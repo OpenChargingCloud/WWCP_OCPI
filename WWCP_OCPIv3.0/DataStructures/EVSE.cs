@@ -23,11 +23,10 @@ using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
-using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -38,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
     /// The Electric Vehicle Supply Equipment (EVSE) is the part that controls
     /// the power supply to a single electric vehicle.
     /// </summary>
-    public class EVSE : //IHasId<EVSE_Id>,
+    public class EVSE : APartyIssuedObject3<EVSE_UId, ChargingStation>,
                         IEquatable<EVSE>,
                         IComparable<EVSE>,
                         IComparable,
@@ -56,14 +55,25 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// The parent charging station of this EVSE.
         /// </summary>
-        public ChargingStation?                 ParentChargingStation      { get; internal set; }
+        public ChargingStation?                 ParentChargingStation
+        {
+            get
+            {
+                return Parent;
+            }
+            internal set
+            {
+                Parent = value;
+            }
+        }
 
         /// <summary>
         /// The unique identification of the EVSE within the CPOs platform.
         /// For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!
         /// </summary>
         [Mandatory]
-        public EVSE_UId                         UId                        { get; }
+        public EVSE_UId                         UId
+            => base.Id;
 
         /// <summary>
         /// The official unique identification of the EVSE.
@@ -217,11 +227,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                       CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
                       CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null)
 
+            : base(ParentChargingStation,
+                   UId)
+
         {
 
             this.ParentChargingStation  = ParentChargingStation;
 
-            this.UId                    = UId;
             this.Presence               = Presence;
             this.Connectors             = Connectors?.    Distinct() ?? [];
             this.Parking                = Parking;
@@ -314,7 +326,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null)
 
             : this(null,
-
                    UId,
                    Presence,
                    Connectors,
@@ -1391,31 +1402,39 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-        #region ToBuilder(NewEVSEUId = null)
+        #region ToBuilder(NewEVSEUId = null, NewVersionId = null)
 
         /// <summary>
         /// Return a builder for this EVSE.
         /// </summary>
         /// <param name="NewEVSEUId">An optional new EVSE identification.</param>
-        public Builder ToBuilder(EVSE_UId? NewEVSEUId = null)
+        /// <param name="NewVersionId">An optional new version identification.</param>
+        public Builder ToBuilder(EVSE_UId?  NewEVSEUId     = null,
+                                 UInt64?    NewVersionId   = null)
 
-            => new (ParentChargingStation,
+            => new (
 
-                    NewEVSEUId ?? UId,
-                    Presence,
-                    Connectors,
-                    Parking,
+                   ParentChargingStation,
+                   //PartyId,
+                   NewEVSEUId ?? UId,
+                   //VersionId,
 
-                    EVSEId,
-                    Status,
-                    StatusSchedule,
-                    PhysicalReference,
-                    Images,
-                    CalibrationInfoURL,
-                    EnergyMeter,
+                   Presence,
+                   Connectors,
+                   Parking,
 
-                    Created,
-                    LastUpdated);
+                   EVSEId,
+                   Status,
+                   StatusSchedule,
+                   PhysicalReference,
+                   Images,
+                   CalibrationInfoURL,
+                   EnergyMeter,
+
+                   Created,
+                   LastUpdated
+
+               );
 
         #endregion
 
@@ -1531,8 +1550,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// Create a new EVSE builder.
             /// </summary>
             /// <param name="ParentChargingStation">The parent charging station of this EVSE.</param>
-            /// 
+            /// <param name="PartyId">The party identification of the party that issued this charging station.</param>
             /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
+            /// <param name="VersionId">The version identification of the charging station.</param>
+            /// 
             /// <param name="Presence">Whether this EVSE is currently physically present, or only planned for the future, or already removed.</param>
             /// <param name="Connectors">An enumeration of available connectors attached to this EVSE.</param>
             /// <param name="Parking">The description of the available parking for the EVSE.</param>
@@ -1548,8 +1569,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// <param name="Created">The optional timestamp when this EVSE was created.</param>
             /// <param name="LastUpdated">The optional timestamp when this EVSE was last updated (or created).</param>
             internal Builder(ChargingStation?              ParentChargingStation   = null,
-
+                        //     Party_Idv3?                   PartyId                 = null,
                              EVSE_UId?                     UId                     = null,
+                        //     UInt64?                       VersionId               = null,
+
                              PresenceStatus?               Presence                = null,
                              IEnumerable<Connector>?       Connectors              = null,
                              Parking?                      Parking                 = null,
@@ -1565,6 +1588,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                              DateTime?                     Created                 = null,
                              DateTime?                     LastUpdated             = null)
+
+                //: base(PartyId,
+                //       Id,
+                //       VersionId)
 
             {
 

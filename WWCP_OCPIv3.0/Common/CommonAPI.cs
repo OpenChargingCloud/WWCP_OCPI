@@ -6906,7 +6906,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                         {
                             try
                             {
-                                OnLocationChangedLocal(newOrUpdatedChargingStation.ParentLocation).Wait();
+                                OnLocationChangedLocal(newOrUpdatedChargingStation.Parent).Wait();
                             }
                             catch (Exception e)
                             {
@@ -7208,9 +7208,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var PartyId = ChargingStation.PartyId;
-            var LocationId = ChargingStation.ParentLocation.Id;
-            var ChargingStationId = ChargingStation.Id;
+            var PartyId            = ChargingStation.ParentLocation.PartyId;
+            var LocationId         = ChargingStation.ParentLocation.Id;
+            var ChargingStationId  = ChargingStation.Id;
 
             if (parties.TryGetValue(PartyId, out var party))
             {
@@ -7266,7 +7266,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             if (!builder.EVSEs.TryAdd(newOrUpdatedEVSE.UId, newOrUpdatedEVSE))
                 builder.EVSEs[newOrUpdatedEVSE.UId] = newOrUpdatedEVSE;
 
-            builder.VersionId++;
+            //builder.VersionId++;
             builder.LastUpdated = newOrUpdatedEVSE.LastUpdated;
 
             await AddOrUpdateChargingStation(

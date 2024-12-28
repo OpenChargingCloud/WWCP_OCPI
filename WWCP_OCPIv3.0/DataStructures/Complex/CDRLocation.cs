@@ -23,6 +23,7 @@ using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
+using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -227,9 +228,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CDRLocation">The parsed location.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject           JSON,
-                                       out CDRLocation?  CDRLocation,
-                                       out String?       ErrorResponse)
+        public static Boolean TryParse(JObject                                JSON,
+                                       [NotNullWhen(true)]  out CDRLocation?  CDRLocation,
+                                       [NotNullWhen(false)] out String?       ErrorResponse)
 
             => TryParse(JSON,
                         out CDRLocation,
@@ -245,8 +246,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCDRLocationParser">A delegate to parse custom location JSON objects.</param>
         public static Boolean TryParse(JObject                                    JSON,
-                                       out CDRLocation?                           CDRLocation,
-                                       out String?                                ErrorResponse,
+                                       [NotNullWhen(true)]  out CDRLocation?      CDRLocation,
+                                       [NotNullWhen(false)] out String?           ErrorResponse,
                                        CustomJObjectParserDelegate<CDRLocation>?  CustomCDRLocationParser   = null)
         {
 

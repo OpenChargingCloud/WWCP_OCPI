@@ -810,9 +810,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 return new ChargingStation(
 
-                           PartyId:            ChargingStation.Id.OperatorId.ToOCPI(),
+                           //PartyId:            ChargingStation.Id.OperatorId.ToOCPI(),
                            Id:                 ChargingStation.Id.ToOCPI(),
-                           VersionId:          1,
+                           //VersionId:          1,
 
                            EVSEs:              evses,
                            Capabilities:       null,
@@ -1617,9 +1617,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 return new CDR(
 
-                           CountryCode:                CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code),
-                           PartyId:                    Party_Idv3.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
-                           Id:                         CDR_Id.     Parse(ChargeDetailRecord.Id.ToString()),
+                           null,
+                           PartyId:                    Party_Idv3.Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
+                           Id:                         CDR_Id.    Parse(ChargeDetailRecord.Id.ToString()),
+                           VersionId:                  1,
                            Start:                      ChargeDetailRecord.SessionTime.StartTime,
                            End:                        ChargeDetailRecord.SessionTime.EndTime. Value,
                            CDRToken:                   new CDRToken(
@@ -1630,7 +1631,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                            ContractId:    Contract_Id.Parse("123")  //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                                                        ),
                            AuthMethod:                 authMethod.Value,
-                           Location:                   null,
+                           CDRLocation:                null,
                                                        //new CDRLocation(          //ToDo: Might still have not required connectors!
                                                        //    Id:                   filteredLocation.Id,
                                                        //    Address:              filteredLocation.Address,
@@ -1661,23 +1662,25 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            MeterId:                    ChargeDetailRecord.EnergyMeterId.ToOCPI(),
                            EnergyMeter:                null,
                            TransparencySoftwares:      null,
-                           Tariffs:                    (IEnumerable<Tariff>?) (GetTariffIdsDelegate?.Invoke(
-                                                           ChargeDetailRecord.ChargingStationOperatorId,
-                                                           ChargeDetailRecord.ChargingPoolId,
-                                                           ChargeDetailRecord.ChargingStationId,
-                                                           ChargeDetailRecord.EVSEId,
-                                                           ChargeDetailRecord.ChargingConnectorId,
-                                                           ChargeDetailRecord.ProviderIdStart
-                                                       )),
+                           TariffAssociationId:        TariffAssociation_Id.Parse(""),
+                           TariffId:                   Tariff_Id.           Parse(""),
+                           //Tariffs:                    (IEnumerable<Tariff>?) (GetTariffIdsDelegate?.Invoke(
+                           //                                ChargeDetailRecord.ChargingStationOperatorId,
+                           //                                ChargeDetailRecord.ChargingPoolId,
+                           //                                ChargeDetailRecord.ChargingStationId,
+                           //                                ChargeDetailRecord.EVSEId,
+                           //                                ChargeDetailRecord.ChargingConnectorId,
+                           //                                ChargeDetailRecord.ProviderIdStart
+                           //                            )),
                            SignedData:                 null,
                            TotalFixedCosts:            null,
                            TotalEnergyCost:            null,
                            TotalTimeCost:              null,
-                           TotalParkingTime:           null,
-                           TotalParkingCost:           null,
+                           //TotalParkingTime:           null,
+                           //TotalParkingCost:           null,
                            TotalReservationCost:       null,
                            Remark:                     null,
-                           InvoiceReferenceId:         null,
+                           //InvoiceReferenceId:         null,
                            Credit:                     null,
                            CreditReferenceId:          null,
                            HomeChargingCompensation:   null,

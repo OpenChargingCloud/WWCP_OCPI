@@ -26,7 +26,7 @@ using cloud.charging.open.protocols.OCPI;
 namespace cloud.charging.open.protocols.OCPIv3_0
 {
 
-    public interface IPartyIssuedObject<TId>// : IHasId<TId>
+    public interface IPartyIssuedObject<TId> : WithId<TId>
         where TId : struct, IId
     {
 
@@ -37,16 +37,40 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public Party_Idv3  PartyId      { get; }
 
         /// <summary>
+        /// The version identification of the object.
+        /// </summary>
+        [Mandatory]
+        public UInt64      VersionId    { get; }
+
+    }
+    public interface WithId<TId>// : IHasId<TId>
+        where TId : struct, IId
+    {
+
+        /// <summary>
         /// The unique identification of this object.
         /// </summary>
         [Mandatory]
         public TId         Id           { get; }
 
+    }
+
+    public interface WithId2<TId, TParent>// : IHasId<TId>
+        where TId     : struct, IId
+        where TParent : class
+    {
+
         /// <summary>
-        /// The version identification of the object.
+        /// The parent object.
         /// </summary>
         [Mandatory]
-        public UInt64      VersionId    { get; }
+        public TParent?    Parent       { get; }
+
+        /// <summary>
+        /// The unique identification of this object.
+        /// </summary>
+        [Mandatory]
+        public TId         Id           { get; }
 
     }
 

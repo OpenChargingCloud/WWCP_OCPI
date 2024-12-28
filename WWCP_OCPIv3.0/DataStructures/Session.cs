@@ -58,26 +58,26 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// When a session goes from PENDING to ACTIVE, this field SHALL be updated to the moment the session went to ACTIVE in the charging station.
         /// </summary>
         [Mandatory]
-        public   DateTime                            Start                        { get; }
+        public   DateTime                                 Start                        { get; }
 
         /// <summary>
         /// The timestamp when the session was completed/finished, charging might have finished before the session ends,
         /// for example: EV is full, but parking cost also has to be paid.
         /// </summary>
         [Optional]
-        public   DateTime?                           End                          { get; }
+        public   DateTime?                                End                          { get; }
 
         /// <summary>
         /// How many kWh of energy were transferred through the EVSE into the vehicle.
         /// </summary>
         [Mandatory]
-        public   WattHour                            Energy                       { get; }
+        public   WattHour                                 Energy                       { get; }
 
         /// <summary>
         /// Token used to start this charging session, including all the relevant information to identify the unique token.
         /// </summary>
         [Mandatory]
-        public   CDRToken                            CDRToken                     { get; }
+        public   CDRToken                                 CDRToken                     { get; }
 
         /// <summary>
         /// Method used for authorization. This might change during a session.This can happen for example when the session was
@@ -86,7 +86,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// charging using a Token that is whitelisted.
         /// </summary>
         [Mandatory]
-        public   AuthMethod                          AuthMethod                   { get; }
+        public   AuthMethod                               AuthMethod                   { get; }
 
         /// <summary>
         /// Reference to the authorization given by the eMSP. When the eMSP provided an authorization_reference
@@ -95,58 +95,46 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// are relevant to this Session, the last given value SHALL be used here.
         /// </summary>
         [Optional]
-        public   AuthorizationReference?             AuthorizationReference       { get; }
+        public   AuthorizationReference?                  AuthorizationReference       { get; }
 
         /// <summary>
         /// The identification of the location of this CPO, on which the charging session is/was happening.
         /// </summary>
         [Mandatory]
-        public   Location_Id                         LocationId                   { get; }
+        public   Location_Id                              LocationId                   { get; }
 
         /// <summary>
         /// The Connector that the Session happened on. This is allowed to be unset if and only if the session
         /// is created for a reservation for which no EVSE has been assigned yet.
         /// </summary>
         [Optional]
-        public   SessionConnector?                   Connector                    { get; }
-
-        ///// <summary>
-        ///// The unique internal identification of the EVSE at which the charging session is/was happening.
-        ///// </summary>
-        //[Mandatory]
-        //public   EVSE_UId                            EVSEUId                      { get; }
-
-        ///// <summary>
-        ///// The unique identification of the connector at which the charging session is/was happening.
-        ///// </summary>
-        //[Mandatory]
-        //public   Connector_Id                        ConnectorId                  { get; }
+        public   SessionConnector?                        Connector                    { get; }
 
         /// <summary>
         /// The ISO 4217 code of the currency used for this session.
         /// </summary>
         [Mandatory]
-        public   OCPI.Currency                       Currency                     { get; }
+        public   OCPI.Currency                            Currency                     { get; }
 
         /// <summary>
         /// The optional enumeration of charging periods that can be used to calculate and verify the total cost.
         /// </summary>
         [Optional]
-        public   IEnumerable<ChargingPeriod>         ChargingPeriods              { get; }
+        public   IEnumerable<ChargingPeriod>              ChargingPeriods              { get; }
 
         /// <summary>
         /// The ID of the Tariff Association that was used to look up the Tariff of this Session.
         /// When the session is free, the ID of a Tariff Association for a Free of Charge tariff is to be given in this field.
         /// </summary>
         [Mandatory]
-        public   TariffAssociation_Id                TariffAssociationId          { get; }
+        public   TariffAssociation_Id                     TariffAssociationId          { get; }
 
         /// <summary>
         /// The ID of the Tariff that was used to compute what this Session costs.
         /// When the session is free, the ID of a Free of Charge tariff is to be given in this field.
         /// </summary>
         [Mandatory]
-        public   Tariff_Id                           TariffId                     { get; }
+        public   Tariff_Id                                TariffId                     { get; }
 
         /// <summary>
         /// The total costs of the session in the specified currency. This is the price that the eMSP will
@@ -154,42 +142,49 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// information is given in the Session object, it does not imply the session is/was free of charge.
         /// </summary>
         [Optional]
-        public   Price?                              TotalCosts                   { get; }
+        public   Price?                                   TotalCosts                   { get; }
 
         /// <summary>
         /// The status of the session.
         /// </summary>
         [Mandatory]
-        public   SessionStatus                       Status                       { get; }
+        public   SessionStatus                            Status                       { get; }
 
         /// <summary>
         /// The optional identification of the energy meter.
         /// </summary>
         [Optional]
-        public   Meter_Id?                           MeterId                      { get; }
+        public   Meter_Id?                                MeterId                      { get; }
 
         /// <summary>
         /// The optional energy meter used for this session.
         /// </summary>
         [Optional, NonStandard]
-        public   EnergyMeter?                        EnergyMeter                  { get; }
+        public   EnergyMeter?                             EnergyMeter                  { get; }
+
+        /// <summary>
+        /// The enumeration of valid transparency softwares which can be used to validate
+        /// the singed charging session and metering data.
+        /// </summary>
+        [Optional, NonStandard]
+        public   IEnumerable<TransparencySoftwareStatus>  TransparencySoftwares        { get; }
 
         /// <summary>
         /// The timestamp when this session was created.
         /// </summary>
         [Mandatory, NonStandard("Pagination")]
-        public   DateTime                            Created                      { get; }
+        public   DateTime                                 Created                      { get; }
 
         /// <summary>
         /// The timestamp when this session was last updated (or created).
         /// </summary>
         [Mandatory]
-        public   DateTime                            LastUpdated                  { get; }
+        public   DateTime                                 LastUpdated                  { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this charging session.
         /// </summary>
-        public   String                              ETag                         { get; private set; }
+        public   String                                   ETag                         { get; private set; }
 
         #endregion
 
@@ -207,16 +202,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Energy">An amount of kWhs that had been charged.</param>
         /// <param name="CDRToken">An authentication token used to start this charging session, including all relevant information to identify the unique token.</param>
         /// <param name="AuthMethod">A method used for authentication.</param>
-        /// <param name="AuthorizationReference">The optional reference to the authorization given by the eMSP. When the eMSP provided an authorization_reference in either: real-time authorization or StartSession, this field SHALL contain the same value.</param>
         /// <param name="LocationId">The identification of the location at which the charging session is/was happening.</param>
-        /// <param name="ConnectorId">An unique identification of the connector at which the charging session is/was happening.</param>
         /// <param name="Currency">An ISO 4217 code of the currency used for this session.</param>
+        /// <param name="TariffAssociationId">The identification of the tariff association that was used to look up the tariff of this session.</param>
+        /// <param name="TariffId">The identification of the tariff that was used to compute what this session costs.</param>
         /// <param name="Status">A status of the session.</param>
         /// 
         /// <param name="End">An optional timestamp when the session was completed.</param>
-        /// <param name="MeterId">The optional identification of the kWh energy meter.</param>
+        /// <param name="AuthorizationReference">The optional reference to the authorization given by the eMSP. When the eMSP provided an authorization_reference in either: real-time authorization or StartSession, this field SHALL contain the same value.</param>
+        /// <param name="Connector">The optional connector that the session happened on.</param>
         /// <param name="ChargingPeriods">An optional enumeration of charging periods that can be used to calculate and verify the total cost.</param>
         /// <param name="TotalCosts">The total costs of the session in the specified currency. This is the price that the eMSP will have to pay to the CPO. A total_cost of 0.00 means free of charge. When omitted, i.e. no price information is given in the Session object, it does not imply the session is/was free of charge.</param>
+        /// <param name="MeterId">The optional identification of the kWh energy meter.</param>
+        /// <param name="EnergyMeter">The optional energy meter used for this session.</param>
+        /// <param name="TransparencySoftwares">An optional enumeration of valid transparency softwares which can be used to validate the signed charging session and metering data.</param>
         /// 
         /// <param name="Created">An optional timestamp when this charging session was created.</param>
         /// <param name="LastUpdated">An optional timestamp when this charging session was last updated (or created).</param>
@@ -249,6 +248,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        Price?                                              TotalCosts                         = null,
                        Meter_Id?                                           MeterId                            = null,
                        EnergyMeter?                                        EnergyMeter                        = null,
+                       IEnumerable<TransparencySoftwareStatus>?            TransparencySoftwares              = null,
 
                        DateTime?                                           Created                            = null,
                        DateTime?                                           LastUpdated                        = null,
@@ -280,13 +280,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.End                     = End;
             this.AuthorizationReference  = AuthorizationReference;
             this.Connector               = Connector;
-            this.ChargingPeriods         = ChargingPeriods?.Distinct() ?? [];
+            this.ChargingPeriods         = ChargingPeriods?.      Distinct() ?? [];
             this.TotalCosts              = TotalCosts;
             this.MeterId                 = MeterId;
             this.EnergyMeter             = EnergyMeter;
+            this.TransparencySoftwares   = TransparencySoftwares?.Distinct() ?? [];
 
-            this.Created                 = Created                     ?? LastUpdated ?? Timestamp.Now;
-            this.LastUpdated             = LastUpdated                 ?? Created     ?? Timestamp.Now;
+            this.Created                 = Created                           ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated             = LastUpdated                       ?? Created     ?? Timestamp.Now;
 
             this.ETag                    = CalcSHA256Hash(CustomSessionSerializer,
                                                           CustomCDRTokenSerializer,
@@ -302,23 +303,24 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            this.Id.                     GetHashCode()       * 73 ^
                            this.VersionId.              GetHashCode()       * 71 ^
 
-                           this.Start.                  GetHashCode()       * 61 ^
-                           this.Energy.                 GetHashCode()       * 59 ^
-                           this.CDRToken.               GetHashCode()       * 53 ^
-                           this.AuthMethod.             GetHashCode()       * 47 ^
-                           this.LocationId.             GetHashCode()       * 43 ^
-                           this.Currency.               GetHashCode()       * 41 ^
-                           this.TariffAssociationId.    GetHashCode()       * 37 ^
-                           this.TariffId.               GetHashCode()       * 31 ^
-                           this.Status.                 GetHashCode()       * 29 ^
+                           this.Start.                  GetHashCode()       * 67 ^
+                           this.Energy.                 GetHashCode()       * 61 ^
+                           this.CDRToken.               GetHashCode()       * 59 ^
+                           this.AuthMethod.             GetHashCode()       * 53 ^
+                           this.LocationId.             GetHashCode()       * 47 ^
+                           this.Currency.               GetHashCode()       * 43 ^
+                           this.TariffAssociationId.    GetHashCode()       * 41 ^
+                           this.TariffId.               GetHashCode()       * 37 ^
+                           this.Status.                 GetHashCode()       * 31 ^
 
-                          (this.End?.                   GetHashCode() ?? 0) * 23 ^
-                          (this.AuthorizationReference?.GetHashCode() ?? 0) * 19 ^
-                          (this.Connector?.             GetHashCode() ?? 0) * 17 ^
-                           this.ChargingPeriods.        CalcHashCode()      * 13 ^
-                          (this.TotalCosts?.            GetHashCode() ?? 0) * 11 ^
-                          (this.MeterId?.               GetHashCode() ?? 0) *  7 ^
-                          (this.EnergyMeter?.           GetHashCode() ?? 0) *  5 ^
+                          (this.End?.                   GetHashCode() ?? 0) * 29 ^
+                          (this.AuthorizationReference?.GetHashCode() ?? 0) * 23 ^
+                          (this.Connector?.             GetHashCode() ?? 0) * 19 ^
+                           this.ChargingPeriods.        CalcHashCode()      * 17 ^
+                          (this.TotalCosts?.            GetHashCode() ?? 0) * 13 ^
+                          (this.MeterId?.               GetHashCode() ?? 0) * 11 ^
+                          (this.EnergyMeter?.           GetHashCode() ?? 0) *  7 ^
+                           this.TransparencySoftwares.  CalcHashCode()      *  5 ^
 
                            this.Created.                GetHashCode()       *  3 ^
                            this.LastUpdated.            GetHashCode();
@@ -330,7 +332,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-        #region (static) Parse   (JSON, CountryCodeURL= null, PartyIdURL= null, SessionIdURL = null, CustomSessionParser = null)
+        #region (static) Parse   (JSON, ...)
 
         /// <summary>
         /// Parse the given JSON representation of a session.
@@ -365,7 +367,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region (static) TryParse(JSON, out Session, out ErrorResponse, SessionIdURL = null, CustomSessionParser = null)
+        #region (static) TryParse(JSON, out Session, out ErrorResponse, ...)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
@@ -614,6 +616,34 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
+                #region Parse EnergyMeter               [optional]
+
+                if (JSON.ParseOptionalJSON("energy_meter",
+                                           "energy meter",
+                                           OCPI.EnergyMeter.TryParse,
+                                           out EnergyMeter? EnergyMeter,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse TransparencySoftwares     [optional]
+
+                if (JSON.ParseOptionalJSON("transparency_softwares",
+                                           "transparency softwares",
+                                           TransparencySoftwareStatus.TryParse,
+                                           out IEnumerable<TransparencySoftwareStatus> TransparencySoftwares,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
                 #region Parse Currency                  [mandatory]
 
                 if (!JSON.ParseMandatory("currency",
@@ -694,20 +724,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
-                #region Parse EnergyMeter               [optional]
-
-                if (JSON.ParseOptionalJSON("energy_meter",
-                                           "energy meter",
-                                           OCPI.EnergyMeter.TryParse,
-                                           out EnergyMeter? EnergyMeter,
-                                           out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                #endregion
-
 
                 #region Parse Created                   [optional, NonStandard]
 
@@ -759,6 +775,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               TotalCosts,
                               MeterId,
                               EnergyMeter,
+                              TransparencySoftwares,
 
                               Created,
                               LastUpdated
@@ -909,10 +926,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    End,
                    AuthorizationReference?.Clone(),
                    Connector?.             Clone(),
-                   ChargingPeriods.        Select(chargingPeriod => chargingPeriod.Clone()).ToArray(),
+                   ChargingPeriods.        Select(chargingPeriod       => chargingPeriod.      Clone()).ToArray(),
                    TotalCosts?.            Clone(),
                    MeterId?.               Clone(),
                    EnergyMeter?.           Clone(),
+                   TransparencySoftwares.  Select(transparencySoftware => transparencySoftware.Clone()).ToArray(),
 
                    Created,
                    LastUpdated
@@ -1408,6 +1426,363 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
+
+        #region ToBuilder(NewSessionId = null, NewVersionId = null)
+
+        /// <summary>
+        /// Return a builder for this charging session.
+        /// </summary>
+        /// <param name="NewSessionId">An optional new charging session identification.</param>
+        /// <param name="NewVersionId">An optional new version identification.</param>
+        public Builder ToBuilder(Session_Id?  NewSessionId   = null,
+                                 UInt64?      NewVersionId   = null)
+
+            => new (
+
+                   CommonAPI,
+                   PartyId,
+                   NewSessionId ?? Id,
+                   NewVersionId ?? VersionId,
+
+                   Start,
+                   Energy,
+                   CDRToken,
+                   AuthMethod,
+                   LocationId,
+                   Currency,
+                   TariffAssociationId,
+                   TariffId,
+                   Status,
+
+                   End,
+                   AuthorizationReference,
+                   Connector,
+                   ChargingPeriods,
+                   TotalCosts,
+                   MeterId,
+                   EnergyMeter,
+                   TransparencySoftwares,
+
+                   Created,
+                   LastUpdated
+
+               );
+
+        #endregion
+
+        #region (class) Builder
+
+        /// <summary>
+        /// A charging session builder.
+        /// </summary>
+        public class Builder : ABuilder
+        {
+
+            #region Properties
+
+            /// <summary>
+            /// The timestamp when the session became ACTIVE in the charging station.
+            /// When the session is still PENDING, this field SHALL be set to the time the session was created at the charging station.
+            /// When a session goes from PENDING to ACTIVE, this field SHALL be updated to the moment the session went to ACTIVE in the charging station.
+            /// </summary>
+            [Mandatory]
+            public   DateTime?                                Start                        { get; set; }
+
+            /// <summary>
+            /// The timestamp when the session was completed/finished, charging might have finished before the session ends,
+            /// for example: EV is full, but parking cost also has to be paid.
+            /// </summary>
+            [Optional]
+            public   DateTime?                                End                          { get; set; }
+
+            /// <summary>
+            /// How many kWh of energy were transferred through the EVSE into the vehicle.
+            /// </summary>
+            [Mandatory]
+            public   WattHour?                                Energy                       { get; set; }
+
+            /// <summary>
+            /// Token used to start this charging session, including all the relevant information to identify the unique token.
+            /// </summary>
+            [Mandatory]
+            public   CDRToken?                                CDRToken                     { get; set; }
+
+            /// <summary>
+            /// Method used for authorization. This might change during a session.This can happen for example when the session was
+            /// started with a reservation according to use case Reserve an EVSE at a location.
+            /// Initially the authorization method will be COMMAND which changes to WHITELIST when the driver arrives and starts
+            /// charging using a Token that is whitelisted.
+            /// </summary>
+            [Mandatory]
+            public   AuthMethod?                              AuthMethod                   { get; set; }
+
+            /// <summary>
+            /// Reference to the authorization given by the eMSP. When the eMSP provided an authorization_reference
+            /// in either: realtime authorization, Start a Session or Reserve an EVSE at a Location this field SHALL
+            /// contain the same value. When different authorization_reference values have been given by the eMSP that
+            /// are relevant to this Session, the last given value SHALL be used here.
+            /// </summary>
+            [Optional]
+            public   AuthorizationReference?                  AuthorizationReference       { get; set; }
+
+            /// <summary>
+            /// The identification of the location of this CPO, on which the charging session is/was happening.
+            /// </summary>
+            [Mandatory]
+            public   Location_Id?                             LocationId                   { get; set; }
+
+            /// <summary>
+            /// The Connector that the Session happened on. This is allowed to be unset if and only if the session
+            /// is created for a reservation for which no EVSE has been assigned yet.
+            /// </summary>
+            [Optional]
+            public   SessionConnector?                        Connector                    { get; set; }
+
+            /// <summary>
+            /// The ISO 4217 code of the currency used for this session.
+            /// </summary>
+            [Mandatory]
+            public   OCPI.Currency?                           Currency                     { get; set; }
+
+            /// <summary>
+            /// The optional enumeration of charging periods that can be used to calculate and verify the total cost.
+            /// </summary>
+            [Optional]
+            public   List<ChargingPeriod>                     ChargingPeriods              { get; }
+
+            /// <summary>
+            /// The ID of the Tariff Association that was used to look up the Tariff of this Session.
+            /// When the session is free, the ID of a Tariff Association for a Free of Charge tariff is to be given in this field.
+            /// </summary>
+            [Mandatory]
+            public   TariffAssociation_Id?                    TariffAssociationId          { get; set; }
+
+            /// <summary>
+            /// The ID of the Tariff that was used to compute what this Session costs.
+            /// When the session is free, the ID of a Free of Charge tariff is to be given in this field.
+            /// </summary>
+            [Mandatory]
+            public   Tariff_Id?                               TariffId                     { get; set; }
+
+            /// <summary>
+            /// The total costs of the session in the specified currency. This is the price that the eMSP will
+            /// have to pay to the CPO. A total_cost of 0.00 means free of charge. When omitted, i.e. no price
+            /// information is given in the Session object, it does not imply the session is/was free of charge.
+            /// </summary>
+            [Optional]
+            public   Price?                                   TotalCosts                   { get; set; }
+
+            /// <summary>
+            /// The status of the session.
+            /// </summary>
+            [Mandatory]
+            public   SessionStatus?                           Status                       { get; set; }
+
+            /// <summary>
+            /// The optional identification of the energy meter.
+            /// </summary>
+            [Optional]
+            public   Meter_Id?                                MeterId                      { get; set; }
+
+            /// <summary>
+            /// The optional energy meter used for this session.
+            /// </summary>
+            [Optional, NonStandard]
+            public   EnergyMeter?                             EnergyMeter                  { get; set; }
+
+            /// <summary>
+            /// The enumeration of valid transparency softwares which can be used to validate
+            /// the singed charging session and metering data.
+            /// </summary>
+            [Optional, NonStandard]
+            public   HashSet<TransparencySoftwareStatus>      TransparencySoftwares        { get; }
+
+            /// <summary>
+            /// The timestamp when this session was created.
+            /// </summary>
+            [Mandatory, NonStandard("Pagination")]
+            public   DateTime?                                Created                      { get; set; }
+
+            /// <summary>
+            /// The timestamp when this session was last updated (or created).
+            /// </summary>
+            [Mandatory]
+            public   DateTime?                                LastUpdated                  { get; set; }
+
+            #endregion
+
+            #region Constructor(s)
+
+            /// <summary>
+            /// Create a new charging session builder.
+            /// </summary>
+            /// <param name="CommonAPI">The common OCPI API hosting this session.</param>
+            /// <param name="PartyId">The party identification of the party that issued this session.</param>
+            /// <param name="Id">An identification of the session within the party.</param>
+            /// <param name="VersionId">The version identification of the session.</param>
+            /// 
+            /// <param name="Start">A timestamp when the session became active.</param>
+            /// <param name="Energy">An amount of kWhs that had been charged.</param>
+            /// <param name="CDRToken">An authentication token used to start this charging session, including all relevant information to identify the unique token.</param>
+            /// <param name="AuthMethod">A method used for authentication.</param>
+            /// <param name="LocationId">The identification of the location at which the charging session is/was happening.</param>
+            /// <param name="Currency">An ISO 4217 code of the currency used for this session.</param>
+            /// <param name="TariffAssociationId">The identification of the tariff association that was used to look up the tariff of this session.</param>
+            /// <param name="TariffId">The identification of the tariff that was used to compute what this session costs.</param>
+            /// <param name="Status">A status of the session.</param>
+            /// 
+            /// <param name="End">An optional timestamp when the session was completed.</param>
+            /// <param name="AuthorizationReference">The optional reference to the authorization given by the eMSP. When the eMSP provided an authorization_reference in either: real-time authorization or StartSession, this field SHALL contain the same value.</param>
+            /// <param name="Connector">The optional connector that the session happened on.</param>
+            /// <param name="ChargingPeriods">An optional enumeration of charging periods that can be used to calculate and verify the total cost.</param>
+            /// <param name="TotalCosts">The total costs of the session in the specified currency. This is the price that the eMSP will have to pay to the CPO. A total_cost of 0.00 means free of charge. When omitted, i.e. no price information is given in the Session object, it does not imply the session is/was free of charge.</param>
+            /// <param name="MeterId">The optional identification of the kWh energy meter.</param>
+            /// <param name="EnergyMeter">The optional energy meter used for this session.</param>
+            /// <param name="TransparencySoftwares">An optional enumeration of valid transparency softwares which can be used to validate the signed charging session and metering data.</param>
+            /// 
+            /// <param name="Created">An optional timestamp when this charging session was created.</param>
+            /// <param name="LastUpdated">An optional timestamp when this charging session was last updated (or created).</param>
+            internal Builder(CommonAPI?                                CommonAPI                = null,
+                             Party_Idv3?                               PartyId                  = null,
+                             Session_Id?                               Id                       = null,
+                             UInt64?                                   VersionId                = null,
+
+                             DateTime?                                 Start                    = null,
+                             WattHour?                                 Energy                   = null,
+                             CDRToken?                                 CDRToken                 = null,
+                             AuthMethod?                               AuthMethod               = null,
+                             Location_Id?                              LocationId               = null,
+                             OCPI.Currency?                            Currency                 = null,
+                             TariffAssociation_Id?                     TariffAssociationId      = null,
+                             Tariff_Id?                                TariffId                 = null,
+                             SessionStatus?                            Status                   = null,
+
+                             DateTime?                                 End                      = null,
+                             AuthorizationReference?                   AuthorizationReference   = null,
+                             SessionConnector?                         Connector                = null,
+                             IEnumerable<ChargingPeriod>?              ChargingPeriods          = null,
+                             Price?                                    TotalCosts               = null,
+                             Meter_Id?                                 MeterId                  = null,
+                             EnergyMeter?                              EnergyMeter              = null,
+                             IEnumerable<TransparencySoftwareStatus>?  TransparencySoftwares    = null,
+
+                             DateTime?                                 Created                  = null,
+                             DateTime?                                 LastUpdated              = null)
+
+                : base(CommonAPI,
+                       PartyId,
+                       Id,
+                       VersionId)
+
+            {
+
+                this.Start                   = Start;
+                this.Energy                  = Energy;
+                this.CDRToken                = CDRToken;
+                this.AuthMethod              = AuthMethod;
+                this.LocationId              = LocationId;
+                this.Currency                = Currency;
+                this.TariffAssociationId     = TariffAssociationId;
+                this.TariffId                = TariffId;
+                this.Status                  = Status;
+
+                this.End                     = End;
+                this.AuthorizationReference  = AuthorizationReference;
+                this.Connector               = Connector;
+                this.ChargingPeriods         = ChargingPeriods       is not null ? new List<ChargingPeriod>(ChargingPeriods) : [];
+                this.TotalCosts              = TotalCosts;
+                this.MeterId                 = MeterId;
+                this.EnergyMeter             = EnergyMeter;
+                this.TransparencySoftwares   = TransparencySoftwares is not null ? new HashSet<TransparencySoftwareStatus>(TransparencySoftwares) : [];
+
+                this.Created                 = Created               ?? LastUpdated;
+                this.LastUpdated             = LastUpdated           ?? Created;
+
+            }
+
+            #endregion
+
+            #region ToImmutable
+
+            /// <summary>
+            /// Return an immutable version of the charging session.
+            /// </summary>
+            public static implicit operator Session?(Builder? Builder)
+
+                => Builder?.ToImmutable(out _);
+
+
+            /// <summary>
+            /// Return an immutable version of the charging session.
+            /// </summary>
+            /// <param name="Warnings"></param>
+            public Session? ToImmutable(out IEnumerable<Warning> Warnings)
+            {
+
+                var warnings = new List<Warning>();
+
+                //if (!PartyId.    HasValue)
+                //    throw new ArgumentNullException(nameof(PartyId),    "The party identification of the charging station must not be null or empty!");
+
+                //if (!Id.         HasValue)
+                //    throw new ArgumentNullException(nameof(Id),         "The charging station identification must not be null or empty!");
+
+                //if (!VersionId.  HasValue)
+                //    throw new ArgumentNullException(nameof(VersionId),  "The version identification of the charging station must not be null or empty!");
+
+                if (!PartyId.  HasValue)
+                    warnings.Add(Warning.Create("The party identification of the charging station must not be null or empty!"));
+
+                if (!Id.       HasValue)
+                    warnings.Add(Warning.Create("The charging station identification must not be null or empty!"));
+
+                if (!VersionId.HasValue)
+                    warnings.Add(Warning.Create("The version identification of the charging station must not be null or empty!"));
+
+                Warnings = warnings;
+
+                return warnings.Count != 0
+
+                           ? null
+
+                           : new Session(
+
+                                 null,
+                                 PartyId.            Value,
+                                 Id.                 Value,
+                                 VersionId.          Value,
+
+                                 Start.              Value,
+                                 Energy.             Value,
+                                 CDRToken.           Value,
+                                 AuthMethod.         Value,
+                                 LocationId.         Value,
+                                 Currency.           Value,
+                                 TariffAssociationId.Value,
+                                 TariffId.           Value,
+                                 Status.             Value,
+
+                                 End,
+                                 AuthorizationReference,
+                                 Connector,
+                                 ChargingPeriods,
+                                 TotalCosts,
+                                 MeterId,
+                                 EnergyMeter,
+                                 TransparencySoftwares,
+
+                                 Created     ?? Timestamp.Now,
+                                 LastUpdated ?? Timestamp.Now
+
+                             );
+
+            }
+
+            #endregion
+
+        }
+
+        #endregion
 
     }
 

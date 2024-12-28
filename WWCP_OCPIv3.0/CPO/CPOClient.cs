@@ -4429,7 +4429,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.POST,
-                                                                                     remoteURL.Value.Path + CDR.CountryCode.ToString() +    // <= Unclear if this URL is correct!
+                                                                                     remoteURL.Value.Path + //CDR.CountryCode.ToString() +    // <= Unclear if this URL is correct!
                                                                                                             CDR.PartyId.    ToString() +
                                                                                                             CDR.Id.         ToString(),
                                                                                      RequestBuilder: requestBuilder => {

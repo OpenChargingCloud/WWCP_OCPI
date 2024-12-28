@@ -591,7 +591,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-        #region (static) Parse   (JSON, LocationIdURL = null, CustomLocationParser = null)
+        #region (static) Parse   (JSON, ...)
 
         /// <summary>
         /// Parse the given JSON representation of a location.
@@ -626,7 +626,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region (static) TryParse(JSON, out Location, out ErrorResponse, LocationIdURL = null, CustomLocationParser = null)
+        #region (static) TryParse(JSON, out Location, out ErrorResponse, ...)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
@@ -1970,20 +1970,22 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-        #region ToBuilder(NewLocationId = null)
+        #region ToBuilder(NewLocationId = null, NewVersionId = null)
 
         /// <summary>
         /// Return a builder for this location.
         /// </summary>
         /// <param name="NewLocationId">An optional new location identification.</param>
-        public Builder ToBuilder(Location_Id? NewLocationId = null)
+        /// <param name="NewVersionId">An optional new version identification.</param>
+        public Builder ToBuilder(Location_Id? NewLocationId  = null,
+                                 UInt64?      NewVersionId   = null)
 
             => new (
 
                    CommonAPI,
                    PartyId,
                    NewLocationId ?? Id,
-                   VersionId,
+                   NewVersionId  ?? VersionId,
 
                    Publish,
                    Timezone,
@@ -2176,7 +2178,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// <summary>
             /// Create a new location builder.
             /// </summary>
-            /// <param name="CommonAPI">The common OCPI API hosting this location.</param>
             /// <param name="PartyId">The party identification of the party that issued this location.</param>
             /// <param name="Id">An identification of the location within the party.</param>
             /// <param name="VersionId">The version identification of the location.</param>
@@ -2206,7 +2207,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// <param name="Created">An optional timestamp when this location was created.</param>
             /// <param name="LastUpdated">An optional timestamp when this location was last updated (or created).</param>
             public Builder(CommonAPI?                           CommonAPI            = null,
-                           Party_Idv3?                            PartyId              = null,
+                           Party_Idv3?                          PartyId              = null,
                            Location_Id?                         Id                   = null,
                            UInt64?                              VersionId            = null,
 
