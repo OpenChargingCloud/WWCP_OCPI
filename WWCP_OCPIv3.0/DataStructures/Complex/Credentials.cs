@@ -77,7 +77,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             this.Token  = Token;
             this.URL    = URL;
-            this.Roles  = Roles?.Distinct() ?? Array.Empty<CredentialsRole>();
+            this.Roles  = Roles?.Distinct() ?? [];
+
+            unchecked
+            {
+
+                hashCode = this.Token.GetHashCode() * 5 ^
+                           this.URL.  GetHashCode() * 3 ^
+                           this.Roles.CalcHashCode();
+
+            }
 
         }
 
@@ -455,21 +464,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return Token.GetHashCode() * 5 ^
-                       URL.  GetHashCode() * 3 ^
-                       Roles.CalcHashCode();
-
-            }
-        }
+            => hashCode;
 
         #endregion
 
@@ -480,15 +482,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         public override String ToString()
 
-            => String.Concat(
-
-                   Token.ToString().SubstringMax(5),
-                   " : ",
-                   URL,
-                   " => ",
-                   Roles.AggregateWith(", ")
-
-               );
+            => $"{Token} : {URL} => {Roles.AggregateWith(", ")}";
 
         #endregion
 

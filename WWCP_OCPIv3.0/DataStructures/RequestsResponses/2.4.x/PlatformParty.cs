@@ -104,7 +104,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-        #region (static) Parse   (JSON, CustomPlatformPartyParser = null)
+        #region (static) Parse   (JSON, ...)
 
         /// <summary>
         /// Parse the given JSON representation of a platform party.
@@ -129,7 +129,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region (static) TryParse(JSON, out PlatformParty, out ErrorResponse, CustomPlatformPartyParser = null)
+        #region (static) TryParse(JSON, out PlatformParty, out ErrorResponse, ...)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
@@ -278,7 +278,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this platform party.
         /// </summary>
         public PlatformParty Clone()
 

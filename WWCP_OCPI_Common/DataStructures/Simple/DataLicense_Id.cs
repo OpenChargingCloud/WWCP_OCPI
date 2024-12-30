@@ -34,14 +34,14 @@ namespace cloud.charging.open.protocols.OCPI
         /// Indicates whether this data license identification is null or empty.
         /// </summary>
         /// <param name="DataLicenseId">A data license identification.</param>
-        public static Boolean IsNullOrEmpty(this OpenDataLicense_Id? DataLicenseId)
+        public static Boolean IsNullOrEmpty(this DataLicense_Id? DataLicenseId)
             => !DataLicenseId.HasValue || DataLicenseId.Value.IsNullOrEmpty;
 
         /// <summary>
         /// Indicates whether this data license identification is null or empty.
         /// </summary>
         /// <param name="DataLicenseId">A data license identification.</param>
-        public static Boolean IsNotNullOrEmpty(this OpenDataLicense_Id? DataLicenseId)
+        public static Boolean IsNotNullOrEmpty(this DataLicense_Id? DataLicenseId)
             => DataLicenseId.HasValue && DataLicenseId.Value.IsNotNullOrEmpty;
 
     }
@@ -51,7 +51,7 @@ namespace cloud.charging.open.protocols.OCPI
     /// The unique identification of a data license.
     /// </summary>
     [NonStandard]
-    public readonly struct OpenDataLicense_Id : IId<OpenDataLicense_Id>
+    public readonly struct DataLicense_Id : IId<DataLicense_Id>
     {
 
         #region Data
@@ -90,7 +90,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Create a new data license identification based on the given string.
         /// </summary>
-        private OpenDataLicense_Id(String Text)
+        private DataLicense_Id(String Text)
         {
             InternalId = Text;
         }
@@ -104,7 +104,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// Parse the given string as a data license identification.
         /// </summary>
         /// <param name="Text">A text representation of a data license identification.</param>
-        public static OpenDataLicense_Id Parse(String Text)
+        public static DataLicense_Id Parse(String Text)
         {
 
             if (TryParse(Text, out var dataLicenseId))
@@ -123,7 +123,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// Try to parse the given string as a data license identification.
         /// </summary>
         /// <param name="Text">A text representation of a data license identification.</param>
-        public static OpenDataLicense_Id? TryParse(String Text)
+        public static DataLicense_Id? TryParse(String Text)
         {
 
             if (TryParse(Text, out var dataLicenseId))
@@ -142,14 +142,14 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         /// <param name="Text">A text representation of a data license identification.</param>
         /// <param name="DataLicenseId">The parsed data license identification.</param>
-        public static Boolean TryParse(String Text, out OpenDataLicense_Id DataLicenseId)
+        public static Boolean TryParse(String Text, out DataLicense_Id DataLicenseId)
         {
 
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    DataLicenseId = new OpenDataLicense_Id(Text.Trim());
+                    DataLicenseId = new DataLicense_Id(Text.Trim());
                     return true;
                 }
                 catch
@@ -163,15 +163,15 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this data license identification.
         /// </summary>
-        public OpenDataLicense_Id Clone
+        public DataLicense_Id Clone()
 
             => new (
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion
@@ -187,8 +187,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="DataLicenseIdId1">A data license identification.</param>
         /// <param name="DataLicenseIdId2">Another data license identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (OpenDataLicense_Id DataLicenseIdId1,
-                                           OpenDataLicense_Id DataLicenseIdId2)
+        public static Boolean operator == (DataLicense_Id DataLicenseIdId1,
+                                           DataLicense_Id DataLicenseIdId2)
 
             => DataLicenseIdId1.Equals(DataLicenseIdId2);
 
@@ -202,8 +202,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="DataLicenseIdId1">A data license identification.</param>
         /// <param name="DataLicenseIdId2">Another data license identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (OpenDataLicense_Id DataLicenseIdId1,
-                                           OpenDataLicense_Id DataLicenseIdId2)
+        public static Boolean operator != (DataLicense_Id DataLicenseIdId1,
+                                           DataLicense_Id DataLicenseIdId2)
 
             => !DataLicenseIdId1.Equals(DataLicenseIdId2);
 
@@ -217,8 +217,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="DataLicenseIdId1">A data license identification.</param>
         /// <param name="DataLicenseIdId2">Another data license identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (OpenDataLicense_Id DataLicenseIdId1,
-                                          OpenDataLicense_Id DataLicenseIdId2)
+        public static Boolean operator < (DataLicense_Id DataLicenseIdId1,
+                                          DataLicense_Id DataLicenseIdId2)
 
             => DataLicenseIdId1.CompareTo(DataLicenseIdId2) < 0;
 
@@ -232,8 +232,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="DataLicenseIdId1">A data license identification.</param>
         /// <param name="DataLicenseIdId2">Another data license identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (OpenDataLicense_Id DataLicenseIdId1,
-                                           OpenDataLicense_Id DataLicenseIdId2)
+        public static Boolean operator <= (DataLicense_Id DataLicenseIdId1,
+                                           DataLicense_Id DataLicenseIdId2)
 
             => DataLicenseIdId1.CompareTo(DataLicenseIdId2) <= 0;
 
@@ -247,8 +247,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="DataLicenseIdId1">A data license identification.</param>
         /// <param name="DataLicenseIdId2">Another data license identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (OpenDataLicense_Id DataLicenseIdId1,
-                                          OpenDataLicense_Id DataLicenseIdId2)
+        public static Boolean operator > (DataLicense_Id DataLicenseIdId1,
+                                          DataLicense_Id DataLicenseIdId2)
 
             => DataLicenseIdId1.CompareTo(DataLicenseIdId2) > 0;
 
@@ -262,8 +262,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="DataLicenseIdId1">A data license identification.</param>
         /// <param name="DataLicenseIdId2">Another data license identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (OpenDataLicense_Id DataLicenseIdId1,
-                                           OpenDataLicense_Id DataLicenseIdId2)
+        public static Boolean operator >= (DataLicense_Id DataLicenseIdId1,
+                                           DataLicense_Id DataLicenseIdId2)
 
             => DataLicenseIdId1.CompareTo(DataLicenseIdId2) >= 0;
 
@@ -281,7 +281,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
-            => Object is OpenDataLicense_Id dataLicenseId
+            => Object is DataLicense_Id dataLicenseId
                    ? CompareTo(dataLicenseId)
                    : throw new ArgumentException("The given object is not a data license identification!",
                                                  nameof(Object));
@@ -294,7 +294,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="DataLicenseId">An object to compare with.</param>
-        public Int32 CompareTo(OpenDataLicense_Id DataLicenseId)
+        public Int32 CompareTo(DataLicense_Id DataLicenseId)
 
             => String.Compare(InternalId,
                               DataLicenseId.InternalId,
@@ -315,7 +315,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <returns>true|false</returns>
         public override Boolean Equals(Object? Object)
 
-            => Object is OpenDataLicense_Id dataLicenseId &&
+            => Object is DataLicense_Id dataLicenseId &&
                    Equals(dataLicenseId);
 
         #endregion
@@ -327,7 +327,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         /// <param name="DataLicenseId">A data license identification to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(OpenDataLicense_Id DataLicenseId)
+        public Boolean Equals(DataLicense_Id DataLicenseId)
 
             => String.Equals(InternalId,
                              DataLicenseId.InternalId,

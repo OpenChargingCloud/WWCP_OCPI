@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System.Diagnostics.CodeAnalysis;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -1401,6 +1399,37 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         }
 
         #endregion
+
+
+        // POST /ocpi/from/DEPTX/to/DKPTY/locations/reserve-now
+        //   + token
+        //   + reservation end time
+        //   + location ID
+        //   + authorization reference
+        //   + asynchronous response URL
+
+        // POST /ocpi/from/DKPTY/to/DEPTX/async-responses/<callback ID>
+        //   + result type SUCCESS
+
+
+
+        // POST /ocpi/from/DEPTX/to/DKPTY/locations/reserve-now
+        //   + token
+        //   + reservation end time
+        //   + location ID
+        //   + authorization reference
+        //   + asynchronous response URL
+
+        // <validation>
+
+        // HTTP 200 OK
+        //   + status ACCEPTED
+
+        // <communicates with EVSE>
+
+        // POST /ocpi/from/DKPTY/to/DEPTX/async-responses/<callback ID>
+        //   + result type FAILED
+
 
 
         #region (private) RegisterURLTemplates()

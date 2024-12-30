@@ -57,7 +57,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// The Open Source license of the transparency software.
         /// </summary>
         [Mandatory]
-        public OpenSourceLicense  OpenSourceLicense        { get; }
+        public SoftwareLicense  OpenSourceLicense        { get; }
 
         /// <summary>
         /// The vendor of the transparency software.
@@ -107,7 +107,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="SourceCodeRepository">An optional URL where to find the source code of the transparency software.</param>
         public TransparencySoftware(String             Name,
                                     String             Version,
-                                    OpenSourceLicense  OpenSourceLicense,
+                                    SoftwareLicense  OpenSourceLicense,
                                     String             Vendor,
 
                                     URL?               Logo                   = null,
@@ -229,8 +229,8 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (!JSON.ParseMandatoryJSON("open_source_license",
                                              "Open Source License",
-                                             OCPI.OpenSourceLicense.TryParse,
-                                             out OpenSourceLicense? OpenSourceLicense,
+                                             OCPI.SoftwareLicense.TryParse,
+                                             out SoftwareLicense? OpenSourceLicense,
                                              out ErrorResponse))
                 {
                     return false;

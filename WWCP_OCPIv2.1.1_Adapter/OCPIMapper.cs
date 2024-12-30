@@ -653,9 +653,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region ToOCPI(this OpenSourceLicense)
 
-        public static OpenSourceLicense ToOCPI(this org.GraphDefined.Vanaheimr.Hermod.OpenSourceLicense OpenSourceLicense)
+        public static SoftwareLicense ToOCPI(this org.GraphDefined.Vanaheimr.Hermod.OpenSourceLicense OpenSourceLicense)
 
-            => new (OpenSourceLicense_Id.Parse(OpenSourceLicense.Id.ToString()),
+            => new (SoftwareLicense_Id.Parse(OpenSourceLicense.Id.ToString()),
                     OpenSourceLicense.URLs.ToArray());
 
         #endregion

@@ -34,27 +34,27 @@ namespace cloud.charging.open.protocols.OCPI
     public static class DisplayTextExtensions
     {
 
-        #region Add(DisplayTexts, Language, Text)
+        //#region Add(DisplayTexts, Language, Text)
 
-        /// <summary>
-        /// Add the given multi-language text to the hash set of multi-language texts.
-        /// </summary>
-        /// <param name="CommandId">A command identification.</param>
-        public static HashSet<DisplayText> Add(this HashSet<DisplayText>  DisplayTexts,
-                                               Languages                  Language,
-                                               String                     Text)
-        {
+        ///// <summary>
+        ///// Add the given multi-language text to the hash set of multi-language texts.
+        ///// </summary>
+        ///// <param name="CommandId">A command identification.</param>
+        //public static HashSet<DisplayText> Add(this HashSet<DisplayText>  DisplayTexts,
+        //                                       Languages                  Language,
+        //                                       String                     Text)
+        //{
 
-            DisplayTexts.Add(
-                new DisplayText(Language,
-                                Text)
-            );
+        //    DisplayTexts.Add(
+        //        new DisplayText(Language,
+        //                        Text)
+        //    );
 
-            return DisplayTexts;
+        //    return DisplayTexts;
 
-        }
+        //}
 
-        #endregion
+        //#endregion
 
         #region ToDisplayText(this Text, Language = Languages.en)
 
@@ -127,11 +127,19 @@ namespace cloud.charging.open.protocols.OCPI
                            String     Text)
         {
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given multi-language text must not be null or empty!");
-
             this.Language  = Language;
             this.Text      = Text.Trim();
+
+            if (this.Text.IsNullOrEmpty())
+                throw new ArgumentNullException(nameof(Text), "The given multi-language text must not be null or empty!");
+
+            unchecked
+            {
+
+                hashCode = Language.GetHashCode() * 3 ^
+                           Text.    GetHashCode();
+
+            }
 
         }
 
@@ -153,26 +161,26 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) CreateSet(Language, Text)
+        //#region (static) CreateSet(Language, Text)
 
-        /// <summary>
-        /// Create a new multi-language text.
-        /// </summary>
-        /// <param name="Language">The language of the text.</param>
-        /// <param name="Text">The text.</param>
-        public static HashSet<DisplayText> CreateSet(Languages  Language,
-                                                     String     Text)
+        ///// <summary>
+        ///// Create a new multi-language text.
+        ///// </summary>
+        ///// <param name="Language">The language of the text.</param>
+        ///// <param name="Text">The text.</param>
+        //public static HashSet<DisplayText> CreateSet(Languages  Language,
+        //                                             String     Text)
 
-            => new (
-                   [
-                       new DisplayText(
-                               Language,
-                               Text
-                           )
-                   ]
-               );
+        //    => new (
+        //           [
+        //               new DisplayText(
+        //                       Language,
+        //                       Text
+        //                   )
+        //           ]
+        //       );
 
-        #endregion
+        //#endregion
 
         #region (static) Parse    (JSON, CustomDisplayTextParser = null)
 
@@ -322,8 +330,10 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public DisplayText Clone()
 
-            => new (Language,
-                    new String(Text.ToCharArray()));
+            => new (
+                   Language,
+                   Text.CloneString()
+               );
 
         #endregion
 
@@ -493,20 +503,13 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
-        /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return Language.GetHashCode() * 3 ^
-                       Text.    GetHashCode();
-
-            }
-        }
+            => hashCode;
 
         #endregion
 
@@ -517,13 +520,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public override String ToString()
 
-            => String.Concat(
-
-                   Language,
-                   " -> ",
-                   Text
-
-               );
+            => $"{Text} ({Language})";
 
         #endregion
 

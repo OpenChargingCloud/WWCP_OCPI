@@ -127,7 +127,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                           new TransparencySoftware(
                                                               "Chargy Transparency Software Desktop Application",
                                                               "v1.00",
-                                                              OpenSourceLicense.AGPL3,
+                                                              SoftwareLicense.AGPL3,
                                                               "GraphDefined GmbH",
                                                               URL.Parse("https://open.charging.cloud/logo.svg"),
                                                               URL.Parse("https://open.charging.cloud/Chargy/howto"),
@@ -144,7 +144,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                           new TransparencySoftware(
                                                               "Chargy Transparency Software Mobile Application",
                                                               "v1.00",
-                                                              OpenSourceLicense.AGPL3,
+                                                              SoftwareLicense.AGPL3,
                                                               "GraphDefined GmbH",
                                                               URL.Parse("https://open.charging.cloud/logo.svg"),
                                                               URL.Parse("https://open.charging.cloud/Chargy/howto"),
@@ -412,7 +412,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                           new TransparencySoftware(
                                                               "Chargy Transparency Software Desktop Application",
                                                               "v1.00",
-                                                              OpenSourceLicense.AGPL3,
+                                                              SoftwareLicense.AGPL3,
                                                               "GraphDefined GmbH",
                                                               URL.Parse("https://open.charging.cloud/logo.svg"),
                                                               URL.Parse("https://open.charging.cloud/Chargy/howto"),
@@ -429,7 +429,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                           new TransparencySoftware(
                                                               "Chargy Transparency Software Mobile Application",
                                                               "v1.00",
-                                                              OpenSourceLicense.AGPL3,
+                                                              SoftwareLicense.AGPL3,
                                                               "GraphDefined GmbH",
                                                               URL.Parse("https://open.charging.cloud/logo.svg"),
                                                               URL.Parse("https://open.charging.cloud/Chargy/howto"),
@@ -698,7 +698,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                           new TransparencySoftware(
                                                               "Chargy Transparency Software Desktop Application",
                                                               "v1.00",
-                                                              OpenSourceLicense.AGPL3,
+                                                              SoftwareLicense.AGPL3,
                                                               "GraphDefined GmbH",
                                                               URL.Parse("https://open.charging.cloud/logo.svg"),
                                                               URL.Parse("https://open.charging.cloud/Chargy/howto"),
@@ -715,7 +715,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                           new TransparencySoftware(
                                                               "Chargy Transparency Software Mobile Application",
                                                               "v1.00",
-                                                              OpenSourceLicense.AGPL3,
+                                                              SoftwareLicense.AGPL3,
                                                               "GraphDefined GmbH",
                                                               URL.Parse("https://open.charging.cloud/logo.svg"),
                                                               URL.Parse("https://open.charging.cloud/Chargy/howto"),
@@ -984,7 +984,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                           new TransparencySoftware(
                                                               "Chargy Transparency Software Desktop Application",
                                                               "v1.00",
-                                                              OpenSourceLicense.AGPL3,
+                                                              SoftwareLicense.AGPL3,
                                                               "GraphDefined GmbH",
                                                               URL.Parse("https://open.charging.cloud/logo.svg"),
                                                               URL.Parse("https://open.charging.cloud/Chargy/howto"),
@@ -1001,7 +1001,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                           new TransparencySoftware(
                                                               "Chargy Transparency Software Mobile Application",
                                                               "v1.00",
-                                                              OpenSourceLicense.AGPL3,
+                                                              SoftwareLicense.AGPL3,
                                                               "GraphDefined GmbH",
                                                               URL.Parse("https://open.charging.cloud/logo.svg"),
                                                               URL.Parse("https://open.charging.cloud/Chargy/howto"),

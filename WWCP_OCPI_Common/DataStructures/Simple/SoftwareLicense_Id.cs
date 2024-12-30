@@ -25,33 +25,33 @@ namespace cloud.charging.open.protocols.OCPI
 {
 
     /// <summary>
-    /// Extension methods for Open Source license identifications.
+    /// Extension methods for software license identifications.
     /// </summary>
     public static class OpenSourceLicenseIdExtensions
     {
 
         /// <summary>
-        /// Indicates whether this Open Source license identification is null or empty.
+        /// Indicates whether this software license identification is null or empty.
         /// </summary>
-        /// <param name="OpenSourceLicenseId">A Open Source license identification.</param>
-        public static Boolean IsNullOrEmpty(this OpenSourceLicense_Id? OpenSourceLicenseId)
+        /// <param name="OpenSourceLicenseId">A software license identification.</param>
+        public static Boolean IsNullOrEmpty(this SoftwareLicense_Id? OpenSourceLicenseId)
             => !OpenSourceLicenseId.HasValue || OpenSourceLicenseId.Value.IsNullOrEmpty;
 
         /// <summary>
-        /// Indicates whether this Open Source license identification is null or empty.
+        /// Indicates whether this software license identification is null or empty.
         /// </summary>
-        /// <param name="OpenSourceLicenseId">A Open Source license identification.</param>
-        public static Boolean IsNotNullOrEmpty(this OpenSourceLicense_Id? OpenSourceLicenseId)
+        /// <param name="OpenSourceLicenseId">A software license identification.</param>
+        public static Boolean IsNotNullOrEmpty(this SoftwareLicense_Id? OpenSourceLicenseId)
             => OpenSourceLicenseId.HasValue && OpenSourceLicenseId.Value.IsNotNullOrEmpty;
 
     }
 
 
     /// <summary>
-    /// The unique identification of an Open Source license.
+    /// The unique identification of a software license.
     /// </summary>
     [NonStandard]
-    public readonly struct OpenSourceLicense_Id : IId<OpenSourceLicense_Id>
+    public readonly struct SoftwareLicense_Id : IId<SoftwareLicense_Id>
     {
 
         #region Data
@@ -66,19 +66,19 @@ namespace cloud.charging.open.protocols.OCPI
         #region Properties
 
         /// <summary>
-        /// Indicates whether this Open Source license identification is null or empty.
+        /// Indicates whether this software license identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
-        /// Indicates whether this Open Source license identification is NOT null or empty.
+        /// Indicates whether this software license identification is NOT null or empty.
         /// </summary>
         public Boolean IsNotNullOrEmpty
             => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
-        /// The length of the Open Source license identificator.
+        /// The length of the software license identificator.
         /// </summary>
         public UInt64 Length
             => (UInt64) (InternalId?.Length ?? 0);
@@ -88,9 +88,9 @@ namespace cloud.charging.open.protocols.OCPI
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new OCPI Open Source license identification based on the given string.
+        /// Create a new OCPI software license identification based on the given string.
         /// </summary>
-        private OpenSourceLicense_Id(String Text)
+        private SoftwareLicense_Id(String Text)
         {
             InternalId = Text;
         }
@@ -101,16 +101,16 @@ namespace cloud.charging.open.protocols.OCPI
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as an Open Source license identification.
+        /// Parse the given string as a software license identification.
         /// </summary>
-        /// <param name="Text">A text representation of an Open Source license identification.</param>
-        public static OpenSourceLicense_Id Parse(String Text)
+        /// <param name="Text">A text representation of a software license identification.</param>
+        public static SoftwareLicense_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out var openSourceLicenseId))
-                return openSourceLicenseId;
+            if (TryParse(Text, out var softwareLicenseId))
+                return softwareLicenseId;
 
-            throw new ArgumentException($"Invalid text representation of an Open Source license identification: '{Text}'!",
+            throw new ArgumentException($"Invalid text representation of a software license identification: '{Text}'!",
                                         nameof(Text));
 
         }
@@ -120,14 +120,14 @@ namespace cloud.charging.open.protocols.OCPI
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given string as an Open Source license identification.
+        /// Try to parse the given string as a software license identification.
         /// </summary>
-        /// <param name="Text">A text representation of an Open Source license identification.</param>
-        public static OpenSourceLicense_Id? TryParse(String Text)
+        /// <param name="Text">A text representation of a software license identification.</param>
+        public static SoftwareLicense_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out var openSourceLicenseId))
-                return openSourceLicenseId;
+            if (TryParse(Text, out var softwareLicenseId))
+                return softwareLicenseId;
 
             return null;
 
@@ -138,18 +138,18 @@ namespace cloud.charging.open.protocols.OCPI
         #region (static) TryParse(Text, out OpenSourceLicenseId)
 
         /// <summary>
-        /// Try to parse the given string as an Open Source license identification.
+        /// Try to parse the given string as a software license identification.
         /// </summary>
-        /// <param name="Text">A text representation of an Open Source license identification.</param>
-        /// <param name="OpenSourceLicenseId">The parsed Open Source license identification.</param>
-        public static Boolean TryParse(String Text, out OpenSourceLicense_Id OpenSourceLicenseId)
+        /// <param name="Text">A text representation of a software license identification.</param>
+        /// <param name="OpenSourceLicenseId">The parsed software license identification.</param>
+        public static Boolean TryParse(String Text, out SoftwareLicense_Id OpenSourceLicenseId)
         {
 
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    OpenSourceLicenseId = new OpenSourceLicense_Id(Text.Trim());
+                    OpenSourceLicenseId = new SoftwareLicense_Id(Text.Trim());
                     return true;
                 }
                 catch
@@ -163,15 +163,15 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
-        /// Clone this Open Source license identification.
+        /// Clone this software license identification.
         /// </summary>
-        public OpenSourceLicense_Id Clone
+        public SoftwareLicense_Id Clone()
 
             => new (
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion
@@ -184,11 +184,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="OpenSourceLicenseIdId1">A Open Source license identification.</param>
-        /// <param name="OpenSourceLicenseIdId2">Another Open Source license identification.</param>
+        /// <param name="OpenSourceLicenseIdId1">A software license identification.</param>
+        /// <param name="OpenSourceLicenseIdId2">Another software license identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (OpenSourceLicense_Id OpenSourceLicenseIdId1,
-                                           OpenSourceLicense_Id OpenSourceLicenseIdId2)
+        public static Boolean operator == (SoftwareLicense_Id OpenSourceLicenseIdId1,
+                                           SoftwareLicense_Id OpenSourceLicenseIdId2)
 
             => OpenSourceLicenseIdId1.Equals(OpenSourceLicenseIdId2);
 
@@ -199,11 +199,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="OpenSourceLicenseIdId1">A Open Source license identification.</param>
-        /// <param name="OpenSourceLicenseIdId2">Another Open Source license identification.</param>
+        /// <param name="OpenSourceLicenseIdId1">A software license identification.</param>
+        /// <param name="OpenSourceLicenseIdId2">Another software license identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (OpenSourceLicense_Id OpenSourceLicenseIdId1,
-                                           OpenSourceLicense_Id OpenSourceLicenseIdId2)
+        public static Boolean operator != (SoftwareLicense_Id OpenSourceLicenseIdId1,
+                                           SoftwareLicense_Id OpenSourceLicenseIdId2)
 
             => !OpenSourceLicenseIdId1.Equals(OpenSourceLicenseIdId2);
 
@@ -214,11 +214,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="OpenSourceLicenseIdId1">A Open Source license identification.</param>
-        /// <param name="OpenSourceLicenseIdId2">Another Open Source license identification.</param>
+        /// <param name="OpenSourceLicenseIdId1">A software license identification.</param>
+        /// <param name="OpenSourceLicenseIdId2">Another software license identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (OpenSourceLicense_Id OpenSourceLicenseIdId1,
-                                          OpenSourceLicense_Id OpenSourceLicenseIdId2)
+        public static Boolean operator < (SoftwareLicense_Id OpenSourceLicenseIdId1,
+                                          SoftwareLicense_Id OpenSourceLicenseIdId2)
 
             => OpenSourceLicenseIdId1.CompareTo(OpenSourceLicenseIdId2) < 0;
 
@@ -229,11 +229,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="OpenSourceLicenseIdId1">A Open Source license identification.</param>
-        /// <param name="OpenSourceLicenseIdId2">Another Open Source license identification.</param>
+        /// <param name="OpenSourceLicenseIdId1">A software license identification.</param>
+        /// <param name="OpenSourceLicenseIdId2">Another software license identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (OpenSourceLicense_Id OpenSourceLicenseIdId1,
-                                           OpenSourceLicense_Id OpenSourceLicenseIdId2)
+        public static Boolean operator <= (SoftwareLicense_Id OpenSourceLicenseIdId1,
+                                           SoftwareLicense_Id OpenSourceLicenseIdId2)
 
             => OpenSourceLicenseIdId1.CompareTo(OpenSourceLicenseIdId2) <= 0;
 
@@ -244,11 +244,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="OpenSourceLicenseIdId1">A Open Source license identification.</param>
-        /// <param name="OpenSourceLicenseIdId2">Another Open Source license identification.</param>
+        /// <param name="OpenSourceLicenseIdId1">A software license identification.</param>
+        /// <param name="OpenSourceLicenseIdId2">Another software license identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (OpenSourceLicense_Id OpenSourceLicenseIdId1,
-                                          OpenSourceLicense_Id OpenSourceLicenseIdId2)
+        public static Boolean operator > (SoftwareLicense_Id OpenSourceLicenseIdId1,
+                                          SoftwareLicense_Id OpenSourceLicenseIdId2)
 
             => OpenSourceLicenseIdId1.CompareTo(OpenSourceLicenseIdId2) > 0;
 
@@ -259,11 +259,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="OpenSourceLicenseIdId1">A Open Source license identification.</param>
-        /// <param name="OpenSourceLicenseIdId2">Another Open Source license identification.</param>
+        /// <param name="OpenSourceLicenseIdId1">A software license identification.</param>
+        /// <param name="OpenSourceLicenseIdId2">Another software license identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (OpenSourceLicense_Id OpenSourceLicenseIdId1,
-                                           OpenSourceLicense_Id OpenSourceLicenseIdId2)
+        public static Boolean operator >= (SoftwareLicense_Id OpenSourceLicenseIdId1,
+                                           SoftwareLicense_Id OpenSourceLicenseIdId2)
 
             => OpenSourceLicenseIdId1.CompareTo(OpenSourceLicenseIdId2) >= 0;
 
@@ -281,9 +281,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
-            => Object is OpenSourceLicense_Id openSourceLicenseId
-                   ? CompareTo(openSourceLicenseId)
-                   : throw new ArgumentException("The given object is not an Open Source license identification!",
+            => Object is SoftwareLicense_Id softwareLicenseId
+                   ? CompareTo(softwareLicenseId)
+                   : throw new ArgumentException("The given object is not a software license identification!",
                                                  nameof(Object));
 
         #endregion
@@ -294,7 +294,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="OpenSourceLicenseId">An object to compare with.</param>
-        public Int32 CompareTo(OpenSourceLicense_Id OpenSourceLicenseId)
+        public Int32 CompareTo(SoftwareLicense_Id OpenSourceLicenseId)
 
             => String.Compare(InternalId,
                               OpenSourceLicenseId.InternalId,
@@ -315,8 +315,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <returns>true|false</returns>
         public override Boolean Equals(Object? Object)
 
-            => Object is OpenSourceLicense_Id openSourceLicenseId &&
-                   Equals(openSourceLicenseId);
+            => Object is SoftwareLicense_Id softwareLicenseId &&
+                   Equals(softwareLicenseId);
 
         #endregion
 
@@ -325,9 +325,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Compares two OpenSourceLicenseIds for equality.
         /// </summary>
-        /// <param name="OpenSourceLicenseId">A Open Source license identification to compare with.</param>
+        /// <param name="OpenSourceLicenseId">A software license identification to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(OpenSourceLicense_Id OpenSourceLicenseId)
+        public Boolean Equals(SoftwareLicense_Id OpenSourceLicenseId)
 
             => String.Equals(InternalId,
                              OpenSourceLicenseId.InternalId,

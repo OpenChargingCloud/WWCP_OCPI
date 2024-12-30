@@ -17,18 +17,12 @@
 
 #region Usings
 
-using System.Security.Authentication;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-
-using cloud.charging.open.protocols.OCPI;
-using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -69,6 +63,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Constructor(s)
 
+        /// <summary>
+        /// Create a new OCPI party role.
+        /// </summary>
+        /// <param name="Module">An unique identification of the module that this platform serves for this party.</param>
+        /// <param name="Side">The side (sender or receiver) this platform serves for the module and party.</param>
         public PartyRole(Module_Id       Module,
                          InterfaceRoles  Side)
 
@@ -90,7 +89,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-        #region (static) Parse   (JSON, CustomPartyRoleParser = null)
+        #region (static) Parse   (JSON, ...)
 
         /// <summary>
         /// Parse the given JSON representation of a party role.
@@ -115,7 +114,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region (static) TryParse(JSON, out PartyRole, out ErrorResponse, CustomPartyRoleParser = null)
+        #region (static) TryParse(JSON, out PartyRole, out ErrorResponse, ...)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
@@ -162,7 +161,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 #region Parse Module    [mandatory]
 
                 if (!JSON.ParseMandatory("module",
-                                         "country code",
+                                         "OCPI module",
                                          Module_Id.TryParse,
                                          out Module_Id Module,
                                          out ErrorResponse))
@@ -175,7 +174,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 #region Parse Side      [mandatory]
 
                 if (!JSON.ParseMandatory("side",
-                                         "party identification",
+                                         "party interface role",
                                          InterfaceRolesExtensions.TryParse,
                                          out InterfaceRoles Side,
                                          out ErrorResponse))
@@ -237,7 +236,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this party role.
         /// </summary>
         public PartyRole Clone()
 

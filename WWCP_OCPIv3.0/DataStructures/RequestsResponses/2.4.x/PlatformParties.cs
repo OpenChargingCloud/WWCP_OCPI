@@ -53,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The optional unique party identification of this hub party.
         /// </summary>
         [Optional]
-        public Party_Idv3?                   HubPartyId    { get; }
+        public Party_Idv3?                 HubPartyId    { get; }
 
         /// <summary>
         /// The enumeration of parties that the platform sending this PlatformParties object
@@ -92,7 +92,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-        #region (static) Parse   (JSON, CustomPlatformPartiesParser = null)
+        #region (static) Parse   (JSON, ...)
 
         /// <summary>
         /// Parse the given JSON representation of platform parties.
@@ -117,7 +117,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region (static) TryParse(JSON, out PlatformParties, out ErrorResponse, CustomPlatformPartiesParser = null)
+        #region (static) TryParse(JSON, out PlatformParties, out ErrorResponse, ...)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
@@ -260,7 +260,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this platform parties.
         /// </summary>
         public PlatformParties Clone()
 

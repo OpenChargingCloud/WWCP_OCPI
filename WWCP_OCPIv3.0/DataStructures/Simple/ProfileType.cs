@@ -181,6 +181,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Static definitions
 
+        /// <summary>
         /// Driver wants to use the cheapest charging profile possible.
         /// </summary>
         public static ProfileType  CHEAP      { get; }
