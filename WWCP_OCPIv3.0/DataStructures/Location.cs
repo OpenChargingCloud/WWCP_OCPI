@@ -387,7 +387,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Create a new location.
         /// </summary>
-        /// <param name="CommonAPI">The common OCPI API hosting this location.</param>
+        /// <param name="CommonAPI">The OCPI Common API hosting this location.</param>
         /// <param name="PartyId">The party identification of the party that issued this location.</param>
         /// <param name="Id">An identification of the location within the party.</param>
         /// <param name="VersionId">The version identification of the location.</param>
@@ -1202,7 +1202,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                ? new JProperty("charging_pool",          new JArray(ChargingPool.    OrderBy(chargingStation       => chargingStation.Id).
                                                                                                      Select (chargingStation       => chargingStation.ToJSON(true,
                                                                                                                                                              true,
-                                                                                                                                                             true,
                                                                                                                                                              CustomChargingStationSerializer,
                                                                                                                                                              CustomEVSESerializer,
                                                                                                                                                              CustomConnectorSerializer,
@@ -1291,6 +1290,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public Location Clone()
 
             => new (
+
                    CommonAPI,
                    PartyId.         Clone(),
                    Id.              Clone(),
@@ -1320,6 +1320,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                    Created,
                    LastUpdated
+
                );
 
         #endregion

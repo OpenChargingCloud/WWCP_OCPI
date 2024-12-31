@@ -159,9 +159,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Create a new charging station.
         /// </summary>
-        /// <param name="PartyId">The party identification of the party that issued this charging station.</param>
         /// <param name="Id">An identification of the charging station within the party.</param>
-        /// <param name="VersionId">The version identification of the charging station.</param>
         /// 
         /// <param name="Capabilities">An enumeration of functionalities that the charging station is capable of.</param>
         /// <param name="EnergyMeter">An optional energy meter, e.g. for the German calibration law.</param>
@@ -185,9 +183,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        public ChargingStation(//Party_Idv3                                                    PartyId,
-                               ChargingStation_Id                                            Id,
-                              // UInt64                                                        VersionId,
+        public ChargingStation(ChargingStation_Id                                            Id,
 
                                IEnumerable<EVSE>?                                            EVSEs                                        = null,
                                IEnumerable<Capability>?                                      Capabilities                                 = null,
@@ -215,9 +211,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null)
 
             : this(null,
-                   //PartyId,
                    Id,
-                   //VersionId,
 
                    EVSEs,
                    Capabilities,
@@ -254,9 +248,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// Create a new charging station.
         /// </summary>
         /// <param name="ParentLocation">The parent location of this charging station.</param>
-        /// <param name="PartyId">The party identification of the party that issued this charging station.</param>
         /// <param name="Id">An identification of the charging station within the party.</param>
-        /// <param name="VersionId">The version identification of the charging station.</param>
         /// 
         /// <param name="Capabilities">An enumeration of functionalities that the ChargingStation is capable of.</param>
         /// <param name="EnergyMeter">An optional energy meter, e.g. for the German calibration law.</param>
@@ -281,9 +273,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         internal ChargingStation(Location?                                                     ParentLocation,
-                                // Party_Idv3                                                    PartyId,
                                  ChargingStation_Id                                            Id,
-                                // UInt64                                                        VersionId,
 
                                  IEnumerable<EVSE>?                                            EVSEs                                        = null,
                                  IEnumerable<Capability>?                                      Capabilities                                 = null,
@@ -315,16 +305,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         {
 
-            this.Capabilities          = Capabilities?.Distinct() ?? [];
+            this.Capabilities          = Capabilities?.     Distinct() ?? [];
             this.FloorLevel            = FloorLevel?.       Trim();
             this.Coordinates           = Coordinates;
             this.PhysicalReference     = PhysicalReference?.Trim();
-            this.Directions            = Directions?.  Distinct() ?? [];
-            this.Images                = Images?.      Distinct() ?? [];
+            this.Directions            = Directions?.       Distinct() ?? [];
+            this.Images                = Images?.           Distinct() ?? [];
             this.EnergyMeter           = EnergyMeter;
 
-            this.Created               = Created                  ?? LastUpdated ?? Timestamp.Now;
-            this.LastUpdated           = LastUpdated              ?? Created     ?? Timestamp.Now;
+            this.Created               = Created                       ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated           = LastUpdated                   ?? Created     ?? Timestamp.Now;
 
             foreach (var evse in EVSEs?.Distinct() ?? [])
             {
@@ -686,19 +676,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        /// <param name="IncludeOwnerInformation">Whether to include optional owner information.</param>
-        /// <param name="IncludeVersionInformation">Whether to include version information.</param>
+        /// <param name="IncludeCreatedTimestamp">Whether to include the created timestamp in the JSON representation.</param>
         /// <param name="IncludeExtensions">Whether to include optional data model extensions.</param>
         /// <param name="CustomChargingStationSerializer">A delegate to serialize custom ChargingStation JSON objects.</param>
-        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomParkingSerializer">A delegate to serialize custom parking JSON objects.</param>
+        /// <param name="CustomParkingRestrictionSerializer">A delegate to serialize custom parking restriction JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
         /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public JObject ToJSON(Boolean                                                       IncludeOwnerInformation                      = true,
-                              Boolean                                                       IncludeVersionInformation                    = true,
+        public JObject ToJSON(Boolean                                                       IncludeCreatedTimestamp                      = true,
                               Boolean                                                       IncludeExtensions                            = true,
                               CustomJObjectSerializerDelegate<ChargingStation>?             CustomChargingStationSerializer              = null,
                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
@@ -711,77 +702,75 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
                               CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
                               CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null)
-                            //  CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
-                            //  CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
-                            //  CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
-                            //  CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
-                            //  CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
-                            //  CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
-                            //  CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
-                            //  CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null)
         {
 
             var json = JSONObject.Create(
 
                            //IncludeOwnerInformation
-                           //    ? new JProperty("party_id",               PartyId.         ToString())
+                           //    ? new JProperty("party_id",              PartyId.         ToString())
                            //    : null,
 
-                                 new JProperty("id",                     Id.              ToString()),
+                                 new JProperty("id",                    Id.              ToString()),
 
                            //IncludeVersionInformation
-                           //    ? new JProperty("version",                VersionId.       ToString())
+                           //    ? new JProperty("version",               VersionId.       ToString())
                            //    : null,
 
 
                            EVSEs.Any()
-                               ? new JProperty("evse",                  new JArray(EVSEs.              OrderBy(evse               => evse.UId).
-                                                                                                       Select (evse               => evse.              ToJSON(CustomEVSESerializer,
-                                                                                                                                                               CustomConnectorSerializer,
-                                                                                                                                                               CustomParkingSerializer,
-                                                                                                                                                               CustomParkingRestrictionSerializer,
-                                                                                                                                                               CustomImageSerializer,
-                                                                                                                                                               CustomStatusScheduleSerializer,
-                                                                                                                                                               CustomEnergyMeterSerializer,
-                                                                                                                                                               CustomTransparencySoftwareStatusSerializer,
-                                                                                                                                                               CustomTransparencySoftwareSerializer,
-                                                                                                                                                               CustomDisplayTextSerializer))))
+                               ? new JProperty("evse",                 new JArray(EVSEs.              OrderBy(evse               => evse.UId).
+                                                                                                      Select (evse               => evse.              ToJSON(true,
+                                                                                                                                                              true,
+                                                                                                                                                              CustomEVSESerializer,
+                                                                                                                                                              CustomConnectorSerializer,
+                                                                                                                                                              CustomParkingSerializer,
+                                                                                                                                                              CustomParkingRestrictionSerializer,
+                                                                                                                                                              CustomImageSerializer,
+                                                                                                                                                              CustomStatusScheduleSerializer,
+                                                                                                                                                              CustomEnergyMeterSerializer,
+                                                                                                                                                              CustomTransparencySoftwareStatusSerializer,
+                                                                                                                                                              CustomTransparencySoftwareSerializer,
+                                                                                                                                                              CustomDisplayTextSerializer))))
                                : null,
 
                            Capabilities.Any()
-                               ? new JProperty("capabilities",          new JArray(Capabilities.       Select (capability         => capability.        ToString())))
+                               ? new JProperty("capabilities",         new JArray(Capabilities.       Select (capability         => capability.        ToString())))
                                : null,
 
                            FloorLevel.IsNotNullOrEmpty()
-                               ? new JProperty("floor_level",           FloorLevel)
+                               ? new JProperty("floor_level",          FloorLevel)
                                : null,
 
                            Coordinates.HasValue
-                               ? new JProperty("coordinates",           new JObject(
-                                                                            new JProperty("latitude",   Coordinates.Value.Latitude. Value.ToString("0.00000##").Replace(",", ".")),
-                                                                            new JProperty("longitude",  Coordinates.Value.Longitude.Value.ToString("0.00000##").Replace(",", "."))
-                                                                        ))
+                               ? new JProperty("coordinates",          new JObject(
+                                                                           new JProperty("latitude",   Coordinates.Value.Latitude. Value.ToString("0.00000##").Replace(",", ".")),
+                                                                           new JProperty("longitude",  Coordinates.Value.Longitude.Value.ToString("0.00000##").Replace(",", "."))
+                                                                       ))
                                : null,
 
                            PhysicalReference.IsNotNullOrEmpty()
-                               ? new JProperty("physical_reference",    PhysicalReference)
+                               ? new JProperty("physical_reference",   PhysicalReference)
                                : null,
 
                            Directions.Any()
-                               ? new JProperty("directions",            new JArray(Directions.         Select (displayText        => displayText.       ToJSON(CustomDisplayTextSerializer))))
+                               ? new JProperty("directions",           new JArray(Directions.         Select (displayText        => displayText.       ToJSON(CustomDisplayTextSerializer))))
                                : null,
 
                            Images.Any()
-                               ? new JProperty("images",                new JArray(Images.             Select (image              => image.             ToJSON(CustomImageSerializer))))
+                               ? new JProperty("images",               new JArray(Images.             Select (image              => image.             ToJSON(CustomImageSerializer))))
                                : null,
 
                            EnergyMeter is not null
-                               ? new JProperty("energy_meter",          EnergyMeter. ToJSON(CustomEnergyMeterSerializer,
-                                                                                            CustomTransparencySoftwareStatusSerializer,
-                                                                                            CustomTransparencySoftwareSerializer))
+                               ? new JProperty("energy_meter",         EnergyMeter. ToJSON(CustomEnergyMeterSerializer,
+                                                                                           CustomTransparencySoftwareStatusSerializer,
+                                                                                           CustomTransparencySoftwareSerializer))
                                : null,
 
-                           new JProperty("last_updated",                LastUpdated.ToIso8601())
+                           IncludeCreatedTimestamp
+                               ? new JProperty("created",              Created.     ToIso8601())
+                               : null,
+
+                                 new JProperty("last_updated",         LastUpdated. ToIso8601())
 
                        );
 
@@ -1057,7 +1046,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             ETag = SHA256.HashData(
                        ToJSON(
-                           true,
                            true,
                            true,
                            CustomChargingStationSerializer,

@@ -261,9 +261,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Create a new charge detail record.
         /// </summary>
-        /// <param name="PartyId">The party identification of the party that issued this location.</param>
+        /// <param name="PartyId">The party identification of the party that issued this charge detail record.</param>
         /// <param name="Id">An identification of the charge detail record within the charge point operator's platform (and suboperator platforms).</param>
-        /// <param name="VersionId">The version identification of the location.</param>
+        /// <param name="VersionId">The version identification of the charge detail record.</param>
         /// 
         /// <param name="Start">The start timestamp of the charging session, or in-case of a reservation (before the start of a session) the start of the reservation.</param>
         /// <param name="End">The timestamp when the session was completed/finished. Charging might have finished before the session ends, for example: EV is full, but parking cost also has to be paid.</param>
@@ -433,10 +433,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Create a new charge detail record.
         /// </summary>
-        /// <param name="CommonAPI">The common OCPI API hosting this location.</param>
-        /// <param name="PartyId">The party identification of the party that issued this location.</param>
+        /// <param name="CommonAPI">The OCPI Common API hosting this charge detail record.</param>
+        /// <param name="PartyId">The party identification of the party that issued this charge detail record.</param>
         /// <param name="Id">An identification of the charge detail record within the charge point operator's platform (and suboperator platforms).</param>
-        /// <param name="VersionId">The version identification of the location.</param>
+        /// <param name="VersionId">The version identification of the charge detail record.</param>
         /// 
         /// <param name="Start">The start timestamp of the charging session, or in-case of a reservation (before the start of a session) the start of the reservation.</param>
         /// <param name="End">The timestamp when the session was completed/finished. Charging might have finished before the session ends, for example: EV is full, but parking cost also has to be paid.</param>
@@ -1439,7 +1439,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                ? new JProperty("home_charging_compensation",   HomeChargingCompensation.Value)
                                : null,
 
-                                 new JProperty("create",                       Created.                       ToIso8601()),
+                           IncludeCreatedTimestamp
+                               ? new JProperty("created",                      Created.                       ToIso8601())
+                               : null,
+
                                  new JProperty("last_updated",                 LastUpdated.                   ToIso8601())
 
                        );
@@ -1455,7 +1458,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this charge detail record.
         /// </summary>
         public CDR Clone()
 
@@ -1760,7 +1763,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>s
         /// Compares two charge detail records.
         /// </summary>
-        /// <param name="Object">A charge detail record to compare with.</param>
+        /// <param name="CDR">A charge detail record to compare with.</param>
         public Int32 CompareTo(CDR? CDR)
         {
 
@@ -2241,11 +2244,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             #region Constructor(s)
 
             /// <summary>
-            /// Create a new charging station builder.
+            /// Create a new charge detail record builder.
             /// </summary>
-            /// <param name="PartyId">The party identification of the party that issued this location.</param>
+            /// <param name="PartyId">The party identification of the party that issued this charge detail record.</param>
             /// <param name="Id">An identification of the charge detail record within the charge point operator's platform (and suboperator platforms).</param>
-            /// <param name="VersionId">The version identification of the location.</param>
+            /// <param name="VersionId">The version identification of the charge detail record.</param>
             /// 
             /// <param name="Start">The start timestamp of the charging session, or in-case of a reservation (before the start of a session) the start of the reservation.</param>
             /// <param name="End">The timestamp when the session was completed/finished. Charging might have finished before the session ends, for example: EV is full, but parking cost also has to be paid.</param>

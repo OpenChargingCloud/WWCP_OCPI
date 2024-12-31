@@ -303,7 +303,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Create a new session.
         /// </summary>
-        /// <param name="CommonAPI">The common OCPI API hosting this session.</param>
+        /// <param name="CommonAPI">The OCPI Common API hosting this session.</param>
         /// <param name="PartyId">The party identification of the party that issued this session.</param>
         /// <param name="Id">An identification of the session within the party.</param>
         /// <param name="VersionId">The version identification of the session.</param>
@@ -1728,7 +1728,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// <summary>
             /// Create a new charging session builder.
             /// </summary>
-            /// <param name="CommonAPI">The common OCPI API hosting this session.</param>
+            /// <param name="CommonAPI">The OCPI Common API hosting this session.</param>
             /// <param name="PartyId">The party identification of the party that issued this session.</param>
             /// <param name="Id">An identification of the session within the party.</param>
             /// <param name="VersionId">The version identification of the session.</param>

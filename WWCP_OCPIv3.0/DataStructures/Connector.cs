@@ -35,7 +35,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
     /// <summary>
     /// A connector is the socket or cable available for the electric vehicle to make use of.
     /// </summary>
-    public class Connector : PartyIssuedObjectReference<Connector_Id>,
+    public class Connector : APartyIssuedObject3<Connector_Id, EVSE>, //PartyIssuedObjectReference<Connector_Id>,
                              IEquatable<Connector>,
                              IComparable<Connector>,
                              IComparable
@@ -52,7 +52,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// The parent EVSE of this connector.
         /// </summary>
-        public EVSE?                             ParentEVSE            { get; internal set; }
+        public EVSE?                             ParentEVSE
+        {
+            get
+            {
+                return Parent;
+            }
+            internal set
+            {
+                Parent = value;
+            }
+        }
 
         /// <summary>
         /// The standard of the installed connector.
@@ -110,6 +120,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         [Optional]
         public IEnumerable<ConnectorCapability>  Capabilities          { get; }
+
 
         /// <summary>
         /// The timestamp when this EVSE was created.
@@ -223,7 +234,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            DateTime?                                    LastUpdated                 = null,
                            CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
-            : base(Id)
+            : base(ParentEVSE,
+                   Id)
 
         {
 
@@ -242,21 +254,27 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.Created             = Created                  ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated         = LastUpdated              ?? Created     ?? Timestamp.Now;
 
-            this.ETag                = SHA256.HashData(ToJSON(CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();
+            this.ETag                = SHA256.HashData(
+                                           ToJSON(
+                                               true,
+                                               true,
+                                               CustomConnectorSerializer
+                                           ).ToUTF8Bytes()
+                                       ).ToBase64();
 
             unchecked
             {
 
-                hashCode = this.Id.                 GetHashCode()        * 31 ^
-                           this.Standard.           GetHashCode()        * 29 ^
-                           this.Format.             GetHashCode()        * 23 ^
-                           this.PowerType.          GetHashCode()        * 19 ^
-                           this.MaxVoltage.         GetHashCode()        * 17 ^
-                           this.MaxAmperage.        GetHashCode()        * 13 ^
-                          (this.CableLength?.       GetHashCode()  ?? 0) * 11 ^
-                          (this.MaxElectricPower?.  GetHashCode()  ?? 0) *  7 ^
-                          (this.TermsAndConditions?.GetHashCode()  ?? 0) *  5 ^
-                           this.Capabilities.       CalcHashCode()       *  3 ^
+                hashCode = this.Id.                 GetHashCode()       * 31 ^
+                           this.Standard.           GetHashCode()       * 29 ^
+                           this.Format.             GetHashCode()       * 23 ^
+                           this.PowerType.          GetHashCode()       * 19 ^
+                           this.MaxVoltage.         GetHashCode()       * 17 ^
+                           this.MaxAmperage.        GetHashCode()       * 13 ^
+                          (this.CableLength?.       GetHashCode() ?? 0) * 11 ^
+                          (this.MaxElectricPower?.  GetHashCode() ?? 0) *  7 ^
+                          (this.TermsAndConditions?.GetHashCode() ?? 0) *  5 ^
+                           this.Capabilities.       CalcHashCode()      *  3 ^
                            this.LastUpdated.        GetHashCode();
 
             }
@@ -475,6 +493,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 #endregion
 
 
+                #region Parse Created             [optional, NonStandard]
+
+                if (JSON.ParseOptional("created",
+                                       "created",
+                                       out DateTime? Created,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
                 #region Parse LastUpdated         [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
@@ -489,6 +520,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
                 Connector = new Connector(
+
                                 ConnectorIdBody ?? ConnectorIdURL!.Value,
                                 Standard,
                                 Format,
@@ -499,7 +531,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                 MaxElectricPower,
                                 TermsAndConditionsURL,
                                 Capabilities,
+
+                                Created,
                                 LastUpdated
+
                             );
 
 
@@ -526,16 +561,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
+        /// <param name="IncludeCreatedTimestamp">Whether to include the created timestamp in the JSON representation.</param>
+        /// <param name="IncludeExtensions">Whether to include optional data model extensions.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
+        public JObject ToJSON(Boolean                                      IncludeCreatedTimestamp     = true,
+                              Boolean                                      IncludeExtensions           = true,
+                              CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
         {
 
             var json = JSONObject.Create(
 
-                                 new JProperty("id",                     Id.                   ToString()),
-                                 new JProperty("standard",               Standard.             ToString()),
-                                 new JProperty("format",                 Format.               AsText()),
-                                 new JProperty("power_type",             PowerType.            AsText()),
+                                 new JProperty("id",                     Id.                ToString()),
+                                 new JProperty("standard",               Standard.          ToString()),
+                                 new JProperty("format",                 Format.            AsText()),
+                                 new JProperty("power_type",             PowerType.         AsText()),
                                  new JProperty("max_voltage",            MaxVoltage.      Value),
                                  new JProperty("max_amperage",           MaxAmperage.     Value),
 
@@ -549,6 +588,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            TermsAndConditions.HasValue
                                ? new JProperty("terms_and_conditions",   TermsAndConditions.ToString())
+                               : null,
+
+                           IncludeCreatedTimestamp
+                               ? new JProperty("created",                Created.           ToIso8601())
                                : null,
 
                                  new JProperty("last_updated",           LastUpdated.       ToIso8601())
@@ -585,6 +628,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    TermsAndConditions?.Clone(),
                    Capabilities.Select(capability => capability.Clone()),
 
+                   Created,
                    LastUpdated
 
                );
@@ -830,7 +874,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// Compares two connectors.
         /// </summary>
         /// <param name="Object">An connector to compare with.</param>
-        public override Int32 CompareTo(Object? Object)
+        public Int32 CompareTo(Object? Object)
 
             => Object is Connector connector
                    ? CompareTo(connector)

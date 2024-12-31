@@ -664,6 +664,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
+        /// <param name="IncludeCreatedTimestamp">Whether to include the created timestamp in the JSON representation.</param>
+        /// <param name="IncludeExtensions">Whether to include optional data model extensions.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         /// <param name="CustomParkingSerializer">A delegate to serialize custom parking JSON objects.</param>
@@ -674,7 +676,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
+        public JObject ToJSON(Boolean                                                       IncludeCreatedTimestamp                      = true,
+                              Boolean                                                       IncludeExtensions                            = true,
+                              CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                               CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
                               CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
                               CustomJObjectSerializerDelegate<ParkingRestriction>?          CustomParkingRestrictionSerializer           = null,
@@ -693,7 +697,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            Connectors.Any()
                                ? new JProperty("connectors",             new JArray(Connectors.    OrderBy(connector     => connector.Id).
-                                                                                                   Select (connector     => connector.     ToJSON(CustomConnectorSerializer))))
+                                                                                                   Select (connector     => connector.     ToJSON(true,
+                                                                                                                                                  true,
+                                                                                                                                                  CustomConnectorSerializer))))
                                : null,
 
                                  new JProperty("parking",                Parking .                ToJSON(CustomParkingSerializer,
@@ -731,7 +737,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                                          CustomTransparencySoftwareSerializer))
                                : null,
 
-                           new JProperty("last_updated",                 LastUpdated.             ToIso8601())
+                           IncludeCreatedTimestamp
+                               ? new JProperty("created",                Created.                 ToIso8601())
+                               : null,
+
+                                 new JProperty("last_updated",           LastUpdated.             ToIso8601())
 
                        );
 
@@ -1013,18 +1023,24 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null)
         {
 
-            this.ETag = SHA256.HashData(ToJSON(CustomEVSESerializer,
-                                               CustomConnectorSerializer,
-                                               CustomParkingSerializer,
-                                               CustomParkingRestrictionSerializer,
-                                               CustomImageSerializer,
-                                               CustomStatusScheduleSerializer,
-                                               CustomEnergyMeterSerializer,
-                                               CustomTransparencySoftwareStatusSerializer,
-                                               CustomTransparencySoftwareSerializer,
-                                               CustomDisplayTextSerializer).ToUTF8Bytes()).ToBase64();
+            ETag = SHA256.HashData(
+                       ToJSON(
+                           true,
+                           true,
+                           CustomEVSESerializer,
+                           CustomConnectorSerializer,
+                           CustomParkingSerializer,
+                           CustomParkingRestrictionSerializer,
+                           CustomImageSerializer,
+                           CustomStatusScheduleSerializer,
+                           CustomEnergyMeterSerializer,
+                           CustomTransparencySoftwareStatusSerializer,
+                           CustomTransparencySoftwareSerializer,
+                           CustomDisplayTextSerializer
+                       ).ToUTF8Bytes()
+                   ).ToBase64();
 
-            return this.ETag;
+            return ETag;
 
         }
 

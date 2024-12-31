@@ -231,7 +231,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Create a new (authorization) token.
         /// </summary>
-        /// <param name="CommonAPI">The common OCPI API hosting this token.</param>
+        /// <param name="CommonAPI">The OCPI Common API hosting this token.</param>
         /// <param name="PartyId">The party identification of the party that issued this token.</param>
         /// <param name="Id">An identification of the token within the party.</param>
         /// <param name="VersionId">The version identification of the token.</param>

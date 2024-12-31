@@ -248,7 +248,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Create a new tariff.
         /// </summary>
-        /// <param name="CommonAPI">The common OCPI API hosting this tariff.</param>
+        /// <param name="CommonAPI">The OCPI Common API hosting this tariff.</param>
         /// <param name="PartyId">The party identification of the party that issued this tariff.</param>
         /// <param name="Id">An identification of the tariff within the party.</param>
         /// <param name="VersionId">The version identification of the tariff.</param>
@@ -699,6 +699,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="IncludeOwnerInformation">Whether to include optional owner information.</param>
         /// <param name="IncludeVersionInformation">Whether to include version information.</param>
         /// <param name="IncludeExtensions">Whether to include optional data model extensions.</param>
+        /// <param name="IncludeCreatedTimestamp">Whether to include the created timestamp.</param>
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>

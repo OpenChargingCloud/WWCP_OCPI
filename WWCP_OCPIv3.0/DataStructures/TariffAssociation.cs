@@ -160,7 +160,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Create a new tariff.
         /// </summary>
-        /// <param name="CommonAPI">The common OCPI API hosting this tariff.</param>
+        /// <param name="CommonAPI">The OCPI Common API hosting this tariff.</param>
         /// <param name="PartyId">The party identification of the party that issued this tariff.</param>
         /// <param name="Id">An identification of the tariff within the party.</param>
         /// <param name="VersionId">The version identification of the tariff.</param>

@@ -33,14 +33,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Indicates whether this async result type is null or empty.
         /// </summary>
-        /// <param name="AsyncResultType">A async result type.</param>
+        /// <param name="AsyncResultType">An async result type.</param>
         public static Boolean IsNullOrEmpty(this AsyncResultType? AsyncResultType)
             => !AsyncResultType.HasValue || AsyncResultType.Value.IsNullOrEmpty;
 
         /// <summary>
         /// Indicates whether this async result type is NOT null or empty.
         /// </summary>
-        /// <param name="AsyncResultType">A async result type.</param>
+        /// <param name="AsyncResultType">An async result type.</param>
         public static Boolean IsNotNullOrEmpty(this AsyncResultType? AsyncResultType)
             => AsyncResultType.HasValue && AsyncResultType.Value.IsNotNullOrEmpty;
 
@@ -48,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
     /// <summary>
-    /// A async result type.
+    /// An async result type.
     /// </summary>
     public readonly struct AsyncResultType : IId<AsyncResultType>
     {
@@ -89,7 +89,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Create a new async result type based on the given text.
         /// </summary>
-        /// <param name="Text">The text representation of a async result type.</param>
+        /// <param name="Text">The text representation of an async result type.</param>
         private AsyncResultType(String Text)
         {
             this.InternalId = Text;
@@ -101,16 +101,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given text as a async result type.
+        /// Parse the given text as an async result type.
         /// </summary>
-        /// <param name="Text">A text representation of a async result type.</param>
+        /// <param name="Text">A text representation of an async result type.</param>
         public static AsyncResultType Parse(String Text)
         {
 
-            if (TryParse(Text, out var immediateResponseToAsyncRequest))
-                return immediateResponseToAsyncRequest;
+            if (TryParse(Text, out var asyncResultType))
+                return asyncResultType;
 
-            throw new ArgumentException($"Invalid text representation of a async result type: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of an async result type: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -120,14 +120,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given text as a async result type.
+        /// Try to parse the given text as an async result type.
         /// </summary>
-        /// <param name="Text">A text representation of a async result type.</param>
+        /// <param name="Text">A text representation of an async result type.</param>
         public static AsyncResultType? TryParse(String Text)
         {
 
-            if (TryParse(Text, out var immediateResponseToAsyncRequest))
-                return immediateResponseToAsyncRequest;
+            if (TryParse(Text, out var asyncResultType))
+                return asyncResultType;
 
             return null;
 
@@ -138,9 +138,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region (static) TryParse(Text, out AsyncResultType)
 
         /// <summary>
-        /// Try to parse the given text as a async result type.
+        /// Try to parse the given text as an async result type.
         /// </summary>
-        /// <param name="Text">A text representation of a async result type.</param>
+        /// <param name="Text">A text representation of an async result type.</param>
         /// <param name="AsyncResultType">The parsed async result type.</param>
         public static Boolean TryParse(String Text, out AsyncResultType AsyncResultType)
         {
@@ -221,7 +221,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AsyncResultType1">A async result type.</param>
+        /// <param name="AsyncResultType1">An async result type.</param>
         /// <param name="AsyncResultType2">Another async result type.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (AsyncResultType AsyncResultType1,
@@ -236,7 +236,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AsyncResultType1">A async result type.</param>
+        /// <param name="AsyncResultType1">An async result type.</param>
         /// <param name="AsyncResultType2">Another async result type.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (AsyncResultType AsyncResultType1,
@@ -251,7 +251,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AsyncResultType1">A async result type.</param>
+        /// <param name="AsyncResultType1">An async result type.</param>
         /// <param name="AsyncResultType2">Another async result type.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (AsyncResultType AsyncResultType1,
@@ -266,7 +266,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AsyncResultType1">A async result type.</param>
+        /// <param name="AsyncResultType1">An async result type.</param>
         /// <param name="AsyncResultType2">Another async result type.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (AsyncResultType AsyncResultType1,
@@ -281,7 +281,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AsyncResultType1">A async result type.</param>
+        /// <param name="AsyncResultType1">An async result type.</param>
         /// <param name="AsyncResultType2">Another async result type.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (AsyncResultType AsyncResultType1,
@@ -296,7 +296,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AsyncResultType1">A async result type.</param>
+        /// <param name="AsyncResultType1">An async result type.</param>
         /// <param name="AsyncResultType2">Another async result type.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (AsyncResultType AsyncResultType1,
@@ -315,12 +315,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Compares two async result types.
         /// </summary>
-        /// <param name="Object">A async result type to compare with.</param>
+        /// <param name="Object">An async result type to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
-            => Object is AsyncResultType immediateResponseToAsyncRequest
-                   ? CompareTo(immediateResponseToAsyncRequest)
-                   : throw new ArgumentException("The given object is not a async result type!",
+            => Object is AsyncResultType asyncResultType
+                   ? CompareTo(asyncResultType)
+                   : throw new ArgumentException("The given object is not an async result type!",
                                                  nameof(Object));
 
         #endregion
@@ -330,7 +330,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Compares two async result types.
         /// </summary>
-        /// <param name="AsyncResultType">A async result type to compare with.</param>
+        /// <param name="AsyncResultType">An async result type to compare with.</param>
         public Int32 CompareTo(AsyncResultType AsyncResultType)
 
             => String.Compare(InternalId,
@@ -348,11 +348,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Compares two async result types for equality.
         /// </summary>
-        /// <param name="Object">A async result type to compare with.</param>
+        /// <param name="Object">An async result type to compare with.</param>
         public override Boolean Equals(Object? Object)
 
-            => Object is AsyncResultType immediateResponseToAsyncRequest &&
-                   Equals(immediateResponseToAsyncRequest);
+            => Object is AsyncResultType asyncResultType &&
+                   Equals(asyncResultType);
 
         #endregion
 
@@ -361,7 +361,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Compares two async result types for equality.
         /// </summary>
-        /// <param name="AsyncResultType">A async result type to compare with.</param>
+        /// <param name="AsyncResultType">An async result type to compare with.</param>
         public Boolean Equals(AsyncResultType AsyncResultType)
 
             => String.Equals(InternalId,

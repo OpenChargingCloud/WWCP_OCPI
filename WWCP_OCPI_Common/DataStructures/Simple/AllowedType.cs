@@ -48,8 +48,7 @@ namespace cloud.charging.open.protocols.OCPI
 
 
     /// <summary>
-    /// The unique identification of an allowed type.
-    /// string(255)
+    /// An allowed type.
     /// </summary>
     public readonly struct AllowedType : IId<AllowedType>
     {
@@ -183,34 +182,43 @@ namespace cloud.charging.open.protocols.OCPI
         #region Static definitions
 
         /// <summary>
-        /// This token is allowed to charge (at this location).
+        /// This Token is allowed to charge (at the given Location).
         /// </summary>
-        public static AllowedType ALLOWED
-            => new ("ALLOWED");
+        public static AllowedType  ALLOWED              { get; }
+            = new ("ALLOWED");
 
         /// <summary>
-        /// This token is blocked.
+        /// This Token is blocked.
         /// </summary>
-        public static AllowedType BLOCKED
-            => new ("BLOCKED");
+        public static AllowedType  BLOCKED              { get; }
+            = new ("BLOCKED");
 
         /// <summary>
-        /// This token has expired.
+        /// This Token has expired.
         /// </summary>
-        public static AllowedType EXPIRED
-            => new ("EXPIRED");
+        public static AllowedType  EXPIRED              { get; }
+            = new ("EXPIRED");
 
         /// <summary>
-        /// This token belongs to an account that has not enough credits to charge (at the given location).
+        /// This Token belongs to an account that has not enough credits to charge (at the given Location).
         /// </summary>
-        public static AllowedType NO_CREDIT
-            => new ("NO_CREDIT");
+        public static AllowedType  NO_CREDIT            { get; }
+            = new ("NO_CREDIT");
 
         /// <summary>
-        /// Token is valid, but is not allowed to charge at the given location.
+        /// This Token is not allowed to charge at the whole Location or all of the Connectors in the
+        /// request, but may be authorized to charge on a subset of the Connectors that authorization
+        /// was requested for.
         /// </summary>
-        public static AllowedType NOT_ALLOWED
-            => new ("NOT_ALLOWED");
+        public static AllowedType  REQUEST_TOO_BROAD    { get; }
+            = new ("REQUEST_TOO_BROAD");
+
+        /// <summary>
+        /// The Token not allowed to charge at the Location or at any of the connectors that
+        /// authorization was requested for.
+        /// </summary>
+        public static AllowedType  NOT_ALLOWED          { get; }
+            = new ("NOT_ALLOWED");
 
         #endregion
 
