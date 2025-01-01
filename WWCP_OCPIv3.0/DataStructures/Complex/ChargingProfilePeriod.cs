@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +27,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 {
 
     /// <summary>
-    /// Charging profile period structure defines a time period in a charging profile, as used in: ChargingProfile
+    /// Charging profile period structure defines a time period in a charging profile.
     /// </summary>
     public readonly struct ChargingProfilePeriod : IEquatable<ChargingProfilePeriod>,
                                                    IComparable<ChargingProfilePeriod>,
@@ -41,30 +41,61 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The value of StartPeriod also defines the stop time of the previous period.
         /// </summary>
         [Mandatory]
-        public TimeSpan  StartPeriod    { get; }
+        public TimeSpan  StartPeriod       { get; }
 
         /// <summary>
-        /// Charging rate limit during the profile period, in the applicable chargingRateUnit, for example in Amperes (A) or Watts (W).
+        /// Charging rate limit during the profile period, in the applicable chargingRateUnit: Amperes (A) or Watts (W).
         /// Accepts at most one digit fraction (e.g. 8.1).
         /// </summary>
         [Mandatory]
-        public Single    Limit          { get; }
+        public Decimal   Limit             { get; }
+
+        /// <summary>
+        /// The number of AC phases that the CPO can use for charging.
+        /// For profiles applying to DC charging stations, no value should be given.
+        /// For AC charging stations, the CPO should assume a default value of 3 when using a ChargingProfilePeriod in which this value is not given.
+        /// </summary>
+        [Optional]
+        public Byte?     NumberOfPhases    { get; }
+
+        /// <summary>
+        /// Which AC phase the CPO should use to charge, if numberPhases is set to 1.
+        /// The only possible values are 1, 2 and 3.
+        /// </summary>
+        [Optional]
+        public Byte?     PhaseToUse        { get; }
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create new charging profile period command.
+        /// Create new charging profile period.
         /// </summary>
         /// <param name="StartPeriod">Start of the period, in seconds from the start of profile. The value of StartPeriod also defines the stop time of the previous period.</param>
         /// <param name="Limit">Charging rate limit during the profile period, in the applicable chargingRateUnit, for example in Amperes (A) or Watts (W). Accepts at most one digit fraction (e.g. 8.1).</param>
+        /// <param name="NumberOfPhases">The number of AC phases that the CPO can use for charging. For profiles applying to DC charging stations, no value should be given. For AC charging stations, the CPO should assume a default value of 3 when using a ChargingProfilePeriod in which this value is not given.</param>
+        /// <param name="PhaseToUse">Which AC phase the CPO should use to charge, if numberPhases is set to 1. The only possible values are 1, 2 and 3.</param>
         public ChargingProfilePeriod(TimeSpan  StartPeriod,
-                                     Single    Limit)
+                                     Decimal   Limit,
+                                     Byte?     NumberOfPhases   = null,
+                                     Byte?     PhaseToUse       = null)
         {
 
-            this.StartPeriod  = StartPeriod;
-            this.Limit        = Limit;
+            this.StartPeriod     = StartPeriod;
+            this.Limit           = Limit;
+            this.NumberOfPhases  = NumberOfPhases;
+            this.PhaseToUse      = PhaseToUse;
+
+            unchecked
+            {
+
+                hashCode = this.StartPeriod.    GetHashCode()       * 7 ^
+                           this.Limit.          GetHashCode()       * 5 ^
+                          (this.NumberOfPhases?.GetHashCode() ?? 0) * 3 ^
+                           this.PhaseToUse?.    GetHashCode() ?? 0;
+
+            }
 
         }
 
@@ -166,7 +197,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     return false;
                 }
 
-                #region Parse StartPeriod   [mandatory]
+                #region Parse StartPeriod       [mandatory]
 
                 if (!JSON.ParseMandatory("start_period",
                                          "start period",
@@ -180,11 +211,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
-                #region Parse Limit         [mandatory]
+                #region Parse Limit             [mandatory]
 
                 if (!JSON.ParseMandatory("limit",
                                          "limit",
-                                         out Single Limit,
+                                         out Decimal Limit,
                                          out ErrorResponse))
                 {
                     return false;
@@ -192,9 +223,39 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
+                #region Parse NumberOfPhases    [optional]
 
-                ChargingProfilePeriod = new ChargingProfilePeriod(StartPeriod,
-                                                                  Limit);
+                if (JSON.ParseOptional("numberPhases",
+                                       "number of phases",
+                                       out Byte? NumberOfPhases,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse PhaseToUse        [optional]
+
+                if (JSON.ParseOptional("phaseToUse",
+                                       "phase to use",
+                                       out Byte? PhaseToUse,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+
+                ChargingProfilePeriod = new ChargingProfilePeriod(
+                                            StartPeriod,
+                                            Limit,
+                                            NumberOfPhases,
+                                            PhaseToUse
+                                        );
 
                 if (CustomChargingProfilePeriodParser is not null)
                     ChargingProfilePeriod = CustomChargingProfilePeriodParser(JSON,
@@ -224,8 +285,18 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         {
 
             var json = JSONObject.Create(
-                           new JProperty("start_period",  (UInt32) Math.Round(StartPeriod.TotalSeconds, 0)),
-                           new JProperty("limit",         Math.Round(Limit, 1))
+
+                                 new JProperty("start_period",   (UInt32) Math.Round(StartPeriod.TotalSeconds, 0)),
+                                 new JProperty("limit",          Math.Round(Limit, 1)),
+
+                           NumberOfPhases.HasValue
+                               ? new JProperty("numberPhases",   NumberOfPhases.Value)
+                               : null,
+
+                           PhaseToUse.HasValue
+                               ? new JProperty("phaseToUse",     PhaseToUse.Value)
+                               : null
+
                        );
 
             return CustomChargingProfilePeriodSerializer is not null
@@ -233,6 +304,24 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        : json;
 
         }
+
+        #endregion
+
+        #region Clone()
+
+        /// <summary>
+        /// Clone this charging profile period.
+        /// </summary>
+        public ChargingProfilePeriod Clone()
+
+            => new (
+
+                   StartPeriod,
+                   Limit,
+                   NumberOfPhases,
+                   PhaseToUse
+
+               );
 
         #endregion
 
@@ -357,10 +446,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public Int32 CompareTo(ChargingProfilePeriod ChargingProfilePeriod)
         {
 
-            var c = StartPeriod.CompareTo(ChargingProfilePeriod.StartPeriod);
+            var c = StartPeriod.         CompareTo(ChargingProfilePeriod.StartPeriod);
 
             if (c == 0)
-                c = Limit.CompareTo(ChargingProfilePeriod.Limit);
+                c = Limit.               CompareTo(ChargingProfilePeriod.Limit);
+
+            if (c == 0 && NumberOfPhases.HasValue && ChargingProfilePeriod.NumberOfPhases.HasValue)
+                c = NumberOfPhases.Value.CompareTo(ChargingProfilePeriod.NumberOfPhases.Value);
+
+            if (c == 0 && PhaseToUse.    HasValue && ChargingProfilePeriod.PhaseToUse.    HasValue)
+                c = PhaseToUse.    Value.CompareTo(ChargingProfilePeriod.PhaseToUse.    Value);
 
             return c;
 
@@ -394,7 +489,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public Boolean Equals(ChargingProfilePeriod ChargingProfilePeriod)
 
             => StartPeriod.Equals(ChargingProfilePeriod.StartPeriod) &&
-               Limit.      Equals(ChargingProfilePeriod.Limit);
+               Limit.      Equals(ChargingProfilePeriod.Limit)       &&
+
+            ((!NumberOfPhases.HasValue && !ChargingProfilePeriod.NumberOfPhases.HasValue) ||
+              (NumberOfPhases.HasValue &&  ChargingProfilePeriod.NumberOfPhases.HasValue && NumberOfPhases.Value.Equals(ChargingProfilePeriod.NumberOfPhases.Value))) &&
+
+            ((!PhaseToUse.    HasValue && !ChargingProfilePeriod.PhaseToUse.    HasValue) ||
+              (PhaseToUse.    HasValue &&  ChargingProfilePeriod.PhaseToUse.    HasValue && PhaseToUse.    Value.Equals(ChargingProfilePeriod.PhaseToUse.    Value)));
 
         #endregion
 
@@ -402,20 +503,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return StartPeriod.GetHashCode() * 3 ^
-                       Limit.      GetHashCode();
-
-            }
-        }
+            => hashCode;
 
         #endregion
 
@@ -428,9 +523,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             => String.Concat(
 
-                   StartPeriod,
-                   ", ",
-                   Limit
+                   $"{StartPeriod.TotalSeconds} seconds, limit: {Limit}",
+
+                   NumberOfPhases.HasValue
+                       ? $", {NumberOfPhases.Value} phases"
+                       : "",
+
+                   PhaseToUse.HasValue
+                       ? $", phase: {PhaseToUse.Value}"
+                       : ""
 
                );
 

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -644,14 +644,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #region Parse TariffElements    [mandatory]
 
-                if (JSON.ParseMandatoryJSON("elements",
-                                            "tariff elements",
-                                            TariffElement.TryParse,
-                                            out IEnumerable<TariffElement> TariffElements,
-                                            out ErrorResponse))
+                if (!JSON.ParseMandatoryJSON("elements",
+                                             "tariff elements",
+                                             TariffElement.TryParse,
+                                             out IEnumerable<TariffElement> TariffElements,
+                                             out ErrorResponse))
                 {
-                    if (ErrorResponse is not null)
-                        return false;
+                    return false;
                 }
 
                 #endregion

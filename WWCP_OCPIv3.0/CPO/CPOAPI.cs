@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1880,7 +1880,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = evse.ToJSON(CustomEVSESerializer,
+                                                   Data                 = evse.ToJSON(true,
+                                                                                      true,
+                                                                                      CustomEVSESerializer,
                                                                                       CustomConnectorSerializer,
                                                                                       CustomParkingSerializer,
                                                                                       CustomParkingRestrictionSerializer,
@@ -1985,7 +1987,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = connector.ToJSON(CustomConnectorSerializer),
+                                                   Data                 = connector.ToJSON(true,
+                                                                                           true,
+                                                                                           CustomConnectorSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET" ],

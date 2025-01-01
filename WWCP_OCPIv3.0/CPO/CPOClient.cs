@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1832,7 +1832,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                                                      RequestBuilder: requestBuilder => {
                                                                                          requestBuilder.Authorization  = TokenAuth;
                                                                                          requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestBuilder.Content        = EVSE.ToJSON(CustomEVSESerializer,
+                                                                                         requestBuilder.Content        = EVSE.ToJSON(true,
+                                                                                                                                     true,
+                                                                                                                                     CustomEVSESerializer,
                                                                                                                                      CustomConnectorSerializer,
                                                                                                                                      CustomParkingSerializer,
                                                                                                                                      CustomParkingRestrictionSerializer,
@@ -2465,7 +2467,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                                                      RequestBuilder: requestBuilder => {
                                                                                          requestBuilder.Authorization  = TokenAuth;
                                                                                          requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestBuilder.Content        = Connector.ToJSON(CustomConnectorSerializer).ToUTF8Bytes(JSONFormat);
+                                                                                         requestBuilder.Content        = Connector.ToJSON(
+                                                                                                                             true,
+                                                                                                                             true,
+                                                                                                                             CustomConnectorSerializer
+                                                                                                                         ).ToUTF8Bytes(JSONFormat);
                                                                                          requestBuilder.Connection     = ConnectionType.Close;
                                                                                          requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                          requestBuilder.Set("X-Request-ID",      requestId);

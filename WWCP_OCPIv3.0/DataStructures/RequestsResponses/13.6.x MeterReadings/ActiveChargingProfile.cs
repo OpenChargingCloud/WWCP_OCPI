@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,8 @@
  */
 
 #region Usings
+
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
@@ -65,6 +67,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.Start            = Start;
             this.ChargingProfile  = ChargingProfile;
 
+            unchecked
+            {
+
+                hashCode = this.Start.          GetHashCode() * 3 ^
+                           this.ChargingProfile.GetHashCode();
+
+            }
+
         }
 
         #endregion
@@ -96,31 +106,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region (static) TryParse(JSON, CustomActiveChargingProfileParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of an active charging profile.
-        /// </summary>
-        /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomActiveChargingProfileParser">A delegate to parse custom active charging profile JSON objects.</param>
-        public static ActiveChargingProfile? TryParse(JObject                                              JSON,
-                                                      CustomJObjectParserDelegate<ActiveChargingProfile>?  CustomActiveChargingProfileParser   = null)
-        {
-
-            if (TryParse(JSON,
-                         out var activeChargingProfile,
-                         out var errorResponse,
-                         CustomActiveChargingProfileParser))
-            {
-                return activeChargingProfile;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
         #region (static) TryParse(JSON, out ActiveChargingProfile, out ErrorResponse, CustomActiveChargingProfileParser = null)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
@@ -131,9 +116,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="ActiveChargingProfile">The parsed active charging profile.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                     JSON,
-                                       out ActiveChargingProfile?  ActiveChargingProfile,
-                                       out String?                 ErrorResponse)
+        public static Boolean TryParse(JObject                                          JSON,
+                                       [NotNullWhen(true)]  out ActiveChargingProfile?  ActiveChargingProfile,
+                                       [NotNullWhen(false)] out String?                 ErrorResponse)
 
             => TryParse(JSON,
                         out ActiveChargingProfile,
@@ -149,8 +134,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomActiveChargingProfileParser">A delegate to parse custom active charging profile JSON objects.</param>
         public static Boolean TryParse(JObject                                              JSON,
-                                       out ActiveChargingProfile?                           ActiveChargingProfile,
-                                       out String?                                          ErrorResponse,
+                                       [NotNullWhen(true)]  out ActiveChargingProfile?      ActiveChargingProfile,
+                                       [NotNullWhen(false)] out String?                     ErrorResponse,
                                        CustomJObjectParserDelegate<ActiveChargingProfile>?  CustomActiveChargingProfileParser   = null)
         {
 
@@ -165,9 +150,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     return false;
                 }
 
-                #region Parse Start             [mandatory]
+                #region Parse Start              [mandatory]
 
-                if (!JSON.ParseMandatory("start",
+                if (!JSON.ParseMandatory("start_date_time",
                                          "start timestamp",
                                          out DateTime Start,
                                          out ErrorResponse))
@@ -177,7 +162,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
-                #region Parse ChargingProfile   [mandatory]
+                #region Parse ChargingProfile    [mandatory]
 
                 if (!JSON.ParseMandatoryJSON("charging_profile",
                                              "charging profile",
@@ -188,14 +173,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     return false;
                 }
 
-                if (ChargingProfile is null)
-                    return false;
-
                 #endregion
 
 
-                ActiveChargingProfile = new ActiveChargingProfile(Start,
-                                                                  ChargingProfile);
+                ActiveChargingProfile = new ActiveChargingProfile(
+                                            Start,
+                                            ChargingProfile
+                                        );
 
                 if (CustomActiveChargingProfileParser is not null)
                     ActiveChargingProfile = CustomActiveChargingProfileParser(JSON,
@@ -229,9 +213,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         {
 
             var json = JSONObject.Create(
-                           new JProperty("start_date_time",   Start.          ToIso8601()),
-                           new JProperty("charging_profile",  ChargingProfile.ToJSON   (CustomChargingProfileSerializer,
-                                                                                        CustomChargingProfilePeriodSerializer))
+                           new JProperty("start_date_time",    Start.          ToIso8601()),
+                           new JProperty("charging_profile",   ChargingProfile.ToJSON   (CustomChargingProfileSerializer,
+                                                                                         CustomChargingProfilePeriodSerializer))
                        );
 
             return CustomActiveChargingProfileSerializer is not null
@@ -239,6 +223,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        : json;
 
         }
+
+        #endregion
+
+        #region Clone()
+
+        /// <summary>
+        /// Clone this active charging profile.
+        /// </summary>
+        public ActiveChargingProfile Clone()
+
+            => new (
+                   Start,
+                   ChargingProfile.Clone()
+               );
 
         #endregion
 
@@ -413,20 +411,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return Start.          GetHashCode() * 3 ^
-                       ChargingProfile.GetHashCode();
-
-            }
-        }
+            => hashCode;
 
         #endregion
 
@@ -437,13 +429,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         public override String ToString()
 
-            => String.Concat(
-
-                   Start,
-                   ": ",
-                   ChargingProfile.ToString()
-
-               );
+            => $"{Start.ToIso8601()}: {ChargingProfile}";
 
         #endregion
 

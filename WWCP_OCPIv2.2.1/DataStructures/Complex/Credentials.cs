@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -120,9 +121,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Credentials">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject           JSON,
-                                       out Credentials?  Credentials,
-                                       out String?       ErrorResponse)
+        public static Boolean TryParse(JObject                                JSON,
+                                       [NotNullWhen(true)]  out Credentials?  Credentials,
+                                       [NotNullWhen(false)] out String?       ErrorResponse)
 
             => TryParse(JSON,
                         out Credentials,
@@ -138,8 +139,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCredentialsParser">A delegate to parse custom credentials JSON objects.</param>
         public static Boolean TryParse(JObject                                    JSON,
-                                       out Credentials?                           Credentials,
-                                       out String?                                ErrorResponse,
+                                       [NotNullWhen(true)]  out Credentials?      Credentials,
+                                       [NotNullWhen(false)] out String?           ErrorResponse,
                                        CustomJObjectParserDelegate<Credentials>?  CustomCredentialsParser)
         {
 
@@ -182,16 +183,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #region Parse Roles     [mandatory]
 
-                if (JSON.ParseMandatoryHashSet("roles",
-                                               "roles",
-                                               CredentialsRole.TryParse,
-                                               out HashSet<CredentialsRole> Roles,
-                                               out ErrorResponse))
+                if (!JSON.ParseMandatoryHashSet("roles",
+                                                "roles",
+                                                CredentialsRole.TryParse,
+                                                out HashSet<CredentialsRole> Roles,
+                                                out ErrorResponse))
                 {
-
-                    if (ErrorResponse is not null)
-                        return false;
-
+                    return false;
                 }
 
                 #endregion

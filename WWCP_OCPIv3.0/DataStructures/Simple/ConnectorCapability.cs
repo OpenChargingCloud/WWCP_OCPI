@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -107,8 +107,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static ConnectorCapability Parse(String Text)
         {
 
-            if (TryParse(Text, out var meterId))
-                return meterId;
+            if (TryParse(Text, out var connectorCapability))
+                return connectorCapability;
 
             throw new ArgumentException($"Invalid text representation of a connector capability: '" + Text + "'!",
                                         nameof(Text));
@@ -126,8 +126,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static ConnectorCapability? TryParse(String Text)
         {
 
-            if (TryParse(Text, out var meterId))
-                return meterId;
+            if (TryParse(Text, out var connectorCapability))
+                return connectorCapability;
 
             return null;
 
@@ -364,13 +364,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two capabilities.
+        /// Compares two connector capabilities.
         /// </summary>
         /// <param name="Object">A connector capability to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
-            => Object is ConnectorCapability meterId
-                   ? CompareTo(meterId)
+            => Object is ConnectorCapability connectorCapability
+                   ? CompareTo(connectorCapability)
                    : throw new ArgumentException("The given object is not a connector capability!",
                                                  nameof(Object));
 
@@ -379,7 +379,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region CompareTo(ConnectorCapability)
 
         /// <summary>
-        /// Compares two capabilities.
+        /// Compares two connector capabilities.
         /// </summary>
         /// <param name="ConnectorCapability">A connector capability to compare with.</param>
         public Int32 CompareTo(ConnectorCapability ConnectorCapability)
@@ -397,20 +397,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two capabilities for equality.
+        /// Compares two connector capabilities for equality.
         /// </summary>
         /// <param name="Object">A connector capability to compare with.</param>
         public override Boolean Equals(Object? Object)
 
-            => Object is ConnectorCapability meterId &&
-                   Equals(meterId);
+            => Object is ConnectorCapability connectorCapability &&
+                   Equals(connectorCapability);
 
         #endregion
 
         #region Equals(ConnectorCapability)
 
         /// <summary>
-        /// Compares two capabilities for equality.
+        /// Compares two connector capabilities for equality.
         /// </summary>
         /// <param name="ConnectorCapability">A connector capability to compare with.</param>
         public Boolean Equals(ConnectorCapability ConnectorCapability)

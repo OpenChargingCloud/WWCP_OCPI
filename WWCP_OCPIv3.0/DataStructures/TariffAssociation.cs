@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +27,6 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv3_0.HTTP;
-using cloud.charging.open.protocols.OCPIv2_3_0;
 
 #endregion
 
@@ -437,14 +436,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region Parse Connectors     [mandatory]
 
-                if (JSON.ParseMandatoryHashSet("connectors",
-                                               "connector references",
-                                               ConnectorReference.TryParse,
-                                               out HashSet<ConnectorReference> Connectors,
-                                               out ErrorResponse))
+                if (!JSON.ParseMandatoryHashSet("connectors",
+                                                "connector references",
+                                                ConnectorReference.TryParse,
+                                                out HashSet<ConnectorReference> Connectors,
+                                                out ErrorResponse))
                 {
-                    if (ErrorResponse is not null)
-                        return false;
+                    return false;
                 }
 
                 #endregion

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,7 @@
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
+using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -190,9 +191,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="TariffElement">The parsed tariff element.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject            JSON,
-                                       out TariffElement  TariffElement,
-                                       out String?        ErrorResponse)
+        public static Boolean TryParse(JObject                                 JSON,
+                                       [NotNullWhen(true)]  out TariffElement  TariffElement,
+                                       [NotNullWhen(false)] out String?        ErrorResponse)
 
             => TryParse(JSON,
                         out TariffElement,
@@ -208,8 +209,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomTariffElementParser">A delegate to parse custom tariff element JSON objects.</param>
         public static Boolean TryParse(JObject                                      JSON,
-                                       out TariffElement                            TariffElement,
-                                       out String?                                  ErrorResponse,
+                                       [NotNullWhen(true)]  out TariffElement       TariffElement,
+                                       [NotNullWhen(false)] out String?             ErrorResponse,
                                        CustomJObjectParserDelegate<TariffElement>?  CustomTariffElementParser   = null)
         {
 

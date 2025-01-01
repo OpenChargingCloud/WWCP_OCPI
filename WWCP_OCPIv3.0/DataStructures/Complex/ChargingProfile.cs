@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,8 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv3_0
@@ -37,6 +39,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
     {
 
         #region Properties
+
+        /// <summary>
+        /// The charging profile identification.
+        /// </summary>
+        [Mandatory]
+        public ChargingProfile_Id                  Id                         { get; }
 
         /// <summary>
         /// The unit of measure.
@@ -78,18 +86,21 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Create new charging profile.
         /// </summary>
+        /// <param name="Id">The charging profile identification.</param>
         /// <param name="ChargingRateUnit">The unit of measure.</param>
         /// <param name="Start">Starting point of an absolute profile. If absent the profile will be relative to start of charging.</param>
         /// <param name="Duration">Duration of the charging profile in seconds. If the duration is left empty, the last period will continue indefinitely or until end of the transaction in case startProfile is absent.</param>
         /// <param name="MinChargingRate">Duration of the charging profile in seconds. If the duration is left empty, the last period will continue indefinitely or until end of the transaction in case startProfile is absent.</param>
         /// <param name="ChargingProfilePeriods">Duration of the charging profile in seconds. If the duration is left empty, the last period will continue indefinitely or until end of the transaction in case startProfile is absent.</param>
-        public ChargingProfile(ChargingRateUnits                    ChargingRateUnit,
+        public ChargingProfile(ChargingProfile_Id                   Id,
+                               ChargingRateUnits                    ChargingRateUnit,
                                DateTime?                            Start                    = null,
                                TimeSpan?                            Duration                 = null,
                                Decimal?                             MinChargingRate          = null,
                                IEnumerable<ChargingProfilePeriod>?  ChargingProfilePeriods   = null)
         {
 
+            this.Id                      = Id;
             this.ChargingRateUnit        = ChargingRateUnit;
             this.Start                   = Start;
             this.Duration                = Duration;
@@ -99,7 +110,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             unchecked
             {
 
-                hashCode = this.ChargingRateUnit.      GetHashCode()       * 11 ^
+                hashCode = this.Id.                    GetHashCode()       * 13 ^
+                           this.ChargingRateUnit.      GetHashCode()       * 11 ^
                           (this.Start?.                GetHashCode() ?? 0) *  7 ^
                           (this.Duration?.             GetHashCode() ?? 0) *  5 ^
                           (this.MinChargingRate?.      GetHashCode() ?? 0) *  3 ^
@@ -182,6 +194,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     return false;
                 }
 
+                #region Parse Id                        [mandatory]
+
+                if (!JSON.ParseMandatory("id",
+                                         "charging profile identification",
+                                         ChargingProfile_Id.TryParse,
+                                         out ChargingProfile_Id Id,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
                 #region Parse ChargingRateUnit          [mandatory]
 
                 if (!JSON.ParseMandatoryEnum("charging_rate_unit",
@@ -255,6 +280,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
                 ChargingProfile = new ChargingProfile(
+                                      Id,
                                       ChargingRateUnit,
                                       Start,
                                       Duration,
@@ -292,6 +318,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             var json = JSONObject.Create(
 
+                                 new JProperty("id",                        Id.                   ToString()),
                                  new JProperty("charging_rate_unit",        ChargingRateUnit.     ToString()),
 
                            Start.HasValue
@@ -318,6 +345,26 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        : json;
 
         }
+
+        #endregion
+
+        #region Clone()
+
+        /// <summary>
+        /// Clone this charging profile.
+        /// </summary>
+        public ChargingProfile Clone()
+
+            => new (
+
+                   Id.Clone(),
+                   ChargingRateUnit,
+                   Start,
+                   Duration,
+                   MinChargingRate,
+                   ChargingProfilePeriods.Select(chargingProfilePeriod => chargingProfilePeriod.Clone())
+
+               );
 
         #endregion
 
@@ -445,7 +492,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (ChargingProfile is null)
                 throw new ArgumentNullException(nameof(ChargingProfile), "The given charging profile must not be null!");
 
-            var c = 0;
+            var c = Id.CompareTo(ChargingProfile.Id);
+
+            if (c == 0)
+                c = ChargingRateUnit.CompareTo(ChargingProfile.ChargingRateUnit);
 
             if (c == 0 && Start.          HasValue && ChargingProfile.Start.          HasValue)
                 c = Start.          Value.CompareTo(ChargingProfile.Start.          Value);
@@ -453,11 +503,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (c == 0 && Duration.       HasValue && ChargingProfile.Duration.       HasValue)
                 c = Duration.       Value.CompareTo(ChargingProfile.Duration.       Value);
 
-            if (c == 0)
-                c = ChargingRateUnit.CompareTo(ChargingProfile.ChargingRateUnit);
-
             if (c == 0 && MinChargingRate.HasValue && ChargingProfile.MinChargingRate.HasValue)
                 c = MinChargingRate.Value.CompareTo(ChargingProfile.MinChargingRate.Value);
+
+            if (c == 0)
+                c = ChargingProfilePeriods.Count().CompareTo(ChargingProfile.ChargingProfilePeriods.Count());
 
             return c;
 
@@ -492,6 +542,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             => ChargingProfile is not null &&
 
+               Id.              Equals(ChargingProfile.Id)               &&
                ChargingRateUnit.Equals(ChargingProfile.ChargingRateUnit) &&
                Start.           Equals(ChargingProfile.Start)            &&
                Duration.        Equals(ChargingProfile.Duration)         &&
@@ -526,19 +577,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             => String.Concat(
 
+                   Id.ToString(),
+
                    Start.HasValue
-                       ? Start.ToString()
+                       ? $", start: {Start.Value.ToIso8601()}"
                        : "",
 
                    Duration.HasValue
-                       ? ", " + Duration + " secs"
+                       ? $", duration: {Duration.Value.TotalMinutes} minutes"
                        : "",
 
                    MinChargingRate.HasValue
-                       ? ", " + MinChargingRate + " "
-                       : "",
-
-                   ChargingRateUnit
+                       ? $", min {MinChargingRate.Value} {ChargingRateUnit}"
+                       : $", {ChargingRateUnit}"
 
                );
 

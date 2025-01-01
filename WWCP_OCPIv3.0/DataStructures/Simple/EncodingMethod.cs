@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
     /// <summary>
-    /// The unique identification of a version.
+    /// The unique identification of an encoding method.
     /// </summary>
     public readonly struct EncodingMethod : IId<EncodingMethod>
     {

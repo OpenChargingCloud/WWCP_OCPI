@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,22 +26,22 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 {
 
     /// <summary>
-    /// Extension methods for immediate response to async requests.
+    /// Extension methods for ImmediateResponseToAsync requests.
     /// </summary>
     public static class ImmediateResponseToAsyncRequestExtensions
     {
 
         /// <summary>
-        /// Indicates whether this immediate response to async request is null or empty.
+        /// Indicates whether this ImmediateResponseToAsync request is null or empty.
         /// </summary>
-        /// <param name="ImmediateResponseToAsyncRequest">A immediate response to async request.</param>
+        /// <param name="ImmediateResponseToAsyncRequest">An ImmediateResponseToAsync request.</param>
         public static Boolean IsNullOrEmpty(this ImmediateResponseToAsyncRequest? ImmediateResponseToAsyncRequest)
             => !ImmediateResponseToAsyncRequest.HasValue || ImmediateResponseToAsyncRequest.Value.IsNullOrEmpty;
 
         /// <summary>
-        /// Indicates whether this immediate response to async request is NOT null or empty.
+        /// Indicates whether this ImmediateResponseToAsync request is NOT null or empty.
         /// </summary>
-        /// <param name="ImmediateResponseToAsyncRequest">A immediate response to async request.</param>
+        /// <param name="ImmediateResponseToAsyncRequest">An ImmediateResponseToAsync request.</param>
         public static Boolean IsNotNullOrEmpty(this ImmediateResponseToAsyncRequest? ImmediateResponseToAsyncRequest)
             => ImmediateResponseToAsyncRequest.HasValue && ImmediateResponseToAsyncRequest.Value.IsNotNullOrEmpty;
 
@@ -49,7 +49,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
     /// <summary>
-    /// A immediate response to async request.
+    /// An ImmediateResponseToAsync request.
     /// </summary>
     public readonly struct ImmediateResponseToAsyncRequest : IId<ImmediateResponseToAsyncRequest>
     {
@@ -66,19 +66,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Properties
 
         /// <summary>
-        /// Indicates whether this immediate response to async request is null or empty.
+        /// Indicates whether this ImmediateResponseToAsync request is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
-        /// Indicates whether this immediate response to async request is NOT null or empty.
+        /// Indicates whether this ImmediateResponseToAsync request is NOT null or empty.
         /// </summary>
         public Boolean IsNotNullOrEmpty
             => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
-        /// The length of the immediate response to async request.
+        /// The length of the ImmediateResponseToAsync request.
         /// </summary>
         public UInt64 Length
             => (UInt64) (InternalId?.Length ?? 0);
@@ -88,9 +88,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new immediate response to async request based on the given text.
+        /// Create a new ImmediateResponseToAsync request based on the given text.
         /// </summary>
-        /// <param name="Text">The text representation of a immediate response to async request.</param>
+        /// <param name="Text">The text representation of an ImmediateResponseToAsync request.</param>
         private ImmediateResponseToAsyncRequest(String Text)
         {
             this.InternalId = Text;
@@ -102,16 +102,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given text as a immediate response to async request.
+        /// Parse the given text as an ImmediateResponseToAsync request.
         /// </summary>
-        /// <param name="Text">A text representation of a immediate response to async request.</param>
+        /// <param name="Text">A text representation of an ImmediateResponseToAsync request.</param>
         public static ImmediateResponseToAsyncRequest Parse(String Text)
         {
 
             if (TryParse(Text, out var immediateResponseToAsyncRequest))
                 return immediateResponseToAsyncRequest;
 
-            throw new ArgumentException($"Invalid text representation of a immediate response to async request: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of an ImmediateResponseToAsync request: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -121,9 +121,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given text as a immediate response to async request.
+        /// Try to parse the given text as an ImmediateResponseToAsync request.
         /// </summary>
-        /// <param name="Text">A text representation of a immediate response to async request.</param>
+        /// <param name="Text">A text representation of an ImmediateResponseToAsync request.</param>
         public static ImmediateResponseToAsyncRequest? TryParse(String Text)
         {
 
@@ -139,10 +139,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region (static) TryParse(Text, out ImmediateResponseToAsyncRequest)
 
         /// <summary>
-        /// Try to parse the given text as a immediate response to async request.
+        /// Try to parse the given text as an ImmediateResponseToAsync request.
         /// </summary>
-        /// <param name="Text">A text representation of a immediate response to async request.</param>
-        /// <param name="ImmediateResponseToAsyncRequest">The parsed immediate response to async request.</param>
+        /// <param name="Text">A text representation of an ImmediateResponseToAsync request.</param>
+        /// <param name="ImmediateResponseToAsyncRequest">The parsed ImmediateResponseToAsync request.</param>
         public static Boolean TryParse(String Text, out ImmediateResponseToAsyncRequest ImmediateResponseToAsyncRequest)
         {
 
@@ -169,7 +169,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this immediate response to async request.
+        /// Clone this ImmediateResponseToAsync request.
         /// </summary>
         public ImmediateResponseToAsyncRequest Clone()
 
@@ -211,8 +211,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ImmediateResponseToAsyncRequest1">A immediate response to async request.</param>
-        /// <param name="ImmediateResponseToAsyncRequest2">Another immediate response to async request.</param>
+        /// <param name="ImmediateResponseToAsyncRequest1">An ImmediateResponseToAsync request.</param>
+        /// <param name="ImmediateResponseToAsyncRequest2">Another ImmediateResponseToAsync request.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (ImmediateResponseToAsyncRequest ImmediateResponseToAsyncRequest1,
                                            ImmediateResponseToAsyncRequest ImmediateResponseToAsyncRequest2)
@@ -226,8 +226,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ImmediateResponseToAsyncRequest1">A immediate response to async request.</param>
-        /// <param name="ImmediateResponseToAsyncRequest2">Another immediate response to async request.</param>
+        /// <param name="ImmediateResponseToAsyncRequest1">An ImmediateResponseToAsync request.</param>
+        /// <param name="ImmediateResponseToAsyncRequest2">Another ImmediateResponseToAsync request.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (ImmediateResponseToAsyncRequest ImmediateResponseToAsyncRequest1,
                                            ImmediateResponseToAsyncRequest ImmediateResponseToAsyncRequest2)
@@ -241,8 +241,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ImmediateResponseToAsyncRequest1">A immediate response to async request.</param>
-        /// <param name="ImmediateResponseToAsyncRequest2">Another immediate response to async request.</param>
+        /// <param name="ImmediateResponseToAsyncRequest1">An ImmediateResponseToAsync request.</param>
+        /// <param name="ImmediateResponseToAsyncRequest2">Another ImmediateResponseToAsync request.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (ImmediateResponseToAsyncRequest ImmediateResponseToAsyncRequest1,
                                           ImmediateResponseToAsyncRequest ImmediateResponseToAsyncRequest2)
@@ -256,8 +256,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ImmediateResponseToAsyncRequest1">A immediate response to async request.</param>
-        /// <param name="ImmediateResponseToAsyncRequest2">Another immediate response to async request.</param>
+        /// <param name="ImmediateResponseToAsyncRequest1">An ImmediateResponseToAsync request.</param>
+        /// <param name="ImmediateResponseToAsyncRequest2">Another ImmediateResponseToAsync request.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (ImmediateResponseToAsyncRequest ImmediateResponseToAsyncRequest1,
                                            ImmediateResponseToAsyncRequest ImmediateResponseToAsyncRequest2)
@@ -271,8 +271,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ImmediateResponseToAsyncRequest1">A immediate response to async request.</param>
-        /// <param name="ImmediateResponseToAsyncRequest2">Another immediate response to async request.</param>
+        /// <param name="ImmediateResponseToAsyncRequest1">An ImmediateResponseToAsync request.</param>
+        /// <param name="ImmediateResponseToAsyncRequest2">Another ImmediateResponseToAsync request.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (ImmediateResponseToAsyncRequest ImmediateResponseToAsyncRequest1,
                                           ImmediateResponseToAsyncRequest ImmediateResponseToAsyncRequest2)
@@ -286,8 +286,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ImmediateResponseToAsyncRequest1">A immediate response to async request.</param>
-        /// <param name="ImmediateResponseToAsyncRequest2">Another immediate response to async request.</param>
+        /// <param name="ImmediateResponseToAsyncRequest1">An ImmediateResponseToAsync request.</param>
+        /// <param name="ImmediateResponseToAsyncRequest2">Another ImmediateResponseToAsync request.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (ImmediateResponseToAsyncRequest ImmediateResponseToAsyncRequest1,
                                            ImmediateResponseToAsyncRequest ImmediateResponseToAsyncRequest2)
@@ -303,14 +303,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two immediate response to async requests.
+        /// Compares two ImmediateResponseToAsync requests.
         /// </summary>
-        /// <param name="Object">A immediate response to async request to compare with.</param>
+        /// <param name="Object">An ImmediateResponseToAsync request to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
             => Object is ImmediateResponseToAsyncRequest immediateResponseToAsyncRequest
                    ? CompareTo(immediateResponseToAsyncRequest)
-                   : throw new ArgumentException("The given object is not a immediate response to async request!",
+                   : throw new ArgumentException("The given object is not an ImmediateResponseToAsync request!",
                                                  nameof(Object));
 
         #endregion
@@ -318,9 +318,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region CompareTo(ImmediateResponseToAsyncRequest)
 
         /// <summary>
-        /// Compares two immediate response to async requests.
+        /// Compares two ImmediateResponseToAsync requests.
         /// </summary>
-        /// <param name="ImmediateResponseToAsyncRequest">A immediate response to async request to compare with.</param>
+        /// <param name="ImmediateResponseToAsyncRequest">An ImmediateResponseToAsync request to compare with.</param>
         public Int32 CompareTo(ImmediateResponseToAsyncRequest ImmediateResponseToAsyncRequest)
 
             => String.Compare(InternalId,
@@ -336,9 +336,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two immediate response to async requests for equality.
+        /// Compares two ImmediateResponseToAsync requests for equality.
         /// </summary>
-        /// <param name="Object">A immediate response to async request to compare with.</param>
+        /// <param name="Object">An ImmediateResponseToAsync request to compare with.</param>
         public override Boolean Equals(Object? Object)
 
             => Object is ImmediateResponseToAsyncRequest immediateResponseToAsyncRequest &&
@@ -349,9 +349,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Equals(ImmediateResponseToAsyncRequest)
 
         /// <summary>
-        /// Compares two immediate response to async requests for equality.
+        /// Compares two ImmediateResponseToAsync requests for equality.
         /// </summary>
-        /// <param name="ImmediateResponseToAsyncRequest">A immediate response to async request to compare with.</param>
+        /// <param name="ImmediateResponseToAsyncRequest">An ImmediateResponseToAsync request to compare with.</param>
         public Boolean Equals(ImmediateResponseToAsyncRequest ImmediateResponseToAsyncRequest)
 
             => String.Equals(InternalId,
