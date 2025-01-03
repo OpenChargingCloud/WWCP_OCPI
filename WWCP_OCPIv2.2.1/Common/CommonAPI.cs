@@ -34,6 +34,7 @@ using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP;
 using cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP;
 using Org.BouncyCastle.Ocsp;
+using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -7404,10 +7405,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region TryGetLocation(CountryCode, PartyId, LocationId, out Location)
 
-        public Boolean TryGetLocation(CountryCode    CountryCode,
-                                      Party_Id       PartyId,
-                                      Location_Id    LocationId,
-                                      out Location?  Location)
+        public Boolean TryGetLocation(CountryCode                        CountryCode,
+                                      Party_Id                           PartyId,
+                                      Location_Id                        LocationId,
+                                      [NotNullWhen(true)] out Location?  Location)
         {
 
             lock (locations)

@@ -1527,7 +1527,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                        Id,
                                        EVSEUId,
                                        ConnectorId,
-                                       EMSPId) ?? Array.Empty<Tariff_Id>();
+                                       EMSPId) ?? [];
 
 
         #region EVSEExists(EVSEUId)
@@ -1561,8 +1561,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         /// <param name="EVSEUId">An EVSE identification.</param>
         /// <param name="EVSE">The EVSE having the given EVSE identification.</param>
-        public Boolean TryGetEVSE(EVSE_UId   EVSEUId,
-                                  out EVSE?  EVSE)
+        public Boolean TryGetEVSE(EVSE_UId                       EVSEUId,
+                                  [NotNullWhen(true)] out EVSE?  EVSE)
         {
 
             lock (EVSEs)
