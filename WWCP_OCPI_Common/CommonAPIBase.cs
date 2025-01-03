@@ -1266,10 +1266,10 @@ namespace cloud.charging.open.protocols.OCPI
 
             #region Set optional attributes
 
-            var serviceIdAttributes = new List<Org.BouncyCastle.Asn1.Cms.Attribute>();
+            var csrAttributes = new List<Org.BouncyCastle.Asn1.Cms.Attribute>();
 
             if (KeyGroupId.SafeAny())
-                serviceIdAttributes.Add(
+                csrAttributes.Add(
                     new Org.BouncyCastle.Asn1.Cms.Attribute(
                         new DerObjectIdentifier(KeyGroupIdAttribute),
                         new DerSet(new DerUtf8String(KeyGroupId))
@@ -1277,7 +1277,7 @@ namespace cloud.charging.open.protocols.OCPI
                 );
 
             if (KeySerialNumber.SafeAny())
-                serviceIdAttributes.Add(
+                csrAttributes.Add(
                     new Org.BouncyCastle.Asn1.Cms.Attribute(
                         X509Name.SerialNumber,
                         new DerSet(new DerUtf8String(KeySerialNumber))
@@ -1285,7 +1285,7 @@ namespace cloud.charging.open.protocols.OCPI
                 );
 
             if (NotBefore.HasValue)
-                serviceIdAttributes.Add(
+                csrAttributes.Add(
                     new Org.BouncyCastle.Asn1.Cms.Attribute(
                         new DerObjectIdentifier(NotBeforeAttribute),
                         new DerSet(new DerUtcTime(NotBefore.Value, 2049)) // 2049 for X.509 standards
@@ -1293,7 +1293,7 @@ namespace cloud.charging.open.protocols.OCPI
                 );
 
             if (NotAfter.HasValue)
-                serviceIdAttributes.Add(
+                csrAttributes.Add(
                     new Org.BouncyCastle.Asn1.Cms.Attribute(
                         new DerObjectIdentifier(NotAfterAttribute),
                         new DerSet(new DerUtcTime(NotAfter.Value, 2049)) // 2049 for X.509 standards
@@ -1302,7 +1302,7 @@ namespace cloud.charging.open.protocols.OCPI
 
 
             if (PartyIds.SafeAny())
-                serviceIdAttributes.Add(
+                csrAttributes.Add(
                     new Org.BouncyCastle.Asn1.Cms.Attribute(
                         new DerObjectIdentifier(PartyIdAttribute),
                         new DerSet(PartyIds.Select(partyId => new DerUtf8String(partyId)).ToArray())
@@ -1310,7 +1310,7 @@ namespace cloud.charging.open.protocols.OCPI
                 );
 
             if (SubCPOIds.SafeAny())
-                serviceIdAttributes.Add(
+                csrAttributes.Add(
                     new Org.BouncyCastle.Asn1.Cms.Attribute(
                         new DerObjectIdentifier(SubCPOsIdAttribute),
                         new DerSet(SubCPOIds.Select(subCPOId => new DerUtf8String(subCPOId)).ToArray())
@@ -1318,15 +1318,37 @@ namespace cloud.charging.open.protocols.OCPI
                 );
 
             if (SubEMSPIds.SafeAny())
-                serviceIdAttributes.Add(
+                csrAttributes.Add(
                     new Org.BouncyCastle.Asn1.Cms.Attribute(
                         new DerObjectIdentifier(SubEMSPsIdAttribute),
                         new DerSet(SubEMSPIds.Select(subEMSPId => new DerUtf8String(subEMSPId)).ToArray())
                     )
                 );
 
+            #endregion
 
-            var attributesAsn1Set   = new DerSet(serviceIdAttributes.ToArray());
+            #region (Extended)KeyUsage Extension
+
+            var extgen = new X509ExtensionsGenerator();
+
+            extgen.AddExtension(
+                X509Extensions.KeyUsage,
+                true,
+                new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyEncipherment)
+            );
+
+            extgen.AddExtension(
+                X509Extensions.ExtendedKeyUsage,
+                true,
+                new ExtendedKeyUsage(KeyPurposeID.id_kp_clientAuth)
+            );
+
+            csrAttributes.Add(
+                new Org.BouncyCastle.Asn1.Cms.Attribute(
+                    PkcsObjectIdentifiers.Pkcs9AtExtensionRequest,
+                    new DerSet(extgen.Generate())
+                )
+            );
 
             #endregion
 
@@ -1336,7 +1358,7 @@ namespace cloud.charging.open.protocols.OCPI
                               PublicKey:         KeyPair.Public,
                               Subject:           subject,
                               //ParsedSubject:     [],
-                              Attributes:        attributesAsn1Set,
+                              Attributes:        new DerSet(csrAttributes.ToArray()),
                               //ParsedAttributes:  [],
                               KeyId:             KeyGroupId,
                               NotBefore:         NotBefore,
@@ -1364,7 +1386,7 @@ namespace cloud.charging.open.protocols.OCPI
                                           signatureFactory,
                                           subject,
                                           KeyPair.Public,
-                                          attributesAsn1Set
+                                          new DerSet(csrAttributes.ToArray())
                                       );
 
 

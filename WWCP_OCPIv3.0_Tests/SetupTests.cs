@@ -88,7 +88,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.SetupTests
                                                                     Description:          "Main EMSP key...");
 
 
+                // openssl req -in csr.txt -noout -text (will not print out the dates correctly!)
                 // https://ssl-trust.com/SSL-Zertifikate/csr-decoder
+                // https://lapo.it/asn1js
                 var pcsr1      = cpo1CPOAPI.  CommonAPI.ParsePEMEncodedCSR(cpo1CSR);
                 var pcsr2      = emsp1EMSPAPI.CommonAPI.ParsePEMEncodedCSR(emsp1CSR);
 
