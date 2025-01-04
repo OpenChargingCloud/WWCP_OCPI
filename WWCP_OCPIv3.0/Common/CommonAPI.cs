@@ -1981,57 +1981,59 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region Custom JSON serializers
 
-        public CustomJObjectSerializerDelegate<VersionInformation>?           CustomVersionInformationSerializer            { get; }
-        public CustomJObjectSerializerDelegate<VersionDetail>?                CustomVersionDetailSerializer                 { get; }
-        public CustomJObjectSerializerDelegate<VersionEndpoint>?              CustomVersionEndpointSerializer               { get; }
+        public CustomJObjectSerializerDelegate<VersionInformation>?            CustomVersionInformationSerializer            { get; set; }
+        public CustomJObjectSerializerDelegate<VersionDetail>?                 CustomVersionDetailSerializer                 { get; set; }
+        public CustomJObjectSerializerDelegate<VersionEndpoint>?               CustomVersionEndpointSerializer               { get; set; }
 
 
-        public CustomJObjectSerializerDelegate<Location>?                     CustomLocationSerializer                      { get; }
-        public CustomJObjectSerializerDelegate<PublishToken>?                 CustomPublishTokenSerializer                  { get; }
-        public CustomJObjectSerializerDelegate<Address>?                      CustomAddressSerializer                       { get; }
-        public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?        CustomAdditionalGeoLocationSerializer         { get; }
-        public CustomJObjectSerializerDelegate<ChargingStation>?              CustomChargingStationSerializer               { get; }
-        public CustomJObjectSerializerDelegate<EVSE>?                         CustomEVSESerializer                          { get; }
-        public CustomJObjectSerializerDelegate<Parking>?                      CustomParkingSerializer                       { get; }
-        public CustomJObjectSerializerDelegate<ParkingRestriction>?           CustomParkingRestrictionSerializer            { get; }
-        public CustomJObjectSerializerDelegate<StatusSchedule>?               CustomStatusScheduleSerializer                { get; }
-        public CustomJObjectSerializerDelegate<Connector>?                    CustomConnectorSerializer                     { get; }
-        public CustomJObjectSerializerDelegate<EnergyMeter>?                  CustomEnergyMeterSerializer                   { get; }
-        public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?   CustomTransparencySoftwareStatusSerializer    { get; }
-        public CustomJObjectSerializerDelegate<TransparencySoftware>?         CustomTransparencySoftwareSerializer          { get; }
-        public CustomJObjectSerializerDelegate<DisplayText>?                  CustomDisplayTextSerializer                   { get; }
-        public CustomJObjectSerializerDelegate<BusinessDetails>?              CustomBusinessDetailsSerializer               { get; }
-        public CustomJObjectSerializerDelegate<Hours>?                        CustomHoursSerializer                         { get; }
-        public CustomJObjectSerializerDelegate<Image>?                        CustomImageSerializer                         { get; }
-        public CustomJObjectSerializerDelegate<EnergyMix>?                    CustomEnergyMixSerializer                     { get; }
-        public CustomJObjectSerializerDelegate<EnergySource>?                 CustomEnergySourceSerializer                  { get; }
-        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?          CustomEnvironmentalImpactSerializer           { get; }
-        public CustomJObjectSerializerDelegate<LocationMaxPower>?             CustomLocationMaxPowerSerializer              { get; }
+        public CustomJObjectSerializerDelegate<Location>?                      CustomLocationSerializer                      { get; set; }
+        public CustomJObjectSerializerDelegate<PublishToken>?                  CustomPublishTokenSerializer                  { get; set; }
+        public CustomJObjectSerializerDelegate<Address>?                       CustomAddressSerializer                       { get; set; }
+        public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?         CustomAdditionalGeoLocationSerializer         { get; set; }
+        public CustomJObjectSerializerDelegate<ChargingStation>?               CustomChargingStationSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<EVSE>?                          CustomEVSESerializer                          { get; set; }
+        public CustomJObjectSerializerDelegate<Parking>?                       CustomParkingSerializer                       { get; set; }
+        public CustomJObjectSerializerDelegate<ParkingRestriction>?            CustomParkingRestrictionSerializer            { get; set; }
+        public CustomJObjectSerializerDelegate<StatusSchedule>?                CustomStatusScheduleSerializer                { get; set; }
+        public CustomJObjectSerializerDelegate<Connector>?                     CustomConnectorSerializer                     { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMeter<Location>>?         CustomLocationEnergyMeterSerializer           { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMeter<ChargingStation>>?  CustomChargingStationEnergyMeterSerializer    { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?             CustomEVSEEnergyMeterSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?    CustomTransparencySoftwareStatusSerializer    { get; set; }
+        public CustomJObjectSerializerDelegate<TransparencySoftware>?          CustomTransparencySoftwareSerializer          { get; set; }
+        public CustomJObjectSerializerDelegate<DisplayText>?                   CustomDisplayTextSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<BusinessDetails>?               CustomBusinessDetailsSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<Hours>?                         CustomHoursSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<Image>?                         CustomImageSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMix>?                     CustomEnergyMixSerializer                     { get; set; }
+        public CustomJObjectSerializerDelegate<EnergySource>?                  CustomEnergySourceSerializer                  { get; set; }
+        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?           CustomEnvironmentalImpactSerializer           { get; set; }
+        public CustomJObjectSerializerDelegate<LocationMaxPower>?              CustomLocationMaxPowerSerializer              { get; set; }
 
 
-        public CustomJObjectSerializerDelegate<Tariff>?                       CustomTariffSerializer                        { get; }
-        public CustomJObjectSerializerDelegate<Price>?                        CustomPriceSerializer                         { get; }
-        public CustomJObjectSerializerDelegate<TariffElement>?                CustomTariffElementSerializer                 { get; }
-        public CustomJObjectSerializerDelegate<PriceComponent>?               CustomPriceComponentSerializer                { get; }
-        public CustomJObjectSerializerDelegate<TariffRestrictions>?           CustomTariffRestrictionsSerializer            { get; }
+        public CustomJObjectSerializerDelegate<Tariff>?                        CustomTariffSerializer                        { get; set; }
+        public CustomJObjectSerializerDelegate<Price>?                         CustomPriceSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<TariffElement>?                 CustomTariffElementSerializer                 { get; set; }
+        public CustomJObjectSerializerDelegate<PriceComponent>?                CustomPriceComponentSerializer                { get; set; }
+        public CustomJObjectSerializerDelegate<TariffRestrictions>?            CustomTariffRestrictionsSerializer            { get; set; }
 
 
-        public CustomJObjectSerializerDelegate<Session>?                      CustomSessionSerializer                       { get; }
-        public CustomJObjectSerializerDelegate<CDRToken>?                     CustomCDRTokenSerializer                      { get; }
-        public CustomJObjectSerializerDelegate<SessionConnector>?             CustomSessionConnectorSerializer              { get; }
-        public CustomJObjectSerializerDelegate<ChargingPeriod>?               CustomChargingPeriodSerializer                { get; }
-        public CustomJObjectSerializerDelegate<CDRDimension>?                 CustomCDRDimensionSerializer                  { get; }
+        public CustomJObjectSerializerDelegate<Session>?                       CustomSessionSerializer                       { get; set; }
+        public CustomJObjectSerializerDelegate<CDRToken>?                      CustomCDRTokenSerializer                      { get; set; }
+        public CustomJObjectSerializerDelegate<SessionConnector>?              CustomSessionConnectorSerializer              { get; set; }
+        public CustomJObjectSerializerDelegate<ChargingPeriod>?                CustomChargingPeriodSerializer                { get; set; }
+        public CustomJObjectSerializerDelegate<CDRDimension>?                  CustomCDRDimensionSerializer                  { get; set; }
 
 
-        public CustomJObjectSerializerDelegate<Token>?                        CustomTokenSerializer                         { get; }
-        public CustomJObjectSerializerDelegate<EnergyContract>?               CustomEnergyContractSerializer                { get; }
+        public CustomJObjectSerializerDelegate<Token>?                         CustomTokenSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyContract>?                CustomEnergyContractSerializer                { get; set; }
 
 
 
-        public CustomJObjectSerializerDelegate<CDR>?                          CustomCDRSerializer                           { get; }
-        public CustomJObjectSerializerDelegate<CDRLocation>?                  CustomCDRLocationSerializer                   { get; }
-        public CustomJObjectSerializerDelegate<SignedData>?                   CustomSignedDataSerializer                    { get; }
-        public CustomJObjectSerializerDelegate<SignedValue>?                  CustomSignedValueSerializer                   { get; }
+        public CustomJObjectSerializerDelegate<CDR>?                           CustomCDRSerializer                           { get; set; }
+        public CustomJObjectSerializerDelegate<CDRLocation>?                   CustomCDRLocationSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<SignedData>?                    CustomSignedDataSerializer                    { get; set; }
+        public CustomJObjectSerializerDelegate<SignedValue>?                   CustomSignedValueSerializer                   { get; set; }
 
         #endregion
 
@@ -5668,7 +5670,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                   CustomParkingRestrictionSerializer,
                                   CustomStatusScheduleSerializer,
                                   CustomConnectorSerializer,
-                                  CustomEnergyMeterSerializer,
+                                  CustomLocationEnergyMeterSerializer,
+                                  CustomChargingStationEnergyMeterSerializer,
+                                  CustomEVSEEnergyMeterSerializer,
                                   CustomTransparencySoftwareStatusSerializer,
                                   CustomTransparencySoftwareSerializer,
                                   CustomDisplayTextSerializer,
@@ -5787,7 +5791,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                   CustomParkingRestrictionSerializer,
                                   CustomStatusScheduleSerializer,
                                   CustomConnectorSerializer,
-                                  CustomEnergyMeterSerializer,
+                                  CustomLocationEnergyMeterSerializer,
+                                  CustomChargingStationEnergyMeterSerializer,
+                                  CustomEVSEEnergyMeterSerializer,
                                   CustomTransparencySoftwareStatusSerializer,
                                   CustomTransparencySoftwareSerializer,
                                   CustomDisplayTextSerializer,
@@ -5927,7 +5933,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                       CustomParkingRestrictionSerializer,
                                       CustomStatusScheduleSerializer,
                                       CustomConnectorSerializer,
-                                      CustomEnergyMeterSerializer,
+                                      CustomLocationEnergyMeterSerializer,
+                                      CustomChargingStationEnergyMeterSerializer,
+                                      CustomEVSEEnergyMeterSerializer,
                                       CustomTransparencySoftwareStatusSerializer,
                                       CustomTransparencySoftwareSerializer,
                                       CustomDisplayTextSerializer,
@@ -6065,7 +6073,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                   CustomParkingRestrictionSerializer,
                                   CustomStatusScheduleSerializer,
                                   CustomConnectorSerializer,
-                                  CustomEnergyMeterSerializer,
+                                  CustomLocationEnergyMeterSerializer,
+                                  CustomChargingStationEnergyMeterSerializer,
+                                  CustomEVSEEnergyMeterSerializer,
                                   CustomTransparencySoftwareStatusSerializer,
                                   CustomTransparencySoftwareSerializer,
                                   CustomDisplayTextSerializer,
@@ -6210,7 +6220,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                   CustomParkingRestrictionSerializer,
                                   CustomStatusScheduleSerializer,
                                   CustomConnectorSerializer,
-                                  CustomEnergyMeterSerializer,
+                                  CustomLocationEnergyMeterSerializer,
+                                  CustomChargingStationEnergyMeterSerializer,
+                                  CustomEVSEEnergyMeterSerializer,
                                   CustomTransparencySoftwareStatusSerializer,
                                   CustomTransparencySoftwareSerializer,
                                   CustomDisplayTextSerializer,
@@ -9391,7 +9403,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                   CustomCDRSerializer,
                                   CustomCDRTokenSerializer,
                                   CustomCDRLocationSerializer,
-                                  CustomEnergyMeterSerializer,
+                                  CustomEVSEEnergyMeterSerializer,
                                   CustomTransparencySoftwareStatusSerializer,
                                   CustomTransparencySoftwareSerializer,
                                   CustomDisplayTextSerializer,
@@ -9491,7 +9503,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                   CustomCDRSerializer,
                                   CustomCDRTokenSerializer,
                                   CustomCDRLocationSerializer,
-                                  CustomEnergyMeterSerializer,
+                                  CustomEVSEEnergyMeterSerializer,
                                   CustomTransparencySoftwareStatusSerializer,
                                   CustomTransparencySoftwareSerializer,
                                   CustomDisplayTextSerializer,
@@ -9612,7 +9624,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                       CustomCDRSerializer,
                                       CustomCDRTokenSerializer,
                                       CustomCDRLocationSerializer,
-                                      CustomEnergyMeterSerializer,
+                                      CustomEVSEEnergyMeterSerializer,
                                       CustomTransparencySoftwareStatusSerializer,
                                       CustomTransparencySoftwareSerializer,
                                       CustomDisplayTextSerializer,
@@ -9747,7 +9759,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                   CustomCDRSerializer,
                                   CustomCDRTokenSerializer,
                                   CustomCDRLocationSerializer,
-                                  CustomEnergyMeterSerializer,
+                                  CustomEVSEEnergyMeterSerializer,
                                   CustomTransparencySoftwareStatusSerializer,
                                   CustomTransparencySoftwareSerializer,
                                   CustomDisplayTextSerializer,
@@ -9889,7 +9901,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                   CustomCDRSerializer,
                                   CustomCDRTokenSerializer,
                                   CustomCDRLocationSerializer,
-                                  CustomEnergyMeterSerializer,
+                                  CustomEVSEEnergyMeterSerializer,
                                   CustomTransparencySoftwareStatusSerializer,
                                   CustomTransparencySoftwareSerializer,
                                   CustomDisplayTextSerializer,

@@ -346,7 +346,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                OCPI.Currency.EUR,
                                SessionStatusTypes.ACTIVE,
                                DateTime.Parse("2020-08-22T00:00:00.000Z").ToUniversalTime(), // End
-                               Meter_Id.Parse("Meter0001"),
+                               EnergyMeter_Id.Parse("Meter0001"),
 
                                new[] {
                                    new ChargingPeriod(

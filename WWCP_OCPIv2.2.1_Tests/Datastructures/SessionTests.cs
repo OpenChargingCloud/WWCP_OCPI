@@ -71,7 +71,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                SessionStatusTypes.ACTIVE,
                                DateTime.Parse("2020-08-22T00:00:00.000Z").ToUniversalTime(), // End
                                AuthorizationReference.Parse("Auth1234"),
-                               Meter_Id.Parse("Meter0001"),
+                               EnergyMeter_Id.Parse("Meter0001"),
                                new ChargingPeriod[] {
                                    ChargingPeriod.Create(
                                        DateTime.Parse("2020-04-12T18:21:49Z").ToUniversalTime(),

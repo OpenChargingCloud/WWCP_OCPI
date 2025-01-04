@@ -287,7 +287,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         public CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                          { get; set; }
         public CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer                { get; set; }
         public CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                     { get; set; }
-        public CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMeter<Location>>?       CustomLocationEnergyMeterSerializer           { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer    { get; set; }
         public CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer          { get; set; }
         public CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                   { get; set; }
@@ -1794,7 +1795,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                                                  CustomEVSESerializer,
                                                                                                                                  CustomStatusScheduleSerializer,
                                                                                                                                  CustomConnectorSerializer,
-                                                                                                                                 CustomEnergyMeterSerializer,
+                                                                                                                                 CustomLocationEnergyMeterSerializer,
+                                                                                                                                 CustomEVSEEnergyMeterSerializer,
                                                                                                                                  CustomTransparencySoftwareStatusSerializer,
                                                                                                                                  CustomTransparencySoftwareSerializer,
                                                                                                                                  CustomDisplayTextSerializer,
@@ -1919,7 +1921,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                           CustomEVSESerializer,
                                                                                           CustomStatusScheduleSerializer,
                                                                                           CustomConnectorSerializer,
-                                                                                          CustomEnergyMeterSerializer,
+                                                                                          CustomLocationEnergyMeterSerializer,
+                                                                                          CustomEVSEEnergyMeterSerializer,
                                                                                           CustomTransparencySoftwareStatusSerializer,
                                                                                           CustomTransparencySoftwareSerializer,
                                                                                           CustomDisplayTextSerializer,
@@ -2024,7 +2027,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                       CustomEVSESerializer,
                                                                                       CustomStatusScheduleSerializer,
                                                                                       CustomConnectorSerializer,
-                                                                                      CustomEnergyMeterSerializer,
+                                                                                      CustomEVSEEnergyMeterSerializer,
                                                                                       CustomTransparencySoftwareStatusSerializer,
                                                                                       CustomTransparencySoftwareSerializer,
                                                                                       CustomDisplayTextSerializer,
@@ -2778,7 +2781,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                   Select        (cdr => cdr.ToJSON(CustomCDRSerializer,
                                                                                                                    CustomCDRTokenSerializer,
                                                                                                                    CustomCDRLocationSerializer,
-                                                                                                                   CustomEnergyMeterSerializer,
+                                                                                                                   CustomEVSEEnergyMeterSerializer,
                                                                                                                    CustomTransparencySoftwareSerializer,
                                                                                                                    CustomTariffSerializer,
                                                                                                                    CustomDisplayTextSerializer,
@@ -2880,7 +2883,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    Data                 = cdr.ToJSON(CustomCDRSerializer,
                                                                                      CustomCDRTokenSerializer,
                                                                                      CustomCDRLocationSerializer,
-                                                                                     CustomEnergyMeterSerializer,
+                                                                                     CustomEVSEEnergyMeterSerializer,
                                                                                      CustomTransparencySoftwareSerializer,
                                                                                      CustomTariffSerializer,
                                                                                      CustomDisplayTextSerializer,

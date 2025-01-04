@@ -698,9 +698,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region ToOCPI(this EnergyMeter)
 
-        public static EnergyMeter ToOCPI(this WWCP.EnergyMeter EnergyMeter)
+        public static EnergyMeter<EVSE> ToOCPI(this WWCP.EnergyMeter EnergyMeter)
 
-            => new (OCPI.Meter_Id.Parse(EnergyMeter.Id.ToString()),
+            => new (OCPI.EnergyMeter_Id.Parse(EnergyMeter.Id.ToString()),
                     EnergyMeter.Model,
                     EnergyMeter.ModelURL,
                     EnergyMeter.HardwareVersion,
@@ -1197,11 +1197,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region ToOCPI(this EnergyMeterId)
 
-        public static OCPI.Meter_Id? ToOCPI(this WWCP.EnergyMeter_Id EnergyMeterId)
+        public static OCPI.EnergyMeter_Id? ToOCPI(this WWCP.EnergyMeter_Id EnergyMeterId)
 
-            => OCPI.Meter_Id.Parse(EnergyMeterId.ToString());
+            => OCPI.EnergyMeter_Id.Parse(EnergyMeterId.ToString());
 
-        public static OCPI.Meter_Id? ToOCPI(this WWCP.EnergyMeter_Id? EnergyMeterId)
+        public static OCPI.EnergyMeter_Id? ToOCPI(this WWCP.EnergyMeter_Id? EnergyMeterId)
 
             => EnergyMeterId.HasValue
                    ? EnergyMeterId.Value.ToOCPI()
@@ -1211,11 +1211,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region ToWWCP(this MeterId)
 
-        public static WWCP.EnergyMeter_Id? ToWWCP(this Meter_Id MeterId)
+        public static WWCP.EnergyMeter_Id? ToWWCP(this EnergyMeter_Id MeterId)
 
             => WWCP.EnergyMeter_Id.Parse(MeterId.ToString());
 
-        public static WWCP.EnergyMeter_Id? ToWWCP(this Meter_Id? MeterId)
+        public static WWCP.EnergyMeter_Id? ToWWCP(this EnergyMeter_Id? MeterId)
 
             => MeterId.HasValue
                    ? MeterId.Value.ToWWCP()
@@ -2127,7 +2127,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            TotalEnergy:             ChargeDetailRecord.ConsumedEnergy.      Value,
                            TotalTime:               ChargeDetailRecord.SessionTime.Duration.Value,
 
-                           MeterId:                 ChargeDetailRecord.EnergyMeterId.ToOCPI(),
+                           EnergyMeterId:                 ChargeDetailRecord.EnergyMeterId.ToOCPI(),
                            EnergyMeter:             null,                        // Our vendor extension!
                            TransparencySoftwares:   null,                        // Our vendor extension!
                            Tariffs:                 tariffs,

@@ -255,9 +255,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Hermod\Hermod\Hermod.csproj" />
-    <ProjectReference Include="..\..\Styx\Styx\Styx.csproj" />
-    <ProjectReference Include="..\..\WWCP_Core\WWCP_Core\WWCP_Core.csproj" />
     <ProjectReference Include="..\WWCP_OCPIv2.1.1\WWCP_OCPIv2.1.1.csproj" />
   </ItemGroup>
 

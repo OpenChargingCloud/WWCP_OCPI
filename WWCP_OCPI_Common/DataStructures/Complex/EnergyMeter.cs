@@ -43,13 +43,14 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="EnergyMeters">An enumeration of smart energy meters.</param>
         /// <param name="Skip">The optional number of smart energy meters to skip.</param>
         /// <param name="Take">The optional number of smart energy meters to return.</param>
-        public static JArray ToJSON(this IEnumerable<EnergyMeter>                                 EnergyMeters,
-                                    UInt64?                                                       Skip                                         = null,
-                                    UInt64?                                                       Take                                         = null,
-                                    CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
-                                    CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
-                                    CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null)
+        public static JArray ToJSON<TParent>(this IEnumerable<EnergyMeter<TParent>>                        EnergyMeters,
+                                             UInt64?                                                       Skip                                         = null,
+                                             UInt64?                                                       Take                                         = null,
+                                             CustomJObjectSerializerDelegate<EnergyMeter<TParent>>?        CustomEnergyMeterSerializer                  = null,
+                                             CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
+                                             CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null)
 
+            where TParent : class
 
             => EnergyMeters?.Any() == true
 
@@ -72,19 +73,28 @@ namespace cloud.charging.open.protocols.OCPI
     /// An energy meter.
     /// </summary>
     [NonStandard]
-    public class EnergyMeter : AInternalData,
-                               IEquatable<EnergyMeter>,
-                               IComparable<EnergyMeter>,
-                               IComparable
+    public class EnergyMeter<TParent> : AInternalData,
+                                        IEquatable<EnergyMeter<TParent>>,
+                                        IComparable<EnergyMeter<TParent>>,
+                                        IComparable
+
+        where TParent : class
+
     {
 
         #region Properties
 
         /// <summary>
+        /// The parent location/charging station/EVSE of this energy meter.
+        /// </summary>
+        public TParent?                                 Parent                        { get; set; }
+
+
+        /// <summary>
         /// The identification of the energy meter.
         /// </summary>
         [Mandatory]
-        public Meter_Id                                 Id                            { get; }
+        public EnergyMeter_Id                           Id                            { get; }
 
         /// <summary>
         /// The optional model of the energy meter.
@@ -172,7 +182,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="TransparencySoftwares">An enumeration of transparency softwares and their legal status, which can be used to validate the charging session data.</param>
         /// <param name="Description">An multi-language description of the energy meter.</param>
         /// <param name="LastUpdated">The timestamp when this energy meter was last updated (or created).</param>
-        public EnergyMeter(Meter_Id                                  Id,
+        public EnergyMeter(EnergyMeter_Id                            Id,
                            String?                                   Model                       = null,
                            URL?                                      ModelURL                    = null,
                            String?                                   HardwareVersion             = null,
@@ -237,8 +247,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomEnergyMeterParser">A delegate to parse custom energy meter JSON objects.</param>
-        public static EnergyMeter Parse(JObject                                    JSON,
-                                        CustomJObjectParserDelegate<EnergyMeter>?  CustomEnergyMeterParser   = null)
+        public static EnergyMeter<TParent> Parse(JObject                                             JSON,
+                                                 CustomJObjectParserDelegate<EnergyMeter<TParent>>?  CustomEnergyMeterParser   = null)
         {
 
             if (TryParse(JSON,
@@ -266,9 +276,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="EnergyMeter">The parsed energy meter.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                                JSON,
-                                       [NotNullWhen(true)]  out EnergyMeter?  EnergyMeter,
-                                       [NotNullWhen(false)] out String?       ErrorResponse)
+        public static Boolean TryParse(JObject                                         JSON,
+                                       [NotNullWhen(true)]  out EnergyMeter<TParent>?  EnergyMeter,
+                                       [NotNullWhen(false)] out String?                ErrorResponse)
 
             => TryParse(JSON,
                         out EnergyMeter,
@@ -283,10 +293,10 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="EnergyMeter">The parsed energy meter.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomEnergyMeterParser">A delegate to parse custom energy meter JSON objects.</param>
-        public static Boolean TryParse(JObject                                    JSON,
-                                       [NotNullWhen(true)]  out EnergyMeter?      EnergyMeter,
-                                       [NotNullWhen(false)] out String?           ErrorResponse,
-                                       CustomJObjectParserDelegate<EnergyMeter>?  CustomEnergyMeterParser   = null)
+        public static Boolean TryParse(JObject                                             JSON,
+                                       [NotNullWhen(true)]  out EnergyMeter<TParent>?      EnergyMeter,
+                                       [NotNullWhen(false)] out String?                    ErrorResponse,
+                                       CustomJObjectParserDelegate<EnergyMeter<TParent>>?  CustomEnergyMeterParser   = null)
         {
 
             try
@@ -304,8 +314,8 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (!JSON.ParseMandatory("id",
                                          "energy meter identification",
-                                         Meter_Id.TryParse,
-                                         out Meter_Id Id,
+                                         EnergyMeter_Id.TryParse,
+                                         out EnergyMeter_Id Id,
                                          out ErrorResponse))
                 {
                     return false;
@@ -435,7 +445,7 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
-                EnergyMeter = new EnergyMeter(
+                EnergyMeter = new EnergyMeter<TParent>(
                                   Id,
                                   Model,
                                   ModelURL,
@@ -478,7 +488,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
+        public JObject ToJSON(CustomJObjectSerializerDelegate<EnergyMeter<TParent>>?        CustomEnergyMeterSerializer                  = null,
                               CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
                               CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null)
         {
@@ -545,7 +555,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Clone this object.
         /// </summary>
-        public EnergyMeter Clone()
+        public EnergyMeter<TParent> Clone()
 
             => new (
                    Id.              Clone(),
@@ -577,8 +587,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="EnergyMeter1">An energy meter.</param>
         /// <param name="EnergyMeter2">Another energy meter.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (EnergyMeter EnergyMeter1,
-                                           EnergyMeter EnergyMeter2)
+        public static Boolean operator == (EnergyMeter<TParent> EnergyMeter1,
+                                           EnergyMeter<TParent> EnergyMeter2)
         {
 
             if (Object.ReferenceEquals(EnergyMeter1, EnergyMeter2))
@@ -601,8 +611,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="EnergyMeter1">An energy meter.</param>
         /// <param name="EnergyMeter2">Another energy meter.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (EnergyMeter EnergyMeter1,
-                                           EnergyMeter EnergyMeter2)
+        public static Boolean operator != (EnergyMeter<TParent> EnergyMeter1,
+                                           EnergyMeter<TParent> EnergyMeter2)
 
             => !(EnergyMeter1 == EnergyMeter2);
 
@@ -616,8 +626,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="EnergyMeter1">An energy meter.</param>
         /// <param name="EnergyMeter2">Another energy meter.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (EnergyMeter EnergyMeter1,
-                                          EnergyMeter EnergyMeter2)
+        public static Boolean operator < (EnergyMeter<TParent> EnergyMeter1,
+                                          EnergyMeter<TParent> EnergyMeter2)
 
             => EnergyMeter1 is null
                    ? throw new ArgumentNullException(nameof(EnergyMeter1), "The given energy meter must not be null!")
@@ -633,8 +643,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="EnergyMeter1">An energy meter.</param>
         /// <param name="EnergyMeter2">Another energy meter.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (EnergyMeter EnergyMeter1,
-                                           EnergyMeter EnergyMeter2)
+        public static Boolean operator <= (EnergyMeter<TParent> EnergyMeter1,
+                                           EnergyMeter<TParent> EnergyMeter2)
 
             => !(EnergyMeter1 > EnergyMeter2);
 
@@ -648,8 +658,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="EnergyMeter1">An energy meter.</param>
         /// <param name="EnergyMeter2">Another energy meter.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (EnergyMeter EnergyMeter1,
-                                          EnergyMeter EnergyMeter2)
+        public static Boolean operator > (EnergyMeter<TParent> EnergyMeter1,
+                                          EnergyMeter<TParent> EnergyMeter2)
 
             => EnergyMeter1 is null
                    ? throw new ArgumentNullException(nameof(EnergyMeter1), "The given energy meter must not be null!")
@@ -665,8 +675,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="EnergyMeter1">An energy meter.</param>
         /// <param name="EnergyMeter2">Another energy meter.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (EnergyMeter EnergyMeter1,
-                                           EnergyMeter EnergyMeter2)
+        public static Boolean operator >= (EnergyMeter<TParent> EnergyMeter1,
+                                           EnergyMeter<TParent> EnergyMeter2)
 
             => !(EnergyMeter1 < EnergyMeter2);
 
@@ -684,7 +694,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Object">An energy meter to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
-            => Object is EnergyMeter energyMeter
+            => Object is EnergyMeter<TParent> energyMeter
                    ? CompareTo(energyMeter)
                    : throw new ArgumentException("The given object is not an energy meter!",
                                                  nameof(Object));
@@ -697,7 +707,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// Compares two energy meters.
         /// </summary>
         /// <param name="EnergyMeter">An energy meter to compare with.</param>
-        public Int32 CompareTo(EnergyMeter? EnergyMeter)
+        public Int32 CompareTo(EnergyMeter<TParent>? EnergyMeter)
         {
 
             if (EnergyMeter is null)
@@ -766,7 +776,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Object">An energy meter to compare with.</param>
         public override Boolean Equals(Object? Object)
 
-            => Object is EnergyMeter energyMeter &&
+            => Object is EnergyMeter<TParent> energyMeter &&
                    Equals(energyMeter);
 
         #endregion
@@ -777,7 +787,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// Compares two energy meters for equality.
         /// </summary>
         /// <param name="EnergyMeter">An energy meter to compare with.</param>
-        public Boolean Equals(EnergyMeter? EnergyMeter)
+        public Boolean Equals(EnergyMeter<TParent>? EnergyMeter)
 
             => EnergyMeter is not null &&
 

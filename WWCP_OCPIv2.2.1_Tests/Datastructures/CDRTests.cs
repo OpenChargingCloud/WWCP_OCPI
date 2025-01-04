@@ -120,11 +120,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
                            Session_Id.            Parse("0815"),
                            AuthorizationReference.Parse("Auth0815"),
-                           Meter_Id.              Parse("Meter0815"),
+                           EnergyMeter_Id.              Parse("Meter0815"),
 
                            // OCPI Computer Science Extensions
-                           new EnergyMeter(
-                               Meter_Id.Parse("Meter0815"),
+                           new EnergyMeter<EVSE>(
+                               EnergyMeter_Id.Parse("Meter0815"),
                                "EnergyMeter Model #1",
                                null,
                                "hw. v1.80",
@@ -345,7 +345,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             ClassicAssert.AreEqual(cdr1.SessionId,                cdr2.SessionId);
             ClassicAssert.AreEqual(cdr1.AuthorizationReference,   cdr2.AuthorizationReference);
-            ClassicAssert.AreEqual(cdr1.MeterId,                  cdr2.MeterId);
+            ClassicAssert.AreEqual(cdr1.EnergyMeterId,                  cdr2.EnergyMeterId);
             ClassicAssert.AreEqual(cdr1.EnergyMeter,              cdr2.EnergyMeter);
             ClassicAssert.AreEqual(cdr1.TransparencySoftwares,    cdr2.TransparencySoftwares);
             ClassicAssert.AreEqual(cdr1.Tariffs,                  cdr2.Tariffs);
