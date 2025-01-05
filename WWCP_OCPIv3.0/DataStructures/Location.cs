@@ -209,6 +209,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public PhoneNumber?                        HelpPhone                { get; }
 
         /// <summary>
+        /// The optional enumeration of energy meters, e.g. at the grid connection point.
+        /// </summary>
+        [Optional]
+        public IEnumerable<EnergyMeter<Location>>  EnergyMeters
+            => energyMeters.Values;
+
+
+        /// <summary>
         /// The timestamp when this location was created.
         /// </summary>
         [Mandatory, NonStandard("Pagination")]
@@ -1309,10 +1317,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                : null,
 
                            energyMeters.Values.Count != 0
-                               ? new JProperty("energy_meters",          new JArray(energyMeters.Values.OrderBy(energyMeter           => energyMeter.Id).
-                                                                                                        Select (energyMeter           => energyMeter.ToJSON(CustomLocationEnergyMeterSerializer,
-                                                                                                                                                            CustomTransparencySoftwareStatusSerializer,
-                                                                                                                                                            CustomTransparencySoftwareSerializer))))
+                               ? new JProperty("energy_meters",          new JArray(EnergyMeters.OrderBy(energyMeter           => energyMeter.Id).
+                                                                                                 Select (energyMeter           => energyMeter.ToJSON(CustomLocationEnergyMeterSerializer,
+                                                                                                                                                     CustomTransparencySoftwareStatusSerializer,
+                                                                                                                                                     CustomTransparencySoftwareSerializer))))
                                : null,
 
                            MaxPower is not null
@@ -1681,9 +1689,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-
-        public IEnumerable<EnergyMeter<Location>> EnergyMeters
-            => energyMeters.Values;
 
         #region EnergyMeterExists(EnergyMeterId)
 
@@ -2157,7 +2162,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// Only holders of Tokens that match all the set fields of one PublishToken in the list are allowed to be shown this Location.
             /// </summary>
             [Optional]
-            public HashSet<PublishToken>           PublishAllowedTo         { get; }
+            public HashSet<PublishToken>           PublishAllowedTo         { get; } = [];
 
             /// <summary>
             /// Display name of the Location.
@@ -2176,7 +2181,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The optional enumeration of geographical locations of related points relevant to the user.
             /// </summary>
             [Optional]
-            public HashSet<AdditionalGeoLocation>  RelatedLocations         { get; }
+            public HashSet<AdditionalGeoLocation>  RelatedLocations         { get; } = [];
 
             /// <summary>
             /// The optional general type of parking at the location.
@@ -2195,7 +2200,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The optional enumeration of human-readable directions on how to reach the location.
             /// </summary>
             [Optional]
-            public HashSet<DisplayText>            Directions               { get; }
+            public HashSet<DisplayText>            Directions               { get; } = [];
 
             /// <summary>
             /// Information of the operator. When not specified, the information retrieved with Use Case Request Parties Served by Platform,
@@ -2220,13 +2225,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The optional enumeration of services that are offered at the Location by the CPO or their affiliated partners.
             /// </summary>
             [Optional]
-            public HashSet<LocationService>        Services                 { get; }
+            public HashSet<LocationService>        Services                 { get; } = [];
 
             /// <summary>
             /// The optional enumeration of facilities this location directly belongs to.
             /// </summary>
             [Optional]
-            public HashSet<Facilities>             Facilities               { get; }
+            public HashSet<Facilities>             Facilities               { get; } = [];
 
             /// <summary>
             /// The optional times when the EVSEs at the location can be accessed for charging.
@@ -2247,7 +2252,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The optional enumeration of images related to the location such as photos or logos.
             /// </summary>
             [Optional]
-            public HashSet<Image>                  Images                   { get; }
+            public HashSet<Image>                  Images                   { get; } = [];
 
             /// <summary>
             /// Optional details on the energy supplied at this location.
@@ -2259,7 +2264,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The optional enumeration of energy meters at this location, e.g. at the grid connection point.
             /// </summary>
             [Optional]
-            public HashSet<EnergyMeter<Location>>  EnergyMeters             { get; }
+            public HashSet<EnergyMeter<Location>>  EnergyMeters             { get; } = [];
 
             /// <summary>
             /// How much power or current this Location can draw from the grid at any one time.
