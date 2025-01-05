@@ -154,13 +154,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The optional identification of the energy meter.
         /// </summary>
         [Optional]
-        public   Meter_Id?                                MeterId                      { get; }
+        public   EnergyMeter_Id?                          EnergyMeterId                { get; }
 
         /// <summary>
         /// The optional energy meter used for this session.
         /// </summary>
         [Optional, NonStandard]
-        public   EnergyMeter?                             EnergyMeter                  { get; }
+        public   EnergyMeter<EVSE>?                       EnergyMeter                  { get; }
 
         /// <summary>
         /// The enumeration of valid transparency softwares which can be used to validate
@@ -214,7 +214,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Connector">The optional connector that the session happened on.</param>
         /// <param name="ChargingPeriods">An optional enumeration of charging periods that can be used to calculate and verify the total cost.</param>
         /// <param name="TotalCosts">The total costs of the session in the specified currency. This is the price that the eMSP will have to pay to the CPO. A total_cost of 0.00 means free of charge. When omitted, i.e. no price information is given in the Session object, it does not imply the session is/was free of charge.</param>
-        /// <param name="MeterId">The optional identification of the kWh energy meter.</param>
+        /// <param name="EnergyMeterId">The optional identification of the kWh energy meter.</param>
         /// <param name="EnergyMeter">The optional energy meter used for this session.</param>
         /// <param name="TransparencySoftwares">An optional enumeration of valid transparency softwares which can be used to validate the signed charging session and metering data.</param>
         /// 
@@ -246,8 +246,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        SessionConnector?                                   Connector                          = null,
                        IEnumerable<ChargingPeriod>?                        ChargingPeriods                    = null,
                        Price?                                              TotalCosts                         = null,
-                       Meter_Id?                                           MeterId                            = null,
-                       EnergyMeter?                                        EnergyMeter                        = null,
+                       EnergyMeter_Id?                                     EnergyMeterId                      = null,
+                       EnergyMeter<EVSE>?                                  EnergyMeter                        = null,
                        IEnumerable<TransparencySoftwareStatus>?            TransparencySoftwares              = null,
 
                        DateTime?                                           Created                            = null,
@@ -280,7 +280,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    Connector,
                    ChargingPeriods,
                    TotalCosts,
-                   MeterId,
+                   EnergyMeterId,
                    EnergyMeter,
                    TransparencySoftwares,
 
@@ -323,7 +323,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Connector">The optional connector that the session happened on.</param>
         /// <param name="ChargingPeriods">An optional enumeration of charging periods that can be used to calculate and verify the total cost.</param>
         /// <param name="TotalCosts">The total costs of the session in the specified currency. This is the price that the eMSP will have to pay to the CPO. A total_cost of 0.00 means free of charge. When omitted, i.e. no price information is given in the Session object, it does not imply the session is/was free of charge.</param>
-        /// <param name="MeterId">The optional identification of the kWh energy meter.</param>
+        /// <param name="EnergyMeterId">The optional identification of the kWh energy meter.</param>
         /// <param name="EnergyMeter">The optional energy meter used for this session.</param>
         /// <param name="TransparencySoftwares">An optional enumeration of valid transparency softwares which can be used to validate the signed charging session and metering data.</param>
         /// 
@@ -356,8 +356,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                          SessionConnector?                                   Connector                          = null,
                          IEnumerable<ChargingPeriod>?                        ChargingPeriods                    = null,
                          Price?                                              TotalCosts                         = null,
-                         Meter_Id?                                           MeterId                            = null,
-                         EnergyMeter?                                        EnergyMeter                        = null,
+                         EnergyMeter_Id?                                     EnergyMeterId                      = null,
+                         EnergyMeter<EVSE>?                                  EnergyMeter                        = null,
                          IEnumerable<TransparencySoftwareStatus>?            TransparencySoftwares              = null,
 
                          DateTime?                                           Created                            = null,
@@ -392,7 +392,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.Connector               = Connector;
             this.ChargingPeriods         = ChargingPeriods?.      Distinct() ?? [];
             this.TotalCosts              = TotalCosts;
-            this.MeterId                 = MeterId;
+            this.EnergyMeterId           = EnergyMeterId;
             this.EnergyMeter             = EnergyMeter;
             this.TransparencySoftwares   = TransparencySoftwares?.Distinct() ?? [];
 
@@ -428,7 +428,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                           (this.Connector?.             GetHashCode() ?? 0) * 19 ^
                            this.ChargingPeriods.        CalcHashCode()      * 17 ^
                           (this.TotalCosts?.            GetHashCode() ?? 0) * 13 ^
-                          (this.MeterId?.               GetHashCode() ?? 0) * 11 ^
+                          (this.EnergyMeterId?.         GetHashCode() ?? 0) * 11 ^
                           (this.EnergyMeter?.           GetHashCode() ?? 0) *  7 ^
                            this.TransparencySoftwares.  CalcHashCode()      *  5 ^
 
@@ -718,8 +718,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("meter_id",
                                        "meter identification",
-                                       Meter_Id.TryParse,
-                                       out Meter_Id? MeterId,
+                                       EnergyMeter_Id.TryParse,
+                                       out EnergyMeter_Id? MeterId,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -732,8 +732,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptionalJSON("energy_meter",
                                            "energy meter",
-                                           OCPI.EnergyMeter.TryParse,
-                                           out EnergyMeter? EnergyMeter,
+                                           EnergyMeter<EVSE>.TryParse,
+                                           out EnergyMeter<EVSE>? EnergyMeter,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -974,8 +974,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                ? new JProperty("connector",                 Connector.Value.       ToJSON(CustomSessionConnectorSerializer))
                                : null,
 
-                           MeterId.HasValue
-                               ? new JProperty("meter_id",                  MeterId.               ToString())
+                           EnergyMeterId.HasValue
+                               ? new JProperty("meter_id",                  EnergyMeterId.               ToString())
                                : null,
 
                                  new JProperty("currency",                  Currency.              ToString()),
@@ -1040,7 +1040,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    Connector?.             Clone(),
                    ChargingPeriods.        Select(chargingPeriod       => chargingPeriod.      Clone()).ToArray(),
                    TotalCosts?.            Clone(),
-                   MeterId?.               Clone(),
+                   EnergyMeterId?.               Clone(),
                    EnergyMeter?.           Clone(),
                    TransparencySoftwares.  Select(transparencySoftware => transparencySoftware.Clone()).ToArray(),
 
@@ -1464,8 +1464,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             ((!AuthorizationReference.HasValue    && !Session.AuthorizationReference.HasValue)    ||
               (AuthorizationReference.HasValue    &&  Session.AuthorizationReference.HasValue    && AuthorizationReference.Value.Equals(Session.AuthorizationReference.Value))) &&
 
-            ((!MeterId.               HasValue    && !Session.MeterId.               HasValue)    ||
-              (MeterId.               HasValue    &&  Session.MeterId.               HasValue    && MeterId.               Value.Equals(Session.MeterId.               Value))) &&
+            ((!EnergyMeterId.               HasValue    && !Session.EnergyMeterId.               HasValue)    ||
+              (EnergyMeterId.               HasValue    &&  Session.EnergyMeterId.               HasValue    && EnergyMeterId.               Value.Equals(Session.EnergyMeterId.               Value))) &&
 
             ((!TotalCosts.            HasValue    && !Session.TotalCosts.            HasValue)    ||
               (TotalCosts.            HasValue    &&  Session.TotalCosts.            HasValue    && TotalCosts.            Value.Equals(Session.TotalCosts.            Value))) &&
@@ -1528,8 +1528,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        ? ChargingPeriods.Count() + " charging period(s), "
                        : "",
 
-                   MeterId.HasValue
-                       ? "meter: " + MeterId.Value.ToString() + ", "
+                   EnergyMeterId.HasValue
+                       ? "meter: " + EnergyMeterId.Value.ToString() + ", "
                        : "",
 
                    "last updated: " + LastUpdated.ToIso8601()
@@ -1571,7 +1571,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    Connector,
                    ChargingPeriods,
                    TotalCosts,
-                   MeterId,
+                   EnergyMeterId,
                    EnergyMeter,
                    TransparencySoftwares,
 
@@ -1694,13 +1694,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The optional identification of the energy meter.
             /// </summary>
             [Optional]
-            public   Meter_Id?                                MeterId                      { get; set; }
+            public   EnergyMeter_Id?                          EnergyMeterId                { get; set; }
 
             /// <summary>
             /// The optional energy meter used for this session.
             /// </summary>
             [Optional, NonStandard]
-            public   EnergyMeter?                             EnergyMeter                  { get; set; }
+            public   EnergyMeter<EVSE>?                       EnergyMeter                  { get; set; }
 
             /// <summary>
             /// The enumeration of valid transparency softwares which can be used to validate
@@ -1748,7 +1748,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// <param name="Connector">The optional connector that the session happened on.</param>
             /// <param name="ChargingPeriods">An optional enumeration of charging periods that can be used to calculate and verify the total cost.</param>
             /// <param name="TotalCosts">The total costs of the session in the specified currency. This is the price that the eMSP will have to pay to the CPO. A total_cost of 0.00 means free of charge. When omitted, i.e. no price information is given in the Session object, it does not imply the session is/was free of charge.</param>
-            /// <param name="MeterId">The optional identification of the kWh energy meter.</param>
+            /// <param name="EnergyMeterId">The optional identification of the kWh energy meter.</param>
             /// <param name="EnergyMeter">The optional energy meter used for this session.</param>
             /// <param name="TransparencySoftwares">An optional enumeration of valid transparency softwares which can be used to validate the signed charging session and metering data.</param>
             /// 
@@ -1774,8 +1774,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                              SessionConnector?                         Connector                = null,
                              IEnumerable<ChargingPeriod>?              ChargingPeriods          = null,
                              Price?                                    TotalCosts               = null,
-                             Meter_Id?                                 MeterId                  = null,
-                             EnergyMeter?                              EnergyMeter              = null,
+                             EnergyMeter_Id?                           EnergyMeterId            = null,
+                             EnergyMeter<EVSE>?                        EnergyMeter              = null,
                              IEnumerable<TransparencySoftwareStatus>?  TransparencySoftwares    = null,
 
                              DateTime?                                 Created                  = null,
@@ -1803,7 +1803,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 this.Connector               = Connector;
                 this.ChargingPeriods         = ChargingPeriods       is not null ? new List<ChargingPeriod>(ChargingPeriods) : [];
                 this.TotalCosts              = TotalCosts;
-                this.MeterId                 = MeterId;
+                this.EnergyMeterId           = EnergyMeterId;
                 this.EnergyMeter             = EnergyMeter;
                 this.TransparencySoftwares   = TransparencySoftwares is not null ? new HashSet<TransparencySoftwareStatus>(TransparencySoftwares) : [];
 
@@ -1879,7 +1879,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                  Connector,
                                  ChargingPeriods,
                                  TotalCosts,
-                                 MeterId,
+                                 EnergyMeterId,
                                  EnergyMeter,
                                  TransparencySoftwares,
 

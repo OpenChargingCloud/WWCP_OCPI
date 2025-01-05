@@ -388,14 +388,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
         public CommonAPILogger                              CommonAPILogger         { get; set; }
 
 
-        public CPOAPI                                       CPOAPI                  { get; set; }
+        public CPOAPI?                                      CPOAPI                  { get; set; }
 
-        public CPOAPILogger                                 CPOAPILogger            { get; set; }
+        public CPOAPILogger?                                CPOAPILogger            { get; set; }
 
 
-        public EMSPAPI                                      EMSPAPI                 { get; set; }
+        public EMSPAPI?                                     EMSPAPI                 { get; set; }
 
-        public EMSPAPILogger                                EMSPAPILogger           { get; set; }
+        public EMSPAPILogger?                               EMSPAPILogger           { get; set; }
 
         /// <summary>
         /// The default request timeout for new CPO/EMSP clients.
@@ -498,12 +498,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 
             var LogfilePrefix          = "HTTPSSEs" + Path.DirectorySeparatorChar;
 
-            //this.DebugLog              = HTTPServer.AddJSONEventSource(EventIdentification:      DebugLogId,
-            //                                                           URLTemplate:              this.URLPathPrefix + "/DebugLog",
-            //                                                           MaxNumberOfCachedEvents:  10000,
-            //                                                           RetryIntervall:           TimeSpan.FromSeconds(5),
-            //                                                           EnableLogging:            true,
-            //                                                           LogfilePrefix:            LogfilePrefix);
+            this.DebugLog              = this.AddJSONEventSource(EventIdentification:      DebugLogId,
+                                                                 URLTemplate:              this.URLPathPrefix + "/debugLog",
+                                                                 MaxNumberOfCachedEvents:  10000,
+                                                                 RetryIntervall:           TimeSpan.FromSeconds(5),
+                                                                 EnableLogging:            true,
+                                                                 LogfilePrefix:            LogfilePrefix);
 
             RegisterURITemplates();
 

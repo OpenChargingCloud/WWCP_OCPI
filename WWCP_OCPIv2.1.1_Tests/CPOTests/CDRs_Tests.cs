@@ -108,11 +108,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                    TimeSpan.FromMinutes(30),
 
                                                                    null,   // Costs
-                                                                   Meter_Id.Parse("Meter0815"),
+                                                                   EnergyMeter_Id.Parse("Meter0815"),
 
                                                                    // OCPI Computer Science Extensions
-                                                                   new EnergyMeter(
-                                                                       Meter_Id.Parse("Meter0815"),
+                                                                   new EnergyMeter<EVSE>(
+                                                                       EnergyMeter_Id.Parse("Meter0815"),
                                                                        "EnergyMeter Model #1",
                                                                        null,
                                                                        "hw. v1.80",

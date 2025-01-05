@@ -1371,8 +1371,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                           },
 
                                                                                           // OCPI Computer Science Extensions
-                                                                                          new EnergyMeter(
-                                                                                              Meter_Id.Parse("Meter0815"),
+                                                                                          new EnergyMeter<EVSE>(
+                                                                                              EnergyMeter_Id.Parse("Meter0815"),
                                                                                               "EnergyMeter Model #1",
                                                                                               null,
                                                                                               "hw. v1.80",
@@ -1503,7 +1503,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                       "Stadtwerke Jena-Ost",
                                                                                       "New Green Deal"
                                                                                   ),
-                                                                                  DateTime.Parse("2020-09-21T00:00:00Z")
+                                                                                  Created: DateTime.Parse("2020-09-21T00:00:00Z")
                                                                               ));
 
                 // HTTP/1.1 201 Created
@@ -1639,8 +1639,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                           },
 
                                                                                           // OCPI Computer Science Extensions
-                                                                                          new EnergyMeter(
-                                                                                              Meter_Id.Parse("Meter0815"),
+                                                                                          new EnergyMeter<EVSE>(
+                                                                                              EnergyMeter_Id.Parse("Meter0815"),
                                                                                               "EnergyMeter Model #1",
                                                                                               null,
                                                                                               "hw. v1.80",
@@ -1771,7 +1771,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                       "Stadtwerke Jena-Ost",
                                                                                       "New Green Deal"
                                                                                   ),
-                                                                                  DateTime.Parse("2020-09-21T00:00:00Z")
+                                                                                  Created: DateTime.Parse("2020-09-21T00:00:00Z")
                                                                               ));
 
                 var response4            = await graphDefinedEMSP.PutEVSE(new EVSE(
@@ -1828,8 +1828,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                               },
 
                                                                               // OCPI Computer Science Extensions
-                                                                              new EnergyMeter(
-                                                                                  Meter_Id.Parse("Meter0815"),
+                                                                              new EnergyMeter<EVSE>(
+                                                                                  EnergyMeter_Id.Parse("Meter0815"),
                                                                                   "EnergyMeter Model #1",
                                                                                   null,
                                                                                   "hw. v1.80",
@@ -1993,11 +1993,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                                                                               Session_Id.            Parse("0815"),
                                                                               AuthorizationReference.Parse("Auth0815"),
-                                                                              Meter_Id.              Parse("Meter0815"),
+                                                                              EnergyMeter_Id.              Parse("Meter0815"),
 
                                                                               // OCPI Computer Science Extensions
-                                                                              new EnergyMeter(
-                                                                                  Meter_Id.Parse("Meter0815"),
+                                                                              new EnergyMeter<EVSE>(
+                                                                                  EnergyMeter_Id.Parse("Meter0815"),
                                                                                   "EnergyMeter Model #1",
                                                                                   null,
                                                                                   "hw. v1.80",

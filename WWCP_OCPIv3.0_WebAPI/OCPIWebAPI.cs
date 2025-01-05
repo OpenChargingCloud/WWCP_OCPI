@@ -26,17 +26,17 @@ using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+using cloud.charging.open.protocols.OCPIv3_0.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
+namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
 {
 
     /// <summary>
     /// OCPI WebAPI extention methods.
     /// </summary>
-    public static class ExtentionMethods
+    public static class ExtensionMethods
     {
 
         #region ParseRoamingNetwork(this HTTPRequest, HTTPServer, out RoamingNetwork, out HTTPResponse)
@@ -53,19 +53,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         /// <returns>True, when roaming network was found; false else.</returns>
         public static Boolean ParseRoamingNetwork(this HTTPRequest                             HTTPRequest,
                                                   HTTPServer<RoamingNetworks, RoamingNetwork>  HTTPServer,
-                                                  out RoamingNetwork?                          RoamingNetwork,
-                                                  out HTTPResponse?                            HTTPResponse)
+                                                  out RoamingNetwork                           RoamingNetwork,
+                                                  out HTTPResponse                             HTTPResponse)
         {
 
-            if (HTTPServer is null)
+            if (HTTPServer == null)
                 Console.WriteLine("HTTPServer == null!");
 
             #region Initial checks
 
-            if (HTTPRequest is null)
+            if (HTTPRequest == null)
                 throw new ArgumentNullException("HTTPRequest",  "The given HTTP request must not be null!");
 
-            if (HTTPServer  is null)
+            if (HTTPServer == null)
                 throw new ArgumentNullException("HTTPServer",   "The given HTTP server must not be null!");
 
             #endregion
@@ -106,7 +106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                   GetAllTenants(HTTPRequest.Host).
                                   FirstOrDefault(roamingnetwork => roamingnetwork.Id == RoamingNetworkId);
 
-            if (RoamingNetwork is null) {
+            if (RoamingNetwork == null) {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
@@ -139,18 +139,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         /// <param name="RemotePartyId">The parsed unique defibrillator identification.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when defibrillator identification was found; false else.</returns>
-        public static Boolean ParseRemotePartyId(this HTTPRequest          HTTPRequest,
-                                                 OCPIWebAPI                OCPIWebAPI,
-                                                 out RemoteParty_Id?       RemotePartyId,
-                                                 out HTTPResponse.Builder  HTTPResponse)
+        public static Boolean ParseRemotePartyId(this HTTPRequest           HTTPRequest,
+                                                 OCPIWebAPI                 OCPIWebAPI,
+                                                 out RemoteParty_Id?        RemotePartyId,
+                                                 out HTTPResponse.Builder?  HTTPResponse)
         {
 
             #region Initial checks
 
-            if (HTTPRequest == null)
+            if (HTTPRequest is null)
                 throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
 
-            if (OCPIWebAPI  == null)
+            if (OCPIWebAPI  is null)
                 throw new ArgumentNullException(nameof(OCPIWebAPI),   "The given OCPI WebAPI must not be null!");
 
             #endregion
@@ -209,19 +209,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         /// <param name="RemoteParty">The resolved defibrillator.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when defibrillator identification was found; false else.</returns>
-        public static Boolean ParseRemoteParty(this HTTPRequest          HTTPRequest,
-                                               OCPIWebAPI                OCPIWebAPI,
-                                               out RemoteParty_Id?       RemotePartyId,
-                                               out RemoteParty           RemoteParty,
-                                               out HTTPResponse.Builder  HTTPResponse)
+        public static Boolean ParseRemoteParty(this HTTPRequest           HTTPRequest,
+                                               OCPIWebAPI                 OCPIWebAPI,
+                                               out RemoteParty_Id?        RemotePartyId,
+                                               out RemoteParty?           RemoteParty,
+                                               out HTTPResponse.Builder?  HTTPResponse)
         {
 
             #region Initial checks
 
-            if (HTTPRequest == null)
+            if (HTTPRequest is null)
                 throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
 
-            if (OCPIWebAPI  == null)
+            if (OCPIWebAPI  is null)
                 throw new ArgumentNullException(nameof(OCPIWebAPI),   "The given OCPI WebAPI must not be null!");
 
             #endregion
@@ -281,7 +281,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         #endregion
 
-
     }
 
 
@@ -296,17 +295,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         /// <summary>
         /// The default HTTP URI prefix.
         /// </summary>
-        public new static readonly  HTTPPath                        DefaultURLPathPrefix       = HTTPPath.Parse("webapi");
+        public new static readonly HTTPPath                         DefaultURLPathPrefix        = HTTPPath.Parse("webapi");
 
         /// <summary>
         /// The default HTTP realm, if HTTP Basic Authentication is used.
         /// </summary>
-        public const                String                          DefaultHTTPRealm           = "Open Charging Cloud OCPIPlus WebAPI";
+        public const String DefaultHTTPRealm = "Open Charging Cloud OCPIPlus WebAPI";
 
         /// <summary>
         /// The HTTP root for embedded ressources.
         /// </summary>
-        public new const            String                          HTTPRoot                   = "cloud.charging.open.protocols.OCPIv2_1_1.WebAPI.HTTPRoot.";
+        public new const       String                               HTTPRoot                    = "cloud.charging.open.protocols.OCPIv2_3_0.WebAPI.HTTPRoot.";
 
 
         //ToDo: http://www.iana.org/form/media-types
@@ -314,15 +313,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         /// <summary>
         /// The HTTP content type for serving OCPI+ XML data.
         /// </summary>
-        public static readonly HTTPContentType                      OCPIPlusJSONContentType    = new ("application", "vnd.OCPIPlus+json", "utf-8", null, null);
+        public static readonly HTTPContentType                      OCPIPlusJSONContentType     = new ("application", "vnd.OCPIPlus+json", "utf-8", null, null);
 
         /// <summary>
         /// The HTTP content type for serving OCPI+ HTML data.
         /// </summary>
-        public static readonly HTTPContentType                      OCPIPlusHTMLContentType    = new ("application", "vnd.OCPIPlus+html", "utf-8", null, null);
+        public static readonly HTTPContentType                      OCPIPlusHTMLContentType     = new ("application", "vnd.OCPIPlus+html", "utf-8", null, null);
 
 
-        public static readonly HTTPEventSource_Id                   DebugLogId                 = HTTPEventSource_Id.Parse("OCPIDebugLog");
+        public static readonly HTTPEventSource_Id                   DebugLogId                  = HTTPEventSource_Id.Parse("OCPIDebugLog");
 
         #endregion
 
@@ -412,6 +411,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         #region Custom JSON serializers
 
         public CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer         { get; set; }
+        public CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer     { get; set; }
         public CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer     { get; set; }
         public CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer     { get; set; }
@@ -455,22 +455,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                           CommonAPI                                   CommonAPI,
 
-                          HTTPPath?                                   OverlayURLPathPrefix             = null,
-                          HTTPPath?                                   APIURLPathPrefix                 = null,
-                          HTTPPath?                                   WebAPIURLPathPrefix              = null,
-                          HTTPPath?                                   BasePath                         = null,
-                          String                                      HTTPRealm                        = DefaultHTTPRealm,
-                          IEnumerable<KeyValuePair<String, String>>?  HTTPLogins                       = null,
-                          String?                                     HTMLTemplate                     = null,
+                          HTTPPath?                                   OverlayURLPathPrefix    = null,
+                          HTTPPath?                                   APIURLPathPrefix        = null,
+                          HTTPPath?                                   WebAPIURLPathPrefix     = null,
+                          HTTPPath?                                   BasePath                = null,
+                          String                                      HTTPRealm               = DefaultHTTPRealm,
+                          IEnumerable<KeyValuePair<String, String>>?  HTTPLogins              = null,
+                          String?                                     HTMLTemplate            = null,
 
-                          Organization_Id?                            AdminOrganizationId              = null,
-                          EMailAddress?                               APIRobotEMailAddress             = null,
-                          String?                                     APIRobotGPGPassphrase            = null,
-                          ISMTPClient?                                SMTPClient                       = null,
+                          Organization_Id?                            AdminOrganizationId     = null,
+                          EMailAddress?                               APIRobotEMailAddress    = null,
+                          String?                                     APIRobotGPGPassphrase   = null,
+                          ISMTPClient?                                SMTPClient              = null,
 
-                          Boolean                                     SkipURLTemplates                 = true,
+                          Boolean                                     SkipURLTemplates        = true,
 
-                          TimeSpan?                                   RequestTimeout                   = null)
+                          TimeSpan?                                   RequestTimeout          = null)
 
             : base(HTTPServer,
                    null,
@@ -633,7 +633,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          AccessControlAllowHeaders  = [ "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("index.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                                                                          html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
                                                          Connection                 = ConnectionType.Close,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
@@ -697,7 +697,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          AccessControlAllowHeaders  = [ "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("versions.versions.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                                                                          html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
                                                          Connection                 = ConnectionType.Close,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
@@ -726,7 +726,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          AccessControlAllowHeaders  = [ "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("versions.versionDetails.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                                                                          html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
                                                          Connection                 = ConnectionType.Close,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
@@ -780,7 +780,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
                                                                ContentType                 = HTTPContentType.Text.HTML_UTF8,
                                                                Content                     = MixWithHTMLTemplate("locations.locations.shtml",
-                                                                                                           html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                                                                           html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
                                                                Connection                  = ConnectionType.Close,
                                                                Vary                        = "Accept"
                                                            }.AsImmutable
@@ -809,7 +809,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          AccessControlAllowHeaders  = [ "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("locations.locationStatistics.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                                                                          html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
                                                          Connection                 = ConnectionType.Close,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
@@ -846,7 +846,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                 ? @"attachment; filename = ""sessions.json"""
                                                                                                 : null,
                                                                ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                               Content                    = new JArray(CommonAPI.GetSessions().Select(session => session.ToJSON())).ToUTF8Bytes(),
+                                                               //Content                    = new JArray(CommonAPI.GetSessions().Select(session => session.ToJSON())).ToUTF8Bytes(),
                                                                Vary                       = "Accept",
                                                                Connection                 = ConnectionType.Close
                                                            }.AsImmutable
@@ -860,7 +860,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                                Content                    = MixWithHTMLTemplate("sessions.sessions.shtml",
-                                                                                                                html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                                                                                html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
                                                                Connection                 = ConnectionType.Close,
                                                                Vary                       = "Accept"
                                                            }.AsImmutable
@@ -913,7 +913,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                                Content                    = MixWithHTMLTemplate("tariffs.tariffs.shtml",
-                                                                                                                html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                                                                                html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
                                                                Connection                 = ConnectionType.Close,
                                                                Vary                       = "Accept"
                                                            }.AsImmutable
@@ -952,7 +952,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                 ? @"attachment; filename = ""cdrs.json"""
                                                                                                 : null,
                                                                ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                               Content                    = new JArray(CommonAPI.GetCDRs().Select(cdr => cdr.ToJSON())).ToUTF8Bytes(),
+                                                               //Content                    = new JArray(CommonAPI.GetCDRs().Select(cdr => cdr.ToJSON())).ToUTF8Bytes(),
                                                                Vary                       = "Accept",
                                                                Connection                 = ConnectionType.Close
                                                            }.AsImmutable
@@ -966,7 +966,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                                Content                    = MixWithHTMLTemplate("cdrs.cdrs.shtml",
-                                                                                                                html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                                                                                html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
                                                                Connection                 = ConnectionType.Close,
                                                                Vary                       = "Accept"
                                                            }.AsImmutable
@@ -997,7 +997,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          AccessControlAllowHeaders  = [ "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("commands.commands.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                                                                          html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
                                                          Connection                 = ConnectionType.Close,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
@@ -1034,7 +1034,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                 ? @"attachment; filename = ""tokens.json"""
                                                                                                 : null,
                                                                ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                               Content                    = new JArray(CommonAPI.GetTokens().Select(token => token.ToJSON())).ToUTF8Bytes(),
+                                                               //Content                    = new JArray(CommonAPI.GetTokens().Select(token => token.ToJSON())).ToUTF8Bytes(),
                                                                Vary                       = "Accept",
                                                                Connection                 = ConnectionType.Close
                                                            }.AsImmutable
@@ -1048,7 +1048,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                                Content                    = MixWithHTMLTemplate("tokens.tokens.shtml",
-                                                                                                                html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                                                                                html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
                                                                Connection                 = ConnectionType.Close,
                                                                Vary                       = "Accept"
                                                            }.AsImmutable
@@ -1129,7 +1129,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              var matchFilter            = Request.QueryString.CreateStringFilter<RemoteParty>("match",
                                                                                                                               (remoteParty, pattern) => remoteParty.Id.         ToString().Contains(pattern) ||
-                                                                                                                                                        remoteParty.BusinessDetails?.Name. Contains(pattern) == true);
+                                                                                                                                                        remoteParty.Roles.Any(role => role.BusinessDetails?.Name. Contains(pattern) == true));
                                              var skip                   = Request.QueryString.GetUInt64 ("skip");
                                              var take                   = Request.QueryString.GetUInt64 ("take");
                                              var matchStatusFilter      = Request.QueryString.CreateMultiEnumFilter<PartyStatus>("matchStatus");
@@ -1221,7 +1221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                 AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                 ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                                 Content                    = MixWithHTMLTemplate("remoteParties.remoteParties.shtml",
-                                                                                                                 html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                                                                                 html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
                                                                 Connection                 = ConnectionType.Close,
                                                                 Vary                       = "Accept"
                                                             }.AsImmutable);
@@ -1325,6 +1325,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                remoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -1403,7 +1404,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteXXXParties.remoteParty.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                                                                          html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
                                                          Connection                 = ConnectionType.Close,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
@@ -1522,6 +1523,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -1671,7 +1673,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              if (!JSON.ParseMandatoryJSON("token",
                                                                           "token",
-                                                                          OCPIv2_1_1.Token.TryParse,
+                                                                          OCPIv3_0.Token.TryParse,
                                                                           out Token? Token,
                                                                           out String? ErrorResponse))
                                              {
@@ -1858,6 +1860,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -1976,6 +1979,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -2196,6 +2200,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -2314,6 +2319,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -2430,9 +2436,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              #region Check RemotePartyId URI parameter
 
                                              if (!Request.ParseRemoteParty(this,
-                                                                           out RemoteParty_Id?       RemotePartyId,
-                                                                           out RemoteParty           RemoteParty,
-                                                                           out HTTPResponse.Builder  HTTPResponse))
+                                                                           out var RemotePartyId,
+                                                                           out var RemoteParty,
+                                                                           out var HTTPResponse))
                                              {
                                                  return HTTPResponse.AsImmutable;
                                              }
@@ -2463,7 +2469,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              if (!JSON.ParseMandatoryJSON("token",
                                                                           "token",
-                                                                          OCPIv2_1_1.Token.TryParse,
+                                                                          OCPIv3_0.Token.TryParse,
                                                                           out Token?  Token,
                                                                           out String? ErrorResponse))
                                              {
@@ -2592,6 +2598,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -2710,6 +2717,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -3043,6 +3051,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -3452,12 +3461,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             #endregion
 
-
         }
 
         #endregion
 
 
+        //public void Add(WWCPCPOAdapter CPOAdapter)
+        //{
+
+        //    _CPOAdapters.Add(CPOAdapter);
+
+        //}
+
+
+        //public void Add(WWCPEMPAdapter EMPAdapter)
+        //{
+
+        //    _EMPAdapters.Add(EMPAdapter);
+
+        //}
 
     }
 

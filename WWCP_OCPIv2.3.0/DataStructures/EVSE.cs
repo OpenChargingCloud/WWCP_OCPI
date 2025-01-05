@@ -93,7 +93,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The optional energy meter, e.g. for the German calibration law.
         /// </summary>
         [Optional, NonStandard]
-        public EnergyMeter?                     EnergyMeter                { get; }
+        public EnergyMeter<EVSE>?               EnergyMeter                { get; }
 
         /// <summary>
         /// The enumeration of available connectors attached to this EVSE.
@@ -197,7 +197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom EVSE energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
@@ -211,7 +211,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                       EVSE_Id?                                                      EVSEId                                       = null,
                       IEnumerable<StatusSchedule>?                                  StatusSchedule                               = null,
                       IEnumerable<Capability>?                                      Capabilities                                 = null,
-                      EnergyMeter?                                                  EnergyMeter                                  = null,
+                      EnergyMeter<EVSE>?                                            EnergyMeter                                  = null,
                       String?                                                       FloorLevel                                   = null,
                       GeoCoordinate?                                                Coordinates                                  = null,
                       String?                                                       PhysicalReference                            = null,
@@ -226,7 +226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                       CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                       CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                       CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
-                      CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
+                      CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer              = null,
                       CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
                       CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
                       CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
@@ -261,7 +261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                         CustomEVSESerializer,
                                                         CustomStatusScheduleSerializer,
                                                         CustomConnectorSerializer,
-                                                        CustomEnergyMeterSerializer,
+                                                        CustomEVSEEnergyMeterSerializer,
                                                         CustomTransparencySoftwareStatusSerializer,
                                                         CustomTransparencySoftwareSerializer,
                                                         CustomDisplayTextSerializer,
@@ -296,7 +296,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// 
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomEVSEEnergyMeterSerializer">A delegate to serialize custom EVSE energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
@@ -309,7 +309,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     EVSE_Id?                                                      EVSEId                                       = null,
                     IEnumerable<StatusSchedule>?                                  StatusSchedule                               = null,
                     IEnumerable<Capability>?                                      Capabilities                                 = null,
-                    EnergyMeter?                                                  EnergyMeter                                  = null,
+                    EnergyMeter<EVSE>?                                            EnergyMeter                                  = null,
                     String?                                                       FloorLevel                                   = null,
                     GeoCoordinate?                                                Coordinates                                  = null,
                     String?                                                       PhysicalReference                            = null,
@@ -324,7 +324,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                     CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                     CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
-                    CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
+                    CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer              = null,
                     CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
                     CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
                     CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
@@ -354,7 +354,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    CustomEVSESerializer,
                    CustomStatusScheduleSerializer,
                    CustomConnectorSerializer,
-                   CustomEnergyMeterSerializer,
+                   CustomEVSEEnergyMeterSerializer,
                    CustomTransparencySoftwareStatusSerializer,
                    CustomTransparencySoftwareSerializer,
                    CustomDisplayTextSerializer,
@@ -542,8 +542,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptionalJSON("energy_meter",
                                            "energy meter",
-                                           OCPI.EnergyMeter.TryParse,
-                                           out EnergyMeter EnergyMeter,
+                                           EnergyMeter<EVSE>.TryParse,
+                                           out EnergyMeter<EVSE>? EnergyMeter,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -696,7 +696,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomEVSEEnergyMeterSerializer">A delegate to serialize custom EVSE energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
@@ -705,7 +705,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                               CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
-                              CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
+                              CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer              = null,
                               CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
                               CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
                               CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
@@ -737,7 +737,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                : null,
 
                            EnergyMeter is not null
-                               ? new JProperty("energy_meter",          EnergyMeter. ToJSON(CustomEnergyMeterSerializer,
+                               ? new JProperty("energy_meter",          EnergyMeter. ToJSON(CustomEVSEEnergyMeterSerializer,
                                                                                             CustomTransparencySoftwareStatusSerializer,
                                                                                             CustomTransparencySoftwareSerializer))
                                : null,
@@ -790,17 +790,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             => new (
                    ParentLocation,
 
-                   UId.              Clone(),
-                   Status.           Clone(),
+                   UId.                Clone(),
+                   Status.             Clone(),
                    Connectors.         Select(connector          => connector.         Clone()).ToArray(),
 
-                   EVSEId?.          Clone(),
+                   EVSEId?.            Clone(),
                    StatusSchedule.     Select(statusSchedule     => statusSchedule.    Clone()).ToArray(),
                    Capabilities.       Select(capability         => capability.        Clone).  ToArray(),
-                   EnergyMeter?.     Clone(),
-                   FloorLevel.       CloneNullableString(),
-                   Coordinates?.     Clone(),
-                   PhysicalReference.CloneNullableString(),
+                   EnergyMeter?.       Clone(),
+                   FloorLevel.         CloneNullableString(),
+                   Coordinates?.       Clone(),
+                   PhysicalReference.  CloneNullableString(),
                    Directions.         Select(displayText        => displayText.       Clone()).ToArray(),
                    ParkingRestrictions.Select(parkingRestriction => parkingRestriction        ).ToArray(),
                    Images.             Select(image              => image.             Clone()).ToArray(),
@@ -1039,7 +1039,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomEVSEEnergyMeterSerializer">A delegate to serialize custom EVSE energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
@@ -1048,24 +1048,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                                      CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                                      CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
-                                     CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
+                                     CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer              = null,
                                      CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
                                      CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
                                      CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
                                      CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null)
         {
 
-            this.ETag = SHA256.HashData(ToJSON(EMSPId,
-                                               CustomEVSESerializer,
-                                               CustomStatusScheduleSerializer,
-                                               CustomConnectorSerializer,
-                                               CustomEnergyMeterSerializer,
-                                               CustomTransparencySoftwareStatusSerializer,
-                                               CustomTransparencySoftwareSerializer,
-                                               CustomDisplayTextSerializer,
-                                               CustomImageSerializer).ToUTF8Bytes()).ToBase64();
+            ETag = SHA256.HashData(
+                       ToJSON(
+                           EMSPId,
+                           CustomEVSESerializer,
+                           CustomStatusScheduleSerializer,
+                           CustomConnectorSerializer,
+                           CustomEVSEEnergyMeterSerializer,
+                           CustomTransparencySoftwareStatusSerializer,
+                           CustomTransparencySoftwareSerializer,
+                           CustomDisplayTextSerializer,
+                           CustomImageSerializer
+                       ).ToUTF8Bytes()
+                   ).ToBase64();
 
-            return this.ETag;
+            return ETag;
 
         }
 
@@ -1537,7 +1541,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// The optional energy meter, e.g. for the German calibration law.
             /// </summary>
             [Optional, NonStandard]
-            public EnergyMeter?                     EnergyMeter                { get; set; }
+            public EnergyMeter<EVSE>?               EnergyMeter                { get; set; }
 
             /// <summary>
             /// The optional floor level on which the EVSE is located (in garage buildings)
@@ -1626,7 +1630,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                              EVSE_Id?                          EVSEId                = null,
                              IEnumerable<StatusSchedule>?      StatusSchedule        = null,
                              IEnumerable<Capability>?          Capabilities          = null,
-                             EnergyMeter?                      EnergyMeter           = null,
+                             EnergyMeter<EVSE>?                EnergyMeter           = null,
                              String?                           FloorLevel            = null,
                              GeoCoordinate?                    Coordinates           = null,
                              String?                           PhysicalReference     = null,

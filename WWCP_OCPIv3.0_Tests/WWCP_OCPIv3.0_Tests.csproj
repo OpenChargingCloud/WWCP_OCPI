@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageReference Include="NUnit" Version="4.3.0" />
+    <PackageReference Include="NUnit" Version="4.3.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
   </ItemGroup>
 
@@ -18,8 +18,8 @@
     <ProjectReference Include="..\..\Styx\StyxTests\StyxTests.csproj" />
     <ProjectReference Include="..\..\WWCP_Core\WWCP_Core\WWCP_Core.csproj" />
     <ProjectReference Include="..\..\WWCP_Core\WWCP_Core_Tests\WWCP_Core_Tests.csproj" />
-    <ProjectReference Include="..\WWCP_OCPIv3.0\WWCP_OCPIv3.0.csproj" />
     <ProjectReference Include="..\WWCP_OCPIv3.0_Adapter\WWCP_OCPIv3.0_Adapter.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv3.0_WebAPI\WWCP_OCPIv3.0_WebAPI.csproj" />
   </ItemGroup>
 
 </Project>

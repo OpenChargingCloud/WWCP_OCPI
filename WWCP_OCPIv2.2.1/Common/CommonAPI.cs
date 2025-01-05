@@ -19,6 +19,7 @@
 
 using System.Collections.Concurrent;
 using System.Security.Authentication;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
@@ -27,14 +28,14 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.Mail;
+using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP;
 using cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP;
-using Org.BouncyCastle.Ocsp;
-using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -56,7 +57,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
     public class PartyData(Party_Idv3 Id)
     {
 
-        public Party_Idv3  Id    { get; } = Id;
+        public Party_Idv3                                   Id    { get; } = Id;
 
         public ConcurrentDictionary<Location_Id, Location>  Locations   = [];
         public TimeRangeDictionary <Tariff_Id,   Tariff>    Tariffs     = [];
@@ -2502,7 +2503,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// The CommonAPI logger.
         /// </summary>
-        public CommonAPILogger?              CommonAPILogger            { get; }
+        public CommonAPILogger?              Logger                     { get; }
 
         #endregion
 
@@ -2811,34 +2812,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region Custom JSON serializers
 
-        public CustomJObjectSerializerDelegate<VersionInformation>?           CustomVersionInformationSerializer            { get; }
-        public CustomJObjectSerializerDelegate<VersionDetail>?                CustomVersionDetailSerializer                 { get; }
-        public CustomJObjectSerializerDelegate<VersionEndpoint>?              CustomVersionEndpointSerializer               { get; }
+        public CustomJObjectSerializerDelegate<VersionInformation>?            CustomVersionInformationSerializer            { get; set; }
+        public CustomJObjectSerializerDelegate<VersionDetail>?                 CustomVersionDetailSerializer                 { get; set; }
+        public CustomJObjectSerializerDelegate<VersionEndpoint>?               CustomVersionEndpointSerializer               { get; set; }
 
 
-        public CustomJObjectSerializerDelegate<Location>?                     CustomLocationSerializer                      { get; }
-        public CustomJObjectSerializerDelegate<PublishToken>?                 CustomPublishTokenSerializer                  { get; }
-        public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?        CustomAdditionalGeoLocationSerializer         { get; }
-        public CustomJObjectSerializerDelegate<EVSE>?                         CustomEVSESerializer                          { get; }
-        public CustomJObjectSerializerDelegate<StatusSchedule>?               CustomStatusScheduleSerializer                { get; }
-        public CustomJObjectSerializerDelegate<Connector>?                    CustomConnectorSerializer                     { get; }
-        public CustomJObjectSerializerDelegate<EnergyMeter>?                  CustomEnergyMeterSerializer                   { get; }
-        public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?   CustomTransparencySoftwareStatusSerializer    { get; }
-        public CustomJObjectSerializerDelegate<TransparencySoftware>?         CustomTransparencySoftwareSerializer          { get; }
-        public CustomJObjectSerializerDelegate<DisplayText>?                  CustomDisplayTextSerializer                   { get; }
-        public CustomJObjectSerializerDelegate<BusinessDetails>?              CustomBusinessDetailsSerializer               { get; }
-        public CustomJObjectSerializerDelegate<Hours>?                        CustomHoursSerializer                         { get; }
-        public CustomJObjectSerializerDelegate<Image>?                        CustomImageSerializer                         { get; }
-        public CustomJObjectSerializerDelegate<EnergyMix>?                    CustomEnergyMixSerializer                     { get; }
-        public CustomJObjectSerializerDelegate<EnergySource>?                 CustomEnergySourceSerializer                  { get; }
-        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?          CustomEnvironmentalImpactSerializer           { get; }
+        public CustomJObjectSerializerDelegate<Location>?                      CustomLocationSerializer                      { get; set; }
+        public CustomJObjectSerializerDelegate<PublishToken>?                  CustomPublishTokenSerializer                  { get; set; }
+        public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?         CustomAdditionalGeoLocationSerializer         { get; set; }
+        public CustomJObjectSerializerDelegate<EVSE>?                          CustomEVSESerializer                          { get; set; }
+        public CustomJObjectSerializerDelegate<StatusSchedule>?                CustomStatusScheduleSerializer                { get; set; }
+        public CustomJObjectSerializerDelegate<Connector>?                     CustomConnectorSerializer                     { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMeter<Location>>?         CustomLocationEnergyMeterSerializer           { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?             CustomEVSEEnergyMeterSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?    CustomTransparencySoftwareStatusSerializer    { get; set; }
+        public CustomJObjectSerializerDelegate<TransparencySoftware>?          CustomTransparencySoftwareSerializer          { get; set; }
+        public CustomJObjectSerializerDelegate<DisplayText>?                   CustomDisplayTextSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<BusinessDetails>?               CustomBusinessDetailsSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<Hours>?                         CustomHoursSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<Image>?                         CustomImageSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMix>?                     CustomEnergyMixSerializer                     { get; set; }
+        public CustomJObjectSerializerDelegate<EnergySource>?                  CustomEnergySourceSerializer                  { get; set; }
+        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?           CustomEnvironmentalImpactSerializer           { get; set; }
 
 
-        public CustomJObjectSerializerDelegate<Tariff>?                       CustomTariffSerializer                        { get; }
-        public CustomJObjectSerializerDelegate<Price>?                        CustomPriceSerializer                         { get; }
-        public CustomJObjectSerializerDelegate<TariffElement>?                CustomTariffElementSerializer                 { get; }
-        public CustomJObjectSerializerDelegate<PriceComponent>?               CustomPriceComponentSerializer                { get; }
-        public CustomJObjectSerializerDelegate<TariffRestrictions>?           CustomTariffRestrictionsSerializer            { get; }
+        public CustomJObjectSerializerDelegate<Tariff>?                        CustomTariffSerializer                        { get; set; }
+        public CustomJObjectSerializerDelegate<Price>?                         CustomPriceSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<TariffElement>?                 CustomTariffElementSerializer                 { get; set; }
+        public CustomJObjectSerializerDelegate<PriceComponent>?                CustomPriceComponentSerializer                { get; set; }
+        public CustomJObjectSerializerDelegate<TariffRestrictions>?            CustomTariffRestrictionsSerializer            { get; set; }
 
         #endregion
 
@@ -2989,7 +2991,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
 
-            this.CommonAPILogger       = this.DisableLogging == false
+            this.Logger       = this.DisableLogging == false
                                              ? null
                                              : new CommonAPILogger(
                                                    this,
@@ -3053,6 +3055,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null,
                          Boolean                       Disable_RootServices      = false,
+
+                         //Organization_Id?              AdminOrganizationId       = null,
+                         //EMailAddress?                 APIRobotEMailAddress      = null,
+                         //String?                       APIRobotGPGPassphrase     = null,
+                         //ISMTPClient?                  SMTPClient                = null,
 
                          JObject?                      APIVersionHashes          = null,
 
@@ -3121,7 +3128,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             if (!OurCredentialRoles.SafeAny())
                 throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
 
-            this.OurCredentialRoles    = OurCredentialRoles?.Distinct() ?? Array.Empty<CredentialsRole>();
+            this.OurCredentialRoles    = OurCredentialRoles?.Distinct() ?? [];
             this.DefaultCountryCode    = DefaultCountryCode;
             this.DefaultPartyId        = DefaultPartyId;
 
@@ -3132,7 +3139,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             HTTPServer.ResponseLog    += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
             HTTPServer.ErrorLog       += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
 
-            this.CommonAPILogger       = this.DisableLogging == false
+            this.Logger                = this.DisableLogging == false
                                              ? new CommonAPILogger(
                                                    this,
                                                    LoggingContext,
@@ -3212,57 +3219,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #region GET         ~/
 
-            //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-            //                                   URLPrefix + "/", "cloud.charging.open.protocols.OCPIv2_2_1.HTTPAPI.CommonAPI.HTTPRoot",
-            //                                   Assembly.GetCallingAssembly());
+            HTTPServer.AddMethodCallback(
 
-            //this.AddMethodCallback(HTTPHostname.Any,
-            //                             HTTPMethod.GET,
-            //                             new HTTPPath[] {
-            //                                 URLPrefix + "/index.html",
-            //                                 URLPrefix + "/"
-            //                             },
-            //                             HTTPContentType.Text.HTML_UTF8,
-            //                             HTTPDelegate: async Request => {
+                this,
+                HTTPHostname.Any,
+                HTTPMethod.GET,
+                URLPathPrefix,
+                HTTPContentType.Text.PLAIN,
+                HTTPDelegate: request =>
 
-            //                                 var _MemoryStream = new MemoryStream();
-            //                                 typeof(CommonAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2_1.HTTPAPI.CommonAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-            //                                 typeof(CommonAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2_1.HTTPAPI.CommonAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+                    Task.FromResult(
+                        new HTTPResponse.Builder(request) {
+                            HTTPStatusCode             = HTTPStatusCode.OK,
+                            Server                     = DefaultHTTPServerName,
+                            Date                       = Timestamp.Now,
+                            AccessControlAllowOrigin   = "*",
+                            AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                            AccessControlAllowHeaders  = [ "Authorization" ],
+                            ContentType                = HTTPContentType.Text.PLAIN,
+                            Content                    = "This is an Open Charge Point Interface HTTP service!\r\nPlease check ~/versions!".ToUTF8Bytes(),
+                            Connection                 = ConnectionType.Close
+                        }.AsImmutable)
 
-            //                                 return new HTTPResponse.Builder(Request) {
-            //                                     HTTPStatusCode  = HTTPStatusCode.OK,
-            //                                     ContentType     = HTTPContentType.Text.HTML_UTF8,
-            //                                     Content         = _MemoryStream.ToArray(),
-            //                                     Connection      = ConnectionType.Close
-            //                                 };
-
-            //                             });
-
-            #region Text
-
-            HTTPServer.AddMethodCallback(this,
-                                         HTTPHostname.Any,
-                                         HTTPMethod.GET,
-                                         URLPathPrefix,
-                                         HTTPContentType.Text.PLAIN,
-                                         HTTPDelegate: Request => {
-
-                                             return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request) {
-                                                     HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     Server                     = DefaultHTTPServerName,
-                                                     Date                       = Timestamp.Now,
-                                                     AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                     AccessControlAllowHeaders  = [ "Authorization" ],
-                                                     ContentType                = HTTPContentType.Text.PLAIN,
-                                                     Content                    = "This is an Open Charge Point Interface HTTP service!\r\nPlease check ~/versions!".ToUTF8Bytes(),
-                                                     Connection                 = ConnectionType.Close
-                                                 }.AsImmutable);
-
-                                         });
-
-            #endregion
+            );
 
             #endregion
 
@@ -6478,7 +6457,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                   CustomEVSESerializer,
                                   CustomStatusScheduleSerializer,
                                   CustomConnectorSerializer,
-                                  CustomEnergyMeterSerializer,
+                                  CustomLocationEnergyMeterSerializer,
+                                  CustomEVSEEnergyMeterSerializer,
                                   CustomTransparencySoftwareStatusSerializer,
                                   CustomTransparencySoftwareSerializer,
                                   CustomDisplayTextSerializer,
@@ -6592,7 +6572,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                   CustomEVSESerializer,
                                   CustomStatusScheduleSerializer,
                                   CustomConnectorSerializer,
-                                  CustomEnergyMeterSerializer,
+                                  CustomLocationEnergyMeterSerializer,
+                                  CustomEVSEEnergyMeterSerializer,
                                   CustomTransparencySoftwareStatusSerializer,
                                   CustomTransparencySoftwareSerializer,
                                   CustomDisplayTextSerializer,
