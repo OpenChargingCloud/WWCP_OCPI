@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -154,7 +156,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="Text">A text representation of a command identification.</param>
         /// <param name="CommandId">The parsed command identification.</param>
-        public static Boolean TryParse(String Text, out Command_Id CommandId)
+        public static Boolean TryParse(String Text, [NotNullWhen(true)] out Command_Id CommandId)
         {
 
             Text = Text.Trim();

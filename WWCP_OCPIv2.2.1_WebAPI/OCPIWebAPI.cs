@@ -22,7 +22,6 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Mail;
-using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.WWCP;
@@ -327,7 +326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
         //public static readonly      HTTPContentType     OCPIPlusHTMLContentType   = new ("application", "vnd.OCPIPlus+html", "utf-8", null, null);
 
 
-        public static readonly      HTTPEventSource_Id  DebugLogId                = HTTPEventSource_Id.Parse("OCPIDebugLog");
+        public static readonly      HTTPEventSource_Id  DebugLogId                = HTTPEventSource_Id.Parse($"OCPI{Version.String}_debugLog");
 
         #endregion
 
@@ -451,6 +450,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
         #region Constructor(s)
 
+        static OCPIWebAPI()
+        {
+            // Using static variables within normal constructors seems to
+            // have a problem setting them up to their expected values!
+        }
+
         /// <summary>
         /// Attach the OCPI WebAPI to the given HTTP server.
         /// </summary>
@@ -556,7 +561,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
             this.DebugLog              = this.AddJSONEventSource(
                                              EventIdentification:      DebugLogId,
-                                             URLTemplate:              this.URLPathPrefix + "/debugLog",
+                                             URLTemplate:              this.URLPathPrefix + "debugLog",
                                              MaxNumberOfCachedEvents:  10000,
                                              RetryIntervall:           TimeSpan.FromSeconds(5),
                                              EnableLogging:            true,

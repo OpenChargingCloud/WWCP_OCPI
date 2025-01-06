@@ -27,6 +27,7 @@ using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv3_0.HTTP;
+using System;
 
 #endregion
 
@@ -321,7 +322,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
         public static readonly HTTPContentType                      OCPIPlusHTMLContentType     = new ("application", "vnd.OCPIPlus+html", "utf-8", null, null);
 
 
-        public static readonly HTTPEventSource_Id                   DebugLogId                  = HTTPEventSource_Id.Parse("OCPIDebugLog");
+        public static readonly HTTPEventSource_Id                   DebugLogId                  = HTTPEventSource_Id.Parse($"OCPI{Version.String}_debugLog");
 
         #endregion
 
@@ -499,7 +500,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
             var LogfilePrefix          = "HTTPSSEs" + Path.DirectorySeparatorChar;
 
             this.DebugLog              = this.AddJSONEventSource(EventIdentification:      DebugLogId,
-                                                                 URLTemplate:              this.URLPathPrefix + "/debugLog",
+                                                                 URLTemplate:              this.URLPathPrefix + "debugLog",
                                                                  MaxNumberOfCachedEvents:  10000,
                                                                  RetryIntervall:           TimeSpan.FromSeconds(5),
                                                                  EnableLogging:            true,

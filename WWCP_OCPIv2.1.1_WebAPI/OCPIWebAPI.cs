@@ -22,7 +22,7 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Mail;
-using org.GraphDefined.Vanaheimr.Hermod.SMTP;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPI;
@@ -296,33 +296,38 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         /// <summary>
         /// The default HTTP URI prefix.
         /// </summary>
-        public new static readonly  HTTPPath                        DefaultURLPathPrefix       = HTTPPath.Parse("webapi");
+        public new static readonly  HTTPPath            DefaultURLPathPrefix      = HTTPPath.Parse("webapi");
+
+        /// <summary>
+        /// The default HTTP service name.
+        /// </summary>
+        public new const            String              DefaultHTTPServiceName    = $"Open Charging Cloud OCPI {Version.String} WebAPI";
 
         /// <summary>
         /// The default HTTP realm, if HTTP Basic Authentication is used.
         /// </summary>
-        public const                String                          DefaultHTTPRealm           = "Open Charging Cloud OCPIPlus WebAPI";
+        public     const            String              DefaultHTTPRealm          = $"Open Charging Cloud OCPI {Version.String} WebAPI";
 
         /// <summary>
         /// The HTTP root for embedded ressources.
         /// </summary>
-        public new const            String                          HTTPRoot                   = "cloud.charging.open.protocols.OCPIv2_1_1.WebAPI.HTTPRoot.";
+        public new const            String              HTTPRoot                   = "cloud.charging.open.protocols.OCPIv2_1_1.WebAPI.HTTPRoot.";
 
 
         //ToDo: http://www.iana.org/form/media-types
 
-        /// <summary>
-        /// The HTTP content type for serving OCPI+ XML data.
-        /// </summary>
-        public static readonly HTTPContentType                      OCPIPlusJSONContentType    = new ("application", "vnd.OCPIPlus+json", "utf-8", null, null);
+        ///// <summary>
+        ///// The HTTP content type for serving OCPI+ XML data.
+        ///// </summary>
+        //public static readonly HTTPContentType                      OCPIPlusJSONContentType    = new ("application", "vnd.OCPIPlus+json", "utf-8", null, null);
 
-        /// <summary>
-        /// The HTTP content type for serving OCPI+ HTML data.
-        /// </summary>
-        public static readonly HTTPContentType                      OCPIPlusHTMLContentType    = new ("application", "vnd.OCPIPlus+html", "utf-8", null, null);
+        ///// <summary>
+        ///// The HTTP content type for serving OCPI+ HTML data.
+        ///// </summary>
+        //public static readonly HTTPContentType                      OCPIPlusHTMLContentType    = new ("application", "vnd.OCPIPlus+html", "utf-8", null, null);
 
 
-        public static readonly HTTPEventSource_Id                   DebugLogId                 = HTTPEventSource_Id.Parse("OCPIDebugLog");
+        public static readonly HTTPEventSource_Id  DebugLogId                 = HTTPEventSource_Id.Parse($"OCPI{Version.String}_debugLog");
 
         #endregion
 
@@ -367,6 +372,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         /// </summary>
         public HTTPPath?                                    APIURLPathPrefix        { get; }
 
+
+        public String                                       VersionPath             { get; }
+
         /// <summary>
         /// The HTTP realm, if HTTP Basic Authentication is used.
         /// </summary>
@@ -386,8 +394,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         public CommonAPI                                    CommonAPI               { get; }
 
-        public CommonAPILogger                              CommonAPILogger         { get; set; }
-
 
         public CPOAPI?                                      CPOAPI                  { get; set; }
 
@@ -401,7 +407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         /// <summary>
         /// The default request timeout for new CPO/EMSP clients.
         /// </summary>
-        public TimeSpan?                                    RequestTimeout          { get; set; }
+        //public TimeSpan?                                    RequestTimeout          { get; set; }
 
         #endregion
 
@@ -444,47 +450,95 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         #region Constructor(s)
 
+        static OCPIWebAPI()
+        {
+            // Using static variables within normal constructors seems to
+            // have a problem setting them up to their expected values!
+        }
+
         /// <summary>
-        /// Attach the OCPI+ WebAPI to the given HTTP server.
+        /// Attach the OCPI WebAPI to the given HTTP server.
         /// </summary>
         /// <param name="HTTPServer">A HTTP server.</param>
         /// <param name="WebAPIURLPathPrefix">An optional prefix for the HTTP URIs.</param>
         /// <param name="HTTPRealm">The HTTP realm, if HTTP Basic Authentication is used.</param>
         /// <param name="HTTPLogins">An enumeration of logins for an optional HTTP Basic Authentication.</param>
-        public OCPIWebAPI(HTTPServer                                  HTTPServer,
+        public OCPIWebAPI(CommonAPI                                   CommonAPI,
 
-                          CommonAPI                                   CommonAPI,
+                          HTTPServer                                  HTTPServer,
+                          HTTPHostname?                               HTTPHostname              = null,
+                          String?                                     ExternalDNSName           = "",
+                          String?                                     HTTPServiceName           = DefaultHTTPServiceName,
+                          //HTTPPath?                                   BasePath                  = null,
 
-                          HTTPPath?                                   OverlayURLPathPrefix             = null,
-                          HTTPPath?                                   APIURLPathPrefix                 = null,
-                          HTTPPath?                                   WebAPIURLPathPrefix              = null,
-                          HTTPPath?                                   BasePath                         = null,
-                          String                                      HTTPRealm                        = DefaultHTTPRealm,
-                          IEnumerable<KeyValuePair<String, String>>?  HTTPLogins                       = null,
-                          String?                                     HTMLTemplate                     = null,
+                          HTTPPath?                                   OverlayURLPathPrefix      = null,
+                          HTTPPath?                                   APIURLPathPrefix          = null,
+                          HTTPPath?                                   WebAPIURLPathPrefix       = null,
+                          HTTPPath?                                   BasePath                  = null,
+                          String                                      VersionPath               = "v2.1/",
 
-                          Organization_Id?                            AdminOrganizationId              = null,
-                          EMailAddress?                               APIRobotEMailAddress             = null,
-                          String?                                     APIRobotGPGPassphrase            = null,
-                          ISMTPClient?                                SMTPClient                       = null,
+                          String                                      HTTPRealm                 = DefaultHTTPRealm,
+                          IEnumerable<KeyValuePair<String, String>>?  HTTPLogins                = null,
 
-                          Boolean                                     SkipURLTemplates                 = true,
+                          //HTTPPath?                                   URLPathPrefix             = null,
+                          String?                                     HTMLTemplate              = null,
+                          JObject?                                    APIVersionHashes          = null,
 
-                          TimeSpan?                                   RequestTimeout                   = null)
+                          Boolean?                                    DisableMaintenanceTasks   = false,
+                          TimeSpan?                                   MaintenanceInitialDelay   = null,
+                          TimeSpan?                                   MaintenanceEvery          = null,
+
+                          Boolean?                                    DisableWardenTasks        = false,
+                          TimeSpan?                                   WardenInitialDelay        = null,
+                          TimeSpan?                                   WardenCheckEvery          = null,
+
+                          //Boolean                                     SkipURLTemplates          = true,
+
+                          Boolean?                                    IsDevelopment             = false,
+                          IEnumerable<String>?                        DevelopmentServers        = null,
+                          Boolean?                                    DisableLogging            = false,
+                          String?                                     LoggingPath               = null,
+                          String?                                     LogfileName               = null,
+                          LogfileCreatorDelegate?                     LogfileCreator            = null
+
+                          //TimeSpan?                                   RequestTimeout            = null
+                         )
 
             : base(HTTPServer,
-                   null,
-                   null, // ExternalDNSName,
-                   null, // HTTPServiceName,
+                   HTTPHostname,
+                   ExternalDNSName,
+                   HTTPServiceName,
                    BasePath,
-                   WebAPIURLPathPrefix ?? DefaultURLPathPrefix,
+
+                   WebAPIURLPathPrefix ?? DefaultURLPathPrefix, //URLPathPrefix,
+                   HTMLTemplate,
+                   APIVersionHashes,
+
+                   DisableMaintenanceTasks,
+                   MaintenanceInitialDelay,
+                   MaintenanceEvery,
+
+                   DisableWardenTasks,
+                   WardenInitialDelay,
+                   WardenCheckEvery,
+
+                   IsDevelopment,
+                   DevelopmentServers,
+                   DisableLogging,
+                   LoggingPath,
+                   LogfileName,
+                   LogfileCreator,
+
                    AutoStart: false)
 
         {
 
             this.CommonAPI             = CommonAPI;
-            this.APIURLPathPrefix      = APIURLPathPrefix;
+
             this.OverlayURLPathPrefix  = OverlayURLPathPrefix;
+            this.APIURLPathPrefix      = APIURLPathPrefix;
+            this.VersionPath           = VersionPath;
+
             this.HTTPRealm             = HTTPRealm.IsNotNullOrEmpty() ? HTTPRealm : DefaultHTTPRealm;
             this.HTTPLogins            = HTTPLogins ?? [];
 
@@ -499,7 +553,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             var LogfilePrefix          = "HTTPSSEs" + Path.DirectorySeparatorChar;
 
             this.DebugLog              = this.AddJSONEventSource(EventIdentification:      DebugLogId,
-                                                                 URLTemplate:              this.URLPathPrefix + "/debugLog",
+                                                                 URLTemplate:              this.URLPathPrefix + "debugLog",
                                                                  MaxNumberOfCachedEvents:  10000,
                                                                  RetryIntervall:           TimeSpan.FromSeconds(5),
                                                                  EnableLogging:            true,
@@ -507,8 +561,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             RegisterURITemplates();
 
-            //this.HTMLTemplate          = HTMLTemplate ?? GetResourceString("template.html");
-            this.RequestTimeout        = RequestTimeout;
+            //this.RequestTimeout        = RequestTimeout;
 
         }
 

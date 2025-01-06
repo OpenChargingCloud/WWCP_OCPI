@@ -564,9 +564,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPRealm:                           "GraphDefined OCPI CPO WebAPI",
                                        HTTPLogins:                          [
                                                                                 new KeyValuePair<String, String>("a", "b")
-                                                                            ],
-                                       HTMLTemplate:                        null,
-                                       RequestTimeout:                      null
+                                                                            ]
                                    );
 
             emsp1WebAPI          = new OCPIWebAPI(
@@ -579,9 +577,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPRealm:                           "GraphDefined OCPI EMSP #1 WebAPI",
                                        HTTPLogins:                          [
                                                                                 new KeyValuePair<String, String>("c", "d")
-                                                                            ],
-                                       HTMLTemplate:                        null,
-                                       RequestTimeout:                      null
+                                                                            ]
                                    );
 
             emsp2WebAPI          = new OCPIWebAPI(
@@ -594,9 +590,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPRealm:                           "GraphDefined OCPI EMSP #2 WebAPI",
                                        HTTPLogins:                          [
                                                                                 new KeyValuePair<String, String>("e", "f")
-                                                                            ],
-                                       HTMLTemplate:                        null,
-                                       RequestTimeout:                      null
+                                                                            ]
                                    );
 
             ClassicAssert.IsNotNull(cpoWebAPI);
