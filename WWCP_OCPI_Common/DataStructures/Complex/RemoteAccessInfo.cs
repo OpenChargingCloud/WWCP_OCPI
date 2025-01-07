@@ -404,14 +404,14 @@ namespace cloud.charging.open.protocols.OCPI
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this remote access information.
         /// </summary>
         public RemoteAccessInfo Clone()
 
             => new (
                    AccessToken.Clone(),
                    VersionsURL.Clone(),
-                   VersionIds.Select(versionId => versionId.Clone).ToArray(),
+                   VersionIds.Select(versionId => versionId.Clone()).ToArray(),
                    SelectedVersionId,
                    Status,
                    NotBefore,

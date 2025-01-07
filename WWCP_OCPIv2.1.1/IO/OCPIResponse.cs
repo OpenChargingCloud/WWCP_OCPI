@@ -450,7 +450,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                   ? new JProperty("data",                    Data)
                                                                   : null,
 
-                                                              new JProperty("status_code",                   StatusCode ?? 2000),
+                                                                    new JProperty("status_code",             StatusCode ?? 2000),
 
                                                               StatusMessage.IsNotNullOrEmpty()
                                                                   ? new JProperty("status_message",          StatusMessage)

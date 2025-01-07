@@ -236,12 +236,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this version endpoint.
         /// </summary>
         public VersionEndpoint Clone()
 
             => new (
-                   Identifier.Clone,
+                   Identifier.Clone(),
                    URL.       Clone()
                );
 

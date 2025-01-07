@@ -964,20 +964,23 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         public static EnergyMeter<EVSE> ToOCPI(this WWCP.EnergyMeter EnergyMeter)
 
-            => new (EnergyMeter_Id.Parse(EnergyMeter.Id.ToString()),
-                    EnergyMeter.Model,
-                    EnergyMeter.ModelURL,
-                    EnergyMeter.HardwareVersion,
-                    EnergyMeter.FirmwareVersion,
-                    EnergyMeter.Manufacturer,
-                    EnergyMeter.ManufacturerURL,
-                    EnergyMeter.PublicKeys.               Select(publicKey                  => PublicKey.Parse(publicKey. ToString())),
-                    EnergyMeter.PublicKeyCertificateChain.HasValue ? CertificateChain.Parse(EnergyMeter.PublicKeyCertificateChain.Value.ToString()) : null,
-                    EnergyMeter.TransparencySoftwares.    Select(transparencySoftwareStatus => transparencySoftwareStatus.ToOCPI()),
-                    EnergyMeter.Description.ToOCPI(),
-                    EnergyMeter.CustomData,
-                    EnergyMeter.InternalData,
-                    EnergyMeter.LastChangeDate);
+            => new (
+                   EnergyMeter_Id.Parse(EnergyMeter.Id.ToString()),
+                   EnergyMeter.Model,
+                   EnergyMeter.ModelURL,
+                   EnergyMeter.HardwareVersion,
+                   EnergyMeter.FirmwareVersion,
+                   EnergyMeter.Manufacturer,
+                   EnergyMeter.ManufacturerURL,
+                   EnergyMeter.PublicKeys.               Select(publicKey                  => PublicKey.Parse(publicKey. ToString())),
+                   EnergyMeter.PublicKeyCertificateChain.HasValue ? CertificateChain.Parse(EnergyMeter.PublicKeyCertificateChain.Value.ToString()) : null,
+                   EnergyMeter.TransparencySoftwares.    Select(transparencySoftwareStatus => transparencySoftwareStatus.ToOCPI()),
+                   EnergyMeter.Description.ToOCPI(),
+                   EnergyMeter.Created,
+                   EnergyMeter.LastChangeDate,
+                   EnergyMeter.CustomData,
+                   EnergyMeter.InternalData
+               );
 
         #endregion
 

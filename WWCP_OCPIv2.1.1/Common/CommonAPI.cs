@@ -2044,9 +2044,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             AddVersionInformation(
                 new VersionInformation(
                     Version.Id,
-                    URL.Parse(
-                        (OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                        (ExternalDNSName ?? "localhost" + (URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}")).Replace("//", "/")
+                    URL.Concat(
+                        OurVersionsURL.Protocol.AsString(),
+                        ExternalDNSName ?? ("localhost:" + HTTPServer.IPPorts.First()),
+                        URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
                 )
             ).GetAwaiter().GetResult();
@@ -2215,9 +2216,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             AddVersionInformation(
                 new VersionInformation(
                     Version.Id,
-                    URL.Parse(
-                        (OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                        (ExternalDNSName ?? "localhost" + (URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}")).Replace("//", "/")
+                    URL.Concat(
+                        OurVersionsURL.Protocol.AsString(),
+                        ExternalDNSName ?? ("localhost:" + HTTPServer.IPPorts.First()),
+                        URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
                 )
             ).GetAwaiter().GetResult();
@@ -3342,7 +3344,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             StatusCode           = 1000,
                             StatusMessage        = "Hello world!",
                             Data                 = new JArray(
-                                                       versionInformations.Values.Select(versionInformation => versionInformation.ToJSON(CustomVersionInformationSerializer))
+                                                       VersionInformations.Select(versionInformation => versionInformation.ToJSON(CustomVersionInformationSerializer))
                                                    ),
                             HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                 HTTPStatusCode             = HTTPStatusCode.OK,
@@ -6271,92 +6273,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
 
-        #region OCPI Version Informations
 
-        private readonly ConcurrentDictionary<Version_Id, VersionInformation>  versionInformations   = [];
-
-        #region AddVersionInformation            (VersionInformation, ...)
-
-        public async Task<AddResult<VersionInformation>>
-
-            AddVersionInformation(VersionInformation  VersionInformation,
-                                  Boolean             SkipNotifications   = false,
-                                  EventTracking_Id?   EventTrackingId     = null,
-                                  User_Id?            CurrentUserId       = null)
-
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            if (versionInformations.TryAdd(VersionInformation.Id, VersionInformation))
-            {
-
-                //await LogAsset(
-                //          addLocation,
-                //          Location.ToJSON(true,
-                //                          true,
-                //                          true,
-                //                          CustomLocationSerializer,
-                //                          CustomPublishTokenSerializer,
-                //                          CustomAddressSerializer,
-                //                          CustomAdditionalGeoLocationSerializer,
-                //                          CustomChargingStationSerializer,
-                //                          CustomEVSESerializer,
-                //                          CustomStatusScheduleSerializer,
-                //                          CustomConnectorSerializer,
-                //                          CustomEnergyMeterSerializer,
-                //                          CustomTransparencySoftwareStatusSerializer,
-                //                          CustomTransparencySoftwareSerializer,
-                //                          CustomDisplayTextSerializer,
-                //                          CustomBusinessDetailsSerializer,
-                //                          CustomHoursSerializer,
-                //                          CustomImageSerializer,
-                //                          CustomEnergyMixSerializer,
-                //                          CustomEnergySourceSerializer,
-                //                          CustomEnvironmentalImpactSerializer,
-                //                          CustomLocationMaxPowerSerializer),
-                //          EventTrackingId,
-                //          CurrentUserId
-                //      );
-
-                //if (!SkipNotifications)
-                //{
-
-                //    var OnLocationAddedLocal = OnLocationAdded;
-                //    if (OnLocationAddedLocal is not null)
-                //    {
-                //        try
-                //        {
-                //            await OnLocationAddedLocal(Location);
-                //        }
-                //        catch (Exception e)
-                //        {
-                //            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
-                //                        Environment.NewLine, e.Message,
-                //                        Environment.NewLine, e.StackTrace ?? "");
-                //        }
-                //    }
-
-                //}
-
-                return AddResult<VersionInformation>.Success(
-                           EventTrackingId,
-                           VersionInformation
-                       );
-
-            }
-
-            return AddResult<VersionInformation>.Failed(
-                       EventTrackingId,
-                       VersionInformation,
-                       "The given version information already exists!"
-                   );
-
-        }
-
-        #endregion
-
-        #endregion
 
 
         #region Locations

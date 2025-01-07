@@ -165,15 +165,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this environmental impact category.
         /// </summary>
-        public EnvironmentalImpactCategory Clone
+        public EnvironmentalImpactCategory Clone()
 
             => new (
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion

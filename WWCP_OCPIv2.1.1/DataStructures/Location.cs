@@ -1238,40 +1238,42 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this location.
         /// </summary>
         public Location Clone()
 
             => new (
-                   CommonAPI,
-                   CountryCode.  Clone(),
-                   PartyId.      Clone(),
-                   Id.           Clone(),
-                   LocationType. Clone(),
-                   new String(Address.   ToCharArray()),
-                   new String(City.      ToCharArray()),
-                   new String(PostalCode.ToCharArray()),
-                   Country.      Clone(),
-                   Coordinates.  Clone(),
 
-                   Name     is not null ? new String(Name.    ToCharArray()) : null,
-                   RelatedLocations.Select(relatedLocation => relatedLocation.Clone()).ToArray(),
-                   EVSEs.           Select(evse            => evse.           Clone()).ToArray(),
-                   Directions.      Select(displayText     => displayText.    Clone()).ToArray(),
-                   Operator?.    Clone(),
-                   SubOperator?. Clone(),
-                   Owner?.       Clone(),
-                   Facilities.      Select(facility        => facility.       Clone  ).ToArray(),
-                   Timezone is not null ? new String(Timezone.ToCharArray()) : null,
-                   OpeningTimes?.Clone(),
+                   CommonAPI,
+                   CountryCode.     Clone(),
+                   PartyId.         Clone(),
+                   Id.              Clone(),
+                   LocationType.    Clone(),
+                   Address.         CloneString(),
+                   City.            CloneString(),
+                   PostalCode.      CloneString(),
+                   Country.         Clone(),
+                   Coordinates.     Clone(),
+
+                   Name?.           CloneString(),
+                   RelatedLocations.Select(relatedLocation => relatedLocation.Clone()),
+                   EVSEs.           Select(evse            => evse.           Clone()),
+                   Directions.      Select(displayText     => displayText.    Clone()),
+                   Operator?.       Clone(),
+                   SubOperator?.    Clone(),
+                   Owner?.          Clone(),
+                   Facilities.      Select(facility        => facility.       Clone()),
+                   Timezone?.       CloneString(),
+                   OpeningTimes?.   Clone(),
                    ChargingWhenClosed,
-                   Images.          Select(image           => image.          Clone()).ToArray(),
-                   EnergyMix?.   Clone(),
+                   Images.          Select(image           => image.          Clone()),
+                   EnergyMix?.      Clone(),
 
                    Publish,
 
                    Created,
                    LastUpdated
+
                );
 
         #endregion

@@ -3001,9 +3001,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             AddVersionInformation(
                 new VersionInformation(
                     Version.Id,
-                    URL.Parse(
-                        (OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                        (ExternalDNSName ?? "localhost" + (URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}")).Replace("//", "/")
+                    URL.Concat(
+                        OurVersionsURL.Protocol.AsString(),
+                        ExternalDNSName ?? ("localhost:" + HTTPServer.IPPorts.First()),
+                        URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
                 )
             ).GetAwaiter().GetResult();
@@ -3145,9 +3146,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             AddVersionInformation(
                 new VersionInformation(
                     Version.Id,
-                    URL.Parse(
-                        (OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                        (ExternalDNSName ?? "localhost" + (URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}")).Replace("//", "/")
+                    URL.Concat(
+                        OurVersionsURL.Protocol.AsString(),
+                        ExternalDNSName ?? ("localhost:" + HTTPServer.IPPorts.First()),
+                        URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
                 )
             ).GetAwaiter().GetResult();

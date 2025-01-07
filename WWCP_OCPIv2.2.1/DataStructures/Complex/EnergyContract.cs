@@ -245,12 +245,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this energy delivery contract.
         /// </summary>
         public EnergyContract Clone()
 
-            => new (new String(SupplierName.ToCharArray()),
-                    ContractId.Clone);
+            => new (
+                   SupplierName.CloneString(),
+                   ContractId.  Clone()
+               );
 
         #endregion
 

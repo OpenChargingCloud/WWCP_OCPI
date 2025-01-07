@@ -327,7 +327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this signed data.
         /// </summary>
         public SignedData Clone()
 
@@ -335,7 +335,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    EncodingMethod.Clone,
                    SignedValues.Select(signedValue => signedValue.Clone()).ToArray(),
                    EncodingMethodVersion,
-                   PublicKey?.    Clone,
+                   PublicKey?.    Clone(),
                    URL?.          Clone()
                );
 

@@ -18,7 +18,9 @@
 #region Usings
 
 using System.Text;
+using System.Collections.Concurrent;
 using System.Security.Authentication;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
@@ -36,6 +38,7 @@ using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Asn1.Cms;
 using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.OpenSsl;
 
 using BCx509 = Org.BouncyCastle.X509;
@@ -46,10 +49,6 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
-using System.Xml.Linq;
-using System.Diagnostics.CodeAnalysis;
-using System.Net.NetworkInformation;
-using Org.BouncyCastle.Asn1.Pkcs;
 
 #endregion
 
@@ -750,6 +749,65 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
+        #region Events
+
+        #region (protected internal) GetVersionsRequest       (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET versions request was received.
+        /// </summary>
+        public HTTPRequestLogEvent OnGetVersionsRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET versions request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">A HTTP request.</param>
+        protected internal Task GetVersionsRequest(DateTime     Timestamp,
+                                                   HTTPAPI      API,
+                                                   HTTPRequest  Request)
+
+            => OnGetVersionsRequest.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request);
+
+        #endregion
+
+        #region (protected internal) GetVersionsResponse      (Response)
+
+        /// <summary>
+        /// An event sent whenever a GET versions response was sent.
+        /// </summary>
+        public HTTPResponseLogEvent OnGetVersionsResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET versions response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="Response">A HTTP response.</param>
+        protected internal Task GetVersionsResponse(DateTime      Timestamp,
+                                                    HTTPAPI       API,
+                                                    HTTPRequest   Request,
+                                                    HTTPResponse  Response)
+
+            => OnGetVersionsResponse.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request,
+                                             Response);
+
+        #endregion
+
+        #endregion
+
+        #region Custom JSON serializers
+
+        public CustomJObjectSerializerDelegate<VersionInformation>?           CustomVersionInformationSerializer            { get; set; }
+
+        #endregion
+
         #region Constructor(s)
 
         #region CommonAPI(HTTPServerName, ...)
@@ -928,6 +986,8 @@ namespace cloud.charging.open.protocols.OCPI
 
             this.ClientConfigurations      = new ClientConfigurator();
 
+            RegisterURLTemplates();
+
         }
 
         #endregion
@@ -1067,9 +1127,280 @@ namespace cloud.charging.open.protocols.OCPI
 
             this.ClientConfigurations      = new ClientConfigurator();
 
+            RegisterURLTemplates();
+
         }
 
         #endregion
+
+        #endregion
+
+
+        #region (private) RegisterURLTemplates()
+
+        private void RegisterURLTemplates()
+        {
+
+            return;
+
+            #region OPTIONS     ~/
+
+            HTTPServer.AddMethodCallback(
+
+                this,
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix,
+                HTTPDelegate: request =>
+
+                    Task.FromResult(
+                        new HTTPResponse.Builder(request) {
+                            HTTPStatusCode             = HTTPStatusCode.OK,
+                            Server                     = HTTPServiceName,
+                            Date                       = Timestamp.Now,
+                            AccessControlAllowOrigin   = "*",
+                            AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                            Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                            AccessControlAllowHeaders  = [ "Authorization" ],
+                            Connection                 = ConnectionType.Close
+                        }.AsImmutable)
+
+            );
+
+            #endregion
+
+            #region GET         ~/
+
+            HTTPServer.AddMethodCallback(
+
+                this,
+                HTTPHostname.Any,
+                HTTPMethod.GET,
+                URLPathPrefix,
+                HTTPContentType.Text.PLAIN,
+                HTTPDelegate: request =>
+
+                    Task.FromResult(
+                        new HTTPResponse.Builder(request) {
+                            HTTPStatusCode             = HTTPStatusCode.OK,
+                            Server                     = DefaultHTTPServerName,
+                            Date                       = Timestamp.Now,
+                            AccessControlAllowOrigin   = "*",
+                            AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                            AccessControlAllowHeaders  = [ "Authorization" ],
+                            ContentType                = HTTPContentType.Text.PLAIN,
+                            Content                    = "This is an Open Charge Point Interface v2.x HTTP service!\r\nPlease check ~/versions!".ToUTF8Bytes(),
+                            Connection                 = ConnectionType.Close
+                        }.AsImmutable)
+
+            );
+
+            #endregion
+
+
+            #region OPTIONS     ~/versions
+
+            // ----------------------------------------------------
+            // curl -v -X OPTIONS http://127.0.0.1:2502/versions
+            // ----------------------------------------------------
+            HTTPServer.AddMethodCallback(
+
+                this,
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "versions",
+                HTTPDelegate: request =>
+
+                    Task.FromResult(
+                        new HTTPResponse.Builder(request) {
+                            HTTPStatusCode             = HTTPStatusCode.OK,
+                            Server                     = HTTPServiceName,
+                            Date                       = Timestamp.Now,
+                            AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                            Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                            AccessControlAllowHeaders  = [ "Authorization" ],
+                            Vary                       = "Accept"
+                        }.AsImmutable)
+
+            );
+
+            #endregion
+
+            #region GET         ~/versions
+
+            // ----------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions
+            // ----------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(
+
+                this,
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "versions",
+                HTTPContentType.Application.JSON_UTF8,
+                HTTPRequestLogger:   GetVersionsRequest,
+                HTTPResponseLogger:  GetVersionsResponse,
+                HTTPDelegate:        request => {
+
+                    var requestId        = request.TryParseHeaderField<Request_Id>    ("X-Request-ID",           Request_Id.    TryParse) ?? Request_Id.    NewRandom(IsLocal: true);
+                    var correlationId    = request.TryParseHeaderField<Correlation_Id>("X-Correlation-ID",       Correlation_Id.TryParse) ?? Correlation_Id.NewRandom(IsLocal: true);
+                    var toCountryCode    = request.TryParseHeaderField<CountryCode>   ("OCPI-to-country-code",   CountryCode.   TryParse);
+                    var toPartyId        = request.TryParseHeaderField<Party_Id>      ("OCPI-to-party-id",       Party_Id.      TryParse);
+                    var fromCountryCode  = request.TryParseHeaderField<CountryCode>   ("OCPI-from-country-code", CountryCode.   TryParse);
+                    var fromPartyId      = request.TryParseHeaderField<Party_Id>      ("OCPI-from-party-id",     Party_Id.      TryParse);
+
+                    AccessToken? accessToken1 = null;
+
+                    if (request.Authorization is HTTPTokenAuthentication TokenAuth &&
+                        TokenAuth.Token.TryParseBASE64_UTF8(out var decodedToken, out var errorResponse) &&
+                        AccessToken.TryParse(decodedToken, out var accessToken))
+                    {
+                        accessToken1 = accessToken;
+                    }
+
+                    else if (request.Authorization is HTTPBasicAuthentication BasicAuth &&
+                        AccessToken.TryParse(BasicAuth.Username, out accessToken))
+                    {
+                        accessToken1 = accessToken;
+                    }
+
+                    if (accessToken1.HasValue)
+                    {
+
+                    //    if (CommonAPI.TryGetRemoteParties(AccessToken.Value, out var parties))
+                    //    {
+
+                    //        if (parties.Count() == 1)
+                    //        {
+
+                    //            RemoteParty      = parties.First();
+
+                    //            LocalAccessInfo  = new LocalAccessInfo2(
+                    //                                   AccessToken.Value,
+                    //                                   RemoteParty.LocalAccessInfos.First(localAccessInfo => localAccessInfo.AccessToken == AccessToken).Status,
+                    //                                   RemoteParty.Roles,
+                    //                                   null,
+                    //                                   null,
+                    //                                   RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
+                    //                               );
+
+                    //            CPOIds           = RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Roles.CPO).
+                    //                                                 Select(credentialsRole => CPO_Id. Parse($"{LocalAccessInfo.Roles.First().CountryCode}*{LocalAccessInfo.Roles.First().PartyId}")).
+                    //                                                 Distinct().
+                    //                                                 ToArray();
+
+                    //            EMSPIds          = RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Roles.EMSP).
+                    //                                                 Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().CountryCode}-{LocalAccessInfo.Roles.First().PartyId}")).
+                    //                                                 Distinct().
+                    //                                                 ToArray();
+
+                    //            if (FromCountryCode.HasValue &&
+                    //                FromPartyId.    HasValue)
+                    //            {
+
+                    //                CPOId            = CPO_Id. Parse($"{FromCountryCode}*{FromPartyId}");
+                    //                EMSPId           = EMSP_Id.Parse($"{FromCountryCode}-{FromPartyId}");
+
+                    //                if (CPOId. HasValue && !CPOIds. Contains(CPOId. Value))
+                    //                    CPOId   = null;
+
+                    //                if (EMSPId.HasValue && !EMSPIds.Contains(EMSPId.Value))
+                    //                    EMSPId  = null;
+
+                    //            }
+
+                    //            if (!FromCountryCode.HasValue &&
+                    //                !FromPartyId.    HasValue)
+                    //            {
+
+                    //                if (CPOIds. Any())
+                    //                    CPOId  = CPOIds. First();
+
+                    //                if (EMSPIds.Any())
+                    //                    EMSPId = EMSPIds.First();
+
+                    //            }
+
+                    //        }
+
+                    //        else if (parties.Count() > 1      &&
+                    //                 FromCountryCode.HasValue &&
+                    //                 FromPartyId.    HasValue)
+                    //        {
+
+                    //            var filteredParties = parties.Where(party => party.Roles.Any(credentialsRole => credentialsRole.CountryCode == FromCountryCode.Value) &&
+                    //                                                         party.Roles.Any(credentialsRole => credentialsRole.PartyId     == FromPartyId.    Value)).
+                    //                                          ToArray();
+
+                    //            if (filteredParties.Length == 1)
+                    //            {
+
+                    //                this.LocalAccessInfo   = new LocalAccessInfo2(AccessToken.Value,
+                    //                                                             filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken).Status);
+
+                    //                //this.AccessInfo2  = filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken);
+
+                    //                this.RemoteParty  = filteredParties.First();
+
+                    //            }
+
+                    //        }
+
+                    //    }
+
+                    }
+
+                    #region Check access token
+
+                    //if (request.LocalAccessInfo is not null &&
+                    //    request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
+                    //{
+
+                    //    return Task.FromResult(
+                    //        new OCPIResponse.Builder(request) {
+                    //            StatusCode           = 2000,
+                    //            StatusMessage        = "Invalid or blocked access token!",
+                    //            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                    //                HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                    //                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                    //                Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                    //                AccessControlAllowHeaders  = [ "Authorization" ]
+                    //            }
+                    //        });
+
+                    //}
+
+                    #endregion
+
+                    return Task.FromResult(
+                        new HTTPResponse.Builder(request) {
+                            HTTPStatusCode             = HTTPStatusCode.OK,
+                            Server                     = DefaultHTTPServerName,
+                            Date                       = Timestamp.Now,
+                            AccessControlAllowOrigin   = "*",
+                            AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                            Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                            AccessControlAllowHeaders  = [ "Authorization" ],
+                            ContentType                = HTTPContentType.Application.JSON_UTF8,
+                            Content                    = JSONObject.Create(
+                                                             new JProperty("status_code",      1000),
+                                                             new JProperty("status_message",  "Hello world!"),
+                                                             new JProperty("data",             new JArray(
+                                                                                                   VersionInformations.Select(versionInformation => versionInformation.ToJSON(CustomVersionInformationSerializer))
+                                                                                               ))
+                                                         ).ToUTF8Bytes(),
+                            Connection                 = ConnectionType.Close,
+                            Vary                       = "Accept"
+                        }.AsImmutable
+                    );
+
+                }
+
+            );
+
+            #endregion
+
+        }
 
         #endregion
 
@@ -1708,6 +2039,98 @@ namespace cloud.charging.open.protocols.OCPI
                     IssuerPrivateKey
                 )
             );
+
+        }
+
+        #endregion
+
+        #endregion
+
+
+        #region OCPI Version Informations
+
+        private readonly ConcurrentDictionary<Version_Id, VersionInformation>  versionInformations   = [];
+
+        public IEnumerable<VersionInformation> VersionInformations
+            => versionInformations.Values;
+
+
+        #region AddVersionInformation            (VersionInformation, ...)
+
+        public async Task<AddResult<VersionInformation>>
+
+            AddVersionInformation(VersionInformation  VersionInformation,
+                                  Boolean             SkipNotifications   = false,
+                                  EventTracking_Id?   EventTrackingId     = null,
+                                  User_Id?            CurrentUserId       = null)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (versionInformations.TryAdd(VersionInformation.Id, VersionInformation))
+            {
+
+                //await LogAsset(
+                //          addLocation,
+                //          Location.ToJSON(true,
+                //                          true,
+                //                          true,
+                //                          CustomLocationSerializer,
+                //                          CustomPublishTokenSerializer,
+                //                          CustomAddressSerializer,
+                //                          CustomAdditionalGeoLocationSerializer,
+                //                          CustomChargingStationSerializer,
+                //                          CustomEVSESerializer,
+                //                          CustomStatusScheduleSerializer,
+                //                          CustomConnectorSerializer,
+                //                          CustomEnergyMeterSerializer,
+                //                          CustomTransparencySoftwareStatusSerializer,
+                //                          CustomTransparencySoftwareSerializer,
+                //                          CustomDisplayTextSerializer,
+                //                          CustomBusinessDetailsSerializer,
+                //                          CustomHoursSerializer,
+                //                          CustomImageSerializer,
+                //                          CustomEnergyMixSerializer,
+                //                          CustomEnergySourceSerializer,
+                //                          CustomEnvironmentalImpactSerializer,
+                //                          CustomLocationMaxPowerSerializer),
+                //          EventTrackingId,
+                //          CurrentUserId
+                //      );
+
+                //if (!SkipNotifications)
+                //{
+
+                //    var OnLocationAddedLocal = OnLocationAdded;
+                //    if (OnLocationAddedLocal is not null)
+                //    {
+                //        try
+                //        {
+                //            await OnLocationAddedLocal(Location);
+                //        }
+                //        catch (Exception e)
+                //        {
+                //            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
+                //                        Environment.NewLine, e.Message,
+                //                        Environment.NewLine, e.StackTrace ?? "");
+                //        }
+                //    }
+
+                //}
+
+                return AddResult<VersionInformation>.Success(
+                           EventTrackingId,
+                           VersionInformation
+                       );
+
+            }
+
+            return AddResult<VersionInformation>.Failed(
+                       EventTrackingId,
+                       VersionInformation,
+                       "The given version information already exists!"
+                   );
 
         }
 

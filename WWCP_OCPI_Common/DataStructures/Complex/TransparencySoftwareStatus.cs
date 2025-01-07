@@ -317,16 +317,18 @@ namespace cloud.charging.open.protocols.OCPI
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this transparency software status.
         /// </summary>
         public TransparencySoftwareStatus Clone()
 
-            => new (TransparencySoftware.Clone(),
-                    LegalStatus.Clone,
-                    Certificate       is not null ? new String(Certificate.      ToCharArray()) : null,
-                    CertificateIssuer is not null ? new String(CertificateIssuer.ToCharArray()) : null,
-                    NotBefore.        HasValue    ? NotBefore.Value                             : null,
-                    NotAfter.         HasValue    ? NotAfter. Value                             : null);
+            => new (
+                   TransparencySoftware.Clone(),
+                   LegalStatus.         Clone(),
+                   Certificate?.        CloneString(),
+                   CertificateIssuer?.  CloneString(),
+                   NotBefore,
+                   NotAfter
+               );
 
         #endregion
 

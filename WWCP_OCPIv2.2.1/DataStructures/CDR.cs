@@ -278,6 +278,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         [Optional]
         public   Boolean?                            HomeChargingCompensation    { get; }
 
+
         /// <summary>
         /// The timestamp when this charge detail record was created.
         /// </summary>

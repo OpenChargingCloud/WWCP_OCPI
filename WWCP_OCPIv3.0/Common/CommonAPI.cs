@@ -2062,7 +2062,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         public CommonAPI(URL                                                        OurBaseURL,
                          URL                                                        OurVersionsURL,
                          IEnumerable<CredentialsRole>                               OurCredentialRoles,
-                         Party_Idv3                                                   DefaultPartyId,
+                         Party_Idv3                                                 DefaultPartyId,
 
                          HTTPPath?                                                  AdditionalURLPathPrefix      = null,
                          Func<EVSE, Boolean>?                                       KeepRemovedEVSEs             = null,
@@ -2195,9 +2195,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             AddVersionInformation(
                 new VersionInformation(
                     Version.Id,
-                    URL.Parse(
-                        (OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                        (ExternalDNSName ?? "localhost" + (URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}")).Replace("//", "/")
+                    URL.Concat(
+                        OurVersionsURL.Protocol.AsString(),
+                        ExternalDNSName ?? ("localhost:" + HTTPServer.IPPorts.First()),
+                        URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
                 )
             ).GetAwaiter().GetResult();
@@ -2234,7 +2235,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         public CommonAPI(URL                           OurBaseURL,
                          URL                           OurVersionsURL,
                          IEnumerable<CredentialsRole>  OurCredentialRoles,
-                         Party_Idv3                      DefaultPartyId,
+                         Party_Idv3                    DefaultPartyId,
 
                          HTTPServer                    HTTPServer,
                          HTTPHostname?                 HTTPHostname              = null,
@@ -2341,9 +2342,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             AddVersionInformation(
                 new VersionInformation(
                     Version.Id,
-                    URL.Parse(
-                        (OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                        (ExternalDNSName ?? "localhost" + (URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}")).Replace("//", "/")
+                    URL.Concat(
+                        OurVersionsURL.Protocol.AsString(),
+                        ExternalDNSName ?? ("localhost:" + HTTPServer.IPPorts.First()),
+                        URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
                 )
             ).GetAwaiter().GetResult();

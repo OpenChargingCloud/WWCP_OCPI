@@ -220,12 +220,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this version detail.
         /// </summary>
         public VersionDetail Clone()
 
-            => new (VersionId.Clone,
-                    Endpoints.Select(endpoint => endpoint.Clone()).ToArray());
+            => new (
+                   VersionId.Clone(),
+                   Endpoints.Select(endpoint => endpoint.Clone()).ToArray()
+               );
 
         #endregion
 
