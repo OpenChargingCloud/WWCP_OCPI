@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -1654,6 +1654,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region Properties
 
+        public CommonAPIBase            APIBase                     { get; }
+
+        /// <summary>
+        /// The (max supported) OCPI version.
+        /// </summary>
+        public Version_Id               OCPIVersion                 { get; } = Version.Id;
+
+
+
         /// <summary>
         /// All our credential roles.
         /// </summary>
@@ -1662,7 +1671,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <summary>
         /// The default party identification to use.
         /// </summary>
-        public Party_Idv3                      DefaultPartyId             { get; }
+        public Party_Idv3                    DefaultPartyId             { get; }
 
         /// <summary>
         /// Whether to keep or delete EVSEs marked as "REMOVED".
@@ -2117,7 +2126,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                          Boolean                                                    AutoStart                    = false)
 
 
-            : base(Version.Id,
+            : base(//Version.Id,
                    OurBaseURL,
                    OurVersionsURL,
 
@@ -2273,7 +2282,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                          String?                       AssetsDBFileName          = null,
                          Boolean                       AutoStart                 = false)
 
-            : base(Version.Id,
+            : base(//Version.Id,
                    OurBaseURL,
                    OurVersionsURL,
                    HTTPServer,
@@ -2385,177 +2394,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         private void RegisterURLTemplates()
         {
-
-            #region OPTIONS     ~/
-
-            HTTPServer.AddMethodCallback(
-
-                this,
-                HTTPHostname.Any,
-                HTTPMethod.OPTIONS,
-                URLPathPrefix,
-                HTTPDelegate: request =>
-
-                    Task.FromResult(
-                        new HTTPResponse.Builder(request) {
-                            HTTPStatusCode             = HTTPStatusCode.OK,
-                            Server                     = HTTPServiceName,
-                            Date                       = Timestamp.Now,
-                            AccessControlAllowOrigin   = "*",
-                            AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                            Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                            AccessControlAllowHeaders  = [ "Authorization" ],
-                            Connection                 = ConnectionType.Close
-                        }.AsImmutable)
-
-            );
-
-            #endregion
-
-            #region GET         ~/
-
-            //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-            //                                   URLPrefix + "/", "cloud.charging.open.protocols.OCPIv3_0.HTTPAPI.CommonAPI.HTTPRoot",
-            //                                   Assembly.GetCallingAssembly());
-
-            //this.AddMethodCallback(HTTPHostname.Any,
-            //                             HTTPMethod.GET,
-            //                             new HTTPPath[] {
-            //                                 URLPrefix + "/index.html",
-            //                                 URLPrefix + "/"
-            //                             },
-            //                             HTTPContentType.Text.HTML_UTF8,
-            //                             HTTPDelegate: async Request => {
-
-            //                                 var _MemoryStream = new MemoryStream();
-            //                                 typeof(CommonAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv3_0.HTTPAPI.CommonAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-            //                                 typeof(CommonAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv3_0.HTTPAPI.CommonAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
-
-            //                                 return new HTTPResponse.Builder(Request) {
-            //                                     HTTPStatusCode  = HTTPStatusCode.OK,
-            //                                     ContentType     = HTTPContentType.Text.HTML_UTF8,
-            //                                     Content         = _MemoryStream.ToArray(),
-            //                                     Connection      = ConnectionType.Close
-            //                                 };
-
-            //                             });
-
-            #region Text
-
-            HTTPServer.AddMethodCallback(this,
-                                         HTTPHostname.Any,
-                                         HTTPMethod.GET,
-                                         URLPathPrefix,
-                                         HTTPContentType.Text.PLAIN,
-                                         HTTPDelegate: Request => {
-
-                                             return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request) {
-                                                     HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     Server                     = DefaultHTTPServerName,
-                                                     Date                       = Timestamp.Now,
-                                                     AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                     AccessControlAllowHeaders  = [ "Authorization" ],
-                                                     ContentType                = HTTPContentType.Text.PLAIN,
-                                                     Content                    = "This is an Open Charge Point Interface HTTP service!\r\nPlease check ~/versions!".ToUTF8Bytes(),
-                                                     Connection                 = ConnectionType.Close
-                                                 }.AsImmutable);
-
-                                         });
-
-            #endregion
-
-            #endregion
-
-
-            #region OPTIONS     ~/versions
-
-            // ----------------------------------------------------
-            // curl -v -X OPTIONS http://127.0.0.1:2502/versions
-            // ----------------------------------------------------
-            this.AddOCPIMethod(
-
-                Hostname,
-                HTTPMethod.OPTIONS,
-                URLPathPrefix + "versions",
-                OCPIRequestHandler: request =>
-
-                    Task.FromResult(
-                        new OCPIResponse.Builder(request) {
-                            HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                Server                     = HTTPServiceName,
-                                Date                       = Timestamp.Now,
-                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                AccessControlAllowHeaders  = [ "Authorization" ],
-                                Vary                       = "Accept"
-                            }
-                        })
-
-            );
-
-            #endregion
-
-            #region GET         ~/versions
-
-            // ----------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions
-            // ----------------------------------------------------------------------
-            this.AddOCPIMethod(
-
-                Hostname,
-                HTTPMethod.GET,
-                URLPathPrefix + "versions",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   GetVersionsRequest,
-                OCPIResponseLogger:  GetVersionsResponse,
-                OCPIRequestHandler:  request => {
-
-                    #region Check access token
-
-                    if (request.LocalAccessInfo is not null &&
-                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
-                    {
-
-                        return Task.FromResult(
-                            new OCPIResponse.Builder(request) {
-                               StatusCode           = 2000,
-                               StatusMessage        = "Invalid or blocked access token!",
-                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
-                           });
-
-                    }
-
-                    #endregion
-
-                    return Task.FromResult(
-                        new OCPIResponse.Builder(request) {
-                            StatusCode           = 1000,
-                            StatusMessage        = "Hello world!",
-                            Data                 = new JArray(
-                                                       versionInformations.Values.Select(versionInformation => versionInformation.ToJSON(CustomVersionInformationSerializer))
-                                                   ),
-                            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                AccessControlAllowHeaders  = [ "Authorization" ],
-                                Vary                       = "Accept"
-                            }
-                        });
-
-                }
-
-            );
-
-            #endregion
-
 
             #region OPTIONS     ~/versions/{versionId}
 

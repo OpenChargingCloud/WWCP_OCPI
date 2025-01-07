@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -138,10 +138,50 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             ClassicAssert.IsNotNull(httpAPI);
 
 
+            var ocpiBaseAPI = new CommonAPIBase(
+
+                                  OurBaseURL:                URL.Parse("http://127.0.0.1:3473/ocpi/v2.1"),
+                                  OurVersionsURL:            URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/versions"),
+                                  HTTPServer:                httpAPI.HTTPServer,
+                                  AdditionalURLPathPrefix:   null,
+                                  //KeepRemovedEVSEs:          null,
+                                  LocationsAsOpenData:       true,
+                                  AllowDowngrades:           null,
+                                  Disable_RootServices:      false,
+
+                                  HTTPHostname:              null,
+                                  ExternalDNSName:           null,
+                                  HTTPServiceName:           null,
+                                  BasePath:                  null,
+
+                                  URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                                  APIVersionHashes:          null,
+
+                                  DisableMaintenanceTasks:   null,
+                                  MaintenanceInitialDelay:   null,
+                                  MaintenanceEvery:          null,
+
+                                  DisableWardenTasks:        null,
+                                  WardenInitialDelay:        null,
+                                  WardenCheckEvery:          null,
+
+                                  IsDevelopment:             null,
+                                  DevelopmentServers:        null,
+                                  DisableLogging:            null,
+                                  LoggingContext:            null,
+                                  LoggingPath:               null,
+                                  LogfileName:               null,
+                                  LogfileCreator:            null
+
+                              );
+
+            ClassicAssert.IsNotNull(ocpiBaseAPI);
+
+
             commonAPI        = new CommonAPI(
 
-                                   OurBaseURL:                          URL.Parse("http://127.0.0.1:3473/ocpi/v2.1"),
-                                   OurVersionsURL:                      URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/versions"),
+                                   //OurBaseURL:                          URL.Parse("http://127.0.0.1:3473/ocpi/v2.1"),
+                                   //OurVersionsURL:                      URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/versions"),
                                    OurBusinessDetails:                  new BusinessDetails(
                                                                             "GraphDefined CSO",
                                                                             URL.Parse("https://www.graphdefined.com/cso")
@@ -150,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    OurPartyId:                          Party_Id.   Parse("GEF"),
                                    OurRole:                             Roles.      CPO,
 
-                                   HTTPServer:                          httpAPI.HTTPServer,
+                                   BaseAPI:                             ocpiBaseAPI,
 
                                    AdditionalURLPathPrefix:             null,
                                    KeepRemovedEVSEs:                    null,

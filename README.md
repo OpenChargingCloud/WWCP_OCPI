@@ -28,7 +28,7 @@ This capability facilitates the provision of open and transparent access to esse
 
 ### Your participation
 
-This software is free and Open Source under [**Apache 2.0 license**](LICENSE).
+This software is free and Open Source under [GNU Affero General Public License (AGPL)](LICENSE).
 We appreciate your participation in this ongoing project, and your help to
 improve it and the e-mobility ICT in general. If you find bugs, want to request
 a feature or send us a pull request, feel free to use the normal GitHub

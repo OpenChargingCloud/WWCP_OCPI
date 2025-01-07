@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -5306,7 +5306,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                                              ),
             //                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                           HTTPStatusCode             = HTTPStatusCode.OK,
-            //                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "DELETE" },
+            //                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "DELETE" ],
             //                                           AccessControlAllowHeaders  = [ "Authorization" ]
             //                                           //LastModified               = ?
             //                                       }.
@@ -5404,7 +5404,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                                              ),
             //                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                           HTTPStatusCode             = HTTPStatusCode.OK,
-            //                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "DELETE" },
+            //                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "DELETE" ],
             //                                           AccessControlAllowHeaders  = [ "Authorization" ]
             //                                           //LastModified               = ?
             //                                       }.
@@ -5477,7 +5477,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                           StatusMessage        = "Could not parse the given charge detail record JSON: " + errorResponse,
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.BadRequest,
-            //                                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "DELETE" },
+            //                                               AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "DELETE" ],
             //                                               AccessControlAllowHeaders  = [ "Authorization" ]
             //                                           }
             //                                       };
@@ -5577,7 +5577,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                       StatusMessage        = "Hello world!",
             //                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                           HTTPStatusCode             = HTTPStatusCode.OK,
-            //                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "DELETE" },
+            //                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "DELETE" ],
             //                                           AccessControlAllowHeaders  = [ "Authorization" ]
             //                                       }
             //                                   };
@@ -5638,7 +5638,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                       StatusMessage        = "Hello world!",
             //                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                           HTTPStatusCode             = HTTPStatusCode.OK,
-            //                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "DELETE" },
+            //                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "DELETE" ],
             //                                           AccessControlAllowHeaders  = [ "Authorization" ]
             //                                       }
             //                                   };

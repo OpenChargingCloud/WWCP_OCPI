@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -177,6 +177,55 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
             #endregion
 
+
+            var ocpiBaseAPI = new CommonAPIBase(
+
+                                  OurBaseURL:                URL.Parse("http://127.0.0.1:3201/ocpi"),
+                                  OurVersionsURL:            URL.Parse("http://127.0.0.1:3201/ocpi/versions"),
+                                  //OurBusinessDetails:        new OCPI.BusinessDetails(
+                                  //                               "GraphDefined OCPI Services",
+                                  //                               URL.Parse("https://www.graphdefined.com/ocpi")
+                                  //                           ),
+                                  //OurCountryCode:            OCPI.CountryCode.Parse("DE"),
+                                  //OurPartyId:                OCPI.Party_Id.   Parse("BDO"),
+                                  //OurRole:                   OCPI.Roles.      CPO,
+
+                                  HTTPServer:                cpoHTTPAPI.HTTPServer,
+                                  AdditionalURLPathPrefix:   null,
+                                  //KeepRemovedEVSEs:          null,
+                                  LocationsAsOpenData:       true,
+                                  AllowDowngrades:           null,
+                                  Disable_RootServices:      false,
+
+                                  HTTPHostname:              null,
+                                  ExternalDNSName:           null,
+                                  HTTPServiceName:           null,
+                                  BasePath:                  null,
+
+                                  URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                                  APIVersionHashes:          null,
+
+                                  DisableMaintenanceTasks:   null,
+                                  MaintenanceInitialDelay:   null,
+                                  MaintenanceEvery:          null,
+
+                                  DisableWardenTasks:        null,
+                                  WardenInitialDelay:        null,
+                                  WardenCheckEvery:          null,
+
+                                  IsDevelopment:             null,
+                                  DevelopmentServers:        null,
+                                  DisableLogging:            null,
+                                  LoggingContext:            null,
+                                  LoggingPath:               null,
+                                  LogfileName:               null,
+                                  LogfileCreator:            null
+
+                              );
+
+            ClassicAssert.IsNotNull(ocpiBaseAPI);
+
+
             #region Create cpo/emsp1/emsp2 OCPI Common API
 
             cpoVersionsAPIURL    = URL.Parse("http://127.0.0.1:3301/ocpi/v2.2/versions");
@@ -198,6 +247,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                                                             ],
                                        DefaultCountryCode:                  CountryCode.Parse("DE"),
                                        DefaultPartyId:                      Party_Id.   Parse("GEF"),
+
+                                       BaseAPI:                             ocpiBaseAPI,
                                        HTTPServer:                          cpoHTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
@@ -252,6 +303,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                                                             ],
                                        DefaultCountryCode:                  CountryCode.Parse("DE"),
                                        DefaultPartyId:                      Party_Id.   Parse("GDF"),
+
+                                       BaseAPI:                             ocpiBaseAPI,
                                        HTTPServer:                          emsp1HTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
@@ -306,6 +359,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                                                             ],
                                        DefaultCountryCode:                  CountryCode.Parse("DE"),
                                        DefaultPartyId:                      Party_Id.   Parse("GD2"),
+
+                                       BaseAPI:                             ocpiBaseAPI,
                                        HTTPServer:                          emsp2HTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,

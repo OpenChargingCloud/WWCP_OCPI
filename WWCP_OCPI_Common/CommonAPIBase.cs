@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -129,13 +129,6 @@ namespace cloud.charging.open.protocols.OCPI
         public IEnumerable<String>  DecodedData    { get; set; } = DecodedData;
 
     }
-
-    /// <summary>
-    /// The CommonAPI Base.
-    /// </summary>
-    public class CommonAPIBase : HTTPAPI,
-                                 IServerStartStop
-    {
 
         #region (class) ClientConfigurator
 
@@ -601,6 +594,14 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
+
+    /// <summary>
+    /// The CommonAPI Base.
+    /// </summary>
+    public class CommonAPIBase : HTTPAPI,
+                                 IServerStartStop
+    {
+
         #region Data
 
         /// <summary>
@@ -624,11 +625,6 @@ namespace cloud.charging.open.protocols.OCPI
         public new static readonly HTTPPath    DefaultURLPathPrefix            = HTTPPath.Parse("io/OCPI/");
 
         /// <summary>
-        /// The (max supported) OCPI version.
-        /// </summary>
-        private readonly           Version_Id  OCPIVersion;
-
-        /// <summary>
         /// The default database file name for all remote party configuration.
         /// </summary>
         public const               String      DefaultRemotePartyDBFileName    = "RemoteParties.db";
@@ -639,54 +635,54 @@ namespace cloud.charging.open.protocols.OCPI
         public const               String      DefaultAssetsDBFileName         = "Assets.db";
 
 
-        protected const String addRemoteParty                     = "addRemoteParty";
-        protected const String addRemotePartyIfNotExists          = "addRemotePartyIfNotExists";
-        protected const String addOrUpdateRemoteParty             = "addOrUpdateRemoteParty";
-        protected const String updateRemoteParty                  = "updateRemoteParty";
-        protected const String removeRemoteParty                  = "removeRemoteParty";
-        protected const String removeAllRemoteParties             = "removeAllRemoteParties";
+        public const String addRemoteParty                     = "addRemoteParty";
+        public const String addRemotePartyIfNotExists          = "addRemotePartyIfNotExists";
+        public const String addOrUpdateRemoteParty             = "addOrUpdateRemoteParty";
+        public const String updateRemoteParty                  = "updateRemoteParty";
+        public const String removeRemoteParty                  = "removeRemoteParty";
+        public const String removeAllRemoteParties             = "removeAllRemoteParties";
 
-        protected const String addLocation                        = "addLocation";
-        protected const String addLocationIfNotExists             = "addLocationIfNotExists";
-        protected const String addOrUpdateLocation                = "addOrUpdateLocation";
-        protected const String updateLocation                     = "updateLocation";
-        protected const String removeLocation                     = "removeLocation";
-        protected const String removeAllLocations                 = "removeAllLocations";
+        public const String addLocation                        = "addLocation";
+        public const String addLocationIfNotExists             = "addLocationIfNotExists";
+        public const String addOrUpdateLocation                = "addOrUpdateLocation";
+        public const String updateLocation                     = "updateLocation";
+        public const String removeLocation                     = "removeLocation";
+        public const String removeAllLocations                 = "removeAllLocations";
 
-        protected const String addEVSE                            = "addEVSE";
-        protected const String addEVSEIfNotExists                 = "addEVSEIfNotExists";
-        protected const String addOrUpdateEVSE                    = "addOrUpdateEVSE";
-        protected const String updateEVSE                         = "updateEVSE";
-        protected const String removeEVSE                         = "removeEVSE";
-        protected const String removeAllEVSEs                     = "removeAllEVSEs";
+        public const String addEVSE                            = "addEVSE";
+        public const String addEVSEIfNotExists                 = "addEVSEIfNotExists";
+        public const String addOrUpdateEVSE                    = "addOrUpdateEVSE";
+        public const String updateEVSE                         = "updateEVSE";
+        public const String removeEVSE                         = "removeEVSE";
+        public const String removeAllEVSEs                     = "removeAllEVSEs";
 
-        protected const String addTariff                          = "addTariff";
-        protected const String addTariffIfNotExists               = "addTariffIfNotExists";
-        protected const String addOrUpdateTariff                  = "addOrUpdateTariff";
-        protected const String updateTariff                       = "updateTariff";
-        protected const String removeTariff                       = "removeTariff";
-        protected const String removeAllTariffs                   = "removeAllTariffs";
+        public const String addTariff                          = "addTariff";
+        public const String addTariffIfNotExists               = "addTariffIfNotExists";
+        public const String addOrUpdateTariff                  = "addOrUpdateTariff";
+        public const String updateTariff                       = "updateTariff";
+        public const String removeTariff                       = "removeTariff";
+        public const String removeAllTariffs                   = "removeAllTariffs";
 
-        protected const String addSession                         = "addSession";
-        protected const String addSessionIfNotExists              = "addSessionIfNotExists";
-        protected const String addOrUpdateSession                 = "addOrUpdateSession";
-        protected const String updateSession                      = "updateSession";
-        protected const String removeSession                      = "removeSession";
-        protected const String removeAllSessions                  = "removeAllSessions";
+        public const String addSession                         = "addSession";
+        public const String addSessionIfNotExists              = "addSessionIfNotExists";
+        public const String addOrUpdateSession                 = "addOrUpdateSession";
+        public const String updateSession                      = "updateSession";
+        public const String removeSession                      = "removeSession";
+        public const String removeAllSessions                  = "removeAllSessions";
 
-        protected const String addTokenStatus                     = "addTokenStatus";
-        protected const String addTokenStatusIfNotExists          = "addTokenStatusIfNotExists";
-        protected const String addOrUpdateTokenStatus             = "addOrUpdateTokenStatus";
-        protected const String updateTokenStatus                  = "updateTokenStatus";
-        protected const String removeTokenStatus                  = "removeTokenStatus";
-        protected const String removeAllTokenStatus               = "removeAllTokenStatus";
+        public const String addTokenStatus                     = "addTokenStatus";
+        public const String addTokenStatusIfNotExists          = "addTokenStatusIfNotExists";
+        public const String addOrUpdateTokenStatus             = "addOrUpdateTokenStatus";
+        public const String updateTokenStatus                  = "updateTokenStatus";
+        public const String removeTokenStatus                  = "removeTokenStatus";
+        public const String removeAllTokenStatus               = "removeAllTokenStatus";
 
-        protected const String addChargeDetailRecord              = "addChargeDetailRecord";
-        protected const String addChargeDetailRecordIfNotExists   = "addChargeDetailRecordIfNotExists";
-        protected const String addOrUpdateChargeDetailRecord      = "addOrUpdateChargeDetailRecord";
-        protected const String updateChargeDetailRecord           = "updateChargeDetailRecord";
-        protected const String removeChargeDetailRecord           = "removeChargeDetailRecord";
-        protected const String removeAllChargeDetailRecords       = "removeAllChargeDetailRecords";
+        public const String addChargeDetailRecord              = "addChargeDetailRecord";
+        public const String addChargeDetailRecordIfNotExists   = "addChargeDetailRecordIfNotExists";
+        public const String addOrUpdateChargeDetailRecord      = "addOrUpdateChargeDetailRecord";
+        public const String updateChargeDetailRecord           = "updateChargeDetailRecord";
+        public const String removeChargeDetailRecord           = "removeChargeDetailRecord";
+        public const String removeAllChargeDetailRecords       = "removeAllChargeDetailRecords";
 
         #endregion
 
@@ -860,7 +856,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
         /// <param name="DNSClient">The DNS client of the API.</param>
         /// <param name="AutoStart">Whether to start the API automatically.</param>
-        public CommonAPIBase(Version_Id                                                 OCPIVersion,
+        public CommonAPIBase(//Version_Id                                                 OCPIVersion,
                              URL                                                        OurBaseURL,
                              URL                                                        OurVersionsURL,
 
@@ -960,7 +956,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         {
 
-            this.OCPIVersion               = OCPIVersion;
+            //this.OCPIVersion               = OCPIVersion;
             this.OurBaseURL                = OurBaseURL;
             this.OurVersionsURL            = OurVersionsURL;
             this.AdditionalURLPathPrefix   = AdditionalURLPathPrefix;
@@ -1028,7 +1024,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="LogfileName">The name of the logfile.</param>
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
         /// <param name="AutoStart">Whether to start the API automatically.</param>
-        public CommonAPIBase(Version_Id                   OCPIVersion,
+        public CommonAPIBase(//Version_Id                   OCPIVersion,
                              URL                          OurBaseURL,
                              URL                          OurVersionsURL,
                              HTTPServer                   HTTPServer,
@@ -1096,7 +1092,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         {
 
-            this.OCPIVersion               = OCPIVersion;
+            //this.OCPIVersion               = OCPIVersion;
             this.OurBaseURL                = OurBaseURL;
             this.OurVersionsURL            = OurVersionsURL;
             this.AdditionalURLPathPrefix   = AdditionalURLPathPrefix;
@@ -1140,8 +1136,6 @@ namespace cloud.charging.open.protocols.OCPI
 
         private void RegisterURLTemplates()
         {
-
-            return;
 
             #region OPTIONS     ~/
 
@@ -1235,7 +1229,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 this,
                 HTTPHostname.Any,
-                HTTPMethod.OPTIONS,
+                HTTPMethod.GET,
                 URLPathPrefix + "versions",
                 HTTPContentType.Application.JSON_UTF8,
                 HTTPRequestLogger:   GetVersionsRequest,
@@ -2515,11 +2509,11 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region Log/Read   Remote Parties
 
-        #region (protected) LogRemoteParty        (Command,              ...)
+        #region LogRemoteParty        (Command,              ...)
 
-        protected Task LogRemoteParty(String            Command,
-                                      EventTracking_Id  EventTrackingId,
-                                      User_Id?          CurrentUserId   = null)
+        public Task LogRemoteParty(String            Command,
+                                   EventTracking_Id  EventTrackingId,
+                                   User_Id?          CurrentUserId   = null)
 
             => WriteToDatabase(
                    RemotePartyDBFileName,
@@ -2531,12 +2525,12 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (protected) LogRemoteParty        (Command, Text = null, ...)
+        #region LogRemoteParty        (Command, Text = null, ...)
 
-        protected Task LogRemoteParty(String            Command,
-                                      String?           Text,
-                                      EventTracking_Id  EventTrackingId,
-                                      User_Id?          CurrentUserId   = null)
+        public Task LogRemoteParty(String            Command,
+                                   String?           Text,
+                                   EventTracking_Id  EventTrackingId,
+                                   User_Id?          CurrentUserId   = null)
 
             => WriteToDatabase(
                    RemotePartyDBFileName,
@@ -2550,12 +2544,12 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (protected) LogRemoteParty        (Command, JSON,        ...)
+        #region LogRemoteParty        (Command, JSON,        ...)
 
-        protected Task LogRemoteParty(String            Command,
-                                      JObject           JSON,
-                                      EventTracking_Id  EventTrackingId,
-                                      User_Id?          CurrentUserId   = null)
+        public Task LogRemoteParty(String            Command,
+                                   JObject           JSON,
+                                   EventTracking_Id  EventTrackingId,
+                                   User_Id?          CurrentUserId   = null)
 
             => WriteToDatabase(
                    RemotePartyDBFileName,
@@ -2567,12 +2561,12 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (protected) LogRemoteParty        (Command, Number,      ...)
+        #region LogRemoteParty        (Command, Number,      ...)
 
-        protected Task Log(String            Command,
-                           Int64             Number,
-                           EventTracking_Id  EventTrackingId,
-                           User_Id?          CurrentUserId   = null)
+        public Task Log(String            Command,
+                        Int64             Number,
+                        EventTracking_Id  EventTrackingId,
+                        User_Id?          CurrentUserId   = null)
 
             => WriteToDatabase(
                    RemotePartyDBFileName,
@@ -2584,11 +2578,11 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (protected) LogRemotePartyComment (Text,                 ...)
+        #region LogRemotePartyComment (Text,                 ...)
 
-        protected Task LogRemotePartyComment(String           Text,
-                                            EventTracking_Id  EventTrackingId,
-                                            User_Id?          CurrentUserId   = null)
+        public Task LogRemotePartyComment(String           Text,
+                                          EventTracking_Id  EventTrackingId,
+                                          User_Id?          CurrentUserId   = null)
 
             => WriteCommentToDatabase(
                    RemotePartyDBFileName,
@@ -2612,11 +2606,11 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region Log/Read   Assets
 
-        #region (protected) LogAsset              (Command,              ...)
+        #region LogAsset              (Command,              ...)
 
-        protected Task LogAsset(String            Command,
-                                EventTracking_Id  EventTrackingId,
-                                User_Id?          CurrentUserId   = null)
+        public Task LogAsset(String            Command,
+                             EventTracking_Id  EventTrackingId,
+                             User_Id?          CurrentUserId   = null)
 
             => WriteToDatabase(
                    AssetsDBFileName,
@@ -2628,12 +2622,12 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (protected) LogAsset              (Command, Text = null, ...)
+        #region LogAsset              (Command, Text = null, ...)
 
-        protected Task LogAsset(String             Command,
-                                String?            Text,
-                                EventTracking_Id?  EventTrackingId   = null,
-                                User_Id?           CurrentUserId     = null)
+        public Task LogAsset(String             Command,
+                             String?            Text,
+                             EventTracking_Id?  EventTrackingId   = null,
+                             User_Id?           CurrentUserId     = null)
 
             => WriteToDatabase(
                    AssetsDBFileName,
@@ -2647,13 +2641,13 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (protected) LogAsset              (Command, JSONObject,  ...)
+        #region LogAsset              (Command, JSONObject,  ...)
 
-        protected Task LogAsset(String             Command,
-                                JObject            JSONObject,
-                                EventTracking_Id   EventTrackingId,
-                                User_Id?           CurrentUserId       = null,
-                                CancellationToken  CancellationToken   = default)
+        public Task LogAsset(String             Command,
+                             JObject            JSONObject,
+                             EventTracking_Id   EventTrackingId,
+                             User_Id?           CurrentUserId       = null,
+                             CancellationToken  CancellationToken   = default)
 
             => WriteToDatabase(
                    AssetsDBFileName,
@@ -2666,12 +2660,12 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (protected) LogAsset              (Command, JSONArray,   ...)
+        #region LogAsset              (Command, JSONArray,   ...)
 
-        protected Task LogAsset(String            Command,
-                                JArray            JSONArray,
-                                EventTracking_Id  EventTrackingId,
-                                User_Id?          CurrentUserId   = null)
+        public Task LogAsset(String            Command,
+                             JArray            JSONArray,
+                             EventTracking_Id  EventTrackingId,
+                             User_Id?          CurrentUserId   = null)
 
             => WriteToDatabase(
                    AssetsDBFileName,
@@ -2683,12 +2677,12 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (protected) LogAsset              (Command, Number,      ...)
+        #region LogAsset              (Command, Number,      ...)
 
-        protected Task LogAsset(String            Command,
-                                Int64             Number,
-                                EventTracking_Id  EventTrackingId,
-                                User_Id?          CurrentUserId   = null)
+        public Task LogAsset(String            Command,
+                             Int64             Number,
+                             EventTracking_Id  EventTrackingId,
+                             User_Id?          CurrentUserId   = null)
 
             => WriteToDatabase(
                    AssetsDBFileName,
@@ -2700,11 +2694,11 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (protected) LogAssetComment       (Text,                 ...)
+        #region LogAssetComment       (Text,                 ...)
 
-        protected Task LogAssetComment(String            Text,
-                                       EventTracking_Id  EventTrackingId,
-                                       User_Id?          CurrentUserId   = null)
+        public Task LogAssetComment(String            Text,
+                                    EventTracking_Id  EventTrackingId,
+                                    User_Id?          CurrentUserId   = null)
 
             => WriteCommentToDatabase(
                    AssetsDBFileName,

@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -79,7 +79,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Missing country code and/or party identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -98,7 +98,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid country code!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -117,7 +117,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid party identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -182,7 +182,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Missing country code, party identification and/or location identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -201,7 +201,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid country code!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -220,7 +220,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid party identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -239,7 +239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid location identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -258,7 +258,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Unknown location identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.NotFound,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -329,7 +329,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Missing country code, party identification, location identification and/or EVSE identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -348,7 +348,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid country code!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -367,7 +367,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid party identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -385,7 +385,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid location identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -404,7 +404,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid EVSE identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -425,7 +425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Unknown location identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.NotFound,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -443,7 +443,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Unknown EVSE identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.NotFound,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -520,7 +520,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Missing country code, party identification, location identification, EVSE identification and/or connector identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -539,7 +539,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid country code!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -558,7 +558,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid party identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -577,7 +577,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid location identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -596,7 +596,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid EVSE identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -615,7 +615,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid connector identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -634,7 +634,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Unknown location identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.NotFound,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -652,7 +652,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Unknown EVSE identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.NotFound,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -670,7 +670,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Unknown connector identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.NotFound,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -736,7 +736,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Missing country code, party identification and/or session identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -755,7 +755,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid country code!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -774,7 +774,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid party identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -792,7 +792,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid session identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -811,7 +811,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Unknown session identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.NotFound,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -866,7 +866,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Missing command identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
@@ -885,7 +885,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         //            StatusMessage        = "Invalid command identification!",
         //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
         //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
         //                AccessControlAllowHeaders  = [ "Authorization" ]
         //            }
         //        };
