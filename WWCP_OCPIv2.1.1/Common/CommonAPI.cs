@@ -1929,8 +1929,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
         /// <param name="DNSClient">The DNS client of the API.</param>
         /// <param name="AutoStart">Whether to start the API automatically.</param>
-        public CommonAPI(URL                                                        OurBaseURL,
-                         URL                                                        OurVersionsURL,
+        public CommonAPI(//URL                                                        OurBaseURL,
+                         //URL                                                        OurVersionsURL,
                          BusinessDetails                                            OurBusinessDetails,
                          CountryCode                                                OurCountryCode,
                          Party_Id                                                   OurPartyId,
@@ -2101,11 +2101,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                              )
                                            : null;
 
-            BaseAPI.AddVersionInformation(
+            this.BaseAPI.AddVersionInformation(
                 new VersionInformation(
                     Version.Id,
                     URL.Concat(
-                        OurVersionsURL.Protocol.AsString(),
+                        BaseAPI.OurVersionsURL.Protocol.AsString(),
                         ExternalDNSName ?? ("localhost:" + HTTPServer.IPPorts.First()),
                         URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
