@@ -9,10 +9,10 @@ The following desribes differences of this implementation to the official protoc
 Most changes are intended to improve the overall security or simplify the daily operations business
 or to support additional concepts/methods like the *EU Cyber Resilience Act (CRA)*, the *European General Data Protection Regulation (GDPR)*, the *German Calibration Law (Eichrecht)* or the *New European Measuring instruments Directive (MID)*
 
-### 1. Crypto agility with KeyId, NotBefore and NotAfter in Certificate Signing Requests
+### 1. Crypto agility with keyGroupId, NotBefore and NotAfter in Certificate Signing Requests
 
 In the process of a Certificate Signing Request (CSR) from Party A to Party B (UC: 01.01), Party A has the option to include option to include the following optional attributes in the CSR:
-1. *keyId*: A unique identification (`UTF8String`) for the cryptographic key used in the CSR.
+1. *keyGroupId*: A unique identification (`UTF8String`) for the cryptographic key used in the CSR.
 2. *notBefore* Date: Specifies the earliest point in time when the certificate, if issued, should become valid.
 3. *notAfter* Date: Specifies the expiration date after which the certificate will no longer be valid.
 

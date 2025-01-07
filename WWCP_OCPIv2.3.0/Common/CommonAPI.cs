@@ -19,6 +19,7 @@
 
 using System.Collections.Concurrent;
 using System.Security.Authentication;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
@@ -7773,10 +7774,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #region TryGetLocation(CountryCode, PartyId, LocationId, out Location)
 
-        public Boolean TryGetLocation(CountryCode    CountryCode,
-                                      Party_Id       PartyId,
-                                      Location_Id    LocationId,
-                                      out Location?  Location)
+        public Boolean TryGetLocation(CountryCode                        CountryCode,
+                                      Party_Id                           PartyId,
+                                      Location_Id                        LocationId,
+                                      [NotNullWhen(true)] out Location?  Location)
         {
 
             lock (locations)

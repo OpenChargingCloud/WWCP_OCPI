@@ -19,24 +19,26 @@
 
 using System.Text;
 using System.Security.Authentication;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
 using Org.BouncyCastle.Math;
-using Org.BouncyCastle.X509;
 using Org.BouncyCastle.Pkcs;
-using Org.BouncyCastle.X509.Extension;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Operators;
 using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Asn1.Cms;
+using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.X509;
+using Org.BouncyCastle.X509.Extension;
 using Org.BouncyCastle.OpenSsl;
+using Org.BouncyCastle.Security;
+using Org.BouncyCastle.Utilities;
 
 using BCx509 = Org.BouncyCastle.X509;
 
@@ -46,10 +48,6 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
-using System.Xml.Linq;
-using System.Diagnostics.CodeAnalysis;
-using System.Net.NetworkInformation;
-using Org.BouncyCastle.Asn1.Pkcs;
 
 #endregion
 
@@ -1142,13 +1140,13 @@ namespace cloud.charging.open.protocols.OCPI
         #region GenerateCSR(...)
 
         /// <summary>
-        /// 
+        /// Generate a new Certificate Signing Request.
         /// </summary>
-        /// <param name="KeyPair"></param>
-        /// <param name="KeyGroupId"></param>
-        /// <param name="KeySerialNumber"></param>
-        /// <param name="NotBefore"></param>
-        /// <param name="NotAfter"></param>
+        /// <param name="KeyPair">The key pair to use.</param>
+        /// <param name="KeyGroupId">An optional key group identification. CSRs with the same keyGroupId replace each other.</param>
+        /// <param name="KeySerialNumber">An optional key serial number.</param>
+        /// <param name="NotBefore">An optional timestamp when the final certificate should become valid.</param>
+        /// <param name="NotAfter">An optional timestamp when the final certificate should expire.</param>
         /// 
         /// <param name="PartyIds"></param>
         /// <param name="SubCPOIds"></param>
@@ -1339,9 +1337,32 @@ namespace cloud.charging.open.protocols.OCPI
 
             extgen.AddExtension(
                 X509Extensions.ExtendedKeyUsage,
-                true,
+                true, // false would be more standard conform, but most CAs don't care...
                 new ExtendedKeyUsage(KeyPurposeID.id_kp_clientAuth)
             );
+
+            #endregion
+
+            #region Subject Alternative Names
+
+            extgen.AddExtension(
+                X509Extensions.SubjectAlternativeName,
+                true, // false would be more standard conform, but most CAs don't care...
+                new DerOctetString(
+                    new GeneralNames([
+                        new (GeneralName.DnsName,                     CommonName),
+                        new (GeneralName.IPAddress,                  "192.168.10.10"),
+                        new (GeneralName.Rfc822Name,                 "admin@example.com"),
+                        new (GeneralName.Rfc822Name,                 "tech@example.com"),
+                        new (GeneralName.UniformResourceIdentifier,  "https://example.com/api/"),
+                        new (GeneralName.UniformResourceIdentifier,  "urn:acme:device:1234")
+                    ]).GetEncoded()
+                )
+            );
+
+            #endregion
+
+            #region Check max CSR Certificate Lifetime
 
             csrAttributes.Add(
                 new Org.BouncyCastle.Asn1.Cms.Attribute(
@@ -1349,10 +1370,6 @@ namespace cloud.charging.open.protocols.OCPI
                     new DerSet(extgen.Generate())
                 )
             );
-
-            #endregion
-
-            #region Check max CSR Certificate Lifetime
 
             var csrInfo = new CSRInfo(
                               PublicKey:         KeyPair.Public,
