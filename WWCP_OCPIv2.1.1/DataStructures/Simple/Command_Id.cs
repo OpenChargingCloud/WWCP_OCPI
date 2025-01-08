@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,8 @@
  */
 
 #region Usings
+
+using System.Diagnostics.CodeAnalysis;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
@@ -154,7 +156,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="Text">A text representation of a command identification.</param>
         /// <param name="CommandId">The parsed command identification.</param>
-        public static Boolean TryParse(String Text, out Command_Id CommandId)
+        public static Boolean TryParse(String Text, [NotNullWhen(true)] out Command_Id CommandId)
         {
 
             Text = Text.Trim();
@@ -177,15 +179,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this command identification.
         /// </summary>
-        public Command_Id Clone
+        public Command_Id Clone()
 
             => new (
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion

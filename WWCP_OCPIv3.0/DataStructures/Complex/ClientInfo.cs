@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,13 +48,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// CPO or eMSP ID of this party (following the 15118 ISO standard), as used in the credentials exchange.
         /// </summary>
         [Mandatory]
-        public Party_Idv3          PartyId        { get; }
+        public Party_Idv3        PartyId        { get; }
 
         /// <summary>
         /// The role of the connected party.
         /// </summary>
         [Mandatory]
-        public Roles             Role           { get; }
+        public Role              Role           { get; }
 
         /// <summary>
         /// Status of the connection to the party.
@@ -81,8 +81,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Status">Status of the connection to the party.</param>
         /// <param name="LastUpdated">Optional timestamp when this client info was last updated.</param>
         public ClientInfo(CountryCode       CountryCode,
-                          Party_Idv3          PartyId,
-                          Roles             Role,
+                          Party_Idv3        PartyId,
+                          Role              Role,
                           ConnectionStatus  Status,
                           DateTime?         LastUpdated = null)
         {
@@ -269,10 +269,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region Parse Role              [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("role",
-                                             "client role",
-                                             out Roles Role,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("role",
+                                         "client role",
+                                         OCPI.Role.TryParse,
+                                         out Role Role,
+                                         out ErrorResponse))
                 {
                     return false;
                 }

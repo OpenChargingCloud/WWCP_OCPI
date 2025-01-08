@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -134,13 +134,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The optional identification of the energy meter.
         /// </summary>
         [Optional]
-        public   Meter_Id?                           MeterId                     { get; }
+        public   EnergyMeter_Id?                     EnergyMeterId               { get; }
 
         /// <summary>
         /// The optional energy meter.
         /// </summary>
         [Optional, NonStandard]
-        public   EnergyMeter?                        EnergyMeter                 { get; }
+        public   EnergyMeter<EVSE>?                  EnergyMeter                 { get; }
 
         /// <summary>
         /// The enumeration of valid transparency softwares which can be used to validate
@@ -278,6 +278,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         [Optional]
         public   Boolean?                            HomeChargingCompensation    { get; }
 
+
         /// <summary>
         /// The timestamp when this charge detail record was created.
         /// </summary>
@@ -318,7 +319,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// 
         /// <param name="SessionId">The optional unique identification of the charging session. Is only allowed to be omitted when the CPO has not implemented the sessions module or this charge detail record is the result of a reservation that never became a charging session.</param>
         /// <param name="AuthorizationReference">The optional reference to the authorization given by the eMSP.</param>
-        /// <param name="MeterId">The optional identification of the energy meter.</param>
+        /// <param name="EnergyMeterId">The optional identification of the energy meter.</param>
         /// <param name="EnergyMeter">The optional energy meter.</param>
         /// <param name="TransparencySoftwares">The enumeration of valid transparency softwares which can be used to validate the singed charging session and metering data.</param>
         /// <param name="Tariffs">The enumeration of relevant charging tariffs.</param>
@@ -341,7 +342,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomCDRSerializer">A delegate to serialize custom charge detail record JSON objects.</param>
         /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
         /// <param name="CustomCDRLocationSerializer">A delegate to serialize custom location JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomEVSEEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
@@ -372,8 +373,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                    Session_Id?                                             SessionId                              = null,
                    AuthorizationReference?                                 AuthorizationReference                 = null,
-                   Meter_Id?                                               MeterId                                = null,
-                   EnergyMeter?                                            EnergyMeter                            = null,
+                   EnergyMeter_Id?                                         EnergyMeterId                          = null,
+                   EnergyMeter<EVSE>?                                      EnergyMeter                            = null,
                    IEnumerable<TransparencySoftware>?                      TransparencySoftwares                  = null,
                    IEnumerable<Tariff>?                                    Tariffs                                = null,
                    SignedData?                                             SignedData                             = null,
@@ -394,7 +395,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    CustomJObjectSerializerDelegate<CDR>?                   CustomCDRSerializer                    = null,
                    CustomJObjectSerializerDelegate<CDRToken>?              CustomCDRTokenSerializer               = null,
                    CustomJObjectSerializerDelegate<CDRLocation>?           CustomCDRLocationSerializer            = null,
-                   CustomJObjectSerializerDelegate<EnergyMeter>?           CustomEnergyMeterSerializer            = null,
+                   CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?     CustomEVSEEnergyMeterSerializer        = null,
                    CustomJObjectSerializerDelegate<TransparencySoftware>?  CustomTransparencySoftwareSerializer   = null,
                    CustomJObjectSerializerDelegate<Tariff>?                CustomTariffSerializer                 = null,
                    CustomJObjectSerializerDelegate<DisplayText>?           CustomDisplayTextSerializer            = null,
@@ -431,7 +432,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             this.SessionId                 = SessionId;
             this.AuthorizationReference    = AuthorizationReference;
-            this.MeterId                   = MeterId;
+            this.EnergyMeterId                   = EnergyMeterId;
             this.EnergyMeter               = EnergyMeter;
             this.TransparencySoftwares     = TransparencySoftwares ?? Array.Empty<TransparencySoftware>();
             this.Tariffs                   = Tariffs               ?? Array.Empty<Tariff>();
@@ -451,24 +452,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.Created                   = Created               ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated               = LastUpdated           ?? Created     ?? Timestamp.Now;
 
-            this.ETag                      = SHA256.HashData(ToJSON(CustomCDRSerializer,
-                                                                                CustomCDRTokenSerializer,
-                                                                                CustomCDRLocationSerializer,
-                                                                                CustomEnergyMeterSerializer,
-                                                                                CustomTransparencySoftwareSerializer,
-                                                                                CustomTariffSerializer,
-                                                                                CustomDisplayTextSerializer,
-                                                                                CustomPriceSerializer,
-                                                                                CustomTariffElementSerializer,
-                                                                                CustomPriceComponentSerializer,
-                                                                                CustomTariffRestrictionsSerializer,
-                                                                                CustomEnergyMixSerializer,
-                                                                                CustomEnergySourceSerializer,
-                                                                                CustomEnvironmentalImpactSerializer,
-                                                                                CustomChargingPeriodSerializer,
-                                                                                CustomCDRDimensionSerializer,
-                                                                                CustomSignedDataSerializer,
-                                                                                CustomSignedValueSerializer).ToUTF8Bytes()).ToBase64();
+            this.ETag                      = SHA256.HashData(
+                                                 ToJSON(
+                                                     CustomCDRSerializer,
+                                                     CustomCDRTokenSerializer,
+                                                     CustomCDRLocationSerializer,
+                                                     CustomEVSEEnergyMeterSerializer,
+                                                     CustomTransparencySoftwareSerializer,
+                                                     CustomTariffSerializer,
+                                                     CustomDisplayTextSerializer,
+                                                     CustomPriceSerializer,
+                                                     CustomTariffElementSerializer,
+                                                     CustomPriceComponentSerializer,
+                                                     CustomTariffRestrictionsSerializer,
+                                                     CustomEnergyMixSerializer,
+                                                     CustomEnergySourceSerializer,
+                                                     CustomEnvironmentalImpactSerializer,
+                                                     CustomChargingPeriodSerializer,
+                                                     CustomCDRDimensionSerializer,
+                                                     CustomSignedDataSerializer,
+                                                     CustomSignedValueSerializer
+                                                 ).ToUTF8Bytes()
+                                             ).ToBase64();
 
             unchecked
             {
@@ -492,7 +497,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                            (this.SessionId?.               GetHashCode()  ?? 0) *  59 ^
                            (this.AuthorizationReference?.  GetHashCode()  ?? 0) *  53 ^
-                           (this.MeterId?.                 GetHashCode()  ?? 0) *  47 ^
+                           (this.EnergyMeterId?.           GetHashCode()  ?? 0) *  47 ^
                            (this.EnergyMeter?.             GetHashCode()  ?? 0) *  43 ^
                             this.TransparencySoftwares.    CalcHashCode()       *  41 ^
                            (this.SignedData?.              GetHashCode()  ?? 0) *  37 ^
@@ -773,12 +778,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #endregion
 
-                #region Parse MeterId                     [optional]
+                #region Parse EnergyMeterId               [optional]
 
                 if (JSON.ParseOptional("meter_id",
                                        "meter identification",
-                                       Meter_Id.TryParse,
-                                       out Meter_Id? MeterId,
+                                       EnergyMeter_Id.TryParse,
+                                       out EnergyMeter_Id? EnergyMeterId,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -791,8 +796,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (JSON.ParseOptionalJSON("energy_meter",
                                            "energy meter",
-                                           OCPI.EnergyMeter.TryParse,
-                                           out EnergyMeter? EnergyMeter,
+                                           EnergyMeter<EVSE>.TryParse,
+                                           out EnergyMeter<EVSE>? EnergyMeter,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -996,7 +1001,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #endregion
 
-                #region Remark                            [optional]
+                #region Parse Remark                      [optional]
 
                 var Remark = JSON.GetString("remark");
 
@@ -1016,7 +1021,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #endregion
 
-                #region Credit                            [optional]
+                #region Parse Credit                      [optional]
 
                 if (JSON.ParseOptional("credit",
                                        "credit charge detail record",
@@ -1101,7 +1106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                           SessionId,
                           AuthorizationReference,
-                          MeterId,
+                          EnergyMeterId,
                           EnergyMeter,
                           TransparencySoftwares,
                           Tariffs,
@@ -1150,7 +1155,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomCDRSerializer">A delegate to serialize custom charge detail record JSON objects.</param>
         /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
         /// <param name="CustomCDRLocationSerializer">A delegate to serialize custom location JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomEVSEEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
@@ -1168,7 +1173,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<CDR>?                   CustomCDRSerializer                    = null,
                               CustomJObjectSerializerDelegate<CDRToken>?              CustomCDRTokenSerializer               = null,
                               CustomJObjectSerializerDelegate<CDRLocation>?           CustomCDRLocationSerializer            = null,
-                              CustomJObjectSerializerDelegate<EnergyMeter>?           CustomEnergyMeterSerializer            = null,
+                              CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?     CustomEVSEEnergyMeterSerializer        = null,
                               CustomJObjectSerializerDelegate<TransparencySoftware>?  CustomTransparencySoftwareSerializer   = null,
                               CustomJObjectSerializerDelegate<Tariff>?                CustomTariffSerializer                 = null,
                               CustomJObjectSerializerDelegate<DisplayText>?           CustomDisplayTextSerializer            = null,
@@ -1206,12 +1211,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                  new JProperty("cdr_location",                 Location.                      ToJSON(CustomCDRLocationSerializer)),
 
-                           MeterId.HasValue
-                               ? new JProperty("meter_id",                     MeterId.                 Value.ToString())
+                           EnergyMeterId.HasValue
+                               ? new JProperty("meter_id",                     EnergyMeterId.                 Value.ToString())
                                : null,
 
                            EnergyMeter is not null
-                               ? new JProperty("energy_meter",                 EnergyMeter.                   ToJSON(CustomEnergyMeterSerializer))
+                               ? new JProperty("energy_meter",                 EnergyMeter.                   ToJSON(CustomEVSEEnergyMeterSerializer))
                                : null,
 
                            TransparencySoftwares.Any()
@@ -1331,7 +1336,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                    SessionId?.             Clone(),
                    AuthorizationReference?.Clone(),
-                   MeterId?.               Clone(),
+                   EnergyMeterId?.               Clone(),
                    EnergyMeter?.           Clone(),
                    TransparencySoftwares.Select(transparencySoftware => transparencySoftware.Clone()).ToArray(),
                    Tariffs.              Select(tariff               => tariff.              Clone()).ToArray(),
@@ -1736,8 +1741,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             ((!AuthorizationReference.  HasValue    && !CDR.AuthorizationReference.  HasValue)  ||
               (AuthorizationReference.  HasValue    &&  CDR.AuthorizationReference.  HasValue    && AuthorizationReference.  Value.Equals(CDR.AuthorizationReference.  Value))) &&
 
-            ((!MeterId.                 HasValue    && !CDR.MeterId.                 HasValue)  ||
-              (MeterId.                 HasValue    &&  CDR.MeterId.                 HasValue    && MeterId.                 Value.Equals(CDR.MeterId.                 Value))) &&
+            ((!EnergyMeterId.                 HasValue    && !CDR.EnergyMeterId.                 HasValue)  ||
+              (EnergyMeterId.                 HasValue    &&  CDR.EnergyMeterId.                 HasValue    && EnergyMeterId.                 Value.Equals(CDR.EnergyMeterId.                 Value))) &&
 
             ((!TotalFixedCosts.         HasValue    && !CDR.TotalFixedCosts.         HasValue)  ||
               (TotalFixedCosts.         HasValue    &&  CDR.TotalFixedCosts.         HasValue    && TotalFixedCosts.         Value.Equals(CDR.TotalFixedCosts.         Value))) &&
@@ -1851,8 +1856,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    // SessionId
                    // AuthorizationReference
 
-                   MeterId.HasValue
-                       ? "meter id: " + MeterId.Value.ToString() + ", "
+                   EnergyMeterId.HasValue
+                       ? "meter id: " + EnergyMeterId.Value.ToString() + ", "
                        : "",
 
                    // EnergyMeter

@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -166,15 +166,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this energy contract identification.
         /// </summary>
-        public EnergyContract_Id Clone
+        public EnergyContract_Id Clone()
 
             => new (
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion

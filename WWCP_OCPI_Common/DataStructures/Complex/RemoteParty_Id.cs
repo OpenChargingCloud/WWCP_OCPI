@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -76,7 +76,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// The party role.
         /// </summary>
-        public Roles        Role           { get;}
+        public Role         Role           { get;}
 
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Role">A party role.</param>
         private RemoteParty_Id(CountryCode  CountryCode,
                                Party_Id     PartyId,
-                               Roles        Role)
+                               Role         Role)
         {
 
             this.CountryCode  = CountryCode;
@@ -140,7 +140,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Role">A party role.</param>
         public static RemoteParty_Id Parse(CountryCode  CountryCode,
                                            Party_Id     PartyId,
-                                           Roles        Role)
+                                           Role         Role)
 
             => new (CountryCode,
                     PartyId,
@@ -158,7 +158,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             => new (CPOId.CountryCode,
                     CPOId.PartyId,
-                    Roles.CPO);
+                    Role.CPO);
 
         #endregion
 
@@ -172,7 +172,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             => new (EMSPId.CountryCode,
                     EMSPId.PartyId,
-                    Roles.EMSP);
+                    Role.EMSP);
 
         #endregion
 
@@ -186,7 +186,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             => new (CountryCode.Parse("XX"),
                     Party_Id.   Parse("XXX"),
-                    Roles.      OTHER);
+                    Role.       OTHER);
 
         #endregion
 
@@ -248,12 +248,14 @@ namespace cloud.charging.open.protocols.OCPI
                     if (matchCollection.Count == 1 &&
                         CountryCode.    TryParse(matchCollection[0].Groups[1].Value, out var countryCode) &&
                         Party_Id.       TryParse(matchCollection[0].Groups[2].Value, out var partyId)     &&
-                        RolesExtensions.TryParse(matchCollection[0].Groups[3].Value, out var role))
+                        Role.           TryParse(matchCollection[0].Groups[3].Value, out var role))
                     {
 
-                        RemotePartyId = new RemoteParty_Id(countryCode,
-                                                           partyId,
-                                                           role);
+                        RemotePartyId = new RemoteParty_Id(
+                                            countryCode,
+                                            partyId,
+                                            role
+                                        );
 
                         return true;
 
@@ -281,7 +283,7 @@ namespace cloud.charging.open.protocols.OCPI
             => new (
                    CountryCode.Clone(),
                    PartyId.    Clone(),
-                   Role
+                   Role.       Clone()
                );
 
         #endregion

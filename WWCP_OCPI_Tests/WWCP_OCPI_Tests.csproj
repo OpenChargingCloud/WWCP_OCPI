@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="NUnit" Version="4.3.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Hermod\HermodTests\HermodTests.csproj" />
+    <ProjectReference Include="..\..\Styx\StyxTests\StyxTests.csproj" />
+    <ProjectReference Include="..\..\WWCP_Core\WWCP_CoreData\WWCP_CoreData.csproj" />
+    <ProjectReference Include="..\..\WWCP_Core\WWCP_Core\WWCP_Core.csproj" />
+    <ProjectReference Include="..\..\WWCP_Core\WWCP_Core_Tests\WWCP_Core_Tests.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.1.1\WWCP_OCPIv2.1.1.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.1.1_Adapter\WWCP_OCPIv2.1.1_Adapter.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.1.1_Tests\WWCP_OCPIv2.1.1_Tests.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.1.1_WebAPI\WWCP_OCPIv2.1.1_WebAPI.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.2.1\WWCP_OCPIv2.2.1.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.2.1_Adapter\WWCP_OCPIv2.2.1_Adapter.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.2.1_Tests\WWCP_OCPIv2.2.1_Tests.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.2.1_WebAPI\WWCP_OCPIv2.2.1_WebAPI.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.3.0\WWCP_OCPIv2.3.0.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.3.0_Adapter\WWCP_OCPIv2.3.0_Adapter.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.3.0_Tests\WWCP_OCPIv2.3.0_Tests.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.3.0_WebAPI\WWCP_OCPIv2.3.0_WebAPI.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv3.0\WWCP_OCPIv3.0.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv3.0_Adapter\WWCP_OCPIv3.0_Adapter.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv3.0_Tests\WWCP_OCPIv3.0_Tests.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv3.0_WebAPI\WWCP_OCPIv3.0_WebAPI.csproj" />
+    <ProjectReference Include="..\WWCP_OCPI_Common\WWCP_OCPI_Common.csproj" />
+  </ItemGroup>
+
+</Project>

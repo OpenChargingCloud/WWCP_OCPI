@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -131,7 +131,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The optional (uplink) energy meter for the entire charging station.
         /// </summary>
         [Optional, NonStandard]
-        public EnergyMeter?                     EnergyMeter                { get; }
+        public EnergyMeter<ChargingStation>?    EnergyMeter                { get; }
 
         /// <summary>
         /// The timestamp when this ChargingStation was created.
@@ -179,36 +179,38 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomParkingRestrictionSerializer">A delegate to serialize custom parking restriction JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomChargingStationEnergyMeterSerializer">A delegate to serialize custom charging station energy meter JSON objects.</param>
+        /// <param name="CustomEVSEEnergyMeterSerializer">A delegate to serialize custom EVSE energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        public ChargingStation(ChargingStation_Id                                            Id,
+        public ChargingStation(ChargingStation_Id                                              Id,
 
-                               IEnumerable<EVSE>?                                            EVSEs                                        = null,
-                               IEnumerable<Capability>?                                      Capabilities                                 = null,
-                               String?                                                       FloorLevel                                   = null,
-                               GeoCoordinate?                                                Coordinates                                  = null,
-                               String?                                                       PhysicalReference                            = null,
-                               IEnumerable<DisplayText>?                                     Directions                                   = null,
-                               IEnumerable<Image>?                                           Images                                       = null,
-                               EnergyMeter?                                                  EnergyMeter                                  = null,
+                               IEnumerable<EVSE>?                                              EVSEs                                        = null,
+                               IEnumerable<Capability>?                                        Capabilities                                 = null,
+                               String?                                                         FloorLevel                                   = null,
+                               GeoCoordinate?                                                  Coordinates                                  = null,
+                               String?                                                         PhysicalReference                            = null,
+                               IEnumerable<DisplayText>?                                       Directions                                   = null,
+                               IEnumerable<Image>?                                             Images                                       = null,
+                               EnergyMeter<ChargingStation>?                                   EnergyMeter                                  = null,
 
-                               DateTime?                                                     Created                                      = null,
-                               DateTime?                                                     LastUpdated                                  = null,
+                               DateTime?                                                       Created                                      = null,
+                               DateTime?                                                       LastUpdated                                  = null,
 
-                               EMSP_Id?                                                      EMSPId                                       = null,
-                               CustomJObjectSerializerDelegate<ChargingStation>?             CustomChargingStationSerializer              = null,
-                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
-                               CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
-                               CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
-                               CustomJObjectSerializerDelegate<ParkingRestriction>?          CustomParkingRestrictionSerializer           = null,
-                               CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
-                               CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
-                               CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
-                               CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
-                               CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
-                               CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null)
+                               EMSP_Id?                                                        EMSPId                                       = null,
+                               CustomJObjectSerializerDelegate<ChargingStation>?               CustomChargingStationSerializer              = null,
+                               CustomJObjectSerializerDelegate<EVSE>?                          CustomEVSESerializer                         = null,
+                               CustomJObjectSerializerDelegate<Connector>?                     CustomConnectorSerializer                    = null,
+                               CustomJObjectSerializerDelegate<Parking>?                       CustomParkingSerializer                      = null,
+                               CustomJObjectSerializerDelegate<ParkingRestriction>?            CustomParkingRestrictionSerializer           = null,
+                               CustomJObjectSerializerDelegate<Image>?                         CustomImageSerializer                        = null,
+                               CustomJObjectSerializerDelegate<StatusSchedule>?                CustomStatusScheduleSerializer               = null,
+                               CustomJObjectSerializerDelegate<EnergyMeter<ChargingStation>>?  CustomChargingStationEnergyMeterSerializer   = null,
+                               CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?             CustomEVSEEnergyMeterSerializer              = null,
+                               CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?    CustomTransparencySoftwareStatusSerializer   = null,
+                               CustomJObjectSerializerDelegate<TransparencySoftware>?          CustomTransparencySoftwareSerializer         = null,
+                               CustomJObjectSerializerDelegate<DisplayText>?                   CustomDisplayTextSerializer                  = null)
 
             : this(null,
                    Id,
@@ -233,7 +235,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    CustomParkingRestrictionSerializer,
                    CustomImageSerializer,
                    CustomStatusScheduleSerializer,
-                   CustomEnergyMeterSerializer,
+                   CustomChargingStationEnergyMeterSerializer,
+                   CustomEVSEEnergyMeterSerializer,
                    CustomTransparencySoftwareStatusSerializer,
                    CustomTransparencySoftwareSerializer,
                    CustomDisplayTextSerializer)
@@ -268,37 +271,39 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomParkingRestrictionSerializer">A delegate to serialize custom parking restriction JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomChargingStationEnergyMeterSerializer">A delegate to serialize custom charging station energy meter JSON objects.</param>
+        /// <param name="CustomEVSEEnergyMeterSerializer">A delegate to serialize custom EVSE energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        internal ChargingStation(Location?                                                     ParentLocation,
-                                 ChargingStation_Id                                            Id,
+        internal ChargingStation(Location?                                                       ParentLocation,
+                                 ChargingStation_Id                                              Id,
 
-                                 IEnumerable<EVSE>?                                            EVSEs                                        = null,
-                                 IEnumerable<Capability>?                                      Capabilities                                 = null,
-                                 String?                                                       FloorLevel                                   = null,
-                                 GeoCoordinate?                                                Coordinates                                  = null,
-                                 String?                                                       PhysicalReference                            = null,
-                                 IEnumerable<DisplayText>?                                     Directions                                   = null,
-                                 IEnumerable<Image>?                                           Images                                       = null,
-                                 EnergyMeter?                                                  EnergyMeter                                  = null,
+                                 IEnumerable<EVSE>?                                              EVSEs                                        = null,
+                                 IEnumerable<Capability>?                                        Capabilities                                 = null,
+                                 String?                                                         FloorLevel                                   = null,
+                                 GeoCoordinate?                                                  Coordinates                                  = null,
+                                 String?                                                         PhysicalReference                            = null,
+                                 IEnumerable<DisplayText>?                                       Directions                                   = null,
+                                 IEnumerable<Image>?                                             Images                                       = null,
+                                 EnergyMeter<ChargingStation>?                                   EnergyMeter                                  = null,
 
-                                 DateTime?                                                     Created                                      = null,
-                                 DateTime?                                                     LastUpdated                                  = null,
+                                 DateTime?                                                       Created                                      = null,
+                                 DateTime?                                                       LastUpdated                                  = null,
 
-                                 EMSP_Id?                                                      EMSPId                                       = null,
-                                 CustomJObjectSerializerDelegate<ChargingStation>?             CustomChargingStationSerializer              = null,
-                                 CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
-                                 CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
-                                 CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
-                                 CustomJObjectSerializerDelegate<ParkingRestriction>?          CustomParkingRestrictionSerializer           = null,
-                                 CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
-                                 CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
-                                 CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
-                                 CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
-                                 CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
-                                 CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null)
+                                 EMSP_Id?                                                        EMSPId                                       = null,
+                                 CustomJObjectSerializerDelegate<ChargingStation>?               CustomChargingStationSerializer              = null,
+                                 CustomJObjectSerializerDelegate<EVSE>?                          CustomEVSESerializer                         = null,
+                                 CustomJObjectSerializerDelegate<Connector>?                     CustomConnectorSerializer                    = null,
+                                 CustomJObjectSerializerDelegate<Parking>?                       CustomParkingSerializer                      = null,
+                                 CustomJObjectSerializerDelegate<ParkingRestriction>?            CustomParkingRestrictionSerializer           = null,
+                                 CustomJObjectSerializerDelegate<Image>?                         CustomImageSerializer                        = null,
+                                 CustomJObjectSerializerDelegate<StatusSchedule>?                CustomStatusScheduleSerializer               = null,
+                                 CustomJObjectSerializerDelegate<EnergyMeter<ChargingStation>>?  CustomChargingStationEnergyMeterSerializer   = null,
+                                 CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?             CustomEVSEEnergyMeterSerializer              = null,
+                                 CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?    CustomTransparencySoftwareStatusSerializer   = null,
+                                 CustomJObjectSerializerDelegate<TransparencySoftware>?          CustomTransparencySoftwareSerializer         = null,
+                                 CustomJObjectSerializerDelegate<DisplayText>?                   CustomDisplayTextSerializer                  = null)
 
             : base(ParentLocation,
                    Id)
@@ -336,7 +341,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                              CustomParkingRestrictionSerializer,
                                              CustomImageSerializer,
                                              CustomStatusScheduleSerializer,
-                                             CustomEnergyMeterSerializer,
+                                             CustomChargingStationEnergyMeterSerializer,
+                                             CustomEVSEEnergyMeterSerializer,
                                              CustomTransparencySoftwareStatusSerializer,
                                              CustomTransparencySoftwareSerializer,
                                              CustomDisplayTextSerializer
@@ -358,7 +364,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="ChargingStationIdURL">An optional charging station identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomChargingStationParser">A delegate to parse custom charging station JSON objects.</param>
         public static ChargingStation Parse(JObject                                        JSON,
-                                            Party_Idv3?                                      PartyIdURL                    = null,
+                                            Party_Idv3?                                    PartyIdURL                    = null,
                                             ChargingStation_Id?                            ChargingStationIdURL          = null,
                                             UInt64?                                        VersionIdURL                  = null,
                                             CustomJObjectParserDelegate<ChargingStation>?  CustomChargingStationParser   = null)
@@ -595,8 +601,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptionalJSON("energy_meter",
                                            "energy meter",
-                                           OCPI.EnergyMeter.TryParse,
-                                           out EnergyMeter? EnergyMeter,
+                                           EnergyMeter<ChargingStation>.TryParse,
+                                           out EnergyMeter<ChargingStation>? EnergyMeter,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -662,8 +668,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             }
             catch (Exception e)
             {
-                ChargingStation           = default;
-                ErrorResponse  = "The given JSON representation of a charging station is invalid: " + e.Message;
+                ChargingStation  = default;
+                ErrorResponse    = "The given JSON representation of a charging station is invalid: " + e.Message;
                 return false;
             }
 
@@ -684,24 +690,26 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomParkingSerializer">A delegate to serialize custom parking JSON objects.</param>
         /// <param name="CustomParkingRestrictionSerializer">A delegate to serialize custom parking restriction JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomChargingStationEnergyMeterSerializer">A delegate to serialize custom charging station energy meter JSON objects.</param>
+        /// <param name="CustomEVSEEnergyMeterSerializer">A delegate to serialize custom EVSE energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public JObject ToJSON(Boolean                                                       IncludeCreatedTimestamp                      = true,
-                              Boolean                                                       IncludeExtensions                            = true,
-                              CustomJObjectSerializerDelegate<ChargingStation>?             CustomChargingStationSerializer              = null,
-                              CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
-                              CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
-                              CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
-                              CustomJObjectSerializerDelegate<ParkingRestriction>?          CustomParkingRestrictionSerializer           = null,
-                              CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
-                              CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
-                              CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
-                              CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
-                              CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
-                              CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null)
+        public JObject ToJSON(Boolean                                                         IncludeCreatedTimestamp                      = true,
+                              Boolean                                                         IncludeExtensions                            = true,
+                              CustomJObjectSerializerDelegate<ChargingStation>?               CustomChargingStationSerializer              = null,
+                              CustomJObjectSerializerDelegate<EVSE>?                          CustomEVSESerializer                         = null,
+                              CustomJObjectSerializerDelegate<Connector>?                     CustomConnectorSerializer                    = null,
+                              CustomJObjectSerializerDelegate<Parking>?                       CustomParkingSerializer                      = null,
+                              CustomJObjectSerializerDelegate<ParkingRestriction>?            CustomParkingRestrictionSerializer           = null,
+                              CustomJObjectSerializerDelegate<Image>?                         CustomImageSerializer                        = null,
+                              CustomJObjectSerializerDelegate<StatusSchedule>?                CustomStatusScheduleSerializer               = null,
+                              CustomJObjectSerializerDelegate<EnergyMeter<ChargingStation>>?  CustomChargingStationEnergyMeterSerializer   = null,
+                              CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?             CustomEVSEEnergyMeterSerializer              = null,
+                              CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?    CustomTransparencySoftwareStatusSerializer   = null,
+                              CustomJObjectSerializerDelegate<TransparencySoftware>?          CustomTransparencySoftwareSerializer         = null,
+                              CustomJObjectSerializerDelegate<DisplayText>?                   CustomDisplayTextSerializer                  = null)
         {
 
             var json = JSONObject.Create(
@@ -727,7 +735,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                                                                                               CustomParkingRestrictionSerializer,
                                                                                                                                                               CustomImageSerializer,
                                                                                                                                                               CustomStatusScheduleSerializer,
-                                                                                                                                                              CustomEnergyMeterSerializer,
+                                                                                                                                                              CustomEVSEEnergyMeterSerializer,
                                                                                                                                                               CustomTransparencySoftwareStatusSerializer,
                                                                                                                                                               CustomTransparencySoftwareSerializer,
                                                                                                                                                               CustomDisplayTextSerializer))))
@@ -761,7 +769,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                : null,
 
                            EnergyMeter is not null
-                               ? new JProperty("energy_meter",         EnergyMeter. ToJSON(CustomEnergyMeterSerializer,
+                               ? new JProperty("energy_meter",         EnergyMeter. ToJSON(CustomChargingStationEnergyMeterSerializer,
                                                                                            CustomTransparencySoftwareStatusSerializer,
                                                                                            CustomTransparencySoftwareSerializer))
                                : null,
@@ -1027,21 +1035,23 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomParkingRestrictionSerializer">A delegate to serialize custom parking restriction JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomChargingStationEnergyMeterSerializer">A delegate to serialize custom charging station energy meter JSON objects.</param>
+        /// <param name="CustomEVSEEnergyMeterSerializer">A delegate to serialize custom EVSE energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<ChargingStation>?             CustomChargingStationSerializer              = null,
-                                     CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
-                                     CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
-                                     CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
-                                     CustomJObjectSerializerDelegate<ParkingRestriction>?          CustomParkingRestrictionSerializer           = null,
-                                     CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
-                                     CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
-                                     CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
-                                     CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
-                                     CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
-                                     CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null)
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<ChargingStation>?               CustomChargingStationSerializer              = null,
+                                     CustomJObjectSerializerDelegate<EVSE>?                          CustomEVSESerializer                         = null,
+                                     CustomJObjectSerializerDelegate<Connector>?                     CustomConnectorSerializer                    = null,
+                                     CustomJObjectSerializerDelegate<Parking>?                       CustomParkingSerializer                      = null,
+                                     CustomJObjectSerializerDelegate<ParkingRestriction>?            CustomParkingRestrictionSerializer           = null,
+                                     CustomJObjectSerializerDelegate<Image>?                         CustomImageSerializer                        = null,
+                                     CustomJObjectSerializerDelegate<StatusSchedule>?                CustomStatusScheduleSerializer               = null,
+                                     CustomJObjectSerializerDelegate<EnergyMeter<ChargingStation>>?  CustomChargingStationEnergyMeterSerializer   = null,
+                                     CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?             CustomEVSEEnergyMeterSerializer              = null,
+                                     CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?    CustomTransparencySoftwareStatusSerializer   = null,
+                                     CustomJObjectSerializerDelegate<TransparencySoftware>?          CustomTransparencySoftwareSerializer         = null,
+                                     CustomJObjectSerializerDelegate<DisplayText>?                   CustomDisplayTextSerializer                  = null)
         {
 
             ETag = SHA256.HashData(
@@ -1055,7 +1065,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            CustomParkingRestrictionSerializer,
                            CustomImageSerializer,
                            CustomStatusScheduleSerializer,
-                           CustomEnergyMeterSerializer,
+                           CustomChargingStationEnergyMeterSerializer,
+                           CustomEVSEEnergyMeterSerializer,
                            CustomTransparencySoftwareStatusSerializer,
                            CustomTransparencySoftwareSerializer,
                            CustomDisplayTextSerializer
@@ -1350,7 +1361,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
              ((EnergyMeter       is     null &&  ChargingStation.EnergyMeter       is     null) ||
               (EnergyMeter       is not null &&  ChargingStation.EnergyMeter       is not null && EnergyMeter.      Equals(ChargingStation.EnergyMeter)))       &&
 
-               
 
                EVSEs.              Count().Equals(ChargingStation.EVSEs.              Count()) &&
                Capabilities.       Count().Equals(ChargingStation.Capabilities.       Count()) &&
@@ -1530,7 +1540,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The optional energy meter, e.g. for the German calibration law.
             /// </summary>
             [Optional, NonStandard]
-            public EnergyMeter?                     EnergyMeter                { get; set; }
+            public EnergyMeter<ChargingStation>?    EnergyMeter                { get; set; }
 
             /// <summary>
             /// The timestamp when this ChargingStation was created.
@@ -1564,20 +1574,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// 
             /// <param name="Created">The optional timestamp when this charging station was created.</param>
             /// <param name="LastUpdated">The optional timestamp when this charging station was last updated (or created).</param>
-            internal Builder(Location?                  ParentLocation      = null,
-                             ChargingStation_Id?        Id                  = null,
+            internal Builder(Location?                      ParentLocation      = null,
+                             ChargingStation_Id?            Id                  = null,
 
-                             IEnumerable<EVSE>?         EVSEs               = null,
-                             IEnumerable<Capability>?   Capabilities        = null,
-                             String?                    FloorLevel          = null,
-                             GeoCoordinate?             Coordinates         = null,
-                             String?                    PhysicalReference   = null,
-                             IEnumerable<DisplayText>?  Directions          = null,
-                             IEnumerable<Image>?        Images              = null,
-                             EnergyMeter?               EnergyMeter         = null,
+                             IEnumerable<EVSE>?             EVSEs               = null,
+                             IEnumerable<Capability>?       Capabilities        = null,
+                             String?                        FloorLevel          = null,
+                             GeoCoordinate?                 Coordinates         = null,
+                             String?                        PhysicalReference   = null,
+                             IEnumerable<DisplayText>?      Directions          = null,
+                             IEnumerable<Image>?            Images              = null,
+                             EnergyMeter<ChargingStation>?  EnergyMeter         = null,
 
-                             DateTime?                  Created             = null,
-                             DateTime?                  LastUpdated         = null)
+                             DateTime?                      Created             = null,
+                             DateTime?                      LastUpdated         = null)
 
                 : base(ParentLocation,
                        Id)

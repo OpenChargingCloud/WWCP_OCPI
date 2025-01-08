@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -105,11 +105,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                TimeSpan.              FromMinutes(30),
 
                                null,    // Costs
-                               Meter_Id.              Parse("Meter0815"),
+                               OCPI.EnergyMeter_Id.              Parse("Meter0815"),
 
                                // OCPI Computer Science Extensions
-                               new OCPI.EnergyMeter(
-                                   Meter_Id.Parse("Meter0815"),
+                               new OCPI.EnergyMeter<EVSE>(
+                                   OCPI.EnergyMeter_Id.Parse("Meter0815"),
                                    "EnergyMeter Model #1",
                                    null,
                                    "hw. v1.80",
@@ -285,7 +285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual (cdr1.TotalEnergy,              parsedCDR.TotalEnergy);
                 ClassicAssert.AreEqual (cdr1.TotalTime,                parsedCDR.TotalTime);
 
-                ClassicAssert.AreEqual (cdr1.MeterId,                  parsedCDR.MeterId);
+                ClassicAssert.AreEqual (cdr1.EnergyMeterId,                  parsedCDR.EnergyMeterId);
                 ClassicAssert.AreEqual (cdr1.EnergyMeter,              parsedCDR.EnergyMeter);
                 ClassicAssert.AreEqual (cdr1.TransparencySoftwares,    parsedCDR.TransparencySoftwares);
                 ClassicAssert.AreEqual (cdr1.Tariffs,                  parsedCDR.Tariffs);
@@ -568,8 +568,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             var wwcpCDR = new ChargeDetailRecord(
 
-                              Id:                             ChargeDetailRecord_Id.NewRandom(),
-                              SessionId:                      ChargingSession_Id.   NewRandom(),
+                              Id: ChargeDetailRecord_Id.NewRandom(),
+                              SessionId: ChargingSession_Id.   NewRandom(),
                               SessionTime:                    new StartEndDateTime(
                                                                   startTime,
                                                                   startTime + TimeSpan.FromHours(2)
@@ -586,21 +586,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                               //ChargingStationOperator       // automagic!
                               //ChargingStationOperatorId     // automagic!
 
-                              ChargingProduct:                ChargingProduct.AC3,
-                              ChargingPrice:                  Price.EURO(
+                              ChargingProduct: ChargingProduct.AC3,
+                              ChargingPrice: Price.EURO(
                                                                   20.00M,
                                                                    0.50M
                                                               ),
 
-                              AuthenticationStart:            LocalAuthentication.FromAuthToken(AuthenticationToken.NewRandom7Bytes),
+                              AuthenticationStart: LocalAuthentication.FromAuthToken(AuthenticationToken.NewRandom7Bytes),
                               //AuthenticationStop
-                              AuthMethodStart:                AuthMethod.AUTH_REQUEST,
+                              AuthMethodStart: AuthMethod.AUTH_REQUEST,
                               //AuthMethodStop
-                              ProviderIdStart:                EMobilityProvider_Id. Parse("DE-GDF"),
+                              ProviderIdStart: EMobilityProvider_Id. Parse("DE-GDF"),
                               //ProviderIdStop
 
                               //EMPRoamingProvider
-                              CSORoamingProviderIdStart:      CSORoamingProvider_Id.Parse("Hubject"),
+                              CSORoamingProviderIdStart: CSORoamingProvider_Id.Parse("Hubject"),
 
                               //Reservation
                               //ReservationId
@@ -613,7 +613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
                               //EnergyMeterId:                // automagic!
                               EnergyMeter:                    new WWCP.EnergyMeter(
-                                                                  EnergyMeter_Id.Parse("12345678")
+                                                                  WWCP.EnergyMeter_Id.Parse("12345678")
                                                               ),
                               EnergyMeteringValues:           [
                                                                   new EnergyMeteringValue(startTime,                             WattHour.ParseKWh( 0), EnergyMeteringValueTypes.Start),
@@ -771,7 +771,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             ClassicAssert.AreEqual (wwcpCDR.ConsumedEnergy!.Value,                                             ocpiCDR!.TotalEnergy);
             ClassicAssert.AreEqual (wwcpCDR.Duration.Value,                                                    ocpiCDR!.TotalTime);
 
-            ClassicAssert.AreEqual (wwcpCDR.EnergyMeterId!.Value.ToString(),                                   ocpiCDR!.MeterId.ToString());
+            ClassicAssert.AreEqual (wwcpCDR.EnergyMeterId!.Value.ToString(),                                   ocpiCDR!.EnergyMeterId.ToString());
 
             //Tariffs
             //SignedData

@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -96,7 +96,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         public CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                          { get; set; }
         public CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer                { get; set; }
         public CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                     { get; set; }
-        public CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMeter<Location>>?       CustomLocationEnergyMeterSerializer           { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer    { get; set; }
         public CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer          { get; set; }
         public CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                   { get; set; }
@@ -1476,13 +1477,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                                         #region Check access token
 
-                                        if ((Request.LocalAccessInfo is not null || CommonAPI.LocationsAsOpenData == false) &&
+                                        if ((Request.LocalAccessInfo is not null || CommonAPI.BaseAPI.LocationsAsOpenData == false) &&
                                             (Request.LocalAccessInfo?.Status            != AccessStatus.ALLOWED ||
-                                             Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true))
+                                             Request.LocalAccessInfo?.IsNot(Role.EMSP) == true))
                                         {
 
 
-                                        //if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                        //if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
                                         //    Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         //{
 
@@ -1605,7 +1606,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                                                                                                  CustomEVSESerializer,
                                                                                                                                  CustomStatusScheduleSerializer,
                                                                                                                                  CustomConnectorSerializer,
-                                                                                                                                 CustomEnergyMeterSerializer,
+                                                                                                                                 CustomLocationEnergyMeterSerializer,
+                                                                                                                                 CustomEVSEEnergyMeterSerializer,
                                                                                                                                  CustomTransparencySoftwareStatusSerializer,
                                                                                                                                  CustomTransparencySoftwareSerializer,
                                                                                                                                  CustomDisplayTextSerializer,
@@ -1683,7 +1685,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                        if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -1730,7 +1732,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                                                           CustomEVSESerializer,
                                                                                           CustomStatusScheduleSerializer,
                                                                                           CustomConnectorSerializer,
-                                                                                          CustomEnergyMeterSerializer,
+                                                                                          CustomLocationEnergyMeterSerializer,
+                                                                                          CustomEVSEEnergyMeterSerializer,
                                                                                           CustomTransparencySoftwareStatusSerializer,
                                                                                           CustomTransparencySoftwareSerializer,
                                                                                           CustomDisplayTextSerializer,
@@ -1790,7 +1793,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                        if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -1835,7 +1838,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                                                       CustomEVSESerializer,
                                                                                       CustomStatusScheduleSerializer,
                                                                                       CustomConnectorSerializer,
-                                                                                      CustomEnergyMeterSerializer,
+                                                                                      CustomEVSEEnergyMeterSerializer,
                                                                                       CustomTransparencySoftwareStatusSerializer,
                                                                                       CustomTransparencySoftwareSerializer,
                                                                                       CustomDisplayTextSerializer,
@@ -1890,7 +1893,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                        if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -1988,7 +1991,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                        if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -2130,7 +2133,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                        if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -2223,7 +2226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                        if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -2359,7 +2362,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                        if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -2500,7 +2503,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                        if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -2589,7 +2592,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                                                   Select        (cdr => cdr.ToJSON(CustomCDRSerializer,
                                                                                                                    CustomCDRTokenSerializer,
                                                                                                                    CustomCDRLocationSerializer,
-                                                                                                                   CustomEnergyMeterSerializer,
+                                                                                                                   CustomEVSEEnergyMeterSerializer,
                                                                                                                    CustomTransparencySoftwareSerializer,
                                                                                                                    CustomTariffSerializer,
                                                                                                                    CustomDisplayTextSerializer,
@@ -2651,7 +2654,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                        if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -2693,7 +2696,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                    Data                 = cdr.ToJSON(CustomCDRSerializer,
                                                                                      CustomCDRTokenSerializer,
                                                                                      CustomCDRLocationSerializer,
-                                                                                     CustomEnergyMeterSerializer,
+                                                                                     CustomEVSEEnergyMeterSerializer,
                                                                                      CustomTransparencySoftwareSerializer,
                                                                                      CustomTariffSerializer,
                                                                                      CustomDisplayTextSerializer,
@@ -2762,7 +2765,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                        if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -2881,7 +2884,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                        if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -2971,7 +2974,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                         #region Check access token
 
                                         if (Request.LocalAccessInfo is null ||
-                                            Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                            Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
                                             Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -3043,7 +3046,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                         #region Check access token
 
                                         if (Request.LocalAccessInfo is null ||
-                                            Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                            Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
                                             Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -3163,7 +3166,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                         #region Check access token
 
                                         if (Request.LocalAccessInfo is null ||
-                                            Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                            Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
                                             Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -3257,7 +3260,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                         #region Check access token
 
                                         if (Request.LocalAccessInfo is null ||
-                                            Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                            Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
                                             Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                                         {
 

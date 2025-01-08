@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,14 +34,14 @@ namespace cloud.charging.open.protocols.OCPI
         /// Indicates whether this meter identification is null or empty.
         /// </summary>
         /// <param name="MeterId">A meter identification.</param>
-        public static Boolean IsNullOrEmpty(this Meter_Id? MeterId)
+        public static Boolean IsNullOrEmpty(this EnergyMeter_Id? MeterId)
             => !MeterId.HasValue || MeterId.Value.IsNullOrEmpty;
 
         /// <summary>
         /// Indicates whether this meter identification is NOT null or empty.
         /// </summary>
         /// <param name="MeterId">A meter identification.</param>
-        public static Boolean IsNotNullOrEmpty(this Meter_Id? MeterId)
+        public static Boolean IsNotNullOrEmpty(this EnergyMeter_Id? MeterId)
             => MeterId.HasValue && MeterId.Value.IsNotNullOrEmpty;
 
     }
@@ -51,7 +51,7 @@ namespace cloud.charging.open.protocols.OCPI
     /// The unique identification of a meter.
     /// string(255)
     /// </summary>
-    public readonly struct Meter_Id : IId<Meter_Id>
+    public readonly struct EnergyMeter_Id : IId<EnergyMeter_Id>
     {
 
         #region Data
@@ -91,7 +91,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// Create a new meter identification based on the given text.
         /// </summary>
         /// <param name="Text">The text representation of a meter identification.</param>
-        private Meter_Id(String Text)
+        private EnergyMeter_Id(String Text)
         {
             this.InternalId = Text;
         }
@@ -105,7 +105,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// Parse the given text as a meter identification.
         /// </summary>
         /// <param name="Text">A text representation of a meter identification.</param>
-        public static Meter_Id Parse(String Text)
+        public static EnergyMeter_Id Parse(String Text)
         {
 
             if (TryParse(Text, out var meterId))
@@ -124,7 +124,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// Try to parse the given text as a meter identification.
         /// </summary>
         /// <param name="Text">A text representation of a meter identification.</param>
-        public static Meter_Id? TryParse(String Text)
+        public static EnergyMeter_Id? TryParse(String Text)
         {
 
             if (TryParse(Text, out var meterId))
@@ -143,7 +143,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         /// <param name="Text">A text representation of a meter identification.</param>
         /// <param name="MeterId">The parsed meter identification.</param>
-        public static Boolean TryParse(String Text, out Meter_Id MeterId)
+        public static Boolean TryParse(String Text, out EnergyMeter_Id MeterId)
         {
 
             Text = Text.Trim();
@@ -152,7 +152,7 @@ namespace cloud.charging.open.protocols.OCPI
             {
                 try
                 {
-                    MeterId = new Meter_Id(Text);
+                    MeterId = new EnergyMeter_Id(Text);
                     return true;
                 }
                 catch
@@ -171,7 +171,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Clone this meter identification.
         /// </summary>
-        public Meter_Id Clone()
+        public EnergyMeter_Id Clone()
 
             => new (
                    InternalId.CloneString()
@@ -190,8 +190,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="MeterId1">A meter identification.</param>
         /// <param name="MeterId2">Another meter identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (Meter_Id MeterId1,
-                                           Meter_Id MeterId2)
+        public static Boolean operator == (EnergyMeter_Id MeterId1,
+                                           EnergyMeter_Id MeterId2)
 
             => MeterId1.Equals(MeterId2);
 
@@ -205,8 +205,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="MeterId1">A meter identification.</param>
         /// <param name="MeterId2">Another meter identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (Meter_Id MeterId1,
-                                           Meter_Id MeterId2)
+        public static Boolean operator != (EnergyMeter_Id MeterId1,
+                                           EnergyMeter_Id MeterId2)
 
             => !MeterId1.Equals(MeterId2);
 
@@ -220,8 +220,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="MeterId1">A meter identification.</param>
         /// <param name="MeterId2">Another meter identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (Meter_Id MeterId1,
-                                          Meter_Id MeterId2)
+        public static Boolean operator < (EnergyMeter_Id MeterId1,
+                                          EnergyMeter_Id MeterId2)
 
             => MeterId1.CompareTo(MeterId2) < 0;
 
@@ -235,8 +235,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="MeterId1">A meter identification.</param>
         /// <param name="MeterId2">Another meter identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (Meter_Id MeterId1,
-                                           Meter_Id MeterId2)
+        public static Boolean operator <= (EnergyMeter_Id MeterId1,
+                                           EnergyMeter_Id MeterId2)
 
             => MeterId1.CompareTo(MeterId2) <= 0;
 
@@ -250,8 +250,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="MeterId1">A meter identification.</param>
         /// <param name="MeterId2">Another meter identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (Meter_Id MeterId1,
-                                          Meter_Id MeterId2)
+        public static Boolean operator > (EnergyMeter_Id MeterId1,
+                                          EnergyMeter_Id MeterId2)
 
             => MeterId1.CompareTo(MeterId2) > 0;
 
@@ -265,8 +265,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="MeterId1">A meter identification.</param>
         /// <param name="MeterId2">Another meter identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (Meter_Id MeterId1,
-                                           Meter_Id MeterId2)
+        public static Boolean operator >= (EnergyMeter_Id MeterId1,
+                                           EnergyMeter_Id MeterId2)
 
             => MeterId1.CompareTo(MeterId2) >= 0;
 
@@ -284,7 +284,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Object">A meter identification to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
-            => Object is Meter_Id meterId
+            => Object is EnergyMeter_Id meterId
                    ? CompareTo(meterId)
                    : throw new ArgumentException("The given object is not a meter identification!",
                                                  nameof(Object));
@@ -297,7 +297,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// Compares two meter identifications.
         /// </summary>
         /// <param name="MeterId">A meter identification to compare with.</param>
-        public Int32 CompareTo(Meter_Id MeterId)
+        public Int32 CompareTo(EnergyMeter_Id MeterId)
 
             => String.Compare(InternalId,
                               MeterId.InternalId,
@@ -317,7 +317,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Object">A meter identification to compare with.</param>
         public override Boolean Equals(Object? Object)
 
-            => Object is Meter_Id meterId &&
+            => Object is EnergyMeter_Id meterId &&
                    Equals(meterId);
 
         #endregion
@@ -328,7 +328,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// Compares two meter identifications for equality.
         /// </summary>
         /// <param name="MeterId">A meter identification to compare with.</param>
-        public Boolean Equals(Meter_Id MeterId)
+        public Boolean Equals(EnergyMeter_Id MeterId)
 
             => String.Equals(InternalId,
                              MeterId.InternalId,

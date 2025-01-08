@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -87,9 +87,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
 
     /// <summary>
-    /// OCPI v3.0 Node test defaults with 2 CPOs and 2 EMSPs.
+    /// OCPI v3.0 test defaults for tests with 2 CPOs and 2 EMSPs.
     /// </summary>
-    public abstract class ATestDefaults_2CPOs2EMSPs
+    public abstract class A_2CPOs2EMSPs_TestDefaults
     {
 
         #region Data
@@ -103,6 +103,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
         public     URL?             cpo2VersionsAPIURL;
         public     URL?             emsp1VersionsAPIURL;
         public     URL?             emsp2VersionsAPIURL;
+
+        protected  CommonBaseAPI?   cpo1BaseAPI;
+        protected  CommonBaseAPI?   cpo2BaseAPI;
+        protected  CommonBaseAPI?   emsp1BaseAPI;
+        protected  CommonBaseAPI?   emsp2BaseAPI;
 
         protected  HTTPAPI?         cpo1HTTPAPI;
         protected  CommonAPI?       cpo1CommonAPI;
@@ -128,7 +133,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
         #region Constructor(s)
 
-        public ATestDefaults_2CPOs2EMSPs()
+        public A_2CPOs2EMSPs_TestDefaults()
         {
 
             Timestamp.Reset();
@@ -172,6 +177,182 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
             #endregion
 
+            #region Create cpo1/cpo2/emsp1/emsp2 OCPI Base APIs
+
+            #region CPO #1
+
+            cpo1BaseAPI = new CommonBaseAPI(
+
+                               OurBaseURL:                URL.Parse("http://127.0.0.1:3201/ocpi"),
+                               OurVersionsURL:            URL.Parse("http://127.0.0.1:3201/ocpi/versions"),
+
+                               HTTPServer:                cpo1HTTPAPI.HTTPServer,
+                               AdditionalURLPathPrefix:   null,
+                               //KeepRemovedEVSEs:          null,
+                               LocationsAsOpenData:       true,
+                               AllowDowngrades:           null,
+                               //Disable_RootServices:      false,
+
+                               HTTPHostname:              null,
+                               ExternalDNSName:           null,
+                               HTTPServiceName:           null,
+                               BasePath:                  null,
+
+                               URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                               APIVersionHashes:          null,
+
+                               DisableMaintenanceTasks:   null,
+                               MaintenanceInitialDelay:   null,
+                               MaintenanceEvery:          null,
+
+                               DisableWardenTasks:        null,
+                               WardenInitialDelay:        null,
+                               WardenCheckEvery:          null,
+
+                               IsDevelopment:             null,
+                               DevelopmentServers:        null,
+                               DisableLogging:            null,
+                               LoggingContext:            null,
+                               LoggingPath:               null,
+                               LogfileName:               null,
+                               LogfileCreator:            null
+
+                           );
+
+            #endregion
+
+            #region CPO #2
+
+            cpo2BaseAPI  = new CommonBaseAPI(
+
+                               OurBaseURL:                URL.Parse("http://127.0.0.1:3202/ocpi"),
+                               OurVersionsURL:            URL.Parse("http://127.0.0.1:3202/ocpi/versions"),
+
+                               HTTPServer:                cpo2HTTPAPI.HTTPServer,
+                               AdditionalURLPathPrefix:   null,
+                               //KeepRemovedEVSEs:          null,
+                               LocationsAsOpenData:       true,
+                               AllowDowngrades:           null,
+                               //Disable_RootServices:      false,
+
+                               HTTPHostname:              null,
+                               ExternalDNSName:           null,
+                               HTTPServiceName:           null,
+                               BasePath:                  null,
+
+                               URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                               APIVersionHashes:          null,
+
+                               DisableMaintenanceTasks:   null,
+                               MaintenanceInitialDelay:   null,
+                               MaintenanceEvery:          null,
+
+                               DisableWardenTasks:        null,
+                               WardenInitialDelay:        null,
+                               WardenCheckEvery:          null,
+
+                               IsDevelopment:             null,
+                               DevelopmentServers:        null,
+                               DisableLogging:            null,
+                               LoggingContext:            null,
+                               LoggingPath:               null,
+                               LogfileName:               null,
+                               LogfileCreator:            null
+
+                           );
+
+            #endregion
+
+            #region EMSP #1
+
+            emsp1BaseAPI = new CommonBaseAPI(
+
+                               OurBaseURL:                URL.Parse("http://127.0.0.1:3401/ocpi"),
+                               OurVersionsURL:            URL.Parse("http://127.0.0.1:3401/ocpi/versions"),
+
+                               HTTPServer:                emsp1HTTPAPI.HTTPServer,
+                               AdditionalURLPathPrefix:   null,
+                               //KeepRemovedEVSEs:          null,
+                               LocationsAsOpenData:       true,
+                               AllowDowngrades:           null,
+                               //Disable_RootServices:      false,
+
+                               HTTPHostname:              null,
+                               ExternalDNSName:           null,
+                               HTTPServiceName:           null,
+                               BasePath:                  null,
+
+                               URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                               APIVersionHashes:          null,
+
+                               DisableMaintenanceTasks:   null,
+                               MaintenanceInitialDelay:   null,
+                               MaintenanceEvery:          null,
+
+                               DisableWardenTasks:        null,
+                               WardenInitialDelay:        null,
+                               WardenCheckEvery:          null,
+
+                               IsDevelopment:             null,
+                               DevelopmentServers:        null,
+                               DisableLogging:            null,
+                               LoggingContext:            null,
+                               LoggingPath:               null,
+                               LogfileName:               null,
+                               LogfileCreator:            null
+
+                           );
+
+            #endregion
+
+            #region EMSP #2
+
+            emsp2BaseAPI = new CommonBaseAPI(
+
+                               OurBaseURL:                URL.Parse("http://127.0.0.1:3402/ocpi"),
+                               OurVersionsURL:            URL.Parse("http://127.0.0.1:3402/ocpi/versions"),
+
+                               HTTPServer:                emsp2HTTPAPI.HTTPServer,
+                               AdditionalURLPathPrefix:   null,
+                               //KeepRemovedEVSEs:          null,
+                               LocationsAsOpenData:       true,
+                               AllowDowngrades:           null,
+                               //Disable_RootServices:      false,
+
+                               HTTPHostname:              null,
+                               ExternalDNSName:           null,
+                               HTTPServiceName:           null,
+                               BasePath:                  null,
+
+                               URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                               APIVersionHashes:          null,
+
+                               DisableMaintenanceTasks:   null,
+                               MaintenanceInitialDelay:   null,
+                               MaintenanceEvery:          null,
+
+                               DisableWardenTasks:        null,
+                               WardenInitialDelay:        null,
+                               WardenCheckEvery:          null,
+
+                               IsDevelopment:             null,
+                               DevelopmentServers:        null,
+                               DisableLogging:            null,
+                               LoggingContext:            null,
+                               LoggingPath:               null,
+                               LogfileName:               null,
+                               LogfileCreator:            null
+
+                           );
+
+            #endregion
+
+            Assert.That(cpo2BaseAPI,   Is.Not.Null);
+            Assert.That(cpo2BaseAPI,   Is.Not.Null);
+            Assert.That(emsp1BaseAPI,  Is.Not.Null);
+            Assert.That(emsp2BaseAPI,  Is.Not.Null);
+
+            #endregion
 
             #region Create CPO #1  Common/CPO API
 
@@ -179,12 +360,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
             cpo1CommonAPI        = new CommonAPI(
 
-                                       OurBaseURL:                          URL.Parse($"http://127.0.0.1:{cpo1TCPPort}/ocpi/v3.0"),
-                                       OurVersionsURL:                      cpo1VersionsAPIURL.Value,
+                                       //OurBaseURL:                          URL.Parse($"http://127.0.0.1:{cpo1TCPPort}/ocpi/v3.0"),
+                                       //OurVersionsURL:                      cpo1VersionsAPIURL.Value,
                                        OurCredentialRoles:                  [
                                                                                 new CredentialsRole(
                                                                                      Party_Idv3.Parse("DEGEF"),
-                                                                                     Roles.CPO,
+                                                                                     Role.CPO,
                                                                                      new BusinessDetails(
                                                                                          "GraphDefined CPO #1 Services",
                                                                                          URL.Parse("https://www.graphdefined.com/cpo1")
@@ -192,7 +373,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                                                 )
                                                                             ],
                                        DefaultPartyId:                      Party_Idv3.Parse("DEGEF"),
-                                       HTTPServer:                          cpo1HTTPAPI.HTTPServer,
+                                       BaseAPI:                             cpo1BaseAPI,
+                                       //HTTPServer:                          cpo1HTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
                                        KeepRemovedEVSEs:                    null,
@@ -273,7 +455,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                        OurCredentialRoles:                  [
                                                                                 new CredentialsRole(
                                                                                      Party_Idv3.Parse("DEGE2"),
-                                                                                     Roles.CPO,
+                                                                                     Role.CPO,
                                                                                      new BusinessDetails(
                                                                                          "GraphDefined CPO #2 Services",
                                                                                          URL.Parse("https://www.graphdefined.com/cpo2")
@@ -281,7 +463,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                                                 )
                                                                             ],
                                        DefaultPartyId:                      Party_Idv3.Parse("DEGE2"),
-                                       HTTPServer:                          cpo2HTTPAPI.HTTPServer,
+                                       BaseAPI:                             cpo2BaseAPI,
+                                       //HTTPServer:                          cpo2HTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
                                        KeepRemovedEVSEs:                    null,
@@ -362,7 +545,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                        OurCredentialRoles:                  [
                                                                                 new CredentialsRole(
                                                                                      Party_Idv3.Parse("DEGDF"),
-                                                                                     Roles.EMSP,
+                                                                                     Role.EMSP,
                                                                                      new BusinessDetails(
                                                                                          "GraphDefined EMSP #1 Services",
                                                                                          URL.Parse("https://www.graphdefined.com/emsp1")
@@ -370,7 +553,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                                                 )
                                                                             ],
                                        DefaultPartyId:                      Party_Idv3.Parse("DEGDF"),
-                                       HTTPServer:                          emsp1HTTPAPI.HTTPServer,
+                                       BaseAPI:                             emsp1BaseAPI,
+                                       //HTTPServer:                          emsp1HTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
                                        KeepRemovedEVSEs:                    null,
@@ -451,7 +635,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                        OurCredentialRoles:                  [
                                                                                 new CredentialsRole(
                                                                                      Party_Idv3.Parse("DEGD2"),
-                                                                                     Roles.EMSP,
+                                                                                     Role.EMSP,
                                                                                      new BusinessDetails(
                                                                                          "GraphDefined EMSP #2 Services",
                                                                                          URL.Parse("https://www.graphdefined.com/emsp2")
@@ -459,6 +643,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                                                 )
                                                                             ],
                                        DefaultPartyId:                      Party_Idv3.Parse("DEGD2"),
+                                       BaseAPI:                             emsp2BaseAPI,
                                        HTTPServer:                          emsp2HTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
@@ -539,7 +724,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                 CredentialsRoles:            [
                                                                                  new CredentialsRole(
                                                                                      PartyId:          emsp1CommonAPI.OurCredentialRoles.First().PartyId,
-                                                                                     Role:             Roles.EMSP,
+                                                                                     Role:             Role.EMSP,
                                                                                      BusinessDetails:  emsp1CommonAPI.OurCredentialRoles.First().BusinessDetails,
                                                                                      AllowDowngrades:  false
                                                                                  )
@@ -563,7 +748,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                 CredentialsRoles:            [
                                                                                  new CredentialsRole(
                                                                                      PartyId:          emsp2CommonAPI.OurCredentialRoles.First().PartyId,
-                                                                                     Role:             Roles.EMSP,
+                                                                                     Role:             Role.EMSP,
                                                                                      BusinessDetails:  emsp2CommonAPI.OurCredentialRoles.First().BusinessDetails,
                                                                                      AllowDowngrades:  false
                                                                                  )
@@ -591,7 +776,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                 CredentialsRoles:            [
                                                                                  new CredentialsRole(
                                                                                      PartyId:          emsp1CommonAPI.OurCredentialRoles.First().PartyId,
-                                                                                     Role:             Roles.EMSP,
+                                                                                     Role:             Role.EMSP,
                                                                                      BusinessDetails:  emsp1CommonAPI.OurCredentialRoles.First().BusinessDetails,
                                                                                      AllowDowngrades:  false
                                                                                  )
@@ -615,7 +800,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                 CredentialsRoles:            [
                                                                                  new CredentialsRole(
                                                                                      PartyId:          emsp2CommonAPI.OurCredentialRoles.First().PartyId,
-                                                                                     Role:             Roles.EMSP,
+                                                                                     Role:             Role.EMSP,
                                                                                      BusinessDetails:  emsp2CommonAPI.OurCredentialRoles.First().BusinessDetails,
                                                                                      AllowDowngrades:  false
                                                                                  )
@@ -643,7 +828,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                 CredentialsRoles:            [
                                                                                  new CredentialsRole(
                                                                                      PartyId:          cpo1CommonAPI.OurCredentialRoles.First().PartyId,
-                                                                                     Role:             Roles.CPO,
+                                                                                     Role:             Role.CPO,
                                                                                      BusinessDetails:  cpo1CommonAPI.OurCredentialRoles.First().BusinessDetails,
                                                                                      AllowDowngrades:  false
                                                                                  )
@@ -667,7 +852,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                 CredentialsRoles:            [
                                                                                  new CredentialsRole(
                                                                                      PartyId:          cpo2CommonAPI.OurCredentialRoles.First().PartyId,
-                                                                                     Role:             Roles.CPO,
+                                                                                     Role:             Role.CPO,
                                                                                      BusinessDetails:  cpo2CommonAPI.OurCredentialRoles.First().BusinessDetails,
                                                                                      AllowDowngrades:  false
                                                                                  )
@@ -697,7 +882,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                 CredentialsRoles:            [
                                                                                  new CredentialsRole(
                                                                                      PartyId:          cpo1CommonAPI.OurCredentialRoles.First().PartyId,
-                                                                                     Role:             Roles.CPO,
+                                                                                     Role:             Role.CPO,
                                                                                      BusinessDetails:  cpo1CommonAPI.OurCredentialRoles.First().BusinessDetails,
                                                                                      AllowDowngrades:  false
                                                                                  )
@@ -721,7 +906,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                 CredentialsRoles:            [
                                                                                  new CredentialsRole(
                                                                                      PartyId:          cpo2CommonAPI.OurCredentialRoles.First().PartyId,
-                                                                                     Role:             Roles.CPO,
+                                                                                     Role:             Role.CPO,
                                                                                      BusinessDetails:  cpo2CommonAPI.OurCredentialRoles.First().BusinessDetails,
                                                                                      AllowDowngrades:  false
                                                                                  )

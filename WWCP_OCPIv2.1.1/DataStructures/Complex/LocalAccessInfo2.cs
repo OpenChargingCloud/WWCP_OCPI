@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -79,7 +79,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The role.
         /// </summary>
         [Mandatory]
-        public Roles             Role                          { get; }
+        public Role              Role                          { get; }
 
         /// <summary>
         /// The optional URL to get the remote OCPI versions information.
@@ -132,7 +132,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                CountryCode       CountryCode,
                                Party_Id          PartyId,
-                               Roles             Role,
+                               Role              Role,
                                BusinessDetails?  BusinessDetails              = null,
 
                                DateTime?         NotBefore                    = null,
@@ -309,8 +309,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("role",
                                          "party role",
-                                         RolesExtensions.TryParse,
-                                         out Roles Role,
+                                         OCPI.Role.TryParse,
+                                         out Role Role,
                                          out ErrorResponse))
                 {
                     return false;
@@ -753,7 +753,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => $"'{BusinessDetails?.Name ?? "<unknown>"}' ({CountryCode}{(Role == Roles.EMSP ? "-" : "*")}{PartyId} {Role.AsText()}) [{Status}] using '{AccessToken}' @ '{VersionsURL}' {(AllowDowngrades ? "[Downgrades allowed]" : "[No downgrades]")}";
+            => $"'{BusinessDetails?.Name ?? "<unknown>"}' ({CountryCode}{(Role == Role.EMSP ? "-" : "*")}{PartyId} {Role}) [{Status}] using '{AccessToken}' @ '{VersionsURL}' {(AllowDowngrades ? "[Downgrades allowed]" : "[No downgrades]")}";
 
         #endregion
 

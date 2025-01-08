@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,18 +25,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
-    /// This OCPI version 2.3.0.
+    /// This OCPI version 2.3
     /// </summary>
     public static class Version
     {
 
         /// <summary>
-        /// This OCPI version 2.3.0 as text "v2.3.0".
+        /// This OCPI version 2.3 as text "v2.3".
         /// </summary>
-        public const           String      String   = "v2.3.0";
+        public const           String      String   = "v2.3";
 
         /// <summary>
-        /// This OCPI version "2.3.0" as version identification.
+        /// This OCPI version "2.3" as version identification.
         /// </summary>
         public readonly static Version_Id  Id       = Version_Id.Parse(String[1..]);
 

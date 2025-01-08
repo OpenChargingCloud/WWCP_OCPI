@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -516,7 +516,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.RemoteParty        = new RemoteParty(
                                           CountryCode:                 CountryCode.Parse("xx"),
                                           PartyId:                     Party_Id.   Parse("xxx"),
-                                          Role:                        Roles.      OTHER,
+                                          Role:                        Role.       OTHER,
                                           BusinessDetails:             new BusinessDetails("xxx"),
 
                                           RemoteAccessToken:           AccessToken,
@@ -1627,7 +1627,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             PutCredentials(Credentials         Credentials,
 
-                           Roles?              RemoteRole          = null,
+                           Role?               RemoteRole          = null,
                            Version_Id?         VersionId           = null,
                            Request_Id?         RequestId           = null,
                            Correlation_Id?     CorrelationId       = null,
@@ -1783,9 +1783,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                 // Only the access token and the business details are allowed to be changed!
                                 await CommonAPI.AddOrUpdateRemoteParty(CountryCode:         RemoteParty.CountryCode,
                                                                        PartyId:             RemoteParty.PartyId,
-                                                                       Role:                RemoteRole ?? (CommonAPI.OurRole == Roles.EMSP
-                                                                                                               ? Roles.CPO
-                                                                                                               : Roles.EMSP),
+                                                                       Role:                RemoteRole ?? (CommonAPI.OurRole == Role.EMSP
+                                                                                                               ? Role.CPO
+                                                                                                               : Role.EMSP),
                                                                        BusinessDetails:     Credentials.BusinessDetails,
 
                                                                        AccessToken:         Credentials.Token,
@@ -2121,7 +2121,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             Register(Version_Id?         VersionId             = null,
                      Boolean             SetAsDefaultVersion   = true,
-                     Roles?              RemoteRole            = null,
+                     Role?               RemoteRole            = null,
                      AccessToken?        CredentialTokenB      = null,
 
                      Request_Id?         RequestId             = null,
@@ -2209,7 +2209,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     var credentials = new Credentials(
                                           credentialTokenB,
-                                          CommonAPI.OurVersionsURL,
+                                          CommonAPI.BaseAPI.OurVersionsURL,
                                           CommonAPI.OurBusinessDetails,
                                           CommonAPI.OurCountryCode,
                                           CommonAPI.OurPartyId
@@ -2301,9 +2301,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         var addOrUpdateResult  = await CommonAPI.AddOrUpdateRemoteParty(
                                                            CountryCode:                  response.Data.CountryCode,
                                                            PartyId:                      response.Data.PartyId,
-                                                           Role:                         RemoteRole ?? (CommonAPI.OurRole == Roles.EMSP
-                                                                                                            ? Roles.CPO
-                                                                                                            : Roles.EMSP),
+                                                           Role:                         RemoteRole ?? (CommonAPI.OurRole == Role.EMSP
+                                                                                                            ? Role.CPO
+                                                                                                            : Role.EMSP),
                                                            BusinessDetails:              response.Data.BusinessDetails,
 
                                                            AccessToken:                  credentialTokenB,

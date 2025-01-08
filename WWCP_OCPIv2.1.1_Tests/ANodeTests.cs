@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -376,6 +376,55 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #endregion
 
+
+            var ocpiBaseAPI = new CommonBaseAPI(
+
+                                  OurBaseURL:                URL.Parse("http://127.0.0.1:3201/ocpi"),
+                                  OurVersionsURL:            URL.Parse("http://127.0.0.1:3201/ocpi/versions"),
+                                  //OurBusinessDetails:        new OCPI.BusinessDetails(
+                                  //                               "GraphDefined OCPI Services",
+                                  //                               URL.Parse("https://www.graphdefined.com/ocpi")
+                                  //                           ),
+                                  //OurCountryCode:            OCPI.CountryCode.Parse("DE"),
+                                  //OurPartyId:                OCPI.Party_Id.   Parse("BDO"),
+                                  //OurRole:                   OCPI.Role.       CPO,
+
+                                  HTTPServer:                cpoHTTPAPI.HTTPServer,
+                                  AdditionalURLPathPrefix:   null,
+                                  //KeepRemovedEVSEs:          null,
+                                  LocationsAsOpenData:       true,
+                                  AllowDowngrades:           null,
+                                  //Disable_RootServices:      false,
+
+                                  HTTPHostname:              null,
+                                  ExternalDNSName:           null,
+                                  HTTPServiceName:           null,
+                                  BasePath:                  null,
+
+                                  URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                                  APIVersionHashes:          null,
+
+                                  DisableMaintenanceTasks:   null,
+                                  MaintenanceInitialDelay:   null,
+                                  MaintenanceEvery:          null,
+
+                                  DisableWardenTasks:        null,
+                                  WardenInitialDelay:        null,
+                                  WardenCheckEvery:          null,
+
+                                  IsDevelopment:             null,
+                                  DevelopmentServers:        null,
+                                  DisableLogging:            null,
+                                  LoggingContext:            null,
+                                  LoggingPath:               null,
+                                  LogfileName:               null,
+                                  LogfileCreator:            null
+
+                              );
+
+            ClassicAssert.IsNotNull(ocpiBaseAPI);
+
+
             #region Create cpo/emsp1/emsp2 OCPI Common API
 
             // Clean up log and databade directories...
@@ -387,27 +436,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             }
 
 
-            cpoVersionsAPIURL    = URL.Parse("http://127.0.0.1:3301/ocpi/v2.1/versions");
+            //cpoVersionsAPIURL    = URL.Parse("http://127.0.0.1:3301/ocpi/v2.1/versions");
 
             cpoCommonAPI         = new CommonAPI(
 
-                                       OurBaseURL:                          URL.Parse("http://127.0.0.1:3301/ocpi/v2.1"),
-                                       OurVersionsURL:                      cpoVersionsAPIURL.Value,
+                                       //OurBaseURL:                          URL.Parse("http://127.0.0.1:3301/ocpi/v2.1"),
+                                       //OurVersionsURL:                      ocpiBaseAPI.OurVersionsURL,
                                        OurBusinessDetails:                  new BusinessDetails(
                                                                                 "GraphDefined CSO Services",
                                                                                 URL.Parse("https://www.graphdefined.com/cso")
                                                                             ),
                                        OurCountryCode:                      CountryCode.Parse("DE"),
                                        OurPartyId:                          Party_Id.   Parse("GEF"),
-                                       OurRole:                             Roles.      CPO,
+                                       OurRole:                             Role.       CPO,
 
+                                       BaseAPI:                             ocpiBaseAPI,
                                        HTTPServer:                          cpoHTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
                                        KeepRemovedEVSEs:                    null,
                                        LocationsAsOpenData:                 true,
                                        AllowDowngrades:                     null,
-                                       Disable_RootServices:                false,
 
                                        HTTPHostname:                        null,
                                        ExternalDNSName:                     null,
@@ -443,23 +492,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             emsp1CommonAPI       = new CommonAPI(
 
-                                       OurBaseURL:                          URL.Parse("http://127.0.0.1:3401/ocpi/v2.1"),
-                                       OurVersionsURL:                      emsp1VersionsAPIURL.Value,
+                                       //OurBaseURL:                          URL.Parse("http://127.0.0.1:3401/ocpi/v2.1"),
+                                       //OurVersionsURL:                      emsp1VersionsAPIURL.Value,
                                        OurBusinessDetails:                  new BusinessDetails(
                                                                                 "GraphDefined EMSP #1 Services",
                                                                                 URL.Parse("https://www.graphdefined.com/emsp1")
                                                                             ),
                                        OurCountryCode:                      CountryCode.Parse("DE"),
                                        OurPartyId:                          Party_Id.   Parse("GDF"),
-                                       OurRole:                             Roles.      EMSP,
+                                       OurRole:                             Role.       EMSP,
 
+                                       BaseAPI:                             ocpiBaseAPI,
                                        HTTPServer:                          emsp1HTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
                                        KeepRemovedEVSEs:                    null,
                                        LocationsAsOpenData:                 true,
                                        AllowDowngrades:                     null,
-                                       Disable_RootServices:                false,
 
                                        HTTPHostname:                        null,
                                        ExternalDNSName:                     null,
@@ -495,23 +544,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             emsp2CommonAPI       = new CommonAPI(
 
-                                       OurBaseURL:                          URL.Parse("http://127.0.0.1:3402/ocpi/v2.1"),
-                                       OurVersionsURL:                      emsp2VersionsAPIURL.Value,
+                                       //OurBaseURL:                          URL.Parse("http://127.0.0.1:3402/ocpi/v2.1"),
+                                       //OurVersionsURL:                      emsp2VersionsAPIURL.Value,
                                        OurBusinessDetails:                  new BusinessDetails(
                                                                                 "GraphDefined EMSP #2 Services",
                                                                                 URL.Parse("https://www.graphdefined.com/emsp2")
                                                                             ),
                                        OurCountryCode:                      CountryCode.Parse("DE"),
                                        OurPartyId:                          Party_Id.   Parse("GD2"),
-                                       OurRole:                             Roles.      EMSP,
+                                       OurRole:                             Role.       EMSP,
 
+                                       BaseAPI:                             ocpiBaseAPI,
                                        HTTPServer:                          emsp2HTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
                                        KeepRemovedEVSEs:                    null,
                                        LocationsAsOpenData:                 true,
                                        AllowDowngrades:                     null,
-                                       Disable_RootServices:                false,
 
                                        HTTPHostname:                        null,
                                        ExternalDNSName:                     null,
@@ -564,9 +613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPRealm:                           "GraphDefined OCPI CPO WebAPI",
                                        HTTPLogins:                          [
                                                                                 new KeyValuePair<String, String>("a", "b")
-                                                                            ],
-                                       HTMLTemplate:                        null,
-                                       RequestTimeout:                      null
+                                                                            ]
                                    );
 
             emsp1WebAPI          = new OCPIWebAPI(
@@ -579,9 +626,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPRealm:                           "GraphDefined OCPI EMSP #1 WebAPI",
                                        HTTPLogins:                          [
                                                                                 new KeyValuePair<String, String>("c", "d")
-                                                                            ],
-                                       HTMLTemplate:                        null,
-                                       RequestTimeout:                      null
+                                                                            ]
                                    );
 
             emsp2WebAPI          = new OCPIWebAPI(
@@ -594,9 +639,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPRealm:                           "GraphDefined OCPI EMSP #2 WebAPI",
                                        HTTPLogins:                          [
                                                                                 new KeyValuePair<String, String>("e", "f")
-                                                                            ],
-                                       HTMLTemplate:                        null,
-                                       RequestTimeout:                      null
+                                                                            ]
                                    );
 
             ClassicAssert.IsNotNull(cpoWebAPI);
@@ -710,7 +753,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             await cpoCommonAPI.AddRemoteParty  (CountryCode:                 emsp1CommonAPI.OurCountryCode,
                                                 PartyId:                     emsp1CommonAPI.OurPartyId,
-                                                Role:                        Roles.EMSP,
+                                                Role:                        Role.EMSP,
                                                 BusinessDetails:             emsp1CommonAPI.OurBusinessDetails,
 
                                                 AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo__token),
@@ -718,7 +761,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                                 RemoteAccessToken:           AccessToken.Parse(cpo_accessing_emsp1__token),
                                                 RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
-                                                RemoteVersionIds:            new[] { Version.Id },
+                                                RemoteVersionIds:            [ Version.Id ],
                                                 SelectedVersionId:           Version.Id,
                                                 AccessTokenBase64Encoding:   false,
                                                 RemoteStatus:                RemoteAccessStatus.ONLINE,
@@ -727,13 +770,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             await cpoCommonAPI.AddRemoteParty  (CountryCode:                 emsp2CommonAPI.OurCountryCode,
                                                 PartyId:                     emsp2CommonAPI.OurPartyId,
-                                                Role:                        Roles.EMSP,
+                                                Role:                        Role.EMSP,
                                                 BusinessDetails:             emsp2CommonAPI.OurBusinessDetails,
                                                 AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo__token),
                                                 AccessStatus:                AccessStatus.ALLOWED,
                                                 RemoteAccessToken:           AccessToken.Parse(cpo_accessing_emsp2__token),
                                                 RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
-                                                RemoteVersionIds:            new[] { Version.Id },
+                                                RemoteVersionIds:            [ Version.Id ],
                                                 SelectedVersionId:           Version.Id,
                                                 AccessTokenBase64Encoding:   false,
                                                 RemoteStatus:                RemoteAccessStatus.ONLINE,
@@ -743,7 +786,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             await emsp1CommonAPI.AddRemoteParty(CountryCode:                 cpoCommonAPI.OurCountryCode,
                                                 PartyId:                     cpoCommonAPI.OurPartyId,
-                                                Role:                        Roles.CPO,
+                                                Role:                        Role.CPO,
                                                 BusinessDetails:             cpoCommonAPI.OurBusinessDetails,
 
                                                 AccessToken:                 AccessToken.Parse(cpo_accessing_emsp1__token),
@@ -751,7 +794,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                                 RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo__token),
                                                 RemoteVersionsURL:           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
-                                                RemoteVersionIds:            new[] { Version.Id },
+                                                RemoteVersionIds:            [ Version.Id ],
                                                 SelectedVersionId:           Version.Id,
                                                 AccessTokenBase64Encoding:   false,
                                                 RemoteStatus:                RemoteAccessStatus.ONLINE,
@@ -761,7 +804,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             await emsp2CommonAPI.AddRemoteParty(CountryCode:                 cpoCommonAPI.OurCountryCode,
                                                 PartyId:                     cpoCommonAPI.OurPartyId,
-                                                Role:                        Roles.CPO,
+                                                Role:                        Role.CPO,
                                                 BusinessDetails:             cpoCommonAPI.OurBusinessDetails,
 
                                                 AccessToken:                 AccessToken.Parse(cpo_accessing_emsp2__token),
@@ -769,7 +812,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                                 RemoteAccessToken:           AccessToken.Parse(emsp2_accessing_cpo__token),
                                                 RemoteVersionsURL:           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
-                                                RemoteVersionIds:            new[] { Version.Id },
+                                                RemoteVersionIds:            [ Version.Id ],
                                                 SelectedVersionId:           Version.Id,
                                                 AccessTokenBase64Encoding:   false,
                                                 RemoteStatus:                RemoteAccessStatus.ONLINE,
@@ -791,7 +834,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             await cpoCommonAPI.AddRemoteParty  (CountryCode:       CountryCode.Parse("XX"),
                                                 PartyId:           Party_Id.   Parse("BLE"),
-                                                Role:              Roles.EMSP,
+                                                Role:              Role.EMSP,
                                                 BusinessDetails:   new BusinessDetails(
                                                                        "Blocked EMSP"
                                                                    ),
@@ -801,7 +844,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             await emsp1CommonAPI.AddRemoteParty(CountryCode:       CountryCode.Parse("XX"),
                                                 PartyId:           Party_Id.   Parse("BLC"),
-                                                Role:              Roles.CPO,
+                                                Role:              Role.CPO,
                                                 BusinessDetails:   new BusinessDetails(
                                                                        "Blocked CPO"
                                                                    ),
@@ -811,7 +854,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             await emsp2CommonAPI.AddRemoteParty(CountryCode:       CountryCode.Parse("XX"),
                                                 PartyId:           Party_Id.   Parse("BLC"),
-                                                Role:              Roles.CPO,
+                                                Role:              Role.CPO,
                                                 BusinessDetails:   new BusinessDetails(
                                                                        "Blocked CPO"
                                                                    ),
@@ -846,7 +889,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             cpoCPOAPI.CPOAPILogger?.Debug("all", LogTargets.Debug);
 
-            cpoCommonAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"CPO Client for {remotePartyId}");
+            cpoCommonAPI.BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"CPO Client for {remotePartyId}");
 
 
 
@@ -868,7 +911,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             emsp1EMSPAPI.EMSPAPILogger?.Debug("all", LogTargets.Debug);
 
-            emsp1CommonAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"EMSP #1 Client for {remotePartyId}");
+            emsp1CommonAPI.BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"EMSP #1 Client for {remotePartyId}");
 
 
 
@@ -890,7 +933,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             emsp2EMSPAPI.EMSPAPILogger?.Debug("all", LogTargets.Debug);
 
-            emsp2CommonAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"EMSP #2 Client for {remotePartyId}");
+            emsp2CommonAPI.BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"EMSP #2 Client for {remotePartyId}");
 
             #endregion
 

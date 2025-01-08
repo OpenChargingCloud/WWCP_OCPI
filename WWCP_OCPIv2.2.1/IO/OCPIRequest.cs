@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -377,12 +377,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
                                            );
 
-                        CPOIds           = RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Roles.CPO).
+                        CPOIds           = RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.CPO).
                                                              Select(credentialsRole => CPO_Id. Parse($"{LocalAccessInfo.Roles.First().CountryCode}*{LocalAccessInfo.Roles.First().PartyId}")).
                                                              Distinct().
                                                              ToArray();
 
-                        EMSPIds          = RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Roles.EMSP).
+                        EMSPIds          = RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.EMSP).
                                                              Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().CountryCode}-{LocalAccessInfo.Roles.First().PartyId}")).
                                                              Distinct().
                                                              ToArray();
@@ -447,7 +447,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             //        this.AccessInfo = accessInfo;
 
-            ////        var allTheirCPORoles = this.AccessInfo.Value.Roles.Where(role => role.Role == Roles.CPO).ToArray();
+            ////        var allTheirCPORoles = this.AccessInfo.Value.Roles.Where(role => role.Role == Role.CPO).ToArray();
 
             ////        if (!FromCountryCode.HasValue && allTheirCPORoles.Length == 1)
             ////            this.FromCountryCode = allTheirCPORoles[0].CountryCode;
@@ -460,7 +460,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             }
 
 
-            //var allMyCPORoles = this.AccessInfo.Value.Roles.Where(role => role.Role == Roles.CPO).ToArray();
+            //var allMyCPORoles = this.AccessInfo.Value.Roles.Where(role => role.Role == Role.CPO).ToArray();
 
             //if (!ToCountryCode.HasValue && allMyCPORoles.Length == 1)
             //    this.ToCountryCode = allMyCPORoles[1].CountryCode;

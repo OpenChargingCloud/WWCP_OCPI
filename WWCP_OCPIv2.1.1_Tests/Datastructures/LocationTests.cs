@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -117,8 +117,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         ],
 
                                         // OCPI Computer Science Extensions
-                                        new EnergyMeter(
-                                            Meter_Id.Parse("Meter0815"),
+                                        new EnergyMeter<EVSE>(
+                                            EnergyMeter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
                                             null,
                                             "hw. v1.80",
@@ -420,8 +420,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         },
 
                                         // OCPI Computer Science Extensions
-                                        new EnergyMeter(
-                                            Meter_Id.Parse("Meter0815"),
+                                        new EnergyMeter<EVSE>(
+                                            EnergyMeter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
                                             null,
                                             "hw. v1.80",
@@ -689,8 +689,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         },
 
                                         // OCPI Computer Science Extensions
-                                        new EnergyMeter(
-                                            Meter_Id.Parse("Meter0815"),
+                                        new EnergyMeter<EVSE>(
+                                            EnergyMeter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
                                             null,
                                             "hw. v1.80",
@@ -958,8 +958,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         },
 
                                         // OCPI Computer Science Extensions
-                                        new EnergyMeter(
-                                            Meter_Id.Parse("Meter0815"),
+                                        new EnergyMeter<EVSE>(
+                                            EnergyMeter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
                                             null,
                                             "hw. v1.80",
@@ -1227,8 +1227,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         },
 
                                         // OCPI Computer Science Extensions
-                                        new EnergyMeter(
-                                            Meter_Id.Parse("Meter0815"),
+                                        new EnergyMeter<EVSE>(
+                                            EnergyMeter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
                                             null,
                                             "hw. v1.80",
@@ -1495,8 +1495,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         },
 
                                         // OCPI Computer Science Extensions
-                                        new EnergyMeter(
-                                            Meter_Id.Parse("Meter0815"),
+                                        new EnergyMeter<EVSE>(
+                                            EnergyMeter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
                                             null,
                                             "hw. v1.80",
@@ -1765,8 +1765,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         },
 
                                         // OCPI Computer Science Extensions
-                                        new EnergyMeter(
-                                            Meter_Id.Parse("Meter0815"),
+                                        new EnergyMeter<EVSE>(
+                                            EnergyMeter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
                                             null,
                                             "hw. v1.80",
@@ -2040,8 +2040,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         },
 
                                         // OCPI Computer Science Extensions
-                                        new EnergyMeter(
-                                            Meter_Id.Parse("Meter0815"),
+                                        new EnergyMeter<EVSE>(
+                                            EnergyMeter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
                                             null,
                                             "hw. v1.80",
@@ -2310,8 +2310,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         },
 
                                         // OCPI Computer Science Extensions
-                                        new EnergyMeter(
-                                            Meter_Id.Parse("Meter0815"),
+                                        new EnergyMeter<EVSE>(
+                                            EnergyMeter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
                                             null,
                                             "hw. v1.80",
@@ -2583,8 +2583,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         },
 
                                         // OCPI Computer Science Extensions
-                                        new EnergyMeter(
-                                            Meter_Id.Parse("Meter0815"),
+                                        new EnergyMeter<EVSE>(
+                                            EnergyMeter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
                                             null,
                                             "hw. v1.80",
@@ -2854,8 +2854,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         },
 
                                         // OCPI Computer Science Extensions
-                                        new EnergyMeter(
-                                            Meter_Id.Parse("Meter0815"),
+                                        new EnergyMeter<EVSE>(
+                                            EnergyMeter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
                                             null,
                                             "hw. v1.80",
@@ -3124,8 +3124,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         },
 
                                         // OCPI Computer Science Extensions
-                                        new EnergyMeter(
-                                            Meter_Id.Parse("Meter0815"),
+                                        new EnergyMeter<EVSE>(
+                                            EnergyMeter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
                                             null,
                                             "hw. v1.80",
@@ -3393,8 +3393,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         },
 
                                         // OCPI Computer Science Extensions
-                                        new EnergyMeter(
-                                            Meter_Id.Parse("Meter0815"),
+                                        new EnergyMeter<EVSE>(
+                                            EnergyMeter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
                                             null,
                                             "hw. v1.80",

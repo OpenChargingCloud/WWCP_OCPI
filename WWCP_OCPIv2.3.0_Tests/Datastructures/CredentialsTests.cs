@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -61,7 +61,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                        new CredentialsRole(
                                            CountryCode.Parse("DE"),
                                            Party_Id.Parse("GEF"),
-                                           Roles.CPO,
+                                           Role.CPO,
                                            new BusinessDetails(
                                                "Open Charging Cloud CPO",
                                                URL.Parse("http://cpo.charging.cloud"),
@@ -79,7 +79,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                        new CredentialsRole(
                                            CountryCode.Parse("DE"),
                                            Party_Id.Parse("GDF"),
-                                           Roles.EMSP,
+                                           Role.EMSP,
                                            new BusinessDetails(
                                                "Open Charging Cloud EMSP",
                                                URL.Parse("http://emsp.charging.cloud"),
@@ -175,7 +175,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(URL.        Parse("https://example.com/ocpi/versions/"),    parsedCredentials.URL);
             ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.First().CountryCode);
             ClassicAssert.AreEqual(Party_Id.   Parse("EXA"),                                   parsedCredentials.Roles.First().PartyId);
-            ClassicAssert.AreEqual(Roles.CPO,                                                  parsedCredentials.Roles.First().Role);
+            ClassicAssert.AreEqual(Role.CPO,                                                  parsedCredentials.Roles.First().Role);
             ClassicAssert.AreEqual("Example Operator",                                         parsedCredentials.Roles.First().BusinessDetails.Name);
 
         }
@@ -224,13 +224,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
             ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.        First().CountryCode);
             ClassicAssert.AreEqual(Party_Id.   Parse("EXA"),                                   parsedCredentials.Roles.        First().PartyId);
-            ClassicAssert.AreEqual(Roles.CPO,                                                  parsedCredentials.Roles.        First().Role);
+            ClassicAssert.AreEqual(Role.CPO,                                                  parsedCredentials.Roles.        First().Role);
             ClassicAssert.AreEqual("Example Operator",                                         parsedCredentials.Roles.        First().BusinessDetails.Name);
 
             // Note: Same CountryCode and PartyId, but different roles: Is this really a good idea?
             ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.Skip(1).First().CountryCode);
             ClassicAssert.AreEqual(Party_Id.   Parse("EXA"),                                   parsedCredentials.Roles.Skip(1).First().PartyId);
-            ClassicAssert.AreEqual(Roles.EMSP,                                                 parsedCredentials.Roles.Skip(1).First().Role);
+            ClassicAssert.AreEqual(Role.EMSP,                                                 parsedCredentials.Roles.Skip(1).First().Role);
             ClassicAssert.AreEqual("Example Provider",                                         parsedCredentials.Roles.Skip(1).First().BusinessDetails.Name);
 
         }
@@ -281,7 +281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
             ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                      parsedCredentials.Roles.First().CountryCode);
             ClassicAssert.AreEqual(Party_Id.   Parse("EXA"),                                     parsedCredentials.Roles.First().PartyId);
-            ClassicAssert.AreEqual(Roles.CPO,                                                    parsedCredentials.Roles.First().Role);
+            ClassicAssert.AreEqual(Role.CPO,                                                    parsedCredentials.Roles.First().Role);
             ClassicAssert.AreEqual(URL.        Parse("https://example.com/img/logo.jpg"),        parsedCredentials.Roles.First().BusinessDetails.Logo.URL);
             ClassicAssert.AreEqual(URL.        Parse("https://example.com/img/logo_thumb.jpg"),  parsedCredentials.Roles.First().BusinessDetails.Logo.Thumbnail);
             ClassicAssert.AreEqual(ImageCategory.OPERATOR,                                     parsedCredentials.Roles.First().BusinessDetails.Logo.Category);
@@ -343,17 +343,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
             ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.        First().CountryCode);
             ClassicAssert.AreEqual(Party_Id.   Parse("EXO"),                                   parsedCredentials.Roles.        First().PartyId);
-            ClassicAssert.AreEqual(Roles.CPO,                                                  parsedCredentials.Roles.        First().Role);
+            ClassicAssert.AreEqual(Role.CPO,                                                  parsedCredentials.Roles.        First().Role);
             ClassicAssert.AreEqual("Excellent Operator",                                       parsedCredentials.Roles.        First().BusinessDetails.Name);
 
             ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.Skip(1).First().CountryCode);
             ClassicAssert.AreEqual(Party_Id.   Parse("PFC"),                                   parsedCredentials.Roles.Skip(1).First().PartyId);
-            ClassicAssert.AreEqual(Roles.CPO,                                                  parsedCredentials.Roles.Skip(1).First().Role);
+            ClassicAssert.AreEqual(Role.CPO,                                                  parsedCredentials.Roles.Skip(1).First().Role);
             ClassicAssert.AreEqual("Plug Flex Charging",                                       parsedCredentials.Roles.Skip(1).First().BusinessDetails.Name);
 
             ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.Skip(2).First().CountryCode);
             ClassicAssert.AreEqual(Party_Id.   Parse("CGP"),                                   parsedCredentials.Roles.Skip(2).First().PartyId);
-            ClassicAssert.AreEqual(Roles.CPO,                                                  parsedCredentials.Roles.Skip(2).First().Role);
+            ClassicAssert.AreEqual(Role.CPO,                                                  parsedCredentials.Roles.Skip(2).First().Role);
             ClassicAssert.AreEqual("Charging Green Power",                                     parsedCredentials.Roles.Skip(2).First().BusinessDetails.Name);
 
         }

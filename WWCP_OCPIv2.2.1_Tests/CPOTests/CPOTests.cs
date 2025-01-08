@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -130,7 +130,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 emsp1VersionsAPIURL.HasValue)
             {
 
-                var result1 = await cpoCommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"), Roles.EMSP);
+                var result1 = await cpoCommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"), Role.EMSP);
                 ClassicAssert.IsTrue(result1);
 
                 var result2 = await cpoCommonAPI.AddRemoteParty(
@@ -139,7 +139,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                  new CredentialsRole(
                                                                      CountryCode:         CountryCode.Parse("DE"),
                                                                      PartyId:             Party_Id.   Parse("GDF"),
-                                                                     Role:                Roles.      EMSP,
+                                                                     Role:                Role.       EMSP,
                                                                      BusinessDetails:     new BusinessDetails("GraphDefined EMSP Services")
                                                                  )
                                                              },
@@ -237,8 +237,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Block Access Token
 
-            await cpoCommonAPI.  RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"), Roles.EMSP);
-            await emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"), Roles.CPO);
+            await cpoCommonAPI.  RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"), Role.EMSP);
+            await emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"), Role.CPO);
 
             var addEMSPResult = await cpoCommonAPI.AddRemoteParty(
                                         Id:                  RemoteParty_Id.Parse("DE-GDF_EMSP"),
@@ -246,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                  new CredentialsRole(
                                                                      CountryCode:         CountryCode.Parse("DE"),
                                                                      PartyId:             Party_Id.   Parse("GDF"),
-                                                                     Role:                Roles.      EMSP,
+                                                                     Role:                Role.       EMSP,
                                                                      BusinessDetails:     new BusinessDetails("GraphDefined EMSP Services")
                                                                  )
                                                              },
@@ -279,7 +279,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                  new CredentialsRole(
                                                                      CountryCode:         CountryCode.Parse("DE"),
                                                                      PartyId:             Party_Id.   Parse("GEF"),
-                                                                     Role:                Roles.      CPO,
+                                                                     Role:                Role.       CPO,
                                                                      BusinessDetails:     new BusinessDetails("GraphDefined CPO Services")
                                                                  )
                                                              },
@@ -558,7 +558,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Change Access Token
 
-            await cpoCommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"), Roles.EMSP);
+            await cpoCommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"), Role.EMSP);
 
             var result = await cpoCommonAPI.AddRemoteParty(
                 Id:                  RemoteParty_Id.Parse("DE-GDF_EMSP"),
@@ -566,7 +566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                  new CredentialsRole(
                                                                      CountryCode:         CountryCode.Parse("DE"),
                                                                      PartyId:             Party_Id.   Parse("GDF"),
-                                                                     Role:                Roles.      EMSP,
+                                                                     Role:                Role.       EMSP,
                                                                      BusinessDetails:     new BusinessDetails("GraphDefined EMSP Services")
                                                                  )
                                                              },
@@ -670,8 +670,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Block Access Token
 
-            await cpoCommonAPI.  RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"), Roles.EMSP);
-            await emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"), Roles.CPO);
+            await cpoCommonAPI.  RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"), Role.EMSP);
+            await emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"), Role.CPO);
 
             var addEMSPResult = await cpoCommonAPI.AddRemoteParty(
                                         Id:                  RemoteParty_Id.Parse("DE-GDF_EMSP"),
@@ -679,7 +679,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                  new CredentialsRole(
                                                                      CountryCode:         CountryCode.Parse("DE"),
                                                                      PartyId:             Party_Id.   Parse("GDF"),
-                                                                     Role:                Roles.      EMSP,
+                                                                     Role:                Role.       EMSP,
                                                                      BusinessDetails:     new BusinessDetails("GraphDefined EMSP Services")
                                                                  )
                                                              },
@@ -712,7 +712,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                  new CredentialsRole(
                                                                      CountryCode:         CountryCode.Parse("DE"),
                                                                      PartyId:             Party_Id.   Parse("GEF"),
-                                                                     Role:                Roles.      CPO,
+                                                                     Role:                Role.       CPO,
                                                                      BusinessDetails:     new BusinessDetails("GraphDefined CPO Services")
                                                                  )
                                                              },
@@ -790,8 +790,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Block Access Token
 
-            await cpoCommonAPI.  RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"), Roles.EMSP);
-            await emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"), Roles.CPO);
+            await cpoCommonAPI.  RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"), Role.EMSP);
+            await emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"), Role.CPO);
 
             var addEMSPResult = await cpoCommonAPI.AddRemoteParty(
                                         Id:                  RemoteParty_Id.Parse("DE-GDF_EMSP"),
@@ -799,7 +799,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                  new CredentialsRole(
                                                                      CountryCode:         CountryCode.Parse("DE"),
                                                                      PartyId:             Party_Id.   Parse("GDF"),
-                                                                     Role:                Roles.      EMSP,
+                                                                     Role:                Role.       EMSP,
                                                                      BusinessDetails:     new BusinessDetails("GraphDefined EMSP Services")
                                                                  )
                                                              },
@@ -832,7 +832,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                  new CredentialsRole(
                                                                      CountryCode:         CountryCode.Parse("DE"),
                                                                      PartyId:             Party_Id.   Parse("GEF"),
-                                                                     Role:                Roles.      CPO,
+                                                                     Role:                Role.       CPO,
                                                                      BusinessDetails:     new BusinessDetails("GraphDefined CPO Services")
                                                                  )
                                                              },
@@ -901,8 +901,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Block Access Token
 
-            await cpoCommonAPI.  RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"), Roles.EMSP);
-            await emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"), Roles.CPO);
+            await cpoCommonAPI.  RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"), Role.EMSP);
+            await emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"), Role.CPO);
 
             var addEMSPResult = await cpoCommonAPI.AddRemoteParty(
                                         Id:                  RemoteParty_Id.Parse("DE-GDF_EMSP"),
@@ -910,7 +910,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                  new CredentialsRole(
                                                                      CountryCode:         CountryCode.Parse("DE"),
                                                                      PartyId:             Party_Id.   Parse("GDF"),
-                                                                     Role:                Roles.      EMSP,
+                                                                     Role:                Role.       EMSP,
                                                                      BusinessDetails:     new BusinessDetails("GraphDefined EMSP Services")
                                                                  )
                                                              },
@@ -943,7 +943,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                  new CredentialsRole(
                                                                      CountryCode:         CountryCode.Parse("DE"),
                                                                      PartyId:             Party_Id.   Parse("GEF"),
-                                                                     Role:                Roles.      CPO,
+                                                                     Role:                Role.       CPO,
                                                                      BusinessDetails:     new BusinessDetails("GraphDefined CPO Services")
                                                                  )
                                                              },
@@ -1036,7 +1036,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                    new CredentialsRole(
                                                                        CountryCode.Parse("DE"),
                                                                        Party_Id.   Parse("EXP"),
-                                                                       Roles.      CPO,
+                                                                       Role.       CPO,
                                                                        new BusinessDetails(
                                                                            "Example Org",
                                                                            URL.Parse("http://example.org")
@@ -1094,7 +1094,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             if (cpoCommonAPI is not null)
             {
 
-                var result1 = await cpoCommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"), Roles.EMSP);
+                var result1 = await cpoCommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"), Role.EMSP);
 
                 ClassicAssert.IsTrue(result1);
 
@@ -1105,7 +1105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                  new CredentialsRole(
                                                                      CountryCode:         CountryCode.Parse("DE"),
                                                                      PartyId:             Party_Id.   Parse("GDF"),
-                                                                     Role:                Roles.      EMSP,
+                                                                     Role:                Role.       EMSP,
                                                                      BusinessDetails:     new BusinessDetails("GraphDefined EMSP Services")
                                                                  )
                                                              },
@@ -1154,7 +1154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                    new CredentialsRole(
                                                                        CountryCode.Parse("DE"),
                                                                        Party_Id.   Parse("EXP"),
-                                                                       Roles.      CPO,
+                                                                       Role.       CPO,
                                                                        new BusinessDetails(
                                                                            "Example Org",
                                                                            URL.Parse("http://example.org")
@@ -1371,8 +1371,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                           },
 
                                                                                           // OCPI Computer Science Extensions
-                                                                                          new EnergyMeter(
-                                                                                              Meter_Id.Parse("Meter0815"),
+                                                                                          new EnergyMeter<EVSE>(
+                                                                                              EnergyMeter_Id.Parse("Meter0815"),
                                                                                               "EnergyMeter Model #1",
                                                                                               null,
                                                                                               "hw. v1.80",
@@ -1503,7 +1503,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                       "Stadtwerke Jena-Ost",
                                                                                       "New Green Deal"
                                                                                   ),
-                                                                                  DateTime.Parse("2020-09-21T00:00:00Z")
+                                                                                  Created: DateTime.Parse("2020-09-21T00:00:00Z")
                                                                               ));
 
                 // HTTP/1.1 201 Created
@@ -1639,8 +1639,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                           },
 
                                                                                           // OCPI Computer Science Extensions
-                                                                                          new EnergyMeter(
-                                                                                              Meter_Id.Parse("Meter0815"),
+                                                                                          new EnergyMeter<EVSE>(
+                                                                                              EnergyMeter_Id.Parse("Meter0815"),
                                                                                               "EnergyMeter Model #1",
                                                                                               null,
                                                                                               "hw. v1.80",
@@ -1771,7 +1771,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                       "Stadtwerke Jena-Ost",
                                                                                       "New Green Deal"
                                                                                   ),
-                                                                                  DateTime.Parse("2020-09-21T00:00:00Z")
+                                                                                  Created: DateTime.Parse("2020-09-21T00:00:00Z")
                                                                               ));
 
                 var response4            = await graphDefinedEMSP.PutEVSE(new EVSE(
@@ -1828,8 +1828,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                               },
 
                                                                               // OCPI Computer Science Extensions
-                                                                              new EnergyMeter(
-                                                                                  Meter_Id.Parse("Meter0815"),
+                                                                              new EnergyMeter<EVSE>(
+                                                                                  EnergyMeter_Id.Parse("Meter0815"),
                                                                                   "EnergyMeter Model #1",
                                                                                   null,
                                                                                   "hw. v1.80",
@@ -1993,11 +1993,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                                                                               Session_Id.            Parse("0815"),
                                                                               AuthorizationReference.Parse("Auth0815"),
-                                                                              Meter_Id.              Parse("Meter0815"),
+                                                                              EnergyMeter_Id.              Parse("Meter0815"),
 
                                                                               // OCPI Computer Science Extensions
-                                                                              new EnergyMeter(
-                                                                                  Meter_Id.Parse("Meter0815"),
+                                                                              new EnergyMeter<EVSE>(
+                                                                                  EnergyMeter_Id.Parse("Meter0815"),
                                                                                   "EnergyMeter Model #1",
                                                                                   null,
                                                                                   "hw. v1.80",

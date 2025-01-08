@@ -143,3 +143,18 @@ WWCP_OCPIv2.2.1_WebAPI/HTTPRoot/css/sessions
 WWCP_OCPIv2.2.1_WebAPI/HTTPRoot/css/tariffs
 WWCP_OCPIv2.2.1_WebAPI/HTTPRoot/css/tokens
 WWCP_OCPIv2.2.1_WebAPI/HTTPRoot/css/versions
+
+# ------------------------------------------------------------------------
+
+WWCP_OCPIv2.3.0_WebAPI/HTTPRoot/css/*.css
+WWCP_OCPIv2.3.0_WebAPI/HTTPRoot/css/*.min.css
+WWCP_OCPIv2.3.0_WebAPI/HTTPRoot/css/cdrs
+WWCP_OCPIv2.3.0_WebAPI/HTTPRoot/css/locations
+WWCP_OCPIv2.3.0_WebAPI/HTTPRoot/css/remoteParties
+WWCP_OCPIv2.3.0_WebAPI/HTTPRoot/css/remoteParty
+WWCP_OCPIv2.3.0_WebAPI/HTTPRoot/css/remoteParty/remoteCPO
+WWCP_OCPIv2.3.0_WebAPI/HTTPRoot/css/sessions
+WWCP_OCPIv2.3.0_WebAPI/HTTPRoot/css/tariffs
+WWCP_OCPIv2.3.0_WebAPI/HTTPRoot/css/tokens
+WWCP_OCPIv2.3.0_WebAPI/HTTPRoot/css/versions
+

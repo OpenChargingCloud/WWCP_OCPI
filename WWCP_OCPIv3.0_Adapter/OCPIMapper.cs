@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -962,22 +962,25 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region ToOCPI(this EnergyMeter)
 
-        public static EnergyMeter ToOCPI(this WWCP.EnergyMeter EnergyMeter)
+        public static EnergyMeter<EVSE> ToOCPI(this WWCP.EnergyMeter EnergyMeter)
 
-            => new (Meter_Id.Parse(EnergyMeter.Id.ToString()),
-                    EnergyMeter.Model,
-                    EnergyMeter.ModelURL,
-                    EnergyMeter.HardwareVersion,
-                    EnergyMeter.FirmwareVersion,
-                    EnergyMeter.Manufacturer,
-                    EnergyMeter.ManufacturerURL,
-                    EnergyMeter.PublicKeys.               Select(publicKey                  => PublicKey.Parse(publicKey. ToString())),
-                    EnergyMeter.PublicKeyCertificateChain.HasValue ? CertificateChain.Parse(EnergyMeter.PublicKeyCertificateChain.Value.ToString()) : null,
-                    EnergyMeter.TransparencySoftwares.    Select(transparencySoftwareStatus => transparencySoftwareStatus.ToOCPI()),
-                    EnergyMeter.Description.ToOCPI(),
-                    EnergyMeter.CustomData,
-                    EnergyMeter.InternalData,
-                    EnergyMeter.LastChangeDate);
+            => new (
+                   EnergyMeter_Id.Parse(EnergyMeter.Id.ToString()),
+                   EnergyMeter.Model,
+                   EnergyMeter.ModelURL,
+                   EnergyMeter.HardwareVersion,
+                   EnergyMeter.FirmwareVersion,
+                   EnergyMeter.Manufacturer,
+                   EnergyMeter.ManufacturerURL,
+                   EnergyMeter.PublicKeys.               Select(publicKey                  => PublicKey.Parse(publicKey. ToString())),
+                   EnergyMeter.PublicKeyCertificateChain.HasValue ? CertificateChain.Parse(EnergyMeter.PublicKeyCertificateChain.Value.ToString()) : null,
+                   EnergyMeter.TransparencySoftwares.    Select(transparencySoftwareStatus => transparencySoftwareStatus.ToOCPI()),
+                   EnergyMeter.Description.ToOCPI(),
+                   EnergyMeter.Created,
+                   EnergyMeter.LastChangeDate,
+                   EnergyMeter.CustomData,
+                   EnergyMeter.InternalData
+               );
 
         #endregion
 
@@ -1440,11 +1443,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region ToOCPI(this EnergyMeterId)
 
-        public static Meter_Id? ToOCPI(this WWCP.EnergyMeter_Id EnergyMeterId)
+        public static EnergyMeter_Id? ToOCPI(this WWCP.EnergyMeter_Id EnergyMeterId)
 
-            => Meter_Id.Parse(EnergyMeterId.ToString());
+            => EnergyMeter_Id.Parse(EnergyMeterId.ToString());
 
-        public static Meter_Id? ToOCPI(this WWCP.EnergyMeter_Id? EnergyMeterId)
+        public static EnergyMeter_Id? ToOCPI(this WWCP.EnergyMeter_Id? EnergyMeterId)
 
             => EnergyMeterId.HasValue
                    ? EnergyMeterId.Value.ToOCPI()
@@ -1454,11 +1457,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region ToWWCP(this MeterId)
 
-        public static WWCP.EnergyMeter_Id? ToWWCP(this Meter_Id MeterId)
+        public static WWCP.EnergyMeter_Id? ToWWCP(this EnergyMeter_Id MeterId)
 
             => WWCP.EnergyMeter_Id.Parse(MeterId.ToString());
 
-        public static WWCP.EnergyMeter_Id? ToWWCP(this Meter_Id? MeterId)
+        public static WWCP.EnergyMeter_Id? ToWWCP(this EnergyMeter_Id? MeterId)
 
             => MeterId.HasValue
                    ? MeterId.Value.ToWWCP()
@@ -1659,7 +1662,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            SessionId:                  null,
                            AuthorizationReference:     null,
-                           MeterId:                    ChargeDetailRecord.EnergyMeterId.ToOCPI(),
+                           EnergyMeterId:                    ChargeDetailRecord.EnergyMeterId.ToOCPI(),
                            EnergyMeter:                null,
                            TransparencySoftwares:      null,
                            TariffAssociationId:        TariffAssociation_Id.Parse(""),

@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -135,7 +135,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The optional identification of the kWh energy meter.
         /// </summary>
         [Optional]
-        public   Meter_Id?                           MeterId                      { get; }
+        public   EnergyMeter_Id?                           MeterId                      { get; }
 
         /// <summary>
         /// The ISO 4217 code of the currency used for this session.
@@ -229,7 +229,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                        DateTime?                                         End                              = null,
                        AuthorizationReference?                           AuthorizationReference           = null,
-                       Meter_Id?                                         MeterId                          = null,
+                       EnergyMeter_Id?                                         MeterId                          = null,
                        IEnumerable<ChargingPeriod>?                      ChargingPeriods                  = null,
                        Price?                                            TotalCosts                       = null,
 
@@ -588,8 +588,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptional("meter_id",
                                        "meter identification",
-                                       Meter_Id.TryParse,
-                                       out Meter_Id? MeterId,
+                                       EnergyMeter_Id.TryParse,
+                                       out EnergyMeter_Id? MeterId,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)

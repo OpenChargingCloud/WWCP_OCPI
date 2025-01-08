@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,12 +17,13 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
-using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -55,7 +56,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The type of the role.
         /// </summary>
         [Mandatory]
-        public Roles            Role                { get; }
+        public Role             Role                { get; }
 
         /// <summary>
         /// Business details of this party.
@@ -85,7 +86,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         public CredentialsRole(CountryCode      CountryCode,
                                Party_Id         PartyId,
-                               Roles            Role,
+                               Role             Role,
                                BusinessDetails  BusinessDetails,
                                Boolean?         AllowDowngrades   = null)
         {
@@ -99,11 +100,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             unchecked
             {
 
-                this.hashCode = this.CountryCode.     GetHashCode() ^
-                                this.PartyId.         GetHashCode() * 3 ^
-                                this.Role.            GetHashCode() * 7 ^
-                                this.BusinessDetails. GetHashCode() * 5 ^
-                                this.AllowDowngrades?.GetHashCode() ?? 0;
+                hashCode = this.CountryCode.     GetHashCode() * 11 ^
+                           this.PartyId.         GetHashCode() *  7 ^
+                           this.Role.            GetHashCode() *  5 ^
+                           this.BusinessDetails. GetHashCode() *  3 ^
+                           this.AllowDowngrades?.GetHashCode() ?? 0;
 
             }
 
@@ -211,8 +212,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("role",
                                          "role",
-                                         Roles.TryParse,
-                                         out Roles Role,
+                                         OCPI.Role.TryParse,
+                                         out Role Role,
                                          out ErrorResponse))
                 {
                     return false;
@@ -294,7 +295,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                  new JProperty("country_code",       CountryCode.    ToString()),
                                  new JProperty("party_id",           PartyId.        ToString()),
-                                 new JProperty("role",               Role.           AsText()),
+                                 new JProperty("role",               Role.           ToString()),
                                  new JProperty("business_details",   BusinessDetails.ToJSON(CustomBusinessDetailsSerializer,
                                                                                             CustomImageSerializer)),
 
@@ -315,14 +316,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this credentials role.
         /// </summary>
         public CredentialsRole Clone()
 
             => new (
                    CountryCode.    Clone(),
                    PartyId.        Clone(),
-                   Role,
+                   Role.           Clone(),
                    BusinessDetails.Clone(),
                    AllowDowngrades
                );
@@ -521,7 +522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         public override String ToString()
 
-            => $"{BusinessDetails.Name} ({CountryCode}{(Role == Roles.EMSP ? "-" : "*")}{PartyId} {Role.AsText()}) {(AllowDowngrades.HasValue ? AllowDowngrades.Value ? "[Downgrades allowed]" : "[No downgrades]" : "")}";
+            => $"{BusinessDetails.Name} ({CountryCode}{(Role == Role.EMSP ? "-" : "*")}{PartyId} {Role}) {(AllowDowngrades.HasValue ? AllowDowngrades.Value ? "[Downgrades allowed]" : "[No downgrades]" : "")}";
 
         #endregion
 

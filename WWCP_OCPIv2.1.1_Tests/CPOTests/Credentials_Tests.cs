@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -257,7 +257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 
                 emsp1CommonAPI.AddRemoteParty(CountryCode:       cpoCommonAPI.OurCountryCode,
                                               PartyId:           cpoCommonAPI.OurPartyId,
-                                              Role:              Roles.CPO,
+                                              Role:              Role.CPO,
                                               BusinessDetails:   cpoCommonAPI.OurBusinessDetails,
 
                                               AccessToken:       AccessToken.Parse(cpo_accessing_emsp1__token),
@@ -1747,7 +1747,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 
                 emsp1CommonAPI.AddRemoteParty(CountryCode:                 cpoCommonAPI.OurCountryCode,
                                               PartyId:                     cpoCommonAPI.OurPartyId,
-                                              Role:                        Roles.CPO,
+                                              Role:                        Role.CPO,
                                               BusinessDetails:             cpoCommonAPI.OurBusinessDetails,
 
                                               AccessToken:                 AccessToken.Parse(cpo_accessing_emsp1__token),
@@ -1755,7 +1755,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 
                                               //RemoteAccessToken:           AccessToken.Parse("cpo_accessing_emsp1++token"),
                                               //RemoteVersionsURL:           null, // 
-                                              //RemoteVersionIds:            new[] { Version.Id },
+                                              //RemoteVersionIds:            [ Version.Id ],
                                               //SelectedVersionId:           Version.Id,
                                               //AccessTokenBase64Encoding:   false,
                                               //RemoteStatus:                RemoteAccessStatus.ONLINE,

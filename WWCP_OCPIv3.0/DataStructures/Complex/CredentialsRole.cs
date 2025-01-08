@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,13 +44,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public Party_Idv3         PartyId             { get; }
+        public Party_Idv3       PartyId             { get; }
 
         /// <summary>
         /// The type of the role.
         /// </summary>
         [Mandatory]
-        public Roles            Role                { get; }
+        public Role             Role                { get; }
 
         /// <summary>
         /// Business details of this party.
@@ -77,8 +77,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Role">The type of the role.</param>
         /// <param name="BusinessDetails">Business details of this party.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        public CredentialsRole(Party_Idv3         PartyId,
-                               Roles            Role,
+        public CredentialsRole(Party_Idv3       PartyId,
+                               Role             Role,
                                BusinessDetails  BusinessDetails,
                                Boolean?         AllowDowngrades   = null)
         {
@@ -189,8 +189,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatory("role",
                                          "role",
-                                         Roles.TryParse,
-                                         out Roles Role,
+                                         OCPI.Role.TryParse,
+                                         out Role Role,
                                          out ErrorResponse))
                 {
                     return false;
@@ -270,7 +270,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             var json = JSONObject.Create(
 
                                  new JProperty("party_id",           PartyId.        ToString()),
-                                 new JProperty("role",               Role.           AsText()),
+                                 new JProperty("role",               Role.           ToString()),
                                  new JProperty("business_details",   BusinessDetails.ToJSON(CustomBusinessDetailsSerializer,
                                                                                             CustomImageSerializer)),
 
@@ -291,13 +291,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this credentials role.
         /// </summary>
         public CredentialsRole Clone()
 
             => new (
                    PartyId.        Clone(),
-                   Role,
+                   Role.           Clone(),
                    BusinessDetails.Clone(),
                    AllowDowngrades
                );
@@ -492,7 +492,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         public override String ToString()
 
-            => $"{BusinessDetails.Name} ({PartyId.ToString(Role)} {Role.AsText()}) {(AllowDowngrades.HasValue ? AllowDowngrades.Value ? "[Downgrades allowed]" : "[No downgrades]" : "")}";
+            => $"{BusinessDetails.Name} ({PartyId.ToString(Role)} {Role}) {(AllowDowngrades.HasValue ? AllowDowngrades.Value ? "[Downgrades allowed]" : "[No downgrades]" : "")}";
 
         #endregion
 

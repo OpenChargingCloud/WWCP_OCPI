@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@
 #region Usings
 
 using System.Text;
+using System.Collections.Concurrent;
 using System.Security.Authentication;
 using System.Diagnostics.CodeAnalysis;
 
@@ -128,13 +129,6 @@ namespace cloud.charging.open.protocols.OCPI
         public IEnumerable<String>  DecodedData    { get; set; } = DecodedData;
 
     }
-
-    /// <summary>
-    /// The CommonAPI Base.
-    /// </summary>
-    public class CommonAPIBase : HTTPAPI,
-                                 IServerStartStop
-    {
 
         #region (class) ClientConfigurator
 
@@ -600,6 +594,14 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
+
+    /// <summary>
+    /// The CommonAPI Base.
+    /// </summary>
+    public class CommonBaseAPI : HTTPAPI,
+                                 IServerStartStop
+    {
+
         #region Data
 
         /// <summary>
@@ -623,11 +625,6 @@ namespace cloud.charging.open.protocols.OCPI
         public new static readonly HTTPPath    DefaultURLPathPrefix            = HTTPPath.Parse("io/OCPI/");
 
         /// <summary>
-        /// The (max supported) OCPI version.
-        /// </summary>
-        private readonly           Version_Id  OCPIVersion;
-
-        /// <summary>
         /// The default database file name for all remote party configuration.
         /// </summary>
         public const               String      DefaultRemotePartyDBFileName    = "RemoteParties.db";
@@ -638,54 +635,54 @@ namespace cloud.charging.open.protocols.OCPI
         public const               String      DefaultAssetsDBFileName         = "Assets.db";
 
 
-        protected const String addRemoteParty                     = "addRemoteParty";
-        protected const String addRemotePartyIfNotExists          = "addRemotePartyIfNotExists";
-        protected const String addOrUpdateRemoteParty             = "addOrUpdateRemoteParty";
-        protected const String updateRemoteParty                  = "updateRemoteParty";
-        protected const String removeRemoteParty                  = "removeRemoteParty";
-        protected const String removeAllRemoteParties             = "removeAllRemoteParties";
+        public const String addRemoteParty                     = "addRemoteParty";
+        public const String addRemotePartyIfNotExists          = "addRemotePartyIfNotExists";
+        public const String addOrUpdateRemoteParty             = "addOrUpdateRemoteParty";
+        public const String updateRemoteParty                  = "updateRemoteParty";
+        public const String removeRemoteParty                  = "removeRemoteParty";
+        public const String removeAllRemoteParties             = "removeAllRemoteParties";
 
-        protected const String addLocation                        = "addLocation";
-        protected const String addLocationIfNotExists             = "addLocationIfNotExists";
-        protected const String addOrUpdateLocation                = "addOrUpdateLocation";
-        protected const String updateLocation                     = "updateLocation";
-        protected const String removeLocation                     = "removeLocation";
-        protected const String removeAllLocations                 = "removeAllLocations";
+        public const String addLocation                        = "addLocation";
+        public const String addLocationIfNotExists             = "addLocationIfNotExists";
+        public const String addOrUpdateLocation                = "addOrUpdateLocation";
+        public const String updateLocation                     = "updateLocation";
+        public const String removeLocation                     = "removeLocation";
+        public const String removeAllLocations                 = "removeAllLocations";
 
-        protected const String addEVSE                            = "addEVSE";
-        protected const String addEVSEIfNotExists                 = "addEVSEIfNotExists";
-        protected const String addOrUpdateEVSE                    = "addOrUpdateEVSE";
-        protected const String updateEVSE                         = "updateEVSE";
-        protected const String removeEVSE                         = "removeEVSE";
-        protected const String removeAllEVSEs                     = "removeAllEVSEs";
+        public const String addEVSE                            = "addEVSE";
+        public const String addEVSEIfNotExists                 = "addEVSEIfNotExists";
+        public const String addOrUpdateEVSE                    = "addOrUpdateEVSE";
+        public const String updateEVSE                         = "updateEVSE";
+        public const String removeEVSE                         = "removeEVSE";
+        public const String removeAllEVSEs                     = "removeAllEVSEs";
 
-        protected const String addTariff                          = "addTariff";
-        protected const String addTariffIfNotExists               = "addTariffIfNotExists";
-        protected const String addOrUpdateTariff                  = "addOrUpdateTariff";
-        protected const String updateTariff                       = "updateTariff";
-        protected const String removeTariff                       = "removeTariff";
-        protected const String removeAllTariffs                   = "removeAllTariffs";
+        public const String addTariff                          = "addTariff";
+        public const String addTariffIfNotExists               = "addTariffIfNotExists";
+        public const String addOrUpdateTariff                  = "addOrUpdateTariff";
+        public const String updateTariff                       = "updateTariff";
+        public const String removeTariff                       = "removeTariff";
+        public const String removeAllTariffs                   = "removeAllTariffs";
 
-        protected const String addSession                         = "addSession";
-        protected const String addSessionIfNotExists              = "addSessionIfNotExists";
-        protected const String addOrUpdateSession                 = "addOrUpdateSession";
-        protected const String updateSession                      = "updateSession";
-        protected const String removeSession                      = "removeSession";
-        protected const String removeAllSessions                  = "removeAllSessions";
+        public const String addSession                         = "addSession";
+        public const String addSessionIfNotExists              = "addSessionIfNotExists";
+        public const String addOrUpdateSession                 = "addOrUpdateSession";
+        public const String updateSession                      = "updateSession";
+        public const String removeSession                      = "removeSession";
+        public const String removeAllSessions                  = "removeAllSessions";
 
-        protected const String addTokenStatus                     = "addTokenStatus";
-        protected const String addTokenStatusIfNotExists          = "addTokenStatusIfNotExists";
-        protected const String addOrUpdateTokenStatus             = "addOrUpdateTokenStatus";
-        protected const String updateTokenStatus                  = "updateTokenStatus";
-        protected const String removeTokenStatus                  = "removeTokenStatus";
-        protected const String removeAllTokenStatus               = "removeAllTokenStatus";
+        public const String addTokenStatus                     = "addTokenStatus";
+        public const String addTokenStatusIfNotExists          = "addTokenStatusIfNotExists";
+        public const String addOrUpdateTokenStatus             = "addOrUpdateTokenStatus";
+        public const String updateTokenStatus                  = "updateTokenStatus";
+        public const String removeTokenStatus                  = "removeTokenStatus";
+        public const String removeAllTokenStatus               = "removeAllTokenStatus";
 
-        protected const String addChargeDetailRecord              = "addChargeDetailRecord";
-        protected const String addChargeDetailRecordIfNotExists   = "addChargeDetailRecordIfNotExists";
-        protected const String addOrUpdateChargeDetailRecord      = "addOrUpdateChargeDetailRecord";
-        protected const String updateChargeDetailRecord           = "updateChargeDetailRecord";
-        protected const String removeChargeDetailRecord           = "removeChargeDetailRecord";
-        protected const String removeAllChargeDetailRecords       = "removeAllChargeDetailRecords";
+        public const String addChargeDetailRecord              = "addChargeDetailRecord";
+        public const String addChargeDetailRecordIfNotExists   = "addChargeDetailRecordIfNotExists";
+        public const String addOrUpdateChargeDetailRecord      = "addOrUpdateChargeDetailRecord";
+        public const String updateChargeDetailRecord           = "updateChargeDetailRecord";
+        public const String removeChargeDetailRecord           = "removeChargeDetailRecord";
+        public const String removeAllChargeDetailRecords       = "removeAllChargeDetailRecords";
 
         #endregion
 
@@ -721,7 +718,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Whether to disable the HTTP root services.
         /// </summary>
-        public Boolean                  Disable_RootServices       { get; }
+        //public Boolean                  Disable_RootServices       { get; }
 
         /// <summary>
         /// The logging context.
@@ -733,27 +730,73 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public ClientConfigurator       ClientConfigurations       { get; }
 
+        #endregion
 
-        public String                   DatabaseFilePath           { get; }
+        #region Events
 
-        /// <summary>
-        /// The database file name for all remote party configuration.
-        /// </summary>
-        public String                   RemotePartyDBFileName      { get; }
+        #region (protected internal) GetVersionsRequest       (Request)
 
         /// <summary>
-        /// The database file name for all OCPI assets.
+        /// An event sent whenever a GET versions request was received.
         /// </summary>
-        public String                   AssetsDBFileName           { get; }
+        public HTTPRequestLogEvent OnGetVersionsRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET versions request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">A HTTP request.</param>
+        protected internal Task GetVersionsRequest(DateTime     Timestamp,
+                                                   HTTPAPI      API,
+                                                   HTTPRequest  Request)
+
+            => OnGetVersionsRequest.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request);
+
+        #endregion
+
+        #region (protected internal) GetVersionsResponse      (Response)
+
+        /// <summary>
+        /// An event sent whenever a GET versions response was sent.
+        /// </summary>
+        public HTTPResponseLogEvent OnGetVersionsResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET versions response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="Response">A HTTP response.</param>
+        protected internal Task GetVersionsResponse(DateTime      Timestamp,
+                                                    HTTPAPI       API,
+                                                    HTTPRequest   Request,
+                                                    HTTPResponse  Response)
+
+            => OnGetVersionsResponse.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request,
+                                             Response);
+
+        #endregion
+
+        #endregion
+
+        #region Custom JSON serializers
+
+        public CustomJObjectSerializerDelegate<VersionInformation>?           CustomVersionInformationSerializer            { get; set; }
 
         #endregion
 
         #region Constructor(s)
 
-        #region CommonAPI(HTTPServerName, ...)
+        #region CommonBaseAPI(HTTPServerName, ...)
 
         /// <summary>
-        /// Create a new CommonAPI.
+        /// Create a new CommonBaseAPI.
         /// </summary>
         /// <param name="OurVersionsURL">The URL of our VERSIONS endpoint.</param>
         /// 
@@ -800,8 +843,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
         /// <param name="DNSClient">The DNS client of the API.</param>
         /// <param name="AutoStart">Whether to start the API automatically.</param>
-        public CommonAPIBase(Version_Id                                                 OCPIVersion,
-                             URL                                                        OurBaseURL,
+        public CommonBaseAPI(URL                                                        OurBaseURL,
                              URL                                                        OurVersionsURL,
 
                              HTTPPath?                                                  AdditionalURLPathPrefix       = null,
@@ -848,9 +890,9 @@ namespace cloud.charging.open.protocols.OCPI
                              String?                                                    LoggingPath                   = null,
                              String?                                                    LogfileName                   = null,
                              OCPILogfileCreatorDelegate?                                LogfileCreator                = null,
-                             String?                                                    DatabaseFilePath              = null,
-                             String?                                                    RemotePartyDBFileName         = null,
-                             String?                                                    AssetsDBFileName              = null,
+                             //String?                                                    DatabaseFilePath              = null,
+                             //String?                                                    RemotePartyDBFileName         = null,
+                             //String?                                                    AssetsDBFileName              = null,
                              DNSClient?                                                 DNSClient                     = null,
                              Boolean                                                    AutoStart                     = false)
 
@@ -900,40 +942,41 @@ namespace cloud.charging.open.protocols.OCPI
 
         {
 
-            this.OCPIVersion               = OCPIVersion;
             this.OurBaseURL                = OurBaseURL;
             this.OurVersionsURL            = OurVersionsURL;
             this.AdditionalURLPathPrefix   = AdditionalURLPathPrefix;
             this.LocationsAsOpenData       = LocationsAsOpenData;
             this.AllowDowngrades           = AllowDowngrades;
-            this.Disable_RootServices      = Disable_RootServices;
+            //this.Disable_RootServices      = Disable_RootServices;
             this.LoggingContext            = LoggingContext;
 
             //this.logfileName               = Path.Combine(this.LoggingPath,
             //                                              this.LogfileName);
 
-            this.DatabaseFilePath          = DatabaseFilePath      ?? Path.Combine(AppContext.BaseDirectory,
-                                                                                   DefaultHTTPAPI_LoggingPath);
+            //this.DatabaseFilePath          = DatabaseFilePath      ?? Path.Combine(AppContext.BaseDirectory,
+            //                                                                       DefaultHTTPAPI_LoggingPath);
 
-            if (this.DatabaseFilePath[^1] != Path.DirectorySeparatorChar)
-                this.DatabaseFilePath     += Path.DirectorySeparatorChar;
+            //if (this.DatabaseFilePath[^1] != Path.DirectorySeparatorChar)
+            //    this.DatabaseFilePath     += Path.DirectorySeparatorChar;
 
-            this.RemotePartyDBFileName     = Path.Combine(this.DatabaseFilePath,
-                                                          RemotePartyDBFileName ?? DefaultRemotePartyDBFileName);
+            //this.RemotePartyDBFileName     = Path.Combine(this.DatabaseFilePath,
+            //                                              RemotePartyDBFileName ?? DefaultRemotePartyDBFileName);
 
-            this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
-                                                          AssetsDBFileName      ?? DefaultAssetsDBFileName);
+            //this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
+            //                                              AssetsDBFileName      ?? DefaultAssetsDBFileName);
 
             this.ClientConfigurations      = new ClientConfigurator();
+
+            RegisterURLTemplates();
 
         }
 
         #endregion
 
-        #region CommonAPI(HTTPServer, ...)
+        #region CommonBaseAPI(HTTPServer, ...)
 
         /// <summary>
-        /// Create a new CommonAPI using the given HTTP server.
+        /// Create a new CommonBaseAPI using the given HTTP server.
         /// </summary>
         /// <param name="OurVersionsURL">The URL of our VERSIONS endpoint.</param>
         /// <param name="HTTPServer">A HTTP server.</param>
@@ -966,15 +1009,14 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="LogfileName">The name of the logfile.</param>
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
         /// <param name="AutoStart">Whether to start the API automatically.</param>
-        public CommonAPIBase(Version_Id                   OCPIVersion,
-                             URL                          OurBaseURL,
+        public CommonBaseAPI(URL                          OurBaseURL,
                              URL                          OurVersionsURL,
                              HTTPServer                   HTTPServer,
 
                              HTTPPath?                    AdditionalURLPathPrefix    = null,
                              Boolean                      LocationsAsOpenData        = true,
                              Boolean?                     AllowDowngrades            = null,
-                             Boolean                      Disable_RootServices       = false,
+                             //Boolean                      Disable_RootServices       = false,
 
                              HTTPHostname?                HTTPHostname               = null,
                              String?                      ExternalDNSName            = "",
@@ -999,9 +1041,9 @@ namespace cloud.charging.open.protocols.OCPI
                              String?                      LoggingPath                = null,
                              String?                      LogfileName                = null,
                              OCPILogfileCreatorDelegate?  LogfileCreator             = null,
-                             String?                      DatabaseFilePath           = null,
-                             String?                      RemotePartyDBFileName      = null,
-                             String?                      AssetsDBFileName           = null,
+                             //String?                      DatabaseFilePath           = null,
+                             //String?                      RemotePartyDBFileName      = null,
+                             //String?                      AssetsDBFileName           = null,
                              Boolean                      AutoStart                  = false)
 
             : base(HTTPServer,
@@ -1034,29 +1076,28 @@ namespace cloud.charging.open.protocols.OCPI
 
         {
 
-            this.OCPIVersion               = OCPIVersion;
             this.OurBaseURL                = OurBaseURL;
             this.OurVersionsURL            = OurVersionsURL;
             this.AdditionalURLPathPrefix   = AdditionalURLPathPrefix;
             this.LocationsAsOpenData       = LocationsAsOpenData;
             this.AllowDowngrades           = AllowDowngrades;
-            this.Disable_RootServices      = Disable_RootServices;
+            //this.Disable_RootServices      = Disable_RootServices;
             this.LoggingContext            = LoggingContext;
 
             //this.logfileName               = Path.Combine(this.LoggingPath,
             //                                              this.LogfileName);
 
-            this.DatabaseFilePath          = DatabaseFilePath                   ?? Path.Combine(AppContext.BaseDirectory,
-                                                                                                DefaultHTTPAPI_LoggingPath);
+            //this.DatabaseFilePath          = DatabaseFilePath                   ?? Path.Combine(AppContext.BaseDirectory,
+            //                                                                                    DefaultHTTPAPI_LoggingPath);
 
-            if (this.DatabaseFilePath[^1] != Path.DirectorySeparatorChar)
-                this.DatabaseFilePath     += Path.DirectorySeparatorChar;
+            //if (this.DatabaseFilePath[^1] != Path.DirectorySeparatorChar)
+            //    this.DatabaseFilePath     += Path.DirectorySeparatorChar;
 
-            this.RemotePartyDBFileName     = Path.Combine(this.DatabaseFilePath,
-                                                          RemotePartyDBFileName ?? DefaultRemotePartyDBFileName);
+            //this.RemotePartyDBFileName     = Path.Combine(this.DatabaseFilePath,
+            //                                              RemotePartyDBFileName ?? DefaultRemotePartyDBFileName);
 
-            this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
-                                                          AssetsDBFileName      ?? DefaultAssetsDBFileName);
+            //this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
+            //                                              AssetsDBFileName      ?? DefaultAssetsDBFileName);
 
             // Link HTTP events...
             HTTPServer.RequestLog         += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -1065,9 +1106,285 @@ namespace cloud.charging.open.protocols.OCPI
 
             this.ClientConfigurations      = new ClientConfigurator();
 
+            RegisterURLTemplates();
+
         }
 
         #endregion
+
+        #endregion
+
+
+        #region (private) RegisterURLTemplates()
+
+        private void RegisterURLTemplates()
+        {
+
+            #region OPTIONS     ~/
+
+            HTTPServer.AddMethodCallback(
+
+                this,
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix,
+                HTTPDelegate: request =>
+
+                    Task.FromResult(
+                        new HTTPResponse.Builder(request) {
+                            HTTPStatusCode             = HTTPStatusCode.OK,
+                            Server                     = HTTPServiceName,
+                            Date                       = Timestamp.Now,
+                            AccessControlAllowOrigin   = "*",
+                            AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                            Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                            AccessControlAllowHeaders  = [ "Authorization" ],
+                            Connection                 = ConnectionType.Close
+                        }.AsImmutable)
+
+            );
+
+            #endregion
+
+            #region GET         ~/
+
+            HTTPServer.AddMethodCallback(
+
+                this,
+                HTTPHostname.Any,
+                HTTPMethod.GET,
+                URLPathPrefix,
+                HTTPContentType.Text.PLAIN,
+                HTTPDelegate: request =>
+
+                    Task.FromResult(
+                        new HTTPResponse.Builder(request) {
+                            HTTPStatusCode             = HTTPStatusCode.OK,
+                            Server                     = DefaultHTTPServerName,
+                            Date                       = Timestamp.Now,
+                            AccessControlAllowOrigin   = "*",
+                            AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                            AccessControlAllowHeaders  = [ "Authorization" ],
+                            ContentType                = HTTPContentType.Text.PLAIN,
+                            Content                    = "This is an Open Charge Point Interface v2.x HTTP service!\r\nPlease check ~/versions!".ToUTF8Bytes(),
+                            Connection                 = ConnectionType.Close
+                        }.AsImmutable)
+
+            );
+
+            #endregion
+
+
+            #region OPTIONS     ~/versions
+
+            // ----------------------------------------------------
+            // curl -v -X OPTIONS http://127.0.0.1:2502/versions
+            // ----------------------------------------------------
+            HTTPServer.AddMethodCallback(
+
+                this,
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "versions",
+                HTTPDelegate: request =>
+
+                    Task.FromResult(
+                        new HTTPResponse.Builder(request) {
+                            HTTPStatusCode             = HTTPStatusCode.OK,
+                            Server                     = HTTPServiceName,
+                            Date                       = Timestamp.Now,
+                            AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                            Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                            AccessControlAllowHeaders  = [ "Authorization" ],
+                            Vary                       = "Accept"
+                        }.AsImmutable)
+
+            );
+
+            #endregion
+
+            #region GET         ~/versions
+
+            // ----------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions
+            // ----------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(
+
+                this,
+                HTTPHostname.Any,
+                HTTPMethod.GET,
+                URLPathPrefix + "versions",
+                HTTPContentType.Application.JSON_UTF8,
+                HTTPRequestLogger:   GetVersionsRequest,
+                HTTPResponseLogger:  GetVersionsResponse,
+                HTTPDelegate:        request => {
+
+                    var requestId        = request.TryParseHeaderField<Request_Id>    ("X-Request-ID",           Request_Id.    TryParse) ?? Request_Id.    NewRandom(IsLocal: true);
+                    var correlationId    = request.TryParseHeaderField<Correlation_Id>("X-Correlation-ID",       Correlation_Id.TryParse) ?? Correlation_Id.NewRandom(IsLocal: true);
+                    var toCountryCode    = request.TryParseHeaderField<CountryCode>   ("OCPI-to-country-code",   CountryCode.   TryParse);
+                    var toPartyId        = request.TryParseHeaderField<Party_Id>      ("OCPI-to-party-id",       Party_Id.      TryParse);
+                    var fromCountryCode  = request.TryParseHeaderField<CountryCode>   ("OCPI-from-country-code", CountryCode.   TryParse);
+                    var fromPartyId      = request.TryParseHeaderField<Party_Id>      ("OCPI-from-party-id",     Party_Id.      TryParse);
+
+                    AccessToken? accessToken1 = null;
+
+                    if (request.Authorization is HTTPTokenAuthentication TokenAuth &&
+                        TokenAuth.Token.TryParseBASE64_UTF8(out var decodedToken, out var errorResponse) &&
+                        AccessToken.TryParse(decodedToken, out var accessToken))
+                    {
+                        accessToken1 = accessToken;
+                    }
+
+                    else if (request.Authorization is HTTPBasicAuthentication BasicAuth &&
+                        AccessToken.TryParse(BasicAuth.Username, out accessToken))
+                    {
+                        accessToken1 = accessToken;
+                    }
+
+                    if (accessToken1.HasValue)
+                    {
+
+                    //    if (CommonAPI.TryGetRemoteParties(AccessToken.Value, out var parties))
+                    //    {
+
+                    //        if (parties.Count() == 1)
+                    //        {
+
+                    //            RemoteParty      = parties.First();
+
+                    //            LocalAccessInfo  = new LocalAccessInfo2(
+                    //                                   AccessToken.Value,
+                    //                                   RemoteParty.LocalAccessInfos.First(localAccessInfo => localAccessInfo.AccessToken == AccessToken).Status,
+                    //                                   RemoteParty.Roles,
+                    //                                   null,
+                    //                                   null,
+                    //                                   RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
+                    //                               );
+
+                    //            CPOIds           = RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.CPO).
+                    //                                                 Select(credentialsRole => CPO_Id. Parse($"{LocalAccessInfo.Roles.First().CountryCode}*{LocalAccessInfo.Roles.First().PartyId}")).
+                    //                                                 Distinct().
+                    //                                                 ToArray();
+
+                    //            EMSPIds          = RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.EMSP).
+                    //                                                 Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().CountryCode}-{LocalAccessInfo.Roles.First().PartyId}")).
+                    //                                                 Distinct().
+                    //                                                 ToArray();
+
+                    //            if (FromCountryCode.HasValue &&
+                    //                FromPartyId.    HasValue)
+                    //            {
+
+                    //                CPOId            = CPO_Id. Parse($"{FromCountryCode}*{FromPartyId}");
+                    //                EMSPId           = EMSP_Id.Parse($"{FromCountryCode}-{FromPartyId}");
+
+                    //                if (CPOId. HasValue && !CPOIds. Contains(CPOId. Value))
+                    //                    CPOId   = null;
+
+                    //                if (EMSPId.HasValue && !EMSPIds.Contains(EMSPId.Value))
+                    //                    EMSPId  = null;
+
+                    //            }
+
+                    //            if (!FromCountryCode.HasValue &&
+                    //                !FromPartyId.    HasValue)
+                    //            {
+
+                    //                if (CPOIds. Any())
+                    //                    CPOId  = CPOIds. First();
+
+                    //                if (EMSPIds.Any())
+                    //                    EMSPId = EMSPIds.First();
+
+                    //            }
+
+                    //        }
+
+                    //        else if (parties.Count() > 1      &&
+                    //                 FromCountryCode.HasValue &&
+                    //                 FromPartyId.    HasValue)
+                    //        {
+
+                    //            var filteredParties = parties.Where(party => party.Roles.Any(credentialsRole => credentialsRole.CountryCode == FromCountryCode.Value) &&
+                    //                                                         party.Roles.Any(credentialsRole => credentialsRole.PartyId     == FromPartyId.    Value)).
+                    //                                          ToArray();
+
+                    //            if (filteredParties.Length == 1)
+                    //            {
+
+                    //                this.LocalAccessInfo   = new LocalAccessInfo2(AccessToken.Value,
+                    //                                                             filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken).Status);
+
+                    //                //this.AccessInfo2  = filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken);
+
+                    //                this.RemoteParty  = filteredParties.First();
+
+                    //            }
+
+                    //        }
+
+                    //    }
+
+                    }
+
+                    #region Check access token
+
+                    //if (request.LocalAccessInfo is not null &&
+                    //    request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
+                    //{
+
+                    //    return Task.FromResult(
+                    //        new OCPIResponse.Builder(request) {
+                    //            StatusCode           = 2000,
+                    //            StatusMessage        = "Invalid or blocked access token!",
+                    //            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                    //                HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                    //                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                    //                Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                    //                AccessControlAllowHeaders  = [ "Authorization" ]
+                    //            }
+                    //        });
+
+                    //}
+
+                    #endregion
+
+
+                    var httpResponseBuilder =
+                        new HTTPResponse.Builder(request) {
+                            HTTPStatusCode             = HTTPStatusCode.OK,
+                            Server                     = DefaultHTTPServerName,
+                            Date                       = Timestamp.Now,
+                            AccessControlAllowOrigin   = "*",
+                            AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                            Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                            AccessControlAllowHeaders  = [ "Authorization" ],
+                            ContentType                = HTTPContentType.Application.JSON_UTF8,
+                            Content                    = JSONObject.Create(
+                                                             new JProperty("status_code",      1000),
+                                                             new JProperty("status_message",  "Hello world!"),
+                                                             new JProperty("data",             new JArray(
+                                                                                                   VersionInformations.
+                                                                                                       OrderBy(versionInformation => versionInformation.Id).
+                                                                                                       Select (versionInformation => versionInformation.ToJSON(CustomVersionInformationSerializer))
+                                                                                               ))
+                                                         ).ToUTF8Bytes(),
+                            Connection                 = ConnectionType.Close,
+                            Vary                       = "Accept"
+                        };
+
+                    httpResponseBuilder.Set("X-Request-ID",      requestId);
+                    httpResponseBuilder.Set("X-Correlation-ID",  correlationId);
+
+                    return Task.FromResult(httpResponseBuilder.AsImmutable);
+
+                }
+
+            );
+
+            #endregion
+
+        }
 
         #endregion
 
@@ -1733,15 +2050,107 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
+        #region OCPI Version Informations
+
+        private readonly ConcurrentDictionary<Version_Id, VersionInformation>  versionInformations   = [];
+
+        public IEnumerable<VersionInformation> VersionInformations
+            => versionInformations.Values;
+
+
+        #region AddVersionInformation            (VersionInformation, ...)
+
+        public async Task<AddResult<VersionInformation>>
+
+            AddVersionInformation(VersionInformation  VersionInformation,
+                                  Boolean             SkipNotifications   = false,
+                                  EventTracking_Id?   EventTrackingId     = null,
+                                  User_Id?            CurrentUserId       = null)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (versionInformations.TryAdd(VersionInformation.Id, VersionInformation))
+            {
+
+                //await LogAsset(
+                //          addLocation,
+                //          Location.ToJSON(true,
+                //                          true,
+                //                          true,
+                //                          CustomLocationSerializer,
+                //                          CustomPublishTokenSerializer,
+                //                          CustomAddressSerializer,
+                //                          CustomAdditionalGeoLocationSerializer,
+                //                          CustomChargingStationSerializer,
+                //                          CustomEVSESerializer,
+                //                          CustomStatusScheduleSerializer,
+                //                          CustomConnectorSerializer,
+                //                          CustomEnergyMeterSerializer,
+                //                          CustomTransparencySoftwareStatusSerializer,
+                //                          CustomTransparencySoftwareSerializer,
+                //                          CustomDisplayTextSerializer,
+                //                          CustomBusinessDetailsSerializer,
+                //                          CustomHoursSerializer,
+                //                          CustomImageSerializer,
+                //                          CustomEnergyMixSerializer,
+                //                          CustomEnergySourceSerializer,
+                //                          CustomEnvironmentalImpactSerializer,
+                //                          CustomLocationMaxPowerSerializer),
+                //          EventTrackingId,
+                //          CurrentUserId
+                //      );
+
+                //if (!SkipNotifications)
+                //{
+
+                //    var OnLocationAddedLocal = OnLocationAdded;
+                //    if (OnLocationAddedLocal is not null)
+                //    {
+                //        try
+                //        {
+                //            await OnLocationAddedLocal(Location);
+                //        }
+                //        catch (Exception e)
+                //        {
+                //            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
+                //                        Environment.NewLine, e.Message,
+                //                        Environment.NewLine, e.StackTrace ?? "");
+                //        }
+                //    }
+
+                //}
+
+                return AddResult<VersionInformation>.Success(
+                           EventTrackingId,
+                           VersionInformation
+                       );
+
+            }
+
+            return AddResult<VersionInformation>.Failed(
+                       EventTrackingId,
+                       VersionInformation,
+                       "The given version information already exists!"
+                   );
+
+        }
+
+        #endregion
+
+        #endregion
+
+
         //ToDo: Wrap the following into a plugable interface!
 
-        #region (private) Read/Write Database Files
+        #region Read/Write Database Files
 
-        #region (private static) WriteToDatabase                          (FileName, Text, ...)
+        #region WriteToDatabase                          (FileName, Text, ...)
 
-        private static Task WriteToDatabase(String             FileName,
-                                            String             Text,
-                                            CancellationToken  CancellationToken   = default)
+        public Task WriteToDatabase(String             FileName,
+                                    String             Text,
+                                    CancellationToken  CancellationToken   = default)
 
             => File.AppendAllTextAsync(
                    FileName,
@@ -1752,14 +2161,14 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (private static) WriteToDatabase                          (FileName, JToken, ...)
+        #region WriteToDatabase                          (FileName, JToken, ...)
 
-        private static Task WriteToDatabase(String             FileName,
-                                            String             Command,
-                                            JToken?            JToken,
-                                            EventTracking_Id   EventTrackingId,
-                                            User_Id?           CurrentUserId       = null,
-                                            CancellationToken  CancellationToken   = default)
+        public Task WriteToDatabase(String             FileName,
+                                    String             Command,
+                                    JToken?            JToken,
+                                    EventTracking_Id   EventTrackingId,
+                                    User_Id?           CurrentUserId       = null,
+                                    CancellationToken  CancellationToken   = default)
 
             => WriteToDatabase(
 
@@ -1784,13 +2193,13 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (private static) WriteCommentToDatabase                   (FileName, Text, ...)
+        #region WriteCommentToDatabase                   (FileName, Text, ...)
 
-        private static Task WriteCommentToDatabase(String             FileName,
-                                                   String             Text,
-                                                   EventTracking_Id   EventTrackingId,
-                                                   User_Id?           CurrentUserId       = null,
-                                                   CancellationToken  CancellationToken   = default)
+        public Task WriteCommentToDatabase(String             FileName,
+                                           String             Text,
+                                           EventTracking_Id   EventTrackingId,
+                                           User_Id?           CurrentUserId       = null,
+                                           CancellationToken  CancellationToken   = default)
 
             => File.AppendAllTextAsync(
                    FileName,
@@ -1802,9 +2211,9 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (private static) LoadCommandsFromDatabaseFile             (DBFileName)
+        #region LoadCommandsFromDatabaseFile             (DBFileName)
 
-        private static IEnumerable<Command> LoadCommandsFromDatabaseFile(String DBFileName)
+        public IEnumerable<Command> LoadCommandsFromDatabaseFile(String DBFileName)
         {
 
             try
@@ -1829,9 +2238,9 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (private static) ParseCommands                            (Commands)
+        #region ParseCommands                            (Commands)
 
-        private static IEnumerable<Command> ParseCommands(IEnumerable<String> Commands)
+        public IEnumerable<Command> ParseCommands(IEnumerable<String> Commands)
         {
 
             try
@@ -1919,9 +2328,9 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (private static) LoadCommandsWithMetadataFromDatabaseFile (DBFileName)
+        #region LoadCommandsWithMetadataFromDatabaseFile (DBFileName)
 
-        private static IEnumerable<CommandWithMetadata> LoadCommandsWithMetadataFromDatabaseFile(String DBFileName)
+        public IEnumerable<CommandWithMetadata> LoadCommandsWithMetadataFromDatabaseFile(String DBFileName)
         {
 
             try
@@ -1946,9 +2355,9 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (private static) ParseCommandsWithMetadata                (Commands)
+        #region ParseCommandsWithMetadata                (Commands)
 
-        private static IEnumerable<CommandWithMetadata> ParseCommandsWithMetadata(IEnumerable<String> Commands)
+        public IEnumerable<CommandWithMetadata> ParseCommandsWithMetadata(IEnumerable<String> Commands)
         {
 
             try
@@ -2107,219 +2516,6 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region Log/Read   Remote Parties
-
-        #region (protected) LogRemoteParty        (Command,              ...)
-
-        protected Task LogRemoteParty(String            Command,
-                                      EventTracking_Id  EventTrackingId,
-                                      User_Id?          CurrentUserId   = null)
-
-            => WriteToDatabase(
-                   RemotePartyDBFileName,
-                   Command,
-                   null,
-                   EventTrackingId,
-                   CurrentUserId
-               );
-
-        #endregion
-
-        #region (protected) LogRemoteParty        (Command, Text = null, ...)
-
-        protected Task LogRemoteParty(String            Command,
-                                      String?           Text,
-                                      EventTracking_Id  EventTrackingId,
-                                      User_Id?          CurrentUserId   = null)
-
-            => WriteToDatabase(
-                   RemotePartyDBFileName,
-                   Command,
-                   Text is not null
-                       ? JToken.Parse(Text)
-                       : null,
-                   EventTrackingId,
-                   CurrentUserId
-               );
-
-        #endregion
-
-        #region (protected) LogRemoteParty        (Command, JSON,        ...)
-
-        protected Task LogRemoteParty(String            Command,
-                                      JObject           JSON,
-                                      EventTracking_Id  EventTrackingId,
-                                      User_Id?          CurrentUserId   = null)
-
-            => WriteToDatabase(
-                   RemotePartyDBFileName,
-                   Command,
-                   JSON,
-                   EventTrackingId,
-                   CurrentUserId
-               );
-
-        #endregion
-
-        #region (protected) LogRemoteParty        (Command, Number,      ...)
-
-        protected Task Log(String            Command,
-                           Int64             Number,
-                           EventTracking_Id  EventTrackingId,
-                           User_Id?          CurrentUserId   = null)
-
-            => WriteToDatabase(
-                   RemotePartyDBFileName,
-                   Command,
-                   Number,
-                   EventTrackingId,
-                   CurrentUserId
-               );
-
-        #endregion
-
-        #region (protected) LogRemotePartyComment (Text,                 ...)
-
-        protected Task LogRemotePartyComment(String           Text,
-                                            EventTracking_Id  EventTrackingId,
-                                            User_Id?          CurrentUserId   = null)
-
-            => WriteCommentToDatabase(
-                   RemotePartyDBFileName,
-                   Text,
-                   EventTrackingId,
-                   CurrentUserId
-               );
-
-        #endregion
-
-
-        #region ReadRemotePartyDatabaseFile       (DatabaseFileName = null)
-
-        public IEnumerable<Command> ReadRemotePartyDatabaseFile(String? DatabaseFileName = null)
-
-            => LoadCommandsFromDatabaseFile(DatabaseFileName ?? RemotePartyDBFileName);
-
-        #endregion
-
-        #endregion
-
-        #region Log/Read   Assets
-
-        #region (protected) LogAsset              (Command,              ...)
-
-        protected Task LogAsset(String            Command,
-                                EventTracking_Id  EventTrackingId,
-                                User_Id?          CurrentUserId   = null)
-
-            => WriteToDatabase(
-                   AssetsDBFileName,
-                   Command,
-                   null,
-                   EventTrackingId,
-                   CurrentUserId
-               );
-
-        #endregion
-
-        #region (protected) LogAsset              (Command, Text = null, ...)
-
-        protected Task LogAsset(String             Command,
-                                String?            Text,
-                                EventTracking_Id?  EventTrackingId   = null,
-                                User_Id?           CurrentUserId     = null)
-
-            => WriteToDatabase(
-                   AssetsDBFileName,
-                   Command,
-                   Text is not null
-                       ? JToken.Parse(Text)
-                       : null,
-                   EventTrackingId ?? EventTracking_Id.New,
-                   CurrentUserId
-               );
-
-        #endregion
-
-        #region (protected) LogAsset              (Command, JSONObject,  ...)
-
-        protected Task LogAsset(String             Command,
-                                JObject            JSONObject,
-                                EventTracking_Id   EventTrackingId,
-                                User_Id?           CurrentUserId       = null,
-                                CancellationToken  CancellationToken   = default)
-
-            => WriteToDatabase(
-                   AssetsDBFileName,
-                   Command,
-                   JSONObject,
-                   EventTrackingId,
-                   CurrentUserId,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected) LogAsset              (Command, JSONArray,   ...)
-
-        protected Task LogAsset(String            Command,
-                                JArray            JSONArray,
-                                EventTracking_Id  EventTrackingId,
-                                User_Id?          CurrentUserId   = null)
-
-            => WriteToDatabase(
-                   AssetsDBFileName,
-                   Command,
-                   JSONArray,
-                   EventTrackingId,
-                   CurrentUserId
-               );
-
-        #endregion
-
-        #region (protected) LogAsset              (Command, Number,      ...)
-
-        protected Task LogAsset(String            Command,
-                                Int64             Number,
-                                EventTracking_Id  EventTrackingId,
-                                User_Id?          CurrentUserId   = null)
-
-            => WriteToDatabase(
-                   AssetsDBFileName,
-                   Command,
-                   Number,
-                   EventTrackingId,
-                   CurrentUserId
-               );
-
-        #endregion
-
-        #region (protected) LogAssetComment       (Text,                 ...)
-
-        protected Task LogAssetComment(String            Text,
-                                       EventTracking_Id  EventTrackingId,
-                                       User_Id?          CurrentUserId   = null)
-
-            => WriteCommentToDatabase(
-                   AssetsDBFileName,
-                   Text,
-                   EventTrackingId,
-                   CurrentUserId
-               );
-
-        #endregion
-
-
-        #region ReadAssetsDatabaseFile            (DatabaseFileName = null)
-
-        public IEnumerable<Command> ReadAssetsDatabaseFile(String? DatabaseFileName = null)
-
-            => LoadCommandsFromDatabaseFile(DatabaseFileName ?? AssetsDBFileName);
-
-        #endregion
-
-        #endregion
-
 
         #region Start(...)
 
@@ -2339,11 +2535,11 @@ namespace cloud.charging.open.protocols.OCPI
 
             var result = await base.Start();
 
-            await LogAsset(
-                      "started",
-                      EventTrackingId,
-                      CurrentUserId
-                  );
+            //await LogAsset(
+            //          "started",
+            //          EventTrackingId,
+            //          CurrentUserId
+            //      );
 
             #region Send 'Open Data API restarted'-e-mail...
 
@@ -2405,11 +2601,11 @@ namespace cloud.charging.open.protocols.OCPI
 
             //SendStarted(this, CurrentTimestamp);
 
-            await LogAsset(
-                      "started",
-                      EventTrackingId,
-                      CurrentUserId
-                  );
+            //await LogAsset(
+            //          "started",
+            //          EventTrackingId,
+            //          CurrentUserId
+            //      );
 
             return result;
 
@@ -2455,12 +2651,12 @@ namespace cloud.charging.open.protocols.OCPI
                                    Wait
                                );
 
-            await LogAsset(
-                      "shutdown",
-                      Message,
-                      EventTrackingId,
-                      CurrentUserId
-                  );
+            //await LogAsset(
+            //          "shutdown",
+            //          Message,
+            //          EventTrackingId,
+            //          CurrentUserId
+            //      );
 
             //SendShutdown(this, Timestamp.Now);
 

@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -71,7 +71,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                SessionStatusTypes.ACTIVE,
                                DateTime.Parse("2020-08-22T00:00:00.000Z").ToUniversalTime(), // End
                                AuthorizationReference.Parse("Auth1234"),
-                               Meter_Id.Parse("Meter0001"),
+                               EnergyMeter_Id.Parse("Meter0001"),
                                new ChargingPeriod[] {
                                    ChargingPeriod.Create(
                                        DateTime.Parse("2020-04-12T18:21:49Z").ToUniversalTime(),

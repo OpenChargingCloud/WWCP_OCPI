@@ -2,11 +2,11 @@
  * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -71,7 +71,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// The party role.
         /// </summary>
-        public Roles     Role       { get;}
+        public Role        Role       { get;}
 
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="PartyId">A party identification.</param>
         /// <param name="Role">A party role.</param>
         private RemoteParty_Id(Party_Idv3  PartyId,
-                               Roles     Role)
+                               Role        Role)
         {
 
             this.PartyId  = PartyId;
@@ -130,7 +130,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="PartyId">A party identification.</param>
         /// <param name="Role">A party role.</param>
         public static RemoteParty_Id Parse(Party_Idv3  PartyId,
-                                           Roles     Role)
+                                           Role        Role)
 
             => new (PartyId,
                     Role);
@@ -146,7 +146,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static RemoteParty_Id From(CPO_Id CPOId)
 
             => new (Party_Idv3.Parse(CPOId.PartyId.ToString()),
-                    Roles.CPO);
+                    Role.CPO);
 
         #endregion
 
@@ -159,7 +159,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static RemoteParty_Id From(EMSP_Id EMSPId)
 
             => new (Party_Idv3.Parse(EMSPId.PartyId.ToString()),
-                    Roles.EMSP);
+                    Role.EMSP);
 
         #endregion
 
@@ -172,7 +172,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static RemoteParty_Id Unknown
 
             => new (Party_Idv3.Parse("XXX"),
-                    Roles.   OTHER);
+                    Role.OTHER);
 
         #endregion
 
@@ -232,8 +232,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     var matchCollection = RemotePartyId_RegEx.Matches(Text);
 
                     if (matchCollection.Count == 1 &&
-                        Party_Idv3.     TryParse(matchCollection[0].Groups[1].Value + matchCollection[0].Groups[2].Value, out var partyId)     &&
-                        RolesExtensions.TryParse(matchCollection[0].Groups[3].Value, out var role))
+                        Party_Idv3.TryParse(matchCollection[0].Groups[1].Value + matchCollection[0].Groups[2].Value, out var partyId) &&
+                        Role.      TryParse(matchCollection[0].Groups[3].Value, out var role))
                     {
 
                         RemotePartyId = new RemoteParty_Id(
@@ -266,7 +266,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             => new (
                    PartyId.Clone(),
-                   Role
+                   Role.   Clone()
                );
 
         #endregion
