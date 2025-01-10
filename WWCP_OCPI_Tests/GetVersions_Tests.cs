@@ -120,7 +120,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 Assert.That(URL.Parse("http://localhost:3401/ocpi/versions/2.2.1") == version2_2_1?.URL, Is.True);
 
                 var version2_3   = versions?.ElementAt(2);
-                Assert.That(version2_3?.  Id == OCPIv2_3_0.Version.Id, Is.True);
+                Assert.That(version2_3?.  Id == OCPIv2_3.Version.Id, Is.True);
                 Assert.That(URL.Parse("http://localhost:3401/ocpi/versions/2.3")   == version2_3?.  URL, Is.True);
 
 
@@ -215,7 +215,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 Assert.That(URL.Parse("http://localhost:3401/ocpi/versions/2.2.1") == version2_2_1?.URL, Is.True);
 
                 var version2_3   = versions?.ElementAt(2);
-                Assert.That(version2_3?.  Id == OCPIv2_3_0.Version.Id, Is.True);
+                Assert.That(version2_3?.  Id == OCPIv2_3.Version.Id, Is.True);
                 Assert.That(URL.Parse("http://localhost:3401/ocpi/versions/2.3")   == version2_3?.  URL, Is.True);
 
 
@@ -237,7 +237,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task CPO1_GetVersions_fromEMSP1_viaOCPIv2_3__RegisteredToken_Test1()
         {
 
-            var graphDefinedEMSP1 = cpo1CommonAPI_v2_3_0?.GetCPOClient(
+            var graphDefinedEMSP1 = cpo1CommonAPI_v2_3?.GetCPOClient(
                                         CountryCode: CountryCode.Parse("DE"),
                                         PartyId:     Party_Id.   Parse("GDF")
                                     );
@@ -310,7 +310,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 Assert.That(URL.Parse("http://localhost:3401/ocpi/versions/2.2.1") == version2_2_1?.URL, Is.True);
 
                 var version2_3   = versions?.ElementAt(2);
-                Assert.That(version2_3?.  Id == OCPIv2_3_0.Version.Id, Is.True);
+                Assert.That(version2_3?.  Id == OCPIv2_3.Version.Id, Is.True);
                 Assert.That(URL.Parse("http://localhost:3401/ocpi/versions/2.3")   == version2_3?.  URL, Is.True);
 
 
@@ -407,7 +407,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 Assert.That(URL.Parse("http://localhost:3301/ocpi/versions/2.2.1") == version2_2_1?.URL, Is.True);
 
                 var version2_3   = versions?.ElementAt(2);
-                Assert.That(version2_3?.  Id == OCPIv2_3_0.Version.Id, Is.True);
+                Assert.That(version2_3?.  Id == OCPIv2_3.Version.Id, Is.True);
                 Assert.That(URL.Parse("http://localhost:3301/ocpi/versions/2.3")   == version2_3?.  URL, Is.True);
 
 
@@ -502,7 +502,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 Assert.That(URL.Parse("http://localhost:3301/ocpi/versions/2.2.1") == version2_2_1?.URL, Is.True);
 
                 var version2_3   = versions?.ElementAt(2);
-                Assert.That(version2_3?.  Id == OCPIv2_3_0.Version.Id, Is.True);
+                Assert.That(version2_3?.  Id == OCPIv2_3.Version.Id, Is.True);
                 Assert.That(URL.Parse("http://localhost:3301/ocpi/versions/2.3")   == version2_3?.  URL, Is.True);
 
 
@@ -524,7 +524,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task EMSP1_GetVersions_fromCPO1_viaOCPIv2_3__RegisteredToken_Test1()
         {
 
-            var graphDefinedCPO1 = emsp1CommonAPI_v2_3_0?.GetEMSPClient(
+            var graphDefinedCPO1 = emsp1CommonAPI_v2_3?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GEF")
                                    );
@@ -597,7 +597,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 Assert.That(URL.Parse("http://localhost:3301/ocpi/versions/2.2.1") == version2_2_1?.URL, Is.True);
 
                 var version2_3   = versions?.ElementAt(2);
-                Assert.That(version2_3?.  Id == OCPIv2_3_0.Version.Id, Is.True);
+                Assert.That(version2_3?.  Id == OCPIv2_3.Version.Id, Is.True);
                 Assert.That(URL.Parse("http://localhost:3301/ocpi/versions/2.3")   == version2_3?.  URL, Is.True);
 
 

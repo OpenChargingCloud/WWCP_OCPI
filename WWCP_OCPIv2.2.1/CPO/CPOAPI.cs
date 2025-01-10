@@ -3207,7 +3207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                    CustomEnergyContractSerializer),
                                                 HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
+                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                                        AccessControlAllowHeaders  = [ "Authorization" ],
                                                        LastModified               = tokenStatus.Token.LastUpdated,
                                                        ETag                       = tokenStatus.Token.ETag
@@ -3281,7 +3281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    StatusMessage        = "Could not parse the given token JSON: " + errorResponse,
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
+                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                                        AccessControlAllowHeaders  = [ "Authorization" ]
                                                    }
                                                };
@@ -3311,7 +3311,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                            HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                                             ? HTTPStatusCode.Created
                                                                                             : HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
+                                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                                            AccessControlAllowHeaders  = [ "Authorization" ],
                                                            LastModified               = addOrUpdateResult.Data.LastUpdated,
                                                            ETag                       = addOrUpdateResult.Data.ETag
@@ -3327,7 +3327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                    CustomEnergyContractSerializer),
                                             HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
+                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                                        AccessControlAllowHeaders  = [ "Authorization" ],
                                                        LastModified               = addOrUpdateResult.Data.LastUpdated,
                                                        ETag                       = addOrUpdateResult.Data.ETag
@@ -3411,7 +3411,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                                   CustomEnergyContractSerializer),
                                                 HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
+                                                               AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                                                AccessControlAllowHeaders  = [ "Authorization" ],
                                                                LastModified               = patchedToken.PatchedData.LastUpdated,
                                                                ETag                       = patchedToken.PatchedData.ETag
@@ -3423,7 +3423,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = patchedToken.ErrorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
+                                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                                            AccessControlAllowHeaders  = [ "Authorization" ]
                                                        }
                                                    };
@@ -3492,7 +3492,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                                CustomEnergyContractSerializer),
                                                 HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
+                                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                                            AccessControlAllowHeaders  = [ "Authorization" ]
                                                            //LastModified               = Timestamp.Now.ToIso8601()
                                                        }
@@ -3506,7 +3506,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                                CustomEnergyContractSerializer),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
+                                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                                            AccessControlAllowHeaders  = [ "Authorization" ]
                                                            //LastModified               = Timestamp.Now.ToIso8601()
                                                        }

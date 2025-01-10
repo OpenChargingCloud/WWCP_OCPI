@@ -306,7 +306,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
         /// <summary>
         /// The HTTP root for embedded ressources.
         /// </summary>
-        public new const       String                               HTTPRoot                    = "cloud.charging.open.protocols.OCPIv2_3_0.WebAPI.HTTPRoot.";
+        public new const       String                               HTTPRoot                    = "cloud.charging.open.protocols.OCPIv2_3.WebAPI.HTTPRoot.";
 
 
         //ToDo: http://www.iana.org/form/media-types

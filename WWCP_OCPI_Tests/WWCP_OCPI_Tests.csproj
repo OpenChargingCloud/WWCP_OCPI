@@ -26,10 +26,10 @@
     <ProjectReference Include="..\WWCP_OCPIv2.2.1_Adapter\WWCP_OCPIv2.2.1_Adapter.csproj" />
     <ProjectReference Include="..\WWCP_OCPIv2.2.1_Tests\WWCP_OCPIv2.2.1_Tests.csproj" />
     <ProjectReference Include="..\WWCP_OCPIv2.2.1_WebAPI\WWCP_OCPIv2.2.1_WebAPI.csproj" />
-    <ProjectReference Include="..\WWCP_OCPIv2.3.0\WWCP_OCPIv2.3.0.csproj" />
-    <ProjectReference Include="..\WWCP_OCPIv2.3.0_Adapter\WWCP_OCPIv2.3.0_Adapter.csproj" />
-    <ProjectReference Include="..\WWCP_OCPIv2.3.0_Tests\WWCP_OCPIv2.3.0_Tests.csproj" />
-    <ProjectReference Include="..\WWCP_OCPIv2.3.0_WebAPI\WWCP_OCPIv2.3.0_WebAPI.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.3\WWCP_OCPIv2.3.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.3_Adapter\WWCP_OCPIv2.3_Adapter.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.3_Tests\WWCP_OCPIv2.3_Tests.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.3_WebAPI\WWCP_OCPIv2.3_WebAPI.csproj" />
     <ProjectReference Include="..\WWCP_OCPIv3.0\WWCP_OCPIv3.0.csproj" />
     <ProjectReference Include="..\WWCP_OCPIv3.0_Adapter\WWCP_OCPIv3.0_Adapter.csproj" />
     <ProjectReference Include="..\WWCP_OCPIv3.0_Tests\WWCP_OCPIv3.0_Tests.csproj" />

@@ -120,7 +120,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 //Assert.That(URL.Parse("http://localhost:3401/ocpi/versions/2.2.1") == version2_2_1?.URL, Is.True);
 
                 //var version2_3   = versions?.ElementAt(2);
-                //Assert.That(version2_3?.  Id == OCPIv2_3_0.Version.Id, Is.True);
+                //Assert.That(version2_3?.  Id == OCPIv2_3.Version.Id, Is.True);
                 //Assert.That(URL.Parse("http://localhost:3401/ocpi/versions/2.3")   == version2_3?.  URL, Is.True);
 
 
@@ -129,7 +129,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                
                 var response3 = await graphDefinedEMSP1.GetVersionDetails(OCPIv2_2_1.Version.Id);
-                var response4 = await graphDefinedEMSP1.GetVersionDetails(OCPIv2_3_0.Version.Id);
+                var response4 = await graphDefinedEMSP1.GetVersionDetails(OCPIv2_3.Version.Id);
 
             }
 
@@ -219,7 +219,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 //Assert.That(URL.Parse("http://localhost:3401/ocpi/versions/2.2.1") == version2_2_1?.URL, Is.True);
 
                 //var version2_3   = versions?.ElementAt(2);
-                //Assert.That(version2_3?.  Id == OCPIv2_3_0.Version.Id, Is.True);
+                //Assert.That(version2_3?.  Id == OCPIv2_3.Version.Id, Is.True);
                 //Assert.That(URL.Parse("http://localhost:3401/ocpi/versions/2.3")   == version2_3?.  URL, Is.True);
 
 
@@ -228,7 +228,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 //var response2 = await graphDefinedEMSP1.GetVersionDetails(OCPIv2_1_1.Version.Id);
                 //var response3 = await graphDefinedEMSP1.GetVersionDetails(OCPIv2_2_1.Version.Id);
-                //var response4 = await graphDefinedEMSP1.GetVersionDetails(OCPIv2_3_0.Version.Id);
+                //var response4 = await graphDefinedEMSP1.GetVersionDetails(OCPIv2_3.Version.Id);
 
             }
 

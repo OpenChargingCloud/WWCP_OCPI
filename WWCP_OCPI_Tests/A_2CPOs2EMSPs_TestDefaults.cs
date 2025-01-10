@@ -38,9 +38,9 @@ using cloud.charging.open.protocols.OCPIv2_2_1;
 using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
 using cloud.charging.open.protocols.OCPIv2_2_1.WebAPI;
 
-using cloud.charging.open.protocols.OCPIv2_3_0;
-using cloud.charging.open.protocols.OCPIv2_3_0.HTTP;
-using cloud.charging.open.protocols.OCPIv2_3_0.WebAPI;
+using cloud.charging.open.protocols.OCPIv2_3;
+using cloud.charging.open.protocols.OCPIv2_3.HTTP;
+using cloud.charging.open.protocols.OCPIv2_3.WebAPI;
 
 using cloud.charging.open.protocols.OCPIv3_0;
 using cloud.charging.open.protocols.OCPIv3_0.HTTP;
@@ -311,12 +311,12 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       ConcurrentDictionary<DateTime, OCPIv2_2_1.HTTP.OCPIRequest>   cpo1APIRequestLogs_v2_2_1  = [];
         protected       ConcurrentDictionary<DateTime, OCPIv2_2_1.OCPIResponse>       cpo1APIResponseLogs_v2_2_1 = [];
 
-        protected       OCPIv2_3_0.HTTP.CommonAPI?                                    cpo1CommonAPI_v2_3_0;
-        protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                 cpo1WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.HTTP.CPOAPI?                                       cpo1CPOAPI_v2_3_0;
-        protected       OCPIv2_3_0.OCPICSOAdapter?                                    cpo1Adapter_v2_3_0;
-        protected       ConcurrentDictionary<DateTime, OCPIv2_3_0.HTTP.OCPIRequest>   cpo1APIRequestLogs_v2_3_0  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv2_3_0.OCPIResponse>       cpo1APIResponseLogs_v2_3_0 = [];
+        protected       OCPIv2_3.HTTP.CommonAPI?                                      cpo1CommonAPI_v2_3;
+        protected       OCPIv2_3.WebAPI.OCPIWebAPI?                                   cpo1WebAPI_v2_3;
+        protected       OCPIv2_3.HTTP.CPOAPI?                                         cpo1CPOAPI_v2_3;
+        protected       OCPIv2_3.OCPICSOAdapter?                                      cpo1Adapter_v2_3;
+        protected       ConcurrentDictionary<DateTime, OCPIv2_3.HTTP.OCPIRequest>     cpo1APIRequestLogs_v2_3  = [];
+        protected       ConcurrentDictionary<DateTime, OCPIv2_3.OCPIResponse>         cpo1APIResponseLogs_v2_3 = [];
 
         protected       OCPIv3_0.HTTP.CommonAPI?                                      cpo1CommonAPI_v3_0;
         protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                   cpo1WebAPI_v3_0;
@@ -350,12 +350,12 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       ConcurrentDictionary<DateTime, OCPIv2_2_1.HTTP.OCPIRequest>   cpo2APIRequestLogs_v2_2_1  = [];
         protected       ConcurrentDictionary<DateTime, OCPIv2_2_1.OCPIResponse>       cpo2APIResponseLogs_v2_2_1 = [];
 
-        protected       OCPIv2_3_0.HTTP.CommonAPI?                                    cpo2CommonAPI_v2_3_0;
-        protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                 cpo2WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.HTTP.CPOAPI?                                       cpo2CPOAPI_v2_3_0;
-        protected       OCPIv2_3_0.OCPICSOAdapter?                                    cpo2Adapter_v2_3_0;
-        protected       ConcurrentDictionary<DateTime, OCPIv2_3_0.HTTP.OCPIRequest>   cpo2APIRequestLogs_v2_3_0  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv2_3_0.OCPIResponse>       cpo2APIResponseLogs_v2_3_0 = [];
+        protected       OCPIv2_3.HTTP.CommonAPI?                                    cpo2CommonAPI_v2_3;
+        protected       OCPIv2_3.WebAPI.OCPIWebAPI?                                 cpo2WebAPI_v2_3;
+        protected       OCPIv2_3.HTTP.CPOAPI?                                       cpo2CPOAPI_v2_3;
+        protected       OCPIv2_3.OCPICSOAdapter?                                    cpo2Adapter_v2_3;
+        protected       ConcurrentDictionary<DateTime, OCPIv2_3.HTTP.OCPIRequest>   cpo2APIRequestLogs_v2_3  = [];
+        protected       ConcurrentDictionary<DateTime, OCPIv2_3.OCPIResponse>       cpo2APIResponseLogs_v2_3 = [];
 
         protected       OCPIv3_0.HTTP.CommonAPI?                                      cpo2CommonAPI_v3_0;
         protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                   cpo2WebAPI_v3_0;
@@ -389,12 +389,12 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       ConcurrentDictionary<DateTime, OCPIv2_2_1.HTTP.OCPIRequest>   emsp1APIRequestLogs_v2_2_1  = [];
         protected       ConcurrentDictionary<DateTime, OCPIv2_2_1.OCPIResponse>       emsp1APIResponseLogs_v2_2_1 = [];
 
-        protected       OCPIv2_3_0.HTTP.CommonAPI?                                    emsp1CommonAPI_v2_3_0;
-        protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                 emsp1WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.HTTP.EMSPAPI?                                      emsp1EMSPAPI_v2_3_0;
-        protected       OCPIv2_3_0.OCPIEMPAdapter?                                    emsp1Adapter_v2_3_0;
-        protected       ConcurrentDictionary<DateTime, OCPIv2_3_0.HTTP.OCPIRequest>   emsp1APIRequestLogs_v2_3_0  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv2_3_0.OCPIResponse>       emsp1APIResponseLogs_v2_3_0 = [];
+        protected       OCPIv2_3.HTTP.CommonAPI?                                    emsp1CommonAPI_v2_3;
+        protected       OCPIv2_3.WebAPI.OCPIWebAPI?                                 emsp1WebAPI_v2_3;
+        protected       OCPIv2_3.HTTP.EMSPAPI?                                      emsp1EMSPAPI_v2_3;
+        protected       OCPIv2_3.OCPIEMPAdapter?                                    emsp1Adapter_v2_3;
+        protected       ConcurrentDictionary<DateTime, OCPIv2_3.HTTP.OCPIRequest>   emsp1APIRequestLogs_v2_3  = [];
+        protected       ConcurrentDictionary<DateTime, OCPIv2_3.OCPIResponse>       emsp1APIResponseLogs_v2_3 = [];
 
         protected       OCPIv3_0.HTTP.CommonAPI?                                      emsp1CommonAPI_v3_0;
         protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                   emsp1WebAPI_v3_0;
@@ -428,12 +428,12 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       ConcurrentDictionary<DateTime, OCPIv2_2_1.HTTP.OCPIRequest>   emsp2APIRequestLogs_v2_2_1  = [];
         protected       ConcurrentDictionary<DateTime, OCPIv2_2_1.OCPIResponse>       emsp2APIResponseLogs_v2_2_1 = [];
 
-        protected       OCPIv2_3_0.HTTP.CommonAPI?                                    emsp2CommonAPI_v2_3_0;
-        protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                 emsp2WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.HTTP.EMSPAPI?                                      emsp2EMSPAPI_v2_3_0;
-        protected       OCPIv2_3_0.OCPIEMPAdapter?                                    emsp2Adapter_v2_3_0;
-        protected       ConcurrentDictionary<DateTime, OCPIv2_3_0.HTTP.OCPIRequest>   emsp2APIRequestLogs_v2_3_0  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv2_3_0.OCPIResponse>       emsp2APIResponseLogs_v2_3_0 = [];
+        protected       OCPIv2_3.HTTP.CommonAPI?                                    emsp2CommonAPI_v2_3;
+        protected       OCPIv2_3.WebAPI.OCPIWebAPI?                                 emsp2WebAPI_v2_3;
+        protected       OCPIv2_3.HTTP.EMSPAPI?                                      emsp2EMSPAPI_v2_3;
+        protected       OCPIv2_3.OCPIEMPAdapter?                                    emsp2Adapter_v2_3;
+        protected       ConcurrentDictionary<DateTime, OCPIv2_3.HTTP.OCPIRequest>   emsp2APIRequestLogs_v2_3  = [];
+        protected       ConcurrentDictionary<DateTime, OCPIv2_3.OCPIResponse>       emsp2APIResponseLogs_v2_3 = [];
 
         protected       OCPIv3_0.HTTP.CommonAPI?                                      emsp2CommonAPI_v3_0;
         protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                   emsp2WebAPI_v3_0;
@@ -788,10 +788,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                     );
 
-            cpo1CommonAPI_v2_3_0  = new OCPIv2_3_0.HTTP.CommonAPI(
+            cpo1CommonAPI_v2_3  = new OCPIv2_3.HTTP.CommonAPI(
 
                                         OurCredentialRoles:                  [
-                                                                                 new OCPIv2_3_0.CredentialsRole(
+                                                                                 new OCPIv2_3.CredentialsRole(
                                                                                      CountryCode:       CountryCode.Parse("DE"),
                                                                                      PartyId:           Party_Id.   Parse("GEF"),
                                                                                      Role:              Role.CPO,
@@ -832,11 +832,11 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         DevelopmentServers:                  null,
                                         DisableLogging:                      null,
                                         LoggingPath:                         null,
-                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_CSO1.log",
+                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_3.Version.String}_CSO1.log",
                                         LogfileCreator:                      null,
                                         DatabaseFilePath:                    null,
-                                        RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_RemoteParties_CPO1.log",
-                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_Assets_CPO1.log",
+                                        RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_3.Version.String}_RemoteParties_CPO1.log",
+                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_3.Version.String}_Assets_CPO1.log",
                                         AutoStart:                           false
 
                                     );
@@ -994,10 +994,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                     );
 
-            emsp1CommonAPI_v2_3_0 = new OCPIv2_3_0.HTTP.CommonAPI(
+            emsp1CommonAPI_v2_3 = new OCPIv2_3.HTTP.CommonAPI(
 
                                         OurCredentialRoles:                  [
-                                                                                 new OCPIv2_3_0.CredentialsRole(
+                                                                                 new OCPIv2_3.CredentialsRole(
                                                                                      CountryCode:       CountryCode.Parse("DE"),
                                                                                      PartyId:           Party_Id.   Parse("GDF"),
                                                                                      Role:              Role.EMSP,
@@ -1038,11 +1038,11 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         DevelopmentServers:                  null,
                                         DisableLogging:                      null,
                                         LoggingPath:                         null,
-                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_EMSP1.log",
+                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_3.Version.String}_EMSP1.log",
                                         LogfileCreator:                      null,
                                         DatabaseFilePath:                    null,
-                                        RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_RemoteParties_EMSP1.log",
-                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_Assets_EMSP1.log",
+                                        RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_3.Version.String}_RemoteParties_EMSP1.log",
+                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_3.Version.String}_Assets_EMSP1.log",
                                         AutoStart:                           false
 
                                     );
@@ -1540,8 +1540,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             if (cpo1CommonAPI_v2_2_1 is not null)
                 File.Delete(cpo1CommonAPI_v2_2_1.RemotePartyDBFileName);
 
-            if (cpo1CommonAPI_v2_3_0 is not null)
-                File.Delete(cpo1CommonAPI_v2_3_0.RemotePartyDBFileName);
+            if (cpo1CommonAPI_v2_3 is not null)
+                File.Delete(cpo1CommonAPI_v2_3.RemotePartyDBFileName);
 
             if (cpo1CommonAPI_v3_0   is not null)
                 File.Delete(cpo1CommonAPI_v3_0.  RemotePartyDBFileName);
@@ -1554,8 +1554,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             if (cpo2CommonAPI_v2_2_1 is not null)
                 File.Delete(cpo2CommonAPI_v2_2_1.RemotePartyDBFileName);
 
-            if (cpo2CommonAPI_v2_3_0 is not null)
-                File.Delete(cpo2CommonAPI_v2_3_0.RemotePartyDBFileName);
+            if (cpo2CommonAPI_v2_3 is not null)
+                File.Delete(cpo2CommonAPI_v2_3.RemotePartyDBFileName);
 
             if (cpo2CommonAPI_v3_0   is not null)
                 File.Delete(cpo2CommonAPI_v3_0.  RemotePartyDBFileName);
@@ -1568,8 +1568,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             if (emsp1CommonAPI_v2_2_1 is not null)
                 File.Delete(emsp1CommonAPI_v2_2_1.RemotePartyDBFileName);
 
-            if (emsp1CommonAPI_v2_3_0 is not null)
-                File.Delete(emsp1CommonAPI_v2_3_0.RemotePartyDBFileName);
+            if (emsp1CommonAPI_v2_3 is not null)
+                File.Delete(emsp1CommonAPI_v2_3.RemotePartyDBFileName);
 
             if (emsp1CommonAPI_v3_0   is not null)
                 File.Delete(emsp1CommonAPI_v3_0.  RemotePartyDBFileName);
@@ -1582,8 +1582,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             if (emsp2CommonAPI_v2_2_1 is not null)
                 File.Delete(emsp2CommonAPI_v2_2_1.RemotePartyDBFileName);
 
-            if (emsp2CommonAPI_v2_3_0 is not null)
-                File.Delete(emsp2CommonAPI_v2_3_0.RemotePartyDBFileName);
+            if (emsp2CommonAPI_v2_3 is not null)
+                File.Delete(emsp2CommonAPI_v2_3.RemotePartyDBFileName);
 
             if (emsp2CommonAPI_v3_0   is not null)
                 File.Delete(emsp2CommonAPI_v3_0.  RemotePartyDBFileName);
