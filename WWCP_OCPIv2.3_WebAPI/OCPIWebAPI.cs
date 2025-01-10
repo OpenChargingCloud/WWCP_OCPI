@@ -668,189 +668,206 @@ namespace cloud.charging.open.protocols.OCPIv2_3.WebAPI
 
             #region / (HTTPRoot)
 
-            this.MapResourceAssemblyFolder(HTTPHostname.Any,
-                                           URLPathPrefix,
-                                           HTTPRoot,
-                                           DefaultFilename: "index.html");
-
-
-            if (OverlayURLPathPrefix.HasValue)
-                HTTPServer.AddMethodCallback(this,
-                                             HTTPHostname.Any,
-                                             HTTPMethod.GET,
-                                             OverlayURLPathPrefix.Value,
-                                             HTTPContentType.Text.HTML_UTF8,
-                                             HTTPDelegate: Request => {
-
-                                                 return Task.FromResult(
-                                                     new HTTPResponse.Builder(Request) {
-                                                         HTTPStatusCode             = HTTPStatusCode.OK,
-                                                         //Server                     = DefaultHTTPServerName,
-                                                         Date                       = Timestamp.Now,
-                                                         AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                         AccessControlAllowHeaders  = [ "Authorization" ],
-                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                         Content                    = MixWithHTMLTemplate("index.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
-                                                         Connection                 = ConnectionType.Close,
-                                                         Vary                       = "Accept"
-                                                     }.AsImmutable);
-
-                                             });
-
-            if (OverlayURLPathPrefix.HasValue)
-                HTTPServer.AddMethodCallback(this,
-                                             HTTPHostname.Any,
-                                             HTTPMethod.GET,
-                                             OverlayURLPathPrefix.Value + "/",
-                                             HTTPContentType.Text.HTML_UTF8,
-                                             HTTPDelegate: Request => {
-
-                                                 return Task.FromResult(
-                                                     new HTTPResponse.Builder(Request) {
-                                                         HTTPStatusCode             = HTTPStatusCode.OK,
-                                                         //Server                     = DefaultHTTPServerName,
-                                                         Date                       = Timestamp.Now,
-                                                         AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                         AccessControlAllowHeaders  = [ "Authorization" ],
-                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                         Content                    = MixWithHTMLTemplate("index.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", "")).ToUTF8Bytes(),
-                                                         Connection                 = ConnectionType.Close,
-                                                         Vary                       = "Accept"
-                                                     }.AsImmutable);
-
-                                             });
-
-            #endregion
-
-            #region ~/libs
-
-            //this.MapResourceAssemblyFolder(HTTPHostname.Any,
-            //                               URLPathPrefix + "libs",
-            //                               UsersAPI.HTTPRoot,
-            //                               typeof(UsersAPI).Assembly);
+            this.MapResourceAssemblyFolder(
+                HTTPHostname.Any,
+                URLPathPrefix,
+                HTTPRoot,
+                DefaultFilename: "index.html"
+            );
 
             #endregion
 
 
-            #region ~/versions
-
             if (OverlayURLPathPrefix.HasValue)
-                HTTPServer.AddMethodCallback(this,
-                                             HTTPHostname.Any,
-                                             HTTPMethod.GET,
-                                             OverlayURLPathPrefix.Value + "versions",
-                                             HTTPContentType.Text.HTML_UTF8,
-                                             HTTPDelegate: Request => {
+            {
 
-                                                 return Task.FromResult(
-                                                     new HTTPResponse.Builder(Request) {
-                                                         HTTPStatusCode             = HTTPStatusCode.OK,
-                                                         //Server                     = DefaultHTTPServerName,
-                                                         Date                       = Timestamp.Now,
-                                                         AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                         AccessControlAllowHeaders  = [ "Authorization" ],
-                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                         Content                    = MixWithHTMLTemplate("versions.versions.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
-                                                         Connection                 = ConnectionType.Close,
-                                                         Vary                       = "Accept"
-                                                     }.AsImmutable);
+                #region GET ~/
 
-                                             });
+                HTTPServer.AddMethodCallback(
 
-            #endregion
+                    this,
+                    HTTPHostname.Any,
+                    HTTPMethod.GET,
+                    OverlayURLPathPrefix.Value,
+                    HTTPContentType.Text.HTML_UTF8,
+                    HTTPDelegate: request =>
 
-            #region ~/versions/{versionId}
+                        Task.FromResult(
+                            new HTTPResponse.Builder(request) {
+                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                Server                     = HTTPServiceName,
+                                Date                       = Timestamp.Now,
+                                AccessControlAllowOrigin   = "*",
+                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders  = [ "Authorization" ],
+                                ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                Content                    = MixWithHTMLTemplate(
+                                                                 "index.shtml",
+                                                                 html => html.Replace("{{versionPath}}", VersionPath)
+                                                             ).ToUTF8Bytes(),
+                                Connection                 = ConnectionType.Close,
+                                Vary                       = "Accept"
+                            }.AsImmutable)
 
-            if (OverlayURLPathPrefix.HasValue)
-                HTTPServer.AddMethodCallback(this,
-                                             HTTPHostname.Any,
-                                             HTTPMethod.GET,
-                                             OverlayURLPathPrefix.Value + "versions/{versionId}",
-                                             HTTPContentType.Text.HTML_UTF8,
-                                             HTTPDelegate: Request => {
-
-                                                 return Task.FromResult(
-                                                     new HTTPResponse.Builder(Request) {
-                                                         HTTPStatusCode             = HTTPStatusCode.OK,
-                                                         //Server                     = DefaultHTTPServerName,
-                                                         Date                       = Timestamp.Now,
-                                                         AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                         AccessControlAllowHeaders  = [ "Authorization" ],
-                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                         Content                    = MixWithHTMLTemplate("versions.versionDetails.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
-                                                         Connection                 = ConnectionType.Close,
-                                                         Vary                       = "Accept"
-                                                     }.AsImmutable);
-
-                                             });
-
-            #endregion
+                );
 
 
-            #region ~/v2.1.1/cpo/locations
+                // Just for convenience...
+                HTTPServer.AddMethodCallback(
 
-            // ~/cpo/locations
-            if (OverlayURLPathPrefix.HasValue)
-                HTTPServer.AddMethodCallback(this,
-                                             HTTPHostname.Any,
-                                             HTTPMethod.GET,
-                                             OverlayURLPathPrefix.Value + Version.String + "/cpo/locations",
-                                             HTTPContentType.Text.HTML_UTF8,
-                                             HTTPDelegate: request => {
+                    this,
+                    HTTPHostname.Any,
+                    HTTPMethod.GET,
+                    OverlayURLPathPrefix.Value + "/",
+                    HTTPContentType.Text.HTML_UTF8,
+                    HTTPDelegate: request =>
 
-                                                 // Appending "?download" to the URL within a web browser will open a download dialog.
-                                                 // Note: This happens here, as the ACCEPT types of the HTTP request do often not include "application/json"!
-                                                 var download = request.QueryString.GetBoolean("download", false);
+                        Task.FromResult(
+                            new HTTPResponse.Builder(request) {
+                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                Server                     = HTTPServiceName,
+                                Date                       = Timestamp.Now,
+                                AccessControlAllowOrigin   = "*",
+                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders  = [ "Authorization" ],
+                                ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                Content                    = MixWithHTMLTemplate(
+                                                                 "index.shtml",
+                                                                 html => html.Replace("{{versionPath}}", "")
+                                                             ).ToUTF8Bytes(),
+                                Connection                 = ConnectionType.Close,
+                                Vary                       = "Accept"
+                            }.AsImmutable)
 
-                                                 return Task.FromResult(
-                                                     download
+                );
 
-                                                         ? new HTTPResponse.Builder(request) {
-                                                               HTTPStatusCode              = HTTPStatusCode.OK,
-                                                               Server                      = HTTPServer.DefaultServerName,
-                                                               Date                        = Timestamp.Now,
-                                                               AccessControlAllowOrigin    = "*",
-                                                               AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
-                                                               AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
-                                                               AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count"],
-                                                               ContentDisposition          = download
-                                                                                                 ? @"attachment; filename = ""locations.json"""
-                                                                                                 : null,
-                                                               ContentType                 = HTTPContentType.Application.JSON_UTF8,
-                                                               Content                     = new JArray(CommonAPI.GetLocations().Select(location => location.ToJSON())).ToUTF8Bytes(),
-                                                               Vary                        = "Accept",
-                                                               Connection                  = ConnectionType.Close
-                                                           }.AsImmutable
+                #endregion
 
-                                                         : new HTTPResponse.Builder(request) {
-                                                               HTTPStatusCode              = HTTPStatusCode.OK,
-                                                               Server                      = HTTPServer.DefaultServerName,
-                                                               Date                        = Timestamp.Now,
-                                                               AccessControlAllowOrigin    = "*",
-                                                               AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
-                                                               AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
-                                                               ContentType                 = HTTPContentType.Text.HTML_UTF8,
-                                                               Content                     = MixWithHTMLTemplate("locations.locations.shtml",
-                                                                                                           html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
-                                                               Connection                  = ConnectionType.Close,
-                                                               Vary                        = "Accept"
-                                                           }.AsImmutable
+                #region GET ~/versions
 
-                                                 );
+                HTTPServer.AddMethodCallback(
 
-                                             });
+                    this,
+                    HTTPHostname.Any,
+                    HTTPMethod.GET,
+                    OverlayURLPathPrefix.Value + "versions",
+                    HTTPContentType.Text.HTML_UTF8,
+                    HTTPDelegate: request =>
+
+                        Task.FromResult(
+                            new HTTPResponse.Builder(request) {
+                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                Server                     = HTTPServiceName,
+                                Date                       = Timestamp.Now,
+                                AccessControlAllowOrigin   = "*",
+                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders  = [ "Authorization" ],
+                                ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                Content                    = MixWithHTMLTemplate(
+                                                                 "versions.versions.shtml",
+                                                                 html => html.Replace("{{versionPath}}", VersionPath)
+                                                             ).ToUTF8Bytes(),
+                                Connection                 = ConnectionType.Close,
+                                Vary                       = "Accept"
+                            }.AsImmutable)
+
+                );
+
+                #endregion
+
+                #region GET ~/versions/{versionId}
+
+                HTTPServer.AddMethodCallback(
+
+                    this,
+                    HTTPHostname.Any,
+                    HTTPMethod.GET,
+                    OverlayURLPathPrefix.Value + $"versions/{Version.Id}",
+                    HTTPContentType.Text.HTML_UTF8,
+                    HTTPDelegate: request =>
+
+                        Task.FromResult(
+                            new HTTPResponse.Builder(request) {
+                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                Server                     = HTTPServiceName,
+                                Date                       = Timestamp.Now,
+                                AccessControlAllowOrigin   = "*",
+                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders  = [ "Authorization" ],
+                                ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                Content                    = MixWithHTMLTemplate(
+                                                                 "versions.versionDetails.shtml",
+                                                                 html => html.Replace("{{versionPath}}", VersionPath)
+                                                             ).ToUTF8Bytes(),
+                                Connection                 = ConnectionType.Close,
+                                Vary                       = "Accept"
+                            }.AsImmutable)
+
+                );
+
+                #endregion
 
 
-            // ~/cpo/locationStatistics
-            if (OverlayURLPathPrefix.HasValue)
+                #region GET ~/v2.3/cpo/locations
+
+                // ~/cpo/locations
+                HTTPServer.AddMethodCallback(
+
+                    this,
+                    HTTPHostname.Any,
+                    HTTPMethod.GET,
+                    OverlayURLPathPrefix.Value + Version.String + "/cpo/locations",
+                    HTTPContentType.Text.HTML_UTF8,
+                    HTTPDelegate: request => {
+
+                        // Appending "?download" to the URL within a web browser will open a download dialog.
+                        // Note: This happens here, as the ACCEPT types of the HTTP request do often not include "application/json"!
+                        var download = request.QueryString.GetBoolean("download", false);
+
+                        return Task.FromResult(
+                            download
+
+                                ? new HTTPResponse.Builder(request) {
+                                      HTTPStatusCode              = HTTPStatusCode.OK,
+                                      Server                      = HTTPServer.DefaultServerName,
+                                      Date                        = Timestamp.Now,
+                                      AccessControlAllowOrigin    = "*",
+                                      AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
+                                      AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count"],
+                                      ContentDisposition          = download
+                                                                        ? @"attachment; filename = ""locations.json"""
+                                                                        : null,
+                                      ContentType                 = HTTPContentType.Application.JSON_UTF8,
+                                      Content                     = new JArray(CommonAPI.GetLocations().Select(location => location.ToJSON())).ToUTF8Bytes(),
+                                      Vary                        = "Accept",
+                                      Connection                  = ConnectionType.Close
+                                  }.AsImmutable
+
+                                : new HTTPResponse.Builder(request) {
+                                      HTTPStatusCode              = HTTPStatusCode.OK,
+                                      Server                      = HTTPServer.DefaultServerName,
+                                      Date                        = Timestamp.Now,
+                                      AccessControlAllowOrigin    = "*",
+                                      AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
+                                      ContentType                 = HTTPContentType.Text.HTML_UTF8,
+                                      Content                     = MixWithHTMLTemplate(
+                                                                        "locations.locations.shtml",
+                                                                        html => html.Replace("{{versionPath}}", VersionPath)
+                                                                    ).ToUTF8Bytes(),
+                                      Connection                  = ConnectionType.Close,
+                                      Vary                        = "Accept"
+                                  }.AsImmutable
+
+                        );
+
+                    }
+
+                );
+
+
+                // ~/cpo/locationStatistics
                 HTTPServer.AddMethodCallback(this,
                                              HTTPHostname.Any,
                                              HTTPMethod.GET,
@@ -861,262 +878,316 @@ namespace cloud.charging.open.protocols.OCPIv2_3.WebAPI
                                                  return Task.FromResult(
                                                      new HTTPResponse.Builder(request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
-                                                         //Server                     = DefaultHTTPServerName,
+                                                         Server                     = HTTPServiceName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                                          AccessControlAllowHeaders  = [ "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("locations.locationStatistics.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
+                                                                                                          html => html.Replace("{{versionPath}}", VersionPath)).ToUTF8Bytes(),
                                                          Connection                 = ConnectionType.Close,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
 
                                              });
 
-            #endregion
+                #endregion
 
-            #region ~/v2.1.1/cpo/sessions
+                #region GET ~/v2.3/cpo/sessions
 
-            if (OverlayURLPathPrefix.HasValue)
-                HTTPServer.AddMethodCallback(this,
-                                             HTTPHostname.Any,
-                                             HTTPMethod.GET,
-                                             OverlayURLPathPrefix.Value + Version.String + "/cpo/sessions",
-                                             HTTPContentType.Text.HTML_UTF8,
-                                             HTTPDelegate: request => {
+                HTTPServer.AddMethodCallback(
 
-                                                 // Appending "?download" to the URL within a web browser will open a download dialog.
-                                                 // Note: This happens here, as the ACCEPT types of the HTTP request do often not include "application/json"!
-                                                 var download = request.QueryString.GetBoolean("download", false);
+                    this,
+                    HTTPHostname.Any,
+                    HTTPMethod.GET,
+                    OverlayURLPathPrefix.Value + Version.String + "/cpo/sessions",
+                    HTTPContentType.Text.HTML_UTF8,
+                    HTTPDelegate: request => {
 
-                                                 return Task.FromResult(
-                                                     download
+                        // Appending "?download" to the URL within a web browser will open a download dialog.
+                        // Note: This happens here, as the ACCEPT types of the HTTP request do often not include "application/json"!
+                        var download = request.QueryString.GetBoolean("download", false);
 
-                                                         ? new HTTPResponse.Builder(request) {
-                                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                                               Server                     = HTTPServer.DefaultServerName,
-                                                               Date                       = Timestamp.Now,
-                                                               AccessControlAllowOrigin   = "*",
-                                                               AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                               ContentDisposition         = download
-                                                                                                ? @"attachment; filename = ""sessions.json"""
-                                                                                                : null,
-                                                               ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                               Content                    = new JArray(CommonAPI.GetSessions().Select(session => session.ToJSON())).ToUTF8Bytes(),
-                                                               Vary                       = "Accept",
-                                                               Connection                 = ConnectionType.Close
-                                                           }.AsImmutable
+                        return Task.FromResult(
+                            download
 
-                                                         : new HTTPResponse.Builder(request) {
-                                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                                               Server                     = HTTPServer.DefaultServerName,
-                                                               Date                       = Timestamp.Now,
-                                                               AccessControlAllowOrigin   = "*",
-                                                               AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                               ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                               Content                    = MixWithHTMLTemplate("sessions.sessions.shtml",
-                                                                                                                html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
-                                                               Connection                 = ConnectionType.Close,
-                                                               Vary                       = "Accept"
-                                                           }.AsImmutable
+                                ? new HTTPResponse.Builder(request) {
+                                      HTTPStatusCode             = HTTPStatusCode.OK,
+                                      Server                     = HTTPServer.DefaultServerName,
+                                      Date                       = Timestamp.Now,
+                                      AccessControlAllowOrigin   = "*",
+                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
+                                      ContentDisposition         = download
+                                                                       ? @"attachment; filename = ""sessions.json"""
+                                                                       : null,
+                                      ContentType                = HTTPContentType.Application.JSON_UTF8,
+                                      Content                    = new JArray(CommonAPI.GetSessions().Select(session => session.ToJSON())).ToUTF8Bytes(),
+                                      Vary                       = "Accept",
+                                      Connection                 = ConnectionType.Close
+                                  }.AsImmutable
 
-                                                 );
+                                : new HTTPResponse.Builder(request) {
+                                      HTTPStatusCode             = HTTPStatusCode.OK,
+                                      Server                     = HTTPServer.DefaultServerName,
+                                      Date                       = Timestamp.Now,
+                                      AccessControlAllowOrigin   = "*",
+                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
+                                      ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                      Content                    = MixWithHTMLTemplate(
+                                                                       "sessions.sessions.shtml",
+                                                                       html => html.Replace("{{versionPath}}", VersionPath)
+                                                                   ).ToUTF8Bytes(),
+                                      Connection                 = ConnectionType.Close,
+                                      Vary                       = "Accept"
+                                  }.AsImmutable
 
-                                             });
+                        );
 
-            #endregion
+                    }
 
-            #region ~/v2.1.1/cpo/tariffs
+                );
 
-            if (OverlayURLPathPrefix.HasValue)
-                HTTPServer.AddMethodCallback(this,
-                                             HTTPHostname.Any,
-                                             HTTPMethod.GET,
-                                             OverlayURLPathPrefix.Value + Version.String + "/cpo/tariffs",
-                                             HTTPContentType.Text.HTML_UTF8,
-                                             HTTPDelegate: request => {
+                #endregion
 
-                                                 // Appending "?download" to the URL within a web browser will open a download dialog.
-                                                 // Note: This happens here, as the ACCEPT types of the HTTP request do often not include "application/json"!
-                                                 var download = request.QueryString.GetBoolean("download", false);
+                #region GET ~/v2.3/cpo/tariffs
 
-                                                 return Task.FromResult(
-                                                     download
+                HTTPServer.AddMethodCallback(
 
-                                                         ? new HTTPResponse.Builder(request) {
-                                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                                               Server                     = HTTPServer.DefaultServerName,
-                                                               Date                       = Timestamp.Now,
-                                                               AccessControlAllowOrigin   = "*",
-                                                               AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                               ContentDisposition         = download
-                                                                                                ? @"attachment; filename = ""tariffs.json"""
-                                                                                                : null,
-                                                               ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                               Content                    = new JArray(CommonAPI.GetTariffs().Select(tariff => tariff.ToJSON())).ToUTF8Bytes(),
-                                                               Vary                       = "Accept",
-                                                               Connection                 = ConnectionType.Close
-                                                           }.AsImmutable
+                    this,
+                    HTTPHostname.Any,
+                    HTTPMethod.GET,
+                    OverlayURLPathPrefix.Value + Version.String + "/cpo/tariffs",
+                    HTTPContentType.Text.HTML_UTF8,
+                    HTTPDelegate: request => {
 
-                                                         : new HTTPResponse.Builder(request) {
-                                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                                               //Server                     = DefaultHTTPServerName,
-                                                               Date                       = Timestamp.Now,
-                                                               AccessControlAllowOrigin   = "*",
-                                                               AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                               ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                               Content                    = MixWithHTMLTemplate("tariffs.tariffs.shtml",
-                                                                                                                html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
-                                                               Connection                 = ConnectionType.Close,
-                                                               Vary                       = "Accept"
-                                                           }.AsImmutable
+                        // Appending "?download" to the URL within a web browser will open a download dialog.
+                        // Note: This happens here, as the ACCEPT types of the HTTP request do often not include "application/json"!
+                        var download = request.QueryString.GetBoolean("download", false);
 
-                                                 );
+                        return Task.FromResult(
+                            download
 
-                                             });
+                                ? new HTTPResponse.Builder(request) {
+                                      HTTPStatusCode             = HTTPStatusCode.OK,
+                                      Server                     = HTTPServer.DefaultServerName,
+                                      Date                       = Timestamp.Now,
+                                      AccessControlAllowOrigin   = "*",
+                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
+                                      ContentDisposition         = download
+                                                                       ? @"attachment; filename = ""tariffs.json"""
+                                                                       : null,
+                                      ContentType                = HTTPContentType.Application.JSON_UTF8,
+                                      Content                    = new JArray(CommonAPI.GetTariffs().Select(tariff => tariff.ToJSON())).ToUTF8Bytes(),
+                                      Vary                       = "Accept",
+                                      Connection                 = ConnectionType.Close
+                                  }.AsImmutable
 
-            #endregion
+                                : new HTTPResponse.Builder(request) {
+                                      HTTPStatusCode             = HTTPStatusCode.OK,
+                                      Server                     = HTTPServiceName,
+                                      Date                       = Timestamp.Now,
+                                      AccessControlAllowOrigin   = "*",
+                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
+                                      ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                      Content                    = MixWithHTMLTemplate(
+                                                                       "tariffs.tariffs.shtml",
+                                                                       html => html.Replace("{{versionPath}}", VersionPath)
+                                                                   ).ToUTF8Bytes(),
+                                      Connection                 = ConnectionType.Close,
+                                      Vary                       = "Accept"
+                                  }.AsImmutable
 
-            #region ~/v2.1.1/cpo/cdrs
+                        );
 
-            if (OverlayURLPathPrefix.HasValue)
-                HTTPServer.AddMethodCallback(this,
-                                             HTTPHostname.Any,
-                                             HTTPMethod.GET,
-                                             OverlayURLPathPrefix.Value + Version.String + "/cpo/cdrs",
-                                             HTTPContentType.Text.HTML_UTF8,
-                                             HTTPDelegate: request => {
+                    }
 
-                                                 // Appending "?download" to the URL within a web browser will open a download dialog.
-                                                 // Note: This happens here, as the ACCEPT types of the HTTP request do often not include "application/json"!
-                                                 var download = request.QueryString.GetBoolean("download", false);
+                );
 
-                                                 return Task.FromResult(
-                                                     download
+                #endregion
 
-                                                         ? new HTTPResponse.Builder(request) {
-                                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                                               Server                     = HTTPServer.DefaultServerName,
-                                                               Date                       = Timestamp.Now,
-                                                               AccessControlAllowOrigin   = "*",
-                                                               AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                               ContentDisposition         = download
-                                                                                                ? @"attachment; filename = ""cdrs.json"""
-                                                                                                : null,
-                                                               ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                               Content                    = new JArray(CommonAPI.GetCDRs().Select(cdr => cdr.ToJSON())).ToUTF8Bytes(),
-                                                               Vary                       = "Accept",
-                                                               Connection                 = ConnectionType.Close
-                                                           }.AsImmutable
+                #region GET ~/v2.3/cpo/cdrs
 
-                                                         : new HTTPResponse.Builder(request) {
-                                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                                               Server                     = HTTPServer.DefaultServerName,
-                                                               Date                       = Timestamp.Now,
-                                                               AccessControlAllowOrigin   = "*",
-                                                               AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                               ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                               Content                    = MixWithHTMLTemplate("cdrs.cdrs.shtml",
-                                                                                                                html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
-                                                               Connection                 = ConnectionType.Close,
-                                                               Vary                       = "Accept"
-                                                           }.AsImmutable
+                HTTPServer.AddMethodCallback(
 
-                                                 );
+                    this,
+                    HTTPHostname.Any,
+                    HTTPMethod.GET,
+                    OverlayURLPathPrefix.Value + Version.String + "/cpo/cdrs",
+                    HTTPContentType.Text.HTML_UTF8,
+                    HTTPDelegate: request => {
 
-                                             });
+                        // Appending "?download" to the URL within a web browser will open a download dialog.
+                        // Note: This happens here, as the ACCEPT types of the HTTP request do often not include "application/json"!
+                        var download = request.QueryString.GetBoolean("download", false);
 
-            #endregion
+                        return Task.FromResult(
+                            download
 
-            #region ~/v2.1.1/cpo/commands
+                                ? new HTTPResponse.Builder(request) {
+                                      HTTPStatusCode             = HTTPStatusCode.OK,
+                                      Server                     = HTTPServer.DefaultServerName,
+                                      Date                       = Timestamp.Now,
+                                      AccessControlAllowOrigin   = "*",
+                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
+                                      ContentDisposition         = download
+                                                                       ? @"attachment; filename = ""cdrs.json"""
+                                                                       : null,
+                                      ContentType                = HTTPContentType.Application.JSON_UTF8,
+                                      Content                    = new JArray(CommonAPI.GetCDRs().Select(cdr => cdr.ToJSON())).ToUTF8Bytes(),
+                                      Vary                       = "Accept",
+                                      Connection                 = ConnectionType.Close
+                                  }.AsImmutable
 
-            if (OverlayURLPathPrefix.HasValue)
-                HTTPServer.AddMethodCallback(this,
-                                             HTTPHostname.Any,
-                                             HTTPMethod.GET,
-                                             OverlayURLPathPrefix.Value + Version.String + "/cpo/commands",
-                                             HTTPContentType.Text.HTML_UTF8,
-                                             HTTPDelegate: Request => {
+                                : new HTTPResponse.Builder(request) {
+                                      HTTPStatusCode             = HTTPStatusCode.OK,
+                                      Server                     = HTTPServer.DefaultServerName,
+                                      Date                       = Timestamp.Now,
+                                      AccessControlAllowOrigin   = "*",
+                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
+                                      ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                      Content                    = MixWithHTMLTemplate(
+                                                                       "cdrs.cdrs.shtml",
+                                                                       html => html.Replace("{{versionPath}}", VersionPath)
+                                                                   ).ToUTF8Bytes(),
+                                      Connection                 = ConnectionType.Close,
+                                      Vary                       = "Accept"
+                                  }.AsImmutable
 
-                                                 return Task.FromResult(
-                                                     new HTTPResponse.Builder(Request) {
-                                                         HTTPStatusCode             = HTTPStatusCode.OK,
-                                                         //Server                     = DefaultHTTPServerName,
-                                                         Date                       = Timestamp.Now,
-                                                         AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                         AccessControlAllowHeaders  = [ "Authorization" ],
-                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                         Content                    = MixWithHTMLTemplate("commands.commands.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
-                                                         Connection                 = ConnectionType.Close,
-                                                         Vary                       = "Accept"
-                                                     }.AsImmutable);
+                        );
 
-                                             });
+                    }
 
-            #endregion
+                );
 
-            #region ~/v2.1.1/cpo/tokens
+                #endregion
 
-            if (OverlayURLPathPrefix.HasValue)
-                HTTPServer.AddMethodCallback(this,
-                                             HTTPHostname.Any,
-                                             HTTPMethod.GET,
-                                             OverlayURLPathPrefix.Value + Version.String + "/cpo/tokens",
-                                             HTTPContentType.Text.HTML_UTF8,
-                                             HTTPDelegate: request => {
+                #region GET ~/v2.3/cpo/commands
 
-                                                 // Appending "?download" to the URL within a web browser will open a download dialog.
-                                                 // Note: This happens here, as the ACCEPT types of the HTTP request do often not include "application/json"!
-                                                 var download = request.QueryString.GetBoolean("download", false);
+                HTTPServer.AddMethodCallback(
 
-                                                 return Task.FromResult(
-                                                     download
+                    this,
+                    HTTPHostname.Any,
+                    HTTPMethod.GET,
+                    OverlayURLPathPrefix.Value + Version.String + "/cpo/commands",
+                    HTTPContentType.Text.HTML_UTF8,
+                    HTTPDelegate: request =>
 
-                                                         ? new HTTPResponse.Builder(request) {
-                                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                                               Server                     = HTTPServer.DefaultServerName,
-                                                               Date                       = Timestamp.Now,
-                                                               AccessControlAllowOrigin   = "*",
-                                                               AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                               ContentDisposition         = download
-                                                                                                ? @"attachment; filename = ""tokens.json"""
-                                                                                                : null,
-                                                               ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                               Content                    = new JArray(CommonAPI.GetTokens().Select(token => token.ToJSON())).ToUTF8Bytes(),
-                                                               Vary                       = "Accept",
-                                                               Connection                 = ConnectionType.Close
-                                                           }.AsImmutable
+                        Task.FromResult(
+                            new HTTPResponse.Builder(request) {
+                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                Server                     = HTTPServiceName,
+                                Date                       = Timestamp.Now,
+                                AccessControlAllowOrigin   = "*",
+                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders  = [ "Authorization" ],
+                                ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                Content                    = MixWithHTMLTemplate(
+                                                                 "commands.commands.shtml",
+                                                                 html => html.Replace("{{versionPath}}", VersionPath)
+                                                             ).ToUTF8Bytes(),
+                                Connection                 = ConnectionType.Close,
+                                Vary                       = "Accept"
+                            }.AsImmutable)
 
-                                                         : new HTTPResponse.Builder(request) {
-                                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                                               Server                     = HTTPServer.DefaultServerName,
-                                                               Date                       = Timestamp.Now,
-                                                               AccessControlAllowOrigin   = "*",
-                                                               AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                               ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                               Content                    = MixWithHTMLTemplate("tokens.tokens.shtml",
-                                                                                                                html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
-                                                               Connection                 = ConnectionType.Close,
-                                                               Vary                       = "Accept"
-                                                           }.AsImmutable
+                );
 
-                                                 );
+                #endregion
 
-                                             });
+                #region GET ~/v2.3/cpo/tokens
 
-            #endregion
+                HTTPServer.AddMethodCallback(
+
+                    this,
+                    HTTPHostname.Any,
+                    HTTPMethod.GET,
+                    OverlayURLPathPrefix.Value + Version.String + "/cpo/tokens",
+                    HTTPContentType.Text.HTML_UTF8,
+                    HTTPDelegate: request => {
+
+                        // Appending "?download" to the URL within a web browser will open a download dialog.
+                        // Note: This happens here, as the ACCEPT types of the HTTP request do often not include "application/json"!
+                        var download = request.QueryString.GetBoolean("download", false);
+
+                        return Task.FromResult(
+                            download
+
+                                ? new HTTPResponse.Builder(request) {
+                                      HTTPStatusCode             = HTTPStatusCode.OK,
+                                      Server                     = HTTPServer.DefaultServerName,
+                                      Date                       = Timestamp.Now,
+                                      AccessControlAllowOrigin   = "*",
+                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
+                                      ContentDisposition         = download
+                                                                       ? @"attachment; filename = ""tokens.json"""
+                                                                       : null,
+                                      ContentType                = HTTPContentType.Application.JSON_UTF8,
+                                      Content                    = new JArray(CommonAPI.GetTokens().Select(token => token.ToJSON())).ToUTF8Bytes(),
+                                      Vary                       = "Accept",
+                                      Connection                 = ConnectionType.Close
+                                  }.AsImmutable
+
+                                : new HTTPResponse.Builder(request) {
+                                      HTTPStatusCode             = HTTPStatusCode.OK,
+                                      Server                     = HTTPServer.DefaultServerName,
+                                      Date                       = Timestamp.Now,
+                                      AccessControlAllowOrigin   = "*",
+                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
+                                      ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                      Content                    = MixWithHTMLTemplate(
+                                                                       "tokens.tokens.shtml",
+                                                                       html => html.Replace("{{versionPath}}", VersionPath)
+                                                                   ).ToUTF8Bytes(),
+                                      Connection                 = ConnectionType.Close,
+                                      Vary                       = "Accept"
+                                  }.AsImmutable
+
+                        );
+
+                    });
+
+                #endregion
+
+
+                #region GET ~/support
+
+                HTTPServer.AddMethodCallback(
+
+                    this,
+                    HTTPHostname.Any,
+                    HTTPMethod.GET,
+                    OverlayURLPathPrefix.Value + "/support",
+                    HTTPContentType.Text.HTML_UTF8,
+                    HTTPDelegate: request =>
+
+                        Task.FromResult(
+                            new HTTPResponse.Builder(request) {
+                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                Server                     = HTTPServer.DefaultServerName,
+                                Date                       = Timestamp.Now,
+                                AccessControlAllowOrigin   = "*",
+                                AccessControlAllowMethods  = [ "GET" ],
+                                AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
+                                ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                Content                    = MixWithHTMLTemplate("support.support.shtml").ToUTF8Bytes(),
+                                Connection                 = ConnectionType.Close,
+                                Vary                       = "Accept"
+                            }.AsImmutable
+                        )
+
+                );
+
+                #endregion
+
+            }
 
 
             #region ~/remoteXXXParties
@@ -3490,35 +3561,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3.WebAPI
 
             #endregion
 
-
-            #region GET      ~/support
-
-            if (OverlayURLPathPrefix.HasValue)
-                HTTPServer.AddMethodCallback(this,
-                                             HTTPHostname.Any,
-                                             HTTPMethod.GET,
-                                             OverlayURLPathPrefix.Value + "/support",
-                                             HTTPContentType.Text.HTML_UTF8,
-                                             HTTPDelegate: request => {
-
-                                                 return Task.FromResult(
-                                                            new HTTPResponse.Builder(request) {
-                                                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                Server                     = HTTPServer.DefaultServerName,
-                                                                Date                       = Timestamp.Now,
-                                                                AccessControlAllowOrigin   = "*",
-                                                                AccessControlAllowMethods  = [ "GET" ],
-                                                                AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                                ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                                Content                    = MixWithHTMLTemplate("support.support.shtml").ToUTF8Bytes(),
-                                                                Connection                 = ConnectionType.Close,
-                                                                Vary                       = "Accept"
-                                                            }.AsImmutable
-                                                        );
-
-                                             });
-
-            #endregion
 
         }
 

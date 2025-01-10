@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -142,7 +144,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          out var errorResponse,
                          CustomReserveNowCommandParser))
             {
-                return reserveNowCommand!;
+                return reserveNowCommand;
             }
 
             throw new ArgumentException("The given JSON representation of a 'reserve now' command is invalid: " + errorResponse,
@@ -162,9 +164,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="ReserveNowCommand">The parsed 'reserve now' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                 JSON,
-                                       out ReserveNowCommand?  ReserveNowCommand,
-                                       out String?             ErrorResponse)
+        public static Boolean TryParse(JObject                                      JSON,
+                                       [NotNullWhen(true)]  out ReserveNowCommand?  ReserveNowCommand,
+                                       [NotNullWhen(false)] out String?             ErrorResponse)
 
             => TryParse(JSON,
                         out ReserveNowCommand,
@@ -180,8 +182,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomReserveNowCommandParser">A delegate to parse custom 'reserve now' command JSON objects.</param>
         public static Boolean TryParse(JObject                                          JSON,
-                                       out ReserveNowCommand?                           ReserveNowCommand,
-                                       out String?                                      ErrorResponse,
+                                       [NotNullWhen(true)]  out ReserveNowCommand?      ReserveNowCommand,
+                                       [NotNullWhen(false)] out String?                 ErrorResponse,
                                        CustomJObjectParserDelegate<ReserveNowCommand>?  CustomReserveNowCommandParser   = null)
         {
 

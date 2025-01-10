@@ -93,7 +93,7 @@ namespace cloud.charging.open.protocols.OCPI
                                AccessStatus      Status,
                                DateTime?         NotBefore                    = null,
                                DateTime?         NotAfter                     = null,
-                               Boolean?          AccessTokenIsBase64Encoded   = false,
+                               Boolean?          AccessTokenIsBase64Encoded   = true,
                                Boolean?          AllowDowngrades              = false)
         {
 
@@ -101,7 +101,7 @@ namespace cloud.charging.open.protocols.OCPI
             this.Status                      = Status;
             this.NotBefore                   = NotBefore;
             this.NotAfter                    = NotAfter;
-            this.AccessTokenIsBase64Encoded  = AccessTokenIsBase64Encoded ?? false;
+            this.AccessTokenIsBase64Encoded  = AccessTokenIsBase64Encoded ?? true;
             this.AllowDowngrades             = AllowDowngrades            ?? false;
 
             unchecked

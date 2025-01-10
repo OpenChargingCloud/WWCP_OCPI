@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Aegir;
@@ -207,7 +209,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          out var errorResponse,
                          CustomCDRLocationParser))
             {
-                return location!;
+                return location;
             }
 
             throw new ArgumentException("The given JSON representation of a charge detail record location is invalid: " + errorResponse,
@@ -227,9 +229,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CDRLocation">The parsed location.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject           JSON,
-                                       out CDRLocation?  CDRLocation,
-                                       out String?       ErrorResponse)
+        public static Boolean TryParse(JObject                                JSON,
+                                       [NotNullWhen(true)]  out CDRLocation?  CDRLocation,
+                                       [NotNullWhen(false)] out String?       ErrorResponse)
 
             => TryParse(JSON,
                         out CDRLocation,
@@ -245,8 +247,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCDRLocationParser">A delegate to parse custom location JSON objects.</param>
         public static Boolean TryParse(JObject                                    JSON,
-                                       out CDRLocation?                           CDRLocation,
-                                       out String?                                ErrorResponse,
+                                       [NotNullWhen(true)]  out CDRLocation?      CDRLocation,
+                                       [NotNullWhen(false)] out String?           ErrorResponse,
                                        CustomJObjectParserDelegate<CDRLocation>?  CustomCDRLocationParser   = null)
         {
 

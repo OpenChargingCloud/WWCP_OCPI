@@ -2440,7 +2440,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
     /// <summary>
     /// The CommonAPI.
     /// </summary>
-    public class CommonAPI : HTTPAPI // : CommonAPIBase
+    public class CommonAPI : HTTPAPI
     {
 
         #region Data
@@ -2884,193 +2884,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region Constructor(s)
 
-        #region CommonAPI(HTTPServerName, ...)
-
         /// <summary>
-        /// Create a new common HTTP API.
+        /// Create a new CommonAPI.
         /// </summary>
-        /// <param name="OurVersionsURL">The URL of our VERSIONS endpoint.</param>
-        /// <param name="OurCredentialRoles">All our credential roles.</param>
-        /// <param name="APIVersionHashes">The API version hashes (git commit hash values).</param>
-        /// 
-        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
-        /// <param name="HTTPServerPort">An optional HTTP TCP port.</param>
-        /// <param name="HTTPServerName">An optional HTTP server name.</param>
-        /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
-        /// <param name="URLPathPrefix">An optional HTTP URL path prefix.</param>
-        /// <param name="HTTPServiceName">An optional HTTP service name.</param>
-        /// <param name="DNSClient">An optional DNS client.</param>
-        /// 
-        /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
-        /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
-        /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        public CommonAPI(URL                                                        OurBaseURL,
-                         URL                                                        OurVersionsURL,
-                         IEnumerable<CredentialsRole>                               OurCredentialRoles,
-                         CountryCode                                                DefaultCountryCode,
-                         Party_Id                                                   DefaultPartyId,
-
-                         CommonBaseAPI                                              BaseAPI,
-
-                         HTTPPath?                                                  AdditionalURLPathPrefix      = null,
-                         Func<EVSE, Boolean>?                                       KeepRemovedEVSEs             = null,
-                         Boolean                                                    LocationsAsOpenData          = true,
-                         Boolean?                                                   AllowDowngrades              = null,
-
-                         HTTPHostname?                                              HTTPHostname                 = null,
-                         String?                                                    ExternalDNSName              = null,
-                         IPPort?                                                    HTTPServerPort               = null,
-                         HTTPPath?                                                  BasePath                     = null,
-                         String?                                                    HTTPServerName               = DefaultHTTPServerName,
-
-                         HTTPPath?                                                  URLPathPrefix                = null,
-                         String?                                                    HTTPServiceName              = DefaultHTTPServiceName,
-                         JObject?                                                   APIVersionHashes             = null,
-
-                         ServerCertificateSelectorDelegate?                         ServerCertificateSelector    = null,
-                         RemoteTLSClientCertificateValidationHandler<IHTTPServer>?  ClientCertificateValidator   = null,
-                         LocalCertificateSelectionHandler?                          LocalCertificateSelector    = null,
-                         SslProtocols?                                              AllowedTLSProtocols          = null,
-                         Boolean?                                                   ClientCertificateRequired    = null,
-                         Boolean?                                                   CheckCertificateRevocation   = null,
-
-                         ServerThreadNameCreatorDelegate?                           ServerThreadNameCreator      = null,
-                         ServerThreadPriorityDelegate?                              ServerThreadPrioritySetter   = null,
-                         Boolean?                                                   ServerThreadIsBackground     = null,
-                         ConnectionIdBuilder?                                       ConnectionIdBuilder          = null,
-                         TimeSpan?                                                  ConnectionTimeout            = null,
-                         UInt32?                                                    MaxClientConnections         = null,
-
-                         Boolean?                                                   DisableMaintenanceTasks      = null,
-                         TimeSpan?                                                  MaintenanceInitialDelay      = null,
-                         TimeSpan?                                                  MaintenanceEvery             = null,
-
-                         Boolean?                                                   DisableWardenTasks           = null,
-                         TimeSpan?                                                  WardenInitialDelay           = null,
-                         TimeSpan?                                                  WardenCheckEvery             = null,
-
-                         Boolean?                                                   IsDevelopment                = null,
-                         IEnumerable<String>?                                       DevelopmentServers           = null,
-                         Boolean?                                                   DisableLogging               = null,
-                         String?                                                    LoggingContext               = null,
-                         String?                                                    LoggingPath                  = null,
-                         String?                                                    LogfileName                  = null,
-                         OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
-                         String?                                                    DatabaseFilePath             = null,
-                         String?                                                    RemotePartyDBFileName        = null,
-                         String?                                                    AssetsDBFileName             = null,
-                         DNSClient?                                                 DNSClient                    = null,
-                         Boolean                                                    AutoStart                    = false)
-
-            : base(HTTPHostname,
-                   ExternalDNSName,
-                   HTTPServerPort  ?? DefaultHTTPServerPort,
-                   BasePath,
-                   HTTPServerName  ?? DefaultHTTPServerName,
-
-                   URLPathPrefix   ?? DefaultURLPathPrefix,
-                   HTTPServiceName ?? DefaultHTTPServiceName,
-                   null, //HTMLTemplate,
-                   APIVersionHashes,
-
-                   ServerCertificateSelector,
-                   ClientCertificateValidator,
-                   LocalCertificateSelector,
-                   AllowedTLSProtocols,
-                   ClientCertificateRequired,
-                   CheckCertificateRevocation,
-
-                   ServerThreadNameCreator,
-                   ServerThreadPrioritySetter,
-                   ServerThreadIsBackground,
-                   ConnectionIdBuilder,
-                   ConnectionTimeout,
-                   MaxClientConnections,
-
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
-
-                   IsDevelopment,
-                   DevelopmentServers,
-                   DisableLogging,
-                   LoggingPath,
-                   LogfileName,
-                   LogfileCreator is not null
-                       ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                       : null,
-                   DNSClient,
-                   AutoStart)
-
-        {
-
-            this.BaseAPI               = BaseAPI;
-
-            if (!OurCredentialRoles.SafeAny())
-                throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
-
-            this.OurCredentialRoles    = OurCredentialRoles.Distinct();
-            this.DefaultCountryCode    = DefaultCountryCode;
-            this.DefaultPartyId        = DefaultPartyId;
-
-            this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
-
-            this.DatabaseFilePath          = DatabaseFilePath                   ?? Path.Combine(AppContext.BaseDirectory,
-                                                                                                DefaultHTTPAPI_LoggingPath);
-
-            if (this.DatabaseFilePath[^1] != Path.DirectorySeparatorChar)
-                this.DatabaseFilePath     += Path.DirectorySeparatorChar;
-
-            this.RemotePartyDBFileName     = Path.Combine(this.DatabaseFilePath,
-                                                          RemotePartyDBFileName ?? DefaultRemotePartyDBFileName);
-
-            this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
-                                                          AssetsDBFileName      ?? DefaultAssetsDBFileName);
-
-
-            this.Logger       = this.DisableLogging == false
-                                             ? null
-                                             : new CommonAPILogger(
-                                                   this,
-                                                   LoggingContext,
-                                                   LoggingPath,
-                                                   LogfileCreator
-                                               );
-
-            BaseAPI.AddVersionInformation(
-                new VersionInformation(
-                    Version.Id,
-                    URL.Concat(
-                        BaseAPI.OurVersionsURL.Protocol.AsString(),
-                        ExternalDNSName ?? ("localhost:" + base.HTTPServer.IPPorts.First()),
-                        URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
-                    )
-                )
-            ).GetAwaiter().GetResult();
-
-
-            if (!this.DisableLogging)
-            {
-                ReadRemotePartyDatabaseFile();
-                ReadAssetsDatabaseFile();
-            }
-
-            RegisterURLTemplates();
-
-        }
-
-        #endregion
-
-        #region CommonAPI(HTTPServer, ...)
-
-        /// <summary>
-        /// Create a new common HTTP API.
-        /// </summary>
-        /// <param name="OurVersionsURL">The URL of our VERSIONS endpoint.</param>
         /// <param name="OurCredentialRoles">All our credential roles.</param>
         /// 
         /// <param name="HTTPServer">A HTTP server.</param>
@@ -3082,9 +2898,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
         /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        public CommonAPI(//URL                           OurBaseURL,
-                         //URL                           OurVersionsURL,
-                         IEnumerable<CredentialsRole>  OurCredentialRoles,
+        public CommonAPI(IEnumerable<CredentialsRole>  OurCredentialRoles,
                          CountryCode                   DefaultCountryCode,
                          Party_Id                      DefaultPartyId,
 
@@ -3213,8 +3027,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             RegisterURLTemplates();
 
         }
-
-        #endregion
 
         #endregion
 

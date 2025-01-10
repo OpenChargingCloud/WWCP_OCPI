@@ -1901,268 +1901,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Constructor(s)
 
-        #region CommonAPI(HTTPServerName, ...)
-
-        /// <summary>
-        /// Create a new CommonAPI.
-        /// </summary>
-        /// <param name="OurVersionsURL">The URL of our VERSIONS endpoint.</param>
-        /// <param name="OurBusinessDetails"></param>
-        /// <param name="OurCountryCode"></param>
-        /// <param name="OurPartyId"></param>
-        /// 
-        /// <param name="AdditionalURLPathPrefix"></param>
-        /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
-        /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
-        /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        /// <param name="Disable_RootServices">Whether to disable / and /versions HTTP services.</param>
-        /// 
-        /// <param name="HTTPHostname">The HTTP hostname for all URLs within this API.</param>
-        /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
-        /// <param name="HTTPServerPort">A TCP port to listen on.</param>
-        /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
-        /// <param name="HTTPServerName">The default HTTP servername, used whenever no HTTP Host-header has been given.</param>
-        /// 
-        /// <param name="URLPathPrefix">A common prefix for all URLs.</param>
-        /// <param name="HTTPServiceName">The name of the HTTP service.</param>
-        /// <param name="APIVersionHashes">The API version hashes (git commit hash values).</param>
-        /// 
-        /// <param name="ServerCertificateSelector">An optional delegate to select a TLS server certificate.</param>
-        /// <param name="ClientCertificateValidator">An optional delegate to verify the TLS client certificate used for authentication.</param>
-        /// <param name="LocalCertificateSelector">An optional delegate to select the TLS client certificate used for authentication.</param>
-        /// <param name="AllowedTLSProtocols">The TLS protocol(s) allowed for this connection.</param>
-        /// 
-        /// <param name="ServerThreadIsBackground">Whether the TCP server thread is a background thread or not.</param>
-        /// <param name="ConnectionIdBuilder">An optional delegate to build a connection identification based on IP socket information.</param>
-        /// <param name="ConnectionTimeout">The TCP client timeout for all incoming client connections in seconds (default: 30 sec).</param>
-        /// <param name="MaxClientConnections">The maximum number of concurrent TCP client connections (default: 4096).</param>
-        /// 
-        /// <param name="DisableMaintenanceTasks">Disable all maintenance tasks.</param>
-        /// <param name="MaintenanceInitialDelay">The initial delay of the maintenance tasks.</param>
-        /// <param name="MaintenanceEvery">The maintenance intervall.</param>
-        /// 
-        /// <param name="DisableWardenTasks">Disable all warden tasks.</param>
-        /// <param name="WardenInitialDelay">The initial delay of the warden tasks.</param>
-        /// <param name="WardenCheckEvery">The warden intervall.</param>
-        /// 
-        /// <param name="IsDevelopment">This HTTP API runs in development mode.</param>
-        /// <param name="DevelopmentServers">An enumeration of server names which will imply to run this service in development mode.</param>
-        /// <param name="DisableLogging">Disable any logging.</param>
-        /// <param name="LoggingPath">The path for all logfiles.</param>
-        /// <param name="LogfileName">The name of the logfile.</param>
-        /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
-        /// <param name="DNSClient">The DNS client of the API.</param>
-        /// <param name="AutoStart">Whether to start the API automatically.</param>
-        public CommonAPI(//URL                                                        OurBaseURL,
-                         //URL                                                        OurVersionsURL,
-                         BusinessDetails                                            OurBusinessDetails,
-                         CountryCode                                                OurCountryCode,
-                         Party_Id                                                   OurPartyId,
-
-                         HTTPPath?                                                  AdditionalURLPathPrefix      = null,
-                         Func<EVSE, Boolean>?                                       KeepRemovedEVSEs             = null,
-                         Boolean                                                    LocationsAsOpenData          = true,
-                         Boolean?                                                   AllowDowngrades              = null,
-
-                         HTTPHostname?                                              HTTPHostname                 = null,
-                         String?                                                    ExternalDNSName              = null,
-                         IPPort?                                                    HTTPServerPort               = null,
-                         HTTPPath?                                                  BasePath                     = null,
-                         String?                                                    HTTPServerName               = DefaultHTTPServerName,
-
-                         HTTPPath?                                                  URLPathPrefix                = null,
-                         String?                                                    HTTPServiceName              = DefaultHTTPServiceName,
-                         JObject?                                                   APIVersionHashes             = null,
-
-                         ServerCertificateSelectorDelegate?                         ServerCertificateSelector    = null,
-                         RemoteTLSClientCertificateValidationHandler<IHTTPServer>?  ClientCertificateValidator   = null,
-                         LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                         SslProtocols?                                              AllowedTLSProtocols          = null,
-                         Boolean?                                                   ClientCertificateRequired    = null,
-                         Boolean?                                                   CheckCertificateRevocation   = null,
-
-                         ServerThreadNameCreatorDelegate?                           ServerThreadNameCreator      = null,
-                         ServerThreadPriorityDelegate?                              ServerThreadPrioritySetter   = null,
-                         Boolean?                                                   ServerThreadIsBackground     = null,
-                         ConnectionIdBuilder?                                       ConnectionIdBuilder          = null,
-                         TimeSpan?                                                  ConnectionTimeout            = null,
-                         UInt32?                                                    MaxClientConnections         = null,
-
-                         Boolean?                                                   DisableMaintenanceTasks      = null,
-                         TimeSpan?                                                  MaintenanceInitialDelay      = null,
-                         TimeSpan?                                                  MaintenanceEvery             = null,
-
-                         Boolean?                                                   DisableWardenTasks           = null,
-                         TimeSpan?                                                  WardenInitialDelay           = null,
-                         TimeSpan?                                                  WardenCheckEvery             = null,
-
-                         Boolean?                                                   IsDevelopment                = null,
-                         IEnumerable<String>?                                       DevelopmentServers           = null,
-                         Boolean?                                                   DisableLogging               = null,
-                         String?                                                    LoggingContext               = null,
-                         String?                                                    LoggingPath                  = null,
-                         String?                                                    LogfileName                  = null,
-                         OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
-                         String?                                                    DatabaseFilePath             = null,
-                         String?                                                    RemotePartyDBFileName        = null,
-                         String?                                                    AssetsDBFileName             = null,
-                         DNSClient?                                                 DNSClient                    = null,
-                         Boolean                                                    AutoStart                    = false)
-
-            : base(HTTPHostname,
-                   ExternalDNSName,
-                   HTTPServerPort  ?? DefaultHTTPServerPort,
-                   BasePath,
-                   HTTPServerName  ?? DefaultHTTPServerName,
-
-                   URLPathPrefix   ?? DefaultURLPathPrefix,
-                   HTTPServiceName ?? DefaultHTTPServiceName,
-                   null, //HTMLTemplate,
-                   APIVersionHashes,
-
-                   ServerCertificateSelector,
-                   ClientCertificateValidator,
-                   LocalCertificateSelector,
-                   AllowedTLSProtocols,
-                   ClientCertificateRequired,
-                   CheckCertificateRevocation,
-
-                   ServerThreadNameCreator,
-                   ServerThreadPrioritySetter,
-                   ServerThreadIsBackground,
-                   ConnectionIdBuilder,
-                   ConnectionTimeout,
-                   MaxClientConnections,
-
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
-
-                   IsDevelopment,
-                   DevelopmentServers,
-                   DisableLogging,
-                   LoggingPath,
-                   LogfileName,
-                   LogfileCreator is not null
-                       ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                       : null,
-                   DNSClient,
-                   AutoStart)
-
-            //: base(Version.Id,
-            //       OurBaseURL,
-            //       OurVersionsURL,
-            //
-            //       AdditionalURLPathPrefix,
-            //       LocationsAsOpenData,
-            //       AllowDowngrades,
-            //       Disable_RootServices,
-            //
-            //       HTTPHostname,
-            //       ExternalDNSName,
-            //       HTTPServerPort,
-            //       BasePath,
-            //       HTTPServerName,
-            //
-            //       URLPathPrefix,
-            //       HTTPServiceName,
-            //       APIVersionHashes,
-            //
-            //       ServerCertificateSelector,
-            //       ClientCertificateValidator,
-            //       LocalCertificateSelector,
-            //       AllowedTLSProtocols,
-            //       ClientCertificateRequired,
-            //       CheckCertificateRevocation,
-            //
-            //       ServerThreadNameCreator,
-            //       ServerThreadPrioritySetter,
-            //       ServerThreadIsBackground,
-            //       ConnectionIdBuilder,
-            //       ConnectionTimeout,
-            //       MaxClientConnections,
-            //
-            //       DisableMaintenanceTasks,
-            //       MaintenanceInitialDelay,
-            //       MaintenanceEvery,
-            //
-            //       DisableWardenTasks,
-            //       WardenInitialDelay,
-            //       WardenCheckEvery,
-            //
-            //       IsDevelopment,
-            //       DevelopmentServers,
-            //       DisableLogging,
-            //       LoggingContext,
-            //       LoggingPath,
-            //       LogfileName,
-            //       LogfileCreator,
-            //       DatabaseFilePath,
-            //       RemotePartyDBFileName,
-            //       AssetsDBFileName,
-            //       DNSClient,
-            //       AutoStart)
-
-        {
-
-            this.OurBusinessDetails  = OurBusinessDetails;
-            this.OurCountryCode      = OurCountryCode;
-            this.OurPartyId          = OurPartyId;
-
-            this.KeepRemovedEVSEs    = KeepRemovedEVSEs ?? (evse => true);
-
-            this.DatabaseFilePath          = DatabaseFilePath                   ?? Path.Combine(AppContext.BaseDirectory,
-                                                                                                DefaultHTTPAPI_LoggingPath);
-
-            if (this.DatabaseFilePath[^1] != Path.DirectorySeparatorChar)
-                this.DatabaseFilePath     += Path.DirectorySeparatorChar;
-
-            this.RemotePartyDBFileName     = Path.Combine(this.DatabaseFilePath,
-                                                          RemotePartyDBFileName ?? DefaultRemotePartyDBFileName);
-
-            this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
-                                                          AssetsDBFileName      ?? DefaultAssetsDBFileName);
-
-
-            this.CommonAPILogger     = this.DisableLogging == false
-                                           ? new CommonAPILogger(
-                                                 this,
-                                                 LoggingContext,
-                                                 LoggingPath,
-                                                 LogfileCreator
-                                             )
-                                           : null;
-
-            this.BaseAPI.AddVersionInformation(
-                new VersionInformation(
-                    Version.Id,
-                    URL.Concat(
-                        BaseAPI.OurVersionsURL.Protocol.AsString(),
-                        ExternalDNSName ?? ("localhost:" + base.HTTPServer.IPPorts.First()),
-                        URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
-                    )
-                )
-            ).GetAwaiter().GetResult();
-
-
-            if (!this.DisableLogging)
-            {
-                ReadRemotePartyDatabaseFile();
-                ReadAssetsDatabaseFile();
-            }
-
-            RegisterURLTemplates();
-
-        }
-
-        #endregion
-
-        #region CommonAPI(HTTPServer, ...)
-
         /// <summary>
         /// Create a new CommonAPI using the given HTTP server.
         /// </summary>
@@ -2202,9 +1940,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="LogfileName">The name of the logfile.</param>
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
         /// <param name="AutoStart">Whether to start the API automatically.</param>
-        public CommonAPI(//URL                          OurBaseURL,
-                         //URL                          OurVersionsURL,
-                         BusinessDetails              OurBusinessDetails,
+        public CommonAPI(BusinessDetails              OurBusinessDetails,
                          CountryCode                  OurCountryCode,
                          Party_Id                     OurPartyId,
                          Role                         OurRole,
@@ -2273,46 +2009,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                        : null,
                    AutoStart)
 
-            //: base(Version.Id,
-            //       OurBaseURL,
-            //       OurVersionsURL,
-            //       HTTPServer,
-
-            //       AdditionalURLPathPrefix,
-            //       LocationsAsOpenData,
-            //       AllowDowngrades,
-            //       Disable_RootServices,
-
-            //       HTTPHostname,
-            //       ExternalDNSName,
-            //       HTTPServiceName,
-            //       BasePath,
-
-            //       URLPathPrefix,
-            //       APIVersionHashes,
-
-            //       DisableMaintenanceTasks,
-            //       MaintenanceInitialDelay,
-            //       MaintenanceEvery,
-
-            //       DisableWardenTasks,
-            //       WardenInitialDelay,
-            //       WardenCheckEvery,
-
-            //       IsDevelopment,
-            //       DevelopmentServers,
-            //       DisableLogging,
-            //       LoggingContext,
-            //       LoggingPath,
-            //       LogfileName ?? DefaultLogfileName,
-            //       LogfileCreator is not null
-            //           ? (loggingPath, remotePartyId, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-            //           : null,
-            //       DatabaseFilePath,
-            //       RemotePartyDBFileName,
-            //       AssetsDBFileName,
-            //       AutoStart)
-
         {
 
             this.BaseAPI               = BaseAPI;
@@ -2372,8 +2068,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             RegisterURLTemplates();
 
         }
-
-        #endregion
 
         #endregion
 
@@ -3327,16 +3021,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         private void RegisterURLTemplates()
         {
 
-            #region OPTIONS     ~/versions/{versionId}
+            #region OPTIONS     ~/versions/2.1.1
 
-            // --------------------------------------------------------
-            // curl -v -X OPTIONS http://127.0.0.1:2502/versions/{id}
-            // --------------------------------------------------------
+            // ---------------------------------------------------------
+            // curl -v -X OPTIONS http://127.0.0.1:2502/versions/2.1.1
+            // ---------------------------------------------------------
             this.AddOCPIMethod(
 
                 Hostname,
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "versions/{versionId}",
+                URLPathPrefix + $"versions/{Version.Id}",
                 OCPIRequestHandler: request =>
 
                     Task.FromResult(
@@ -3354,16 +3048,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region GET         ~/versions/{versionId}
+            #region GET         ~/versions/2.1.1
 
-            // ---------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions/{id}
-            // ---------------------------------------------------------------------------
+            // ----------------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions/2.1.1
+            // ----------------------------------------------------------------------------
             this.AddOCPIMethod(
 
                 Hostname,
                 HTTPMethod.GET,
-                URLPathPrefix + "versions/{versionId}",
+                URLPathPrefix + $"versions/{Version.Id}",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetVersionRequest,
                 OCPIResponseLogger:  GetVersionResponse,
@@ -3390,60 +3084,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #endregion
 
-                    #region Get version identification URL parameter
 
-                    if (request.ParsedURLParameters.Length < 1)
-                    {
-
-                        return Task.FromResult(
-                            new OCPIResponse.Builder(request) {
-                                StatusCode           = 2000,
-                                StatusMessage        = "Version identification is missing!",
-                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
-                                }
-                            });
-
-                    }
-
-                    if (!Version_Id.TryParse(request.ParsedURLParameters[0], out var versionId))
-                    {
-
-                        return Task.FromResult(
-                            new OCPIResponse.Builder(request) {
-                                StatusCode           = 2000,
-                                StatusMessage        = "Version identification is invalid!",
-                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
-                                }
-                            });
-
-                    }
-
-                    #endregion
-
-                    #region Only allow OCPI version v2.1.1
-
-                    if (versionId.ToString() != Version.Id.ToString())
-                        return Task.FromResult(
-                            new OCPIResponse.Builder(request) {
-                                StatusCode           = 2000,
-                                StatusMessage        = "This OCPI version is not supported!",
-                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
-                                }
-                            });
-
-                    #endregion
-
-
-                    var prefix = URLPathPrefix + BaseAPI.AdditionalURLPathPrefix + $"v{versionId}";
+                    var prefix = URLPathPrefix + BaseAPI.AdditionalURLPathPrefix + Version.String;
 
                     #region Common credential endpoints...
 
@@ -3547,7 +3189,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             StatusCode           = 1000,
                             StatusMessage        = "Hello world!",
                             Data                 = new VersionDetail(
-                                                       versionId,
+                                                       Version.Id,
                                                        endpoints
                                                    ).ToJSON(CustomVersionDetailSerializer,
                                                             CustomVersionEndpointSerializer),
@@ -3568,16 +3210,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
 
-            #region OPTIONS     ~/{versionId}/credentials
+            #region OPTIONS     ~/2.1.1/credentials
 
-            // ----------------------------------------------------------
+            // ------------------------------------------------------------
             // curl -v -X OPTIONS http://127.0.0.1:2502/2.1.1/credentials
-            // ----------------------------------------------------------
+            // ------------------------------------------------------------
             this.AddOCPIMethod(
 
                 Hostname,
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "{versionId}/credentials",
+                URLPathPrefix + $"{Version.Id}/credentials",
                 OCPIRequestHandler: request => {
 
                     #region Defaults
@@ -3638,18 +3280,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region GET         ~/{versionId}/credentials
+            #region GET         ~/2.1.1/credentials
 
             // Retrieves the credentials object to access the server's platform.
             // The response contains the credentials object to access the server's platform.
             // This credentials object also contains extra information about the server such as its business details.
 
-            // ---------------------------------------------------------------------------------
+            // -------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
-            // ---------------------------------------------------------------------------------
+            // -------------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.GET,
-                               URLPathPrefix + "{versionId}/credentials",
+                               URLPathPrefix + $"{Version.Id}/credentials",
                                HTTPContentType.Application.JSON_UTF8,
                                OCPIRequestLogger:   GetCredentialsRequest,
                                OCPIResponseLogger:  GetCredentialsResponse,
@@ -3698,16 +3340,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region POST        ~/{versionId}/credentials
+            #region POST        ~/2.1.1/credentials
 
             // REGISTER new OCPI party!
 
-            // -----------------------------------------------------------------------------
+            // -------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
-            // -----------------------------------------------------------------------------
+            // -------------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.POST,
-                               URLPathPrefix + "{versionId}/credentials",
+                               URLPathPrefix + $"{Version.Id}/credentials",
                                HTTPContentType.Application.JSON_UTF8,
                                OCPIRequestLogger:   PostCredentialsRequest,
                                OCPIResponseLogger:  PostCredentialsResponse,
@@ -3745,7 +3387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region PUT         ~/{versionId}/credentials
+            #region PUT         ~/2.1.1/credentials
 
             // UPDATE the registration of an existing OCPI party!
 
@@ -3760,12 +3402,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             // This must return a HTTP status code 405: method not allowed if the client was not registered yet.
 
-            // ---------------------------------------------------------------------------------
+            // -------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
-            // ---------------------------------------------------------------------------------
+            // -------------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.PUT,
-                               URLPathPrefix + "{versionId}/credentials",
+                               URLPathPrefix + $"{Version.Id}/credentials",
                                HTTPContentType.Application.JSON_UTF8,
                                OCPIRequestLogger:   PutCredentialsRequest,
                                OCPIResponseLogger:  PutCredentialsResponse,
@@ -3832,7 +3474,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region DELETE      ~/{versionId}/credentials
+            #region DELETE      ~/2.1.1/credentials
 
             // UNREGISTER an existing OCPI party!
 
@@ -3842,12 +3484,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             // This must return a HTTP status code 405: method not allowed if the client was not registered.
 
-            // ---------------------------------------------------------------------------------
+            // -------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
-            // ---------------------------------------------------------------------------------
+            // -------------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.DELETE,
-                               URLPathPrefix + "{versionId}/credentials",
+                               URLPathPrefix + $"{Version.Id}/credentials",
                                HTTPContentType.Application.JSON_UTF8,
                                OCPIRequestLogger:   DeleteCredentialsRequest,
                                OCPIResponseLogger:  DeleteCredentialsResponse,

@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -86,7 +88,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                          out var errorResponse,
                          CustomActiveChargingProfileParser))
             {
-                return activeChargingProfile!;
+                return activeChargingProfile;
             }
 
             throw new ArgumentException("The given JSON representation of an active charging profile is invalid: " + errorResponse,
@@ -131,9 +133,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="ActiveChargingProfile">The parsed active charging profile.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                     JSON,
-                                       out ActiveChargingProfile?  ActiveChargingProfile,
-                                       out String?                 ErrorResponse)
+        public static Boolean TryParse(JObject                                          JSON,
+                                       [NotNullWhen(true)]  out ActiveChargingProfile?  ActiveChargingProfile,
+                                       [NotNullWhen(false)] out String?                 ErrorResponse)
 
             => TryParse(JSON,
                         out ActiveChargingProfile,
@@ -149,8 +151,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomActiveChargingProfileParser">A delegate to parse custom active charging profile JSON objects.</param>
         public static Boolean TryParse(JObject                                              JSON,
-                                       out ActiveChargingProfile?                           ActiveChargingProfile,
-                                       out String?                                          ErrorResponse,
+                                       [NotNullWhen(true)]  out ActiveChargingProfile?      ActiveChargingProfile,
+                                       [NotNullWhen(false)] out String?                     ErrorResponse,
                                        CustomJObjectParserDelegate<ActiveChargingProfile>?  CustomActiveChargingProfileParser   = null)
         {
 

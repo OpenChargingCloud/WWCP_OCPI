@@ -780,7 +780,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                     this,
                     HTTPHostname.Any,
                     HTTPMethod.GET,
-                    OverlayURLPathPrefix.Value + "versions/{versionId}",
+                    OverlayURLPathPrefix.Value + $"versions/{Version.Id}",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request =>
 
@@ -852,7 +852,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                       ContentType                 = HTTPContentType.Text.HTML_UTF8,
                                       Content                     = MixWithHTMLTemplate(
                                                                         "locations.locations.shtml",
-                                                                        html => html.Replace("{{versionPath}}", "v2.2/")
+                                                                        html => html.Replace("{{versionPath}}", VersionPath)
                                                                     ).ToUTF8Bytes(),
                                       Connection                  = ConnectionType.Close,
                                       Vary                        = "Accept"
@@ -883,7 +883,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                          AccessControlAllowHeaders  = [ "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("locations.locationStatistics.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", "v2.2/")).ToUTF8Bytes(),
+                                                                                                          html => html.Replace("{{versionPath}}", VersionPath)).ToUTF8Bytes(),
                                                          Connection                 = ConnectionType.Close,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
@@ -936,7 +936,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                       ContentType                = HTTPContentType.Text.HTML_UTF8,
                                       Content                    = MixWithHTMLTemplate(
                                                                        "sessions.sessions.shtml",
-                                                                       html => html.Replace("{{versionPath}}", "v2.2/")
+                                                                       html => html.Replace("{{versionPath}}", VersionPath)
                                                                    ).ToUTF8Bytes(),
                                       Connection                 = ConnectionType.Close,
                                       Vary                       = "Accept"
@@ -994,7 +994,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                       ContentType                = HTTPContentType.Text.HTML_UTF8,
                                       Content                    = MixWithHTMLTemplate(
                                                                        "tariffs.tariffs.shtml",
-                                                                       html => html.Replace("{{versionPath}}", "v2.2/")
+                                                                       html => html.Replace("{{versionPath}}", VersionPath)
                                                                    ).ToUTF8Bytes(),
                                       Connection                 = ConnectionType.Close,
                                       Vary                       = "Accept"
@@ -1052,7 +1052,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                       ContentType                = HTTPContentType.Text.HTML_UTF8,
                                       Content                    = MixWithHTMLTemplate(
                                                                        "cdrs.cdrs.shtml",
-                                                                       html => html.Replace("{{versionPath}}", "v2.2/")
+                                                                       html => html.Replace("{{versionPath}}", VersionPath)
                                                                    ).ToUTF8Bytes(),
                                       Connection                 = ConnectionType.Close,
                                       Vary                       = "Accept"
@@ -1088,7 +1088,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                 ContentType                = HTTPContentType.Text.HTML_UTF8,
                                 Content                    = MixWithHTMLTemplate(
                                                                  "commands.commands.shtml",
-                                                                 html => html.Replace("{{versionPath}}", "v2.2/")
+                                                                 html => html.Replace("{{versionPath}}", VersionPath)
                                                              ).ToUTF8Bytes(),
                                 Connection                 = ConnectionType.Close,
                                 Vary                       = "Accept"
@@ -1142,7 +1142,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                       ContentType                = HTTPContentType.Text.HTML_UTF8,
                                       Content                    = MixWithHTMLTemplate(
                                                                        "tokens.tokens.shtml",
-                                                                       html => html.Replace("{{versionPath}}", "v2.2/")
+                                                                       html => html.Replace("{{versionPath}}", VersionPath)
                                                                    ).ToUTF8Bytes(),
                                       Connection                 = ConnectionType.Close,
                                       Vary                       = "Accept"

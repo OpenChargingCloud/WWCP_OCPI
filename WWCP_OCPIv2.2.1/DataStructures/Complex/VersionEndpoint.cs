@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -115,9 +117,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="VersionEndpoint">The parsed version endpoint endpoint.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject              JSON,
-                                       out VersionEndpoint  VersionEndpoint,
-                                       out String?          ErrorResponse)
+        public static Boolean TryParse(JObject                                   JSON,
+                                       [NotNullWhen(true)]  out VersionEndpoint  VersionEndpoint,
+                                       [NotNullWhen(false)] out String?          ErrorResponse)
 
             => TryParse(JSON,
                         out VersionEndpoint,
@@ -133,8 +135,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomVersionEndpointParser">A delegate to parse custom version JSON objects.</param>
         public static Boolean TryParse(JObject                                        JSON,
-                                       out VersionEndpoint                            VersionEndpoint,
-                                       out String?                                    ErrorResponse,
+                                       [NotNullWhen(true)]  out VersionEndpoint       VersionEndpoint,
+                                       [NotNullWhen(false)] out String?               ErrorResponse,
                                        CustomJObjectParserDelegate<VersionEndpoint>?  CustomVersionEndpointParser)
         {
 
@@ -189,9 +191,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                VersionEndpoint = new VersionEndpoint(Identifier,
-                                                      Role,
-                                                      URL);
+                VersionEndpoint = new VersionEndpoint(
+                                      Identifier,
+                                      Role,
+                                      URL
+                                  );
 
 
                 if (CustomVersionEndpointParser is not null)

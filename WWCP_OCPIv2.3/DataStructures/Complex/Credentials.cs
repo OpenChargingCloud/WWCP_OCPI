@@ -101,7 +101,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                          out var errorResponse,
                          CustomCredentialsParser))
             {
-                return credentials!;
+                return credentials;
             }
 
             throw new ArgumentException("The given JSON representation of a credentials is invalid: " + errorResponse,

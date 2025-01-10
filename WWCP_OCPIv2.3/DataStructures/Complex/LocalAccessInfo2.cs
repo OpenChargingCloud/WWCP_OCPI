@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -179,7 +181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                          out var errorResponse,
                          CustomLocalAccessInfo2Parser))
             {
-                return localAccessInfo!;
+                return localAccessInfo;
             }
 
             throw new ArgumentException("The given JSON representation of a local access information is invalid: " + errorResponse,
@@ -199,9 +201,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="LocalAccessInfo2">The parsed local access information.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject               JSON,
-                                       out LocalAccessInfo2?  LocalAccessInfo2,
-                                       out String?           ErrorResponse)
+        public static Boolean TryParse(JObject                                     JSON,
+                                       [NotNullWhen(true)]  out LocalAccessInfo2?  LocalAccessInfo2,
+                                       [NotNullWhen(false)] out String?            ErrorResponse)
 
             => TryParse(JSON,
                         out LocalAccessInfo2,
@@ -216,9 +218,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="LocalAccessInfo2">The parsed local access information.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomLocalAccessInfo2Parser">A delegate to parse custom local access information JSON objects.</param>
-        public static Boolean TryParse(JObject                                        JSON,
-                                       out LocalAccessInfo2?                           LocalAccessInfo2,
-                                       out String?                                    ErrorResponse,
+        public static Boolean TryParse(JObject                                         JSON,
+                                       [NotNullWhen(true)]  out LocalAccessInfo2?      LocalAccessInfo2,
+                                       [NotNullWhen(false)] out String?                ErrorResponse,
                                        CustomJObjectParserDelegate<LocalAccessInfo2>?  CustomLocalAccessInfo2Parser   = null)
         {
 

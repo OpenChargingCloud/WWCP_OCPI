@@ -1258,7 +1258,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region Define and connect Remote Parties
 
-            #region CPO #1 -> EMSP #1
+            #region EMSP #1 -> CPO #1
 
             await cpo1CommonAPI_v2_1_1.AddRemoteParty (CountryCode:                 emsp1CommonAPI_v2_1_1.OurCountryCode,
                                                        PartyId:                     emsp1CommonAPI_v2_1_1.OurPartyId,
@@ -1288,7 +1288,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                         //    CountryCode:       emsp1CommonAPI_v2_2_1.OurCountryCode,
                                                                                         //    PartyId:           emsp1CommonAPI_v2_2_1.OurPartyId,
                                                                                         //    Role:              Role.EMSP,
-                                                                                        //    BusinessDetails:   emsp1CommonAPI_v2_1_1.OurBusinessDetails,
+                                                                                        //    BusinessDetails:   emsp1CommonAPI_v2_2_1.OurBusinessDetails,
                                                                                         //    AllowDowngrades:   true
                                                                                         //)
                                                                                     ],
@@ -1305,10 +1305,38 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                                        PartyStatus:                 PartyStatus.ENABLED);
 
+            await cpo1CommonAPI_v2_3.  AddRemoteParty (Id:                          RemoteParty_Id.Parse(
+                                                                                        emsp1CommonAPI_v2_3.DefaultCountryCode,
+                                                                                        emsp1CommonAPI_v2_3.DefaultPartyId,
+                                                                                        Role.EMSP
+                                                                                    ),
+                                                       CredentialsRoles:            [
+                                                                                        emsp1CommonAPI_v2_3.OurCredentialRoles.First()
+                                                                                        //new OCPIv2_3.CredentialsRole(
+                                                                                        //    CountryCode:       emsp1CommonAPI_v2_3.OurCountryCode,
+                                                                                        //    PartyId:           emsp1CommonAPI_v2_3.OurPartyId,
+                                                                                        //    Role:              Role.EMSP,
+                                                                                        //    BusinessDetails:   emsp1CommonAPI_v2_3.OurBusinessDetails,
+                                                                                        //    AllowDowngrades:   true
+                                                                                        //)
+                                                                                    ],
+
+                                                       AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
+                                                       AccessStatus:                AccessStatus.ALLOWED,
+
+                                                       RemoteAccessToken:           AccessToken.Parse(cpo1_accessing_emsp1__token),
+                                                       RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/versions"),
+                                                       RemoteVersionIds:            [ OCPIv2_3.Version.Id ],
+                                                       SelectedVersionId:           OCPIv2_3.Version.Id,
+                                                       AccessTokenBase64Encoding:   true,
+                                                       RemoteStatus:                RemoteAccessStatus.ONLINE,
+
+                                                       PartyStatus:                 PartyStatus.ENABLED);
+
             #endregion
 
 
-            #region EMSP #1 -> CPO #1
+            #region CPO #1 -> EMSP #1
 
             await emsp1CommonAPI_v2_1_1.AddRemoteParty(CountryCode:                 cpo1CommonAPI_v2_1_1.OurCountryCode,
                                                        PartyId:                     cpo1CommonAPI_v2_1_1.OurPartyId,
@@ -1342,7 +1370,27 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                        RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo1HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/versions"),
                                                        RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
                                                        SelectedVersionId:           OCPIv2_2_1.Version.Id,
-                                                       AccessTokenBase64Encoding:   false,
+                                                       AccessTokenBase64Encoding:   true,
+                                                       RemoteStatus:                RemoteAccessStatus.ONLINE,
+
+                                                       PartyStatus:                 PartyStatus.ENABLED);
+
+            await emsp1CommonAPI_v2_3.  AddRemoteParty(Id:                          RemoteParty_Id.Parse(
+                                                                                        cpo1CommonAPI_v2_3.DefaultCountryCode,
+                                                                                        cpo1CommonAPI_v2_3.DefaultPartyId,
+                                                                                        Role.CPO
+                                                                                    ),
+                                                       CredentialsRoles:            [
+                                                                                        cpo1CommonAPI_v2_3.OurCredentialRoles.First()
+                                                                                    ],
+                                                       AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
+                                                       AccessStatus:                AccessStatus.ALLOWED,
+
+                                                       RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo1__token),
+                                                       RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo1HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/versions"),
+                                                       RemoteVersionIds:            [ OCPIv2_3.Version.Id ],
+                                                       SelectedVersionId:           OCPIv2_3.Version.Id,
+                                                       AccessTokenBase64Encoding:   true,
                                                        RemoteStatus:                RemoteAccessStatus.ONLINE,
 
                                                        PartyStatus:                 PartyStatus.ENABLED);

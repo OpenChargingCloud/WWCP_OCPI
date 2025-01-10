@@ -227,7 +227,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                          out var errorResponse,
                          CustomTariffRestrictionsParser))
             {
-                return tariffRestrictions!;
+                return tariffRestrictions;
             }
 
             throw new ArgumentException("The given JSON representation of tariff restrictions is invalid: " + errorResponse,

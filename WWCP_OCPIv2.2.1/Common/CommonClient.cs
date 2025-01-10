@@ -900,7 +900,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     await GetVersions(EventTrackingId:    eventTrackingId,
                                       CancellationToken:  CancellationToken);
 
-                if (!versions.ContainsKey(versionId.Value))
+                if (!versions.TryGetValue(versionId.Value, out var versionURL))
                     response = OCPIResponse<Version_Id, VersionDetail>.Error("Unkown version identification!");
 
                 else
@@ -916,46 +916,48 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                             #region Upstream HTTP request...
 
-                            var httpResponse = await new HTTPSClient(versions[versionId.Value],
-                                                                     VirtualHostname,
-                                                                     Description,
-                                                                     PreferIPv4,
-                                                                     RemoteCertificateValidator,
-                                                                     LocalCertificateSelector,
-                                                                     ClientCert,
-                                                                     TLSProtocol,
-                                                                     ContentType,
-                                                                     Accept,
-                                                                     Authentication,
-                                                                     HTTPUserAgent,
-                                                                     Connection,
-                                                                     RequestTimeout,
-                                                                     TransmissionRetryDelay,
-                                                                     MaxNumberOfRetries,
-                                                                     InternalBufferSize,
-                                                                     UseHTTPPipelining,
-                                                                     DisableLogging,
-                                                                     HTTPLogger,
-                                                                     DNSClient).
+                            var httpResponse = await new HTTPSClient(
+                                                         versionURL,
+                                                         VirtualHostname,
+                                                         Description,
+                                                         PreferIPv4,
+                                                         RemoteCertificateValidator,
+                                                         LocalCertificateSelector,
+                                                         ClientCert,
+                                                         TLSProtocol,
+                                                         ContentType,
+                                                         Accept,
+                                                         Authentication,
+                                                         HTTPUserAgent,
+                                                         Connection,
+                                                         RequestTimeout,
+                                                         TransmissionRetryDelay,
+                                                         MaxNumberOfRetries,
+                                                         InternalBufferSize,
+                                                         UseHTTPPipelining,
+                                                         DisableLogging,
+                                                         HTTPLogger,
+                                                         DNSClient
+                                                     ).
 
-                                                       Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                              versions[versionId.Value].Path,
-                                                                                              RequestBuilder: requestBuilder => {
-                                                                                                  //requestBuilder.Host           = HTTPHostname.Parse(Versions[VersionId].Hostname + (Versions[VersionId].Port.HasValue ? Versions[VersionId].Port.Value.ToString() : ""));
-                                                                                                  requestBuilder.Authorization = TokenAuth;
-                                                                                                  requestBuilder.Connection = ConnectionType.Close;
-                                                                                                  requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                                  requestBuilder.Set("X-Request-ID", requestId);
-                                                                                                  requestBuilder.Set("X-Correlation-ID", correlationId);
-                                                                                              }),
+                                                     Execute(client => client.CreateRequest(HTTPMethod.GET,
+                                                                                            versionURL.Path,
+                                                                                            RequestBuilder: requestBuilder => {
+                                                                                                //requestBuilder.Host           = HTTPHostname.Parse(Versions[VersionId].Hostname + (Versions[VersionId].Port.HasValue ? Versions[VersionId].Port.Value.ToString() : ""));
+                                                                                                requestBuilder.Authorization    = TokenAuth;
+                                                                                                requestBuilder.Connection       = ConnectionType.Close;
+                                                                                                requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                                requestBuilder.Set("X-Request-ID", requestId);
+                                                                                                requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                                            }),
 
-                                                             RequestLogDelegate:   OnGetVersionDetailsHTTPRequest,
-                                                             ResponseLogDelegate:  OnGetVersionDetailsHTTPResponse,
-                                                             CancellationToken:    CancellationToken,
-                                                             EventTrackingId:      eventTrackingId,
-                                                             RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+                                                           RequestLogDelegate:   OnGetVersionDetailsHTTPRequest,
+                                                           ResponseLogDelegate:  OnGetVersionDetailsHTTPResponse,
+                                                           CancellationToken:    CancellationToken,
+                                                           EventTrackingId:      eventTrackingId,
+                                                           RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
 
-                                                       ConfigureAwait(false);
+                                                     ConfigureAwait(false);
 
                             #endregion
 

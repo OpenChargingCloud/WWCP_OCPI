@@ -418,7 +418,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          TariffIdURL,
                          CustomTariffParser))
             {
-                return tariff!;
+                return tariff;
             }
 
             throw new ArgumentException("The given JSON representation of a tariff is invalid: " + errorResponse,

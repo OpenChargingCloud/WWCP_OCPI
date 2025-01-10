@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -133,7 +135,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          out var errorResponse,
                          CustomStartSessionCommandParser))
             {
-                return startSessionCommand!;
+                return startSessionCommand;
             }
 
             throw new ArgumentException("The given JSON representation of a 'start session' command is invalid: " + errorResponse,
@@ -153,9 +155,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="StartSessionCommand">The parsed 'start session' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                   JSON,
-                                       out StartSessionCommand?  StartSessionCommand,
-                                       out String?               ErrorResponse)
+        public static Boolean TryParse(JObject                                        JSON,
+                                       [NotNullWhen(true)]  out StartSessionCommand?  StartSessionCommand,
+                                       [NotNullWhen(false)] out String?               ErrorResponse)
 
             => TryParse(JSON,
                         out StartSessionCommand,
@@ -171,8 +173,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomStartSessionCommandParser">A delegate to parse custom 'start session' command JSON objects.</param>
         public static Boolean TryParse(JObject                                            JSON,
-                                       out StartSessionCommand?                           StartSessionCommand,
-                                       out String?                                        ErrorResponse,
+                                       [NotNullWhen(true)]  out StartSessionCommand?      StartSessionCommand,
+                                       [NotNullWhen(false)] out String?                   ErrorResponse,
                                        CustomJObjectParserDelegate<StartSessionCommand>?  CustomStartSessionCommandParser   = null)
         {
 

@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -95,7 +97,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          out var errorResponse,
                          CustomCancelReservationCommandParser))
             {
-                return cancelReservationCommand!;
+                return cancelReservationCommand;
             }
 
             throw new ArgumentException("The given JSON representation of a 'cancel reservation' command is invalid: " + errorResponse,
@@ -115,9 +117,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CancelReservationCommand">The parsed 'cancel reservation' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                        JSON,
-                                       out CancelReservationCommand?  CancelReservationCommand,
-                                       out String?                    ErrorResponse)
+        public static Boolean TryParse(JObject                                             JSON,
+                                       [NotNullWhen(true)]  out CancelReservationCommand?  CancelReservationCommand,
+                                       [NotNullWhen(false)] out String?                    ErrorResponse)
 
             => TryParse(JSON,
                         out CancelReservationCommand,
@@ -133,8 +135,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCancelReservationCommandParser">A delegate to parse custom 'cancel reservation' command JSON objects.</param>
         public static Boolean TryParse(JObject                                                 JSON,
-                                       out CancelReservationCommand?                           CancelReservationCommand,
-                                       out String?                                             ErrorResponse,
+                                       [NotNullWhen(true)]  out CancelReservationCommand?      CancelReservationCommand,
+                                       [NotNullWhen(false)] out String?                        ErrorResponse,
                                        CustomJObjectParserDelegate<CancelReservationCommand>?  CustomCancelReservationCommandParser   = null)
         {
 

@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -112,7 +114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                          out var errorResponse,
                          CustomUnlockConnectorCommandParser))
             {
-                return unlockConnectorCommand!;
+                return unlockConnectorCommand;
             }
 
             throw new ArgumentException("The given JSON representation of an 'unlock connector' command is invalid: " + errorResponse,
@@ -132,9 +134,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="UnlockConnectorCommand">The parsed 'unlock connector' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                      JSON,
-                                       out UnlockConnectorCommand?  UnlockConnectorCommand,
-                                       out String?                  ErrorResponse)
+        public static Boolean TryParse(JObject                                           JSON,
+                                       [NotNullWhen(true)]  out UnlockConnectorCommand?  UnlockConnectorCommand,
+                                       [NotNullWhen(false)] out String?                  ErrorResponse)
 
             => TryParse(JSON,
                         out UnlockConnectorCommand,
@@ -150,8 +152,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomUnlockConnectorCommandParser">A delegate to parse custom 'unlock connector' command JSON objects.</param>
         public static Boolean TryParse(JObject                                               JSON,
-                                       out UnlockConnectorCommand?                           UnlockConnectorCommand,
-                                       out String?                                           ErrorResponse,
+                                       [NotNullWhen(true)]  out UnlockConnectorCommand?      UnlockConnectorCommand,
+                                       [NotNullWhen(false)] out String?                      ErrorResponse,
                                        CustomJObjectParserDelegate<UnlockConnectorCommand>?  CustomUnlockConnectorCommandParser   = null)
         {
 
