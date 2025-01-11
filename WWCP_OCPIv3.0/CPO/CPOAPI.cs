@@ -1529,7 +1529,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                                         HTTPStatusCode              = HTTPStatusCode.Forbidden,
                                                         AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
                                                         AccessControlAllowHeaders   = [ "Authorization" ],
-                                                        AccessControlExposeHeaders  = ["X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count"]
+                                                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
                                                     }
                                                 });
 

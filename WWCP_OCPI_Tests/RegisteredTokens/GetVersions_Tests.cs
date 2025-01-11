@@ -324,7 +324,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #endregion
 
 
-
         #region EMSP1_GetVersions_fromCPO1_viaOCPIv2_1_1__RegisteredToken_Test1()
 
         /// <summary>
@@ -409,10 +408,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 var version2_3   = versions?.ElementAt(2);
                 Assert.That(version2_3?.  Id == OCPIv2_3.Version.Id, Is.True);
                 Assert.That(URL.Parse("http://localhost:3301/ocpi/versions/2.3")   == version2_3?.  URL, Is.True);
-
-
-                //Assert.That(response.Request, Is.Not.Null);
-
 
             }
 
@@ -609,7 +604,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         }
 
         #endregion
-
 
     }
 

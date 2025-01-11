@@ -199,6 +199,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         #endregion
 
 
+        #region Data
+
+        /// <summary>
+        /// The default HTTP user agent.
+        /// </summary>
+        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(CPOClient)}";
+
+        /// <summary>
+        /// The default logging context.
+        /// </summary>
+        public new const String  DefaultLoggingContext   = nameof(CPOClient);
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -793,6 +807,68 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         #region Constructor(s)
 
+        #region CPOClient(OCPIVersionsURL, OCPIToken = null, ...)
+
+        /// <summary>
+        /// Create a new CPO client.
+        /// </summary>
+        /// <param name="OCPIVersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
+        /// <param name="OCPIToken">The optional OCPI token.</param>
+        /// 
+        /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
+        /// <param name="Description">An optional description of this CPO client.</param>
+        /// <param name="DisableLogging">Disable all logging.</param>
+        /// <param name="LoggingPath">The logging path.</param>
+        /// <param name="LoggingContext">An optional context for logging.</param>
+        /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
+        /// <param name="DNSClient">The DNS client to use.</param>
+        public CPOClient(URL                          OCPIVersionsURL,
+                         String?                      OCPIToken         = null,
+
+                         HTTPHostname?                VirtualHostname   = null,
+                         I18NString?                  Description       = null,
+                         HTTPClientLogger?            HTTPLogger        = null,
+                         TimeSpan?                    RequestTimeout    = null,
+
+                         Boolean?                     DisableLogging    = false,
+                         String?                      LoggingPath       = null,
+                         String?                      LoggingContext    = null,
+                         OCPILogfileCreatorDelegate?  LogfileCreator    = null,
+                         DNSClient?                   DNSClient         = null)
+
+            : base(OCPIVersionsURL,
+                   OCPIToken,
+
+                   VirtualHostname,
+                   Description,
+                   HTTPLogger,
+                   RequestTimeout,
+
+                   DisableLogging,
+                   LoggingPath,
+                   LoggingContext,
+                   LogfileCreator,
+                   DNSClient)
+
+        {
+
+            this.Counters    = new APICounters();
+
+            base.HTTPLogger  = this.DisableLogging == false
+                                   ? new Logger(
+                                         this,
+                                         LoggingPath,
+                                         LoggingContext ?? DefaultLoggingContext,
+                                         LogfileCreator
+                                     )
+                                   : null;
+
+        }
+
+        #endregion
+
+        #region CPOClient(CommonAPI, RemoteParty, ...)
+
         /// <summary>
         /// Create a new EMSP client.
         /// </summary>
@@ -843,6 +919,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                    : null;
 
         }
+
+        #endregion
 
         #endregion
 

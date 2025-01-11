@@ -17,7 +17,7 @@
 
 #region Usings
 
-using System.Net.Security;
+using System.Collections.Concurrent;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
@@ -105,11 +105,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <summary>
         /// The default HTTP user agent.
         /// </summary>
-        public new const    String                                 DefaultHTTPUserAgent   = $"GraphDefined OCPI {Version.String} Common Client";
+        public new const    String                                           DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} Common Client";
 
-        protected readonly  Dictionary<Version_Id, URL>            versions               = new ();
+        /// <summary>
+        /// The default logging context.
+        /// </summary>
+        public const        String                                           DefaultLoggingContext   = nameof(CommonClient);
 
-        protected readonly  Dictionary<Version_Id, VersionDetail>  versionDetails         = new ();
+        protected readonly  ConcurrentDictionary<Version_Id, URL>            versions                = [];
+
+        protected readonly  ConcurrentDictionary<Version_Id, VersionDetail>  versionDetails          = [];
 
         #endregion
 
@@ -118,53 +123,53 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <summary>
         /// The CommonAPI.
         /// </summary>
-        public CommonAPI                CommonAPI                { get; }
+        public CommonAPI?                CommonAPI                { get; }
 
         /// <summary>
         /// The remote party.
         /// </summary>
-        public RemoteParty              RemoteParty              { get; }
+        public RemoteParty?              RemoteParty              { get; }
 
         /// <summary>
         /// The current remote URL of the remote VERSIONS endpoint to connect to.
         /// The remote party might define multiple for H/A reasons.
         /// </summary>
-        public URL                      RemoteVersionsURL        { get; }
+        public URL                       RemoteVersionsURL        { get; }
 
         /// <summary>
         /// The current access token.
         /// The remote party might define different access token for each VersionsAPI endpoint for H/A and/or security reasons.
         /// The access token might be updated during the REGISTRATION process!
         /// </summary>
-        public AccessToken              AccessToken              { get; private set; }
+        public AccessToken?              AccessToken              { get; private set; }
 
         /// <summary>
         /// The current HTTP Token Authentication based on the current access token.
         /// The remote party might define different access token for each VersionsAPI endpoint for H/A and/or security reasons.
         /// The access token might be updated during the REGISTRATION process!
         /// </summary>
-        public HTTPTokenAuthentication  TokenAuth                { get; private set; }
+        public HTTPTokenAuthentication?  TokenAuth                { get; private set; }
 
         /// <summary>
         /// The selected OCPI version.
         /// The selected OCPI version might be updated during the REGISTRATION process!
         /// </summary>
-        public Version_Id?              SelectedOCPIVersionId    { get; set; }
+        public Version_Id?               SelectedOCPIVersionId    { get; set; }
 
         /// <summary>
         /// The JSON formating used.
         /// </summary>
-        public Formatting               JSONFormat               { get; set; } = Formatting.None;
+        public Formatting                JSONFormat               { get; set; } = Formatting.None;
 
         /// <summary>
         /// CPO client event counters.
         /// </summary>
-        public CommonAPICounters        Counters                 { get; }
+        public CommonAPICounters         Counters                 { get; }
 
         /// <summary>
         /// The attached HTTP client logger.
         /// </summary>
-        public new Logger?              HTTPLogger
+        public new Logger?               HTTPLogger
         {
             get
             {
@@ -361,6 +366,91 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         #endregion
 
         #region Constructor(s)
+
+        #region CommonClient(OCPIVersionsURL, OCPIToken = null, ...)
+
+        /// <summary>
+        /// Create a new OCPI Common client.
+        /// </summary>
+        /// <param name="OCPIVersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
+        /// <param name="OCPIToken">The optional OCPI token.</param>
+        /// 
+        /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
+        /// <param name="Description">An optional description of this CPO client.</param>
+        /// <param name="HTTPLogger">An optional delegate to log HTTP(S) requests and responses.</param>
+        /// <param name="RequestTimeout">An optional request timeout.</param>
+        /// 
+        /// <param name="DisableLogging">Whether to disable all logging.</param>
+        /// <param name="LoggingPath">An optional path for logging.</param>
+        /// <param name="LoggingContext">An optional context for logging.</param>
+        /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
+        /// <param name="DNSClient">The DNS client to use.</param>
+        public CommonClient(URL                          OCPIVersionsURL,
+                            String?                      OCPIToken         = null,
+
+                            HTTPHostname?                VirtualHostname   = null,
+                            I18NString?                  Description       = null,
+                            HTTPClientLogger?            HTTPLogger        = null,
+                            TimeSpan?                    RequestTimeout    = null,
+
+                            Boolean?                     DisableLogging    = false,
+                            String?                      LoggingPath       = null,
+                            String?                      LoggingContext    = null,
+                            OCPILogfileCreatorDelegate?  LogfileCreator    = null,
+                            DNSClient?                   DNSClient         = null)
+
+            : base(OCPIVersionsURL,
+                   VirtualHostname,
+                   Description,
+                   null, //RemoteParty.PreferIPv4,
+                   null, //RemoteParty.RemoteCertificateValidator,
+                   null, //RemoteParty.LocalCertificateSelector,
+                   null, //RemoteParty.ClientCert,
+                   null, //RemoteParty.TLSProtocol,
+                   HTTPContentType.Application.JSON_UTF8,
+                   AcceptTypes.FromHTTPContentTypes(HTTPContentType.Application.JSON_UTF8),
+                   OCPIToken.IsNotNullOrEmpty()
+                       ? HTTPTokenAuthentication.Parse(OCPIToken)
+                       : null,
+                   null, //RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent,
+                   ConnectionType.Close,
+                   null, //RemoteParty.RequestTimeout,
+                   null, //RemoteParty.TransmissionRetryDelay,
+                   null, //RemoteParty.MaxNumberOfRetries,
+                   null, //RemoteParty.InternalBufferSize,
+                   null, //RemoteParty.UseHTTPPipelining,
+                   DisableLogging,
+                   HTTPLogger,
+                   DNSClient)
+
+        {
+
+            this.RemoteVersionsURL  = OCPIVersionsURL;
+
+            this.AccessToken        = OCPIToken.IsNotNullOrEmpty()
+                                          ? OCPI.AccessToken.Parse(OCPIToken)
+                                          : null;
+
+            this.TokenAuth          = OCPIToken.IsNotNullOrEmpty()
+                                          ? HTTPTokenAuthentication.Parse(OCPIToken)
+                                          : null;
+
+            this.Counters           = new CommonAPICounters();
+
+            base.HTTPLogger         = this.DisableLogging == false
+                                          ? new Logger(
+                                                this,
+                                                LoggingPath,
+                                                LoggingContext,
+                                                LogfileCreator is not null
+                                                    ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
+                                                    : null
+                                            )
+                                          : null;
+
+        }
+
+        #endregion
 
         #region CommonClient(CommonAPI, RemoteParty, ...)
 
@@ -607,13 +697,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<VersionInformation>>>
 
-            GetVersions(Request_Id?         RequestId           = null,
-                        Correlation_Id?     CorrelationId       = null,
+            GetVersions(Request_Id?        RequestId           = null,
+                        Correlation_Id?    CorrelationId       = null,
 
-                        DateTime?           Timestamp           = null,
-                        EventTracking_Id?   EventTrackingId     = null,
-                        TimeSpan?           RequestTimeout      = null,
-                        CancellationToken   CancellationToken   = default)
+                        DateTime?          Timestamp           = null,
+                        EventTracking_Id?  EventTrackingId     = null,
+                        TimeSpan?          RequestTimeout      = null,
+                        CancellationToken  CancellationToken   = default)
 
         {
 
@@ -749,8 +839,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
                                     foreach (var versionInformation in response.Data)
                                     {
-                                        versions.Add(versionInformation.Id,
-                                                     versionInformation.URL);
+                                        versions.TryAdd(
+                                            versionInformation.Id,
+                                            versionInformation.URL
+                                        );
                                     }
 
                                 }
@@ -1032,9 +1124,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                         {
 
                                             if (versionDetails.ContainsKey(versionId.Value))
-                                                versionDetails.Remove(versionId.Value);
+                                                versionDetails.TryRemove(versionId.Value, out _);
 
-                                            versionDetails.Add(versionId.Value, response.Data);
+                                            versionDetails.TryAdd(
+                                                versionId.Value,
+                                                response.Data
+                                            );
 
                                             if (SetAsDefaultVersion)
                                                 SelectedOCPIVersionId = VersionId;
@@ -1183,14 +1278,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Credentials>>
 
-            GetCredentials(Version_Id?         VersionId           = null,
-                           Request_Id?         RequestId           = null,
-                           Correlation_Id?     CorrelationId       = null,
+            GetCredentials(Version_Id?        VersionId           = null,
+                           Request_Id?        RequestId           = null,
+                           Correlation_Id?    CorrelationId       = null,
 
-                           DateTime?           Timestamp           = null,
-                           EventTracking_Id?   EventTrackingId     = null,
-                           TimeSpan?           RequestTimeout      = null,
-                           CancellationToken   CancellationToken   = default)
+                           DateTime?          Timestamp           = null,
+                           EventTracking_Id?  EventTrackingId     = null,
+                           TimeSpan?          RequestTimeout      = null,
+                           CancellationToken  CancellationToken   = default)
 
         {
 
@@ -1395,16 +1490,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Credentials>>
 
-            PostCredentials(Credentials         Credentials,
+            PostCredentials(Credentials        Credentials,
 
-                            Version_Id?         VersionId           = null,
-                            Request_Id?         RequestId           = null,
-                            Correlation_Id?     CorrelationId       = null,
+                            Version_Id?        VersionId           = null,
+                            Request_Id?        RequestId           = null,
+                            Correlation_Id?    CorrelationId       = null,
 
-                            DateTime?           Timestamp           = null,
-                            EventTracking_Id?   EventTrackingId     = null,
-                            TimeSpan?           RequestTimeout      = null,
-                            CancellationToken   CancellationToken   = default)
+                            DateTime?          Timestamp           = null,
+                            EventTracking_Id?  EventTrackingId     = null,
+                            TimeSpan?          RequestTimeout      = null,
+                            CancellationToken  CancellationToken   = default)
 
         {
 
@@ -1613,16 +1708,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Credentials>>
 
-            PutCredentials(Credentials         Credentials,
+            PutCredentials(Credentials        Credentials,
 
-                           Version_Id?         VersionId           = null,
-                           Request_Id?         RequestId           = null,
-                           Correlation_Id?     CorrelationId       = null,
+                           Version_Id?        VersionId           = null,
+                           Request_Id?        RequestId           = null,
+                           Correlation_Id?    CorrelationId       = null,
 
-                           DateTime?           Timestamp           = null,
-                           EventTracking_Id?   EventTrackingId     = null,
-                           TimeSpan?           RequestTimeout      = null,
-                           CancellationToken   CancellationToken   = default)
+                           DateTime?          Timestamp           = null,
+                           EventTracking_Id?  EventTrackingId     = null,
+                           TimeSpan?          RequestTimeout      = null,
+                           CancellationToken  CancellationToken   = default)
 
         {
 
@@ -2120,17 +2215,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Credentials>>
 
-            Register(Version_Id?                    VersionId             = null,
-                     Boolean                        SetAsDefaultVersion   = true,
-                     AccessToken?                   CredentialTokenB      = null,
+            Register(Version_Id?        VersionId             = null,
+                     Boolean            SetAsDefaultVersion   = true,
+                     AccessToken?       CredentialTokenB      = null,
 
-                     Request_Id?                    RequestId             = null,
-                     Correlation_Id?                CorrelationId         = null,
+                     Request_Id?        RequestId             = null,
+                     Correlation_Id?    CorrelationId         = null,
 
-                     DateTime?                      Timestamp             = null,
-                     EventTracking_Id?              EventTrackingId       = null,
-                     TimeSpan?                      RequestTimeout        = null,
-                     CancellationToken              CancellationToken     = default)
+                     DateTime?          Timestamp             = null,
+                     EventTracking_Id?  EventTrackingId       = null,
+                     TimeSpan?          RequestTimeout        = null,
+                     CancellationToken  CancellationToken     = default)
 
         {
 
@@ -2186,7 +2281,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             try
             {
 
-                var credentialTokenB  = CredentialTokenB ?? AccessToken.NewRandom();
+                var credentialTokenB  = CredentialTokenB ?? OCPI.AccessToken.NewRandom();
 
                 var remoteURL         = await GetRemoteURL(Module_Id.Credentials,
                                                            InterfaceRoles.RECEIVER,

@@ -28,10 +28,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 {
 
     /// <summary>
-    /// Testing the OCPI GetVersionDetails method(s).
+    /// Testing the OCPI GetVersionDetails method(s) using registered OCPO tokens.
     /// </summary>
     [TestFixture]
-    public class GetVersionDetails_Tests : A_2CPOs2EMSPs_TestDefaults
+    public class GetVersionDetails_RegisteredTokens_Tests : A_2CPOs2EMSPs_TestDefaults
     {
 
         #region CPO1_GetVersionDetails_v2_1_1_fromEMSP1_viaOCPIv2_1_1__RegisteredToken_Test1()

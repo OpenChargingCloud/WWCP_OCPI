@@ -3805,7 +3805,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                           StatusMessage        = "Invalid or blocked access token!",
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.Forbidden,
-            //                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                               AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                               AccessControlAllowHeaders  = [ "Authorization" ]
             //                                           }
             //                                       };
@@ -3866,7 +3866,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                           //Data                 = newOrUpdatedEVSE.ToJSON(),
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.OK,
-            //                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                               AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                               AccessControlAllowHeaders  = [ "Authorization" ]
             //                                           }
             //                                       };
@@ -6501,7 +6501,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                               StatusMessage        = "Could not parse the given 'RESERVE NOW' command result JSON: " + errorResponse,
             //                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
-            //                                                   AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                                   AccessControlAllowHeaders  = [ "Authorization" ]
             //                                               }
             //                                           }
@@ -6522,7 +6522,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                               StatusCode           = 1000,
             //                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                                   HTTPStatusCode             = HTTPStatusCode.Accepted,
-            //                                                   AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                                   AccessControlAllowHeaders  = [ "Authorization" ]
             //                                               }
             //                                           }
@@ -6536,7 +6536,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                           StatusMessage        = "Unknown 'RESERVE NOW' command identification!",
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.OK,
-            //                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                               AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                               AccessControlAllowHeaders  = [ "Authorization" ]
             //                                           }
             //                                       }
@@ -6610,7 +6610,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                               StatusMessage        = "Could not parse the given 'CANCEL RESERVATION' command result JSON: " + errorResponse,
             //                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
-            //                                                   AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                                   AccessControlAllowHeaders  = [ "Authorization" ]
             //                                               }
             //                                           }
@@ -6631,7 +6631,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                               StatusCode           = 1000,
             //                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                                   HTTPStatusCode             = HTTPStatusCode.Accepted,
-            //                                                   AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                                   AccessControlAllowHeaders  = [ "Authorization" ]
             //                                               }
             //                                           }
@@ -6645,7 +6645,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                           StatusMessage        = "Unknown 'CANCEL RESERVATION' command identification!",
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.OK,
-            //                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                               AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                               AccessControlAllowHeaders  = [ "Authorization" ]
             //                                           }
             //                                       }
@@ -6719,7 +6719,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                               StatusMessage        = "Could not parse the given 'START SESSION' command result JSON: " + errorResponse,
             //                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
-            //                                                   AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                                   AccessControlAllowHeaders  = [ "Authorization" ]
             //                                               }
             //                                           }
@@ -6740,7 +6740,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                               StatusCode           = 1000,
             //                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                                   HTTPStatusCode             = HTTPStatusCode.Accepted,
-            //                                                   AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                                   AccessControlAllowHeaders  = [ "Authorization" ]
             //                                               }
             //                                           }
@@ -6754,7 +6754,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                           StatusMessage        = "Unknown 'START SESSION' command identification!",
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.OK,
-            //                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                               AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                               AccessControlAllowHeaders  = [ "Authorization" ]
             //                                           }
             //                                       }
@@ -6828,7 +6828,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                               StatusMessage        = "Could not parse the given 'STOP SESSION' command result JSON: " + errorResponse,
             //                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
-            //                                                   AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                                   AccessControlAllowHeaders  = [ "Authorization" ]
             //                                               }
             //                                           }
@@ -6849,7 +6849,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                               StatusCode           = 1000,
             //                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                                   HTTPStatusCode             = HTTPStatusCode.Accepted,
-            //                                                   AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                                   AccessControlAllowHeaders  = [ "Authorization" ]
             //                                               }
             //                                           }
@@ -6863,7 +6863,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                           StatusMessage        = "Unknown 'STOP SESSION' command identification!",
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.OK,
-            //                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                               AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                               AccessControlAllowHeaders  = [ "Authorization" ]
             //                                           }
             //                                       }
@@ -6937,7 +6937,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                               StatusMessage        = "Could not parse the given 'UNLOCK CONNECTOR' command result JSON: " + errorResponse,
             //                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
-            //                                                   AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                                   AccessControlAllowHeaders  = [ "Authorization" ]
             //                                               }
             //                                           }
@@ -6958,7 +6958,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                               StatusCode           = 1000,
             //                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                                   HTTPStatusCode             = HTTPStatusCode.Accepted,
-            //                                                   AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                                   AccessControlAllowHeaders  = [ "Authorization" ]
             //                                               }
             //                                           }
@@ -6972,7 +6972,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                           StatusMessage        = "Unknown 'UNLOCK CONNECTOR' command identification!",
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.OK,
-            //                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+            //                                               AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
             //                                               AccessControlAllowHeaders  = [ "Authorization" ]
             //                                           }
             //                                       }

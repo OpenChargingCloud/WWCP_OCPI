@@ -26,12 +26,7 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
-using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.Mail;
-using org.GraphDefined.Vanaheimr.Hermod.SMTP;
-using org.GraphDefined.Vanaheimr.Hermod.Sockets;
-using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP;
@@ -3124,13 +3119,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                          new (
                                              Module_Id.Credentials,
                                              InterfaceRoles.SENDER,
-                                             URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() + (request.Host + (prefix + "credentials")))
+                                             URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                                 (request.Host + (prefix + "credentials")))
                                          ),
 
                                          new (
                                              Module_Id.Credentials,
                                              InterfaceRoles.RECEIVER,
-                                             URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() + (request.Host + (prefix + "credentials")))
+                                             URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                                 (request.Host + (prefix + "credentials")))
                                          )
 
                                     };
@@ -3143,42 +3140,70 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     if (request.RemoteParty?.Roles.Any(credentialsRole => credentialsRole.Role == Role.CPO) == true)
                     {
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,
-                                                            InterfaceRoles.RECEIVER,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() + 
-                                                                    (request.Host + (prefix + "emsp/locations")).Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Locations,
+                                InterfaceRoles.RECEIVER,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() + 
+                                    (request.Host + (prefix + "emsp/locations")).Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Tariffs,
-                                                            InterfaceRoles.RECEIVER,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "emsp/tariffs")).  Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Tariffs,
+                                InterfaceRoles.RECEIVER,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "emsp/tariffs")).  Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
-                                                            InterfaceRoles.RECEIVER,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "emsp/sessions")). Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Sessions,
+                                InterfaceRoles.RECEIVER,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "emsp/sessions")). Replace("//", "/"))
+                            )
+                        );
 
                         // When the EMSP acts as smart charging receiver so that a SCSP can talk to him!
-                        endpoints.Add(new VersionEndpoint(Module_Id.ChargingProfiles,
-                                                            InterfaceRoles.SENDER,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.ChargingProfiles,
+                                InterfaceRoles.SENDER,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
-                                                            InterfaceRoles.RECEIVER,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "emsp/cdrs")).     Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.CDRs,
+                                InterfaceRoles.RECEIVER,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "emsp/cdrs")).     Replace("//", "/"))
+                            )
+                        );
 
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Commands,
-                                                            InterfaceRoles.SENDER,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "emsp/commands")). Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Commands,
+                                InterfaceRoles.SENDER,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "emsp/commands")). Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Tokens,
-                                                            InterfaceRoles.SENDER,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "emsp/tokens")).   Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Tokens,
+                                InterfaceRoles.SENDER,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "emsp/tokens")).   Replace("//", "/"))
+                            )
+                        );
 
                         // hubclientinfo
 
@@ -3186,19 +3211,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                     #endregion
 
-                    #region We are a CPO, the other side is unauthenticated and we export locations as Open Data...
+                    #region We are a CPO, the other side is unauthenticated and we export locations and AdHoc tariffs as Open Data...
 
                     if (OurCredentialRoles.Any(credentialRole => credentialRole.Role == Role.CPO) &&
                         BaseAPI.LocationsAsOpenData &&
                         request.RemoteParty is null)
                     {
+
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.Locations,
                                 InterfaceRoles.SENDER,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() + (request.Host + (prefix + "cpo/locations")))
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/locations")))
                             )
                         );
+
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Tariffs,
+                                InterfaceRoles.SENDER,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/tariffs")))
+                            )
+                        );
+
                     }
 
                     #endregion
@@ -3208,41 +3245,69 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     if (request.RemoteParty?.Roles.Any(credentialsRole => credentialsRole.Role == Role.EMSP) == true)
                     {
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,
-                                                            InterfaceRoles.SENDER,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "cpo/locations")).       Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Locations,
+                                InterfaceRoles.SENDER,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/locations")).       Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Tariffs,
-                                                            InterfaceRoles.SENDER,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "cpo/tariffs")).         Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Tariffs,
+                                InterfaceRoles.SENDER,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/tariffs")).         Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
-                                                            InterfaceRoles.SENDER,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "cpo/sessions")).        Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Sessions,
+                                InterfaceRoles.SENDER,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/sessions")).        Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.ChargingProfiles,
-                                                            InterfaceRoles.SENDER,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.ChargingProfiles,
+                                InterfaceRoles.SENDER,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
-                                                            InterfaceRoles.SENDER,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "cpo/cdrs")).            Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.CDRs,
+                                InterfaceRoles.SENDER,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/cdrs")).            Replace("//", "/"))
+                            )
+                        );
 
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Commands,
-                                                            InterfaceRoles.RECEIVER,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "cpo/commands")).        Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Commands,
+                                InterfaceRoles.RECEIVER,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/commands")).        Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Tokens,
-                                                            InterfaceRoles.RECEIVER,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "cpo/tokens")).          Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Tokens,
+                                InterfaceRoles.RECEIVER,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/tokens")).          Replace("//", "/"))
+                            )
+                        );
 
                         // hubclientinfo
 
@@ -3352,52 +3417,54 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             // ---------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2.1/credentials
             // ---------------------------------------------------------------------------------
-            this.AddOCPIMethod(Hostname,
-                               HTTPMethod.GET,
-                               URLPathPrefix + $"{Version.Id}/credentials",
-                               HTTPContentType.Application.JSON_UTF8,
-                               OCPIRequestLogger:   GetCredentialsRequest,
-                               OCPIResponseLogger:  GetCredentialsResponse,
-                               OCPIRequestHandler:  Request => {
+            this.AddOCPIMethod(
 
-                                   #region Check access token
+                Hostname,
+                HTTPMethod.GET,
+                URLPathPrefix + $"{Version.Id}/credentials",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestLogger:   GetCredentialsRequest,
+                OCPIResponseLogger:  GetCredentialsResponse,
+                OCPIRequestHandler:  request => {
 
-                                   if (Request.LocalAccessInfo is not null &&
-                                       Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
-                                   {
+                    #region Check access token
 
-                                       return Task.FromResult(
-                                           new OCPIResponse.Builder(Request) {
-                                              StatusCode           = 2000,
-                                              StatusMessage        = "Invalid or blocked access token!",
-                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                  HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                  AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                  AccessControlAllowHeaders  = [ "Authorization" ]
-                                              }
-                                          });
+                    if (request.LocalAccessInfo is not null &&
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
+                    {
 
-                                   }
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                               StatusCode           = 2000,
+                               StatusMessage        = "Invalid or blocked access token!",
+                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                           });
 
-                                   #endregion
+                    }
 
-                                   return Task.FromResult(
-                                       new OCPIResponse.Builder(Request) {
-                                           StatusCode           = 1000,
-                                           StatusMessage        = "Hello world!",
-                                           Data                 = new Credentials(
-                                                                      Request.LocalAccessInfo?.AccessToken ?? AccessToken.Parse("<any>"),
-                                                                      BaseAPI.OurVersionsURL,
-                                                                      OurCredentialRoles
-                                                                  ).ToJSON(),
-                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                               AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                                               AccessControlAllowHeaders  = [ "Authorization" ]
-                                           }
-                                       });
+                    #endregion
 
-                               });
+                    return Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                            StatusCode           = 1000,
+                            StatusMessage        = "Hello world!",
+                            Data                 = new Credentials(
+                                                       request.LocalAccessInfo?.AccessToken ?? AccessToken.Parse("<any>"),
+                                                       BaseAPI.OurVersionsURL,
+                                                       OurCredentialRoles
+                                                   ).ToJSON(),
+                            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                                AccessControlAllowHeaders  = [ "Authorization" ]
+                            }
+                        });
+
+                });
 
             #endregion
 
@@ -3408,43 +3475,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             // -----------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2.1/credentials
             // -----------------------------------------------------------------------------
-            this.AddOCPIMethod(Hostname,
-                               HTTPMethod.POST,
-                               URLPathPrefix + $"{Version.Id}/credentials",
-                               HTTPContentType.Application.JSON_UTF8,
-                               OCPIRequestLogger:   PostCredentialsRequest,
-                               OCPIResponseLogger:  PostCredentialsResponse,
-                               OCPIRequestHandler:  async Request => {
+            this.AddOCPIMethod(
 
-                                   if (Request.LocalAccessInfo?.Status == AccessStatus.ALLOWED)
-                                   {
+                Hostname,
+                HTTPMethod.POST,
+                URLPathPrefix + $"{Version.Id}/credentials",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestLogger:   PostCredentialsRequest,
+                OCPIResponseLogger:  PostCredentialsResponse,
+                OCPIRequestHandler:  async request => {
 
-                                       if (Request.LocalAccessInfo.VersionsURL.HasValue)
-                                           return new OCPIResponse.Builder(Request) {
-                                                      StatusCode           = 2000,                                              // CREDENTIALS_TOKEN_A
-                                                      StatusMessage        = $"The given access token '{Request.LocalAccessInfo.AccessToken}' is already registered!",
-                                                      HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                          HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                          AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                                                          AccessControlAllowHeaders  = [ "Authorization" ]
-                                                      }
-                                                  };
+                    if (request.LocalAccessInfo?.Status == AccessStatus.ALLOWED)
+                    {
 
-                                       return await POSTOrPUTCredentials(Request);
+                        if (request.LocalAccessInfo.VersionsURL.HasValue)
+                            return new OCPIResponse.Builder(request) {
+                                       StatusCode           = 2000,                                              // CREDENTIALS_TOKEN_A
+                                       StatusMessage        = $"The given access token '{request.LocalAccessInfo.AccessToken}' is already registered!",
+                                       HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                                           AccessControlAllowHeaders  = [ "Authorization" ]
+                                       }
+                                   };
 
-                                   }
+                        return await POSTOrPUTCredentials(request);
 
-                                   return new OCPIResponse.Builder(Request) {
-                                              StatusCode           = 2000,
-                                              StatusMessage        = "You need to be registered before trying to invoke this protected method!",
-                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                  HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                  AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                                                  AccessControlAllowHeaders  = [ "Authorization" ]
-                                              }
-                                          };
+                    }
 
-                               });
+                    return new OCPIResponse.Builder(request) {
+                               StatusCode           = 2000,
+                               StatusMessage        = "You need to be registered before trying to invoke this protected method!",
+                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                           };
+
+                });
 
             #endregion
 
@@ -3455,72 +3524,74 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             // ---------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2.1/credentials
             // ---------------------------------------------------------------------------------
-            this.AddOCPIMethod(Hostname,
-                               HTTPMethod.PUT,
-                               URLPathPrefix + $"{Version.Id}/credentials",
-                               HTTPContentType.Application.JSON_UTF8,
-                               OCPIRequestLogger:   PutCredentialsRequest,
-                               OCPIResponseLogger:  PutCredentialsResponse,
-                               OCPIRequestHandler:  async Request => {
+            this.AddOCPIMethod(
 
-                                   #region The access token is known...
+                Hostname,
+                HTTPMethod.PUT,
+                URLPathPrefix + $"{Version.Id}/credentials",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestLogger:   PutCredentialsRequest,
+                OCPIResponseLogger:  PutCredentialsResponse,
+                OCPIRequestHandler:  async request => {
 
-                                   if (Request.LocalAccessInfo is not null)
-                                   {
+                    #region The access token is known...
 
-                                       #region ...but access is blocked!
+                    if (request.LocalAccessInfo is not null)
+                    {
 
-                                       if (Request.LocalAccessInfo?.Status == AccessStatus.BLOCKED)
-                                           return new OCPIResponse.Builder(Request) {
-                                                      StatusCode           = 2000,
-                                                      StatusMessage        = "The given access token '" + (Request.AccessToken?.ToString() ?? "") + "' is blocked!",
-                                                      HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                          HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                          AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                          AccessControlAllowHeaders  = [ "Authorization" ]
-                                                      }
-                                                  };
+                        #region ...but access is blocked!
 
-                                       #endregion
-
-                                       #region ...and access is allowed, but maybe not yet full registered!
-
-                                       if (Request.LocalAccessInfo?.Status == AccessStatus.ALLOWED)
-                                       {
-
-                                           // The party is not yet fully registered!
-                                           if (!Request.LocalAccessInfo?.VersionsURL.HasValue == true)
-                                               return new OCPIResponse.Builder(Request) {
-                                                          StatusCode           = 2000,
-                                                          StatusMessage        = "The given access token '" + (Request.AccessToken?.ToString() ?? "") + "' is not yet registered!",
-                                                          HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                              HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                              AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
-                                                              AccessControlAllowHeaders  = [ "Authorization" ]
-                                                          }
-                                                      };
-
-                                           return await POSTOrPUTCredentials(Request);
-
+                        if (request.LocalAccessInfo?.Status == AccessStatus.BLOCKED)
+                            return new OCPIResponse.Builder(request) {
+                                       StatusCode           = 2000,
+                                       StatusMessage        = "The given access token '" + (request.AccessToken?.ToString() ?? "") + "' is blocked!",
+                                       HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                           HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                           AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                           AccessControlAllowHeaders  = [ "Authorization" ]
                                        }
+                                   };
 
-                                       #endregion
+                        #endregion
 
+                        #region ...and access is allowed, but maybe not yet full registered!
+
+                        if (request.LocalAccessInfo?.Status == AccessStatus.ALLOWED)
+                        {
+
+                            // The party is not yet fully registered!
+                            if (!request.LocalAccessInfo?.VersionsURL.HasValue == true)
+                                return new OCPIResponse.Builder(request) {
+                                           StatusCode           = 2000,
+                                           StatusMessage        = "The given access token '" + (request.AccessToken?.ToString() ?? "") + "' is not yet registered!",
+                                           HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                               HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
+                                               AccessControlAllowHeaders  = [ "Authorization" ]
+                                           }
+                                       };
+
+                            return await POSTOrPUTCredentials(request);
+
+                        }
+
+                        #endregion
+
+                    }
+
+                    #endregion
+
+                    return new OCPIResponse.Builder(request) {
+                                   StatusCode           = 2000,
+                                   StatusMessage        = "You need to be registered before trying to invoke this protected method!",
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ]
                                    }
+                               };
 
-                                   #endregion
-
-                                   return new OCPIResponse.Builder(Request) {
-                                                  StatusCode           = 2000,
-                                                  StatusMessage        = "You need to be registered before trying to invoke this protected method!",
-                                                  HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                      HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                      AccessControlAllowHeaders  = [ "Authorization" ]
-                                                  }
-                                              };
-
-                               });
+                });
 
             #endregion
 
@@ -3531,57 +3602,59 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             // ---------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2.1/credentials
             // ---------------------------------------------------------------------------------
-            this.AddOCPIMethod(Hostname,
-                               HTTPMethod.DELETE,
-                               URLPathPrefix + $"{Version.Id}/credentials",
-                               HTTPContentType.Application.JSON_UTF8,
-                               OCPIRequestLogger:   DeleteCredentialsRequest,
-                               OCPIResponseLogger:  DeleteCredentialsResponse,
-                               OCPIRequestHandler:  async Request => {
+            this.AddOCPIMethod(
 
-                                   if (Request.LocalAccessInfo?.Status == AccessStatus.ALLOWED)
-                                   {
+                Hostname,
+                HTTPMethod.DELETE,
+                URLPathPrefix + $"{Version.Id}/credentials",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestLogger:   DeleteCredentialsRequest,
+                OCPIResponseLogger:  DeleteCredentialsResponse,
+                OCPIRequestHandler:  async request => {
 
-                                       #region Validations
+                    if (request.LocalAccessInfo?.Status == AccessStatus.ALLOWED)
+                    {
 
-                                       if (!Request.LocalAccessInfo.VersionsURL.HasValue)
-                                           return new OCPIResponse.Builder(Request) {
-                                                      StatusCode           = 2000,
-                                                      StatusMessage        = $"The given access token '{Request.LocalAccessInfo.AccessToken}' is not fully registered!",
-                                                      HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                          HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                          AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                                                          AccessControlAllowHeaders  = [ "Authorization" ]
-                                                      }
-                                                  };
+                        #region Validations
 
-                                       #endregion
+                        if (!request.LocalAccessInfo.VersionsURL.HasValue)
+                            return new OCPIResponse.Builder(request) {
+                                       StatusCode           = 2000,
+                                       StatusMessage        = $"The given access token '{request.LocalAccessInfo.AccessToken}' is not fully registered!",
+                                       HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                                           AccessControlAllowHeaders  = [ "Authorization" ]
+                                       }
+                                   };
 
-                                       await RemoveAccessToken(Request.LocalAccessInfo.AccessToken);
+                        #endregion
 
-                                       return new OCPIResponse.Builder(Request) {
-                                                  StatusCode           = 1000,
-                                                  StatusMessage        = $"The given access token '{Request.LocalAccessInfo.AccessToken}' was deleted!",
-                                                  HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                      HTTPStatusCode             = HTTPStatusCode.OK,
-                                                      AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                                                      AccessControlAllowHeaders  = [ "Authorization" ]
-                                                  }
-                                              };
+                        await RemoveAccessToken(request.LocalAccessInfo.AccessToken);
 
+                        return new OCPIResponse.Builder(request) {
+                                   StatusCode           = 1000,
+                                   StatusMessage        = $"The given access token '{request.LocalAccessInfo.AccessToken}' was deleted!",
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ]
                                    }
+                               };
 
-                                   return new OCPIResponse.Builder(Request) {
-                                              StatusCode           = 2000,
-                                              StatusMessage        = "You need to be registered before trying to invoke this protected method!",
-                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                  HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                  AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                                                  AccessControlAllowHeaders  = [ "Authorization" ]
-                                              }
-                                          };
+                    }
 
-                               });
+                    return new OCPIResponse.Builder(request) {
+                               StatusCode           = 2000,
+                               StatusMessage        = "You need to be registered before trying to invoke this protected method!",
+                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                           };
+
+                });
 
             #endregion
 

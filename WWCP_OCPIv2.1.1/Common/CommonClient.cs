@@ -122,51 +122,51 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The CommonAPI.
         /// </summary>
-        public CommonAPI                CommonAPI                { get; }
+        public CommonAPI?                CommonAPI                { get; }
 
         /// <summary>
         /// The remote party.
         /// </summary>
-        public RemoteParty              RemoteParty              { get; }
+        public RemoteParty?              RemoteParty              { get; }
 
         /// <summary>
         /// The current remote URL of the remote VERSIONS endpoint to connect to.
         /// The remote party might define multiple for H/A reasons.
         /// </summary>
-        public URL                      RemoteVersionsURL        { get; }
+        public URL                       RemoteVersionsURL        { get; }
 
         /// <summary>
         /// The current access token.
         /// The remote party might define different access token per VersionsAPI endpoint for H/A and/or security reasons.
         /// The access token might be updated during the REGISTRATION process!
         /// </summary>
-        public AccessToken              AccessToken              { get; private set; }
+        public AccessToken?              AccessToken              { get; private set; }
 
         /// <summary>
         /// The current HTTP Token Authentication based on the current access token.
         /// </summary>
-        public HTTPTokenAuthentication  TokenAuth                { get; private set; }
+        public HTTPTokenAuthentication?  TokenAuth                { get; private set; }
 
         /// <summary>
         /// The selected OCPI version.
         /// The selected OCPI version might be updated during the REGISTRATION process!
         /// </summary>
-        public Version_Id?              SelectedOCPIVersionId    { get; set; }
+        public Version_Id?               SelectedOCPIVersionId    { get; set; }
 
         /// <summary>
         /// The JSON formating used.
         /// </summary>
-        public Formatting               JSONFormat               { get; set; } = Formatting.None;
+        public Formatting                JSONFormat               { get; set; } = Formatting.None;
 
         /// <summary>
         /// CPO client event counters.
         /// </summary>
-        public CommonAPICounters        Counters                 { get; }
+        public CommonAPICounters         Counters                 { get; }
 
         /// <summary>
         /// The attached HTTP client logger.
         /// </summary>
-        public new Logger?              HTTPLogger
+        public new Logger?               HTTPLogger
         {
             get
             {
@@ -364,6 +364,91 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Constructor(s)
 
+        #region CommonClient(OCPIVersionsURL, OCPIToken = null, ...)
+
+        /// <summary>
+        /// Create a new OCPI Common client.
+        /// </summary>
+        /// <param name="OCPIVersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
+        /// <param name="OCPIToken">The optional OCPI token.</param>
+        /// 
+        /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
+        /// <param name="Description">An optional description of this CPO client.</param>
+        /// <param name="HTTPLogger">An optional delegate to log HTTP(S) requests and responses.</param>
+        /// <param name="RequestTimeout">An optional request timeout.</param>
+        /// 
+        /// <param name="DisableLogging">Whether to disable all logging.</param>
+        /// <param name="LoggingPath">An optional path for logging.</param>
+        /// <param name="LoggingContext">An optional context for logging.</param>
+        /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
+        /// <param name="DNSClient">The DNS client to use.</param>
+        public CommonClient(URL                          OCPIVersionsURL,
+                            String?                      OCPIToken         = null,
+
+                            HTTPHostname?                VirtualHostname   = null,
+                            I18NString?                  Description       = null,
+                            HTTPClientLogger?            HTTPLogger        = null,
+                            TimeSpan?                    RequestTimeout    = null,
+
+                            Boolean?                     DisableLogging    = false,
+                            String?                      LoggingPath       = null,
+                            String?                      LoggingContext    = null,
+                            OCPILogfileCreatorDelegate?  LogfileCreator    = null,
+                            DNSClient?                   DNSClient         = null)
+
+            : base(OCPIVersionsURL,
+                   VirtualHostname,
+                   Description,
+                   null, //RemoteParty.PreferIPv4,
+                   null, //RemoteParty.RemoteCertificateValidator,
+                   null, //RemoteParty.LocalCertificateSelector,
+                   null, //RemoteParty.ClientCert,
+                   null, //RemoteParty.TLSProtocol,
+                   HTTPContentType.Application.JSON_UTF8,
+                   AcceptTypes.FromHTTPContentTypes(HTTPContentType.Application.JSON_UTF8),
+                   OCPIToken.IsNotNullOrEmpty()
+                       ? HTTPTokenAuthentication.Parse(OCPIToken)
+                       : null,
+                   null, //RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent,
+                   ConnectionType.Close,
+                   RequestTimeout,
+                   null, //RemoteParty.TransmissionRetryDelay,
+                   null, //RemoteParty.MaxNumberOfRetries,
+                   null, //RemoteParty.InternalBufferSize,
+                   null, //RemoteParty.UseHTTPPipelining,
+                   DisableLogging,
+                   HTTPLogger,
+                   DNSClient)
+
+        {
+
+            this.RemoteVersionsURL  = OCPIVersionsURL;
+
+            this.AccessToken        = OCPIToken.IsNotNullOrEmpty()
+                                          ? OCPI.AccessToken.Parse(OCPIToken)
+                                          : null;
+
+            this.TokenAuth          = OCPIToken.IsNotNullOrEmpty()
+                                          ? HTTPTokenAuthentication.Parse(OCPIToken)
+                                          : null;
+
+            this.Counters           = new CommonAPICounters();
+
+            base.HTTPLogger         = this.DisableLogging == false
+                                          ? new Logger(
+                                                this,
+                                                LoggingPath,
+                                                LoggingContext ?? DefaultLoggingContext,
+                                                LogfileCreator is not null
+                                                    ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
+                                                    : null
+                                            )
+                                          : null;
+
+        }
+
+        #endregion
+
         #region CommonClient(CommonAPI, RemoteParty, ...)
 
         /// <summary>
@@ -400,7 +485,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    HTTPContentType.Application.JSON_UTF8,
                    RemoteParty.Accept,
                    RemoteParty.HTTPAuthentication,
-                   RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent,
+                   RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent,
                    ConnectionType.Close,
                    RemoteParty.RequestTimeout,
                    RemoteParty.TransmissionRetryDelay,
@@ -646,7 +731,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        Select(e => e(startTime,
                                                      timestamp,
                                                      this,
-                                                     $"{nameof(CommonClient)} {RemoteParty.Id}",
+                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
                                                      eventTrackingId,
 
                                                      RequestId,
@@ -675,7 +760,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await new HTTPSClient(
+                    var httpResponse = await HTTPClientFactory.Create(
                                                  RemoteURL,
                                                  VirtualHostname,
                                                  Description,
@@ -689,7 +774,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  Authentication,
                                                  HTTPUserAgent,
                                                  Connection,
-                                                 RequestTimeout,
+                                                 requestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
                                                  InternalBufferSize,
@@ -697,26 +782,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  DisableLogging,
                                                  HTTPLogger,
                                                  DNSClient
-                                             ).Execute(client => client.CreateRequest(
-                                                                     HTTPMethod.GET,
-                                                                     RemoteVersionsURL.Path,
-                                                                     RequestBuilder: requestBuilder => {
-                                                                         requestBuilder.Authorization  = TokenAuth;
-                                                                         requestBuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
-                                                                         requestBuilder.Connection     = ConnectionType.Close;
-                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                         requestBuilder.Set("X-Request-ID",      requestId);
-                                                                         requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                     }
-                                                                 ),
-
-                                                       RequestLogDelegate:   OnGetVersionsHTTPRequest,
-                                                       ResponseLogDelegate:  OnGetVersionsHTTPResponse,
-                                                       CancellationToken:    CancellationToken,
-                                                       EventTrackingId:      eventTrackingId,
-                                                       RequestTimeout:       requestTimeout).
-
-                                               ConfigureAwait(false);
+                                             ).
+                                             GET(
+                                                 Path:                 RemoteVersionsURL.Path,
+                                                 QueryString:          null,
+                                                 Accept:               AcceptTypes.FromHTTPContentTypes(
+                                                                           HTTPContentType.Application.JSON_UTF8
+                                                                       ),
+                                                 Authentication:       TokenAuth,
+                                                 UserAgent:            RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent,
+                                                 Connection:           ConnectionType.Close,
+                                                 RequestTimeout:       requestTimeout,
+                                                 EventTrackingId:      eventTrackingId,
+                                                 NumberOfRetry:        transmissionRetry,
+                                                 RequestBuilder:       requestBuilder => {
+                                                                           requestBuilder.Set("X-Request-ID",     requestId);
+                                                                           requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                       },
+                                                 RequestLogDelegate:   OnGetVersionsHTTPRequest,
+                                                 ResponseLogDelegate:  OnGetVersionsHTTPResponse,
+                                                 CancellationToken:    CancellationToken
+                                             ).
+                                             ConfigureAwait(false);
 
                     #endregion
 
@@ -735,11 +822,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<VersionInformation>.ParseJArray(httpResponse,
-                                                                            requestId,
-                                                                            correlationId,
-                                                                            json => VersionInformation.Parse(json,
-                                                                                                             CustomVersionInformationParser));
+                    response = OCPIResponse<VersionInformation>.ParseJArray(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => VersionInformation.Parse(
+                                               json,
+                                               CustomVersionInformationParser
+                                           )
+                               );
 
                     switch (response.StatusCode)
                     {
@@ -795,7 +886,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        Select(e => e(endtime,
                                                      timestamp,
                                                      this,
-                                                     $"{nameof(CommonClient)} {RemoteParty.Id}",
+                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
                                                      eventTrackingId,
 
                                                      RequestId,
@@ -833,15 +924,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Version_Id, VersionDetail>>
 
-            GetVersionDetails(Version_Id?         VersionId             = null,
-                              Boolean             SetAsDefaultVersion   = true,
-                              Request_Id?         RequestId             = null,
-                              Correlation_Id?     CorrelationId         = null,
+            GetVersionDetails(Version_Id?        VersionId             = null,
+                              Boolean            SetAsDefaultVersion   = true,
+                              Request_Id?        RequestId             = null,
+                              Correlation_Id?    CorrelationId         = null,
 
-                              DateTime?           Timestamp             = null,
-                              EventTracking_Id?   EventTrackingId       = null,
-                              TimeSpan?           RequestTimeout        = null,
-                              CancellationToken   CancellationToken     = default)
+                              DateTime?          Timestamp             = null,
+                              EventTracking_Id?  EventTrackingId       = null,
+                              TimeSpan?          RequestTimeout        = null,
+                              CancellationToken  CancellationToken     = default)
 
         {
 
@@ -872,7 +963,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        Select(e => e(startTime,
                                                      timestamp,
                                                      this,
-                                                     $"{nameof(CommonClient)} {RemoteParty.Id}",
+                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
                                                      eventTrackingId,
 
                                                      VersionId,
@@ -922,7 +1013,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                             #region Upstream HTTP request...
 
-                            var httpResponse = await new HTTPSClient(
+                            var httpResponse = await HTTPClientFactory.Create(
                                                          versionURL,
                                                          VirtualHostname,
                                                          Description,
@@ -936,7 +1027,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                          Authentication,
                                                          HTTPUserAgent,
                                                          Connection,
-                                                         RequestTimeout,
+                                                         requestTimeout,
                                                          TransmissionRetryDelay,
                                                          MaxNumberOfRetries,
                                                          InternalBufferSize,
@@ -945,27 +1036,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                          HTTPLogger,
                                                          DNSClient
                                                      ).
-
-                                                     Execute(client => client.CreateRequest(
-                                                                           HTTPMethod.GET,
-                                                                           versionURL.Path,
-                                                                           RequestBuilder: requestBuilder => {
-                                                                               //requestBuilder.Host           = HTTPHostname.Parse(Versions[VersionId].Hostname + (Versions[VersionId].Port.HasValue ? Versions[VersionId].Port.Value.ToString() : ""));
-                                                                               requestBuilder.Authorization  = TokenAuth;
-                                                                               requestBuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
-                                                                               requestBuilder.Connection     = ConnectionType.Close;
-                                                                               requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                               requestBuilder.Set("X-Request-ID",      requestId);
-                                                                               requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                           }
-                                                                       ),
-
-                                                             RequestLogDelegate:   OnGetVersionDetailsHTTPRequest,
-                                                             ResponseLogDelegate:  OnGetVersionDetailsHTTPResponse,
-                                                             CancellationToken:    CancellationToken,
-                                                             EventTrackingId:      eventTrackingId,
-                                                             RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
-
+                                                     GET(
+                                                         Path:                 versionURL.Path,
+                                                         QueryString:          null,
+                                                         Accept:               AcceptTypes.FromHTTPContentTypes(
+                                                                                   HTTPContentType.Application.JSON_UTF8
+                                                                               ),
+                                                         Authentication:       TokenAuth,
+                                                         UserAgent:            RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent,
+                                                         Connection:           ConnectionType.Close,
+                                                         RequestTimeout:       requestTimeout,
+                                                         EventTrackingId:      eventTrackingId,
+                                                         NumberOfRetry:        transmissionRetry,
+                                                         RequestBuilder:       requestBuilder => {
+                                                                                   requestBuilder.Set("X-Request-ID",     requestId);
+                                                                                   requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                               },
+                                                         RequestLogDelegate:   OnGetVersionDetailsHTTPRequest,
+                                                         ResponseLogDelegate:  OnGetVersionDetailsHTTPResponse,
+                                                         CancellationToken:    CancellationToken
+                                                     ).
                                                      ConfigureAwait(false);
 
                             #endregion
@@ -1023,12 +1113,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                             #endregion
 
-                            response = OCPIResponse<Version_Id, VersionDetail>.ParseJObject(versionId.Value,
-                                                                                            httpResponse,
-                                                                                            requestId,
-                                                                                            correlationId,
-                                                                                            json => VersionDetail.Parse(json,
-                                                                                                                        CustomVersionDetailParser));
+                            response = OCPIResponse<Version_Id, VersionDetail>.ParseJObject(
+                                           versionId.Value,
+                                           httpResponse,
+                                           requestId,
+                                           correlationId,
+                                           json => VersionDetail.Parse(
+                                                       json,
+                                                       CustomVersionDetailParser
+                                                   )
+                                       );
 
                             switch (response.StatusCode)
                             {
@@ -1087,7 +1181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        Select(e => e(endtime,
                                                      timestamp,
                                                      this,
-                                                     $"{nameof(CommonClient)} {RemoteParty.Id}",
+                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
                                                      eventTrackingId,
 
                                                      VersionId,
@@ -1188,14 +1282,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Credentials>>
 
-            GetCredentials(Version_Id?         VersionId           = null,
-                           Request_Id?         RequestId           = null,
-                           Correlation_Id?     CorrelationId       = null,
+            GetCredentials(Version_Id?        VersionId           = null,
+                           Request_Id?        RequestId           = null,
+                           Correlation_Id?    CorrelationId       = null,
 
-                           DateTime?           Timestamp           = null,
-                           EventTracking_Id?   EventTrackingId     = null,
-                           TimeSpan?           RequestTimeout      = null,
-                           CancellationToken   CancellationToken   = default)
+                           DateTime?          Timestamp           = null,
+                           EventTracking_Id?  EventTrackingId     = null,
+                           TimeSpan?          RequestTimeout      = null,
+                           CancellationToken  CancellationToken   = default)
 
         {
 
@@ -1226,7 +1320,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        Select(e => e(startTime,
                                                      timestamp,
                                                      this,
-                                                     $"{nameof(CommonClient)} {RemoteParty.Id}",
+                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
                                                      eventTrackingId,
 
                                                      RequestId,
@@ -1303,7 +1397,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                          remoteURL.Value.Path,
                                                                          RequestBuilder: requestBuilder => {
                                                                              requestBuilder.Authorization  = TokenAuth;
-                                                                             requestBuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
+                                                                             requestBuilder.UserAgent      = RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                              requestBuilder.Connection     = ConnectionType.Close;
                                                                              requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                              requestBuilder.Set("X-Request-ID",      requestId);
@@ -1360,7 +1454,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        Select(e => e(endtime,
                                                      timestamp,
                                                      this,
-                                                     $"{nameof(CommonClient)} {RemoteParty.Id}",
+                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
                                                      eventTrackingId,
 
                                                      RequestId,
@@ -1404,16 +1498,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Credentials>>
 
-            PostCredentials(Credentials         Credentials,
+            PostCredentials(Credentials        Credentials,
 
-                            Version_Id?         VersionId           = null,
-                            Request_Id?         RequestId           = null,
-                            Correlation_Id?     CorrelationId       = null,
+                            Version_Id?        VersionId           = null,
+                            Request_Id?        RequestId           = null,
+                            Correlation_Id?    CorrelationId       = null,
 
-                            DateTime?           Timestamp           = null,
-                            EventTracking_Id?   EventTrackingId     = null,
-                            TimeSpan?           RequestTimeout      = null,
-                            CancellationToken   CancellationToken   = default)
+                            DateTime?          Timestamp           = null,
+                            EventTracking_Id?  EventTrackingId     = null,
+                            TimeSpan?          RequestTimeout      = null,
+                            CancellationToken  CancellationToken   = default)
 
         {
 
@@ -1444,7 +1538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        Select(e => e(startTime,
                                                      timestamp,
                                                      this,
-                                                     $"{nameof(CommonClient)} {RemoteParty.Id}",
+                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
                                                      eventTrackingId,
 
                                                      RequestId,
@@ -1522,7 +1616,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                          remoteURL.Value.Path,
                                                                          RequestBuilder: requestBuilder => {
                                                                              requestBuilder.Authorization  = TokenAuth;
-                                                                             requestBuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
+                                                                             requestBuilder.UserAgent      = RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                              requestBuilder.Connection     = ConnectionType.Close;
                                                                              requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                                              requestBuilder.Content        = Credentials.ToJSON().ToUTF8Bytes(JSONFormat);
@@ -1581,7 +1675,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        Select(e => e(endtime,
                                                      timestamp,
                                                      this,
-                                                     $"{nameof(CommonClient)} {RemoteParty.Id}",
+                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
                                                      eventTrackingId,
 
                                                      RequestId,
@@ -1627,17 +1721,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         public async Task<OCPIResponse<Credentials>>
 
-            PutCredentials(Credentials         Credentials,
+            PutCredentials(Credentials        Credentials,
 
-                           Role?               RemoteRole          = null,
-                           Version_Id?         VersionId           = null,
-                           Request_Id?         RequestId           = null,
-                           Correlation_Id?     CorrelationId       = null,
+                           Role?              RemoteRole          = null,
+                           Version_Id?        VersionId           = null,
+                           Request_Id?        RequestId           = null,
+                           Correlation_Id?    CorrelationId       = null,
 
-                           DateTime?           Timestamp           = null,
-                           EventTracking_Id?   EventTrackingId     = null,
-                           TimeSpan?           RequestTimeout      = null,
-                           CancellationToken   CancellationToken   = default)
+                           DateTime?          Timestamp           = null,
+                           EventTracking_Id?  EventTrackingId     = null,
+                           TimeSpan?          RequestTimeout      = null,
+                           CancellationToken  CancellationToken   = default)
 
         {
 
@@ -1668,7 +1762,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        Select(e => e(startTime,
                                                      timestamp,
                                                      this,
-                                                     $"{nameof(CommonClient)} {RemoteParty.Id}",
+                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
                                                      eventTrackingId,
 
                                                      RequestId,
@@ -1746,7 +1840,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                          remoteURL.Value.Path,
                                                                          RequestBuilder: requestBuilder => {
                                                                              requestBuilder.Authorization  = TokenAuth;
-                                                                             requestBuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
+                                                                             requestBuilder.UserAgent      = RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                              requestBuilder.Connection     = ConnectionType.Close;
                                                                              requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                                              requestBuilder.Content        = Credentials.ToJSON().ToUTF8Bytes(JSONFormat);
@@ -1842,7 +1936,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        Select(e => e(endtime,
                                                      timestamp,
                                                      this,
-                                                     $"{nameof(CommonClient)} {RemoteParty.Id}",
+                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
                                                      eventTrackingId,
 
                                                      RequestId,
@@ -1923,7 +2017,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        Select(e => e(startTime,
                                                      timestamp,
                                                      this,
-                                                     $"{nameof(CommonClient)} {RemoteParty.Id}",
+                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
                                                      eventTrackingId,
 
                                                      RequestId,
@@ -2000,7 +2094,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                          remoteURL.Value.Path,
                                                                          RequestBuilder: requestBuilder => {
                                                                              requestBuilder.Authorization  = TokenAuth;
-                                                                             requestBuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
+                                                                             requestBuilder.UserAgent      = RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                              requestBuilder.Connection     = ConnectionType.Close;
                                                                              requestBuilder.Set("X-Request-ID",      requestId);
                                                                              requestBuilder.Set("X-Correlation-ID",  correlationId);
@@ -2054,7 +2148,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        Select(e => e(endtime,
                                                      timestamp,
                                                      this,
-                                                     $"{nameof(CommonClient)} {RemoteParty.Id}",
+                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
                                                      eventTrackingId,
 
                                                      RequestId,
@@ -2121,18 +2215,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Credentials>>
 
-            Register(Version_Id?         VersionId             = null,
-                     Boolean             SetAsDefaultVersion   = true,
-                     Role?               RemoteRole            = null,
-                     AccessToken?        CredentialTokenB      = null,
+            Register(Version_Id?        VersionId             = null,
+                     Boolean            SetAsDefaultVersion   = true,
+                     Role?              RemoteRole            = null,
+                     AccessToken?       CredentialTokenB      = null,
 
-                     Request_Id?         RequestId             = null,
-                     Correlation_Id?     CorrelationId         = null,
+                     Request_Id?        RequestId             = null,
+                     Correlation_Id?    CorrelationId         = null,
 
-                     DateTime?           Timestamp             = null,
-                     EventTracking_Id?   EventTrackingId       = null,
-                     TimeSpan?           RequestTimeout        = null,
-                     CancellationToken   CancellationToken     = default)
+                     DateTime?          Timestamp             = null,
+                     EventTracking_Id?  EventTrackingId       = null,
+                     TimeSpan?          RequestTimeout        = null,
+                     CancellationToken  CancellationToken     = default)
 
         {
 
@@ -2163,7 +2257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        Select(e => e(startTime,
                                                      timestamp,
                                                      this,
-                                                     $"{nameof(CommonClient)} {RemoteParty.Id}",
+                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
                                                      eventTrackingId,
 
                                                      RequestId,
@@ -2188,7 +2282,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var credentialTokenB  = CredentialTokenB ?? AccessToken.NewRandom();
+                var credentialTokenB  = CredentialTokenB ?? OCPI.AccessToken.NewRandom();
 
                 var remoteURL         = await GetRemoteURL(
                                                   Module_Id.Credentials,
@@ -2246,7 +2340,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                      remoteURL.Value.Path,
                                                                      RequestBuilder: requestBuilder => {
                                                                          requestBuilder.Authorization  = TokenAuth;
-                                                                         requestBuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
+                                                                         requestBuilder.UserAgent      = RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestBuilder.Connection     = ConnectionType.Close;
                                                                          requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                                          requestBuilder.Content        = credentials.ToJSON().ToUTF8Bytes(JSONFormat);
@@ -2375,7 +2469,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        Select(e => e(endtime,
                                                      timestamp,
                                                      this,
-                                                     $"{nameof(CommonClient)} {RemoteParty.Id}",
+                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
                                                      eventTrackingId,
 
                                                      RequestId,

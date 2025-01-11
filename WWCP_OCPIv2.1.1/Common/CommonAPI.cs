@@ -25,12 +25,8 @@ using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Styx.Arrows;
 using org.GraphDefined.Vanaheimr.Hermod;
-using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.Sockets;
-using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP;
@@ -3107,43 +3103,78 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     if (request.RemoteParty?.Role == Role.CPO)
                     {
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "emsp/locations")).Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Locations,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "emsp/locations")).Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Tariffs,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "emsp/tariffs")).  Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Tariffs,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "emsp/tariffs")).  Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "emsp/sessions")). Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Sessions,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "emsp/sessions")). Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "emsp/cdrs")).     Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.CDRs,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "emsp/cdrs")).Replace("//", "/"))
+                            )
+                        );
 
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Commands,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "emsp/commands")). Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Commands,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "emsp/commands")). Replace("//", "/"))));
-
-                        endpoints.Add(new VersionEndpoint(Module_Id.Tokens,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "emsp/tokens")).   Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Tokens,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "emsp/tokens")).   Replace("//", "/"))
+                            )
+                        );
 
                     }
 
                     #endregion
 
-                    #region We are a CPO, the other side is unauthenticated and we export locations as Open Data...
+                    #region We are a CPO, the other side is unauthenticated and we export locations and AdHoc tariffs as Open Data...
 
                     if (OurRole == Role.CPO && request.RemoteParty is null && BaseAPI.LocationsAsOpenData)
                     {
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "cpo/locations")).Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Locations,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/locations")).Replace("//", "/"))
+                            )
+                        );
+
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Tariffs,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/tariffs")).Replace("//", "/"))
+                            )
+                        );
 
                     }
 
@@ -3154,30 +3185,54 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     if (request.RemoteParty?.Role == Role.EMSP)
                     {
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "cpo/locations")).Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Locations,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/locations")).Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Tariffs,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "cpo/tariffs")).  Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Tariffs,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/tariffs")).  Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "cpo/sessions")). Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Sessions,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/sessions")). Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "cpo/cdrs")).     Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.CDRs,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/cdrs")).     Replace("//", "/"))
+                            )
+                        );
 
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Commands,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "cpo/commands")). Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Commands,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/commands")). Replace("//", "/"))
+                            )
+                        );
 
-                        endpoints.Add(new VersionEndpoint(Module_Id.Tokens,
-                                                            URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                                    (request.Host + (prefix + "cpo/tokens")).   Replace("//", "/"))));
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.Tokens,
+                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    (request.Host + (prefix + "cpo/tokens")).   Replace("//", "/"))
+                            )
+                        );
 
                     }
 
