@@ -28,7 +28,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 {
 
     /// <summary>
-    /// Testing the OCPI GetVersionDetails method(s) using registered OCPO tokens.
+    /// Testing the OCPI GetVersionDetails method(s) using NO OCPI tokens (Open Data Access).
     /// </summary>
     [TestFixture]
     public class GetVersions_OpenData_Tests : A_2CPOs2EMSPs_TestDefaults
@@ -37,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #region GetVersions_v2_1_1_fromCPO1_Test1()
 
         /// <summary>
-        /// CPO #1 Open Data for its OCPI v2.1.1 version details!
+        /// CPO #1 OCPI v2.1.1 versions as Open Data!
         /// </summary>
         [Test]
         public async Task GetVersions_v2_1_1_fromCPO1_Test1()
@@ -132,7 +132,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #region GetVersions_v2_2_1_fromCPO1_Test1()
 
         /// <summary>
-        /// CPO #1 Open Data for its OCPI v2.2.1 version details!
+        /// CPO #1 OCPI v2.2.1 versions as Open Data!
         /// </summary>
         [Test]
         public async Task GetVersions_v2_2_1_fromCPO1_Test1()
@@ -227,7 +227,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #region GetVersions_v2_3_fromCPO1_Test1()
 
         /// <summary>
-        /// CPO #1 Open Data for its OCPI v2.3 version details!
+        /// CPO #1 OCPI v2.3 versions as Open Data!
         /// </summary>
         [Test]
         public async Task GetVersions_v2_3_fromCPO1_Test1()

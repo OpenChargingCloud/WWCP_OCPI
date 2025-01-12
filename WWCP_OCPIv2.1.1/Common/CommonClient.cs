@@ -364,72 +364,98 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Constructor(s)
 
-        #region CommonClient(OCPIVersionsURL, OCPIToken = null, ...)
+        #region CommonClient(VersionsURL, AccessToken = null, ...)
 
         /// <summary>
         /// Create a new OCPI Common client.
         /// </summary>
-        /// <param name="OCPIVersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
-        /// <param name="OCPIToken">The optional OCPI token.</param>
+        /// <param name="VersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
+        /// <param name="AccessToken">The optional OCPI access token.</param>
         /// 
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
-        /// <param name="Description">An optional description of this CPO client.</param>
-        /// <param name="HTTPLogger">An optional delegate to log HTTP(S) requests and responses.</param>
+        /// <param name="Description">An optional description of this client.</param>
+        /// <param name="PreferIPv4">Prefer IPv4 instead of IPv6.</param>
+        /// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
+        /// <param name="LocalCertificateSelector">A delegate to select a TLS client certificate.</param>
+        /// <param name="ClientCert">The TLS client certificate to use of HTTP authentication.</param>
+        /// <param name="TLSProtocol">The TLS protocol to use.</param>
+        /// <param name="ContentType">An optional HTTP content type.</param>
+        /// <param name="Accept">The optional HTTP accept header.</param>
+        /// <param name="HTTPAuthentication">The optional HTTP authentication to use.</param>
+        /// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
+        /// <param name="Connection">The optional HTTP connection type.</param>
         /// <param name="RequestTimeout">An optional request timeout.</param>
-        /// 
+        /// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
+        /// <param name="MaxNumberOfRetries">An optional maximum number of transmission retries for HTTP request.</param>
+        /// <param name="InternalBufferSize">An optional size of the internal HTTP client buffers.</param>
+        /// <param name="UseHTTPPipelining">Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.</param>
         /// <param name="DisableLogging">Whether to disable all logging.</param>
+        /// <param name="HTTPLogger">An optional delegate to log HTTP(S) requests and responses.</param>
         /// <param name="LoggingPath">An optional path for logging.</param>
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CommonClient(URL                          OCPIVersionsURL,
-                            String?                      OCPIToken         = null,
+        public CommonClient(URL                                                        VersionsURL,
+                            String?                                                    AccessToken                  = null,
 
-                            HTTPHostname?                VirtualHostname   = null,
-                            I18NString?                  Description       = null,
-                            HTTPClientLogger?            HTTPLogger        = null,
-                            TimeSpan?                    RequestTimeout    = null,
+                            HTTPHostname?                                              VirtualHostname              = null,
+                            I18NString?                                                Description                  = null,
+                            Boolean?                                                   PreferIPv4                   = null,
+                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
+                            LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
+                            X509Certificate?                                           ClientCert                   = null,
+                            SslProtocols?                                              TLSProtocol                  = null,
+                            HTTPContentType?                                           ContentType                  = null,
+                            AcceptTypes?                                               Accept                       = null,
+                            IHTTPAuthentication?                                       HTTPAuthentication           = null,
+                            String?                                                    HTTPUserAgent                = DefaultHTTPUserAgent,
+                            ConnectionType?                                            Connection                   = null,
+                            TimeSpan?                                                  RequestTimeout               = null,
+                            TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
+                            UInt16?                                                    MaxNumberOfRetries           = DefaultMaxNumberOfRetries,
+                            UInt32?                                                    InternalBufferSize           = DefaultInternalBufferSize,
+                            Boolean?                                                   UseHTTPPipelining            = null,
+                            Boolean?                                                   DisableLogging               = false,
+                            String?                                                    LoggingPath                  = null,
+                            String?                                                    LoggingContext               = null,
+                            OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
+                            HTTPClientLogger?                                          HTTPLogger                   = null,
+                            DNSClient?                                                 DNSClient                    = null)
 
-                            Boolean?                     DisableLogging    = false,
-                            String?                      LoggingPath       = null,
-                            String?                      LoggingContext    = null,
-                            OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                            DNSClient?                   DNSClient         = null)
-
-            : base(OCPIVersionsURL,
+            : base(VersionsURL,
                    VirtualHostname,
                    Description,
-                   null, //RemoteParty.PreferIPv4,
-                   null, //RemoteParty.RemoteCertificateValidator,
-                   null, //RemoteParty.LocalCertificateSelector,
-                   null, //RemoteParty.ClientCert,
-                   null, //RemoteParty.TLSProtocol,
-                   HTTPContentType.Application.JSON_UTF8,
-                   AcceptTypes.FromHTTPContentTypes(HTTPContentType.Application.JSON_UTF8),
-                   OCPIToken.IsNotNullOrEmpty()
-                       ? HTTPTokenAuthentication.Parse(OCPIToken)
-                       : null,
-                   null, //RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent,
-                   ConnectionType.Close,
-                   RequestTimeout,
-                   null, //RemoteParty.TransmissionRetryDelay,
-                   null, //RemoteParty.MaxNumberOfRetries,
-                   null, //RemoteParty.InternalBufferSize,
-                   null, //RemoteParty.UseHTTPPipelining,
+                   PreferIPv4,
+                   RemoteCertificateValidator,
+                   LocalCertificateSelector,
+                   ClientCert,
+                   TLSProtocol,
+                   ContentType        ?? HTTPContentType.Application.JSON_UTF8,
+                   Accept             ?? AcceptTypes.FromHTTPContentTypes(HTTPContentType.Application.JSON_UTF8),
+                   HTTPAuthentication ?? (AccessToken.IsNotNullOrEmpty()
+                                              ? HTTPTokenAuthentication.Parse(AccessToken)
+                                              : null),
+                   HTTPUserAgent      ?? DefaultHTTPUserAgent,
+                   Connection         ?? ConnectionType.Close,
+                   RequestTimeout     ?? DefaultRequestTimeout,
+                   TransmissionRetryDelay,
+                   MaxNumberOfRetries,
+                   InternalBufferSize,
+                   UseHTTPPipelining,
                    DisableLogging,
                    HTTPLogger,
                    DNSClient)
 
         {
 
-            this.RemoteVersionsURL  = OCPIVersionsURL;
+            this.RemoteVersionsURL  = VersionsURL;
 
-            this.AccessToken        = OCPIToken.IsNotNullOrEmpty()
-                                          ? OCPI.AccessToken.Parse(OCPIToken)
+            this.AccessToken        = AccessToken.IsNotNullOrEmpty()
+                                          ? OCPI.AccessToken.Parse(AccessToken)
                                           : null;
 
-            this.TokenAuth          = OCPIToken.IsNotNullOrEmpty()
-                                          ? HTTPTokenAuthentication.Parse(OCPIToken)
+            this.TokenAuth          = AccessToken.IsNotNullOrEmpty()
+                                          ? HTTPTokenAuthentication.Parse(AccessToken)
                                           : null;
 
             this.Counters           = new CommonAPICounters();

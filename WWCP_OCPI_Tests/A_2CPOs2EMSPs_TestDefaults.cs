@@ -449,6 +449,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         protected const String  UnknownToken       = "UnknownUnknownUnknownToken";
 
+        protected const String  BlockedToken       = "blocked-token";
         protected const String  BlockedCPOToken    = "blocked-cpo";
         protected const String  BlockedEMSPToken   = "blocked-emsp";
 
@@ -1710,37 +1711,58 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #endregion
 
-            #region Define blocked Remote Parties
+            #region Define blocked Access Tokens and blocked Remote Parties
 
-            //await cpoCommonAPI.AddRemoteParty  (CountryCode:       CountryCode.Parse("XX"),
-            //                                    PartyId:           Party_Id.   Parse("BLE"),
-            //                                    Role:              Role.EMSP,
-            //                                    BusinessDetails:   new BusinessDetails(
-            //                                                           "Blocked EMSP"
-            //                                                       ),
-            //                                    AccessToken:       AccessToken.Parse(BlockedEMSPToken),
-            //                                    AccessStatus:      AccessStatus.BLOCKED,
-            //                                    PartyStatus:       PartyStatus. ENABLED);
+            #region Blocked Tokens
 
-            //await emsp1CommonAPI.AddRemoteParty(CountryCode:       CountryCode.Parse("XX"),
-            //                                    PartyId:           Party_Id.   Parse("BLC"),
-            //                                    Role:              Role.CPO,
-            //                                    BusinessDetails:   new BusinessDetails(
-            //                                                           "Blocked CPO"
-            //                                                       ),
-            //                                    AccessToken:       AccessToken.Parse(BlockedCPOToken),
-            //                                    AccessStatus:      AccessStatus.BLOCKED,
-            //                                    PartyStatus:       PartyStatus. ENABLED);
+            await cpo1CommonAPI_v2_1_1.AddAccessToken(
+                      AccessToken.Parse(BlockedToken),
+                      AccessStatus.BLOCKED
+                  );
 
-            //await emsp2CommonAPI.AddRemoteParty(CountryCode:       CountryCode.Parse("XX"),
-            //                                    PartyId:           Party_Id.   Parse("BLC"),
-            //                                    Role:              Role.CPO,
-            //                                    BusinessDetails:   new BusinessDetails(
-            //                                                           "Blocked CPO"
-            //                                                       ),
-            //                                    AccessToken:       AccessToken.Parse(BlockedCPOToken),
-            //                                    AccessStatus:      AccessStatus.BLOCKED,
-            //                                    PartyStatus:       PartyStatus. ENABLED);
+            await cpo2CommonAPI_v2_1_1.AddAccessToken(
+                      AccessToken.Parse(BlockedToken),
+                      AccessStatus.BLOCKED
+                  );
+
+            await emsp1CommonAPI_v2_1_1.AddAccessToken(
+                      AccessToken.Parse(BlockedToken),
+                      AccessStatus.BLOCKED
+                  );
+
+            await emsp2CommonAPI_v2_1_1.AddAccessToken(
+                      AccessToken.Parse(BlockedToken),
+                      AccessStatus.BLOCKED
+                  );
+
+            #endregion
+
+
+            await cpo1CommonAPI_v2_1_1.AddRemoteParty(
+                      CountryCode:       CountryCode.Parse("XX"),
+                      PartyId:           Party_Id.   Parse("BLE"),
+                      Role:              Role.EMSP,
+                      BusinessDetails:   new BusinessDetails(
+                                             "Blocked EMSP"
+                                         ),
+                      AccessToken:       AccessToken.Parse(BlockedEMSPToken),
+                      AccessStatus:      AccessStatus.BLOCKED,
+                      PartyStatus:       PartyStatus. ENABLED
+                  );
+
+
+            await emsp1CommonAPI_v2_1_1.AddRemoteParty(
+                      CountryCode:       CountryCode.Parse("XX"),
+                      PartyId:           Party_Id.   Parse("BLC"),
+                      Role:              Role.EMSP,
+                      BusinessDetails:   new BusinessDetails(
+                                             "Blocked CPO"
+                                         ),
+                      AccessToken:       AccessToken.Parse(BlockedCPOToken),
+                      AccessStatus:      AccessStatus.BLOCKED,
+                      PartyStatus:       PartyStatus. ENABLED
+                  );
+
 
 
             //ClassicAssert.AreEqual(3, cpoCommonAPI.  RemoteParties.Count());

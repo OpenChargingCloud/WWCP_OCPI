@@ -1429,7 +1429,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// The Common API.
     /// </summary>
-    public class CommonAPI : HTTPAPI // : CommonAPIBase
+    public class CommonAPI : HTTPAPI
     {
 
         #region Data
@@ -1900,10 +1900,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// Create a new CommonAPI using the given HTTP server.
         /// </summary>
-        /// <param name="OurVersionsURL">The URL of our VERSIONS endpoint.</param>
         /// <param name="OurBusinessDetails"></param>
         /// <param name="OurCountryCode"></param>
         /// <param name="OurPartyId"></param>
+        /// <param name="OurRole"></param>
         /// 
         /// <param name="HTTPServer">A HTTP server.</param>
         /// 
@@ -1911,7 +1911,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
         /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        /// <param name="Disable_RootServices">Whether to disable / and /versions HTTP services.</param>
         /// 
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
@@ -1984,7 +1983,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    BasePath,
 
                    URLPathPrefix,//   ?? DefaultURLPathPrefix,
-                   null, //HTMLTemplate,
+                   null,         //HTMLTemplate,
                    APIVersionHashes,
 
                    DisableMaintenanceTasks,
@@ -2007,17 +2006,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            this.BaseAPI               = BaseAPI;
+            this.BaseAPI                   = BaseAPI;
 
-            this.OurBusinessDetails    = OurBusinessDetails;
-            this.OurCountryCode        = OurCountryCode;
-            this.OurPartyId            = OurPartyId;
-            this.OurRole               = OurRole;
+            this.OurBusinessDetails        = OurBusinessDetails;
+            this.OurCountryCode            = OurCountryCode;
+            this.OurPartyId                = OurPartyId;
+            this.OurRole                   = OurRole;
 
-            this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
+            this.KeepRemovedEVSEs          = KeepRemovedEVSEs ?? (evse => true);
 
-            this.DatabaseFilePath          = DatabaseFilePath                   ?? Path.Combine(AppContext.BaseDirectory,
-                                                                                                DefaultHTTPAPI_LoggingPath);
+            this.DatabaseFilePath          = DatabaseFilePath                   ?? Path.Combine(
+                                                                                       AppContext.BaseDirectory,
+                                                                                       DefaultHTTPAPI_LoggingPath
+                                                                                   );
 
             if (this.DatabaseFilePath[^1] != Path.DirectorySeparatorChar)
                 this.DatabaseFilePath     += Path.DirectorySeparatorChar;
@@ -2030,18 +2031,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
             // Link HTTP events...
-            base.HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
-            base.HTTPServer.ResponseLog    += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
-            base.HTTPServer.ErrorLog       += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
+            base.HTTPServer.RequestLog    += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
+            base.HTTPServer.ResponseLog   += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
+            base.HTTPServer.ErrorLog      += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
 
-            this.CommonAPILogger       = this.DisableLogging == false
-                                             ? new CommonAPILogger(
-                                                   this,
-                                                   LoggingContext,
-                                                   LoggingPath,
-                                                   LogfileCreator
-                                               )
-                                             : null;
+            this.CommonAPILogger           = this.DisableLogging == false
+                                                 ? new CommonAPILogger(
+                                                       this,
+                                                       LoggingContext,
+                                                       LoggingPath,
+                                                       LogfileCreator
+                                                   )
+                                                 : null;
 
             this.BaseAPI.AddVersionInformation(
                 new VersionInformation(
@@ -4071,6 +4072,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         //ToDo: Wrap the following into a plugable interface!
 
         #region AccessTokens
+
+        public async Task AddAccessToken(String        Token,
+                                         AccessStatus  Status)
+        {
+            if (AccessToken.TryParse(Token, out var token))
+            {
+                await BaseAPI.AddAccessToken(
+                    token,
+                    Status
+                );
+            }
+        }
+
+        public async Task AddAccessToken(AccessToken   Token,
+                                         AccessStatus  Status)
+        {
+            await BaseAPI.AddAccessToken(
+                Token,
+                Status
+            );
+        }
+
 
         // An access token might be used by more than one CountryCode + PartyId + Role combination!
 

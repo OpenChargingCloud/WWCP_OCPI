@@ -32,16 +32,16 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 {
 
     /// <summary>
-    /// Testing the OCPI GetVersions method(s).
+    /// Testing the OCPI GetVersionDetails method(s) using registered OCPI tokens.
     /// </summary>
     [TestFixture]
-    public class GetVersions_Tests : A_2CPOs2EMSPs_TestDefaults
+    public class GetVersions_RegisteredTokens_Tests : A_2CPOs2EMSPs_TestDefaults
     {
 
         #region CPO1_GetVersions_fromEMSP1_viaOCPIv2_1_1__RegisteredToken_Test1()
 
         /// <summary>
-        /// CPO #1 asks EMSP #1 for its OCPI versions via OCPI v2.1.1!
+        /// CPO #1 asking EMSP #1 for its OCPI versions via OCPI v2.1.1!
         /// </summary>
         [Test]
         public async Task CPO1_GetVersions_fromEMSP1_viaOCPIv2_1_1__RegisteredToken_Test1()
@@ -136,7 +136,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #region CPO1_GetVersions_fromEMSP1_viaOCPIv2_2_1__RegisteredToken_Test1()
 
         /// <summary>
-        /// CPO #1 asks EMSP #1 for its OCPI versions via OCPI v2.2.1!
+        /// CPO #1 asking EMSP #1 for its OCPI versions via OCPI v2.2.1!
         /// </summary>
         [Test]
         public async Task CPO1_GetVersions_fromEMSP1_viaOCPIv2_2_1__RegisteredToken_Test1()
@@ -231,7 +231,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #region CPO1_GetVersions_fromEMSP1_viaOCPIv2_3__RegisteredToken_Test1()
 
         /// <summary>
-        /// CPO #1 asks EMSP #1 for its OCPI versions via OCPI v2.3!
+        /// CPO #1 asking EMSP #1 for its OCPI versions via OCPI v2.3!
         /// </summary>
         [Test]
         public async Task CPO1_GetVersions_fromEMSP1_viaOCPIv2_3__RegisteredToken_Test1()
@@ -604,6 +604,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         }
 
         #endregion
+
 
     }
 

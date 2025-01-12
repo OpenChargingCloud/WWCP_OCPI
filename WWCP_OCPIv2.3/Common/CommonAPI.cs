@@ -4147,6 +4147,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
 
         #region AccessTokens
 
+        public async Task AddAccessToken(String        Token,
+                                         AccessStatus  Status)
+        {
+            if (AccessToken.TryParseBASE64(Token, out var token))
+            {
+                await BaseAPI.AddAccessToken(
+                    token,
+                    Status
+                );
+            }
+        }
+
+        public async Task AddAccessToken(AccessToken   Token,
+                                         AccessStatus  Status)
+        {
+            await BaseAPI.AddAccessToken(
+                Token,
+                Status
+            );
+        }
+
+
         // An access token might be used by more than one CountryCode + PartyId + Role combination!
 
         #region RemoveAccessToken(AccessToken)

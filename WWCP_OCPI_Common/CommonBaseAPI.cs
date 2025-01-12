@@ -716,11 +716,6 @@ namespace cloud.charging.open.protocols.OCPI
         public Boolean?                 AllowDowngrades            { get; }
 
         /// <summary>
-        /// Whether to disable the HTTP root services.
-        /// </summary>
-        //public Boolean                  Disable_RootServices       { get; }
-
-        /// <summary>
         /// The logging context.
         /// </summary>
         public String?                  LoggingContext             { get; }
@@ -1115,6 +1110,75 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
+
+        #region AccessTokens
+
+        private readonly ConcurrentDictionary<AccessToken, AccessStatus> accessTokens = [];
+
+        public AccessStatus DefaultAccessStatus { get; set; } = AccessStatus.ALLOWED;
+
+
+        #region AddAccessToken    (Token, Status)
+
+        public async Task AddAccessToken(AccessToken   Token,
+                                         AccessStatus  Status)
+        {
+
+            accessTokens.AddOrUpdate(
+                Token,
+                Status,
+                (a, b) => b
+            );
+
+            //ToDo: Persist!
+
+        }
+
+        #endregion
+
+        #region RemoveAccessToken (Token)
+
+        public async Task RemoveAccessToken(AccessToken Token)
+        {
+
+            accessTokens.TryRemove(Token, out _);
+
+            //ToDo: Persist!
+
+        }
+
+        #endregion
+
+
+        public Boolean AccessTokenIs(AccessToken   Token,
+                                     AccessStatus  Status)
+        {
+
+            if (accessTokens.TryGetValue(Token, out var status))
+                return status == Status;
+
+            return DefaultAccessStatus ==  Status;
+
+        }
+
+        public Boolean AccessTokenIsAllowed(AccessToken Token)
+
+            => AccessTokenIs(
+                   Token,
+                   AccessStatus.ALLOWED
+               );
+
+        public Boolean AccessTokenIsBlocked(AccessToken Token)
+
+            => AccessTokenIs(
+                   Token,
+                   AccessStatus.BLOCKED
+               );
+
+        #endregion
+
+
+
         #region (private) RegisterURLTemplates()
 
         private void RegisterURLTemplates()
@@ -1226,11 +1290,14 @@ namespace cloud.charging.open.protocols.OCPI
                     var fromCountryCode  = request.TryParseHeaderField<CountryCode>   ("OCPI-from-country-code", CountryCode.   TryParse);
                     var fromPartyId      = request.TryParseHeaderField<Party_Id>      ("OCPI-from-party-id",     Party_Id.      TryParse);
 
+
+                    #region Check access token
+
                     AccessToken? accessToken1 = null;
 
                     if (request.Authorization is HTTPTokenAuthentication TokenAuth &&
-                        TokenAuth.Token.TryParseBASE64_UTF8(out var decodedToken, out var errorResponse) &&
-                        AccessToken.TryParse(decodedToken, out var accessToken))
+                        //TokenAuth.Token.TryParseBASE64_UTF8(out var decodedToken, out var errorResponse) &&
+                        AccessToken.TryParse(TokenAuth.Token, out var accessToken))
                     {
                         accessToken1 = accessToken;
                     }
@@ -1244,108 +1311,35 @@ namespace cloud.charging.open.protocols.OCPI
                     if (accessToken1.HasValue)
                     {
 
-                    //    if (CommonAPI.TryGetRemoteParties(AccessToken.Value, out var parties))
-                    //    {
+                        if (AccessTokenIsBlocked(accessToken1.Value))
+                        {
 
-                    //        if (parties.Count() == 1)
-                    //        {
+                            var httpResponseBuilder2 =
+                                new HTTPResponse.Builder(request) {
+                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                    Server                     = DefaultHTTPServerName,
+                                    Date                       = Timestamp.Now,
+                                    AccessControlAllowOrigin   = "*",
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                    Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ],
+                                    ContentType                = HTTPContentType.Application.JSON_UTF8,
+                                    Content                    = JSONObject.Create(
+                                                                     new JProperty("status_code",     2000),
+                                                                     new JProperty("status_message", "Invalid or blocked access token!")
+                                                                 ).ToUTF8Bytes(),
+                                    Connection                 = ConnectionType.Close,
+                                    Vary                       = "Accept"
+                                };
 
-                    //            RemoteParty      = parties.First();
+                            httpResponseBuilder2.Set("X-Request-ID",      requestId);
+                            httpResponseBuilder2.Set("X-Correlation-ID",  correlationId);
 
-                    //            LocalAccessInfo  = new LocalAccessInfo2(
-                    //                                   AccessToken.Value,
-                    //                                   RemoteParty.LocalAccessInfos.First(localAccessInfo => localAccessInfo.AccessToken == AccessToken).Status,
-                    //                                   RemoteParty.Roles,
-                    //                                   null,
-                    //                                   null,
-                    //                                   RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
-                    //                               );
+                            return Task.FromResult(httpResponseBuilder2.AsImmutable);
 
-                    //            CPOIds           = RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.CPO).
-                    //                                                 Select(credentialsRole => CPO_Id. Parse($"{LocalAccessInfo.Roles.First().CountryCode}*{LocalAccessInfo.Roles.First().PartyId}")).
-                    //                                                 Distinct().
-                    //                                                 ToArray();
-
-                    //            EMSPIds          = RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.EMSP).
-                    //                                                 Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().CountryCode}-{LocalAccessInfo.Roles.First().PartyId}")).
-                    //                                                 Distinct().
-                    //                                                 ToArray();
-
-                    //            if (FromCountryCode.HasValue &&
-                    //                FromPartyId.    HasValue)
-                    //            {
-
-                    //                CPOId            = CPO_Id. Parse($"{FromCountryCode}*{FromPartyId}");
-                    //                EMSPId           = EMSP_Id.Parse($"{FromCountryCode}-{FromPartyId}");
-
-                    //                if (CPOId. HasValue && !CPOIds. Contains(CPOId. Value))
-                    //                    CPOId   = null;
-
-                    //                if (EMSPId.HasValue && !EMSPIds.Contains(EMSPId.Value))
-                    //                    EMSPId  = null;
-
-                    //            }
-
-                    //            if (!FromCountryCode.HasValue &&
-                    //                !FromPartyId.    HasValue)
-                    //            {
-
-                    //                if (CPOIds. Any())
-                    //                    CPOId  = CPOIds. First();
-
-                    //                if (EMSPIds.Any())
-                    //                    EMSPId = EMSPIds.First();
-
-                    //            }
-
-                    //        }
-
-                    //        else if (parties.Count() > 1      &&
-                    //                 FromCountryCode.HasValue &&
-                    //                 FromPartyId.    HasValue)
-                    //        {
-
-                    //            var filteredParties = parties.Where(party => party.Roles.Any(credentialsRole => credentialsRole.CountryCode == FromCountryCode.Value) &&
-                    //                                                         party.Roles.Any(credentialsRole => credentialsRole.PartyId     == FromPartyId.    Value)).
-                    //                                          ToArray();
-
-                    //            if (filteredParties.Length == 1)
-                    //            {
-
-                    //                this.LocalAccessInfo   = new LocalAccessInfo2(AccessToken.Value,
-                    //                                                             filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken).Status);
-
-                    //                //this.AccessInfo2  = filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken);
-
-                    //                this.RemoteParty  = filteredParties.First();
-
-                    //            }
-
-                    //        }
-
-                    //    }
+                        }
 
                     }
-
-                    #region Check access token
-
-                    //if (request.LocalAccessInfo is not null &&
-                    //    request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
-                    //{
-
-                    //    return Task.FromResult(
-                    //        new OCPIResponse.Builder(request) {
-                    //            StatusCode           = 2000,
-                    //            StatusMessage        = "Invalid or blocked access token!",
-                    //            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                    //                HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                    //                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                    //                Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                    //                AccessControlAllowHeaders  = [ "Authorization" ]
-                    //            }
-                    //        });
-
-                    //}
 
                     #endregion
 

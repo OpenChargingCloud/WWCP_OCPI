@@ -67,19 +67,19 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Indicates whether this access token is null or empty.
         /// </summary>
-        public Boolean IsNullOrEmpty
+        public Boolean  IsNullOrEmpty
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
         /// Indicates whether this access token is NOT null or empty.
         /// </summary>
-        public Boolean IsNotNullOrEmpty
+        public Boolean  IsNotNullOrEmpty
             => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the access token.
         /// </summary>
-        public UInt64 Length
+        public UInt64   Length
             => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
@@ -98,7 +98,7 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) NewRandom(Length = 50)
+        #region (static) NewRandom      (Length = 50)
 
         /// <summary>
         /// Create a new random access token.
@@ -110,7 +110,8 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) Parse    (Text)
+
+        #region (static) Parse          (Text)
 
         /// <summary>
         /// Parse the given text as an access token.
@@ -122,14 +123,14 @@ namespace cloud.charging.open.protocols.OCPI
             if (TryParse(Text, out var accessToken))
                 return accessToken;
 
-            throw new ArgumentException($"Invalid text representation of an access token: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of an access token: '{Text}'!",
                                         nameof(Text));
 
         }
 
         #endregion
 
-        #region (static) TryParse (Text)
+        #region (static) TryParse       (Text)
 
         /// <summary>
         /// Try to parse the given text as an access token.
@@ -147,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse (Text, out AccessToken)
+        #region (static) TryParse       (Text, out AccessToken)
 
         /// <summary>
         /// Try to parse the given text as an access token.
@@ -176,6 +177,75 @@ namespace cloud.charging.open.protocols.OCPI
         }
 
         #endregion
+
+
+        #region (static) ParseBASE64    (Text)
+
+        /// <summary>
+        /// Parse the given text as a BASE64-encoded access token.
+        /// </summary>
+        /// <param name="Text">A text representation of an access token.</param>
+        public static AccessToken ParseBASE64(String Text)
+        {
+
+            if (TryParseBASE64(Text, out var accessToken))
+                return accessToken;
+
+            throw new ArgumentException($"Invalid text representation of an access token: '{Text}'!",
+                                        nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParseBASE64 (Text)
+
+        /// <summary>
+        /// Try to parse the given text as a BASE64-encoded access token.
+        /// </summary>
+        /// <param name="Text">A text representation of an access token.</param>
+        public static AccessToken? TryParseBASE64(String Text)
+        {
+
+            if (TryParseBASE64(Text, out var accessToken))
+                return accessToken;
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region (static) TryParseBASE64 (Text, out AccessToken)
+
+        /// <summary>
+        /// Try to parse the given text as a BASE64-encoded access token.
+        /// </summary>
+        /// <param name="Text">A text representation of an access token.</param>
+        /// <param name="AccessToken">The parsed access token.</param>
+        public static Boolean TryParseBASE64(String Text, out AccessToken AccessToken)
+        {
+
+            Text = Text.Trim();
+
+            if (Text.IsNotNullOrEmpty())
+            {
+                try
+                {
+                    AccessToken = new AccessToken(Text.ToBase64());
+                    return true;
+                }
+                catch
+                { }
+            }
+
+            AccessToken = default;
+            return false;
+
+        }
+
+        #endregion
+
 
         #region Clone()
 

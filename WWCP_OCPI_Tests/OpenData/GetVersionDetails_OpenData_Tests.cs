@@ -28,7 +28,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 {
 
     /// <summary>
-    /// Testing the OCPI GetVersionDetails method(s) using registered OCPO tokens.
+    /// Testing the OCPI GetVersionDetails method(s) using NO OCPI tokens (Open Data Access).
     /// </summary>
     [TestFixture]
     public class GetVersionDetails_OpenData_Tests : A_2CPOs2EMSPs_TestDefaults
