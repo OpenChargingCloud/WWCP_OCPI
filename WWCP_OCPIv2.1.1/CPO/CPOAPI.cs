@@ -1965,7 +1965,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region Check access token
 
-                    if ((request.LocalAccessInfo is not null || CommonAPI.BaseAPI.LocationsAsOpenData == false) &&
+                    if ((request.LocalAccessInfo is not null || CommonAPI.BaseAPI.TariffsAsOpenData == false) &&
                         (request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
                          request.LocalAccessInfo?.Role   != Role.EMSP))
                     {

@@ -710,6 +710,11 @@ namespace cloud.charging.open.protocols.OCPI
         public Boolean                  LocationsAsOpenData        { get; }
 
         /// <summary>
+        /// Allow anonymous access to tariffs as Open Data.
+        /// </summary>
+        public Boolean                  TariffsAsOpenData          { get; }
+
+        /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI v2.2 does not define any behaviour for this.
         /// </summary>
@@ -793,12 +798,13 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Create a new CommonBaseAPI.
         /// </summary>
+        /// <param name="OurBaseURL">The URL for your API endpoint.</param>
         /// <param name="OurVersionsURL">The URL of our VERSIONS endpoint.</param>
         /// 
         /// <param name="AdditionalURLPathPrefix"></param>
         /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
+        /// <param name="TariffsAsOpenData">Allow anonymous access to tariffs as Open Data.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        /// <param name="Disable_RootServices">Whether to disable / and /versions HTTP services.</param>
         /// 
         /// <param name="HTTPHostname">The HTTP hostname for all URLs within this API.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
@@ -815,8 +821,6 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="LocalCertificateSelector">An optional delegate to select the TLS client certificate used for authentication.</param>
         /// <param name="AllowedTLSProtocols">The TLS protocol(s) allowed for this connection.</param>
         /// 
-        /// <param name="ServerThreadName">The optional name of the TCP server thread.</param>
-        /// <param name="ServerThreadPriority">The optional priority of the TCP server thread.</param>
         /// <param name="ServerThreadIsBackground">Whether the TCP server thread is a background thread or not.</param>
         /// <param name="ConnectionIdBuilder">An optional delegate to build a connection identification based on IP socket information.</param>
         /// <param name="ConnectionTimeout">The TCP client timeout for all incoming client connections in seconds (default: 30 sec).</param>
@@ -843,8 +847,8 @@ namespace cloud.charging.open.protocols.OCPI
 
                              HTTPPath?                                                  AdditionalURLPathPrefix       = null,
                              Boolean                                                    LocationsAsOpenData           = true,
+                             Boolean                                                    TariffsAsOpenData             = false,
                              Boolean?                                                   AllowDowngrades               = null,
-                             Boolean                                                    Disable_RootServices          = true,
 
                              HTTPHostname?                                              HTTPHostname                  = null,
                              String?                                                    ExternalDNSName               = null,
@@ -939,10 +943,12 @@ namespace cloud.charging.open.protocols.OCPI
 
             this.OurBaseURL                = OurBaseURL;
             this.OurVersionsURL            = OurVersionsURL;
+
             this.AdditionalURLPathPrefix   = AdditionalURLPathPrefix;
             this.LocationsAsOpenData       = LocationsAsOpenData;
+            this.TariffsAsOpenData         = TariffsAsOpenData;
             this.AllowDowngrades           = AllowDowngrades;
-            //this.Disable_RootServices      = Disable_RootServices;
+
             this.LoggingContext            = LoggingContext;
 
             //this.logfileName               = Path.Combine(this.LoggingPath,
@@ -978,8 +984,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// 
         /// <param name="AdditionalURLPathPrefix"></param>
         /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
+        /// <param name="TariffsAsOpenData">Allow anonymous access to tariffs as Open Data.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        /// <param name="Disable_RootServices">Whether to disable / and /versions HTTP services.</param>
         /// 
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
@@ -1010,8 +1016,8 @@ namespace cloud.charging.open.protocols.OCPI
 
                              HTTPPath?                    AdditionalURLPathPrefix    = null,
                              Boolean                      LocationsAsOpenData        = true,
+                             Boolean                      TariffsAsOpenData          = false,
                              Boolean?                     AllowDowngrades            = null,
-                             //Boolean                      Disable_RootServices       = false,
 
                              HTTPHostname?                HTTPHostname               = null,
                              String?                      ExternalDNSName            = "",
@@ -1073,10 +1079,12 @@ namespace cloud.charging.open.protocols.OCPI
 
             this.OurBaseURL                = OurBaseURL;
             this.OurVersionsURL            = OurVersionsURL;
+
             this.AdditionalURLPathPrefix   = AdditionalURLPathPrefix;
             this.LocationsAsOpenData       = LocationsAsOpenData;
+            this.TariffsAsOpenData         = TariffsAsOpenData;
             this.AllowDowngrades           = AllowDowngrades;
-            //this.Disable_RootServices      = Disable_RootServices;
+
             this.LoggingContext            = LoggingContext;
 
             //this.logfileName               = Path.Combine(this.LoggingPath,
