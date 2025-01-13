@@ -3213,28 +3213,29 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
 
                     #region We are a CPO, the other side is unauthenticated and we export locations and AdHoc tariffs as Open Data...
 
-                    if (OurCredentialRoles.Any(credentialRole => credentialRole.Role == Role.CPO) &&
-                        BaseAPI.LocationsAsOpenData &&
-                        request.RemoteParty is null)
+                    if (request.RemoteParty is null &&
+                        OurCredentialRoles.Any(credentialRole => credentialRole.Role == Role.CPO))
                     {
 
-                        endpoints.Add(
-                            new VersionEndpoint(
-                                Module_Id.Locations,
-                                InterfaceRoles.SENDER,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "cpo/locations")).Replace("//", "/"))
-                            )
-                        );
+                        if (BaseAPI.LocationsAsOpenData)
+                            endpoints.Add(
+                                new VersionEndpoint(
+                                    Module_Id.Locations,
+                                    InterfaceRoles.SENDER,
+                                    URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                        (request.Host + (prefix + "cpo/locations")))
+                                )
+                            );
 
-                        endpoints.Add(
-                            new VersionEndpoint(
-                                Module_Id.Tariffs,
-                                InterfaceRoles.SENDER,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "cpo/tariffs")).Replace("//", "/"))
-                            )
-                        );
+                        if (BaseAPI.TariffsAsOpenData)
+                            endpoints.Add(
+                                new VersionEndpoint(
+                                    Module_Id.Tariffs,
+                                    InterfaceRoles.SENDER,
+                                    URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                        (request.Host + (prefix + "cpo/tariffs")))
+                                )
+                            );
 
                     }
 
@@ -3321,9 +3322,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                             StatusCode           = 1000,
                             StatusMessage        = "Hello world!",
                             Data                 = new VersionDetail(
-                                                        Version.Id,
-                                                        endpoints
-                                                    ).ToJSON(CustomVersionDetailSerializer,
+                                                       Version.Id,
+                                                       endpoints
+                                                   ).ToJSON(CustomVersionDetailSerializer,
                                                             CustomVersionEndpointSerializer),
                             HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                 HTTPStatusCode             = HTTPStatusCode.OK,

@@ -3158,24 +3158,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region We are a CPO, the other side is unauthenticated and we export locations and AdHoc tariffs as Open Data...
 
-                    if (OurRole == Role.CPO && request.RemoteParty is null && BaseAPI.LocationsAsOpenData)
+                    if (request.RemoteParty is null &&
+                        OurRole == Role.CPO)
                     {
 
-                        endpoints.Add(
-                            new VersionEndpoint(
-                                Module_Id.Locations,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "cpo/locations")).Replace("//", "/"))
-                            )
-                        );
+                        if (BaseAPI.LocationsAsOpenData)
+                            endpoints.Add(
+                                new VersionEndpoint(
+                                    Module_Id.Locations,
+                                    URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                        (request.Host + (prefix + "cpo/locations")).Replace("//", "/"))
+                                )
+                            );
 
-                        endpoints.Add(
-                            new VersionEndpoint(
-                                Module_Id.Tariffs,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "cpo/tariffs")).Replace("//", "/"))
-                            )
-                        );
+                        if (BaseAPI.TariffsAsOpenData)
+                            endpoints.Add(
+                                new VersionEndpoint(
+                                    Module_Id.Tariffs,
+                                    URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                        (request.Host + (prefix + "cpo/tariffs")).Replace("//", "/"))
+                                )
+                            );
 
                     }
 
