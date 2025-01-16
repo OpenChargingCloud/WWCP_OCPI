@@ -262,7 +262,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 return;
             }
 
-            var graphDefinedCPO1 = new OCPIv2_3.HTTP.CommonClient(
+            var graphDefinedCPO1 = new OCPIv2_3_0.HTTP.CommonClient(
                                        cpo1BaseAPI.OurVersionsURL
                                    );
 
@@ -271,7 +271,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             if (graphDefinedCPO1 is not null)
             {
 
-                var response = await graphDefinedCPO1.GetVersionDetails(OCPIv2_3.Version.Id);
+                var response = await graphDefinedCPO1.GetVersionDetails(OCPIv2_3_0.Version.Id);
 
                 // GET /ocpi/versions/2.3 HTTP/1.1
                 // Accept:                          application/json; charset=utf-8; q=1
@@ -334,7 +334,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 if (response.Data is not null)
                 {
 
-                    Assert.That(response.Data.VersionId,                                        Is.EqualTo(OCPIv2_3.Version.Id));
+                    Assert.That(response.Data.VersionId,                                        Is.EqualTo(OCPIv2_3_0.Version.Id));
 
                     var endpoints = response.Data.Endpoints.
                                         GroupBy     (endpoint => endpoint.Identifier).
@@ -344,15 +344,15 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints,                                                      Is.Not.Null);
                     Assert.That(endpoints.Count,                                                Is.EqualTo(3));
 
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Credentials].First().URL,          Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/credentials")));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Locations].  First().URL,          Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/locations")));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Tariffs].    First().URL,          Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/tariffs"))); //ToDo: Should AdHoc tariffs be available on default?
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].First().URL,          Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/credentials")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].  First().URL,          Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/locations")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].    First().URL,          Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/tariffs"))); //ToDo: Should AdHoc tariffs be available on default?
 
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Credentials].Any(endpoint => endpoint.Role == OCPIv2_3.InterfaceRoles.SENDER),    Is.True);
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Credentials].Any(endpoint => endpoint.Role == OCPIv2_3.InterfaceRoles.RECEIVER),  Is.True); //ToDo: Does this make sense for OpenData access?
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].Any(endpoint => endpoint.Role == OCPIv2_3_0.InterfaceRoles.SENDER),    Is.True);
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].Any(endpoint => endpoint.Role == OCPIv2_3_0.InterfaceRoles.RECEIVER),  Is.True); //ToDo: Does this make sense for OpenData access?
 
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Locations].  First().Role,         Is.EqualTo(OCPIv2_3.InterfaceRoles.SENDER));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Tariffs].    First().Role,         Is.EqualTo(OCPIv2_3.InterfaceRoles.SENDER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].  First().Role,         Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].    First().Role,         Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
 
                 }
 

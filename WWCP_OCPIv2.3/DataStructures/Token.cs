@@ -25,11 +25,11 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_3.HTTP;
+using cloud.charging.open.protocols.OCPIv2_3_0.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
@@ -538,7 +538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                 if (JSON.ParseOptionalJSON("energy_contract",
                                            "energy contract",
-                                           OCPIv2_3.EnergyContract.TryParse,
+                                           OCPIv2_3_0.EnergyContract.TryParse,
                                            out EnergyContract? EnergyContract,
                                            out ErrorResponse))
                 {

@@ -23,7 +23,7 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3.SCSP.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
 {
 
     #region OnGetLocationsRequest/-Response

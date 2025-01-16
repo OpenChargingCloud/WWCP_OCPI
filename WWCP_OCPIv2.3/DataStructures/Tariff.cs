@@ -26,11 +26,11 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_3.HTTP;
+using cloud.charging.open.protocols.OCPIv2_3_0.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
@@ -588,7 +588,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                 if (JSON.ParseOptional("type",
                                        "tariff type",
-                                       OCPIv2_3.TariffType.TryParse,
+                                       OCPIv2_3_0.TariffType.TryParse,
                                        out TariffType? TariffType,
                                        out ErrorResponse))
                 {
@@ -711,7 +711,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                 if (JSON.ParseOptionalJSON("energy_mix",
                                            "energy mix",
-                                           OCPIv2_3.EnergyMix.TryParse,
+                                           OCPIv2_3_0.EnergyMix.TryParse,
                                            out EnergyMix? EnergyMix,
                                            out ErrorResponse))
                 {

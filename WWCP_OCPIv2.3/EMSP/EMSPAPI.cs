@@ -27,7 +27,7 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 {
 
     /// <summary>
@@ -110,6 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
         public CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer    { get; set; }
         public CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer          { get; set; }
+        public CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                       { get; set; }
         public CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                   { get; set; }
         public CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                         { get; set; }
@@ -2238,7 +2239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
             #region GET    [/emsp] == /
 
             //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-            //                                   URLPathPrefix + "/emsp", "cloud.charging.open.protocols.OCPIv2_3.HTTPAPI.EMSPAPI.HTTPRoot",
+            //                                   URLPathPrefix + "/emsp", "cloud.charging.open.protocols.OCPIv2_3_0.HTTPAPI.EMSPAPI.HTTPRoot",
             //                                   Assembly.GetCallingAssembly());
 
             //CommonAPI.AddOCPIMethod(HTTPHostname.Any,
@@ -2251,8 +2252,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
             //                             OCPIRequest: async Request => {
 
             //                                 var _MemoryStream = new MemoryStream();
-            //                                 typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_3.HTTPAPI.EMSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-            //                                 typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_3.HTTPAPI.EMSPAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_3_0.HTTPAPI.EMSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_3_0.HTTPAPI.EMSPAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
             //                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                     HTTPStatusCode  = HTTPStatusCode.OK,
@@ -2369,6 +2370,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                                                                                                      CustomEVSEEnergyMeterSerializer,
                                                                                                                      CustomTransparencySoftwareStatusSerializer,
                                                                                                                      CustomTransparencySoftwareSerializer,
+                                                                                                                     CustomParkingSerializer,
                                                                                                                      CustomDisplayTextSerializer,
                                                                                                                      CustomBusinessDetailsSerializer,
                                                                                                                      CustomHoursSerializer,
@@ -2545,6 +2547,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                                                                           CustomEVSEEnergyMeterSerializer,
                                                                                           CustomTransparencySoftwareStatusSerializer,
                                                                                           CustomTransparencySoftwareSerializer,
+                                                                                          CustomParkingSerializer,
                                                                                           CustomDisplayTextSerializer,
                                                                                           CustomBusinessDetailsSerializer,
                                                                                           CustomHoursSerializer,
@@ -2661,6 +2664,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                                                                                             CustomEVSEEnergyMeterSerializer,
                                                                                                             CustomTransparencySoftwareStatusSerializer,
                                                                                                             CustomTransparencySoftwareSerializer,
+                                                                                                            CustomParkingSerializer,
                                                                                                             CustomDisplayTextSerializer,
                                                                                                             CustomBusinessDetailsSerializer,
                                                                                                             CustomHoursSerializer,
@@ -2695,6 +2699,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                                                                                       CustomEVSEEnergyMeterSerializer,
                                                                                                       CustomTransparencySoftwareStatusSerializer,
                                                                                                       CustomTransparencySoftwareSerializer,
+                                                                                                      CustomParkingSerializer,
                                                                                                       CustomDisplayTextSerializer,
                                                                                                       CustomBusinessDetailsSerializer,
                                                                                                       CustomHoursSerializer,
@@ -2790,6 +2795,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                                                                                                      CustomEVSEEnergyMeterSerializer,
                                                                                                                      CustomTransparencySoftwareStatusSerializer,
                                                                                                                      CustomTransparencySoftwareSerializer,
+                                                                                                                     CustomParkingSerializer,
                                                                                                                      CustomDisplayTextSerializer,
                                                                                                                      CustomBusinessDetailsSerializer,
                                                                                                                      CustomHoursSerializer,
@@ -2884,6 +2890,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                                                                               CustomEVSEEnergyMeterSerializer,
                                                                                               CustomTransparencySoftwareStatusSerializer,
                                                                                               CustomTransparencySoftwareSerializer,
+                                                                                              CustomParkingSerializer,
                                                                                               CustomDisplayTextSerializer,
                                                                                               CustomBusinessDetailsSerializer,
                                                                                               CustomHoursSerializer,
@@ -2985,7 +2992,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = evse.ToJSON(Request.EMSPId,
+                                                   Data                 = evse.ToJSON(true,
+                                                                                      true,
+                                                                                      true,
+                                                                                      Request.EMSPId,
                                                                                       CustomEVSESerializer,
                                                                                       CustomStatusScheduleSerializer,
                                                                                       CustomConnectorSerializer,
@@ -3091,7 +3101,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
-                                                       Data                 = addOrUpdateResult.Data.ToJSON(Request.EMSPId,
+                                                       Data                 = addOrUpdateResult.Data.ToJSON(true,
+                                                                                                            true,
+                                                                                                            true,
+                                                                                                            Request.EMSPId,
                                                                                                             CustomEVSESerializer,
                                                                                                             CustomStatusScheduleSerializer,
                                                                                                             CustomConnectorSerializer,
@@ -3114,7 +3127,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                         return new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 2000,
                                                    StatusMessage        = addOrUpdateResult.ErrorResponse,
-                                                   Data                 = newOrUpdatedEVSE.ToJSON(Request.EMSPId,
+                                                   Data                 = newOrUpdatedEVSE.ToJSON(true,
+                                                                                                  true,
+                                                                                                  true,
+                                                                                                  Request.EMSPId,
                                                                                                   CustomEVSESerializer,
                                                                                                   CustomStatusScheduleSerializer,
                                                                                                   CustomConnectorSerializer,
@@ -3202,7 +3218,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                             return new OCPIResponse.Builder(Request) {
                                                            StatusCode           = 1000,
                                                            StatusMessage        = "Hello world!",
-                                                           Data                 = patchedEVSE.PatchedData.ToJSON(Request.EMSPId,
+                                                           Data                 = patchedEVSE.PatchedData.ToJSON(true,
+                                                                                                                 true,
+                                                                                                                 true,
+                                                                                                                 Request.EMSPId,
                                                                                                                  CustomEVSESerializer,
                                                                                                                  CustomStatusScheduleSerializer,
                                                                                                                  CustomConnectorSerializer,
@@ -3288,7 +3307,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                         return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
-                                                       Data                 = existingEVSE.ToJSON(Request.EMSPId,
+                                                       Data                 = existingEVSE.ToJSON(true,
+                                                                                                  true,
+                                                                                                  true,
+                                                                                                  Request.EMSPId,
                                                                                                   CustomEVSESerializer,
                                                                                                   CustomStatusScheduleSerializer,
                                                                                                   CustomConnectorSerializer,
@@ -3395,7 +3417,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = connector.ToJSON(Request.EMSPId,
+                                                   Data                 = connector.ToJSON(true,
+                                                                                           true,
+                                                                                           Request.EMSPId,
                                                                                            CustomConnectorSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
@@ -3498,7 +3522,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
-                                                       Data                 = addOrUpdateResult.Data.ToJSON(Request.EMSPId,
+                                                       Data                 = addOrUpdateResult.Data.ToJSON(true,
+                                                                                                            true,
+                                                                                                            Request.EMSPId,
                                                                                                             CustomConnectorSerializer),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = addOrUpdateResult.WasCreated == true
@@ -3514,7 +3540,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                         return new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 2000,
                                                    StatusMessage        = addOrUpdateResult.ErrorResponse,
-                                                   Data                 = newOrUpdatedConnector.ToJSON(Request.EMSPId,
+                                                   Data                 = newOrUpdatedConnector.ToJSON(true,
+                                                                                                       true,
+                                                                                                       Request.EMSPId,
                                                                                                        CustomConnectorSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -3679,7 +3707,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                         return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
-                                                       Data                 = existingConnector.ToJSON(Request.EMSPId,
+                                                       Data                 = existingConnector.ToJSON(true,
+                                                                                                       true,
+                                                                                                       Request.EMSPId,
                                                                                                        CustomConnectorSerializer),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,

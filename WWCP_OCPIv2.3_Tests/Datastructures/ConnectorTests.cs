@@ -29,7 +29,7 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
+namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 {
 
     /// <summary>
@@ -57,11 +57,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                  Volt.  ParseV(400),
                                  Ampere.ParseA(30),
                                  Watt.  ParseW(12),
-                                 new[] {
+                                 [
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 ],
                                  URL.Parse("https://open.charging.cloud/terms"),
+                                 [ ConnectorCapability.ISO_15118_2_PLUG_AND_CHARGE ],
+                                 DateTime.Parse("2020-09-21T00:00:00Z"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
 
@@ -79,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
             ClassicAssert.AreEqual("https://open.charging.cloud/terms",  JSON["terms_and_conditions"].Value<String>());
             ClassicAssert.AreEqual("2020-09-21T00:00:00.000Z",           JSON["last_updated"].        Value<String>());
 
-            ClassicAssert.IsTrue(Connector.TryParse(JSON, out Connector Connector2, out String ErrorResponse));
+            ClassicAssert.IsTrue(Connector.TryParse(JSON, out var Connector2, out var ErrorResponse));
             ClassicAssert.IsNull(ErrorResponse);
 
             ClassicAssert.AreEqual(new[] {
@@ -121,11 +123,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                  Volt.  ParseV(400),
                                  Ampere.ParseA(30),
                                  Watt.  ParseW(12),
-                                 new[] {
+                                 [
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 ],
                                  URL.Parse("https://open.charging.cloud/terms"),
+                                 [ ConnectorCapability.ISO_15118_2_PLUG_AND_CHARGE ],
+                                 DateTime.Parse("2020-09-21T00:00:00Z"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
 
@@ -172,11 +176,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                  Volt.  ParseV(400),
                                  Ampere.ParseA(30),
                                  Watt.  ParseW(12),
-                                 new[] {
+                                 [
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 ],
                                  URL.Parse("https://open.charging.cloud/terms"),
+                                 [ ConnectorCapability.ISO_15118_2_PLUG_AND_CHARGE ],
+                                 DateTime.Parse("2020-09-21T00:00:00Z"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
 
@@ -189,7 +195,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
             ClassicAssert.IsNotNull(patchResult.PatchedData);
 
             ClassicAssert.AreEqual   (Connector_Id.Parse("1"),                         patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual   (ConnectorType.TESLA_S,                          patchResult.PatchedData.Standard);
+            ClassicAssert.AreEqual   (ConnectorType.TESLA_S,                           patchResult.PatchedData.Standard);
             ClassicAssert.AreEqual   (ConnectorFormats.SOCKET,                         patchResult.PatchedData.Format);
             ClassicAssert.AreEqual   (PowerTypes.AC_3_PHASE,                           patchResult.PatchedData.PowerType);
             ClassicAssert.AreEqual   (400,                                             patchResult.PatchedData.MaxVoltage);
@@ -224,11 +230,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                  Volt.  ParseV(400),
                                  Ampere.ParseA(30),
                                  Watt.  ParseW(12),
-                                 new[] {
+                                 [
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 ],
                                  URL.Parse("https://open.charging.cloud/terms"),
+                                 [ ConnectorCapability.ISO_15118_2_PLUG_AND_CHARGE ],
+                                 DateTime.Parse("2020-09-21T00:00:00Z"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
 
@@ -241,7 +249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
             ClassicAssert.IsNotNull(patchResult.PatchedData);
 
             ClassicAssert.AreEqual (Connector_Id.Parse("1"),                         patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual (ConnectorType.IEC_62196_T2,                     patchResult.PatchedData.Standard);
+            ClassicAssert.AreEqual (ConnectorType.IEC_62196_T2,                      patchResult.PatchedData.Standard);
             ClassicAssert.AreEqual (ConnectorFormats.CABLE,                          patchResult.PatchedData.Format);
             ClassicAssert.AreEqual (PowerTypes.AC_3_PHASE,                           patchResult.PatchedData.PowerType);
             ClassicAssert.AreEqual (400,                                             patchResult.PatchedData.MaxVoltage);
@@ -274,11 +282,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                  Volt.  ParseV(400),
                                  Ampere.ParseA(30),
                                  Watt.  ParseW(12),
-                                 new[] {
+                                 [
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 ],
                                  URL.Parse("https://open.charging.cloud/terms"),
+                                 [ ConnectorCapability.ISO_15118_2_PLUG_AND_CHARGE ],
+                                 DateTime.Parse("2020-09-21T00:00:00Z"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
 
@@ -291,7 +301,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
             ClassicAssert.IsNotNull(patchResult.PatchedData);
 
             ClassicAssert.AreEqual (Connector_Id.Parse("1"),                         patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual (ConnectorType.IEC_62196_T2,                     patchResult.PatchedData.Standard);
+            ClassicAssert.AreEqual (ConnectorType.IEC_62196_T2,                      patchResult.PatchedData.Standard);
             ClassicAssert.AreEqual (ConnectorFormats.SOCKET,                         patchResult.PatchedData.Format);
             ClassicAssert.AreEqual (PowerTypes.AC_3_PHASE,                           patchResult.PatchedData.PowerType);
             ClassicAssert.AreEqual (400,                                             patchResult.PatchedData.MaxVoltage);
@@ -323,11 +333,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                  Volt.  ParseV(400),
                                  Ampere.ParseA(30),
                                  Watt.  ParseW(12),
-                                 new[] {
+                                 [
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 ],
                                  URL.Parse("https://open.charging.cloud/terms"),
+                                 [ ConnectorCapability.ISO_15118_2_PLUG_AND_CHARGE ],
+                                 DateTime.Parse("2020-09-21T00:00:00Z"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
 
@@ -340,7 +352,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
             ClassicAssert.IsNotNull(patchResult.PatchedData);
 
             ClassicAssert.AreEqual (Connector_Id.Parse("1"),                         patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual (ConnectorType.IEC_62196_T2,                     patchResult.PatchedData.Standard);
+            ClassicAssert.AreEqual (ConnectorType.IEC_62196_T2,                      patchResult.PatchedData.Standard);
             ClassicAssert.AreEqual (ConnectorFormats.SOCKET,                         patchResult.PatchedData.Format);
             ClassicAssert.AreEqual (PowerTypes.AC_3_PHASE,                           patchResult.PatchedData.PowerType);
             ClassicAssert.AreEqual (400,                                             patchResult.PatchedData.MaxVoltage);
@@ -371,11 +383,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                  Volt.  ParseV(400),
                                  Ampere.ParseA(30),
                                  Watt.  ParseW(12),
-                                 new[] {
+                                 [
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 ],
                                  URL.Parse("https://open.charging.cloud/terms"),
+                                 [ ConnectorCapability.ISO_15118_2_PLUG_AND_CHARGE ],
+                                 DateTime.Parse("2020-09-21T00:00:00Z"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
 
@@ -388,7 +402,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
             ClassicAssert.IsNotNull(patchResult.PatchedData);
 
             ClassicAssert.AreEqual (Connector_Id.Parse("1"),          patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual (ConnectorType.IEC_62196_T2,      patchResult.PatchedData.Standard);
+            ClassicAssert.AreEqual (ConnectorType.IEC_62196_T2,       patchResult.PatchedData.Standard);
             ClassicAssert.AreEqual (ConnectorFormats.SOCKET,          patchResult.PatchedData.Format);
             ClassicAssert.AreEqual (PowerTypes.AC_3_PHASE,            patchResult.PatchedData.PowerType);
             ClassicAssert.AreEqual (400,                              patchResult.PatchedData.MaxVoltage);
@@ -421,11 +435,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                  Volt.  ParseV(400),
                                  Ampere.ParseA(30),
                                  Watt.  ParseW(12),
-                                 new[] {
+                                 [
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 ],
                                  URL.Parse("https://open.charging.cloud/terms"),
+                                 [ ConnectorCapability.ISO_15118_2_PLUG_AND_CHARGE ],
+                                 DateTime.Parse("2020-09-21T00:00:00Z"),
                                  DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                              );
 
@@ -472,11 +488,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                  Volt.  ParseV(400),
                                  Ampere.ParseA(30),
                                  Watt.  ParseW(12),
-                                 new[] {
+                                 [
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 ],
                                  URL.Parse("https://open.charging.cloud/terms"),
+                                 [ ConnectorCapability.ISO_15118_2_PLUG_AND_CHARGE ],
+                                 DateTime.Parse("2020-09-21T00:00:00Z"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
 
@@ -490,7 +508,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
             ClassicAssert.IsNotNull(patchResult.PatchedData);
 
             ClassicAssert.AreEqual (Connector_Id.Parse("1"),                                             patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual (ConnectorType.IEC_62196_T2,                                         patchResult.PatchedData.Standard);
+            ClassicAssert.AreEqual (ConnectorType.IEC_62196_T2,                                          patchResult.PatchedData.Standard);
             ClassicAssert.AreEqual (ConnectorFormats.SOCKET,                                             patchResult.PatchedData.Format);
             ClassicAssert.AreEqual (PowerTypes.AC_3_PHASE,                                               patchResult.PatchedData.PowerType);
             ClassicAssert.AreEqual (400,                                                                 patchResult.PatchedData.MaxVoltage);

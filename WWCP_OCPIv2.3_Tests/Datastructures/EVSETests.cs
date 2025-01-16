@@ -30,7 +30,7 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
+namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 {
 
     /// <summary>
@@ -55,7 +55,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
             var EVSE1 = new EVSE(
                             EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                             StatusType.AVAILABLE,
-                            [ VehicleType.PERSONAL_VEHICLE ],
                             [
                                 new Connector(
                                     Connector_Id.Parse("1"),
@@ -70,6 +69,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                         Tariff_Id.Parse("DE*GEF*T0002")
                                     },
                                     URL.Parse("https://open.charging.cloud/terms"),
+                                    [ ConnectorCapability.ISO_15118_2_PLUG_AND_CHARGE ],
+                                    DateTime.Parse("2020-09-21"),
                                     DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                                 ),
                                 new Connector(
@@ -85,9 +86,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                         Tariff_Id.Parse("DE*GEF*T0004")
                                     },
                                     URL.Parse("https://open.charging.cloud/terms"),
+                                    [ ConnectorCapability.ISO_15118_20_PLUG_AND_CHARGE ],
+                                    DateTime.Parse("2020-09-22"),
                                     DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                                 )
                             ],
+                            [ Parking_Id.Parse("1") ],
+                            [ VehicleType.PERSONAL_VEHICLE ],
+
                             EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                             [
                                 new StatusSchedule(
@@ -163,10 +169,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                 DisplayText.Create(Languages.en, "Ken sent me!")
                             ],
                             [
-                                ParkingRestriction.EV_ONLY,
-                                ParkingRestriction.PLUGGED
-                            ],
-                            [
                                 new Image(
                                     URL.Parse("http://example.com/pinguine.jpg"),
                                     ImageFileType.jpeg,
@@ -184,6 +186,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                     URL.Parse("http://example.com/kleine_wellensittiche.jpg")
                                 )
                             ],
+                            [EMSP_Id.Parse("DE*GDF")],
+                            DateTime.Parse("2020-09-18"),
                             DateTime.Parse("2020-09-18T00:00:00Z").ToUniversalTime()
                         );
 
@@ -238,7 +242,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
             ClassicAssert.AreEqual(EVSE1.Coordinates,                        evse2.Coordinates);
             ClassicAssert.AreEqual(EVSE1.PhysicalReference,                  evse2.PhysicalReference);
             ClassicAssert.AreEqual(EVSE1.Directions,                         evse2.Directions);
-            ClassicAssert.AreEqual(EVSE1.ParkingRestrictions,                evse2.ParkingRestrictions);
             ClassicAssert.AreEqual(EVSE1.Images,                             evse2.Images);
             ClassicAssert.AreEqual(EVSE1.LastUpdated.ToIso8601(),            evse2.LastUpdated.ToIso8601());
 

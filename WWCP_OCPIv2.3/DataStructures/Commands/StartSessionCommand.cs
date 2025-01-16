@@ -28,7 +28,7 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
@@ -193,7 +193,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                 if (!JSON.ParseMandatoryJSON("token",
                                              "token",
-                                             OCPIv2_3.Token.TryParse,
+                                             OCPIv2_3_0.Token.TryParse,
                                              out Token? Token,
                                              out ErrorResponse))
                 {
@@ -250,7 +250,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                 if (JSON.ParseOptional("authorization_reference",
                                        "authorization reference",
-                                       OCPIv2_3.AuthorizationReference.TryParse,
+                                       OCPIv2_3_0.AuthorizationReference.TryParse,
                                        out AuthorizationReference? AuthorizationReference,
                                        out ErrorResponse))
                 {

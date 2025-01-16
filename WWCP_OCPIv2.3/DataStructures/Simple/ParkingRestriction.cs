@@ -21,7 +21,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
@@ -184,43 +184,43 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <summary>
         /// Parking only for people who work at a site, building, or complex that the Location belongs to.
         /// </summary>
-        public static ParkingRestriction EMPLOYEES      { get; }
+        public static ParkingRestriction  EMPLOYEES    { get; }
             = new ("EMPLOYEES");
 
         /// <summary>
         /// Reserved parking spot for electric vehicles.
         /// </summary>
-        public static ParkingRestriction EV_ONLY        { get; }
+        public static ParkingRestriction  EV_ONLY      { get; }
             = new ("EV_ONLY");
 
         /// <summary>
         /// Parking allowed only while plugged in (charging).
         /// </summary>
-        public static ParkingRestriction PLUGGED        { get; }
+        public static ParkingRestriction  PLUGGED      { get; }
             = new ("PLUGGED");
 
         /// <summary>
         /// Reserved parking spot for disabled people with valid ID.
         /// </summary>
-        public static ParkingRestriction DISABLED       { get; }
+        public static ParkingRestriction  DISABLED     { get; }
             = new ("DISABLED");
 
         /// <summary>
         /// Parking spot for customers/guests only, for example in case of a hotel or shop.
         /// </summary>
-        public static ParkingRestriction CUSTOMERS      { get; }
+        public static ParkingRestriction  CUSTOMERS    { get; }
             = new ("CUSTOMERS");
 
         /// <summary>
         /// Parking only for taxi vehicles.
         /// </summary>
-        public static ParkingRestriction TAXI           { get; }
-            = new ("TAXI");
+        public static ParkingRestriction  TAXIS        { get; }
+            = new ("TAXIS");
 
         /// <summary>
         /// Parking only for people who live in a complex that the Location belongs to.
         /// </summary>
-        public static ParkingRestriction TENANTS        { get; }
+        public static ParkingRestriction  TENANTS      { get; }
             = new ("TENANTS");
 
         #endregion

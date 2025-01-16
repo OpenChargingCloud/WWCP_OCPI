@@ -313,7 +313,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             if (graphDefinedEMSP1 is not null)
             {
 
-                var response = await graphDefinedEMSP1.GetVersionDetails(OCPIv2_3.Version.Id);
+                var response = await graphDefinedEMSP1.GetVersionDetails(OCPIv2_3_0.Version.Id);
 
                 // GET /ocpi/versions/2.3 HTTP/1.1
                 // Accept:                        application/json; charset=utf-8; q=1
@@ -402,7 +402,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 if (response.Data is not null)
                 {
 
-                    Assert.That(response.Data.VersionId,                                        Is.EqualTo(OCPIv2_3.Version.Id));
+                    Assert.That(response.Data.VersionId,                                        Is.EqualTo(OCPIv2_3_0.Version.Id));
 
                     var endpoints = response.Data.Endpoints.
                                         GroupBy     (endpoint => endpoint.Identifier).
@@ -412,25 +412,25 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints,                                                      Is.Not.Null);
                     Assert.That(endpoints.Count,                                                Is.EqualTo(8));
 
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Credentials].     First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/credentials")));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/locations")));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/tariffs")));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/sessions")));
-                    //Assert.That(endpoints[OCPIv2_3.Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/chargingProfiles")));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/cdrs")));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/commands")));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/tokens")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/credentials")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/locations")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/tariffs")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/sessions")));
+                    //Assert.That(endpoints[OCPIv2_3_0.Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/chargingProfiles")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/cdrs")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/commands")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/tokens")));
 
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_3.InterfaceRoles.SENDER),    Is.True);
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_3.InterfaceRoles.RECEIVER),  Is.True);
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_3_0.InterfaceRoles.SENDER),    Is.True);
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_3_0.InterfaceRoles.RECEIVER),  Is.True);
 
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Locations].       First().Role,  Is.EqualTo(OCPIv2_3.InterfaceRoles.RECEIVER));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Tariffs].         First().Role,  Is.EqualTo(OCPIv2_3.InterfaceRoles.RECEIVER));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Sessions].        First().Role,  Is.EqualTo(OCPIv2_3.InterfaceRoles.RECEIVER));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.ChargingProfiles].First().Role,  Is.EqualTo(OCPIv2_3.InterfaceRoles.SENDER));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.CDRs].            First().Role,  Is.EqualTo(OCPIv2_3.InterfaceRoles.RECEIVER));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Commands].        First().Role,  Is.EqualTo(OCPIv2_3.InterfaceRoles.SENDER));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Tokens].          First().Role,  Is.EqualTo(OCPIv2_3.InterfaceRoles.SENDER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].       First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.RECEIVER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].         First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.RECEIVER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Sessions].        First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.RECEIVER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.ChargingProfiles].First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.CDRs].            First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.RECEIVER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Commands].        First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tokens].          First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
 
                 }
 
@@ -729,7 +729,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             if (graphDefinedCPO1 is not null)
             {
 
-                var response = await graphDefinedCPO1.GetVersionDetails(OCPIv2_3.Version.Id);
+                var response = await graphDefinedCPO1.GetVersionDetails(OCPIv2_3_0.Version.Id);
 
                 // GET /ocpi/versions/2.3 HTTP/1.1
                 // Accept:                        application/json; charset=utf-8; q=1
@@ -818,7 +818,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 if (response.Data is not null)
                 {
 
-                    Assert.That(response.Data.VersionId,                                        Is.EqualTo(OCPIv2_3.Version.Id));
+                    Assert.That(response.Data.VersionId,                                        Is.EqualTo(OCPIv2_3_0.Version.Id));
 
                     var endpoints = response.Data.Endpoints.
                                         GroupBy     (endpoint => endpoint.Identifier).
@@ -828,25 +828,25 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints,                                                      Is.Not.Null);
                     Assert.That(endpoints.Count,                                                Is.EqualTo(8));
 
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Credentials].     First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/credentials")));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/locations")));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/tariffs")));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/sessions")));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/chargingProfiles")));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/cdrs")));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/commands")));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/tokens")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/credentials")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/locations")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/tariffs")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/sessions")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/chargingProfiles")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/cdrs")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/commands")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/tokens")));
 
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_3.InterfaceRoles.SENDER),    Is.True);
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_3.InterfaceRoles.RECEIVER),  Is.True);
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_3_0.InterfaceRoles.SENDER),    Is.True);
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_3_0.InterfaceRoles.RECEIVER),  Is.True);
 
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Locations].       First().Role,  Is.EqualTo(OCPIv2_3.InterfaceRoles.SENDER));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Tariffs].         First().Role,  Is.EqualTo(OCPIv2_3.InterfaceRoles.SENDER));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Sessions].        First().Role,  Is.EqualTo(OCPIv2_3.InterfaceRoles.SENDER));
-                    //Assert.That(endpoints[OCPIv2_3.Module_Id.ChargingProfiles].First().Role,  Is.EqualTo(OCPIv2_3.InterfaceRoles.RECEIVER));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.CDRs].            First().Role,  Is.EqualTo(OCPIv2_3.InterfaceRoles.SENDER));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Commands].        First().Role,  Is.EqualTo(OCPIv2_3.InterfaceRoles.RECEIVER));
-                    Assert.That(endpoints[OCPIv2_3.Module_Id.Tokens].          First().Role,  Is.EqualTo(OCPIv2_3.InterfaceRoles.RECEIVER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].       First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].         First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Sessions].        First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
+                    //Assert.That(endpoints[OCPIv2_3_0.Module_Id.ChargingProfiles].First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.RECEIVER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.CDRs].            First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Commands].        First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.RECEIVER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tokens].          First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.RECEIVER));
 
                 }
 

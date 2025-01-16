@@ -21,22 +21,22 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
-    /// This OCPI version 2.3
+    /// This OCPI version 2.3.0-rc2
     /// </summary>
     public static class Version
     {
 
         /// <summary>
-        /// This OCPI version 2.3 as text "v2.3".
+        /// This OCPI version 2.3.0 as text "v2.3.0".
         /// </summary>
-        public const           String      String   = "v2.3";
+        public const           String      String   = "v2.3.0";
 
         /// <summary>
-        /// This OCPI version "2.3" as version identification.
+        /// This OCPI version "2.3.0" as version identification.
         /// </summary>
         public readonly static Version_Id  Id       = Version_Id.Parse(String[1..]);
 

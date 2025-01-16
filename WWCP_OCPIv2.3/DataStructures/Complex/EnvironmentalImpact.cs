@@ -25,7 +25,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
@@ -145,7 +145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                 if (!JSON.ParseMandatory("category",
                                          "environmental impact category",
-                                         OCPIv2_3.EnvironmentalImpactCategory.TryParse,
+                                         OCPIv2_3_0.EnvironmentalImpactCategory.TryParse,
                                          out EnvironmentalImpactCategory EnvironmentalImpactCategory,
                                          out ErrorResponse))
                 {

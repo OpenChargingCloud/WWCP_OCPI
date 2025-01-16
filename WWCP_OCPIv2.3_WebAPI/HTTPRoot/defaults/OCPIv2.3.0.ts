@@ -302,7 +302,7 @@ type ParkingRestriction =
     "EV_ONLY"     |                                                 // Reserved parking spot for electric vehicles.
     "PLUGGED"     |                                                 // Parking is only allowed while plugged in (charging).
     "CUSTOMERS"   |                                                 // Parking spot for customers/guests only, for example in case of a hotel or shop.
-    "TAXI"        |                                                 // Parking only for taxi vehicles.
+    "TAXIS"       |                                                 // Parking only for taxi vehicles.
     "TENANTS"     |                                                 // Parking only for people who live in a complex that the Location belongs to.
      string;
 

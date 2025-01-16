@@ -25,7 +25,7 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3.EMSP.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 {
 
     #region OnGetLocationsRequest/-Response

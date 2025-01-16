@@ -17,13 +17,15 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
@@ -114,9 +116,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="StatusSchedule">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject             JSON,
-                                       out StatusSchedule  StatusSchedule,
-                                       out String?         ErrorResponse)
+        public static Boolean TryParse(JObject                                  JSON,
+                                       [NotNullWhen(true)]  out StatusSchedule  StatusSchedule,
+                                       [NotNullWhen(false)] out String?         ErrorResponse)
 
             => TryParse(JSON,
                         out StatusSchedule,
@@ -132,8 +134,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomStatusScheduleParser">A delegate to parse custom status schedule JSON objects.</param>
         public static Boolean TryParse(JObject                                       JSON,
-                                       out StatusSchedule                            StatusSchedule,
-                                       out String?                                   ErrorResponse,
+                                       [NotNullWhen(true)]  out StatusSchedule       StatusSchedule,
+                                       [NotNullWhen(false)] out String?              ErrorResponse,
                                        CustomJObjectParserDelegate<StatusSchedule>?  CustomStatusScheduleParser   = null)
         {
 
@@ -189,9 +191,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                 #endregion
 
 
-                StatusSchedule = new StatusSchedule(Status,
-                                                    Begin,
-                                                    End);
+                StatusSchedule = new StatusSchedule(
+                                     Status,
+                                     Begin,
+                                     End
+                                 );
 
 
                 if (CustomStatusScheduleParser is not null)
@@ -223,13 +227,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
             var json = JSONObject.Create(
 
-                           new JProperty("period_begin",      Begin.    ToIso8601()),
+                                 new JProperty("period_begin",   Begin.    ToIso8601()),
 
                            End.HasValue
-                               ? new JProperty("period_end",  End.Value.ToIso8601())
+                               ? new JProperty("period_end",     End.Value.ToIso8601())
                                : null,
 
-                           new JProperty("status",            Status.   ToString())
+                                 new JProperty("status",         Status.   ToString())
 
                        );
 
@@ -244,7 +248,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this status schedule.
         /// </summary>
         public StatusSchedule Clone()
 

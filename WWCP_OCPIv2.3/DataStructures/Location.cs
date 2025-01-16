@@ -29,11 +29,11 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_3.HTTP;
+using cloud.charging.open.protocols.OCPIv2_3_0.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
@@ -61,6 +61,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3
     {
 
         #region Data
+
+        /// <summary>
+        /// The default JSON-LD context of locations.
+        /// </summary>
+        public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse("https://open.charging.cloud/contexts/OCPI/2.3/location");
 
         private readonly Lock                                                         patchLock    = new();
 
@@ -192,6 +197,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3
             => evses.Values.Select(evse => evse.UId);
 
         /// <summary>
+        /// An optional enumeration of parking places that can be used by vehicles charging at this location.
+        /// </summary>
+        [Optional]
+        public IEnumerable<Parking>                ParkingPlaces            { get; }
+
+        /// <summary>
         /// The optional enumeration of human-readable directions on how to reach the location.
         /// </summary>
         [Optional]
@@ -307,6 +318,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="RelatedLocations">An optional enumeration of additional geographical locations of related geo coordinates that might be relevant to the EV driver.</param>
         /// <param name="ParkingType">An optional general type of parking at the location.</param>
         /// <param name="EVSEs">An optional enumeration of Electric Vehicle Supply Equipments (EVSE) at this location.</param>
+        /// <param name="ParkingPlaces">An optional enumeration of parking places that can be used by vehicles charging at this location.</param>
         /// <param name="Directions">An optional enumeration of human-readable directions on how to reach the location.</param>
         /// <param name="Operator">Optional information about the charging station operator.</param>
         /// <param name="SubOperator">Optional information about the suboperator.</param>
@@ -331,6 +343,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="CustomEVSEEnergyMeterSerializer">A delegate to serialize custom EVSE energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
+        /// <param name="CustomParkingSerializer">A delegate to serialize custom parking JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
@@ -355,6 +368,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                         IEnumerable<AdditionalGeoLocation>?                           RelatedLocations                             = null,
                         ParkingType?                                                  ParkingType                                  = null,
                         IEnumerable<EVSE>?                                            EVSEs                                        = null,
+                        IEnumerable<Parking>?                                         ParkingPlaces                                = null,
                         IEnumerable<DisplayText>?                                     Directions                                   = null,
                         BusinessDetails?                                              Operator                                     = null,
                         BusinessDetails?                                              SubOperator                                  = null,
@@ -380,6 +394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                         CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer              = null,
                         CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
                         CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
+                        CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
                         CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
                         CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
                         CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
@@ -406,6 +421,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                    RelatedLocations,
                    ParkingType,
                    EVSEs,
+                   ParkingPlaces,
                    Directions,
                    Operator,
                    SubOperator,
@@ -430,6 +446,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                    CustomEVSEEnergyMeterSerializer,
                    CustomTransparencySoftwareStatusSerializer,
                    CustomTransparencySoftwareSerializer,
+                   CustomParkingSerializer,
                    CustomDisplayTextSerializer,
                    CustomBusinessDetailsSerializer,
                    CustomHoursSerializer,
@@ -466,6 +483,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="RelatedLocations">An optional enumeration of additional geographical locations of related geo coordinates that might be relevant to the EV driver.</param>
         /// <param name="ParkingType">An optional general type of parking at the location.</param>
         /// <param name="EVSEs">An optional enumeration of Electric Vehicle Supply Equipments (EVSE) at this location.</param>
+        /// <param name="ParkingPlaces">An optional enumeration of parking places that can be used by vehicles charging at this location.</param>
         /// <param name="Directions">An optional enumeration of human-readable directions on how to reach the location.</param>
         /// <param name="Operator">Optional information about the charging station operator.</param>
         /// <param name="SubOperator">Optional information about the suboperator.</param>
@@ -490,6 +508,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="CustomEVSEEnergyMeterSerializer">A delegate to serialize custom EVSE energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
+        /// <param name="CustomParkingSerializer">A delegate to serialize custom parking JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
@@ -516,6 +535,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                         IEnumerable<AdditionalGeoLocation>?                           RelatedLocations                             = null,
                         ParkingType?                                                  ParkingType                                  = null,
                         IEnumerable<EVSE>?                                            EVSEs                                        = null,
+                        IEnumerable<Parking>?                                         ParkingPlaces                                = null,
                         IEnumerable<DisplayText>?                                     Directions                                   = null,
                         BusinessDetails?                                              Operator                                     = null,
                         BusinessDetails?                                              SubOperator                                  = null,
@@ -541,6 +561,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                         CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer              = null,
                         CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
                         CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
+                        CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
                         CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
                         CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
                         CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
@@ -568,6 +589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
             this.State                = State;
             this.RelatedLocations     = RelatedLocations?.Distinct() ?? [];
             this.ParkingType          = ParkingType;
+            this.ParkingPlaces        = ParkingPlaces?.   Distinct() ?? [];
             this.Directions           = Directions?.      Distinct() ?? [];
             this.Operator             = Operator;
             this.SubOperator          = SubOperator;
@@ -617,6 +639,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                                             CustomEVSEEnergyMeterSerializer,
                                             CustomTransparencySoftwareStatusSerializer,
                                             CustomTransparencySoftwareSerializer,
+                                            CustomParkingSerializer,
                                             CustomDisplayTextSerializer,
                                             CustomBusinessDetailsSerializer,
                                             CustomHoursSerializer,
@@ -629,25 +652,26 @@ namespace cloud.charging.open.protocols.OCPIv2_3
             unchecked
             {
 
-                hashCode = this.CountryCode.        GetHashCode()        * 109 ^
-                           this.PartyId.            GetHashCode()        * 107 ^
-                           this.Id.                 GetHashCode()        * 103 ^
-                           this.Publish.            GetHashCode()        * 101 ^
-                           this.Address.            GetHashCode()        *  97 ^
-                           this.City.               GetHashCode()        *  89 ^
-                           this.Country.            GetHashCode()        *  83 ^
-                           this.Coordinates.        GetHashCode()        *  79 ^
-                           this.Timezone.           GetHashCode()        *  73 ^
-                           this.Created.            GetHashCode()        *  71 ^
-                           this.LastUpdated.        GetHashCode()        *  67 ^
+                hashCode = this.CountryCode.        GetHashCode()        * 113 ^
+                           this.PartyId.            GetHashCode()        * 109 ^
+                           this.Id.                 GetHashCode()        * 107 ^
+                           this.Publish.            GetHashCode()        * 103 ^
+                           this.Address.            GetHashCode()        * 101 ^
+                           this.City.               GetHashCode()        *  97 ^
+                           this.Country.            GetHashCode()        *  89 ^
+                           this.Coordinates.        GetHashCode()        *  83 ^
+                           this.Timezone.           GetHashCode()        *  79 ^
+                           this.Created.            GetHashCode()        *  73 ^
+                           this.LastUpdated.        GetHashCode()        *  71 ^
 
-                           this.PublishAllowedTo.   CalcHashCode()       *  61 ^
-                          (this.Name?.              GetHashCode()  ?? 0) *  59 ^
-                          (this.PostalCode?.        GetHashCode()  ?? 0) *  53 ^
-                          (this.State?.             GetHashCode()  ?? 0) *  47 ^
-                           this.RelatedLocations.   CalcHashCode()       *  41 ^
-                          (this.ParkingType?.       GetHashCode()  ?? 0) *  37 ^
-                           this.EVSEs.              CalcHashCode()       *  31 ^
+                           this.PublishAllowedTo.   CalcHashCode()       *  67 ^
+                          (this.Name?.              GetHashCode()  ?? 0) *  61 ^
+                          (this.PostalCode?.        GetHashCode()  ?? 0) *  59 ^
+                          (this.State?.             GetHashCode()  ?? 0) *  53 ^
+                           this.RelatedLocations.   CalcHashCode()       *  47 ^
+                          (this.ParkingType?.       GetHashCode()  ?? 0) *  41 ^
+                           this.EVSEs.              CalcHashCode()       *  37 ^
+                           this.ParkingPlaces.      CalcHashCode()       *  31 ^
                            this.Directions.         CalcHashCode()       *  29 ^
                           (this.Operator?.          GetHashCode()  ?? 0) *  23 ^
                           (this.SubOperator?.       GetHashCode()  ?? 0) *  19 ^
@@ -958,7 +982,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                 if (JSON.ParseOptional("parking_type",
                                        "parking type",
-                                       OCPIv2_3.ParkingType.TryParse,
+                                       OCPIv2_3_0.ParkingType.TryParse,
                                        out ParkingType? ParkingType,
                                        out ErrorResponse))
                 {
@@ -974,6 +998,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                                               "evses",
                                               EVSE.TryParse,
                                               out HashSet<EVSE> EVSEs,
+                                              out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse ParkingPlaces         [optional]
+
+                if (JSON.ParseOptionalHashSet("parking_places",
+                                              "parking places",
+                                              Parking.TryParse,
+                                              out HashSet<Parking> ParkingPlaces,
                                               out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -1042,7 +1080,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                 if (JSON.ParseOptionalHashSet("facilities",
                                               "facilities",
-                                              OCPIv2_3.Facilities.TryParse,
+                                              OCPIv2_3_0.Facilities.TryParse,
                                               out HashSet<Facilities> Facilities,
                                               out ErrorResponse))
                 {
@@ -1097,7 +1135,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                 if (JSON.ParseOptionalJSON("energy_mix",
                                            "energy mix",
-                                           OCPIv2_3.EnergyMix.TryParse,
+                                           OCPIv2_3_0.EnergyMix.TryParse,
                                            out EnergyMix? EnergyMix,
                                            out ErrorResponse))
                 {
@@ -1167,6 +1205,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                                RelatedLocations,
                                ParkingType,
                                EVSEs,
+                               ParkingPlaces,
                                Directions,
                                Operator,
                                Suboperator,
@@ -1234,6 +1273,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                               CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer              = null,
                               CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
                               CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
+                              CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
                               CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
                               CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
                               CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
@@ -1288,7 +1328,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                            EVSEs.Any()
                                ? new JProperty("evses",                  new JArray(EVSEs.           OrderBy(evse                  => evse.UId).
-                                                                                                     Select (evse                  => evse.ToJSON(EMSPId,
+                                                                                                     Select (evse                  => evse.ToJSON(true,
+                                                                                                                                                  true,
+                                                                                                                                                  true,
+                                                                                                                                                  EMSPId,
                                                                                                                                                   CustomEVSESerializer,
                                                                                                                                                   CustomStatusScheduleSerializer,
                                                                                                                                                   CustomConnectorSerializer,
@@ -1299,8 +1342,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                                                                                                                                                   CustomImageSerializer))))
                                : null,
 
+                           ParkingPlaces.Any()
+                               ? new JProperty("parking_places",         new JArray(ParkingPlaces.   Select (parking               => parking.     ToJSON(CustomParkingSerializer))))
+                               : null,
+
                            Directions.Any()
-                               ? new JProperty("directions",             new JArray(Directions.      Select (displayText           => displayText.ToJSON(CustomDisplayTextSerializer))))
+                               ? new JProperty("directions",             new JArray(Directions.      Select (displayText           => displayText. ToJSON(CustomDisplayTextSerializer))))
                                : null,
 
                            Operator is not null
@@ -1391,6 +1438,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                    RelatedLocations.Select(relatedLocation => relatedLocation.Clone()).ToArray(),
                    ParkingType?.    Clone(),
                    EVSEs.           Select(evse            => evse.           Clone()).ToArray(),
+                   ParkingPlaces.   Select(parking         => parking.        Clone()).ToArray(),
                    Directions.      Select(displayText     => displayText.    Clone()).ToArray(),
                    Operator?.       Clone(),
                    SubOperator?.    Clone(),
@@ -1812,6 +1860,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                                      CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer              = null,
                                      CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
                                      CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
+                                     CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
                                      CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
                                      CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
                                      CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
@@ -1834,6 +1883,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                            CustomEVSEEnergyMeterSerializer,
                            CustomTransparencySoftwareStatusSerializer,
                            CustomTransparencySoftwareSerializer,
+                           CustomParkingSerializer,
                            CustomDisplayTextSerializer,
                            CustomBusinessDetailsSerializer,
                            CustomHoursSerializer,
@@ -2082,6 +2132,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                PublishAllowedTo.Count().Equals(Location.PublishAllowedTo.Count()) &&
                RelatedLocations.Count().Equals(Location.RelatedLocations.Count()) &&
                EVSEs.           Count().Equals(Location.EVSEs.           Count()) &&
+               ParkingPlaces.   Count().Equals(Location.ParkingPlaces.   Count()) &&
                Directions.      Count().Equals(Location.Directions.      Count()) &&
                Facilities.      Count().Equals(Location.Facilities.      Count()) &&
                Images.          Count().Equals(Location.Images.          Count()) &&
@@ -2089,6 +2140,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                PublishAllowedTo.All(publishTokenType      => Location.PublishAllowedTo.Contains(publishTokenType))      &&
                RelatedLocations.All(additionalGeoLocation => Location.RelatedLocations.Contains(additionalGeoLocation)) &&
                EVSEs.           All(evse                  => Location.EVSEs.           Contains(evse))                  &&
+               ParkingPlaces.   All(parking               => Location.ParkingPlaces.   Contains(parking))               &&
                Directions.      All(displayText           => Location.Directions.      Contains(displayText))           &&
                Facilities.      All(facility              => Location.Facilities.      Contains(facility))              &&
                Images.          All(image                 => Location.Images.          Contains(image));
@@ -2160,6 +2212,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                    RelatedLocations,
                    ParkingType,
                    EVSEs,
+                   ParkingPlaces,
                    Directions,
                    Operator,
                    SubOperator,
@@ -2307,6 +2360,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                 => EVSEs.Select(evse => evse.UId);
 
             /// <summary>
+            /// An optional enumeration of parking places that can be used by vehicles charging at this location.
+            /// </summary>
+            [Optional]
+            public HashSet<Parking>                    ParkingPlaces            { get; }
+
+            /// <summary>
             /// The optional enumeration of human-readable directions on how to reach the location.
             /// </summary>
             [Optional]
@@ -2452,6 +2511,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                            IEnumerable<AdditionalGeoLocation>?  RelatedLocations     = null,
                            ParkingType?                         ParkingType          = null,
                            IEnumerable<EVSE>?                   EVSEs                = null,
+                           IEnumerable<Parking>?                ParkingPlaces        = null,
                            IEnumerable<DisplayText>?            Directions           = null,
                            BusinessDetails?                     Operator             = null,
                            BusinessDetails?                     SubOperator          = null,
@@ -2487,6 +2547,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                 this.RelatedLocations    = RelatedLocations is not null ? new HashSet<AdditionalGeoLocation>(RelatedLocations) : [];
                 this.ParkingType         = ParkingType;
                 this.EVSEs               = EVSEs            is not null ? new HashSet<EVSE>                 (EVSEs)            : [];
+                this.ParkingPlaces       = ParkingPlaces    is not null ? new HashSet<Parking>              (ParkingPlaces)    : [];
                 this.Directions          = Directions       is not null ? new HashSet<DisplayText>          (Directions)       : [];
                 this.Operator            = Operator;
                 this.SubOperator         = SubOperator;
@@ -2572,6 +2633,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                                RelatedLocations,
                                ParkingType,
                                EVSEs,
+                               ParkingPlaces,
                                Directions,
                                Operator,
                                SubOperator,

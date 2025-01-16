@@ -25,7 +25,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
@@ -183,7 +183,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                 if (!JSON.ParseMandatoryJSON("charging_profile",
                                              "charging profile",
-                                             OCPIv2_3.ChargingProfile.TryParse,
+                                             OCPIv2_3_0.ChargingProfile.TryParse,
                                              out ChargingProfile? ChargingProfile,
                                              out ErrorResponse))
                 {

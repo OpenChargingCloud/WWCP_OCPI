@@ -29,12 +29,12 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_3.CPO.HTTP;
-using cloud.charging.open.protocols.OCPIv2_3.EMSP.HTTP;
+using cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP;
+using cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 {
 
     /// <summary>
@@ -2859,6 +2859,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
         public CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?            CustomEVSEEnergyMeterSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?   CustomTransparencySoftwareStatusSerializer    { get; set; }
         public CustomJObjectSerializerDelegate<TransparencySoftware>?         CustomTransparencySoftwareSerializer          { get; set; }
+        public CustomJObjectSerializerDelegate<Parking>?                      CustomParkingSerializer                       { get; set; }
         public CustomJObjectSerializerDelegate<DisplayText>?                  CustomDisplayTextSerializer                   { get; set; }
         public CustomJObjectSerializerDelegate<BusinessDetails>?              CustomBusinessDetailsSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<Hours>?                        CustomHoursSerializer                         { get; set; }
@@ -6395,6 +6396,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                   CustomEVSEEnergyMeterSerializer,
                                   CustomTransparencySoftwareStatusSerializer,
                                   CustomTransparencySoftwareSerializer,
+                                  CustomParkingSerializer,
                                   CustomDisplayTextSerializer,
                                   CustomBusinessDetailsSerializer,
                                   CustomHoursSerializer,
@@ -6510,6 +6512,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                   CustomEVSEEnergyMeterSerializer,
                                   CustomTransparencySoftwareStatusSerializer,
                                   CustomTransparencySoftwareSerializer,
+                                  CustomParkingSerializer,
                                   CustomDisplayTextSerializer,
                                   CustomBusinessDetailsSerializer,
                                   CustomHoursSerializer,
@@ -6644,6 +6647,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                       CustomEVSEEnergyMeterSerializer,
                                       CustomTransparencySoftwareStatusSerializer,
                                       CustomTransparencySoftwareSerializer,
+                                      CustomParkingSerializer,
                                       CustomDisplayTextSerializer,
                                       CustomBusinessDetailsSerializer,
                                       CustomHoursSerializer,
@@ -6778,6 +6782,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                   CustomEVSEEnergyMeterSerializer,
                                   CustomTransparencySoftwareStatusSerializer,
                                   CustomTransparencySoftwareSerializer,
+                                  CustomParkingSerializer,
                                   CustomDisplayTextSerializer,
                                   CustomBusinessDetailsSerializer,
                                   CustomHoursSerializer,
@@ -6919,6 +6924,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
                                   CustomEVSEEnergyMeterSerializer,
                                   CustomTransparencySoftwareStatusSerializer,
                                   CustomTransparencySoftwareSerializer,
+                                  CustomParkingSerializer,
                                   CustomDisplayTextSerializer,
                                   CustomBusinessDetailsSerializer,
                                   CustomHoursSerializer,

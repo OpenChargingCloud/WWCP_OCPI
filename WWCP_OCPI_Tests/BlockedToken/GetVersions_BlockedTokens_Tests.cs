@@ -330,7 +330,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 return;
             }
 
-            var graphDefinedCPO1 = new OCPIv2_3.HTTP.CommonClient(
+            var graphDefinedCPO1 = new OCPIv2_3_0.HTTP.CommonClient(
                                        VersionsURL:  cpo1BaseAPI.OurVersionsURL,
                                        AccessToken:  BlockedToken
                                    );
@@ -400,7 +400,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 return;
             }
 
-            var graphDefinedEMSP1 = new OCPIv2_3.HTTP.CommonClient(
+            var graphDefinedEMSP1 = new OCPIv2_3_0.HTTP.CommonClient(
                                         VersionsURL:  emsp1BaseAPI.OurVersionsURL,
                                         AccessToken:  BlockedToken
                                     );

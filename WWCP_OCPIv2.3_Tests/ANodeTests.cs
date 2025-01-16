@@ -27,11 +27,11 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_3.HTTP;
+using cloud.charging.open.protocols.OCPIv2_3_0.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests
+namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 {
 
     public static class TestHelpers

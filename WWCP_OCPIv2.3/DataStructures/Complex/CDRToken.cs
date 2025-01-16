@@ -27,7 +27,7 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
@@ -241,7 +241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                 if (!JSON.ParseMandatory("type",
                                          "token type",
-                                         OCPIv2_3.TokenType.TryParse,
+                                         OCPIv2_3_0.TokenType.TryParse,
                                          out TokenType TokenType,
                                          out ErrorResponse))
                 {

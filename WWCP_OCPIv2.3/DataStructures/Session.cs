@@ -25,11 +25,11 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_3.HTTP;
+using cloud.charging.open.protocols.OCPIv2_3_0.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
@@ -510,7 +510,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                 if (!JSON.ParseMandatoryJSON("cdr_token",
                                              "charge detail record token",
-                                             OCPIv2_3.CDRToken.TryParse,
+                                             OCPIv2_3_0.CDRToken.TryParse,
                                              out CDRToken CDRToken,
                                              out ErrorResponse))
                 {
@@ -535,7 +535,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                 if (JSON.ParseOptional("authorization_reference",
                                        "authorization reference",
-                                       OCPIv2_3.AuthorizationReference.TryParse,
+                                       OCPIv2_3_0.AuthorizationReference.TryParse,
                                        out AuthorizationReference? AuthorizationReference,
                                        out ErrorResponse))
                 {

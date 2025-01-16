@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <RootNamespace>cloud.charging.open.protocols.OCPIv2_3.WebAPI</RootNamespace>
+    <RootNamespace>cloud.charging.open.protocols.OCPIv2_3_0.WebAPI</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>

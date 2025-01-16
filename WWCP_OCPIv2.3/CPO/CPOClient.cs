@@ -28,11 +28,11 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_3.HTTP;
+using cloud.charging.open.protocols.OCPIv2_3_0.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3.CPO.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 {
 
     /// <summary>
@@ -257,6 +257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.CPO.HTTP
         public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer    { get; set; }
         public CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer          { get; set; }
         public CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                       { get; set; }
         public CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                         { get; set; }
         public CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                         { get; set; }
@@ -1293,6 +1294,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.CPO.HTTP
                                                                                                                                          CustomEVSEEnergyMeterSerializer,
                                                                                                                                          CustomTransparencySoftwareStatusSerializer,
                                                                                                                                          CustomTransparencySoftwareSerializer,
+                                                                                                                                         CustomParkingSerializer,
                                                                                                                                          CustomDisplayTextSerializer,
                                                                                                                                          CustomBusinessDetailsSerializer,
                                                                                                                                          CustomHoursSerializer,
@@ -1946,7 +1948,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3.CPO.HTTP
                                                                                      RequestBuilder: requestBuilder => {
                                                                                          requestBuilder.Authorization  = TokenAuth;
                                                                                          requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestBuilder.Content        = EVSE.ToJSON(EMSPId,
+                                                                                         requestBuilder.Content        = EVSE.ToJSON(true,
+                                                                                                                                     true,
+                                                                                                                                     true,
+                                                                                                                                     EMSPId,
                                                                                                                                      CustomEVSESerializer,
                                                                                                                                      CustomStatusScheduleSerializer,
                                                                                                                                      CustomConnectorSerializer,
@@ -2575,7 +2580,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3.CPO.HTTP
                                                                                      RequestBuilder: requestBuilder => {
                                                                                          requestBuilder.Authorization  = TokenAuth;
                                                                                          requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestBuilder.Content        = Connector.ToJSON(EMSPId, CustomConnectorSerializer).ToUTF8Bytes(JSONFormat);
+                                                                                         requestBuilder.Content        = Connector.ToJSON(true,
+                                                                                                                                          true,
+                                                                                                                                          EMSPId,
+                                                                                                                                          CustomConnectorSerializer).ToUTF8Bytes(JSONFormat);
                                                                                          requestBuilder.Connection     = ConnectionType.Close;
                                                                                          requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                          requestBuilder.Set("X-Request-ID",      requestId);

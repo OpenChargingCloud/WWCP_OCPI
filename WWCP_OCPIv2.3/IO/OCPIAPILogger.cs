@@ -28,7 +28,7 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 {
 
     //public delegate String OCPILogfileCreatorDelegate(String LoggingPath, RemoteParty? RemoteParty, String Context, String LogfileName);

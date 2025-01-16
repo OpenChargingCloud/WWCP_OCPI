@@ -29,7 +29,7 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
@@ -43,6 +43,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
         #region Data
 
+        /// <summary>
+        /// The default JSON-LD context of locations.
+        /// </summary>
+        public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse("https://open.charging.cloud/contexts/OCPI/2.3/connector");
+
         private readonly Lock patchLock = new();
 
         #endregion
@@ -52,7 +57,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <summary>
         /// The parent EVSE of this connector.
         /// </summary>
-        public EVSE?                   ParentEVSE               { get; internal set; }
+        public EVSE?                             ParentEVSE               { get; internal set; }
 
         /// <summary>
         /// The identification of the connector within the EVSE.
@@ -60,37 +65,37 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// string(36)
         /// </summary>
         [Mandatory]
-        public Connector_Id            Id                       { get; }
+        public Connector_Id                      Id                       { get; }
 
         /// <summary>
         /// The standard of the installed connector.
         /// </summary>
         [Mandatory]
-        public ConnectorType           Standard                 { get; }
+        public ConnectorType                     Standard                 { get; }
 
         /// <summary>
         /// The format (socket/cable) of the installed connector.
         /// </summary>
         [Mandatory]
-        public ConnectorFormats        Format                   { get; }
+        public ConnectorFormats                  Format                   { get; }
 
         /// <summary>
         /// The type of power at the connector.
         /// </summary>
         [Mandatory]
-        public PowerTypes              PowerType                { get; }
+        public PowerTypes                        PowerType                { get; }
 
         /// <summary>
         /// The maximum voltage of the connector (line to neutral for AC_3_PHASE).
         /// </summary>
         [Mandatory]
-        public Volt                    MaxVoltage               { get; }
+        public Volt                              MaxVoltage               { get; }
 
         /// <summary>
         /// The maximum amperage of the connector.
         /// </summary>
         [Mandatory]
-        public Ampere                  MaxAmperage              { get; }
+        public Ampere                            MaxAmperage              { get; }
 
         /// <summary>
         /// The maximum electric power that can be delivered by this connector.
@@ -98,9 +103,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// and amperage, this value should be set.
         /// </summary>
         [Optional]
-        public Watt?                   MaxElectricPower         { get; }
+        public Watt?                             MaxElectricPower         { get; }
 
-        public EMSP_Id?                EMSPId                   { get; }
+        public EMSP_Id?                          EMSPId                   { get; }
 
         private readonly IEnumerable<Tariff_Id> tariffIds;
 
@@ -111,7 +116,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// same time: start_date_time and end_date_time period not overlapping.
         /// </summary>
         [Optional]
-        public IEnumerable<Tariff_Id>  TariffIds
+        public IEnumerable<Tariff_Id>            TariffIds
         {
             get
             {
@@ -119,7 +124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                 if (tariffIds.Any())
                     return tariffIds;
 
-                return ParentEVSE?.GetTariffIds(Id, EMSPId) ?? Array.Empty<Tariff_Id>();
+                return ParentEVSE?.GetTariffIds(Id, EMSPId) ?? [];
 
             }
         }
@@ -128,18 +133,31 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// The optional URL to the operator's terms and conditions.
         /// </summary>
         [Optional]
-        public URL?                    TermsAndConditionsURL    { get; }
+        public URL?                              TermsAndConditionsURL    { get; }
+
+        /// <summary>
+        /// The optional enumeration of functionalities that the connector is capable of.
+        /// </summary>
+        [Optional]
+        public IEnumerable<ConnectorCapability>  Capabilities             { get; }
+
+
+        /// <summary>
+        /// The timestamp when this EVSE was created.
+        /// </summary>
+        [Mandatory, NonStandard("Pagination")]
+        public DateTime                          Created                  { get; }
 
         /// <summary>
         /// The timestamp when this connector was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                LastUpdated              { get; }
+        public DateTime                          LastUpdated              { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this connector.
         /// </summary>
-        public String                  ETag                     { get; }
+        public String                            ETag                     { get; }
 
         #endregion
 
@@ -161,8 +179,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="MaxElectricPower">The maximum electric power that can be delivered by this connector.</param>
         /// <param name="TariffIds">An enumeration of currently valid charging tariffs identifiers.</param>
         /// <param name="TermsAndConditionsURL">An optional URL to the operator's terms and conditions.</param>
+        /// <param name="Capabilities">An optional enumeration of connector capabilities.</param>
         /// 
+        /// <param name="Created">The optional timestamp when this connector was created.</param>
         /// <param name="LastUpdated">A timestamp when this connector was last updated (or created).</param>
+        /// 
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         internal Connector(EVSE?                                        ParentEVSE,
 
@@ -175,8 +196,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                            Watt?                                        MaxElectricPower            = null,
                            IEnumerable<Tariff_Id>?                      TariffIds                   = null,
                            URL?                                         TermsAndConditionsURL       = null,
+                           IEnumerable<ConnectorCapability>?            Capabilities                = null,
 
+                           DateTime?                                    Created                     = null,
                            DateTime?                                    LastUpdated                 = null,
+
                            EMSP_Id?                                     EMSPId                      = null,
                            CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
@@ -191,25 +215,36 @@ namespace cloud.charging.open.protocols.OCPIv2_3
             this.MaxVoltage             = MaxVoltage;
             this.MaxAmperage            = MaxAmperage;
             this.MaxElectricPower       = MaxElectricPower;
-            this.tariffIds              = TariffIds?.Distinct() ?? Array.Empty<Tariff_Id>();
+            this.tariffIds              = TariffIds?.   Distinct() ?? [];
             this.TermsAndConditionsURL  = TermsAndConditionsURL;
+            this.Capabilities           = Capabilities?.Distinct() ?? [];
 
-            this.LastUpdated            = LastUpdated ?? Timestamp.Now;
+            this.Created                = Created                  ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated            = LastUpdated              ?? Created     ?? Timestamp.Now;
 
-            this.ETag                   = SHA256.HashData(ToJSON(EMSPId, CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();
+            this.ETag                   = SHA256.HashData(
+                                              ToJSON(
+                                                  true,
+                                                  true,
+                                                  EMSPId,
+                                                  CustomConnectorSerializer
+                                              ).ToUTF8Bytes()
+                                          ).ToBase64();
 
             unchecked
             {
 
-                hashCode = this.Id.                    GetHashCode()       * 29 ^
-                           this.Standard.              GetHashCode()       * 23 ^
-                           this.Format.                GetHashCode()       * 19 ^
-                           this.PowerType.             GetHashCode()       * 17 ^
-                           this.MaxVoltage.            GetHashCode()       * 13 ^
-                           this.MaxAmperage.           GetHashCode()       * 11 ^
-                           this.TariffIds.             CalcHashCode()      *  7 ^
-                          (this.MaxElectricPower?.     GetHashCode() ?? 0) *  5 ^
-                          (this.TermsAndConditionsURL?.GetHashCode() ?? 0) *  3 ^
+                hashCode = this.Id.                    GetHashCode()       * 37 ^
+                           this.Standard.              GetHashCode()       * 31 ^
+                           this.Format.                GetHashCode()       * 29 ^
+                           this.PowerType.             GetHashCode()       * 23 ^
+                           this.MaxVoltage.            GetHashCode()       * 19 ^
+                           this.MaxAmperage.           GetHashCode()       * 17 ^
+                           this.TariffIds.             CalcHashCode()      * 13 ^
+                          (this.MaxElectricPower?.     GetHashCode() ?? 0) * 11 ^
+                          (this.TermsAndConditionsURL?.GetHashCode() ?? 0) *  7 ^
+                           this.Capabilities.          CalcHashCode()      *  5 ^
+                           this.Created.               GetHashCode()       *  3 ^
                            this.LastUpdated.           GetHashCode();
 
             }
@@ -232,8 +267,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="MaxElectricPower">The maximum electric power that can be delivered by this connector.</param>
         /// <param name="TariffIds">An enumeration of currently valid charging tariffs identifiers.</param>
         /// <param name="TermsAndConditionsURL">An optional URL to the operator's terms and conditions.</param>
+        /// <param name="Capabilities">An optional enumeration of connector capabilities.</param>
         /// 
+        /// <param name="Created">The optional timestamp when this connector was created.</param>
         /// <param name="LastUpdated">A timestamp when this connector was last updated (or created).</param>
+        /// 
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         public Connector(Connector_Id                                 Id,
                          ConnectorType                                Standard,
@@ -244,8 +282,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                          Watt?                                        MaxElectricPower            = null,
                          IEnumerable<Tariff_Id>?                      TariffIds                   = null,
                          URL?                                         TermsAndConditionsURL       = null,
+                         IEnumerable<ConnectorCapability>?            Capabilities                = null,
 
+                         DateTime?                                    Created                     = null,
                          DateTime?                                    LastUpdated                 = null,
+
                          EMSP_Id?                                     EMSPId                      = null,
                          CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
@@ -260,8 +301,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                    MaxElectricPower,
                    TariffIds,
                    TermsAndConditionsURL,
+                   Capabilities,
 
+                   Created,
                    LastUpdated,
+
                    EMSPId,
                    CustomConnectorSerializer)
 
@@ -464,6 +508,34 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                 #endregion
 
+                #region Parse Capabilities        [optional]
+
+                if (JSON.ParseOptionalHashSet("capabilities",
+                                              "connector capabilities",
+                                              ConnectorCapability.TryParse,
+                                              out HashSet<ConnectorCapability> Capabilities,
+                                              out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+
+                #region Parse Created             [optional, NonStandard]
+
+                if (JSON.ParseOptional("created",
+                                       "created",
+                                       out DateTime? Created,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
                 #region Parse LastUpdated         [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
@@ -478,6 +550,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
 
                 Connector = new Connector(
+
                                 ConnectorIdBody ?? ConnectorIdURL!.Value,
                                 Standard,
                                 Format,
@@ -488,8 +561,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                                 MaxElectricPower,
                                 TariffIds,
                                 TermsAndConditionsURL,
+                                Capabilities,
 
+                                Created,
                                 LastUpdated
+
                             );
 
 
@@ -516,8 +592,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
+        /// <param name="IncludeCreatedTimestamp">Whether to include the created timestamp in the JSON representation.</param>
+        /// <param name="IncludeExtensions">Whether to include optional data model extensions.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        public JObject ToJSON(EMSP_Id?                                     EMSPId                      = null,
+        public JObject ToJSON(Boolean                                      IncludeCreatedTimestamp     = true,
+                              Boolean                                      IncludeExtensions           = true,
+                              EMSP_Id?                                     EMSPId                      = null,
                               CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
         {
 
@@ -540,14 +620,23 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                                      : null,
 
                                  tariffIds is not null && tariffIds.Any()
-                                     ? new JProperty("tariff_ids",             new JArray(tariffIds.Select(tariffId => tariffId.ToString())))
+                                     ? new JProperty("tariff_ids",             new JArray(tariffIds.   Select(tariffId    => tariffId.  ToString())))
                                      : null,
 
                                  TermsAndConditionsURL.HasValue
                                      ? new JProperty("terms_and_conditions",   TermsAndConditionsURL.ToString())
                                      : null,
 
-                                       new JProperty("last_updated",           LastUpdated.          ToIso8601())
+                                 Capabilities.Any()
+                                     ? new JProperty("capabilities",           new JArray(Capabilities.OrderBy(capability => capability).
+                                                                                                       Select (capability => capability.ToString())))
+                                     : null,
+
+                                 IncludeCreatedTimestamp
+                               ? new JProperty("created",                      Created.              ToIso8601())
+                               : null,
+
+                                 new JProperty("last_updated",                 LastUpdated.          ToIso8601())
 
                              );
 
@@ -562,11 +651,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this connector.
         /// </summary>
         public Connector Clone()
 
             => new (
+
                    ParentEVSE,
 
                    Id.                    Clone(),
@@ -576,10 +666,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                    MaxVoltage,
                    MaxAmperage,
                    MaxElectricPower,
-                   TariffIds.Select(tariffId => tariffId.Clone()),
+                   TariffIds.   Select(tariffId   => tariffId.  Clone()),
                    TermsAndConditionsURL?.Clone(),
+                   Capabilities.Select(capability => capability.Clone()),
 
+                   Created,
                    LastUpdated
+
                );
 
         #endregion
