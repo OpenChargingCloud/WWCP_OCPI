@@ -720,7 +720,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             => new (
 
-                   VehicleTypes.       Select(vehicleType => vehicleType.Clone()),
+                   VehicleTypes.       Select(vehicleType        => vehicleType.       Clone()),
                    EVSEPosition.       Clone(),
                    Direction.          Clone(),
                    RestrictedToType,
@@ -736,9 +736,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    ParkingRestrictions.Select(parkingRestriction => parkingRestriction.Clone()),
                    TimeLimit,
                    Roofed,
-                   Images.             Select(image => image.Clone()),
+                   Images.             Select(image              => image.             Clone()),
                    Lighting,
-                   Standards.          Select(standard => standard.Clone())
+                   Standards.          Select(standard           => standard.          Clone())
 
                );
 

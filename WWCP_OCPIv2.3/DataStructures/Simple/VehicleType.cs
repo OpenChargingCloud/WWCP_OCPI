@@ -165,15 +165,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this vehicle type.
         /// </summary>
-        public VehicleType Clone
+        public VehicleType Clone()
 
             => new (
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion

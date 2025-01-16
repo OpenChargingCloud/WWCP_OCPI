@@ -232,7 +232,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                                           Name:                 I18NString.Create("Test EVSE #1A1"),
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 
-                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialAdminStatus:   EVSEAdminStatusType.Operational,
                                           InitialStatus:        EVSEStatusType.Available,
 
                                           ChargingConnectors:   [
@@ -261,7 +261,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                                           Name:                 I18NString.Create("Test EVSE #1A2"),
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1A2"),
 
-                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialAdminStatus:   EVSEAdminStatusType.Operational,
                                           InitialStatus:        EVSEStatusType.Available,
 
                                           ChargingConnectors:   [
@@ -290,7 +290,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                                           Name:                 I18NString.Create("Test EVSE #1B1"),
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1B1"),
 
-                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialAdminStatus:   EVSEAdminStatusType.Operational,
                                           InitialStatus:        EVSEStatusType.Available,
 
                                           ChargingConnectors:   [
@@ -319,7 +319,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                                           Name:                 I18NString.Create("Test EVSE #2A1"),
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #2A1"),
 
-                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialAdminStatus:   EVSEAdminStatusType.Operational,
                                           InitialStatus:        EVSEStatusType.Available,
 
                                           ChargingConnectors:   [
@@ -706,7 +706,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                                           Name:                 I18NString.Create("Test EVSE #1A1"),
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 
-                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialAdminStatus:   EVSEAdminStatusType.Operational,
                                           InitialStatus:        EVSEStatusType.Available,
 
                                           ChargingConnectors:   [
@@ -735,7 +735,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                                           Name:                 I18NString.Create("Test EVSE #1A2"),
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1A2"),
 
-                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialAdminStatus:   EVSEAdminStatusType.Operational,
                                           InitialStatus:        EVSEStatusType.Available,
 
                                           ChargingConnectors:   [
@@ -764,7 +764,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                                           Name:                 I18NString.Create("Test EVSE #1B1"),
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1B1"),
 
-                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialAdminStatus:   EVSEAdminStatusType.Operational,
                                           InitialStatus:        EVSEStatusType.Available,
 
                                           ChargingConnectors:   [
@@ -793,7 +793,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                                           Name:                 I18NString.Create("Test EVSE #2A1"),
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #2A1"),
 
-                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialAdminStatus:   EVSEAdminStatusType.Operational,
                                           InitialStatus:        EVSEStatusType.Available,
 
                                           ChargingConnectors:   [
@@ -1492,7 +1492,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                                           Name:                 I18NString.Create("Test EVSE #1A1"),
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 
-                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialAdminStatus:   EVSEAdminStatusType.Operational,
                                           InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
@@ -1515,7 +1515,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                                           Name:                 I18NString.Create("Test EVSE #1A2"),
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1A2"),
 
-                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialAdminStatus:   EVSEAdminStatusType.Operational,
                                           InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
@@ -1538,7 +1538,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                                           Name:                 I18NString.Create("Test EVSE #1B1"),
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1B1"),
 
-                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialAdminStatus:   EVSEAdminStatusType.Operational,
                                           InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
@@ -1561,7 +1561,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                                           Name:                 I18NString.Create("Test EVSE #2A1"),
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #2A1"),
 
-                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialAdminStatus:   EVSEAdminStatusType.Operational,
                                           InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {

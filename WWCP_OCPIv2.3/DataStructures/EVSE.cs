@@ -143,6 +143,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         public IEnumerable<ParkingRestriction>  ParkingRestrictions        { get; }
 
         /// <summary>
+        /// The enumeration of vehicle types that the EVSE is intended for and that the associated
+        /// parking is designed to accomodate.
+        /// </summary>
+        [Mandatory]
+        public IEnumerable<VehicleType>         VehicleTypes               { get; }
+
+        /// <summary>
         /// The optional enumeration of images related to the EVSE such as photos or logos.
         /// </summary>
         [Optional]
@@ -169,7 +176,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
         #region Constructor(s)
 
-        #region (internal) EVSE(ParentLocation, UId, Status, Connectors, ... )
+        #region (internal) EVSE(ParentLocation, UId, Status, VehicleTypes, Connectors, ... )
 
         /// <summary>
         /// Create a new EVSE.
@@ -178,7 +185,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// 
         /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
         /// <param name="Status">A current status of the EVSE.</param>
-        /// <param name="Connectors">An enumeration of available connectors attached to this EVSE.</param>
+        /// <param name="VehicleTypes">The enumeration of vehicle types that the EVSE is intended for and that the associated parking is designed to accomodate.</param>
+        /// <param name="Connectors">The enumeration of available connectors attached to this EVSE.</param>
         /// 
         /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
         /// <param name="StatusSchedule">An enumeration of planned future status of the EVSE.</param>
@@ -197,7 +205,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom EVSE energy meter JSON objects.</param>
+        /// <param name="CustomEVSEEnergyMeterSerializer">A delegate to serialize custom EVSE energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
@@ -206,6 +214,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                       EVSE_UId                                                      UId,
                       StatusType                                                    Status,
+                      IEnumerable<VehicleType>                                      VehicleTypes,
                       IEnumerable<Connector>                                        Connectors,
 
                       EVSE_Id?                                                      EVSEId                                       = null,
@@ -238,15 +247,23 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
             this.UId                   = UId;
             this.Status                = Status;
-            this.Connectors            = Connectors?.         Distinct() ?? [];
+            this.VehicleTypes          = VehicleTypes.        Distinct();
+            this.Connectors            = Connectors.          Distinct();
+
+            if (!this.VehicleTypes.Any())
+                throw new ArgumentNullException(nameof(VehicleTypes),  "The given enumeration of vehicle types must not be null or empty!");
+
+            if (!this.Connectors.  Any())
+                throw new ArgumentNullException(nameof(Connectors),    "The given enumeration of connectors must not be null or empty!");
+
 
             this.EVSEId                = EVSEId;
             this.StatusSchedule        = StatusSchedule?.     Distinct() ?? [];
             this.Capabilities          = Capabilities?.       Distinct() ?? [];
             this.EnergyMeter           = EnergyMeter;
-            this.FloorLevel            = FloorLevel?.       Trim();
+            this.FloorLevel            = FloorLevel?.         Trim();
             this.Coordinates           = Coordinates;
-            this.PhysicalReference     = PhysicalReference?.Trim();
+            this.PhysicalReference     = PhysicalReference?.  Trim();
             this.Directions            = Directions?.         Distinct() ?? [];
             this.ParkingRestrictions   = ParkingRestrictions?.Distinct() ?? [];
             this.Images                = Images?.             Distinct() ?? [];
@@ -271,14 +288,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
         #endregion
 
-        #region EVSE(UId, Status, Connectors, ... )
+        #region EVSE(UId, Status, VehicleTypes, Connectors, ... )
 
         /// <summary>
         /// Create a new EVSE.
         /// </summary>
         /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
         /// <param name="Status">A current status of the EVSE.</param>
-        /// <param name="Connectors">An enumeration of available connectors attached to this EVSE.</param>
+        /// <param name="VehicleTypes">The enumeration of vehicle types that the EVSE is intended for and that the associated parking is designed to accomodate.</param>
+        /// <param name="Connectors">The enumeration of available connectors attached to this EVSE.</param>
         /// 
         /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
         /// <param name="StatusSchedule">An enumeration of planned future status of the EVSE.</param>
@@ -304,6 +322,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         public EVSE(EVSE_UId                                                      UId,
                     StatusType                                                    Status,
+                    IEnumerable<VehicleType>                                      VehicleTypes,
                     IEnumerable<Connector>                                        Connectors,
 
                     EVSE_Id?                                                      EVSEId                                       = null,
@@ -334,6 +353,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                    UId,
                    Status,
+                   VehicleTypes,
                    Connectors,
 
                    EVSEId,
@@ -475,6 +495,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3
                                          "EVSE status",
                                          StatusType.TryParse,
                                          out StatusType Status,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse VehicleTypes           [mandatory]
+
+                if (!JSON.ParseMandatory("vehicle_types",
+                                         "vehicle types",
+                                         VehicleType.TryParse,
+                                         out IEnumerable<VehicleType> VehicleTypes,
                                          out ErrorResponse))
                 {
                     return false;
@@ -651,6 +684,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                            EVSEUIdBody ?? EVSEUIdURL!.Value,
                            Status,
+                           VehicleTypes,
                            Connectors,
 
                            EVSEId,
@@ -783,20 +817,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this EVSE.
         /// </summary>
         public EVSE Clone()
 
             => new (
+
                    ParentLocation,
 
                    UId.                Clone(),
                    Status.             Clone(),
+                   VehicleTypes.       Select(vehicleType        => vehicleType.       Clone()).ToArray(),
                    Connectors.         Select(connector          => connector.         Clone()).ToArray(),
 
                    EVSEId?.            Clone(),
                    StatusSchedule.     Select(statusSchedule     => statusSchedule.    Clone()).ToArray(),
-                   Capabilities.       Select(capability         => capability.        Clone).  ToArray(),
+                   Capabilities.       Select(capability         => capability.        Clone()).ToArray(),
                    EnergyMeter?.       Clone(),
                    FloorLevel.         CloneNullableString(),
                    Coordinates?.       Clone(),
@@ -807,6 +843,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                    Created,
                    LastUpdated
+
                );
 
         #endregion
@@ -1455,25 +1492,30 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         /// <param name="NewEVSEUId">An optional new EVSE identification.</param>
         public Builder ToBuilder(EVSE_UId? NewEVSEUId = null)
 
-            => new (ParentLocation,
+            => new (
 
-                    NewEVSEUId ?? UId,
-                    Status,
-                    Connectors,
+                   ParentLocation,
 
-                    EVSEId,
-                    StatusSchedule,
-                    Capabilities,
-                    EnergyMeter,
-                    FloorLevel,
-                    Coordinates,
-                    PhysicalReference,
-                    Directions,
-                    ParkingRestrictions,
-                    Images,
+                   NewEVSEUId ?? UId,
+                   Status,
+                   VehicleTypes,
+                   Connectors,
 
-                    Created,
-                    LastUpdated);
+                   EVSEId,
+                   StatusSchedule,
+                   Capabilities,
+                   EnergyMeter,
+                   FloorLevel,
+                   Coordinates,
+                   PhysicalReference,
+                   Directions,
+                   ParkingRestrictions,
+                   Images,
+
+                   Created,
+                   LastUpdated
+
+               );
 
         #endregion
 
@@ -1578,6 +1620,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3
             public HashSet<ParkingRestriction>      ParkingRestrictions        { get; }
 
             /// <summary>
+            /// The enumeration of vehicle types that the EVSE is intended for and that the associated
+            /// parking is designed to accomodate.
+            /// </summary>
+            [Mandatory]
+            public HashSet<VehicleType>             VehicleTypes               { get; }
+
+            /// <summary>
             /// The optional enumeration of images related to the EVSE such as photos or logos.
             /// </summary>
             [Optional]
@@ -1606,6 +1655,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
             /// 
             /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the EVSE UId has the same value as the official EVSE Id!</param>
             /// <param name="Status">A current status of the EVSE.</param>
+            /// <param name="VehicleTypes">An enumeration of vehicle types that the EVSE is intended for and that the associated parking is designed to accomodate.</param>
             /// <param name="Connectors">An enumeration of available connectors attached to this EVSE.</param>
             /// 
             /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the official EVSE Id has the same value as the internal EVSE UId!</param>
@@ -1625,6 +1675,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                              EVSE_UId?                         UId                   = null,
                              StatusType?                       Status                = null,
+                             IEnumerable<VehicleType>?         VehicleTypes          = null,
                              IEnumerable<Connector>?           Connectors            = null,
 
                              EVSE_Id?                          EVSEId                = null,
@@ -1647,6 +1698,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                 this.UId                   = UId;
                 this.Status                = Status;
+                this.VehicleTypes          = VehicleTypes        is not null ? new HashSet<VehicleType>       (VehicleTypes)        : [];
                 this.Connectors            = Connectors          is not null ? new HashSet<Connector>         (Connectors)          : [];
 
                 this.EVSEId                = EVSEId;
@@ -1722,6 +1774,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                                  UId.   Value,
                                  Status.Value,
+                                 VehicleTypes,
                                  Connectors,
 
                                  EVSEId,

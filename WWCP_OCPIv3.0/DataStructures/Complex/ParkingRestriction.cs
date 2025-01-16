@@ -254,7 +254,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this parking restriction.
         /// </summary>
         public ParkingRestriction Clone()
 

@@ -186,38 +186,38 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// gif
         /// </summary>
-        public static ImageFileType gif
-            => new("gif");
+        public static ImageFileType  gif     { get; }
+            = new ("gif");
 
         /// <summary>
         /// jpeg
         /// </summary>
-        public static ImageFileType jpeg
-            => new("jpeg");
+        public static ImageFileType  jpeg    { get; }
+            = new ("jpeg");
 
         /// <summary>
         /// jpg
         /// </summary>
-        public static ImageFileType jpg
-            => new("jpg");
+        public static ImageFileType  jpg     { get; }
+            = new ("jpg");
 
         /// <summary>
         /// png
         /// </summary>
-        public static ImageFileType png
-            => new("png");
+        public static ImageFileType  png     { get; }
+            = new ("png");
 
         /// <summary>
         /// svg
         /// </summary>
-        public static ImageFileType svg
-            => new("svg");
+        public static ImageFileType  svg     { get; }
+            = new ("svg");
 
         /// <summary>
         /// webp
         /// </summary>
-        public static ImageFileType webp
-            => new("webp");
+        public static ImageFileType  webp    { get; }
+            = new ("webp");
 
 #pragma warning restore IDE1006 // Naming Styles
 

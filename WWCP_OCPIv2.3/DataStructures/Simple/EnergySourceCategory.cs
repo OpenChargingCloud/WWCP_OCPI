@@ -165,15 +165,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this energy source category.
         /// </summary>
-        public EnergySourceCategory Clone
+        public EnergySourceCategory Clone()
 
             => new (
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion

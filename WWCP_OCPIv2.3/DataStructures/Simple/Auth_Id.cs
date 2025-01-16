@@ -165,15 +165,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this authentication credential identification.
         /// </summary>
-        public Auth_Id Clone
+        public Auth_Id Clone()
 
             => new (
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion

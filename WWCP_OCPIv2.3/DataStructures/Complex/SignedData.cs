@@ -332,7 +332,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         public SignedData Clone()
 
             => new (
-                   EncodingMethod.Clone,
+                   EncodingMethod.Clone(),
                    SignedValues.Select(signedValue => signedValue.Clone()).ToArray(),
                    EncodingMethodVersion,
                    PublicKey?.    Clone(),

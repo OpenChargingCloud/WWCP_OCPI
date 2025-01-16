@@ -363,6 +363,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               UInt16                                            MaxStatusScheduleSize               = DefaultMaxStatusScheduleSize,
 
                               String?                                           DataSource                          = null,
+                              DateTime?                                         Created                             = null,
                               DateTime?                                         LastChange                          = null,
 
                               JObject?                                          CustomData                          = null,
@@ -385,6 +386,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    MaxStatusScheduleSize,
 
                    DataSource,
+                   Created,
                    LastChange,
 
                    CustomData,

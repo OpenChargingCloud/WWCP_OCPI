@@ -55,7 +55,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
             var EVSE1 = new EVSE(
                             EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                             StatusType.AVAILABLE,
-                            new[] {
+                            [ VehicleType.PERSONAL_VEHICLE ],
+                            [
                                 new Connector(
                                     Connector_Id.Parse("1"),
                                     ConnectorType.IEC_62196_T2,
@@ -86,9 +87,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                     URL.Parse("https://open.charging.cloud/terms"),
                                     DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                                 )
-                            },
+                            ],
                             EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                            new[] {
+                            [
                                 new StatusSchedule(
                                     StatusType.INOPERATIVE,
                                     DateTime.Parse("2020-09-22T00:00:00.000Z").ToUniversalTime(),
@@ -99,11 +100,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                     DateTime.Parse("2020-12-30T00:00:00.000Z").ToUniversalTime(),
                                     DateTime.Parse("2020-12-31T00:00:00.000Z").ToUniversalTime()
                                 )
-                            },
-                            new[] {
+                            ],
+                            [
                                 Capability.RFID_READER,
                                 Capability.RESERVABLE
-                            },
+                            ],
 
                             // OCPI Computer Science Extensions
                             new EnergyMeter<EVSE>(
@@ -116,7 +117,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                 null,
                                 null,
                                 null,
-                                new TransparencySoftwareStatus[] {
+                                [
                                     new TransparencySoftwareStatus(
                                         new TransparencySoftware(
                                             "Chargy Transparency Software Desktop Application",
@@ -151,21 +152,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                         NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
                                         NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
                                     )
-                                }
+                                ]
                             ),
 
                             "1. Stock",
                             GeoCoordinate.Parse(10.1, 20.2),
                             "Ladestation #1",
-                            new[] {
+                            [
                                 DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                 DisplayText.Create(Languages.en, "Ken sent me!")
-                            },
-                            new[] {
+                            ],
+                            [
                                 ParkingRestriction.EV_ONLY,
                                 ParkingRestriction.PLUGGED
-                            },
-                            new[] {
+                            ],
+                            [
                                 new Image(
                                     URL.Parse("http://example.com/pinguine.jpg"),
                                     ImageFileType.jpeg,
@@ -182,7 +183,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.Datastructures
                                     300,
                                     URL.Parse("http://example.com/kleine_wellensittiche.jpg")
                                 )
-                            },
+                            ],
                             DateTime.Parse("2020-09-18T00:00:00Z").ToUniversalTime()
                         );
 

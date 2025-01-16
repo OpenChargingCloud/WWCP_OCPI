@@ -166,15 +166,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this tariff type.
         /// </summary>
-        public TariffType Clone
+        public TariffType Clone()
 
             => new(
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion

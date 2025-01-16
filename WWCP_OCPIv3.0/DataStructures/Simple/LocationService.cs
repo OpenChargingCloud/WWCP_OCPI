@@ -24,7 +24,6 @@ using org.GraphDefined.Vanaheimr.Illias;
 namespace cloud.charging.open.protocols.OCPIv3_0
 {
 
-
     /// <summary>
     /// Extension methods for location services.
     /// </summary>

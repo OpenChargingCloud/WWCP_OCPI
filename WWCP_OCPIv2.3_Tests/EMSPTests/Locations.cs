@@ -85,6 +85,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.EMSPTests
                                                  new EVSE(
                                                      EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                      StatusType.AVAILABLE,
+                                                     [ VehicleType.PERSONAL_VEHICLE ],
                                                      new[] {
                                                          new Connector(
                                                              Connector_Id.Parse("1"),
@@ -382,6 +383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.EMSPTests
                                                  new EVSE(
                                                      EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                      StatusType.AVAILABLE,
+                                                     [ VehicleType.PERSONAL_VEHICLE ],
                                                      new[] {
                                                          new Connector(
                                                              Connector_Id.Parse("1"),
@@ -695,6 +697,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.EMSPTests
                                                         new EVSE(
                                                             EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                             StatusType.AVAILABLE,
+                                                            [ VehicleType.PERSONAL_VEHICLE ],
                                                             new[] {
                                                                 new Connector(
                                                                     Connector_Id.Parse("1"),
@@ -987,6 +990,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.EMSPTests
                                                  new EVSE(
                                                      EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                      StatusType.AVAILABLE,
+                                                     [ VehicleType.PERSONAL_VEHICLE ],
                                                      new[] {
                                                          new Connector(
                                                              Connector_Id.Parse("1"),
@@ -1284,6 +1288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.EMSPTests
                                                  new EVSE(
                                                      EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                      StatusType.AVAILABLE,
+                                                     [ VehicleType.PERSONAL_VEHICLE ],
                                                      new[] {
                                                          new Connector(
                                                              Connector_Id.Parse("1"),
@@ -1582,6 +1587,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.EMSPTests
                                                  new EVSE(
                                                      EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                      StatusType.AVAILABLE,
+                                                     [ VehicleType.PERSONAL_VEHICLE ],
                                                      new[] {
                                                          new Connector(
                                                              Connector_Id.Parse("1"),
@@ -1882,6 +1888,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.EMSPTests
                                                  new EVSE(
                                                      EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                      StatusType.AVAILABLE,
+                                                     [ VehicleType.PERSONAL_VEHICLE ],
                                                      new[] {
                                                          new Connector(
                                                              Connector_Id.Parse("1"),
@@ -2181,6 +2188,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.EMSPTests
                                                  new EVSE(
                                                      EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                      StatusType.AVAILABLE,
+                                                     [ VehicleType.PERSONAL_VEHICLE ],
                                                      new[] {
                                                          new Connector(
                                                              Connector_Id.Parse("1"),
@@ -2480,6 +2488,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests.EMSPTests
                                                  new EVSE(
                                                      EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                      StatusType.AVAILABLE,
+                                                     [ VehicleType.PERSONAL_VEHICLE ],
                                                      new[] {
                                                          new Connector(
                                                              Connector_Id.Parse("1"),

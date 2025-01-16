@@ -165,15 +165,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this CDR dimension type.
         /// </summary>
-        public CDRDimensionType Clone
+        public CDRDimensionType Clone()
 
             => new(
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion

@@ -216,12 +216,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this environmental impact.
         /// </summary>
         public EnvironmentalImpact Clone()
 
-            => new (Category.Clone,
-                    Amount);
+            => new (
+                   Category.Clone(),
+                   Amount
+               );
 
         #endregion
 

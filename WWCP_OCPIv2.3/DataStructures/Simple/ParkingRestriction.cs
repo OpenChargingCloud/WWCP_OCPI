@@ -17,10 +17,7 @@
 
 #region Usings
 
-using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Illias;
-using Org.BouncyCastle.Utilities;
-using System.Numerics;
 
 #endregion
 
@@ -168,15 +165,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this parking restriction.
         /// </summary>
-        public ParkingRestriction Clone
+        public ParkingRestriction Clone()
 
             => new (
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion

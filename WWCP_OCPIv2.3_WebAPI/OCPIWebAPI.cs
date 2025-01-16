@@ -421,7 +421,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.WebAPI
         public CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer         { get; set; }
         public CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer     { get; set; }
         public CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer     { get; set; }
-        public CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<OCPI.Image>?        CustomImageSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer     { get; set; }
         public CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer    { get; set; }
 

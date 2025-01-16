@@ -842,6 +842,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3
 
                            UId:                   evseUId.Value,
                            Status:                EVSE.Status.Value.ToOCPI(),
+                           VehicleTypes:          [ VehicleType.PERSONAL_VEHICLE ],
                            Connectors:            connectors,
 
                            EVSEId:                evseId,

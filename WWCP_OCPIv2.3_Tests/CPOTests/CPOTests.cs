@@ -1308,19 +1308,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests
                                                                                   "Location 0001",
                                                                                   "07749",
                                                                                   "Thüringen",
-                                                                                  new[] {
+                                                                                  [
                                                                                       new AdditionalGeoLocation(
                                                                                           Latitude.Parse(11),
                                                                                           Longitude.Parse(22),
                                                                                           Name: DisplayText.Create(Languages.de, "Postkasten")
                                                                                       )
-                                                                                  },
+                                                                                  ],
                                                                                   ParkingType.PARKING_LOT,
-                                                                                  new[] {
+                                                                                  [
                                                                                       new EVSE(
                                                                                           EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                                                           StatusType.AVAILABLE,
-                                                                                          new[] {
+                                                                                          [ VehicleType.PERSONAL_VEHICLE ],
+                                                                                          [
                                                                                               new Connector(
                                                                                                   Connector_Id.Parse("1"),
                                                                                                   ConnectorType.IEC_62196_T2,
@@ -1329,10 +1330,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests
                                                                                                   Volt.  ParseV(400),
                                                                                                   Ampere.ParseA(30),
                                                                                                   Watt.  ParseW(12),
-                                                                                                  new[] {
+                                                                                                  [
                                                                                                       Tariff_Id.Parse("DE*GEF*T0001"),
                                                                                                       Tariff_Id.Parse("DE*GEF*T0002")
-                                                                                                  },
+                                                                                                  ],
                                                                                                   URL.Parse("https://open.charging.cloud/terms"),
                                                                                                   DateTime.Parse("2020-09-21")
                                                                                               ),
@@ -1344,16 +1345,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests
                                                                                                   Volt.  ParseV(400),
                                                                                                   Ampere.ParseA(20),
                                                                                                   Watt.  ParseW(8),
-                                                                                                  new[] {
+                                                                                                  [
                                                                                                       Tariff_Id.Parse("DE*GEF*T0003"),
                                                                                                       Tariff_Id.Parse("DE*GEF*T0004")
-                                                                                                  },
+                                                                                                  ],
                                                                                                   URL.Parse("https://open.charging.cloud/terms"),
                                                                                                   DateTime.Parse("2020-09-22")
                                                                                               )
-                                                                                          },
+                                                                                          ],
                                                                                           EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                                                                          new[] {
+                                                                                          [
                                                                                               new StatusSchedule(
                                                                                                   StatusType.INOPERATIVE,
                                                                                                   DateTime.Parse("2020-09-23"),
@@ -1364,11 +1365,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests
                                                                                                   DateTime.Parse("2020-12-30"),
                                                                                                   DateTime.Parse("2020-12-31")
                                                                                               )
-                                                                                          },
-                                                                                          new[] {
+                                                                                          ],
+                                                                                          [
                                                                                               Capability.RFID_READER,
                                                                                               Capability.RESERVABLE
-                                                                                          },
+                                                                                          ],
 
                                                                                           // OCPI Computer Science Extensions
                                                                                           new EnergyMeter<EVSE>(
@@ -1386,15 +1387,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests
                                                                                           "1. Stock",
                                                                                           GeoCoordinate.Parse(10.1, 20.2),
                                                                                           "Ladestation #1",
-                                                                                          new[] {
+                                                                                          [
                                                                                               DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                                                                               DisplayText.Create(Languages.en, "Ken sent me!")
-                                                                                          },
-                                                                                          new[] {
+                                                                                          ],
+                                                                                          [
                                                                                               ParkingRestriction.EV_ONLY,
                                                                                               ParkingRestriction.PLUGGED
-                                                                                          },
-                                                                                          new[] {
+                                                                                          ],
+                                                                                          [
                                                                                               new Image(
                                                                                                   URL.Parse("http://example.com/pinguine.jpg"),
                                                                                                   ImageFileType.jpeg,
@@ -1403,14 +1404,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests
                                                                                                   150,
                                                                                                   URL.Parse("http://example.com/kleine_pinguine.jpg")
                                                                                               )
-                                                                                          },
+                                                                                          ],
                                                                                           DateTime.Parse("2020-09-22")
                                                                                       )
-                                                                                  },
-                                                                                  new[] {
+                                                                                  ],
+                                                                                  [
                                                                                       new DisplayText(Languages.de, "Hallo Welt!"),
                                                                                       new DisplayText(Languages.en, "Hello world!")
-                                                                                  },
+                                                                                  ],
                                                                                   new BusinessDetails(
                                                                                       "Open Charging Cloud",
                                                                                       URL.Parse("https://open.charging.cloud"),
@@ -1588,6 +1589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests
                                                                                       new EVSE(
                                                                                           EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                                                           StatusType.AVAILABLE,
+                                                                                          [ VehicleType.PERSONAL_VEHICLE ],
                                                                                           new[] {
                                                                                               new Connector(
                                                                                                   Connector_Id.Parse("1"),
@@ -1777,6 +1779,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3.UnitTests
                 var response4            = await graphDefinedEMSP.PutEVSE(new EVSE(
                                                                               EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                                               StatusType.AVAILABLE,
+                                                                              [ VehicleType.PERSONAL_VEHICLE ],
                                                                               new[] {
                                                                                   new Connector(
                                                                                       Connector_Id.Parse("1"),

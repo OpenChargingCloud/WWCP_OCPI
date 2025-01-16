@@ -277,8 +277,10 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public AdditionalGeoLocation Clone()
 
-            => new (GeoLocation.Clone(),
-                    Name?.      Clone());
+            => new (
+                   GeoLocation.Clone(),
+                   Name?.      Clone()
+               );
 
         #endregion
 
@@ -377,12 +379,10 @@ namespace cloud.charging.open.protocols.OCPI
 
             => String.Concat(
 
-                   GeoLocation.Latitude,
-                   " / ",
-                   GeoLocation.Longitude,
+                   GeoLocation,
 
                    Name.HasValue
-                       ? ", " + Name.Value.ToString()
+                       ? $", {Name.Value}"
                        : ""
 
                );
