@@ -1,0 +1,38 @@
+﻿body #page #workarea #bottom #right #text #versionInfos {
+  padding: 1vh 2vw;
+  border-radius: 6px;
+  /*background-color:   #e7e7e7;*/
+}
+body #page #workarea #bottom #right #text #versionInfos #description {
+  font-weight: bold;
+  padding-bottom: 0.6vh;
+}
+body #page #workarea #bottom #right #text #versionInfos #versions {
+  display: flex;
+  flex-direction: column;
+  border-top: none;
+}
+body #page #workarea #bottom #right #text #versionInfos #versions a.version {
+  padding: 1vh 2vw;
+  display: inline-block;
+  color: #5272a3;
+  font-weight: bold;
+  background-color: #e7e7e7;
+  text-decoration: none;
+  border-top: 1px solid #ebebeb;
+}
+body #page #workarea #bottom #right #text #versionInfos #versions a.version .versionLink {
+  font-size: 85%;
+  font-weight: normal;
+}
+body #page #workarea #bottom #right #text #versionInfos #versions a.version:hover {
+  background-color: #bcc9dd;
+}
+body #page #workarea #bottom #right #text #versionInfos #versions a.version:first-child {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+body #page #workarea #bottom #right #text #versionInfos #versions a.version:last-child {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}

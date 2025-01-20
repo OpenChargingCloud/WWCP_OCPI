@@ -1,0 +1,139 @@
+﻿body #page #bottom {
+  overflow-y: auto;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 {
+  padding: 1vh 2vw;
+  border-radius: 6px;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 .description {
+  font-weight: bold;
+  padding-bottom: 3px;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 .statistics {
+  display: table;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 .statistics .row {
+  display: table-row;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 .statistics .row .key {
+  display: table-cell;
+  /*padding-right:      10px;*/
+  width: 15vh;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 .statistics .row .value {
+  display: table-cell;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokenStatistics {
+  padding-bottom: 10px;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #evseStatusStatistics {
+  padding-bottom: 15px;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens {
+  border-top: none;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .properties {
+  display: table;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .properties .row {
+  display: table-row;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .properties .row .key {
+  display: table-cell;
+  padding-right: 10px;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .properties .row .value {
+  display: table-cell;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token {
+  padding: 15px 22px;
+  display: inline-block;
+  color: #5272a3;
+  font-weight: bold;
+  background-color: #efefef;
+  border-top: 1px solid #ffffff;
+  text-decoration: none;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .counter {
+  display: inline-block;
+  color: #7a96c1;
+  margin-right: 3px;
+  padding-bottom: 1px;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .id {
+  display: inline-block;
+  padding-bottom: 1px;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .altURL {
+  font-size: 75%;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .altURL a {
+  color: rgb(82, 114, 163);
+  text-decoration: none;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .altTexts {
+  padding: 10px 0px;
+  font-size: 80%;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .tokenElements {
+  padding-left: 10px;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .tokenElements .tokenElement {
+  background-color: #e2e2e2;
+  padding: 10px 15px;
+  margin-top: 4px;
+  border-radius: 4px;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .tokenElements .tokenElement .priceComponents {
+  display: table;
+  font-size: 90%;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .tokenElements .tokenElement .priceComponents .priceComponent {
+  display: table-row;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .tokenElements .tokenElement .priceComponents .priceComponent .type {
+  display: table-cell;
+  padding-right: 10px;
+  font-size: 90%;
+  min-width: 3vw;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .tokenElements .tokenElement .priceComponents .priceComponent .price {
+  display: table-cell;
+  padding-right: 10px;
+  font-size: 80%;
+  padding-bottom: 4px;
+  min-width: 3vw;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .tokenElements .tokenElement .priceComponents .priceComponent .stepSize {
+  display: table-cell;
+  padding-right: 10px;
+  font-size: 80%;
+  padding-bottom: 4px;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .tokenElements .tokenElement .tokenRestrictions {
+  font-size: 85%;
+  margin-top: 6px;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .tokenElements .tokenElement .tokenRestrictions .restrictions {
+  display: table;
+  padding: 2px 20px;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .tokenElements .tokenElement .tokenRestrictions .restrictions .restriction {
+  display: table-row;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .tokenElements .tokenElement .tokenRestrictions .restrictions .restriction .key {
+  display: table-cell;
+  font-size: 95%;
+  padding-right: 1vw;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .tokenElements .tokenElement .tokenRestrictions .restrictions .restriction .value {
+  display: table-cell;
+  font-size: 80%;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token .dates {
+  margin-top: 15px;
+  font-size: 70%;
+}
+body #page #bottom #right #text #tokenInfos #tokenInfos2 #tokens .token:hover {
+  background-color: rgba(188, 201, 221, 0.5);
+}

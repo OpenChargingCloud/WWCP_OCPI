@@ -142,7 +142,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WWCP_OCPIv2.3\WWCP_OCPIv2.3.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.3.0\WWCP_OCPIv2.3.0.csproj" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
