@@ -218,18 +218,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             = new ("DEBIT_CARD_PAYABLE");
 
         /// <summary>
-        /// The EVSE supports authentication of the Driver using a contract certificate stored in the vehicle according to ISO 15118-2.
-        /// </summary>
-        public static Capability ISO_15118_2_PLUG_AND_CHARGE         { get; }
-            = new ("ISO_15118_2_PLUG_AND_CHARGE");
-
-        /// <summary>
-        /// The EVSE supports authentication of the Driver using a contract certificate stored in the vehicle according to ISO 15118-20.
-        /// </summary>
-        public static Capability ISO_15118_20_PLUG_AND_CHARGE        { get; }
-            = new ("ISO_15118_20_PLUG_AND_CHARGE");
-
-        /// <summary>
         /// EVSE has a payment terminal with a pin-code entry device.
         /// </summary>
         public static Capability PED_TERMINAL                        { get; }
