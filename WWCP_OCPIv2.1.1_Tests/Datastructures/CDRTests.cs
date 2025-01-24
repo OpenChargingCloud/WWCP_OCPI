@@ -469,8 +469,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                                    ),
                                              GeoLocation:          GeoCoordinate.Parse(50.93, 11.63),
 
-                                             InitialAdminStatus:   ChargingPoolAdminStatusTypes.Operational,
-                                             InitialStatus:        ChargingPoolStatusTypes.Available
+                                             InitialAdminStatus:   ChargingPoolAdminStatusType.Operational,
+                                             InitialStatus:        ChargingPoolStatusType.Available
 
                                          );
 
