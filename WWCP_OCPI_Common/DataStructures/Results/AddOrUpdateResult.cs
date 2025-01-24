@@ -131,6 +131,19 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
+        #region (static) NoOperation (EventTrackingId,       ErrorResponse = null)
+
+        public static AddOrUpdateResult<T> NoOperation(EventTracking_Id  EventTrackingId,
+                                                       String?           ErrorResponse = null)
+
+            => new (true,
+                    default,
+                    false,
+                    ErrorResponse,
+                    EventTrackingId);
+
+        #endregion
+
         #region (static) NoOperation (EventTrackingId, Data, ErrorResponse = null)
 
         public static AddOrUpdateResult<T> NoOperation(EventTracking_Id  EventTrackingId,

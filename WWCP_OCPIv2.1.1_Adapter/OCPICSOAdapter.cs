@@ -978,10 +978,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         if (location is not null)
                         {
 
-                            var result = await CommonAPI.UpdateLocation(location,
-                                                                        null,
-                                                                        false,
-                                                                        EventTrackingId);
+                            var result = await CommonAPI.UpdateLocation(
+                                                   Location:            location,
+                                                   AllowDowngrades:     null,
+                                                   SkipNotifications:   false,
+                                                   EventTrackingId:     EventTrackingId,
+                                                   CurrentUserId:       null,
+                                                   CancellationToken:   CancellationToken
+                                               );
 
                             //ToDo: Process errors!!!
 
@@ -1245,6 +1249,159 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+
+        #region UpdateChargingStation        (ChargingStation,  PropertyName, NewValue, OldValue = null, DataSource = null, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Update the given charging station.
+        /// </summary>
+        /// <param name="ChargingStation">A charging station to update.</param>
+        /// <param name="PropertyName">The name of the charging station property to update.</param>
+        /// <param name="NewValue">The new value of the charging station property to update.</param>
+        /// <param name="OldValue">The optional old value of the charging station property to update.</param>
+        /// <param name="DataSource">An optional data source or context for the charging station property update.</param>
+        /// <param name="TransmissionType">Whether to send the charging station update directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        public override async Task<WWCP.UpdateChargingStationResult>
+
+            UpdateChargingStation(WWCP.IChargingStation   ChargingStation,
+                                  String                  PropertyName,
+                                  Object?                 NewValue,
+                                  Object?                 OldValue            = null,
+                                  Context?                DataSource          = null,
+                                  WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
+
+                                  DateTime?               Timestamp           = null,
+                                  EventTracking_Id?       EventTrackingId     = null,
+                                  TimeSpan?               RequestTimeout      = null,
+                                  CancellationToken       CancellationToken   = default)
+
+        {
+
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
+                                                              CancellationToken);
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            try
+            {
+
+                if (lockTaken)
+                {
+
+                    AddOrUpdateResult<IEnumerable<EVSE>> result = AddOrUpdateResult<IEnumerable<EVSE>>.NoOperation(EventTrackingId, "No EVSEs found!");
+
+                    IEnumerable<Warning> warnings = [];
+
+                    var locationId  = ChargingStation.ChargingPool is not null
+                                          ? Location_Id.TryParse(ChargingStation.ChargingPool.Id.ToString())
+                                          : null;
+
+                    if (locationId.HasValue)
+                    {
+
+                        var evses = new List<EVSE>();
+
+                        foreach (var evse in ChargingStation.EVSEs)
+                        {
+
+                            if (IncludeEVSEs is null ||
+                               (IncludeEVSEs is not null && IncludeEVSEs(evse)))
+                            {
+
+                                var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
+                                                        CustomEVSEIdConverter,
+                                                        connectorId => true,
+                                                        new DateTime[] {
+                                                            evse.Status.Timestamp,
+                                                            evse.LastChangeDate,
+                                                            ChargingStation.LastChangeDate
+                                                        }.Max(),
+                                                        out warnings);
+
+                                if (evse2 is not null)
+                                    evses.Add(evse2);
+
+                                else
+                                    result = AddOrUpdateResult<IEnumerable<EVSE>>.Failed(EventTrackingId, "Could not convert the given EVSE!");
+
+                            }
+                            else
+                                result = AddOrUpdateResult<IEnumerable<EVSE>>.Failed(EventTrackingId, "The given EVSE was filtered!");
+
+                            if (!result.IsSuccess)
+                                break;
+
+                        }
+
+                        if (evses.Count > 0)
+                        {
+
+                            if (CommonAPI.TryGetLocation(locationId.Value, out var location))
+                                result = await CommonAPI.AddOrUpdateEVSEs(
+                                                   Location:            location,
+                                                   EVSEs:               evses,
+                                                   AllowDowngrades:     true, // Multiple EVSEs per station will lead to the same timestamp!
+                                                   SkipNotifications:   false,
+                                                   EventTrackingId:     EventTrackingId,
+                                                   CurrentUserId:       null,
+                                                   CancellationToken:   CancellationToken
+                                               );
+
+                            else
+                                result = AddOrUpdateResult<IEnumerable<EVSE>>.Failed(EventTrackingId, "Unknown location identification!");
+
+                        }
+
+                    }
+                    else
+                        result = AddOrUpdateResult<IEnumerable<EVSE>>.Failed(EventTrackingId, "Invalid location identification!");
+
+
+                    return result.IsSuccess
+
+                               ? WWCP.UpdateChargingStationResult.Success(
+                                     ChargingStation,
+                                     EventTrackingId,
+                                     Id,
+                                     this,
+                                     Warnings: warnings
+                                 )
+
+                               : WWCP.UpdateChargingStationResult.Error(
+                                     ChargingStation,
+                                     I18NString.Create(
+                                         Languages.en,
+                                         result.ErrorResponse ?? "error"
+                                     ),
+                                     EventTrackingId,
+                                     Id,
+                                     this,
+                                     Warnings: warnings
+                                 );
+
+                }
+
+            }
+            finally
+            {
+                if (lockTaken)
+                    DataAndStatusLock.Release();
+            }
+
+            return lockTaken
+                       ? WWCP.UpdateChargingStationResult.Enqueued   (ChargingStation,                     EventTrackingId, Id, this)
+                       : WWCP.UpdateChargingStationResult.LockTimeout(ChargingStation, MaxLockWaitingTime, EventTrackingId, Id, this);
+
+        }
+
+        #endregion
+
+
         #region (Set/Add/Update/Delete) EVSE(s)...
 
         #region AddEVSE         (EVSE, TransmissionType = Enqueue, ...)
@@ -1282,12 +1439,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (lockTaken)
                 {
 
-                    OCPI.AddResult<EVSE> result;
+                    AddResult<EVSE> result;
 
                     IEnumerable<Warning> warnings = [];
 
                     var locationId  = EVSE.ChargingPool is not null
-                                          ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.ToString())
+                                          ? Location_Id.TryParse(EVSE.ChargingPool.ToString())
                                           : null;
 
                     if (locationId.HasValue)
@@ -1316,19 +1473,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                      false,
                                                                      EventTrackingId);
                                 else
-                                    result = OCPI.AddResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
+                                    result = AddResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
                             }
                             else
-                                result = OCPI.AddResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
+                                result = AddResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
 
                         }
                         else
-                            result = OCPI.AddResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
+                            result = AddResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
 
                     }
                     else
-                        result = OCPI.AddResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
+                        result = AddResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
 
 
                     return result.IsSuccess
@@ -1405,12 +1562,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (lockTaken)
                 {
 
-                    OCPI.AddOrUpdateResult<EVSE> result;
+                    AddOrUpdateResult<EVSE> result;
 
                     IEnumerable<Warning> warnings = [];
 
                     var locationId  = EVSE.ChargingPool is not null
-                                          ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
+                                          ? Location_Id.TryParse(EVSE.ChargingPool.Id.ToString())
                                           : null;
 
                     if (locationId.HasValue)
@@ -1434,25 +1591,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                         out warnings);
 
                                 if (evse2 is not null)
-                                    result = await CommonAPI.AddOrUpdateEVSE(location,
-                                                                             evse2,
-                                                                             null,
-                                                                             false,
-                                                                             EventTrackingId);
+                                    result = await CommonAPI.AddOrUpdateEVSE(
+                                                       location,
+                                                       evse2,
+                                                       null,
+                                                       false,
+                                                       EventTrackingId,
+                                                       null,
+                                                       CancellationToken
+                                                   );
                                 else
-                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
+                                    result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
                             }
                             else
-                                result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
+                                result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
 
                         }
                         else
-                            result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
+                            result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
 
                     }
                     else
-                        result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
+                        result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
 
 
                     return result.IsSuccess
@@ -1546,12 +1707,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (lockTaken)
                 {
 
-                    OCPI.AddOrUpdateResult<EVSE> result;
+                    AddOrUpdateResult<EVSE> result;
 
                     IEnumerable<Warning> warnings = [];
 
                     var locationId  = EVSE.ChargingPool is not null
-                                          ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
+                                          ? Location_Id.TryParse(EVSE.ChargingPool.Id.ToString())
                                           : null;
 
                     if (locationId.HasValue)
@@ -1575,25 +1736,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                         out warnings);
 
                                 if (evse2 is not null)
-                                    result = await CommonAPI.AddOrUpdateEVSE(location,
-                                                                             evse2,
-                                                                             null,
-                                                                             false,
-                                                                             EventTrackingId);
+                                    result = await CommonAPI.AddOrUpdateEVSE(
+                                                       location,
+                                                       evse2,
+                                                       null,
+                                                       false,
+                                                       EventTrackingId,
+                                                       null,
+                                                       CancellationToken
+                                                   );
                                 else
-                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
+                                    result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
                             }
                             else
-                                result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
+                                result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
 
                         }
                         else
-                            result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
+                            result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
 
                     }
                     else
-                        result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
+                        result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
 
 
                     return result.IsSuccess
@@ -1716,7 +1881,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                             {
 
                                 var locationId = evse.ChargingPool is not null
-                                                     ? OCPI.Location_Id.TryParse(evse.ChargingPool.Id.ToString())
+                                                     ? Location_Id.TryParse(evse.ChargingPool.Id.ToString())
                                                      : null;
 
                                 if (locationId.HasValue)

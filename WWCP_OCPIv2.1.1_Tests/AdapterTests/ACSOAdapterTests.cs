@@ -18,7 +18,6 @@
 #region Usings
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
@@ -28,7 +27,6 @@ using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 
 using cloud.charging.open.protocols.WWCP;
-using cloud.charging.open.protocols.WWCP.Networking;
 
 #endregion
 
@@ -49,6 +47,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected  CPOAPI?                    cpoAPI;
         protected  OCPICSOAdapter?            csoAdapter;
         protected  IChargingStationOperator?  graphDefinedCSO;
+
+        protected  URL                        remoteLocationsURL = URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/locations");
 
         #endregion
 
@@ -127,7 +127,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                         ]
                                );
 
-            ClassicAssert.IsNotNull(roamingNetwork);
+            Assert.That(roamingNetwork,  Is.Not.Null);
 
 
             httpAPI          = new HTTPAPI(
@@ -135,7 +135,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    AutoStart:                           true
                                );
 
-            ClassicAssert.IsNotNull(httpAPI);
+            Assert.That(httpAPI,  Is.Not.Null);
 
 
             var ocpiBaseAPI = new CommonBaseAPI(
@@ -147,7 +147,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                   //KeepRemovedEVSEs:          null,
                                   LocationsAsOpenData:       true,
                                   AllowDowngrades:           null,
-                                  //Disable_RootServices:      false,
 
                                   HTTPHostname:              null,
                                   ExternalDNSName:           null,
@@ -175,13 +174,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                               );
 
-            ClassicAssert.IsNotNull(ocpiBaseAPI);
+            Assert.That(ocpiBaseAPI,  Is.Not.Null);
 
 
             commonAPI        = new CommonAPI(
 
-                                   //OurBaseURL:                          URL.Parse("http://127.0.0.1:3473/ocpi/v2.1"),
-                                   //OurVersionsURL:                      URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/versions"),
                                    OurBusinessDetails:                  new BusinessDetails(
                                                                             "GraphDefined CSO",
                                                                             URL.Parse("https://www.graphdefined.com/cso")
@@ -223,7 +220,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                );
 
-            ClassicAssert.IsNotNull(commonAPI);
+            Assert.That(commonAPI,  Is.Not.Null);
 
 
             cpoAPI           = new CPOAPI(
@@ -257,7 +254,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                );
 
-            ClassicAssert.IsNotNull(cpoAPI);
+            Assert.That(cpoAPI,  Is.Not.Null);
 
 
             csoAdapter       = roamingNetwork.CreateOCPIv2_1_1_CSOAdapter(
@@ -290,7 +287,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                );
 
-            ClassicAssert.IsNotNull(csoAdapter);
+            Assert.That(csoAdapter,  Is.Not.Null);
 
 
             graphDefinedCSO  = roamingNetwork.CreateChargingStationOperator(
@@ -301,7 +298,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    InitialStatus:       ChargingStationOperatorStatusTypes.Available
                                ).Result.ChargingStationOperator;
 
-            ClassicAssert.IsNotNull(graphDefinedCSO);
+            Assert.That(graphDefinedCSO,  Is.Not.Null);
+
 
         }
 

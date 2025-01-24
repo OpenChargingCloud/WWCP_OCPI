@@ -1495,8 +1495,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        EMSPId) ?? [];
 
 
-
-
         private readonly ConcurrentDictionary<EVSE_UId, EVSE> evsesByUId  = new();
         private readonly ConcurrentDictionary<EVSE_Id,  EVSE> evsesById   = new();
 
@@ -1522,9 +1520,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             if (evsesByUId.TryGetValue(EVSEUId, out var evse))
-                return evse!;
+                return evse;
 
-            return default;
+            return null;
 
         }
 
@@ -1537,8 +1535,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="EVSEUId">An EVSE unique identification.</param>
         /// <param name="EVSE">The EVSE having the given EVSE identification.</param>
-        public Boolean TryGetEVSE(EVSE_UId   EVSEUId,
-                                  out EVSE?  EVSE)
+        public Boolean TryGetEVSE(EVSE_UId                       EVSEUId,
+                                  [NotNullWhen(true)] out EVSE?  EVSE)
 
             => evsesByUId.TryGetValue(EVSEUId, out EVSE);
 
