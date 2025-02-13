@@ -37,13 +37,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public static Boolean Is(this LocalAccessInfo2?  AccessInfo,
                                  Role                    Role)
 
-            => AccessInfo?.Is(Role) == true;
+            => AccessInfo?.Is2(Role) == true;
 
         public static Boolean IsNot(this LocalAccessInfo2?  AccessInfo,
                                     Role                    Role)
 
             => AccessInfo is null ||
-               AccessInfo.IsNot(Role);
+               AccessInfo.IsNot2(Role);
 
     }
 
