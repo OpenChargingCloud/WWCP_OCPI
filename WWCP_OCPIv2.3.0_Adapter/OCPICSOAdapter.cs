@@ -652,15 +652,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region UpdateChargingPool      (ChargingPool, PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
+        #region UpdateChargingPool      (ChargingPool, PropertyName = null, NewValue = null, OldValue = null, DataSource = null, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Update the given charging pool.
         /// </summary>
         /// <param name="ChargingPool">A charging pool.</param>
-        /// <param name="PropertyName">The optional name of a charging pool property to update.</param>
-        /// <param name="OldValue">The optional old value of a charging pool property to update.</param>
-        /// <param name="NewValue">The optional new value of a charging pool property to update.</param>
+        /// <param name="PropertyName">The name of the charging pool property to update, if any specific.</param>
+        /// <param name="NewValue">The new value of the charging pool property to update.</param>
+        /// <param name="OldValue">The optional old value of the charging pool property to update.</param>
+        /// <param name="DataSource">An optional data source or context for the charging pool property update.</param>
         /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
         /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
@@ -670,16 +671,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public override async Task<WWCP.UpdateChargingPoolResult>
 
             UpdateChargingPool(WWCP.IChargingPool      ChargingPool,
-                               String?                 PropertyName,
-                               Object?                 OldValue,
-                               Object?                 NewValue,
-                               Context?                DataSource,
-                               WWCP.TransmissionTypes  TransmissionType,
+                               String?                 PropertyName        = null,
+                               Object?                 NewValue            = null,
+                               Object?                 OldValue            = null,
+                               Context?                DataSource          = null,
+                               WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
 
-                               DateTime?               Timestamp,
-                               EventTracking_Id?       EventTrackingId,
-                               TimeSpan?               RequestTimeout,
-                               CancellationToken       CancellationToken)
+                               DateTime?               Timestamp           = null,
+                               EventTracking_Id?       EventTrackingId     = null,
+                               TimeSpan?               RequestTimeout      = null,
+                               CancellationToken       CancellationToken   = default)
         {
 
             var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
@@ -763,6 +764,164 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
         #endregion
+
+
+        #region UpdateChargingStation        (ChargingStation,  PropertyName = null, NewValue = null, OldValue = null, DataSource = null, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Update the given charging station.
+        /// </summary>
+        /// <param name="ChargingStation">A charging station to update.</param>
+        /// <param name="PropertyName">The name of the charging station property to update, if any specific.</param>
+        /// <param name="NewValue">The new value of the charging station property to update.</param>
+        /// <param name="OldValue">The optional old value of the charging station property to update.</param>
+        /// <param name="DataSource">An optional data source or context for the charging station property update.</param>
+        /// <param name="TransmissionType">Whether to send the charging station update directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        public override async Task<WWCP.UpdateChargingStationResult>
+
+            UpdateChargingStation(WWCP.IChargingStation   ChargingStation,
+                                  String?                 PropertyName        = null,
+                                  Object?                 NewValue            = null,
+                                  Object?                 OldValue            = null,
+                                  Context?                DataSource          = null,
+                                  WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
+
+                                  DateTime?               Timestamp           = null,
+                                  EventTracking_Id?       EventTrackingId     = null,
+                                  TimeSpan?               RequestTimeout      = null,
+                                  CancellationToken       CancellationToken   = default)
+
+        {
+
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
+                                                              CancellationToken);
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            try
+            {
+
+                if (lockTaken)
+                {
+
+                    AddOrUpdateResult<IEnumerable<EVSE>> result = AddOrUpdateResult<IEnumerable<EVSE>>.NoOperation(EventTrackingId, "No EVSEs found!");
+
+                    IEnumerable<Warning> warnings = [];
+
+                    var countryCode  = CountryCode.TryParse(ChargingStation.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = Party_Id.   TryParse(ChargingStation.Id.OperatorId.Suffix);
+
+                    var locationId   = ChargingStation.ChargingPool is not null
+                                           ? Location_Id.TryParse(ChargingStation.ChargingPool.Id.ToString())
+                                           : null;
+
+                    if (countryCode.HasValue &&
+                        partyId.    HasValue &&
+                        locationId. HasValue)
+                    {
+
+                        var evses = new List<EVSE>();
+
+                        foreach (var evse in ChargingStation.EVSEs)
+                        {
+
+                            if (IncludeEVSEs is null ||
+                               (IncludeEVSEs is not null && IncludeEVSEs(evse)))
+                            {
+
+                                var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
+                                                        CustomEVSEIdConverter,
+                                                        //connectorId => true,
+                                                        new DateTime[] {
+                                                            evse.Status.Timestamp,
+                                                            evse.LastChangeDate,
+                                                            ChargingStation.LastChangeDate
+                                                        }.Max(),
+                                                        out warnings);
+
+                                if (evse2 is not null)
+                                    evses.Add(evse2);
+
+                                else
+                                    result = AddOrUpdateResult<IEnumerable<EVSE>>.Failed(EventTrackingId, "Could not convert the given EVSE!");
+
+                            }
+                            else
+                                result = AddOrUpdateResult<IEnumerable<EVSE>>.Failed(EventTrackingId, "The given EVSE was filtered!");
+
+                            if (!result.IsSuccess)
+                                break;
+
+                        }
+
+                        if (evses.Count > 0)
+                        {
+
+                            if (CommonAPI.TryGetLocation(countryCode.Value, partyId.Value, locationId.Value, out var location))
+                                result = await CommonAPI.AddOrUpdateEVSEs(
+                                                   Location:            location,
+                                                   EVSEs:               evses,
+                                                   AllowDowngrades:     true, // Multiple EVSEs per station will lead to the same timestamp!
+                                                   SkipNotifications:   false,
+                                                   EventTrackingId:     EventTrackingId,
+                                                   CurrentUserId:       null,
+                                                   CancellationToken:   CancellationToken
+                                               );
+
+                            else
+                                result = AddOrUpdateResult<IEnumerable<EVSE>>.Failed(EventTrackingId, "Unknown location identification!");
+
+                        }
+
+                    }
+                    else
+                        result = AddOrUpdateResult<IEnumerable<EVSE>>.Failed(EventTrackingId, "Invalid location identification!");
+
+
+                    return result.IsSuccess
+
+                               ? WWCP.UpdateChargingStationResult.Success(
+                                     ChargingStation,
+                                     EventTrackingId,
+                                     Id,
+                                     this,
+                                     Warnings: warnings
+                                 )
+
+                               : WWCP.UpdateChargingStationResult.Error(
+                                     ChargingStation,
+                                     I18NString.Create(
+                                         Languages.en,
+                                         result.ErrorResponse ?? "error"
+                                     ),
+                                     EventTrackingId,
+                                     Id,
+                                     this,
+                                     Warnings: warnings
+                                 );
+
+                }
+
+            }
+            finally
+            {
+                if (lockTaken)
+                    DataAndStatusLock.Release();
+            }
+
+            return lockTaken
+                       ? WWCP.UpdateChargingStationResult.Enqueued   (ChargingStation,                     EventTrackingId, Id, this)
+                       : WWCP.UpdateChargingStationResult.LockTimeout(ChargingStation, MaxLockWaitingTime, EventTrackingId, Id, this);
+
+        }
+
+        #endregion
+
 
         #region (Set/Add/Update/Delete) EVSE(s)...
 
@@ -1022,15 +1181,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region UpdateEVSE      (EVSE, PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
+        #region UpdateEVSE      (EVSE, PropertyName = null, NewValue = null, OldValue = null, DataSource = null, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Update the EVSE data of the given charging pool within the static EVSE data at the OICP server.
         /// </summary>
         /// <param name="EVSE">An EVSE.</param>
-        /// <param name="PropertyName">The name of the charging pool property to update.</param>
-        /// <param name="OldValue">The old value of the charging pool property to update.</param>
-        /// <param name="NewValue">The new value of the charging pool property to update.</param>
+        /// <param name="PropertyName">The name of the EVSE property to update.</param>
+        /// <param name="NewValue">The new value of the EVSE property to update, if any specific.</param>
+        /// <param name="OldValue">The optional old value of the EVSE property to update.</param>
+        /// <param name="DataSource">An optional data source or context for the EVSE property update.</param>
         /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
         /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
@@ -1040,10 +1200,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public override async Task<WWCP.UpdateEVSEResult>
 
             UpdateEVSE(WWCP.IEVSE              EVSE,
-                       String                  PropertyName,
-                       Object?                 NewValue,
-                       Object?                 OldValue,
-                       Context?                DataSource,
+                       String?                 PropertyName        = null,
+                       Object?                 NewValue            = null,
+                       Object?                 OldValue            = null,
+                       Context?                DataSource          = null,
                        WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
 
                        DateTime?               Timestamp           = null,
@@ -1056,20 +1216,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
                                                               CancellationToken);
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             try
             {
 
                 if (lockTaken)
                 {
 
-                    OCPI.AddOrUpdateResult<EVSE> result;
+                    AddOrUpdateResult<EVSE> result;
 
                     IEnumerable<Warning> warnings = [];
 
-                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
+                    var countryCode  = CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
                     var locationId   = EVSE.ChargingPool is not null
-                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
+                                           ? Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
                                            : null;
 
                     if (countryCode.HasValue &&
@@ -1098,19 +1260,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 if (evse2 is not null)
                                     result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
                                 else
-                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
+                                    result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
                             }
                             else
-                                result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
+                                result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
 
                         }
                         else
-                            result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
+                            result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
 
                     }
                     else
-                        result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
+                        result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
 
 
                     return result.IsSuccess

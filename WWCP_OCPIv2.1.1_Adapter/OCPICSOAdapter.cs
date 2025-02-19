@@ -921,15 +921,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region UpdateChargingPool      (ChargingPool,  PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
+        #region UpdateChargingPool      (ChargingPool,  PropertyName = null, NewValue = null, OldValue = null, DataSource = null, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Update the given charging pool.
         /// </summary>
         /// <param name="ChargingPool">A charging pool.</param>
-        /// <param name="PropertyName">The optional name of a charging pool property to update.</param>
-        /// <param name="OldValue">The optional old value of a charging pool property to update.</param>
-        /// <param name="NewValue">The optional new value of a charging pool property to update.</param>
+        /// <param name="PropertyName">The name of the charging pool property to update, if any specific.</param>
+        /// <param name="NewValue">The new value of the charging pool property to update.</param>
+        /// <param name="OldValue">The optional old value of the charging pool property to update.</param>
+        /// <param name="DataSource">An optional data source or context for the charging pool property update.</param>
         /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
         /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
@@ -939,8 +940,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public override async Task<WWCP.UpdateChargingPoolResult>
 
             UpdateChargingPool(WWCP.IChargingPool      ChargingPool,
-                               String                  PropertyName,
-                               Object?                 NewValue,
+                               String?                 PropertyName        = null,
+                               Object?                 NewValue            = null,
                                Object?                 OldValue            = null,
                                Context?                DataSource          = null,
                                WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
@@ -996,10 +997,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                     propertyUpdateInfos.Add(new PropertyUpdateInfo(PropertyName, OldValue, NewValue));
 
                                 else
-                                    chargingPoolsUpdateLog.Add(ChargingPool,
-                                                               new List<PropertyUpdateInfo> {
-                                                                   new PropertyUpdateInfo(PropertyName, OldValue, NewValue)
-                                                               });
+                                    chargingPoolsUpdateLog.Add(
+                                        ChargingPool,
+                                        [ new PropertyUpdateInfo(PropertyName, OldValue, NewValue) ]
+                                    );
 
                             }
 
@@ -1250,13 +1251,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region UpdateChargingStation        (ChargingStation,  PropertyName, NewValue, OldValue = null, DataSource = null, TransmissionType = Enqueue, ...)
+        #region UpdateChargingStation        (ChargingStation,  PropertyName = null, NewValue = null, OldValue = null, DataSource = null, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Update the given charging station.
         /// </summary>
         /// <param name="ChargingStation">A charging station to update.</param>
-        /// <param name="PropertyName">The name of the charging station property to update.</param>
+        /// <param name="PropertyName">The name of the charging station property to update, if any specific.</param>
         /// <param name="NewValue">The new value of the charging station property to update.</param>
         /// <param name="OldValue">The optional old value of the charging station property to update.</param>
         /// <param name="DataSource">An optional data source or context for the charging station property update.</param>
@@ -1269,8 +1270,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public override async Task<WWCP.UpdateChargingStationResult>
 
             UpdateChargingStation(WWCP.IChargingStation   ChargingStation,
-                                  String                  PropertyName,
-                                  Object?                 NewValue,
+                                  String?                 PropertyName        = null,
+                                  Object?                 NewValue            = null,
                                   Object?                 OldValue            = null,
                                   Context?                DataSource          = null,
                                   WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
@@ -1665,15 +1666,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region UpdateEVSE      (EVSE, PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
+        #region UpdateEVSE      (EVSE, PropertyName = null, NewValue = null, OldValue = null, DataSource = null, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Update the EVSE data of the given charging pool within the static EVSE data at the OCPI server.
         /// </summary>
         /// <param name="EVSE">An EVSE to upload.</param>
-        /// <param name="PropertyName">The name of the charging pool property to update.</param>
-        /// <param name="OldValue">The old value of the charging pool property to update.</param>
-        /// <param name="NewValue">The new value of the charging pool property to update.</param>
+        /// <param name="PropertyName">The name of the EVSE property to update.</param>
+        /// <param name="NewValue">The new value of the EVSE property to update, if any specific.</param>
+        /// <param name="OldValue">The optional old value of the EVSE property to update.</param>
+        /// <param name="DataSource">An optional data source or context for the EVSE property update.</param>
         /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
         /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
@@ -1683,10 +1685,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public override async Task<WWCP.UpdateEVSEResult>
 
             UpdateEVSE(WWCP.IEVSE              EVSE,
-                       String                  PropertyName,
-                       Object?                 NewValue,
-                       Object?                 OldValue,
-                       Context?                DataSource,
+                       String?                 PropertyName        = null,
+                       Object?                 NewValue            = null,
+                       Object?                 OldValue            = null,
+                       Context?                DataSource          = null,
                        WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
 
                        DateTime?               Timestamp           = null,

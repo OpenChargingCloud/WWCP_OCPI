@@ -1666,7 +1666,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                        Id,
                                        EVSEUId,
                                        ConnectorId,
-                                       EMSPId) ?? Array.Empty<Tariff_Id>();
+                                       EMSPId) ?? [];
 
 
         #region EVSEExists(EVSEUId)
@@ -1783,6 +1783,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             EVSE = null;
             return false;
+
+        }
+
+        #endregion
+
+
+        #region Update(LocationBuilder, out Warnings)
+
+        public Location? Update(Action<Builder>           LocationBuilder,
+                                out IEnumerable<Warning>  Warnings)
+        {
+
+            var builder = ToBuilder();
+            LocationBuilder(builder);
+
+            return builder.ToImmutable(out Warnings);
 
         }
 
@@ -2566,91 +2582,133 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region ToImmutable
 
-            /// <summary>
-            /// Return an immutable version of the location.
-            /// </summary>
-            public static implicit operator Location(Builder Builder)
+            #region SetEVSE   (EVSE)
 
-                => Builder.ToImmutable;
-
-
-            /// <summary>
-            /// Return an immutable version of the location.
-            /// </summary>
-            public Location ToImmutable
+            public Builder SetEVSE(EVSE EVSE)
             {
-                get
-                {
 
-                    if (!CountryCode.HasValue)
-                        throw new ArgumentNullException(nameof(CountryCode),  "The country code must not be null or empty!");
+                var newEVSEs = EVSEs.Where(evse => evse.UId != EVSE.UId).ToHashSet();
+                EVSEs.Clear();
 
-                    if (!PartyId.    HasValue)
-                        throw new ArgumentNullException(nameof(PartyId),      "The party identification must not be null or empty!");
+                foreach (var newEVSE in newEVSEs)
+                    EVSEs.Add(newEVSE);
 
-                    if (!Id.         HasValue)
-                        throw new ArgumentNullException(nameof(Id),           "The location identification must not be null or empty!");
+                EVSEs.Add(EVSE);
 
-                    if (!Publish.    HasValue)
-                        throw new ArgumentNullException(nameof(Publish),      "The publish parameter must not be null or empty!");
+                return this;
 
-                    if (Address  is null || Address. IsNullOrEmpty())
-                        throw new ArgumentNullException(nameof(Address),      "The address parameter must not be null or empty!");
+            }
 
-                    if (City     is null || City.    IsNullOrEmpty())
-                        throw new ArgumentNullException(nameof(City),         "The city parameter must not be null or empty!");
+            #endregion
 
-                    if (Country  is null)
-                        throw new ArgumentNullException(nameof(Country),      "The country parameter must not be null or empty!");
+            #region RemoveEVSE(EVSE)
 
-                    if (!Coordinates.HasValue)
-                        throw new ArgumentNullException(nameof(Coordinates),  "The geo coordinates must not be null or empty!");
+            public Builder RemoveEVSE(EVSE EVSE)
+            {
 
-                    if (Timezone is null || Timezone.IsNullOrEmpty())
-                        throw new ArgumentNullException(nameof(Timezone),     "The timezone parameter must not be null or empty!");
+                var newEVSEs = EVSEs.Where(evse => evse.UId != EVSE.UId).ToHashSet();
+                EVSEs.Clear();
+
+                foreach (var newEVSE in newEVSEs)
+                    EVSEs.Add(newEVSE);
+
+                return this;
+
+            }
+
+            #endregion
 
 
-                    return new Location(
+            #region ToImmutable(out Warnings)
 
-                               CommonAPI,
+            /// <summary>
+            /// Return an immutable version of the location.
+            /// </summary>
+            public static implicit operator Location?(Builder Builder)
 
-                               CountryCode.Value,
-                               PartyId.    Value,
-                               Id.         Value,
-                               Publish.    Value,
-                               Address,
-                               City,
-                               Country,
-                               Coordinates.Value,
-                               Timezone,
+                => Builder.ToImmutable(out _);
 
-                               PublishAllowedTo,
-                               Name,
-                               PostalCode,
-                               State,
-                               RelatedLocations,
-                               ParkingType,
-                               EVSEs,
-                               ParkingPlaces,
-                               Directions,
-                               Operator,
-                               SubOperator,
-                               Owner,
-                               Facilities,
-                               OpeningTimes,
-                               ChargingWhenClosed,
-                               Images,
-                               EnergyMix,
-                               EnergyMeters,
 
-                               Created     ?? Timestamp.Now,
-                               LastUpdated ?? Timestamp.Now
+            /// <summary>
+            /// Return an immutable version of the location.
+            /// </summary>
+            /// <param name="Warnings"></param>
+            public Location? ToImmutable(out IEnumerable<Warning> Warnings)
+            {
 
-                           );
+                var warnings = new List<Warning>();
 
-                }
+                if (!CountryCode. HasValue)
+                    warnings.Add(Warning.Create("The country code must not be null or empty!"));
+
+                if (!PartyId.     HasValue)
+                    warnings.Add(Warning.Create("The party identification must not be null or empty!"));
+
+                if (!Id.          HasValue)
+                    warnings.Add(Warning.Create("The location identification must not be null or empty!"));
+
+                if (!Publish.     HasValue)
+                    warnings.Add(Warning.Create("The publish parameter must not be null or empty!"));
+
+                if (Address    is null || Address.   IsNullOrEmpty())
+                    warnings.Add(Warning.Create("The address parameter must not be null or empty!"));
+
+                if (City       is null || City.      IsNullOrEmpty())
+                    warnings.Add(Warning.Create("The city parameter must not be null or empty!"));
+
+                if (Country is null)
+                    warnings.Add(Warning.Create("The country parameter must not be null or empty!"));
+
+                if (!Coordinates.HasValue)
+                    warnings.Add(Warning.Create("The geo coordinates must not be null or empty!"));
+
+                if (Timezone is null || Timezone.IsNullOrEmpty())
+                    warnings.Add(Warning.Create("The timezone parameter must not be null or empty!"));
+
+                Warnings = warnings;
+
+
+                return warnings.Count > 0
+                           ? null
+                           : new Location(
+
+                                 CommonAPI,
+
+                                 CountryCode!.Value,
+                                 PartyId!.    Value,
+                                 Id!.         Value,
+                                 Publish!.    Value,
+                                 Address!,
+                                 City!,
+                                 Country!,
+                                 Coordinates!.Value,
+                                 Timezone!,
+
+                                 PublishAllowedTo,
+                                 Name,
+                                 PostalCode,
+                                 State,
+                                 RelatedLocations,
+                                 ParkingType,
+                                 EVSEs,
+                                 ParkingPlaces,
+                                 Directions,
+                                 Operator,
+                                 SubOperator,
+                                 Owner,
+                                 Facilities,
+                                 OpeningTimes,
+                                 ChargingWhenClosed,
+                                 Images,
+                                 EnergyMix,
+                                 EnergyMeters,
+
+                                 Created     ?? Timestamp.Now,
+                                 LastUpdated ?? Timestamp.Now
+
+                             );
+
             }
 
             #endregion

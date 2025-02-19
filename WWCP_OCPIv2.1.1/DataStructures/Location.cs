@@ -2325,7 +2325,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #endregion
 
 
-            #region ToImmutable
+            #region ToImmutable(out Warnings)
 
             /// <summary>
             /// Return an immutable version of the location.
@@ -2373,37 +2373,42 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 Warnings = warnings;
 
-                return warnings.Any()
+
+                return warnings.Count > 0
                            ? null
-                           : new Location(CommonAPI,
-                                          CountryCode!. Value,
-                                          PartyId!.     Value,
-                                          Id!.          Value,
-                                          LocationType!.Value,
-                                          Address!,
-                                          City!,
-                                          PostalCode!,
-                                          Country!,
-                                          Coordinates!.Value,
+                           : new Location(
 
-                                          Name,
-                                          RelatedLocations,
-                                          EVSEs,
-                                          Directions,
-                                          Operator,
-                                          SubOperator,
-                                          Owner,
-                                          Facilities,
-                                          Timezone,
-                                          OpeningTimes,
-                                          ChargingWhenClosed,
-                                          Images,
-                                          EnergyMix,
+                                 CommonAPI,
+                                 CountryCode!. Value,
+                                 PartyId!.     Value,
+                                 Id!.          Value,
+                                 LocationType!.Value,
+                                 Address!,
+                                 City!,
+                                 PostalCode!,
+                                 Country!,
+                                 Coordinates!.Value,
 
-                                          Publish,
+                                 Name,
+                                 RelatedLocations,
+                                 EVSEs,
+                                 Directions,
+                                 Operator,
+                                 SubOperator,
+                                 Owner,
+                                 Facilities,
+                                 Timezone,
+                                 OpeningTimes,
+                                 ChargingWhenClosed,
+                                 Images,
+                                 EnergyMix,
 
-                                          Created     ?? Timestamp.Now,
-                                          LastUpdated ?? Timestamp.Now);
+                                 Publish,
+
+                                 Created     ?? Timestamp.Now,
+                                 LastUpdated ?? Timestamp.Now
+
+                             );
 
             }
 

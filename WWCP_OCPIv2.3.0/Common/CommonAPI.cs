@@ -7525,6 +7525,99 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #endregion
 
+
+        #region AddOrUpdateEVSEs       (Location, EVSEs,                           AllowDowngrades = false, SkipNotifications = false)
+
+        public async Task<AddOrUpdateResult<IEnumerable<EVSE>>> AddOrUpdateEVSEs(Location           Location,
+                                                                                 IEnumerable<EVSE>  EVSEs,
+                                                                                 Boolean?           AllowDowngrades     = false,
+                                                                                 Boolean            SkipNotifications   = false,
+                                                                                 EventTracking_Id?  EventTrackingId     = null,
+                                                                                 User_Id?           CurrentUserId       = null,
+                                                                                 CancellationToken  CancellationToken   = default)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            #region Validate AllowDowngrades
+
+            foreach (var evse in EVSEs)
+            {
+                if (Location.TryGetEVSE(evse.UId, out var existingEVSE) &&
+                    existingEVSE is not null)
+                {
+
+                    if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                        evse.LastUpdated <= existingEVSE.LastUpdated)
+                    {
+                        return AddOrUpdateResult<IEnumerable<EVSE>>.Failed(
+                                   EventTrackingId,
+                                   EVSEs,
+                                   "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!"
+                               );
+                    }
+
+                    //if (EVSE.LastUpdated.ToIso8601() == existingEVSE.LastUpdated.ToIso8601())
+                    //    return AddOrUpdateResult<EVSE>.NoOperation(EVSE,
+                    //                                               "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
+
+                }
+            }
+
+            #endregion
+
+            var newLocation = Location.Update(locationBuilder => {
+
+                                                  foreach (var evse in EVSEs)
+                                                  {
+
+                                                      if (evse.Status != StatusType.REMOVED || KeepRemovedEVSEs(evse))
+                                                          locationBuilder.SetEVSE(evse);
+                                                      else
+                                                          locationBuilder.RemoveEVSE(evse);
+
+                                                      if (evse.LastUpdated > locationBuilder.LastUpdated)
+                                                          locationBuilder.LastUpdated  = evse.LastUpdated;
+
+                                                  }
+
+                                              },
+                                              out var warnings);
+
+            if (newLocation is null)
+                return AddOrUpdateResult<IEnumerable<EVSE>>.Failed(
+                           EventTrackingId,
+                           EVSEs,
+                           warnings.First().Text.FirstText()
+                       );
+
+
+            var updateLocationResult = await UpdateLocation(
+                                                 newLocation,
+                                                 AllowDowngrades ?? this.AllowDowngrades,
+                                                 SkipNotifications,
+                                                 EventTrackingId,
+                                                 CurrentUserId,
+                                                 CancellationToken
+                                             );
+
+
+            //ToDo: Check if all EVSEs have been added OR updated!
+            return updateLocationResult.IsSuccess
+                       ? //existingEVSE is null
+                         //    ? AddOrUpdateResult<IEnumerable<EVSE>>.Created(EventTrackingId, EVSEs)
+                              AddOrUpdateResult<IEnumerable<EVSE>>.Updated(EventTrackingId, EVSEs)
+                       : AddOrUpdateResult<IEnumerable<EVSE>>.Failed(
+                             EventTrackingId,
+                             EVSEs,
+                             updateLocationResult.ErrorResponse ?? "Unknown error!"
+                         );
+
+        }
+
+        #endregion
+
+
         #endregion
 
         #region Connectors
