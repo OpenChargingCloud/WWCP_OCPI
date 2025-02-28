@@ -1231,7 +1231,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public static Time? ToOCPI(this org.GraphDefined.Vanaheimr.Illias.Time Time)
 
-            => OCPIv2_1_1.Time.FromHourMinSec(Time.Hour,
+            => OCPIv2_1_1.Time.FromHourMinSec((Byte) Time.Hour,
                                               Time.Minute,
                                               Time.Second ?? 0);
 
