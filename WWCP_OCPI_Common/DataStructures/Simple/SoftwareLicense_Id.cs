@@ -78,7 +78,7 @@ namespace cloud.charging.open.protocols.OCPI
             => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
-        /// The length of the software license identificator.
+        /// The length of the software license identifier.
         /// </summary>
         public UInt64 Length
             => (UInt64) (InternalId?.Length ?? 0);

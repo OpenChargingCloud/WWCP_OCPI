@@ -888,7 +888,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (!JSON.ParseMandatoryJSON("coordinates",
                                              "geo coordinates",
                                              GeoCoordinate.TryParse,
-                                             out GeoCoordinate? Coordinates,
+                                             out GeoCoordinate Coordinates,
                                              out ErrorResponse))
                 {
                     return false;
@@ -1157,7 +1157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                Address,
                                City,
                                Country,
-                               Coordinates.Value,
+                               Coordinates,
                                TimeZone,
 
                                PublishTokenTypes,

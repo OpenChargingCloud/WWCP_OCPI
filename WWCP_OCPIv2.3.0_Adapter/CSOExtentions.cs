@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.WWCP
         /// 
         /// <param name="RoamingNetwork">A WWCP roaming network.</param>
         /// <param name="Id">The unique identification of the roaming provider.</param>
-        /// <param name="Name">The offical (multi-language) name of the roaming provider.</param>
+        /// <param name="Name">The official (multi-language) name of the roaming provider.</param>
         /// 
         /// <param name="EVSE2EVSEDataRecord">A delegate to process an EVSE data record, e.g. before pushing it to the roaming provider.</param>
         /// 

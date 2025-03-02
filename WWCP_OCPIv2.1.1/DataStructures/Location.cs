@@ -816,7 +816,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatoryJSON("coordinates",
                                              "geo coordinates",
                                              GeoCoordinate.TryParse,
-                                             out GeoCoordinate? Coordinates,
+                                             out GeoCoordinate Coordinates,
                                              out ErrorResponse))
                 {
                     return false;
@@ -1033,6 +1033,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
                 Location = new Location(
+
                                null,
                                CountryCodeBody ?? CountryCodeURL!.Value,
                                PartyIdBody     ?? PartyIdURL!.    Value,
@@ -1042,7 +1043,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                City,
                                PostalCode,
                                Country,
-                               Coordinates.Value,
+                               Coordinates,
 
                                Name,
                                RelatedLocations,
@@ -1062,6 +1063,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                Created,
                                LastUpdated
+
                            );
 
                 if (CustomLocationParser is not null)

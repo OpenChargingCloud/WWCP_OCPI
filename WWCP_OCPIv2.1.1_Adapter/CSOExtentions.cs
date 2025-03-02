@@ -45,7 +45,7 @@ namespace cloud.charging.open.protocols.WWCP
         /// 
         /// <param name="RoamingNetwork">A WWCP roaming network.</param>
         /// <param name="Id">The unique identification of the roaming provider.</param>
-        /// <param name="Name">The offical (multi-language) name of the roaming provider.</param>
+        /// <param name="Name">The official (multi-language) name of the roaming provider.</param>
         /// 
         /// <param name="IncludeEVSEs">Only include the EVSEs matching the given delegate.</param>
         /// <param name="ServiceCheckEvery">The service check intervall.</param>
@@ -204,7 +204,7 @@ namespace cloud.charging.open.protocols.WWCP
         /// 
         /// <param name="RoamingNetwork">A WWCP roaming network.</param>
         /// <param name="Id">The unique identification of the roaming provider.</param>
-        /// <param name="Name">The offical (multi-language) name of the roaming provider.</param>
+        /// <param name="Name">The official (multi-language) name of the roaming provider.</param>
         /// 
         /// <param name="IncludeEVSEs">Only include the EVSEs matching the given delegate.</param>
         /// <param name="ServiceCheckEvery">The service check intervall.</param>

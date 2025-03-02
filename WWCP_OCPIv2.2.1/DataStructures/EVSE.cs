@@ -499,7 +499,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #region Parse EVSEId                 [optional]
 
                 if (JSON.ParseOptional("evse_id",
-                                       "offical EVSE identification",
+                                       "official EVSE identification",
                                        EVSE_Id.TryParse,
                                        out EVSE_Id? EVSEId,
                                        out ErrorResponse))
@@ -1383,7 +1383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         private readonly Object hashSync = new ();
 
         /// <summary>
-        /// Get the hashcode of this object.
+        /// Get the hash code of this object.
         /// </summary>
         public override Int32 GetHashCode()
         {

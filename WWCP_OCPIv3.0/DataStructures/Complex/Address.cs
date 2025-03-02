@@ -241,7 +241,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 if (!JSON.ParseMandatoryJSON("coordinates",
                                              "geo coordinates",
                                              GeoCoordinate.TryParse,
-                                             out GeoCoordinate? Coordinates,
+                                             out GeoCoordinate Coordinates,
                                              out ErrorResponse))
                 {
                     return false;
@@ -266,7 +266,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               Street,
                               City,
                               Country,
-                              Coordinates.Value,
+                              Coordinates,
                               PostalCode,
                               State
                           );
