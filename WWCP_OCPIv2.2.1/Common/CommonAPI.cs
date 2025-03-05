@@ -181,7 +181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="FailOnMissingLocation">Whether to fail when the location for the given location identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseLocation(this OCPIRequest           Request,
-                                            CommonAPI                    CommonAPI,
+                                            CommonAPI                  CommonAPI,
                                             out CountryCode?           CountryCode,
                                             out Party_Id?              PartyId,
                                             out Location_Id?           LocationId,
@@ -2498,6 +2498,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         public Boolean?                 AllowDowngrades            { get; }
 
 
+        public Boolean                  IndentifyAsOCPI_2_2        { get; }
+
+
         /// <summary>
         /// All our credential roles.
         /// </summary>
@@ -2910,6 +2913,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null,
+                         Boolean                       IndentifyAsOCPI_2_2       = false,
 
                          JObject?                      APIVersionHashes          = null,
 
@@ -2939,8 +2943,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    HTTPServiceName ?? DefaultHTTPServiceName,
                    BasePath,
 
-                   URLPathPrefix,//   ?? DefaultURLPathPrefix,
-                   null, //HTMLTemplate,
+                   URLPathPrefix,   //?? DefaultURLPathPrefix,
+                   null,            //HTMLTemplate,
                    APIVersionHashes,
 
                    DisableMaintenanceTasks,
@@ -2971,6 +2975,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.OurCredentialRoles    = OurCredentialRoles?.Distinct() ?? [];
             this.DefaultCountryCode    = DefaultCountryCode;
             this.DefaultPartyId        = DefaultPartyId;
+            this.IndentifyAsOCPI_2_2   = IndentifyAsOCPI_2_2;
 
             this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
 
@@ -3012,6 +3017,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 )
             ).GetAwaiter().GetResult();
 
+            if (this.IndentifyAsOCPI_2_2)
+            {
+                this.BaseAPI.AddVersionInformation(
+                    new VersionInformation(
+                        Version_Id.Parse("2.2"),
+                        URL.Concat(
+                            BaseAPI.OurVersionsURL.Protocol.AsString(),
+                            ExternalDNSName ?? ("localhost:" + base.HTTPServer.IPPorts.First()),
+                            URLPathPrefix + AdditionalURLPathPrefix + $"/versions/2.2"
+                        )
+                    )
+                ).GetAwaiter().GetResult();
+            }
 
             if (!this.DisableLogging)
             {
@@ -3045,6 +3063,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         private void RegisterURLTemplates()
         {
+
+            HTTPServer.Rewrite(req => {
+
+                if (this.IndentifyAsOCPI_2_2)
+                {
+
+                    if (req.Path.EndsWith("2.2"))
+                        return HTTPRequest.ChangePath(req, HTTPPath.Parse($"{req.Path}.1"), new Tuple<String, Object>("X-OCPIVersion", Version_Id.Parse("2.2")));
+
+                    if (req.Path.Contains("/2.2/"))
+                        return HTTPRequest.ChangePath(req, HTTPPath.Parse(req.Path.ToString().Replace("/2.2/", "/2.2.1/")), new Tuple<String, Object>("X-OCPIVersion", Version_Id.Parse("2.2")));
+
+                }
+
+                return null;
+
+            });
 
             #region OPTIONS     ~/versions/2.2.1
 
@@ -3110,7 +3145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     #endregion
 
 
-                    var prefix = URLPathPrefix + BaseAPI.AdditionalURLPathPrefix + Version.String;
+                    var prefix = URLPathPrefix + BaseAPI.AdditionalURLPathPrefix + $"{request.HTTPRequest.GetHeaderField<Version_Id?>("X-OCPIVersion") ?? Version.Id}";
 
                     #region Common credential endpoints...
 
