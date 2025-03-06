@@ -2217,12 +2217,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         //
         //  3. Other party fetches <VERSIONS endpoint> using <CREDENTIALS_TOKEN_A> and stores all versions endpoint information.
         //  4. Other party chooses a common version, fetches version details from the found <VERSION DETAIL endpoint> using <CREDENTIALS_TOKEN_A> and stores all version endpoint information.
-        //  5. Other party generates <CREDENTIALS_TOKEN_B> and POSTs its choosen version (as part of the request URL), its <VERSIONS endpoint> and this <CREDENTIALS_TOKEN_B>.
+        //  5. Other party generates <CREDENTIALS_TOKEN_B> and POSTs its chosen version (as part of the request URL), its <VERSIONS endpoint> and this <CREDENTIALS_TOKEN_B>.
         //
         // >>> Here we are in a synchronous HTTP POST request! >>>
-        //    6. We verify that the version the other side has choosen is at least valid.
+        //    6. We verify that the version the other side has chosen is at least valid.
         //    7. We fetch <VERSIONS> from the given <VERSIONS endpoint> using <CREDENTIALS_TOKEN_B> and store all versions endpoint information.
-        //    8. We verify that the version the other side has choosen can be used.
+        //    8. We verify that the version the other side has chosen can be used.
         //    9. We fetch <VERSION DETAIL> from the given <VERSION DETAIL endpoint> for the common version using <CREDENTIALS_TOKEN_B> and store all versions endpoint information.
         //   10. We generate <CREDENTIALS_TOKEN_C> and return this as response to the POST request in 5.
         //

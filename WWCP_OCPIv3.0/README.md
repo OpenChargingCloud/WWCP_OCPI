@@ -24,7 +24,7 @@ These attributes enhance security, availability and crypto agility by enabling P
 In the process of a Certificate Signing Request (CSR) from Party A to Party B (UC: 01.01), Party A has the option to include an optional list of all (sub-)party, CPO, or EMSP identifications as attribute data within the CSR. This information serves to provide Party B with additional context and clarity about the requesting entity and its affiliations, enabling Party B to make more informed decisions regarding whether to sign or reject the incoming CSR and thus helps to ***prevent impersonation attacks***.    
 These attributes, if included, will also be copied directly into the issued X.509 Client Certificate, ensuring that the information about (sub-)party, CPO, or EMSP identifications is available during subsequent TLS handshake operations. This allows both the certificate owner and verifying parties to access this metadata at the point of establishing secure connections, streamlining trust validation processes.
 
-The identification data is encoded using ASN.1 structures such as `SEQUENCE OF UTF8String`, allowing flexibility in representing multiple identifications in a structured and standardized format. The choosen ASN.1 OIDs for the lists of (sub-)party, CPO or EMSP identifications is still subject
+The identification data is encoded using ASN.1 structures such as `SEQUENCE OF UTF8String`, allowing flexibility in representing multiple identifications in a structured and standardized format. The chosen ASN.1 OIDs for the lists of (sub-)party, CPO or EMSP identifications is still subject
 of change.
 
 
