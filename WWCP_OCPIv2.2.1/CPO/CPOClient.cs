@@ -18,6 +18,7 @@
 #region Usings
 
 using System.Security.Authentication;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
@@ -263,6 +264,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         public CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                     { get; set; }
         public CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                  { get; set; }
         public CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer           { get; set; }
+        public CustomJObjectSerializerDelegate<Tariff>?                      CustomTariffSerializer                        { get; set; }
+        public CustomJObjectSerializerDelegate<Price>?                       CustomPriceSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<TariffElement>?               CustomTariffElementSerializer                 { get; set; }
+        public CustomJObjectSerializerDelegate<PriceComponent>?              CustomPriceComponentSerializer                { get; set; }
+        public CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer            { get; set; }
+        public CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                       { get; set; }
+        public CustomJObjectSerializerDelegate<CDRToken>?                    CustomCDRTokenSerializer                      { get; set; }
+        public CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer                { get; set; }
+        public CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                  { get; set; }
+        public CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                           { get; set; }
+        public CustomJObjectSerializerDelegate<CDRLocation>?                 CustomCDRLocationSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                    { get; set; }
+        public CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<LocationReference>?           CustomLocationReferenceSerializer             { get; set; }
+        public CustomJObjectSerializerDelegate<SetChargingProfileCommand>?   CustomSetChargingProfileSerializer            { get; set; }
+        public CustomJObjectSerializerDelegate<ChargingProfile>?             CustomChargingProfileSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<ChargingProfilePeriod>?       CustomChargingProfilePeriodSerializer         { get; set; }
 
         #endregion
 
@@ -974,7 +992,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             => base.ToJSON(nameof(CPOClient));
 
 
-        #region GetLocation    (CountryCode, PartyId, LocationId, ...)
+        #region GetLocation        (CountryCode, PartyId, LocationId, ...)
 
         /// <summary>
         /// Get the charging location specified by the given location identification from the remote API.
@@ -1014,31 +1032,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnGetLocationRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetLocationRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetLocationRequest is not null)
-                    await Task.WhenAll(OnGetLocationRequest.GetInvocationList().
-                                       Cast<OnGetLocationRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          LocationId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     LocationId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetLocationRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1047,12 +1057,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Locations,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Locations,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -1083,32 +1093,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                    remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                           PartyId.    ToString() +
-                                                                                                           LocationId. ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                     RequestLogDelegate:   OnGetLocationHTTPRequest,
-                                                     ResponseLogDelegate:  OnGetLocationHTTPResponse,
-                                                     CancellationToken:    CancellationToken,
-                                                     EventTrackingId:      eventTrackingId,
-                                                     RequestTimeout:       requestTimeout).
+                                             GET(remoteURL.Value.Path + CountryCode.ToString() +
+                                                                        PartyId.    ToString() +
+                                                                        LocationId. ToString(),
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnGetLocationHTTPRequest,
+                                                 ResponseLogDelegate:   OnGetLocationHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<Location>.ParseJObject(httpResponse,
-                                                                   requestId,
-                                                                   correlationId,
-                                                                   json => Location.Parse(json));
+                    response = OCPIResponse<Location>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Location.Parse(json)
+                               );
 
                     Counters.GetLocation.IncResponses_OK();
 
@@ -1133,34 +1144,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetLocationResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetLocationResponse is not null)
-                    await Task.WhenAll(OnGetLocationResponse.GetInvocationList().
-                                       Cast<OnGetLocationResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          LocationId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     LocationId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetLocationResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -1170,7 +1173,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         #endregion
 
-        #region PutLocation    (Location, ...)
+        #region PutLocation        (Location, ...)
 
         /// <summary>
         /// Put/store the given charging location on/within the remote API.
@@ -1211,29 +1214,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnPutLocationRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPutLocationRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutLocationRequest is not null)
-                    await Task.WhenAll(OnPutLocationRequest.GetInvocationList().
-                                       Cast<OnPutLocationRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Location,
 
-                                                     Location,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutLocationRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1242,12 +1237,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Locations,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Locations,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -1278,51 +1273,54 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                    remoteURL.Value.Path + Location.CountryCode.ToString() +
-                                                                                                           Location.PartyId.    ToString() +
-                                                                                                           Location.Id.         ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                        requestBuilder.Content        = Location.ToJSON(EMSPId,
-                                                                                                                                        CustomLocationSerializer,
-                                                                                                                                        CustomPublishTokenSerializer,
-                                                                                                                                        CustomAdditionalGeoLocationSerializer,
-                                                                                                                                        CustomEVSESerializer,
-                                                                                                                                        CustomStatusScheduleSerializer,
-                                                                                                                                        CustomConnectorSerializer,
-                                                                                                                                        CustomLocationEnergyMeterSerializer,
-                                                                                                                                        CustomEVSEEnergyMeterSerializer,
-                                                                                                                                        CustomTransparencySoftwareStatusSerializer,
-                                                                                                                                        CustomTransparencySoftwareSerializer,
-                                                                                                                                        CustomDisplayTextSerializer,
-                                                                                                                                        CustomBusinessDetailsSerializer,
-                                                                                                                                        CustomHoursSerializer,
-                                                                                                                                        CustomImageSerializer,
-                                                                                                                                        CustomEnergyMixSerializer,
-                                                                                                                                        CustomEnergySourceSerializer,
-                                                                                                                                        CustomEnvironmentalImpactSerializer).ToUTF8Bytes(JSONFormat);
-                                                                                        requestBuilder.Connection    = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                   RequestLogDelegate:   OnPutLocationHTTPRequest,
-                                                   ResponseLogDelegate:  OnPutLocationHTTPResponse,
-                                                   CancellationToken:    CancellationToken,
-                                                   EventTrackingId:      eventTrackingId,
-                                                   RequestTimeout:       requestTimeout).
+                                             PUT(remoteURL.Value.Path + Location.CountryCode.ToString() +
+                                                                        Location.PartyId.    ToString() +
+                                                                        Location.Id.         ToString(),
+                                                 Content:               Location.ToJSON(
+                                                                            EMSPId,
+                                                                            CustomLocationSerializer,
+                                                                            CustomPublishTokenSerializer,
+                                                                            CustomAdditionalGeoLocationSerializer,
+                                                                            CustomEVSESerializer,
+                                                                            CustomStatusScheduleSerializer,
+                                                                            CustomConnectorSerializer,
+                                                                            CustomLocationEnergyMeterSerializer,
+                                                                            CustomEVSEEnergyMeterSerializer,
+                                                                            CustomTransparencySoftwareStatusSerializer,
+                                                                            CustomTransparencySoftwareSerializer,
+                                                                            CustomDisplayTextSerializer,
+                                                                            CustomBusinessDetailsSerializer,
+                                                                            CustomHoursSerializer,
+                                                                            CustomImageSerializer,
+                                                                            CustomEnergyMixSerializer,
+                                                                            CustomEnergySourceSerializer,
+                                                                            CustomEnvironmentalImpactSerializer
+                                                                        ).ToUTF8Bytes(JSONFormat),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnPutLocationHTTPRequest,
+                                                 ResponseLogDelegate:   OnPutLocationHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<Location>.ParseJObject(httpResponse,
-                                                                   requestId,
-                                                                   correlationId,
-                                                                   json => Location.Parse(json));
+                    response = OCPIResponse<Location>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Location.Parse(json)
+                               );
 
                     Counters.PutLocation.IncResponses_OK();
 
@@ -1347,32 +1345,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPutLocationResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutLocationResponse is not null)
-                    await Task.WhenAll(OnPutLocationResponse.GetInvocationList().
-                                       Cast<OnPutLocationResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Location,
 
-                                                     Location,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutLocationResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -1382,7 +1372,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         #endregion
 
-        #region PatchLocation  (CountryCode, PartyId, LocationId, LocationPatch, ...)
+        #region PatchLocation      (CountryCode, PartyId, LocationId, LocationPatch, ...)
 
         /// <summary>
         /// Patch a location.
@@ -1431,30 +1421,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnPatchLocationRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPatchLocationRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchLocationRequest is not null)
-                    await Task.WhenAll(OnPatchLocationRequest.GetInvocationList().
-                                       Cast<OnPatchLocationRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          LocationPatch,
 
-                                                     LocationId,
-                                                     LocationPatch,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchLocationRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1463,12 +1445,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Locations,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Locations,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -1499,34 +1481,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.PATCH,
-                                                                                    remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                           PartyId.    ToString() +
-                                                                                                           LocationId. ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization = TokenAuth;
-                                                                                        requestBuilder.ContentType   = HTTPContentType.Application.JSON_UTF8;
-                                                                                        requestBuilder.Content       = LocationPatch.ToUTF8Bytes(JSONFormat);
-                                                                                        requestBuilder.Connection    = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
+                                             PATCH(remoteURL.Value.Path + CountryCode.ToString() +
+                                                                          PartyId.    ToString() +
+                                                                          LocationId. ToString(),
+                                                   Content:               LocationPatch.ToUTF8Bytes(JSONFormat),
+                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                   Accept:                ocpiAcceptTypes,
+                                                   Authentication:        TokenAuth,
+                                                   Connection:            ConnectionType.Close,
+                                                   RequestBuilder:        requestBuilder => {
+                                                                              requestBuilder.Set("X-Request-ID",     requestId);
+                                                                              requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                          },
+                                                   RequestLogDelegate:    OnPatchLocationHTTPRequest,
+                                                   ResponseLogDelegate:   OnPatchLocationHTTPResponse,
+                                                   EventTrackingId:       eventTrackingId,
+                                                   //NumberOfRetry:         transmissionRetry,
+                                                   RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                   CancellationToken:     CancellationToken).
 
-                                                   RequestLogDelegate:   OnPatchLocationHTTPRequest,
-                                                   ResponseLogDelegate:  OnPatchLocationHTTPResponse,
-                                                   CancellationToken:    CancellationToken,
-                                                   EventTrackingId:      eventTrackingId,
-                                                   RequestTimeout:       requestTimeout).
-
-                                             ConfigureAwait(false);
+                                               ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<Location>.ParseJObject(httpResponse,
-                                                                   requestId,
-                                                                   correlationId,
-                                                                   json => Location.Parse(json));
+                    response = OCPIResponse<Location>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Location.Parse(json)
+                               );
 
                     Counters.PatchLocation.IncResponses_OK();
 
@@ -1551,33 +1534,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPatchLocationResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchLocationResponse is not null)
-                    await Task.WhenAll(OnPatchLocationResponse.GetInvocationList().
-                                       Cast<OnPatchLocationResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          LocationPatch,
 
-                                                     LocationId,
-                                                     LocationPatch,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchLocationResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -1588,7 +1563,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         #endregion
 
 
-        #region GetEVSE        (CountryCode, PartyId, LocationId, EVSEUId, ...)
+        #region GetEVSE            (CountryCode, PartyId, LocationId, EVSEUId, ...)
 
         /// <summary>
         /// Get the EVSE specified by the given EVSE unique identification from the remote API.
@@ -1629,30 +1604,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnGetEVSERequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetEVSERequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetEVSERequest is not null)
-                    await Task.WhenAll(OnGetEVSERequest.GetInvocationList().
-                                       Cast<OnGetEVSERequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          EVSEUId,
 
-                                                     LocationId,
-                                                     EVSEUId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetEVSERequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1661,12 +1628,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Locations,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Locations,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -1697,33 +1664,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                    remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                           PartyId.    ToString() +
-                                                                                                           LocationId. ToString() +
-                                                                                                           EVSEUId.    ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                     RequestLogDelegate:   OnGetEVSEHTTPRequest,
-                                                     ResponseLogDelegate:  OnGetEVSEHTTPResponse,
-                                                     CancellationToken:    CancellationToken,
-                                                     EventTrackingId:      eventTrackingId,
-                                                     RequestTimeout:       requestTimeout).
+                                             GET(remoteURL.Value.Path + CountryCode.ToString() +
+                                                                        PartyId.    ToString() +
+                                                                        LocationId. ToString() +
+                                                                        EVSEUId.    ToString(),
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnGetEVSEHTTPRequest,
+                                                 ResponseLogDelegate:   OnGetEVSEHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<EVSE>.ParseJObject(httpResponse,
-                                                               requestId,
-                                                               correlationId,
-                                                               json => EVSE.Parse(json));
+                    response = OCPIResponse<EVSE>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => EVSE.Parse(json)
+                               );
 
                     Counters.GetEVSE.IncResponses_OK();
 
@@ -1748,33 +1716,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetEVSEResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetEVSEResponse is not null)
-                    await Task.WhenAll(OnGetEVSEResponse.GetInvocationList().
-                                       Cast<OnGetEVSEResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          EVSEUId,
 
-                                                     LocationId,
-                                                     EVSEUId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchLocationResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -1784,7 +1744,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         #endregion
 
-        #region PutEVSE        (EVSE, ...)
+        #region PutEVSE            (EVSE, ...)
 
         /// <summary>
         /// Put/store the given EVSE on/within the remote API.
@@ -1812,25 +1772,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             if (EVSE.ParentLocation is null)
                 return OCPIResponse<EVSE>.Error("The parent location of the given EVSE must not be null!");
 
-            return await PutEVSE(EVSE,
-                                 EVSE.ParentLocation.CountryCode,
-                                 EVSE.ParentLocation.PartyId,
-                                 EVSE.ParentLocation.Id,
-                                 EMSPId,
+            return await PutEVSE(
+                             EVSE,
+                             EVSE.ParentLocation.CountryCode,
+                             EVSE.ParentLocation.PartyId,
+                             EVSE.ParentLocation.Id,
+                             EMSPId,
 
-                                 RequestId,
-                                 CorrelationId,
-                                 VersionId,
+                             RequestId,
+                             CorrelationId,
+                             VersionId,
 
-                                 EventTrackingId,
-                                 RequestTimeout,
-                                 CancellationToken);
+                             EventTrackingId,
+                             RequestTimeout,
+                             CancellationToken
+                         );
 
         }
 
         #endregion
 
-        #region PutEVSE        (EVSE, CountryCode, PartyId, LocationId, ...)
+        #region PutEVSE            (EVSE, CountryCode, PartyId, LocationId, ...)
 
         /// <summary>
         /// Put/store the given EVSE on/within the remote API.
@@ -1877,32 +1839,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnPutEVSERequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPutEVSERequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutEVSERequest is not null)
-                    await Task.WhenAll(OnPutEVSERequest.GetInvocationList().
-                                       Cast<OnPutEVSERequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          EVSE,
+                          CountryCode,
+                          PartyId,
+                          LocationId,
 
-                                                     EVSE,
-                                                     CountryCode,
-                                                     PartyId,
-                                                     LocationId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutEVSERequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1911,12 +1865,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Locations,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Locations,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -1947,43 +1901,46 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                    remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                           PartyId.    ToString() +
-                                                                                                           LocationId. ToString() +
-                                                                                                           EVSE.UId.   ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                        requestBuilder.Content        = EVSE.ToJSON(EMSPId,
-                                                                                                                                    CustomEVSESerializer,
-                                                                                                                                    CustomStatusScheduleSerializer,
-                                                                                                                                    CustomConnectorSerializer,
-                                                                                                                                    CustomEVSEEnergyMeterSerializer,
-                                                                                                                                    CustomTransparencySoftwareStatusSerializer,
-                                                                                                                                    CustomTransparencySoftwareSerializer,
-                                                                                                                                    CustomDisplayTextSerializer,
-                                                                                                                                    CustomImageSerializer).ToUTF8Bytes(JSONFormat);
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                   RequestLogDelegate:   OnPutEVSEHTTPRequest,
-                                                   ResponseLogDelegate:  OnPutEVSEHTTPResponse,
-                                                   CancellationToken:    CancellationToken,
-                                                   EventTrackingId:      eventTrackingId,
-                                                   RequestTimeout:       requestTimeout).
+                                             PUT(remoteURL.Value.Path + CountryCode.ToString() +
+                                                                        PartyId.    ToString() +
+                                                                        LocationId. ToString() +
+                                                                        EVSE.UId.   ToString(),
+                                                 Content:               EVSE.ToJSON(
+                                                                            EMSPId,
+                                                                            CustomEVSESerializer,
+                                                                            CustomStatusScheduleSerializer,
+                                                                            CustomConnectorSerializer,
+                                                                            CustomEVSEEnergyMeterSerializer,
+                                                                            CustomTransparencySoftwareStatusSerializer,
+                                                                            CustomTransparencySoftwareSerializer,
+                                                                            CustomDisplayTextSerializer,
+                                                                            CustomImageSerializer
+                                                                        ).ToUTF8Bytes(JSONFormat),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnPutEVSEHTTPRequest,
+                                                 ResponseLogDelegate:   OnPutEVSEHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<EVSE>.ParseJObject(httpResponse,
-                                                               requestId,
-                                                               correlationId,
-                                                               json => EVSE.Parse(json));
+                    response = OCPIResponse<EVSE>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => EVSE.Parse(json)
+                               );
 
                     Counters.PutEVSE.IncResponses_OK();
 
@@ -2008,35 +1965,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPutEVSEResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutEVSEResponse is not null)
-                    await Task.WhenAll(OnPutEVSEResponse.GetInvocationList().
-                                       Cast<OnPutEVSEResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          EVSE,
+                          CountryCode,
+                          PartyId,
+                          LocationId,
 
-                                                     EVSE,
-                                                     CountryCode,
-                                                     PartyId,
-                                                     LocationId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutEVSEResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -2046,7 +1995,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         #endregion
 
-        #region PatchEVSE      (CountryCode, PartyId, LocationId, EVSEUId, EVSEPatch, ...)
+        #region PatchEVSE          (CountryCode, PartyId, LocationId, EVSEUId, EVSEPatch, ...)
 
         /// <summary>
         /// Patch a location.
@@ -2095,33 +2044,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnPatchEVSERequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPatchEVSERequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchEVSERequest is not null)
-                    await Task.WhenAll(OnPatchEVSERequest.GetInvocationList().
-                                       Cast<OnPatchEVSERequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          LocationId,
+                          EVSEUId,
+                          EVSEPatch,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     EVSEPatch,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchEVSERequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2130,12 +2071,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Locations,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Locations,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -2166,35 +2107,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.PATCH,
-                                                                                    remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                           PartyId.    ToString() +
-                                                                                                           LocationId. ToString() +
-                                                                                                           EVSEUId.    ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                        requestBuilder.Content        = EVSEPatch.ToUTF8Bytes(JSONFormat);
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                   RequestLogDelegate:   OnPatchEVSEHTTPRequest,
-                                                   ResponseLogDelegate:  OnPatchEVSEHTTPResponse,
-                                                   CancellationToken:    CancellationToken,
-                                                   EventTrackingId:      eventTrackingId,
-                                                   RequestTimeout:       requestTimeout).
+                                             PATCH(remoteURL.Value.Path + CountryCode.ToString() +
+                                                                          PartyId.    ToString() +
+                                                                          LocationId. ToString() +
+                                                                          EVSEUId.    ToString(),
+                                                   Content:               EVSEPatch.ToUTF8Bytes(JSONFormat),
+                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                   Accept:                ocpiAcceptTypes,
+                                                   Authentication:        TokenAuth,
+                                                   Connection:            ConnectionType.Close,
+                                                   RequestBuilder:        requestBuilder => {
+                                                                              requestBuilder.Set("X-Request-ID",     requestId);
+                                                                              requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                          },
+                                                   RequestLogDelegate:    OnPatchEVSEHTTPRequest,
+                                                   ResponseLogDelegate:   OnPatchEVSEHTTPResponse,
+                                                   EventTrackingId:       eventTrackingId,
+                                                   //NumberOfRetry:         transmissionRetry,
+                                                   RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                   CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<EVSE>.ParseJObject(httpResponse,
-                                                               requestId,
-                                                               correlationId,
-                                                               json => EVSE.Parse(json));
+                    response = OCPIResponse<EVSE>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => EVSE.Parse(json)
+                               );
 
                     Counters.PatchEVSE.IncResponses_OK();
 
@@ -2219,36 +2161,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPatchEVSEResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchEVSEResponse is not null)
-                    await Task.WhenAll(OnPatchEVSEResponse.GetInvocationList().
-                                       Cast<OnPatchEVSEResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          LocationId,
+                          EVSEUId,
+                          EVSEPatch,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     EVSEPatch,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchEVSEResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -2259,7 +2193,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         #endregion
 
 
-        #region GetConnector   (CountryCode, PartyId, LocationId, EVSEUId, ConnectorId, ...)
+        #region GetConnector       (CountryCode, PartyId, LocationId, EVSEUId, ConnectorId, ...)
 
         /// <summary>
         /// Get the connector specified by the given connector identification from the remote API.
@@ -2301,33 +2235,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnGetConnectorRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetConnectorRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetConnectorRequest is not null)
-                    await Task.WhenAll(OnGetConnectorRequest.GetInvocationList().
-                                       Cast<OnGetConnectorRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          LocationId,
+                          EVSEUId,
+                          ConnectorId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     ConnectorId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetConnectorRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2336,12 +2262,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Locations,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Locations,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -2372,34 +2298,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                    remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                           PartyId.    ToString() +
-                                                                                                           LocationId. ToString() +
-                                                                                                           EVSEUId.    ToString() +
-                                                                                                           ConnectorId.ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                     RequestLogDelegate:   OnGetConnectorHTTPRequest,
-                                                     ResponseLogDelegate:  OnGetConnectorHTTPResponse,
-                                                     CancellationToken:    CancellationToken,
-                                                     EventTrackingId:      eventTrackingId,
-                                                     RequestTimeout:       requestTimeout).
+                                             GET(remoteURL.Value.Path + CountryCode.ToString() +
+                                                                        PartyId.    ToString() +
+                                                                        LocationId. ToString() +
+                                                                        EVSEUId.    ToString() +
+                                                                        ConnectorId.ToString(),
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnGetConnectorHTTPRequest,
+                                                 ResponseLogDelegate:   OnGetConnectorHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<Connector>.ParseJObject(httpResponse,
-                                                                   requestId,
-                                                                   correlationId,
-                                                                   json => Connector.Parse(json));
+                    response = OCPIResponse<Connector>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Connector.Parse(json)
+                               );
 
                     Counters.GetConnector.IncResponses_OK();
 
@@ -2424,36 +2351,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetConnectorResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetConnectorResponse is not null)
-                    await Task.WhenAll(OnGetConnectorResponse.GetInvocationList().
-                                       Cast<OnGetConnectorResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          LocationId,
+                          EVSEUId,
+                          ConnectorId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     ConnectorId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetConnectorResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -2463,7 +2382,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         #endregion
 
-        #region PutConnector   (Connector, ...)
+        #region PutConnector       (Connector, ...)
 
         /// <summary>
         /// Put/store the given charging connector on/within the remote API.
@@ -2514,29 +2433,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnPutConnectorRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPutConnectorRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutConnectorRequest is not null)
-                    await Task.WhenAll(OnPutConnectorRequest.GetInvocationList().
-                                       Cast<OnPutConnectorRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Connector,
 
-                                                     Connector,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutConnectorRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2545,12 +2456,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Locations,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Locations,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -2581,36 +2492,40 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                    remoteURL.Value.Path + Connector.ParentEVSE.ParentLocation.CountryCode.ToString() +
-                                                                                                           Connector.ParentEVSE.ParentLocation.PartyId.    ToString() +
-                                                                                                           Connector.ParentEVSE.ParentLocation.Id.         ToString() +
-                                                                                                           Connector.ParentEVSE.               UId.        ToString() +
-                                                                                                           Connector.                          Id.         ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                        requestBuilder.Content        = Connector.ToJSON(EMSPId, CustomConnectorSerializer).ToUTF8Bytes(JSONFormat);
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                   RequestLogDelegate:   OnPutConnectorHTTPRequest,
-                                                   ResponseLogDelegate:  OnPutConnectorHTTPResponse,
-                                                   CancellationToken:    CancellationToken,
-                                                   EventTrackingId:      eventTrackingId,
-                                                   RequestTimeout:       requestTimeout).
+                                             PUT(remoteURL.Value.Path + Connector.ParentEVSE.ParentLocation.CountryCode.ToString() +
+                                                                        Connector.ParentEVSE.ParentLocation.PartyId.    ToString() +
+                                                                        Connector.ParentEVSE.ParentLocation.Id.         ToString() +
+                                                                        Connector.ParentEVSE.               UId.        ToString() +
+                                                                        Connector.                          Id.         ToString(),
+                                                 Content:               Connector.ToJSON(
+                                                                            EMSPId,
+                                                                            CustomConnectorSerializer
+                                                                        ).ToUTF8Bytes(JSONFormat),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnPutConnectorHTTPRequest,
+                                                 ResponseLogDelegate:   OnPutConnectorHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<Connector>.ParseJObject(httpResponse,
-                                                                    requestId,
-                                                                    correlationId,
-                                                                    json => Connector.Parse(json));
+                    response = OCPIResponse<Connector>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Connector.Parse(json)
+                               );
 
                     Counters.PutConnector.IncResponses_OK();
 
@@ -2635,32 +2550,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPutConnectorResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutConnectorResponse is not null)
-                    await Task.WhenAll(OnPutConnectorResponse.GetInvocationList().
-                                       Cast<OnPutConnectorResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Connector,
 
-                                                     Connector,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutConnectorResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -2670,7 +2577,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         #endregion
 
-        #region PatchConnector (CountryCode, PartyId, LocationId, EVSEUId, ConnectorId, ConnectorPatch, ...)
+        #region PatchConnector     (CountryCode, PartyId, LocationId, EVSEUId, ConnectorId, ConnectorPatch, ...)
 
         /// <summary>
         /// Patch a connector.
@@ -2713,34 +2620,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnPatchConnectorRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPatchConnectorRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchConnectorRequest is not null)
-                    await Task.WhenAll(OnPatchConnectorRequest.GetInvocationList().
-                                       Cast<OnPatchConnectorRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          LocationId,
+                          EVSEUId,
+                          ConnectorId,
+                          ConnectorPatch,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     ConnectorId,
-                                                     ConnectorPatch,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchConnectorRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2749,12 +2648,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Locations,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Locations,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -2785,36 +2684,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.PATCH,
-                                                                                    remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                           PartyId.    ToString() +
-                                                                                                           LocationId. ToString() +
-                                                                                                           EVSEUId.    ToString() +
-                                                                                                           ConnectorId.ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                        requestBuilder.Content        = ConnectorPatch.ToUTF8Bytes(JSONFormat);
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                   RequestLogDelegate:   OnPatchConnectorHTTPRequest,
-                                                   ResponseLogDelegate:  OnPatchConnectorHTTPResponse,
-                                                   CancellationToken:    CancellationToken,
-                                                   EventTrackingId:      eventTrackingId,
-                                                   RequestTimeout:       requestTimeout).
+                                             PATCH(remoteURL.Value.Path + CountryCode.ToString() +
+                                                                          PartyId.    ToString() +
+                                                                          LocationId. ToString() +
+                                                                          EVSEUId.    ToString() +
+                                                                          ConnectorId.ToString(),
+                                                   Content:               ConnectorPatch.ToUTF8Bytes(JSONFormat),
+                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                   Accept:                ocpiAcceptTypes,
+                                                   Authentication:        TokenAuth,
+                                                   Connection:            ConnectionType.Close,
+                                                   RequestBuilder:        requestBuilder => {
+                                                                              requestBuilder.Set("X-Request-ID",     requestId);
+                                                                              requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                          },
+                                                   RequestLogDelegate:    OnPatchConnectorHTTPRequest,
+                                                   ResponseLogDelegate:   OnPatchConnectorHTTPResponse,
+                                                   EventTrackingId:       eventTrackingId,
+                                                   //NumberOfRetry:         transmissionRetry,
+                                                   RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                   CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<Connector>.ParseJObject(httpResponse,
-                                                                    requestId,
-                                                                    correlationId,
-                                                                    json => Connector.Parse(json));
+                    response = OCPIResponse<Connector>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Connector.Parse(json)
+                               );
 
                     Counters.PatchConnector.IncResponses_OK();
 
@@ -2839,37 +2739,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPatchConnectorResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchConnectorResponse is not null)
-                    await Task.WhenAll(OnPatchConnectorResponse.GetInvocationList().
-                                       Cast<OnPatchConnectorResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          LocationId,
+                          EVSEUId,
+                          ConnectorId,
+                          ConnectorPatch,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     ConnectorId,
-                                                     ConnectorPatch,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchConnectorResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -2880,7 +2772,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         #endregion
 
 
-        #region GetTariff      (CountryCode, PartyId, TariffId, ...)
+        #region GetTariff          (CountryCode, PartyId, TariffId, ...)
 
         /// <summary>
         /// Get the charging tariff specified by the given tariff identification from the remote API.
@@ -2920,31 +2812,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnGetTariffRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetTariffRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetTariffRequest is not null)
-                    await Task.WhenAll(OnGetTariffRequest.GetInvocationList().
-                                       Cast<OnGetTariffRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          TariffId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     TariffId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetTariffRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2953,12 +2837,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Tariffs,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Tariffs,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -2989,32 +2873,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                    remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                           PartyId.    ToString() +
-                                                                                                           TariffId.   ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                     RequestLogDelegate:   OnGetTariffHTTPRequest,
-                                                     ResponseLogDelegate:  OnGetTariffHTTPResponse,
-                                                     CancellationToken:    CancellationToken,
-                                                     EventTrackingId:      eventTrackingId,
-                                                     RequestTimeout:       requestTimeout).
+                                             GET(remoteURL.Value.Path + CountryCode.ToString() +
+                                                                        PartyId.    ToString() +
+                                                                        TariffId.   ToString(),
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnGetTariffHTTPRequest,
+                                                 ResponseLogDelegate:   OnGetTariffHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<Tariff>.ParseJObject(httpResponse,
-                                                                 requestId,
-                                                                 correlationId,
-                                                                 json => Tariff.Parse(json));
+                    response = OCPIResponse<Tariff>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Tariff.Parse(json)
+                               );
 
                     Counters.GetTariff.IncResponses_OK();
 
@@ -3039,34 +2924,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetTariffResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetTariffResponse is not null)
-                    await Task.WhenAll(OnGetTariffResponse.GetInvocationList().
-                                       Cast<OnGetTariffResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          TariffId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     TariffId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetTariffResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -3076,7 +2953,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         #endregion
 
-        #region PutTariff      (Tariff, ...)
+        #region PutTariff          (Tariff, ...)
 
         /// <summary>
         /// Put/store the given charging tariff on/within the remote API.
@@ -3116,29 +2993,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnPutTariffRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPutTariffRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutTariffRequest is not null)
-                    await Task.WhenAll(OnPutTariffRequest.GetInvocationList().
-                                       Cast<OnPutTariffRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Tariff,
 
-                                                     Tariff,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutTariffRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -3147,12 +3016,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Tariffs,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Tariffs,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -3183,34 +3052,47 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                    remoteURL.Value.Path + Tariff.CountryCode.ToString() +
-                                                                                                           Tariff.PartyId.    ToString() +
-                                                                                                           Tariff.Id.         ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                        requestBuilder.Content        = Tariff.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                   RequestLogDelegate:   OnPutTariffHTTPRequest,
-                                                   ResponseLogDelegate:  OnPutTariffHTTPResponse,
-                                                   CancellationToken:    CancellationToken,
-                                                   EventTrackingId:      eventTrackingId,
-                                                   RequestTimeout:       requestTimeout).
+                                             PUT(remoteURL.Value.Path + Tariff.CountryCode.ToString() +
+                                                                        Tariff.PartyId.    ToString() +
+                                                                        Tariff.Id.         ToString(),
+                                                 Content:               Tariff.ToJSON(
+                                                                            true,
+                                                                            true,
+                                                                            CustomTariffSerializer,
+                                                                            CustomDisplayTextSerializer,
+                                                                            CustomPriceSerializer,
+                                                                            CustomTariffElementSerializer,
+                                                                            CustomPriceComponentSerializer,
+                                                                            CustomTariffRestrictionsSerializer,
+                                                                            CustomEnergyMixSerializer,
+                                                                            CustomEnergySourceSerializer,
+                                                                            CustomEnvironmentalImpactSerializer
+                                                                        ).ToUTF8Bytes(JSONFormat),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnPutTariffHTTPRequest,
+                                                 ResponseLogDelegate:   OnPutTariffHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<Tariff>.ParseJObject(httpResponse,
-                                                                 requestId,
-                                                                 correlationId,
-                                                                 json => Tariff.Parse(json));
+                    response = OCPIResponse<Tariff>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Tariff.Parse(json)
+                               );
 
                     Counters.PutTariff.IncResponses_OK();
 
@@ -3235,32 +3117,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPutTariffResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutTariffResponse is not null)
-                    await Task.WhenAll(OnPutTariffResponse.GetInvocationList().
-                                       Cast<OnPutTariffResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Tariff,
 
-                                                     Tariff,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutTariffResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -3270,7 +3144,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         #endregion
 
-        #region PatchTariff    (CountryCode, PartyId, TariffId, TariffPatch, ...)    [NonStandard]
+        #region PatchTariff        (CountryCode, PartyId, TariffId, TariffPatch, ...)    [NonStandard]
 
         /// <summary>
         /// Patch a tariff.
@@ -3318,32 +3192,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnPatchTariffRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPatchTariffRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchTariffRequest is not null)
-                    await Task.WhenAll(OnPatchTariffRequest.GetInvocationList().
-                                       Cast<OnPatchTariffRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          TariffId,
+                          TariffPatch,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     TariffId,
-                                                     TariffPatch,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchTariffRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -3352,12 +3218,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Tariffs,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Tariffs,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -3388,34 +3254,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.PATCH,
-                                                                                    remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                           PartyId.    ToString() +
-                                                                                                           TariffId. ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                        requestBuilder.Content        = TariffPatch.ToUTF8Bytes(JSONFormat);
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                   RequestLogDelegate:   OnPatchTariffHTTPRequest,
-                                                   ResponseLogDelegate:  OnPatchTariffHTTPResponse,
-                                                   CancellationToken:    CancellationToken,
-                                                   EventTrackingId:      eventTrackingId,
-                                                   RequestTimeout:       requestTimeout).
+                                             PATCH(remoteURL.Value.Path + CountryCode.ToString() +
+                                                                          PartyId.    ToString() +
+                                                                          TariffId.   ToString(),
+                                                   Content:               TariffPatch.ToUTF8Bytes(JSONFormat),
+                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                   Accept:                ocpiAcceptTypes,
+                                                   Authentication:        TokenAuth,
+                                                   Connection:            ConnectionType.Close,
+                                                   RequestBuilder:        requestBuilder => {
+                                                                              requestBuilder.Set("X-Request-ID",     requestId);
+                                                                              requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                          },
+                                                   RequestLogDelegate:    OnPatchTariffHTTPRequest,
+                                                   ResponseLogDelegate:   OnPatchTariffHTTPResponse,
+                                                   EventTrackingId:       eventTrackingId,
+                                                   //NumberOfRetry:         transmissionRetry,
+                                                   RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                   CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<Tariff>.ParseJObject(httpResponse,
-                                                                 requestId,
-                                                                 correlationId,
-                                                                 json => Tariff.Parse(json));
+                    response = OCPIResponse<Tariff>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Tariff.Parse(json)
+                               );
 
                     Counters.PatchTariff.IncResponses_OK();
 
@@ -3440,35 +3307,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPatchTariffResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchTariffResponse is not null)
-                    await Task.WhenAll(OnPatchTariffResponse.GetInvocationList().
-                                       Cast<OnPatchTariffResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          TariffId,
+                          TariffPatch,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     TariffId,
-                                                     TariffPatch,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchTariffResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -3478,7 +3337,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         #endregion
 
-        #region DeleteTariff   (CountryCode, PartyId, TariffId, ...)
+        #region DeleteTariff       (CountryCode, PartyId, TariffId, ...)
 
         /// <summary>
         /// Delete the charging tariff specified by the given tariff identification from the remote API.
@@ -3518,31 +3377,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnDeleteTariffRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnDeleteTariffRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnDeleteTariffRequest is not null)
-                    await Task.WhenAll(OnDeleteTariffRequest.GetInvocationList().
-                                       Cast<OnDeleteTariffRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          TariffId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     TariffId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnDeleteTariffRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -3551,12 +3402,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Tariffs,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Tariffs,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -3587,32 +3438,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.DELETE,
-                                                                                    remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                           PartyId.    ToString() +
-                                                                                                           TariffId.   ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                     RequestLogDelegate:   OnDeleteTariffHTTPRequest,
-                                                     ResponseLogDelegate:  OnDeleteTariffHTTPResponse,
-                                                     CancellationToken:    CancellationToken,
-                                                     EventTrackingId:      eventTrackingId,
-                                                     RequestTimeout:       requestTimeout).
+                                             DELETE(remoteURL.Value.Path + CountryCode.ToString() +
+                                                                           PartyId.    ToString() +
+                                                                           TariffId.   ToString(),
+                                                    Accept:                ocpiAcceptTypes,
+                                                    Authentication:        TokenAuth,
+                                                    Connection:            ConnectionType.Close,
+                                                    RequestBuilder:        requestBuilder => {
+                                                                               requestBuilder.Set("X-Request-ID",     requestId);
+                                                                               requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                           },
+                                                    RequestLogDelegate:    OnDeleteTariffHTTPRequest,
+                                                    ResponseLogDelegate:   OnDeleteTariffHTTPResponse,
+                                                    EventTrackingId:       eventTrackingId,
+                                                    //NumberOfRetry:         transmissionRetry,
+                                                    RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                    CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<Tariff>.ParseJObject(httpResponse,
-                                                                 requestId,
-                                                                 correlationId,
-                                                                 json => Tariff.Parse(json));
+                    response = OCPIResponse<Tariff>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Tariff.Parse(json)
+                               );
 
                     Counters.DeleteTariff.IncResponses_OK();
 
@@ -3637,34 +3489,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnDeleteTariffResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnDeleteTariffResponse is not null)
-                    await Task.WhenAll(OnDeleteTariffResponse.GetInvocationList().
-                                       Cast<OnDeleteTariffResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          TariffId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     TariffId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnDeleteTariffResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -3675,7 +3519,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         #endregion
 
 
-        #region GetSession     (CountryCode, PartyId, SessionId, ...)
+        #region GetSession         (CountryCode, PartyId, SessionId, ...)
 
         /// <summary>
         /// Get the charging session specified by the given session identification from the remote API.
@@ -3715,31 +3559,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnGetSessionRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetSessionRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetSessionRequest is not null)
-                    await Task.WhenAll(OnGetSessionRequest.GetInvocationList().
-                                       Cast<OnGetSessionRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          SessionId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     SessionId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetSessionRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -3748,12 +3584,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Sessions,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Sessions,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -3784,32 +3620,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                    remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                           PartyId.    ToString() +
-                                                                                                           SessionId.   ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                     RequestLogDelegate:   OnGetSessionHTTPRequest,
-                                                     ResponseLogDelegate:  OnGetSessionHTTPResponse,
-                                                     CancellationToken:    CancellationToken,
-                                                     EventTrackingId:      eventTrackingId,
-                                                     RequestTimeout:       requestTimeout).
+                                             GET(remoteURL.Value.Path + CountryCode.ToString() +
+                                                                        PartyId.    ToString() +
+                                                                        SessionId.  ToString(),
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnGetSessionHTTPRequest,
+                                                 ResponseLogDelegate:   OnGetSessionHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<Session>.ParseJObject(httpResponse,
-                                                                 requestId,
-                                                                 correlationId,
-                                                                 json => Session.Parse(json));
+                    response = OCPIResponse<Session>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Session.Parse(json)
+                               );
 
                     Counters.GetSession.IncResponses_OK();
 
@@ -3834,34 +3671,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetSessionResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetSessionResponse is not null)
-                    await Task.WhenAll(OnGetSessionResponse.GetInvocationList().
-                                       Cast<OnGetSessionResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          SessionId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     SessionId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetSessionResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -3871,7 +3700,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         #endregion
 
-        #region PutSession     (Session, ...)
+        #region PutSession         (Session, ...)
 
         /// <summary>
         /// Put/store the given charging session on/within the remote API.
@@ -3911,29 +3740,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnPutSessionRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPutSessionRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutSessionRequest is not null)
-                    await Task.WhenAll(OnPutSessionRequest.GetInvocationList().
-                                       Cast<OnPutSessionRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Session,
 
-                                                     Session,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutSessionRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -3942,12 +3763,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Sessions,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Sessions,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -3978,34 +3799,41 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                    remoteURL.Value.Path + Session.CountryCode.ToString() +
-                                                                                                           Session.PartyId.    ToString() +
-                                                                                                           Session.Id.         ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                        requestBuilder.Content        = Session.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                   RequestLogDelegate:   OnPutSessionHTTPRequest,
-                                                   ResponseLogDelegate:  OnPutSessionHTTPResponse,
-                                                   CancellationToken:    CancellationToken,
-                                                   EventTrackingId:      eventTrackingId,
-                                                   RequestTimeout:       requestTimeout).
+                                             PUT(remoteURL.Value.Path + Session.CountryCode.ToString() +
+                                                                        Session.PartyId.    ToString() +
+                                                                        Session.Id.         ToString(),
+                                                 Content:               Session.ToJSON(
+                                                                            CustomSessionSerializer,
+                                                                            CustomCDRTokenSerializer,
+                                                                            CustomChargingPeriodSerializer,
+                                                                            CustomCDRDimensionSerializer,
+                                                                            CustomPriceSerializer
+                                                                        ).ToUTF8Bytes(JSONFormat),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnPutSessionHTTPRequest,
+                                                 ResponseLogDelegate:   OnPutSessionHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<Session>.ParseJObject(httpResponse,
-                                                                  requestId,
-                                                                  correlationId,
-                                                                  json => Session.Parse(json));
+                    response = OCPIResponse<Session>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Session.Parse(json)
+                               );
 
                     Counters.PutSession.IncResponses_OK();
 
@@ -4030,32 +3858,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPutSessionResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutSessionResponse is not null)
-                    await Task.WhenAll(OnPutSessionResponse.GetInvocationList().
-                                       Cast<OnPutSessionResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Session,
 
-                                                     Session,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutSessionResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -4065,7 +3885,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         #endregion
 
-        #region PatchSession   (CountryCode, PartyId, SessionId, SessionPatch, ...)
+        #region PatchSession       (CountryCode, PartyId, SessionId, SessionPatch, ...)
 
         /// <summary>
         /// Patch a session.
@@ -4113,32 +3933,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnPatchSessionRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPatchSessionRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchSessionRequest is not null)
-                    await Task.WhenAll(OnPatchSessionRequest.GetInvocationList().
-                                       Cast<OnPatchSessionRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          SessionId,
+                          SessionPatch,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     SessionId,
-                                                     SessionPatch,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchSessionRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -4147,12 +3959,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Sessions,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Sessions,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -4183,34 +3995,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.PATCH,
-                                                                                    remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                           PartyId.    ToString() +
-                                                                                                           SessionId. ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                        requestBuilder.Content        = SessionPatch.ToUTF8Bytes(JSONFormat);
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                   RequestLogDelegate:   OnPatchSessionHTTPRequest,
-                                                   ResponseLogDelegate:  OnPatchSessionHTTPResponse,
-                                                   CancellationToken:    CancellationToken,
-                                                   EventTrackingId:      eventTrackingId,
-                                                   RequestTimeout:       requestTimeout).
+                                             PATCH(remoteURL.Value.Path + CountryCode.ToString() +
+                                                                          PartyId.    ToString() +
+                                                                          SessionId.  ToString(),
+                                                   Content:               SessionPatch.ToUTF8Bytes(JSONFormat),
+                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                   Accept:                ocpiAcceptTypes,
+                                                   Authentication:        TokenAuth,
+                                                   Connection:            ConnectionType.Close,
+                                                   RequestBuilder:        requestBuilder => {
+                                                                              requestBuilder.Set("X-Request-ID",     requestId);
+                                                                              requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                          },
+                                                   RequestLogDelegate:    OnPatchSessionHTTPRequest,
+                                                   ResponseLogDelegate:   OnPatchSessionHTTPResponse,
+                                                   EventTrackingId:       eventTrackingId,
+                                                   //NumberOfRetry:         transmissionRetry,
+                                                   RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                   CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<Session>.ParseJObject(httpResponse,
-                                                                 requestId,
-                                                                 correlationId,
-                                                                 json => Session.Parse(json));
+                    response = OCPIResponse<Session>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Session.Parse(json)
+                               );
 
                     Counters.PatchSession.IncResponses_OK();
 
@@ -4235,35 +4048,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPatchSessionResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchSessionResponse is not null)
-                    await Task.WhenAll(OnPatchSessionResponse.GetInvocationList().
-                                       Cast<OnPatchSessionResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          SessionId,
+                          SessionPatch,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     SessionId,
-                                                     SessionPatch,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchSessionResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -4273,7 +4078,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         #endregion
 
-        #region DeleteSession  (CountryCode, PartyId, SessionId, ...)    [NonStandard]
+        #region DeleteSession      (CountryCode, PartyId, SessionId, ...)    [NonStandard]
 
         /// <summary>
         /// Delete the charging session specified by the given session identification from the remote API.
@@ -4313,31 +4118,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnDeleteSessionRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnDeleteSessionRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnDeleteSessionRequest is not null)
-                    await Task.WhenAll(OnDeleteSessionRequest.GetInvocationList().
-                                       Cast<OnDeleteSessionRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          SessionId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     SessionId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnDeleteSessionRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -4346,12 +4143,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Sessions,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Sessions,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -4382,32 +4179,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.DELETE,
-                                                                                    remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                           PartyId.    ToString() +
-                                                                                                           SessionId.   ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                     RequestLogDelegate:   OnDeleteSessionHTTPRequest,
-                                                     ResponseLogDelegate:  OnDeleteSessionHTTPResponse,
-                                                     CancellationToken:    CancellationToken,
-                                                     EventTrackingId:      eventTrackingId,
-                                                     RequestTimeout:       requestTimeout).
+                                             DELETE(remoteURL.Value.Path + CountryCode.ToString() +
+                                                                           PartyId.    ToString() +
+                                                                           SessionId.  ToString(),
+                                                    Accept:                ocpiAcceptTypes,
+                                                    Authentication:        TokenAuth,
+                                                    Connection:            ConnectionType.Close,
+                                                    RequestBuilder:        requestBuilder => {
+                                                                               requestBuilder.Set("X-Request-ID",     requestId);
+                                                                               requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                           },
+                                                    RequestLogDelegate:    OnDeleteSessionHTTPRequest,
+                                                    ResponseLogDelegate:   OnDeleteSessionHTTPResponse,
+                                                    EventTrackingId:       eventTrackingId,
+                                                    //NumberOfRetry:         transmissionRetry,
+                                                    RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                    CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<Session>.ParseJObject(httpResponse,
-                                                                 requestId,
-                                                                 correlationId,
-                                                                 json => Session.Parse(json));
+                    response = OCPIResponse<Session>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Session.Parse(json)
+                               );
 
                     Counters.DeleteSession.IncResponses_OK();
 
@@ -4432,34 +4230,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnDeleteSessionResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnDeleteSessionResponse is not null)
-                    await Task.WhenAll(OnDeleteSessionResponse.GetInvocationList().
-                                       Cast<OnDeleteSessionResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          SessionId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     SessionId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnDeleteSessionResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -4470,7 +4260,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         #endregion
 
 
-        #region PostCDR        (CDR, ...)
+        #region PostCDR            (CDR, ...)
 
         /// <summary>
         /// Post/store the given charge detail record on/within the remote API.
@@ -4508,29 +4298,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnPostCDRRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPostCDRRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPostCDRRequest is not null)
-                    await Task.WhenAll(OnPostCDRRequest.GetInvocationList().
-                                       Cast<OnPostCDRRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CDR,
 
-                                                     CDR,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostCDRRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -4539,12 +4321,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.CDRs,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.CDRs,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -4575,34 +4357,54 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.POST,
-                                                                                    remoteURL.Value.Path + CDR.CountryCode.ToString() +    // <= Unclear if this URL is correct!
-                                                                                                           CDR.PartyId.    ToString() +
-                                                                                                           CDR.Id.         ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                        requestBuilder.Content        = CDR.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                   RequestLogDelegate:   OnPostCDRHTTPRequest,
-                                                   ResponseLogDelegate:  OnPostCDRHTTPResponse,
-                                                   CancellationToken:    CancellationToken,
-                                                   EventTrackingId:      eventTrackingId,
-                                                   RequestTimeout:       requestTimeout).
+                                             POST(remoteURL.Value.Path + CDR.CountryCode.ToString() +    // <= Unclear if this URL is correct!
+                                                                         CDR.PartyId.    ToString() +
+                                                                         CDR.Id.         ToString(),
+                                                  Content:               CDR.ToJSON(
+                                                                             CustomCDRSerializer,
+                                                                             CustomCDRTokenSerializer,
+                                                                             CustomCDRLocationSerializer,
+                                                                             CustomEVSEEnergyMeterSerializer,
+                                                                             CustomTransparencySoftwareSerializer,
+                                                                             CustomTariffSerializer,
+                                                                             CustomDisplayTextSerializer,
+                                                                             CustomPriceSerializer,
+                                                                             CustomTariffElementSerializer,
+                                                                             CustomPriceComponentSerializer,
+                                                                             CustomTariffRestrictionsSerializer,
+                                                                             CustomEnergyMixSerializer,
+                                                                             CustomEnergySourceSerializer,
+                                                                             CustomEnvironmentalImpactSerializer,
+                                                                             CustomChargingPeriodSerializer,
+                                                                             CustomCDRDimensionSerializer,
+                                                                             CustomSignedDataSerializer,
+                                                                             CustomSignedValueSerializer
+                                                                         ).ToUTF8Bytes(JSONFormat),
+                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                  Accept:                ocpiAcceptTypes,
+                                                  Authentication:        TokenAuth,
+                                                  Connection:            ConnectionType.Close,
+                                                  RequestBuilder:        requestBuilder => {
+                                                                             requestBuilder.Set("X-Request-ID",     requestId);
+                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                         },
+                                                  RequestLogDelegate:    OnPostCDRHTTPRequest,
+                                                  ResponseLogDelegate:   OnPostCDRHTTPResponse,
+                                                  EventTrackingId:       eventTrackingId,
+                                                  //NumberOfRetry:         transmissionRetry,
+                                                  RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                  CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<CDR>.ParseJObject(httpResponse,
-                                                              requestId,
-                                                              correlationId,
-                                                              json => CDR.Parse(json));
+                    response = OCPIResponse<CDR>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => CDR.Parse(json)
+                               );
 
                     Counters.PostCDR.IncResponses_OK();
 
@@ -4627,32 +4429,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPostCDRResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPostCDRResponse is not null)
-                    await Task.WhenAll(OnPostCDRResponse.GetInvocationList().
-                                       Cast<OnPostCDRResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CDR,
 
-                                                     CDR,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostCDRResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -4662,7 +4456,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         #endregion
 
-        #region GetCDR         (CountryCode, PartyId, CDRId, ...)   // The concrete URL is not specified by OCPI! m(
+        #region GetCDR             (CountryCode, PartyId, CDRId, ...)   // The concrete URL is not specified by OCPI! m(
 
         /// <summary>
         /// Get the charge detail record specified by the given charge detail record identification from the remote API.
@@ -4702,31 +4496,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnGetCDRRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetCDRRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetCDRRequest is not null)
-                    await Task.WhenAll(OnGetCDRRequest.GetInvocationList().
-                                       Cast<OnGetCDRRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          CDRId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     CDRId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetCDRRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -4735,12 +4521,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.CDRs,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.CDRs,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -4771,32 +4557,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                    remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                           PartyId.    ToString() +
-                                                                                                           CDRId.      ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                     RequestLogDelegate:   OnGetCDRHTTPRequest,
-                                                     ResponseLogDelegate:  OnGetCDRHTTPResponse,
-                                                     CancellationToken:    CancellationToken,
-                                                     EventTrackingId:      eventTrackingId,
-                                                     RequestTimeout:       requestTimeout).
+                                             GET(remoteURL.Value.Path + CountryCode.ToString() +
+                                                                        PartyId.    ToString() +
+                                                                        CDRId.      ToString(),
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnGetCDRHTTPRequest,
+                                                 ResponseLogDelegate:   OnGetCDRHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<CDR>.ParseJObject(httpResponse,
-                                                                 requestId,
-                                                                 correlationId,
-                                                                 json => CDR.Parse(json));
+                    response = OCPIResponse<CDR>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => CDR.Parse(json)
+                               );
 
                     Counters.GetCDR.IncResponses_OK();
 
@@ -4821,34 +4608,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetCDRResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetCDRResponse is not null)
-                    await Task.WhenAll(OnGetCDRResponse.GetInvocationList().
-                                       Cast<OnGetCDRResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          CDRId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     CDRId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetCDRResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -4859,7 +4638,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         #endregion
 
 
-        #region GetTokens      (Offset = null, Limit = null, ...)
+        #region GetTokens          (Offset = null, Limit = null, ...)
 
         /// <summary>
         /// Get all tokens from the remote API.
@@ -4903,30 +4682,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnGetTokensRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetTokensRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetTokensRequest is not null)
-                    await Task.WhenAll(OnGetTokensRequest.GetInvocationList().
-                                       Cast<OnGetTokensRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Offset,
+                          Limit,
 
-                                                     Offset,
-                                                     Limit,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetTokensRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -4935,12 +4706,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Tokens,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Tokens,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 var offsetLimit    = "";
 
@@ -4983,30 +4754,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                    remoteURL.Value.Path + offsetLimit,
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                   RequestLogDelegate:   OnGetTokensHTTPRequest,
-                                                   ResponseLogDelegate:  OnGetTokensHTTPResponse,
-                                                   CancellationToken:    CancellationToken,
-                                                   EventTrackingId:      eventTrackingId,
-                                                   RequestTimeout:       requestTimeout).
+                                             GET(remoteURL.Value.Path + offsetLimit,
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnGetTokensHTTPRequest,
+                                                 ResponseLogDelegate:   OnGetTokensHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<Token>.ParseJArray(httpResponse,
-                                                               requestId,
-                                                               correlationId,
-                                                               json => Token.Parse(json));
+                    response = OCPIResponse<Token>.ParseJArray(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Token.Parse(json)
+                               );
 
                     Counters.GetTokens.IncResponses_OK();
 
@@ -5031,33 +4803,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetTokensResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetTokensResponse is not null)
-                    await Task.WhenAll(OnGetTokensResponse.GetInvocationList().
-                                       Cast<OnGetTokensResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Offset,
+                          Limit,
 
-                                                     Offset,
-                                                     Limit,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetTokensResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -5067,7 +4831,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         #endregion
 
-        #region PostToken      (TokenId, TokenType = null, ...)
+        #region PostToken          (TokenId, TokenType = null, ...)
 
         /// <summary>
         /// Post/store the given token identification on/within the remote API.
@@ -5107,31 +4871,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnPostTokenRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPostTokenRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPostTokenRequest is not null)
-                    await Task.WhenAll(OnPostTokenRequest.GetInvocationList().
-                                       Cast<OnPostTokenRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          TokenId,
+                          TokenType,
+                          LocationReference,
 
-                                                     TokenId,
-                                                     TokenType,
-                                                     LocationReference,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostTokenRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -5140,12 +4896,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Tokens,
-                                    InterfaceRoles.SENDER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Tokens,
+                                          InterfaceRoles.SENDER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -5176,32 +4932,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.POST,
-                                                                                    remoteURL.Value.Path + TokenId.ToString() + "authorize",
-                                                                                    RequestBuilder: requestBuilder => {
+                                             POST(remoteURL.Value.Path + TokenId.ToString() + "authorize",
+                                                  Content:               [],
+                                                  Accept:                ocpiAcceptTypes,
+                                                  Authentication:        TokenAuth,
+                                                  Connection:            ConnectionType.Close,
+                                                  RequestBuilder:        requestBuilder => {
 
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
+                                                                             requestBuilder.Set("X-Request-ID",     requestId);
+                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
 
-                                                                                        if (TokenType.HasValue)
-                                                                                            requestBuilder.QueryString.Add("type", TokenType.Value.ToString());
+                                                                             if (TokenType.HasValue)
+                                                                                 requestBuilder.QueryString.Add("type", TokenType.Value.ToString());
 
-                                                                                        if (LocationReference.HasValue)
-                                                                                        {
-                                                                                            requestBuilder.ContentType = HTTPContentType.Application.JSON_UTF8;
-                                                                                            requestBuilder.Content     = LocationReference.Value.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                        }
+                                                                             if (LocationReference.HasValue)
+                                                                             {
+                                                                                 requestBuilder.Content     = LocationReference.Value.ToJSON(
+                                                                                                                  CustomLocationReferenceSerializer
+                                                                                                              ).ToUTF8Bytes(JSONFormat);
+                                                                                 requestBuilder.ContentType = HTTPContentType.Application.JSON_UTF8;
+                                                                             }
 
-                                                                                    }),
-
-                                                   RequestLogDelegate:   OnPostTokenHTTPRequest,
-                                                   ResponseLogDelegate:  OnPostTokenHTTPResponse,
-                                                   CancellationToken:    CancellationToken,
-                                                   EventTrackingId:      eventTrackingId,
-                                                   RequestTimeout:       requestTimeout).
+                                                                         },
+                                                  RequestLogDelegate:    OnPostTokenHTTPRequest,
+                                                  ResponseLogDelegate:   OnPostTokenHTTPResponse,
+                                                  EventTrackingId:       eventTrackingId,
+                                                  //NumberOfRetry:         transmissionRetry,
+                                                  RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                  CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
@@ -5233,10 +4991,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                     //
                     // }
 
-                    response = OCPIResponse<AuthorizationInfo>.ParseJObject(httpResponse,
-                                                                            requestId,
-                                                                            correlationId,
-                                                                            json => AuthorizationInfo.Parse(json));
+                    response = OCPIResponse<AuthorizationInfo>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => AuthorizationInfo.Parse(json)
+                               );
 
                     Counters.PostToken.IncResponses_OK();
 
@@ -5261,34 +5021,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPostTokenResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPostTokenResponse is not null)
-                    await Task.WhenAll(OnPostTokenResponse.GetInvocationList().
-                                       Cast<OnPostTokenResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          TokenId,
+                          TokenType,
+                          LocationReference,
 
-                                                     TokenId,
-                                                     TokenType,
-                                                     LocationReference,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostTokenResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -5303,7 +5055,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         // A CPO wants to send an update towards a EMSP or SCSP: https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/mod_charging_profiles.asciidoc
 
-        #region SetChargingProfile(Token, ExpiryDate, ReservationId, LocationId, EVSEUId, AuthorizationReference, ...)
+        #region SetChargingProfile (Token, ExpiryDate, ReservationId, LocationId, EVSEUId, AuthorizationReference, ...)
 
         /// <summary>
         /// Put/store the given token on/within the remote API.
@@ -5342,30 +5094,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region Send OnSetChargingProfileRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnSetChargingProfileRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnSetChargingProfileRequest is not null)
-                    await Task.WhenAll(OnSetChargingProfileRequest.GetInvocationList().
-                                       Cast<OnSetChargingProfileRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          SessionId,
+                          ChargingProfile,
 
-                                                     SessionId,
-                                                     ChargingProfile,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnSetChargingProfileRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -5374,15 +5118,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.ChargingProfiles,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.ChargingProfiles,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
-                var command   = new SetChargingProfileCommand(ChargingProfile,
-                                                              CommonAPI.GetModuleURL(Module_Id.Commands) + "SET_CHARGING_PROFILE" + RandomExtensions.RandomString(50));
+                var command   = new SetChargingProfileCommand(
+                                    ChargingProfile,
+                                    CommonAPI.GetModuleURL(Module_Id.Commands) + "SET_CHARGING_PROFILE" + RandomExtensions.RandomString(50)
+                                );
 
 
                 if (remoteURL.HasValue)
@@ -5414,32 +5160,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  DNSClient
                                              ).
 
-                                             Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                    remoteURL.Value.Path + SessionId.ToString(),
-                                                                                    RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
-                                                                                        requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                        requestBuilder.Content        = command.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                        requestBuilder.Connection     = ConnectionType.Close;
-                                                                                        requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                    }),
-
-                                                     RequestLogDelegate:   OnSetChargingProfileHTTPRequest,
-                                                     ResponseLogDelegate:  OnSetChargingProfileHTTPResponse,
-                                                     CancellationToken:    CancellationToken,
-                                                     EventTrackingId:      eventTrackingId,
-                                                     RequestTimeout:       requestTimeout).
+                                             PUT(remoteURL.Value.Path + SessionId.ToString(),
+                                                 Content:               command.ToJSON(
+                                                                            CustomSetChargingProfileSerializer,
+                                                                            CustomChargingProfileSerializer,
+                                                                            CustomChargingProfilePeriodSerializer
+                                                                        ).ToUTF8Bytes(JSONFormat),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnSetChargingProfileHTTPRequest,
+                                                 ResponseLogDelegate:   OnSetChargingProfileHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
                     #endregion
 
-                    response = OCPIResponse<ChargingProfileResponse>.ParseJObject(httpResponse,
-                                                                                  requestId,
-                                                                                  correlationId,
-                                                                                  json => ChargingProfileResponse.Parse(json));
+                    response = OCPIResponse<ChargingProfileResponse>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => ChargingProfileResponse.Parse(json)
+                               );
 
                     Counters.SetChargingProfile.IncResponses_OK();
 
@@ -5464,39 +5215,52 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnSetChargingProfileResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnSetChargingProfileResponse is not null)
-                    await Task.WhenAll(OnSetChargingProfileResponse.GetInvocationList().
-                                       Cast<OnSetChargingProfileResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          SessionId,
+                          ChargingProfile,
 
-                                                     SessionId,
-                                                     ChargingProfile,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnSetChargingProfileResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
             return response;
 
         }
+
+        #endregion
+
+
+
+        #region (private) LogEvent (Logger, LogHandler, ...)
+
+        private Task LogEvent<TDelegate>(TDelegate?                                         Logger,
+                                         Func<TDelegate, Task>                              LogHandler,
+                                         [CallerArgumentExpression(nameof(Logger))] String  EventName     = "",
+                                         [CallerMemberName()]                       String  OCPICommand   = "")
+
+            where TDelegate : Delegate
+
+            => LogEvent(
+                   nameof(CPOClient),
+                   Logger,
+                   LogHandler,
+                   EventName,
+                   OCPICommand
+               );
 
         #endregion
 

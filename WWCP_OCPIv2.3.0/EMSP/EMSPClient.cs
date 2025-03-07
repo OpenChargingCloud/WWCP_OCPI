@@ -18,6 +18,7 @@
 #region Usings
 
 using System.Security.Authentication;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
@@ -4563,6 +4564,26 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
 
         //ToDo: Add smart charging commands!
+
+
+        #region (private) LogEvent (Logger, LogHandler, ...)
+
+        private Task LogEvent<TDelegate>(TDelegate?                                         Logger,
+                                         Func<TDelegate, Task>                              LogHandler,
+                                         [CallerArgumentExpression(nameof(Logger))] String  EventName     = "",
+                                         [CallerMemberName()]                       String  OCPICommand   = "")
+
+            where TDelegate : Delegate
+
+            => LogEvent(
+                   nameof(EMSPClient),
+                   Logger,
+                   LogHandler,
+                   EventName,
+                   OCPICommand
+               );
+
+        #endregion
 
 
         #region Dispose()
