@@ -331,22 +331,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         /// <summary>
         /// An event fired whenever a request getting all tariffs will be send.
         /// </summary>
-        public event OnGetTariffsRequestDelegate?   OnGetTariffsRequest;
+        public event OnGetTariffsRequestDelegate?     OnGetTariffsRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting all tariffs will be send.
         /// </summary>
-        public event ClientRequestLogHandler?       OnGetTariffsHTTPRequest;
+        public event ClientRequestLogHandler?         OnGetTariffsHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting all tariffs HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler?      OnGetTariffsHTTPResponse;
+        public event ClientResponseLogHandler?        OnGetTariffsHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting all tariffs request had been received.
         /// </summary>
-        public event OnGetTariffsResponseDelegate?  OnGetTariffsResponse;
+        public event OnGetTariffsResponseDelegate?    OnGetTariffsResponse;
 
         #endregion
 
@@ -355,22 +355,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         /// <summary>
         /// An event fired whenever a request getting a tariff by it identification will be send.
         /// </summary>
-        public event OnGetTariffsRequestDelegate?   OnGetTariffRequest;
+        public event OnGetTariffRequestDelegate?     OnGetTariffRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting a tariff by it identification will be send.
         /// </summary>
-        public event ClientRequestLogHandler?       OnGetTariffHTTPRequest;
+        public event ClientRequestLogHandler?        OnGetTariffHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting a tariff by it identification HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler?      OnGetTariffHTTPResponse;
+        public event ClientResponseLogHandler?       OnGetTariffHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting a tariff by it identification request had been received.
         /// </summary>
-        public event OnGetTariffsResponseDelegate?  OnGetTariffResponse;
+        public event OnGetTariffResponseDelegate?    OnGetTariffResponse;
 
         #endregion
 
@@ -404,22 +404,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         /// <summary>
         /// An event fired whenever a request getting a session by it identification will be send.
         /// </summary>
-        public event OnGetSessionsRequestDelegate?   OnGetSessionRequest;
+        public event OnGetSessionRequestDelegate?     OnGetSessionRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting a session by it identification will be send.
         /// </summary>
-        public event ClientRequestLogHandler?        OnGetSessionHTTPRequest;
+        public event ClientRequestLogHandler?         OnGetSessionHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting a session by it identification HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler?       OnGetSessionHTTPResponse;
+        public event ClientResponseLogHandler?        OnGetSessionHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting a session by it identification request had been received.
         /// </summary>
-        public event OnGetSessionsResponseDelegate?  OnGetSessionResponse;
+        public event OnGetSessionResponseDelegate?    OnGetSessionResponse;
 
         #endregion
 
@@ -453,22 +453,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         /// <summary>
         /// An event fired whenever a request getting a CDR by it identification will be send.
         /// </summary>
-        public event OnGetCDRsRequestDelegate?   OnGetCDRRequest;
+        public event OnGetCDRRequestDelegate?     OnGetCDRRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting a CDR by it identification will be send.
         /// </summary>
-        public event ClientRequestLogHandler?    OnGetCDRHTTPRequest;
+        public event ClientRequestLogHandler?     OnGetCDRHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting a CDR by it identification HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler?   OnGetCDRHTTPResponse;
+        public event ClientResponseLogHandler?    OnGetCDRHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting a CDR by it identification request had been received.
         /// </summary>
-        public event OnGetCDRsResponseDelegate?  OnGetCDRResponse;
+        public event OnGetCDRResponseDelegate?    OnGetCDRResponse;
 
         #endregion
 
@@ -674,103 +674,103 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
         #region EMSPClient(VersionsURL, AccessToken = null, ...)
 
-        /// <summary>
-        /// Create a new EMSP client.
-        /// </summary>
-        /// <param name="VersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
-        /// <param name="AccessToken">The optional OCPI token.</param>
-        /// 
-        /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
-        /// <param name="Description">An optional description of this client.</param>
-        /// <param name="PreferIPv4">Prefer IPv4 instead of IPv6.</param>
-        /// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
-        /// <param name="LocalCertificateSelector">A delegate to select a TLS client certificate.</param>
-        /// <param name="ClientCert">The TLS client certificate to use of HTTP authentication.</param>
-        /// <param name="TLSProtocol">The TLS protocol to use.</param>
-        /// <param name="ContentType">An optional HTTP content type.</param>
-        /// <param name="Accept">The optional HTTP accept header.</param>
-        /// <param name="HTTPAuthentication">The optional HTTP authentication to use.</param>
-        /// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
-        /// <param name="Connection">The optional HTTP connection type.</param>
-        /// <param name="RequestTimeout">An optional request timeout.</param>
-        /// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
-        /// <param name="MaxNumberOfRetries">An optional maximum number of transmission retries for HTTP request.</param>
-        /// <param name="InternalBufferSize">An optional size of the internal HTTP client buffers.</param>
-        /// <param name="UseHTTPPipelining">Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.</param>
-        /// <param name="DisableLogging">Whether to disable all logging.</param>
-        /// <param name="HTTPLogger">An optional delegate to log HTTP(S) requests and responses.</param>
-        /// <param name="LoggingPath">An optional path for logging.</param>
-        /// <param name="LoggingContext">An optional context for logging.</param>
-        /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-        /// <param name="DNSClient">The DNS client to use.</param>
-        public EMSPClient(URL                                                        VersionsURL,
-                          String?                                                    AccessToken                  = null,
+        ///// <summary>
+        ///// Create a new EMSP client.
+        ///// </summary>
+        ///// <param name="VersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
+        ///// <param name="AccessToken">The optional OCPI token.</param>
+        ///// 
+        ///// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
+        ///// <param name="Description">An optional description of this client.</param>
+        ///// <param name="PreferIPv4">Prefer IPv4 instead of IPv6.</param>
+        ///// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
+        ///// <param name="LocalCertificateSelector">A delegate to select a TLS client certificate.</param>
+        ///// <param name="ClientCert">The TLS client certificate to use of HTTP authentication.</param>
+        ///// <param name="TLSProtocol">The TLS protocol to use.</param>
+        ///// <param name="ContentType">An optional HTTP content type.</param>
+        ///// <param name="Accept">The optional HTTP accept header.</param>
+        ///// <param name="HTTPAuthentication">The optional HTTP authentication to use.</param>
+        ///// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
+        ///// <param name="Connection">The optional HTTP connection type.</param>
+        ///// <param name="RequestTimeout">An optional request timeout.</param>
+        ///// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
+        ///// <param name="MaxNumberOfRetries">An optional maximum number of transmission retries for HTTP request.</param>
+        ///// <param name="InternalBufferSize">An optional size of the internal HTTP client buffers.</param>
+        ///// <param name="UseHTTPPipelining">Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.</param>
+        ///// <param name="DisableLogging">Whether to disable all logging.</param>
+        ///// <param name="HTTPLogger">An optional delegate to log HTTP(S) requests and responses.</param>
+        ///// <param name="LoggingPath">An optional path for logging.</param>
+        ///// <param name="LoggingContext">An optional context for logging.</param>
+        ///// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
+        ///// <param name="DNSClient">The DNS client to use.</param>
+        //public EMSPClient(URL                                                        VersionsURL,
+        //                  String?                                                    AccessToken                  = null,
 
-                          HTTPHostname?                                              VirtualHostname              = null,
-                          I18NString?                                                Description                  = null,
-                          Boolean?                                                   PreferIPv4                   = null,
-                          RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                          LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                          X509Certificate?                                           ClientCert                   = null,
-                          SslProtocols?                                              TLSProtocol                  = null,
-                          HTTPContentType?                                           ContentType                  = null,
-                          AcceptTypes?                                               Accept                       = null,
-                          IHTTPAuthentication?                                       HTTPAuthentication           = null,
-                          String?                                                    HTTPUserAgent                = null,
-                          ConnectionType?                                            Connection                   = null,
-                          TimeSpan?                                                  RequestTimeout               = null,
-                          TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                          UInt16?                                                    MaxNumberOfRetries           = null,
-                          UInt32?                                                    InternalBufferSize           = null,
-                          Boolean?                                                   UseHTTPPipelining            = null,
-                          Boolean?                                                   DisableLogging               = null,
-                          String?                                                    LoggingPath                  = null,
-                          String?                                                    LoggingContext               = null,
-                          OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
-                          HTTPClientLogger?                                          HTTPLogger                   = null,
-                          DNSClient?                                                 DNSClient                    = null)
+        //                  HTTPHostname?                                              VirtualHostname              = null,
+        //                  I18NString?                                                Description                  = null,
+        //                  Boolean?                                                   PreferIPv4                   = null,
+        //                  RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
+        //                  LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
+        //                  X509Certificate?                                           ClientCert                   = null,
+        //                  SslProtocols?                                              TLSProtocol                  = null,
+        //                  HTTPContentType?                                           ContentType                  = null,
+        //                  AcceptTypes?                                               Accept                       = null,
+        //                  IHTTPAuthentication?                                       HTTPAuthentication           = null,
+        //                  String?                                                    HTTPUserAgent                = null,
+        //                  ConnectionType?                                            Connection                   = null,
+        //                  TimeSpan?                                                  RequestTimeout               = null,
+        //                  TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
+        //                  UInt16?                                                    MaxNumberOfRetries           = null,
+        //                  UInt32?                                                    InternalBufferSize           = null,
+        //                  Boolean?                                                   UseHTTPPipelining            = null,
+        //                  Boolean?                                                   DisableLogging               = null,
+        //                  String?                                                    LoggingPath                  = null,
+        //                  String?                                                    LoggingContext               = null,
+        //                  OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
+        //                  HTTPClientLogger?                                          HTTPLogger                   = null,
+        //                  DNSClient?                                                 DNSClient                    = null)
 
-            : base(VersionsURL,
-                   AccessToken,
+        //    : base(VersionsURL,
+        //           AccessToken,
 
-                   VirtualHostname,
-                   Description,
-                   PreferIPv4,
-                   RemoteCertificateValidator,
-                   LocalCertificateSelector,
-                   ClientCert,
-                   TLSProtocol,
-                   ContentType,
-                   Accept,
-                   HTTPAuthentication,
-                   HTTPUserAgent,
-                   Connection,
-                   RequestTimeout,
-                   TransmissionRetryDelay,
-                   MaxNumberOfRetries,
-                   InternalBufferSize,
-                   UseHTTPPipelining,
-                   DisableLogging,
-                   LoggingPath,
-                   LoggingContext,
-                   LogfileCreator,
-                   HTTPLogger,
-                   DNSClient)
+        //           VirtualHostname,
+        //           Description,
+        //           PreferIPv4,
+        //           RemoteCertificateValidator,
+        //           LocalCertificateSelector,
+        //           ClientCert,
+        //           TLSProtocol,
+        //           ContentType,
+        //           Accept,
+        //           HTTPAuthentication,
+        //           HTTPUserAgent,
+        //           Connection,
+        //           RequestTimeout,
+        //           TransmissionRetryDelay,
+        //           MaxNumberOfRetries,
+        //           InternalBufferSize,
+        //           UseHTTPPipelining,
+        //           DisableLogging,
+        //           LoggingPath,
+        //           LoggingContext,
+        //           LogfileCreator,
+        //           HTTPLogger,
+        //           DNSClient)
 
-        {
+        //{
 
-            this.Counters    = new APICounters();
+        //    this.Counters    = new APICounters();
 
-            base.HTTPLogger  = this.DisableLogging == false
-                                   ? new Logger(
-                                         this,
-                                         LoggingPath,
-                                         LoggingContext ?? DefaultLoggingContext,
-                                         LogfileCreator
-                                     )
-                                   : null;
+        //    base.HTTPLogger  = this.DisableLogging == false
+        //                           ? new Logger(
+        //                                 this,
+        //                                 LoggingPath,
+        //                                 LoggingContext ?? DefaultLoggingContext,
+        //                                 LogfileCreator
+        //                             )
+        //                           : null;
 
-        }
+        //}
 
         #endregion
 
@@ -885,27 +885,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnGetLocationsRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetLocationsRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetLocationsRequest is not null)
-                    await Task.WhenAll(OnGetLocationsRequest.GetInvocationList().
-                                       Cast<OnGetLocationsRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetLocationsRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1001,30 +993,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetLocationsResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetLocationsResponse is not null)
-                    await Task.WhenAll(OnGetLocationsResponse.GetInvocationList().
-                                       Cast<OnGetLocationsResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetLocationsResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -1078,29 +1062,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnGetLocationRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetLocationRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetLocationRequest is not null)
-                    await Task.WhenAll(OnGetLocationRequest.GetInvocationList().
-                                       Cast<OnGetLocationRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
 
-                                                     LocationId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetLocationRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1194,32 +1170,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetLocationResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetLocationResponse is not null)
-                    await Task.WhenAll(OnGetLocationResponse.GetInvocationList().
-                                       Cast<OnGetLocationResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
 
-                                                     LocationId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetLocationResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -1275,30 +1243,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnGetEVSERequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetEVSERequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetEVSERequest is not null)
-                    await Task.WhenAll(OnGetEVSERequest.GetInvocationList().
-                                       Cast<OnGetEVSERequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          EVSEUId,
 
-                                                     LocationId,
-                                                     EVSEUId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetEVSERequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1392,33 +1352,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetEVSEResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetEVSEResponse is not null)
-                    await Task.WhenAll(OnGetEVSEResponse.GetInvocationList().
-                                       Cast<OnGetEVSEResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          EVSEUId,
 
-                                                     LocationId,
-                                                     EVSEUId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetEVSEResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -1476,31 +1428,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnGetConnectorRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetConnectorRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetConnectorRequest is not null)
-                    await Task.WhenAll(OnGetConnectorRequest.GetInvocationList().
-                                       Cast<OnGetConnectorRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          EVSEUId,
+                          ConnectorId,
 
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     ConnectorId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetConnectorRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1594,34 +1538,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetConnectorResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetConnectorResponse is not null)
-                    await Task.WhenAll(OnGetConnectorResponse.GetInvocationList().
-                                       Cast<OnGetConnectorResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          EVSEUId,
+                          ConnectorId,
 
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     ConnectorId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetConnectorResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -1682,27 +1618,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnGetTariffRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetTariffsRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetTariffsRequest is not null)
-                    await Task.WhenAll(OnGetTariffsRequest.GetInvocationList().
-                                       Cast<OnGetTariffsRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetTariffsRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1798,30 +1726,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetTariffsResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetTariffsResponse is not null)
-                    await Task.WhenAll(OnGetTariffsResponse.GetInvocationList().
-                                       Cast<OnGetTariffsResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetTariffsResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -1875,29 +1795,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnGetTariffRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetTariffRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetTariffRequest is not null)
-                    await Task.WhenAll(OnGetTariffRequest.GetInvocationList().
-                                       Cast<OnGetTariffRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          TariffId,
 
-                                                     TariffId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetTariffRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1991,32 +1903,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetTariffResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetTariffResponse is not null)
-                    await Task.WhenAll(OnGetTariffResponse.GetInvocationList().
-                                       Cast<OnGetTariffResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          TariffId,
 
-                                                     TariffId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetTariffResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -2077,27 +1981,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnGetSessionRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetSessionsRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetSessionsRequest is not null)
-                    await Task.WhenAll(OnGetSessionsRequest.GetInvocationList().
-                                       Cast<OnGetSessionsRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetSessionsRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2209,30 +2105,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetSessionsResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetSessionsResponse is not null)
-                    await Task.WhenAll(OnGetSessionsResponse.GetInvocationList().
-                                       Cast<OnGetSessionsResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetSessionsResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -2286,29 +2174,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnGetSessionRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetSessionRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetSessionRequest is not null)
-                    await Task.WhenAll(OnGetSessionRequest.GetInvocationList().
-                                       Cast<OnGetSessionRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          SessionId,
 
-                                                     SessionId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetSessionRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2402,32 +2282,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetSessionResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetSessionResponse is not null)
-                    await Task.WhenAll(OnGetSessionResponse.GetInvocationList().
-                                       Cast<OnGetSessionResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          SessionId,
 
-                                                     SessionId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetSessionResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -2490,27 +2362,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnGetCDRRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetCDRsRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetCDRsRequest is not null)
-                    await Task.WhenAll(OnGetCDRsRequest.GetInvocationList().
-                                       Cast<OnGetCDRsRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetCDRsRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2606,30 +2470,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetCDRsResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetCDRsResponse is not null)
-                    await Task.WhenAll(OnGetCDRsResponse.GetInvocationList().
-                                       Cast<OnGetCDRsResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetCDRsResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -2683,29 +2539,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnGetCDRRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetCDRRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetCDRRequest is not null)
-                    await Task.WhenAll(OnGetCDRRequest.GetInvocationList().
-                                       Cast<OnGetCDRRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CDRId,
 
-                                                     CDRId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetCDRRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2799,32 +2647,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetCDRResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetCDRResponse is not null)
-                    await Task.WhenAll(OnGetCDRResponse.GetInvocationList().
-                                       Cast<OnGetCDRResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CDRId,
 
-                                                     CDRId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetCDRResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -2875,31 +2715,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnGetTokenRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetTokenRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetTokenRequest is not null)
-                    await Task.WhenAll(OnGetTokenRequest.GetInvocationList().
-                                       Cast<OnGetTokenRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          TokenId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     TokenId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetTokenRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2995,34 +2827,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetTokenResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetTokenResponse is not null)
-                    await Task.WhenAll(OnGetTokenResponse.GetInvocationList().
-                                       Cast<OnGetTokenResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          TokenId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     TokenId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetTokenResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -3072,29 +2896,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnPutTokenRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPutTokenRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutTokenRequest is not null)
-                    await Task.WhenAll(OnPutTokenRequest.GetInvocationList().
-                                       Cast<OnPutTokenRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Token,
 
-                                                     Token,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnPutTokenRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -3192,32 +3008,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPutTokenResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutTokenResponse is not null)
-                    await Task.WhenAll(OnPutTokenResponse.GetInvocationList().
-                                       Cast<OnPutTokenResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Token,
 
-                                                     Token,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnPutTokenResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -3275,32 +3083,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnPatchTokenRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPatchTokenRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchTokenRequest is not null)
-                    await Task.WhenAll(OnPatchTokenRequest.GetInvocationList().
-                                       Cast<OnPatchTokenRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          TokenId,
+                          TokenPatch,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     TokenId,
-                                                     TokenPatch,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnPatchTokenRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -3398,35 +3198,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPatchTokenResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchTokenResponse is not null)
-                    await Task.WhenAll(OnPatchTokenResponse.GetInvocationList().
-                                       Cast<OnPatchTokenResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          TokenId,
+                          TokenPatch,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     TokenId,
-                                                     TokenPatch,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnPatchTokenResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -3484,34 +3276,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnReserveNowRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnReserveNowRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnReserveNowRequest is not null)
-                    await Task.WhenAll(OnReserveNowRequest.GetInvocationList().
-                                       Cast<OnReserveNowRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Token,
+                          ExpirationTimestamp,
+                          ReservationId,
+                          LocationId,
+                          EVSEUId,
+                          AuthorizationReference,
 
-                                                     Token,
-                                                     ExpirationTimestamp,
-                                                     ReservationId,
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     AuthorizationReference,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnReserveNowRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -3635,37 +3419,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnReserveNowResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnReserveNowResponse is not null)
-                    await Task.WhenAll(OnReserveNowResponse.GetInvocationList().
-                                       Cast<OnReserveNowResponseDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Token,
+                          ExpirationTimestamp,
+                          ReservationId,
+                          LocationId,
+                          EVSEUId,
+                          AuthorizationReference,
 
-                                                     Token,
-                                                     ExpirationTimestamp,
-                                                     ReservationId,
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     AuthorizationReference,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnReserveNowResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -3715,29 +3491,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnCancelReservationRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnCancelReservationRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnCancelReservationRequest is not null)
-                    await Task.WhenAll(OnCancelReservationRequest.GetInvocationList().
-                                       Cast<OnCancelReservationRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          ReservationId,
 
-                                                     ReservationId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnCancelReservationRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -3855,32 +3623,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnCancelReservationResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnCancelReservationResponse is not null)
-                    await Task.WhenAll(OnCancelReservationResponse.GetInvocationList().
-                                       Cast<OnCancelReservationResponseDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          ReservationId,
 
-                                                     ReservationId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnCancelReservationResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -3934,33 +3694,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnStartSessionRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnStartSessionRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnStartSessionRequest is not null)
-                    await Task.WhenAll(OnStartSessionRequest.GetInvocationList().
-                                       Cast<OnStartSessionRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Token,
+                          LocationId,
+                          EVSEUId,
+                          ConnectorId,
+                          AuthorizationReference,
 
-                                                     Token,
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     ConnectorId,
-                                                     AuthorizationReference,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnStartSessionRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -4083,36 +3835,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnStartSessionResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnStartSessionResponse is not null)
-                    await Task.WhenAll(OnStartSessionResponse.GetInvocationList().
-                                       Cast<OnStartSessionResponseDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Token,
+                          LocationId,
+                          EVSEUId,
+                          ConnectorId,
+                          AuthorizationReference,
 
-                                                     Token,
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     ConnectorId,
-                                                     AuthorizationReference,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnStartSessionResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -4162,29 +3906,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnStopSessionRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnStopSessionRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnStopSessionRequest is not null)
-                    await Task.WhenAll(OnStopSessionRequest.GetInvocationList().
-                                       Cast<OnStopSessionRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          SessionId,
 
-                                                     SessionId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnStopSessionRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -4303,32 +4039,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnStopSessionResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnStopSessionResponse is not null)
-                    await Task.WhenAll(OnStopSessionResponse.GetInvocationList().
-                                       Cast<OnStopSessionResponseDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          SessionId,
 
-                                                     SessionId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnStopSessionResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -4380,31 +4108,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             #region Send OnUnlockConnectorRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnUnlockConnectorRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnUnlockConnectorRequest is not null)
-                    await Task.WhenAll(OnUnlockConnectorRequest.GetInvocationList().
-                                       Cast<OnUnlockConnectorRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          EVSEUId,
+                          ConnectorId,
 
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     ConnectorId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnUnlockConnectorRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -4525,34 +4245,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnUnlockConnectorResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnUnlockConnectorResponse is not null)
-                    await Task.WhenAll(OnUnlockConnectorResponse.GetInvocationList().
-                                       Cast<OnUnlockConnectorResponseDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          EVSEUId,
+                          ConnectorId,
 
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     ConnectorId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnUnlockConnectorResponse));
-            }
+                          response,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 

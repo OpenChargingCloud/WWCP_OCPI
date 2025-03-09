@@ -46,41 +46,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region (class) CommonAPICounters
 
-        public class CommonAPICounters
+        public class CommonAPICounters(APICounterValues? GetVersions         = null,
+                                       APICounterValues? GetVersionDetails   = null,
+
+                                       APICounterValues? GetCredentials      = null,
+                                       APICounterValues? PostCredentials     = null,
+                                       APICounterValues? PutCredentials      = null,
+                                       APICounterValues? DeleteCredentials   = null,
+
+                                       APICounterValues? Register            = null)
         {
 
-            public APICounterValues  GetVersions          { get; }
-            public APICounterValues  GetVersionDetails    { get; }
+            #region Properties
 
-            public APICounterValues  GetCredentials       { get; }
-            public APICounterValues  PostCredentials      { get; }
-            public APICounterValues  PutCredentials       { get; }
-            public APICounterValues  DeleteCredentials    { get; }
+            public APICounterValues GetVersions          { get; } = GetVersions       ?? new APICounterValues();
+            public APICounterValues GetVersionDetails    { get; } = GetVersionDetails ?? new APICounterValues();
 
-            public APICounterValues  Register             { get; }
+            public APICounterValues GetCredentials       { get; } = GetCredentials    ?? new APICounterValues();
+            public APICounterValues PostCredentials      { get; } = PostCredentials   ?? new APICounterValues();
+            public APICounterValues PutCredentials       { get; } = PutCredentials    ?? new APICounterValues();
+            public APICounterValues DeleteCredentials    { get; } = DeleteCredentials ?? new APICounterValues();
 
-            public CommonAPICounters(APICounterValues?  GetVersions         = null,
-                                     APICounterValues?  GetVersionDetails   = null,
+            public APICounterValues Register             { get; } = Register          ?? new APICounterValues();
 
-                                     APICounterValues?  GetCredentials      = null,
-                                     APICounterValues?  PostCredentials     = null,
-                                     APICounterValues?  PutCredentials      = null,
-                                     APICounterValues?  DeleteCredentials   = null,
+            #endregion
 
-                                     APICounterValues?  Register            = null)
-            {
-
-                this.GetVersions        = GetVersions       ?? new APICounterValues();
-                this.GetVersionDetails  = GetVersionDetails ?? new APICounterValues();
-
-                this.GetCredentials     = GetCredentials    ?? new APICounterValues();
-                this.PostCredentials    = PostCredentials   ?? new APICounterValues();
-                this.PutCredentials     = PutCredentials    ?? new APICounterValues();
-                this.DeleteCredentials  = DeleteCredentials ?? new APICounterValues();
-
-                this.Register           = Register          ?? new APICounterValues();
-
-            }
 
             public virtual JObject ToJSON()
 
@@ -193,22 +183,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event fired whenever a request getting all versions will be send.
         /// </summary>
-        public event OnGetVersionsRequestDelegate?   OnGetVersionsRequest;
+        public event OnGetVersionsRequestDelegate?     OnGetVersionsRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting all versions will be send.
         /// </summary>
-        public event ClientRequestLogHandler?        OnGetVersionsHTTPRequest;
+        public event ClientRequestLogHandler?          OnGetVersionsHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting all versions HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler?       OnGetVersionsHTTPResponse;
+        public event ClientResponseLogHandler?         OnGetVersionsHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting all versions request had been received.
         /// </summary>
-        public event OnGetVersionsResponseDelegate?  OnGetVersionsResponse;
+        public event OnGetVersionsResponseDelegate?    OnGetVersionsResponse;
 
         #endregion
 
@@ -217,22 +207,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event fired whenever a request getting version details will be send.
         /// </summary>
-        public event OnGetVersionsRequestDelegate?   OnGetVersionDetailsRequest;
+        public event OnGetVersionDetailsRequestDelegate?     OnGetVersionDetailsRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting version details will be send.
         /// </summary>
-        public event ClientRequestLogHandler?        OnGetVersionDetailsHTTPRequest;
+        public event ClientRequestLogHandler?                OnGetVersionDetailsHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting version details HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler?       OnGetVersionDetailsHTTPResponse;
+        public event ClientResponseLogHandler?               OnGetVersionDetailsHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting version details request had been received.
         /// </summary>
-        public event OnGetVersionsResponseDelegate?  OnGetVersionDetailsResponse;
+        public event OnGetVersionDetailsResponseDelegate?    OnGetVersionDetailsResponse;
 
         #endregion
 
@@ -717,7 +707,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         #endregion
 
 
-        #region GetVersions(...)
+        #region GetVersions       (...)
 
         /// <summary>
         /// Get versions.
@@ -755,29 +745,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #region Send OnGetVersionsRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetVersionsRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          timestamp,
+                          this,
+                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          eventTrackingId,
 
-                if (OnGetVersionsRequest is not null)
-                    await Task.WhenAll(OnGetVersionsRequest.GetInvocationList().
-                                       Cast<OnGetVersionsRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     timestamp,
-                                                     this,
-                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
-                                                     eventTrackingId,
+                          RequestId,
+                          CorrelationId,
 
-                                                     RequestId,
-                                                     CorrelationId,
-
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnGetVersionsRequest));
-            }
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -896,42 +878,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    response.HTTPResponse?.HTTPStatusCode.IsReasonForRetransmission == true);
 
 
+            #region Update counters
+
+            if (response.HTTPResponse?.HTTPStatusCode == HTTPStatusCode.OK)
+                Counters.GetVersions.IncResponses_OK();
+            else
+                Counters.GetVersions.IncResponses_Error();
+
+            #endregion
+
             #region Send OnGetVersionsResponse event
 
             var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetVersionsResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          timestamp,
+                          this,
+                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          eventTrackingId,
 
-                // Update counters
-                if (response.HTTPResponse?.HTTPStatusCode == HTTPStatusCode.OK)
-                    Counters.GetVersions.IncResponses_OK();
-                else
-                    Counters.GetVersions.IncResponses_Error();
+                          RequestId,
+                          CorrelationId,
 
-
-                if (OnGetVersionsResponse is not null)
-                    await Task.WhenAll(OnGetVersionsResponse.GetInvocationList().
-                                       Cast<OnGetVersionsResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     timestamp,
-                                                     this,
-                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
-                                                     eventTrackingId,
-
-                                                     RequestId,
-                                                     CorrelationId,
-
-                                                     requestTimeout,
-                                                     response.Data ?? Array.Empty<VersionInformation>(),
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnGetVersionsResponse));
-            }
+                          requestTimeout,
+                          response.Data ?? [],
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -941,7 +917,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
-        #region GetVersionDetails(VersionId, ...)
+        #region GetVersionDetails (VersionId, ...)
 
         /// <summary>
         /// Get versions.
@@ -984,31 +960,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #region Send OnGetVersionDetailsRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetVersionDetailsRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          timestamp,
+                          this,
+                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          eventTrackingId,
 
-                if (OnGetVersionDetailsRequest is not null)
-                    await Task.WhenAll(OnGetVersionDetailsRequest.GetInvocationList().
-                                       Cast<OnGetVersionDetailsRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     timestamp,
-                                                     this,
-                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
-                                                     eventTrackingId,
+                          VersionId,
+                          SetAsDefaultVersion,
+                          RequestId,
+                          CorrelationId,
 
-                                                     VersionId,
-                                                     SetAsDefaultVersion,
-                                                     RequestId,
-                                                     CorrelationId,
-
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnGetVersionDetailsRequest));
-            }
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1235,7 +1203,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         #endregion
 
 
-        #region GetRemoteURL(ModuleId, InterfaceRole, VersionId = null, ...)
+        #region GetRemoteURL      (ModuleId, InterfaceRole, VersionId = null, ...)
 
         public async Task<URL?> GetRemoteURL(Module_Id          ModuleId,
                                              InterfaceRoles     InterfaceRole,
@@ -1298,7 +1266,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         #endregion
 
 
-        #region GetCredentials   (...)
+        #region GetCredentials    (...)
 
         /// <summary>
         /// Get our credentials from the remote API.
@@ -1342,31 +1310,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #region Send OnGetCredentialsHTTPRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetCredentialsRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          timestamp,
+                          this,
+                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          eventTrackingId,
 
-                if (OnGetCredentialsRequest is not null)
-                    await Task.WhenAll(OnGetCredentialsRequest.GetInvocationList().
-                                       Cast<OnGetCredentialsRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     timestamp,
-                                                     this,
-                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
-                                                     eventTrackingId,
+                          RequestId,
+                          CorrelationId,
 
-                                                     RequestId,
-                                                     CorrelationId,
+                          versionId,
 
-                                                     versionId,
-
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnGetCredentialsHTTPRequest));
-            }
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1468,44 +1428,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    response.HTTPResponse?.HTTPStatusCode.IsReasonForRetransmission == true);
 
 
+            #region Update counters
+
+            if (response.HTTPResponse?.HTTPStatusCode == HTTPStatusCode.OK)
+                Counters.GetCredentials.IncResponses_OK();
+            else
+                Counters.GetCredentials.IncResponses_Error();
+
+            #endregion
+
             #region Send OnGetCredentialsHTTPResponse event
 
             var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetCredentialsResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          timestamp,
+                          this,
+                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          eventTrackingId,
 
-                // Update counters
-                if (response.HTTPResponse?.HTTPStatusCode == HTTPStatusCode.OK)
-                    Counters.GetCredentials.IncResponses_OK();
-                else
-                    Counters.GetCredentials.IncResponses_Error();
+                          RequestId,
+                          CorrelationId,
 
+                          versionId,
 
-                if (OnGetCredentialsResponse is not null)
-                    await Task.WhenAll(OnGetCredentialsResponse.GetInvocationList().
-                                       Cast<OnGetCredentialsResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     timestamp,
-                                                     this,
-                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
-                                                     eventTrackingId,
-
-                                                     RequestId,
-                                                     CorrelationId,
-
-                                                     versionId,
-
-                                                     requestTimeout,
-                                                     response.Data,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnGetCredentialsHTTPResponse));
-            }
+                          requestTimeout,
+                          response.Data,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -1515,7 +1469,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
-        #region PostCredentials  (Credentials, ...)
+        #region PostCredentials   (Credentials, ...)
 
         /// <summary>
         /// Post our credentials onto the remote API.
@@ -1563,32 +1517,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #region Send OnPostCredentialsHTTPRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPostCredentialsRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          timestamp,
+                          this,
+                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          eventTrackingId,
 
-                if (OnPostCredentialsRequest is not null)
-                    await Task.WhenAll(OnPostCredentialsRequest.GetInvocationList().
-                                       Cast<OnPostCredentialsRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     timestamp,
-                                                     this,
-                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
-                                                     eventTrackingId,
+                          RequestId,
+                          CorrelationId,
 
-                                                     RequestId,
-                                                     CorrelationId,
+                          versionId,
+                          Credentials,
 
-                                                     versionId,
-                                                     Credentials,
-
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnPostCredentialsHTTPRequest));
-            }
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1692,45 +1638,39 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    response.HTTPResponse?.HTTPStatusCode.IsReasonForRetransmission == true);
 
 
+            #region Update counters
+
+            if (response.HTTPResponse?.HTTPStatusCode == HTTPStatusCode.OK)
+                Counters.PostCredentials.IncResponses_OK();
+            else
+                Counters.PostCredentials.IncResponses_Error();
+
+            #endregion
+
             #region Send OnPostCredentialsHTTPResponse event
 
             var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPostCredentialsResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          timestamp,
+                          this,
+                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          eventTrackingId,
 
-                // Update counters
-                if (response.HTTPResponse?.HTTPStatusCode == HTTPStatusCode.OK)
-                    Counters.PostCredentials.IncResponses_OK();
-                else
-                    Counters.PostCredentials.IncResponses_Error();
+                          RequestId,
+                          CorrelationId,
 
+                          versionId,
+                          Credentials,
 
-                if (OnPostCredentialsResponse is not null)
-                    await Task.WhenAll(OnPostCredentialsResponse.GetInvocationList().
-                                       Cast<OnPostCredentialsResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     timestamp,
-                                                     this,
-                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
-                                                     eventTrackingId,
-
-                                                     RequestId,
-                                                     CorrelationId,
-
-                                                     versionId,
-                                                     Credentials,
-
-                                                     requestTimeout,
-                                                     response.Data,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnPostCredentialsHTTPResponse));
-            }
+                          requestTimeout,
+                          response.Data,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -1740,7 +1680,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
-        #region PutCredentials   (Credentials, ...)
+        #region PutCredentials    (Credentials, ...)
 
         /// <summary>
         /// Put our credentials onto the remote API.
@@ -1788,32 +1728,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #region Send OnPutCredentialsHTTPRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPutCredentialsRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          timestamp,
+                          this,
+                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          eventTrackingId,
 
-                if (OnPutCredentialsRequest is not null)
-                    await Task.WhenAll(OnPutCredentialsRequest.GetInvocationList().
-                                       Cast<OnPutCredentialsRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     timestamp,
-                                                     this,
-                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
-                                                     eventTrackingId,
+                          RequestId,
+                          CorrelationId,
 
-                                                     RequestId,
-                                                     CorrelationId,
+                          versionId,
+                          Credentials,
 
-                                                     versionId,
-                                                     Credentials,
-
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnPutCredentialsHTTPRequest));
-            }
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1983,45 +1915,39 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    response.HTTPResponse?.HTTPStatusCode.IsReasonForRetransmission == true);
 
 
+            #region Update counters
+
+            if (response.HTTPResponse?.HTTPStatusCode == HTTPStatusCode.OK)
+                Counters.PutCredentials.IncResponses_OK();
+            else
+                Counters.PutCredentials.IncResponses_Error();
+
+            #endregion
+
             #region Send OnPutCredentialsHTTPResponse event
 
             var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPutCredentialsResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          timestamp,
+                          this,
+                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          eventTrackingId,
 
-                // Update counters
-                if (response.HTTPResponse?.HTTPStatusCode == HTTPStatusCode.OK)
-                    Counters.PutCredentials.IncResponses_OK();
-                else
-                    Counters.PutCredentials.IncResponses_Error();
+                          RequestId,
+                          CorrelationId,
 
+                          versionId,
+                          Credentials,
 
-                if (OnPutCredentialsResponse is not null)
-                    await Task.WhenAll(OnPutCredentialsResponse.GetInvocationList().
-                                       Cast<OnPutCredentialsResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     timestamp,
-                                                     this,
-                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
-                                                     eventTrackingId,
-
-                                                     RequestId,
-                                                     CorrelationId,
-
-                                                     versionId,
-                                                     Credentials,
-
-                                                     requestTimeout,
-                                                     response.Data,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnPutCredentialsHTTPResponse));
-            }
+                          requestTimeout,
+                          response.Data,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -2031,7 +1957,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
-        #region DeleteCredentials(Credentials, ...)
+        #region DeleteCredentials (Credentials, ...)
 
         /// <summary>
         /// Remove our credentials from the remote API.
@@ -2075,31 +2001,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #region Send OnDeleteCredentialsHTTPRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnDeleteCredentialsRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          timestamp,
+                          this,
+                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          eventTrackingId,
 
-                if (OnDeleteCredentialsRequest is not null)
-                    await Task.WhenAll(OnDeleteCredentialsRequest.GetInvocationList().
-                                       Cast<OnDeleteCredentialsRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     timestamp,
-                                                     this,
-                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
-                                                     eventTrackingId,
+                          RequestId,
+                          CorrelationId,
 
-                                                     RequestId,
-                                                     CorrelationId,
+                          versionId,
 
-                                                     versionId,
-
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnDeleteCredentialsHTTPRequest));
-            }
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2197,43 +2115,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    response.HTTPResponse?.HTTPStatusCode.IsReasonForRetransmission == true);
 
 
+            #region Update counters
+
+            if (response.HTTPResponse?.HTTPStatusCode == HTTPStatusCode.OK)
+                Counters.DeleteCredentials.IncResponses_OK();
+            else
+                Counters.DeleteCredentials.IncResponses_Error();
+
+            #endregion
+
             #region Send OnDeleteCredentialsHTTPResponse event
 
             var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnDeleteCredentialsResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          timestamp,
+                          this,
+                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          eventTrackingId,
 
-                // Update counters
-                if (response.HTTPResponse?.HTTPStatusCode == HTTPStatusCode.OK)
-                    Counters.DeleteCredentials.IncResponses_OK();
-                else
-                    Counters.DeleteCredentials.IncResponses_Error();
+                          RequestId,
+                          CorrelationId,
 
+                          versionId,
 
-                if (OnDeleteCredentialsResponse is not null)
-                    await Task.WhenAll(OnDeleteCredentialsResponse.GetInvocationList().
-                                       Cast<OnDeleteCredentialsResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     timestamp,
-                                                     this,
-                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
-                                                     eventTrackingId,
-
-                                                     RequestId,
-                                                     CorrelationId,
-
-                                                     versionId,
-
-                                                     requestTimeout,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnDeleteCredentialsHTTPResponse));
-            }
+                          requestTimeout,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
@@ -2244,7 +2156,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         #endregion
 
 
-        #region Register(VersionId, ...)
+        #region Register          (VersionId, ...)
 
         //  1. We create <CREDENTIALS_TOKEN_A> and associate it with <CountryCode> + <PartyId>.
         //  2. We send <CREDENTIALS_TOKEN_A> and <VERSIONS endpoint> to the other party... e.g. via e-mail.
@@ -2309,31 +2221,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #region Send OnRegisterRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnRegisterRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          timestamp,
+                          this,
+                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          eventTrackingId,
 
-                if (OnRegisterRequest is not null)
-                    await Task.WhenAll(OnRegisterRequest.GetInvocationList().
-                                       Cast<OnRegisterRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     timestamp,
-                                                     this,
-                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
-                                                     eventTrackingId,
+                          RequestId,
+                          CorrelationId,
 
-                                                     RequestId,
-                                                     CorrelationId,
+                          versionId,
 
-                                                     versionId,
-
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnRegisterRequest));
-            }
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2559,44 +2463,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    response.HTTPResponse?.HTTPStatusCode.IsReasonForRetransmission == true);
 
 
+            #region Update counters
+
+            if (response.HTTPResponse?.HTTPStatusCode == HTTPStatusCode.OK)
+                Counters.Register.IncResponses_OK();
+            else
+                Counters.Register.IncResponses_Error();
+
+            #endregion
+
             #region Send OnRegisterResponse event
 
             var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnDeleteCredentialsResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          timestamp,
+                          this,
+                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          eventTrackingId,
 
-                // Update counters
-                if (response.HTTPResponse?.HTTPStatusCode == HTTPStatusCode.OK)
-                    Counters.Register.IncResponses_OK();
-                else
-                    Counters.Register.IncResponses_Error();
+                          RequestId,
+                          CorrelationId,
 
+                          versionId,
 
-                if (OnRegisterResponse is not null)
-                    await Task.WhenAll(OnRegisterResponse.GetInvocationList().
-                                       Cast<OnRegisterResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     timestamp,
-                                                     this,
-                                                     $"{nameof(CommonClient)} {RemoteParty?.Id}",
-                                                     eventTrackingId,
-
-                                                     RequestId,
-                                                     CorrelationId,
-
-                                                     versionId,
-
-                                                     requestTimeout,
-                                                     response.Data,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnRegisterResponse));
-            }
+                          requestTimeout,
+                          endtime - startTime
+                      )
+                  );
 
             #endregion
 
