@@ -460,9 +460,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                 this,
                                                 LoggingPath,
                                                 LoggingContext,
-                                                LogfileCreator is not null
-                                                    ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                                                    : null
+                                                LogfileCreator
                                             )
                                           : null;
 
@@ -537,9 +535,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                 this,
                                                 LoggingPath,
                                                 LoggingContext,
-                                                LogfileCreator is not null
-                                                    ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                                                    : null
+                                                LogfileCreator
                                             )
                                           : null;
 
@@ -593,62 +589,53 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                             Boolean?                                                   DisableLogging               = false,
                             String?                                                    LoggingPath                  = null,
                             String?                                                    LoggingContext               = null,
-                            LogfileCreatorDelegate?                                    LogfileCreator               = null,
+                            OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
                             DNSClient?                                                 DNSClient                    = null)
 
-            : base(RemoteVersionsURL,
+            : this(CommonAPI,
+                   new RemoteParty(
+
+                       RemoteParty_Id.Unknown,
+                       [],
+
+                       AccessToken,
+                       RemoteVersionsURL,
+                       null, //RemoteVersionIds,
+                       null, //SelectedVersionId,
+                       AccessTokenBase64Encoding,
+                       null, //AllowDowngrades,
+
+                       null, //RemoteStatus,
+                       null, //Status,
+                       null, //RemoteAccessNotBefore,
+                       null, //RemoteAccessNotAfter,
+
+                       PreferIPv4,
+                       RemoteCertificateValidator,
+                       LocalCertificateSelector,
+                       ClientCert,
+                       TLSProtocol,
+                       HTTPUserAgent,
+                       RequestTimeout,
+                       TransmissionRetryDelay,
+                       MaxNumberOfRetries,
+                       InternalBufferSize,
+                       UseHTTPPipelining,
+
+                       null //LastUpdated
+
+                   ),
                    VirtualHostname,
                    Description,
-                   PreferIPv4,
-                   RemoteCertificateValidator,
-                   LocalCertificateSelector,
-                   ClientCert,
-                   TLSProtocol,
-                   HTTPContentType.Application.JSON_UTF8,
-                   Accept,
-                   Authentication,
-                   HTTPUserAgent ?? DefaultHTTPUserAgent,
-                   ConnectionType.Close,
-                   RequestTimeout,
-                   TransmissionRetryDelay,
-                   MaxNumberOfRetries,
-                   InternalBufferSize,
-                   UseHTTPPipelining,
-                   DisableLogging,
                    HTTPLogger,
+
+                   DisableLogging,
+                   LoggingPath,
+                   LoggingContext,
+                   LogfileCreator,
                    DNSClient)
 
-        {
-
-            this.CommonAPI          = CommonAPI;
-
-            this.RemoteParty        = new RemoteParty(
-                                          Id:                          RemoteParty_Id.Unknown,
-                                          Roles:                       [],
-
-                                          RemoteAccessToken:           AccessToken,
-                                          RemoteVersionsURL:           RemoteVersionsURL,
-                                          AccessTokenBase64Encoding:   AccessTokenBase64Encoding,
-                                          RemoteStatus:                RemoteAccessStatus.ONLINE,
-                                          Status:                      PartyStatus.ENABLED
-                                      );
-
-            this.TokenAuth          = HTTPTokenAuthentication.Parse(AccessTokenBase64Encoding
-                                                                        ? AccessToken.ToString().ToBase64()
-                                                                        : AccessToken.ToString());
-            this.AccessToken        = AccessToken;
-            this.RemoteVersionsURL  = RemoteVersionsURL;
-
-            this.Counters           = new CommonAPICounters();
-
-            base.HTTPLogger         = this.DisableLogging == false
-                                          ? new Logger(this,
-                                                       LoggingPath,
-                                                       LoggingContext,
-                                                       LogfileCreator)
-                                          : null;
-
-        }
+        { }
 
         #endregion
 

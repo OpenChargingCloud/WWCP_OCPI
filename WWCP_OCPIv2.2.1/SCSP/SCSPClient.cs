@@ -370,70 +370,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
         /// Create a new SCSP client.
         /// </summary>
         /// <param name="CommonAPI">The CommonAPI.</param>
-        /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
-        /// <param name="AccessToken">The access token.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
-        /// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
-        /// <param name="ClientCert">The TLS client certificate to use of HTTP authentication.</param>
-        /// <param name="Accept">The optional HTTP accept header.</param>
-        /// <param name="Authentication">The optional HTTP authentication to use, e.g. HTTP Basic Auth.</param>
-        /// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
-        /// <param name="RequestTimeout">An optional request timeout.</param>
-        /// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
-        /// <param name="MaxNumberOfRetries">The maximum number of transmission retries for HTTP request.</param>
         /// <param name="DisableLogging">Disable all logging.</param>
         /// <param name="LoggingPath">The logging path.</param>
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public SCSPClient(CommonAPI                                                  CommonAPI,
-                          URL                                                        RemoteVersionsURL,
-                          AccessToken                                                AccessToken,
-                          HTTPHostname?                                              VirtualHostname              = null,
-                          I18NString?                                                Description                  = null,
-                          Boolean?                                                   PreferIPv4                   = null,
-                          RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                          LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                          X509Certificate?                                           ClientCert                   = null,
-                          SslProtocols?                                              TLSProtocol                  = null,
-                          AcceptTypes?                                               Accept                       = null,
-                          IHTTPAuthentication?                                       Authentication               = null,
-                          String?                                                    HTTPUserAgent                = DefaultHTTPUserAgent,
-                          TimeSpan?                                                  RequestTimeout               = null,
-                          TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                          UInt16?                                                    MaxNumberOfRetries           = null,
-                          UInt32?                                                    InternalBufferSize           = null,
-                          Boolean                                                    UseHTTPPipelining            = false,
-                          HTTPClientLogger?                                          HTTPLogger                   = null,
-                          Boolean                                                    AccessTokenBase64Encoding    = true,
+        public SCSPClient(CommonAPI                    CommonAPI,
+                          RemoteParty                  RemoteParty,
+                          HTTPHostname?                VirtualHostname   = null,
+                          I18NString?                  Description       = null,
+                          HTTPClientLogger?            HTTPLogger        = null,
 
-                          Boolean?                                                   DisableLogging               = false,
-                          String?                                                    LoggingPath                  = null,
-                          String?                                                    LoggingContext               = null,
-                          LogfileCreatorDelegate?                                    LogfileCreator               = null,
-                          DNSClient?                                                 DNSClient                    = null)
+                          Boolean?                     DisableLogging    = false,
+                          String?                      LoggingPath       = null,
+                          String?                      LoggingContext    = null,
+                          OCPILogfileCreatorDelegate?  LogfileCreator    = null,
+                          DNSClient?                   DNSClient         = null)
 
             : base(CommonAPI,
-                   RemoteVersionsURL,
-                   AccessToken,
+                   RemoteParty,
                    VirtualHostname,
                    Description,
-                   PreferIPv4,
-                   RemoteCertificateValidator,
-                   LocalCertificateSelector,
-                   ClientCert,
-                   TLSProtocol,
-                   Accept,
-                   Authentication,
-                   HTTPUserAgent,
-                   RequestTimeout,
-                   TransmissionRetryDelay,
-                   MaxNumberOfRetries,
-                   InternalBufferSize,
-                   UseHTTPPipelining,
                    HTTPLogger,
-                   AccessTokenBase64Encoding,
 
                    DisableLogging,
                    LoggingPath,

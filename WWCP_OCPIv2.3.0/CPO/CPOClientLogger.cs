@@ -75,9 +75,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                 : base(CPOClient,
                        LoggingPath,
                        Context ?? DefaultContext,
-                       LogfileCreator is not null
-                           ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                           : null)
+                       LogfileCreator)
 
             {
 

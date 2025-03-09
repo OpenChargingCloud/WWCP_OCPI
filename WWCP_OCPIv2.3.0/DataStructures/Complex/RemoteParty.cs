@@ -34,16 +34,17 @@ using cloud.charging.open.protocols.OCPI;
 namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
-    public delegate Boolean RemotePartyProviderDelegate(RemoteParty_Id RemotePartyId, out RemoteParty RemoteParty);
+    public delegate Boolean RemotePartyProviderDelegate (RemoteParty_Id                                      RemotePartyId,
+                                                         out RemoteParty                                     RemoteParty);
 
-    public delegate JObject RemotePartyToJSONDelegate(RemoteParty                                         RemoteParty,
-                                                      Boolean                                             Embedded                           = false,
-                                                      CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer        = null,
-                                                      CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer    = null,
-                                                      CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
-                                                      CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
-                                                      CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
-                                                      CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null);
+    public delegate JObject RemotePartyToJSONDelegate   (RemoteParty                                         RemoteParty,
+                                                         Boolean                                             Embedded                           = false,
+                                                         CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer        = null,
+                                                         CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer    = null,
+                                                         CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
+                                                         CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
+                                                         CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
+                                                         CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null);
 
 
     /// <summary>
@@ -106,8 +107,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
 
     /// <summary>
-    /// A remote party.
-    /// In OCPI v2.2 this is a roaming network operator serving multiple CPOs and/or EMSPs.
+    /// A remote party serving multiple CPOs and/or EMSPs.
     /// </summary>
     public class RemoteParty : IRemoteParty,
                                IEquatable<RemoteParty>,
@@ -255,8 +255,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            AccessToken                                                AccessToken,
                            Boolean?                                                   AccessTokenBase64Encoding    = null,
                            Boolean?                                                   AllowDowngrades              = false,
-                           AccessStatus                                               AccessStatus                 = AccessStatus.ALLOWED,
-                           PartyStatus                                                Status                       = PartyStatus.ENABLED,
+                           AccessStatus?                                              AccessStatus                 = AccessStatus.ALLOWED,
+                           PartyStatus?                                               Status                       = PartyStatus.ENABLED,
 
                            DateTime?                                                  LocalAccessNotBefore         = null,
                            DateTime?                                                  LocalAccessNotAfter          = null,
@@ -273,7 +273,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            UInt32?                                                    InternalBufferSize           = null,
                            Boolean?                                                   UseHTTPPipelining            = null,
 
-                           DateTime? LastUpdated = null)
+                           DateTime?                                                  LastUpdated                  = null)
 
             : this(Id,
                    Roles,
@@ -281,7 +281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    [
                        new LocalAccessInfo(
                            AccessToken,
-                           AccessStatus,
+                           AccessStatus ?? OCPI.AccessStatus.ALLOWED,
                            LocalAccessNotBefore,
                            LocalAccessNotAfter,
                            AccessTokenBase64Encoding,
@@ -289,7 +289,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                        )
                    ],
                    [],
-                   Status,
+                   Status ?? PartyStatus.ENABLED,
 
                    PreferIPv4,
                    RemoteCertificateValidator,
@@ -322,7 +322,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            Boolean?                                                   AllowDowngrades              = null,
 
                            RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.ONLINE,
-                           PartyStatus                                                Status                       = PartyStatus.ENABLED,
+                           PartyStatus?                                               Status                       = PartyStatus.ENABLED,
                            DateTime?                                                  RemoteAccessNotBefore        = null,
                            DateTime?                                                  RemoteAccessNotAfter         = null,
 
@@ -357,7 +357,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            AllowDowngrades
                        )
                    ],
-                   Status,
+                   Status ?? PartyStatus.ENABLED,
 
                    PreferIPv4,
                    RemoteCertificateValidator,
@@ -394,9 +394,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                            Boolean?                                                   AccessTokenBase64Encoding    = null,
                            Boolean?                                                   AllowDowngrades              = false,
-                           AccessStatus                                               AccessStatus                 = AccessStatus.ALLOWED,
+                           AccessStatus?                                              AccessStatus                 = AccessStatus.ALLOWED,
                            RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.ONLINE,
-                           PartyStatus                                                Status                       = PartyStatus.ENABLED,
+                           PartyStatus?                                               Status                       = PartyStatus.ENABLED,
                            DateTime?                                                  RemoteAccessNotBefore        = null,
                            DateTime?                                                  RemoteAccessNotAfter         = null,
 
@@ -420,7 +420,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    [
                        new LocalAccessInfo(
                            AccessToken,
-                           AccessStatus,
+                           AccessStatus ?? OCPI.AccessStatus.ALLOWED,
                            LocalAccessNotBefore,
                            LocalAccessNotAfter,
                            AccessTokenBase64Encoding,
@@ -440,7 +440,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            AllowDowngrades
                        )
                    ],
-                   Status,
+                   Status ?? PartyStatus.ENABLED,
 
                    PreferIPv4,
                    RemoteCertificateValidator,
@@ -468,7 +468,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            IEnumerable<LocalAccessInfo>                               LocalAccessInfos,
                            IEnumerable<RemoteAccessInfo>                              RemoteAccessInfos,
 
-                           PartyStatus                                                Status                       = PartyStatus.ENABLED,
+                           PartyStatus?                                               Status                       = PartyStatus.ENABLED,
 
                            Boolean?                                                   PreferIPv4                   = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
@@ -488,11 +488,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             this.Id                          = Id;
             this.Roles                       = Roles;
-            this.Status                      = Status;
+            this.Status                      = Status ?? PartyStatus.ENABLED;
 
             this.PreferIPv4                  = PreferIPv4;
             this.RemoteCertificateValidator  = RemoteCertificateValidator;
-            this.LocalCertificateSelector   = LocalCertificateSelector;
+            this.LocalCertificateSelector    = LocalCertificateSelector;
             this.ClientCert                  = ClientCert;
             this.TLSProtocol                 = TLSProtocol;
             this.HTTPUserAgent               = HTTPUserAgent;
@@ -504,8 +504,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             this.LastUpdated                 = LastUpdated ?? Timestamp.Now;
 
-            this.localAccessInfos            = LocalAccessInfos. IsNeitherNullNorEmpty() ? new List<LocalAccessInfo> (LocalAccessInfos)  : [];
-            this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? new List<RemoteAccessInfo>(RemoteAccessInfos) : [];
+            this.localAccessInfos            = LocalAccessInfos. IsNeitherNullNorEmpty() ? [.. LocalAccessInfos]  : [];
+            this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? [.. RemoteAccessInfos] : [];
 
             this.ETag                        = CalcSHA256Hash();
 
