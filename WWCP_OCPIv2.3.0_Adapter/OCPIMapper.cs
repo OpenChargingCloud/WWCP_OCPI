@@ -790,7 +790,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     if (!evseUId.HasValue)
                     {
-                        warnings.Add(Warning.Create($"The given EVSE identificaton '{EVSE.Id}' could not be converted to an OCPI EVSE Unique identification!"));
+                        warnings.Add(Warning.Create($"The given EVSE identification '{EVSE.Id}' could not be converted to an OCPI EVSE Unique identification!"));
                         Warnings = warnings;
                         return null;
                     }
@@ -802,7 +802,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (!evseId.HasValue)
                 {
-                    warnings.Add(Warning.Create($"The given EVSE identificaton '{EVSE.Id}' could not be converted to an OCPI EVSE identification!"));
+                    warnings.Add(Warning.Create($"The given EVSE identification '{EVSE.Id}' could not be converted to an OCPI EVSE identification!"));
                     Warnings = warnings;
                     return null;
                 }
@@ -843,8 +843,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            UId:                   evseUId.Value,
                            Status:                EVSE.Status.Value.ToOCPI(),
                            Connectors:            connectors,
-                           Parking:               [ Parking_Id.Parse("1") ],
-                           VehicleTypes:          [ VehicleType.PERSONAL_VEHICLE ],
 
                            EVSEId:                evseId,
                            StatusSchedule:        [],
@@ -854,6 +852,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            Coordinates:           EVSE.ChargingStation.GeoLocation         ?? EVSE.ChargingPool.GeoLocation,
                            PhysicalReference:     EVSE.PhysicalReference                   ?? EVSE.ChargingStation.PhysicalReference,
                            Directions:            EVSE.ChargingStation.ArrivalInstructions.ToOCPI(),
+                           Parking:               null,
                            Images:                [],
 
                            LastUpdated:           LastUpdate ?? EVSE.LastChangeDate

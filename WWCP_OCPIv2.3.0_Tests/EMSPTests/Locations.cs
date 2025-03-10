@@ -122,8 +122,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               DateTime.Parse("2020-09-22")
                                           )
                                       ],
-                                      [ Parking_Id.Parse("1") ],
-                                      [ VehicleType.PERSONAL_VEHICLE ],
 
                                       EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                       [
@@ -163,6 +161,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                           DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                           DisplayText.Create(Languages.en, "Ken sent me!")
                                       ],
+                                      [ ParkingRestriction.CUSTOMERS ],
+                                      [ new EVSEParking(Parking_Id.Parse("1"), EVSEPosition.CENTER) ],
                                       [
                                           new Image(
                                               URL.Parse("http://example.com/pinguine.jpg"),
@@ -194,7 +194,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       EVSEPosition:            null,
                                       Direction:               null,
                                       DriveThrough:            null,
-                                      ParkingRestrictions:     null,
                                       TimeLimit:               null,
                                       Roofed:                  null,
                                       Images:                  null,
@@ -298,7 +297,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                   "Stadtwerke Jena-Ost",
                                   "New Green Deal"
                               ),
-                              Created: DateTime.Parse("2020-09-21T00:00:00Z")
+                              null,
+                              PhoneNumber.Parse("+49 123 456 789 0"),
+                              DateTime.   Parse("2020-09-21T00:00:00Z")
                           ),
                           SkipNotifications: true
                       );
@@ -449,8 +450,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               DateTime.Parse("2020-09-22")
                                           )
                                       ],
-                                      [ Parking_Id.Parse("1") ],
-                                      [ VehicleType.PERSONAL_VEHICLE ],
 
                                       EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                       [
@@ -490,6 +489,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                           DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                           DisplayText.Create(Languages.en, "Ken sent me!")
                                       ],
+                                      [ ParkingRestriction.CUSTOMERS ],
+                                      [ new EVSEParking(Parking_Id.Parse("1"), EVSEPosition.CENTER) ],
                                       [
                                           new Image(
                                               URL.Parse("http://example.com/pinguine.jpg"),
@@ -521,7 +522,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       EVSEPosition:            null,
                                       Direction:               null,
                                       DriveThrough:            null,
-                                      ParkingRestrictions:     null,
                                       TimeLimit:               null,
                                       Roofed:                  null,
                                       Images:                  null,
@@ -625,7 +625,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                   "Stadtwerke Jena-Ost",
                                   "New Green Deal"
                               ),
-                              Created: DateTime.Parse("2020-09-21T00:00:00Z")
+                              null,
+                              PhoneNumber.Parse("+49 123 456 789 0"),
+                              DateTime.   Parse("2020-09-21T00:00:00Z")
                           ),
                           SkipNotifications: true
                       );
@@ -786,8 +788,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               DateTime.Parse("2020-09-22")
                                           )
                                       ],
-                                      [ Parking_Id.Parse("1") ],
-                                      [ VehicleType.PERSONAL_VEHICLE ],
 
                                       EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                       [
@@ -827,6 +827,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                           DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                           DisplayText.Create(Languages.en, "Ken sent me!")
                                       ],
+                                      [ ParkingRestriction.CUSTOMERS ],
+                                      [ new EVSEParking(Parking_Id.Parse("1"), EVSEPosition.CENTER) ],
                                       [
                                           new Image(
                                               URL.Parse("http://example.com/pinguine.jpg"),
@@ -858,7 +860,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       EVSEPosition:            null,
                                       Direction:               null,
                                       DriveThrough:            null,
-                                      ParkingRestrictions:     null,
                                       TimeLimit:               null,
                                       Roofed:                  null,
                                       Images:                  null,
@@ -962,7 +963,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                   "Stadtwerke Jena-Ost",
                                   "New Green Deal"
                               ),
-                              Created: DateTime.Parse("2020-09-21T00:00:00Z")
+                              null,
+                              PhoneNumber.Parse("+49 123 456 789 0"),
+                              DateTime.   Parse("2020-09-21T00:00:00Z")
                           ),
                           SkipNotifications: true
                       );
@@ -1114,8 +1117,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               DateTime.Parse("2020-09-22")
                                           )
                                       ],
-                                      [ Parking_Id.Parse("1") ],
-                                      [ VehicleType.PERSONAL_VEHICLE ],
 
                                       EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                       [
@@ -1155,6 +1156,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                           DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                           DisplayText.Create(Languages.en, "Ken sent me!")
                                       ],
+                                      [ ParkingRestriction.CUSTOMERS ],
+                                      [ new EVSEParking(Parking_Id.Parse("1"), EVSEPosition.CENTER) ],
                                       [
                                           new Image(
                                               URL.Parse("http://example.com/pinguine.jpg"),
@@ -1186,7 +1189,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       EVSEPosition:            null,
                                       Direction:               null,
                                       DriveThrough:            null,
-                                      ParkingRestrictions:     null,
                                       TimeLimit:               null,
                                       Roofed:                  null,
                                       Images:                  null,
@@ -1290,7 +1292,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                   "Stadtwerke Jena-Ost",
                                   "New Green Deal"
                               ),
-                              Created: DateTime.Parse("2020-09-21T00:00:00Z")
+                              null,
+                              PhoneNumber.Parse("+49 123 456 789 0"),
+                              DateTime.   Parse("2020-09-21T00:00:00Z")
                           ),
                           SkipNotifications: true
                       );
@@ -1441,8 +1445,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               DateTime.Parse("2020-09-22")
                                           )
                                       ],
-                                      [ Parking_Id.Parse("1") ],
-                                      [ VehicleType.PERSONAL_VEHICLE ],
 
                                       EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                       [
@@ -1482,6 +1484,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                           DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                           DisplayText.Create(Languages.en, "Ken sent me!")
                                       ],
+                                      [ ParkingRestriction.CUSTOMERS ],
+                                      [ new EVSEParking(Parking_Id.Parse("1"), EVSEPosition.CENTER) ],
                                       [
                                           new Image(
                                               URL.Parse("http://example.com/pinguine.jpg"),
@@ -1513,7 +1517,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       EVSEPosition:            null,
                                       Direction:               null,
                                       DriveThrough:            null,
-                                      ParkingRestrictions:     null,
                                       TimeLimit:               null,
                                       Roofed:                  null,
                                       Images:                  null,
@@ -1617,7 +1620,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                   "Stadtwerke Jena-Ost",
                                   "New Green Deal"
                               ),
-                              Created: DateTime.Parse("2020-09-21T00:00:00Z")
+                              null,
+                              PhoneNumber.Parse("+49 123 456 789 0"),
+                              DateTime.   Parse("2020-09-21T00:00:00Z")
                           ),
                           SkipNotifications: true
                       );
@@ -1769,8 +1774,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               DateTime.Parse("2020-09-22")
                                           )
                                       ],
-                                      [ Parking_Id.Parse("1") ],
-                                      [ VehicleType.PERSONAL_VEHICLE ],
 
                                       EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                       [
@@ -1810,6 +1813,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                           DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                           DisplayText.Create(Languages.en, "Ken sent me!")
                                       ],
+                                      [ ParkingRestriction.CUSTOMERS ],
+                                      [ new EVSEParking(Parking_Id.Parse("1"), EVSEPosition.CENTER) ],
                                       [
                                           new Image(
                                               URL.Parse("http://example.com/pinguine.jpg"),
@@ -1841,7 +1846,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       EVSEPosition:            null,
                                       Direction:               null,
                                       DriveThrough:            null,
-                                      ParkingRestrictions:     null,
                                       TimeLimit:               null,
                                       Roofed:                  null,
                                       Images:                  null,
@@ -1945,7 +1949,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                   "Stadtwerke Jena-Ost",
                                   "New Green Deal"
                               ),
-                              Created: DateTime.Parse("2020-09-21T00:00:00Z")
+                              null,
+                              PhoneNumber.Parse("+49 123 456 789 0"),
+                              DateTime.   Parse("2020-09-21T00:00:00Z")
                           ),
                           SkipNotifications: true
                       );
@@ -2099,8 +2105,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               DateTime.Parse("2020-09-22")
                                           )
                                       ],
-                                      [ Parking_Id.Parse("1") ],
-                                      [ VehicleType.PERSONAL_VEHICLE ],
 
                                       EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                       [
@@ -2140,6 +2144,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                           DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                           DisplayText.Create(Languages.en, "Ken sent me!")
                                       ],
+                                      [ ParkingRestriction.CUSTOMERS ],
+                                      [ new EVSEParking(Parking_Id.Parse("1"), EVSEPosition.CENTER) ],
                                       [
                                           new Image(
                                               URL.Parse("http://example.com/pinguine.jpg"),
@@ -2171,7 +2177,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       EVSEPosition:            null,
                                       Direction:               null,
                                       DriveThrough:            null,
-                                      ParkingRestrictions:     null,
                                       TimeLimit:               null,
                                       Roofed:                  null,
                                       Images:                  null,
@@ -2275,7 +2280,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                   "Stadtwerke Jena-Ost",
                                   "New Green Deal"
                               ),
-                              Created: DateTime.Parse("2020-09-21T00:00:00Z")
+                              null,
+                              PhoneNumber.Parse("+49 123 456 789 0"),
+                              DateTime.   Parse("2020-09-21T00:00:00Z")
                           ),
                           SkipNotifications: true
                       );
@@ -2428,8 +2435,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               DateTime.Parse("2020-09-22")
                                           )
                                       ],
-                                      [ Parking_Id.Parse("1") ],
-                                      [ VehicleType.PERSONAL_VEHICLE ],
 
                                       EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                       [
@@ -2469,6 +2474,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                           DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                           DisplayText.Create(Languages.en, "Ken sent me!")
                                       ],
+                                      [ ParkingRestriction.CUSTOMERS ],
+                                      [ new EVSEParking(Parking_Id.Parse("1"), EVSEPosition.CENTER) ],
                                       [
                                           new Image(
                                               URL.Parse("http://example.com/pinguine.jpg"),
@@ -2500,7 +2507,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       EVSEPosition:            null,
                                       Direction:               null,
                                       DriveThrough:            null,
-                                      ParkingRestrictions:     null,
                                       TimeLimit:               null,
                                       Roofed:                  null,
                                       Images:                  null,
@@ -2604,7 +2610,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                   "Stadtwerke Jena-Ost",
                                   "New Green Deal"
                               ),
-                              Created: DateTime.Parse("2020-09-21T00:00:00Z")
+                              null,
+                              PhoneNumber.Parse("+49 123 456 789 0"),
+                              DateTime.   Parse("2020-09-21T00:00:00Z")
                           ),
                           SkipNotifications: true
                       );
@@ -2757,8 +2765,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               DateTime.Parse("2020-09-22")
                                           )
                                       ],
-                                      [ Parking_Id.Parse("1") ],
-                                      [ VehicleType.PERSONAL_VEHICLE ],
 
                                       EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                       [
@@ -2798,6 +2804,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                           DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                           DisplayText.Create(Languages.en, "Ken sent me!")
                                       ],
+                                      [ ParkingRestriction.CUSTOMERS ],
+                                      [ new EVSEParking(Parking_Id.Parse("1"), EVSEPosition.CENTER) ],
                                       [
                                           new Image(
                                               URL.Parse("http://example.com/pinguine.jpg"),
@@ -2829,7 +2837,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       EVSEPosition:            null,
                                       Direction:               null,
                                       DriveThrough:            null,
-                                      ParkingRestrictions:     null,
                                       TimeLimit:               null,
                                       Roofed:                  null,
                                       Images:                  null,
@@ -2933,7 +2940,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                   "Stadtwerke Jena-Ost",
                                   "New Green Deal"
                               ),
-                              Created: DateTime.Parse("2020-09-21T00:00:00Z")
+                              null,
+                              PhoneNumber.Parse("+49 123 456 789 0"),
+                              DateTime.   Parse("2020-09-21T00:00:00Z")
                           ),
                           SkipNotifications: true
                       );

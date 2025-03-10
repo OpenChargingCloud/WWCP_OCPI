@@ -49,17 +49,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public Parking_Id                       Id                       { get; }
 
         /// <summary>
-        /// The vehicle types that the EVSE is intended for and that the associated parking is designed to accomodate.
-        /// </summary>
-        [Mandatory]
-        public IEnumerable<VehicleType>         VehicleTypes             { get; }
-
-        /// <summary>
         /// A string identifier for the parking place that is physically visible on-site to drivers using the parking space.
         /// This could be a short identifier painted on the surface of a parking place in a parking garage for example.
         /// </summary>
         [Optional]
         public String?                          PhysicalReference          { get; }
+
+        /// <summary>
+        /// The vehicle types that the EVSE is intended for and that the associated parking is designed to accomodate.
+        /// </summary>
+        [Mandatory]
+        public IEnumerable<VehicleType>         VehicleTypes             { get; }
 
         /// <summary>
         /// The maximum vehicle weight that can park at the EVSE, in kilograms.A value for this field should be provided
@@ -94,14 +94,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.
         /// </summary>
         [Optional]
-        public Meter?                           ParkingBayLength         { get; }
+        public Meter?                           ParkingSpaceLength       { get; }
 
         /// <summary>
         /// The width of the parking space, in centimeters. A value for this field should be provided unless the value of the
         /// vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.
         /// </summary>
         [Optional]
-        public Meter?                           ParkingBayWidth          { get; }
+        public Meter?                           ParkingSpaceWidth        { get; }
 
         /// <summary>
         /// Whether vehicles loaded with dangerous substances are allowed to park at the EVSE.A value for this field should
@@ -117,7 +117,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public EVSEPosition?                    EVSEPosition             { get; }
 
         /// <summary>
-        /// The direction in which the vehicle is to be parked next to this EVSE.
+        /// The direction in which the vehicle is to be parked next to the EVSE.
         /// </summary>
         [Optional]
         public ParkingDirection?                Direction                { get; }
@@ -134,12 +134,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         [Mandatory]
         public Boolean                          RestrictedToType         { get; }
-
-        /// <summary>
-        /// All applicable restrictions on who can park at this EVSE, apart from those related to the vehicle type.
-        /// </summary>
-        [Optional]
-        public IEnumerable<ParkingRestriction>  ParkingRestrictions      { get; }
 
         /// <summary>
         /// Whether a reservation is required for parking at the EVSE.
@@ -200,7 +194,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         /// <param name="Id">The identification of the parking space within the charge point operator's platform (and suboperator platforms).</param>
         /// <param name="VehicleTypes">The vehicle types that the EVSE is intended for and that the associated parking is designed to accomodate.</param>
-        /// <param name="RestrictedToType">Whether it is forbidden for vehicles of a type not listed in vehicle_types to park at this EVSE, even if they can physically park there safely.</param>
+        /// <param name="RestrictedToType">Whether it is forbidden for vehicles of a type not listed in vehicle_types to park at the EVSE, even if they can physically park there safely.</param>
         /// <param name="ReservationRequired">Whether a reservation is required for parking at the EVSE.</param>
         /// 
         /// <param name="PhysicalReference">A string identifier for the parking place that is physically visible on-site to drivers using the parking space. This could be a short identifier painted on the surface of a parking place in a parking garage for example.</param>
@@ -212,9 +206,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="ParkingSpaceWidth">The width of the parking space, in centimeters. A value for this field should be provided unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.</param>
         /// <param name="DangerousGoodsAllowed">Whether vehicles loaded with dangerous substances are allowed to park at the EVSE.A value for this field should be provided unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.</param>
         /// <param name="EVSEPosition">The position of the EVSE relative to the parking space.</param>
-        /// <param name="Direction">The direction in which the vehicle is to be parked next to this EVSE.</param>
+        /// <param name="Direction">The direction in which the vehicle is to be parked next to the EVSE.</param>
         /// <param name="DriveThrough">The position of the EVSE relative to the parking space.</param>
-        /// <param name="ParkingRestrictions">All applicable restrictions on who can park at this EVSE, apart from those related to the vehicle type.</param>
         /// <param name="TimeLimit">A time limit. If this field is present, vehicles may not park in this parking longer than this number of minutes.</param>
         /// <param name="Roofed">Whether the vehicle will be parked under a roof while charging.</param>
         /// <param name="Images">Photos of the parking space at the EVSE. At least one photograph should be provided if the value of vehicle_types includes the DISABLED vehicle type.</param>
@@ -238,7 +231,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                        EVSEPosition?                     EVSEPosition            = null,
                        ParkingDirection?                 Direction               = null,
                        Boolean?                          DriveThrough            = null,
-                       IEnumerable<ParkingRestriction>?  ParkingRestrictions     = null,
                        TimeSpan?                         TimeLimit               = null,
                        Boolean?                          Roofed                  = null,
                        IEnumerable<Image>?               Images                  = null,
@@ -258,13 +250,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.MaxVehicleHeight       = MaxVehicleHeight;
             this.MaxVehicleLength       = MaxVehicleLength;
             this.MaxVehicleWidth        = MaxVehicleWidth;
-            this.ParkingBayLength       = ParkingSpaceLength;
-            this.ParkingBayWidth        = ParkingSpaceWidth;
+            this.ParkingSpaceLength     = ParkingSpaceLength;
+            this.ParkingSpaceWidth      = ParkingSpaceWidth;
             this.DangerousGoodsAllowed  = DangerousGoodsAllowed;
             this.EVSEPosition           = EVSEPosition;
             this.Direction              = Direction;
             this.DriveThrough           = DriveThrough;
-            this.ParkingRestrictions    = ParkingRestrictions?.Distinct() ?? [];
             this.TimeLimit              = TimeLimit;
             this.Roofed                 = Roofed;
             this.Images                 = Images?.             Distinct() ?? [];
@@ -286,13 +277,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                           (this.MaxVehicleHeight?.     GetHashCode() ?? 0) *  61 ^
                           (this.MaxVehicleLength?.     GetHashCode() ?? 0) *  59 ^
                           (this.MaxVehicleWidth?.      GetHashCode() ?? 0) *  53 ^
-                          (this.ParkingBayLength?.     GetHashCode() ?? 0) *  47 ^
-                          (this.ParkingBayWidth?.      GetHashCode() ?? 0) *  43 ^
+                          (this.ParkingSpaceLength?.   GetHashCode() ?? 0) *  47 ^
+                          (this.ParkingSpaceWidth?.    GetHashCode() ?? 0) *  43 ^
                           (this.DangerousGoodsAllowed?.GetHashCode() ?? 0) *  41 ^
                           (this.EVSEPosition?.         GetHashCode() ?? 0) *  37 ^
                           (this.Direction?.            GetHashCode() ?? 0) *  31 ^
                           (this.DriveThrough?.         GetHashCode() ?? 0) *  29 ^
-                           this.ParkingRestrictions.   CalcHashCode()      *  23 ^
+//                           this.ParkingRestrictions.   CalcHashCode()      *  23 ^
                           (this.TimeLimit?.            GetHashCode() ?? 0) *  19 ^
                           (this.Roofed?.               GetHashCode() ?? 0) *  13 ^
                            this.Images.                CalcHashCode()      *  11 ^
@@ -455,7 +446,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptional("max_vehicle_height",
                                        "max vehicle height",
-                                       Meter.TryParse,
+                                       Meter.TryParseCM,
                                        out Meter? MaxVehicleHeight,
                                        out ErrorResponse))
                 {
@@ -469,7 +460,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptional("max_vehicle_length",
                                        "max vehicle length",
-                                       Meter.TryParse,
+                                       Meter.TryParseCM,
                                        out Meter? MaxVehicleLength,
                                        out ErrorResponse))
                 {
@@ -485,7 +476,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptional("max_vehicle_width",
                                        "max vehicle width",
-                                       Meter.TryParse,
+                                       Meter.TryParseCM,
                                        out Meter? MaxVehicleWidth,
                                        out ErrorResponse))
                 {
@@ -497,12 +488,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #endregion
 
-                #region Parse ParkingBayLength         [optional]
+                #region Parse ParkingSpaceLength       [optional]
 
-                if (JSON.ParseOptional("parking_bay_length",
+                if (JSON.ParseOptional("parking_space_length",
                                        "parking space length",
-                                       Meter.TryParse,
-                                       out Meter? ParkingBayLength,
+                                       Meter.TryParseCM,
+                                       out Meter? ParkingSpaceLength,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -511,12 +502,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #endregion
 
-                #region Parse ParkingBayWidth          [optional]
+                #region Parse ParkingSpaceWidth        [optional]
 
-                if (JSON.ParseOptional("parking_bay_width",
+                if (JSON.ParseOptional("parking_space_width",
                                        "parking space width",
-                                       Meter.TryParse,
-                                       out Meter? ParkingBayWidth,
+                                       Meter.TryParseCM,
+                                       out Meter? ParkingSpaceWidth,
                                        out ErrorResponse))
                 {
 
@@ -576,20 +567,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                        "drive through",
                                        out Boolean? DriveThrough,
                                        out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                #endregion
-
-                #region Parse ParkingRestrictions      [optional]
-
-                if (JSON.ParseOptionalHashSet("parking_restrictions",
-                                              "parking restrictions",
-                                              ParkingRestriction.TryParse,
-                                              out HashSet<ParkingRestriction>? ParkingRestrictions,
-                                              out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -707,13 +684,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                               MaxVehicleHeight,
                               MaxVehicleLength,
                               MaxVehicleWidth,
-                              ParkingBayLength,
-                              ParkingBayWidth,
+                              ParkingSpaceLength,
+                              ParkingSpaceWidth,
                               DangerousGoodsAllowed,
                               EVSEPosition,
                               Direction,
                               DriveThrough,
-                              ParkingRestrictions,
                               TimeLimit,
                               Roofed,
                               Images,
@@ -769,23 +745,23 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                : null,
 
                            MaxVehicleHeight.     HasValue
-                               ? new JProperty("max_vehicle_height",        MaxVehicleHeight.     Value.Value)
+                               ? new JProperty("max_vehicle_height",        MaxVehicleHeight.     Value.CM)
                                : null,
 
                            MaxVehicleLength.     HasValue
-                               ? new JProperty("max_vehicle_length",        MaxVehicleLength.     Value.Value)
+                               ? new JProperty("max_vehicle_length",        MaxVehicleLength.     Value.CM)
                                : null,
 
                            MaxVehicleWidth.      HasValue
-                               ? new JProperty("max_vehicle_width",         MaxVehicleWidth.      Value.Value)
+                               ? new JProperty("max_vehicle_width",         MaxVehicleWidth.      Value.CM)
                                : null,
 
-                           ParkingBayLength.     HasValue
-                               ? new JProperty("parking_bay_length",        ParkingBayLength.     Value.Value)
+                           ParkingSpaceLength.     HasValue
+                               ? new JProperty("parking_space_length",      ParkingSpaceLength.   Value.CM)
                                : null,
 
-                           ParkingBayWidth.      HasValue
-                               ? new JProperty("parking_bay_width",         ParkingBayWidth.      Value.Value)
+                           ParkingSpaceWidth.      HasValue
+                               ? new JProperty("parking_space_width",       ParkingSpaceWidth.    Value.CM)
                                : null,
 
                            DangerousGoodsAllowed.HasValue
@@ -802,10 +778,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                            DriveThrough.HasValue
                                ? new JProperty("drive_through",             DriveThrough.         Value)
-                               : null,
-
-                           ParkingRestrictions.Any()
-                               ? new JProperty("parking_restrictions",      new JArray(ParkingRestrictions.Select(parkingRestriction => parkingRestriction.ToString())))
                                : null,
 
                            TimeLimit.            HasValue
@@ -865,13 +837,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    MaxVehicleHeight?.  Clone(),
                    MaxVehicleLength?.  Clone(),
                    MaxVehicleWidth?.   Clone(),
-                   ParkingBayLength?.  Clone(),
-                   ParkingBayWidth?.   Clone(),
+                   ParkingSpaceLength?.  Clone(),
+                   ParkingSpaceWidth?.   Clone(),
                    DangerousGoodsAllowed,
                    EVSEPosition?.      Clone(),
                    Direction?.         Clone(),
                    DriveThrough,
-                   ParkingRestrictions.Select(parkingRestriction => parkingRestriction.Clone()),
                    TimeLimit,
                    Roofed,
                    Images.             Select(image              => image.             Clone()),
@@ -1035,10 +1006,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             c = MaxVehicleWidth?.CompareTo(Parking.MaxVehicleWidth) ?? (Parking.MaxVehicleWidth.HasValue ? -1 : 0);
             if (c != 0) return c;
 
-            c = ParkingBayLength?.CompareTo(Parking.ParkingBayLength) ?? (Parking.ParkingBayLength.HasValue ? -1 : 0);
+            c = ParkingSpaceLength?.CompareTo(Parking.ParkingSpaceLength) ?? (Parking.ParkingSpaceLength.HasValue ? -1 : 0);
             if (c != 0) return c;
 
-            c = ParkingBayWidth?.CompareTo(Parking.ParkingBayWidth) ?? (Parking.ParkingBayWidth.HasValue ? -1 : 0);
+            c = ParkingSpaceWidth?.CompareTo(Parking.ParkingSpaceWidth) ?? (Parking.ParkingSpaceWidth.HasValue ? -1 : 0);
             if (c != 0) return c;
 
             c = DangerousGoodsAllowed?.CompareTo(Parking.DangerousGoodsAllowed) ?? (Parking.DangerousGoodsAllowed.HasValue ? -1 : 0);
@@ -1048,9 +1019,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             if (c != 0) return c;
 
             c = Direction?.CompareTo(Parking.Direction) ?? (Parking.Direction.HasValue ? -1 : 0);
-            if (c != 0) return c;
-
-            c = ParkingRestrictions.Count().CompareTo(Parking.ParkingRestrictions.Count());
             if (c != 0) return c;
 
             c = TimeLimit?.CompareTo(Parking.TimeLimit) ?? (Parking.TimeLimit.HasValue ? -1 : 0);
@@ -1121,11 +1089,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             ((!MaxVehicleWidth.      HasValue  && !Parking.MaxVehicleWidth.HasValue) ||
               (MaxVehicleWidth.      HasValue  &&  Parking.MaxVehicleWidth.HasValue && MaxVehicleWidth.Value.Equals(Parking.MaxVehicleWidth.Value))) &&
 
-            ((!ParkingBayLength.     HasValue && !Parking.ParkingBayLength.HasValue) ||
-              (ParkingBayLength.     HasValue &&  Parking.ParkingBayLength.HasValue && ParkingBayLength.Value.Equals(Parking.ParkingBayLength.Value))) &&
+            ((!ParkingSpaceLength.     HasValue && !Parking.ParkingSpaceLength.HasValue) ||
+              (ParkingSpaceLength.     HasValue &&  Parking.ParkingSpaceLength.HasValue && ParkingSpaceLength.Value.Equals(Parking.ParkingSpaceLength.Value))) &&
 
-            ((!ParkingBayWidth.      HasValue && !Parking.ParkingBayWidth.HasValue) ||
-              (ParkingBayWidth.      HasValue &&  Parking.ParkingBayWidth.HasValue && ParkingBayWidth.Value.Equals(Parking.ParkingBayWidth.Value))) &&
+            ((!ParkingSpaceWidth.      HasValue && !Parking.ParkingSpaceWidth.HasValue) ||
+              (ParkingSpaceWidth.      HasValue &&  Parking.ParkingSpaceWidth.HasValue && ParkingSpaceWidth.Value.Equals(Parking.ParkingSpaceWidth.Value))) &&
 
             ((!DangerousGoodsAllowed.HasValue && !Parking.DangerousGoodsAllowed.HasValue) ||
               (DangerousGoodsAllowed.HasValue &&  Parking.DangerousGoodsAllowed.HasValue && DangerousGoodsAllowed.Value.Equals(Parking.DangerousGoodsAllowed.Value))) &&
@@ -1138,8 +1106,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             ((!DriveThrough.         HasValue && !Parking.DriveThrough.         HasValue) ||
               (DriveThrough.         HasValue &&  Parking.DriveThrough.         HasValue && DriveThrough.Value.Equals(Parking.DriveThrough.Value))) &&
-
-               ParkingRestrictions.SequenceEqual(Parking.ParkingRestrictions) &&
 
             ((!TimeLimit.            HasValue && !Parking.TimeLimit.            HasValue) ||
               (TimeLimit.            HasValue &&  Parking.TimeLimit.            HasValue && TimeLimit.Value.Equals(Parking.TimeLimit.Value))) &&

@@ -790,7 +790,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     if (!evseUId.HasValue)
                     {
-                        warnings.Add(Warning.Create($"The given EVSE identificaton '{EVSE.Id}' could not be converted to an OCPI EVSE Unique identification!"));
+                        warnings.Add(Warning.Create($"The given EVSE identification '{EVSE.Id}' could not be converted to an OCPI EVSE Unique identification!"));
                         Warnings = warnings;
                         return null;
                     }
@@ -802,7 +802,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!evseId.HasValue)
                 {
-                    warnings.Add(Warning.Create($"The given EVSE identificaton '{EVSE.Id}' could not be converted to an OCPI EVSE identification!"));
+                    warnings.Add(Warning.Create($"The given EVSE identification '{EVSE.Id}' could not be converted to an OCPI EVSE identification!"));
                     Warnings = warnings;
                     return null;
                 }

@@ -261,6 +261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         public CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                       { get; set; }
         public CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<EVSEParking>?                 CustomEVSEParkingSerializer                   { get; set; }
         public CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                         { get; set; }
         public CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                     { get; set; }
         public CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                  { get; set; }
@@ -1296,6 +1297,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                                             CustomDisplayTextSerializer,
                                                                             CustomBusinessDetailsSerializer,
                                                                             CustomHoursSerializer,
+                                                                            CustomEVSEParkingSerializer,
                                                                             CustomImageSerializer,
                                                                             CustomEnergyMixSerializer,
                                                                             CustomEnergySourceSerializer,
@@ -1922,6 +1924,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                                             CustomTransparencySoftwareStatusSerializer,
                                                                             CustomTransparencySoftwareSerializer,
                                                                             CustomDisplayTextSerializer,
+                                                                            CustomEVSEParkingSerializer,
                                                                             CustomImageSerializer
                                                                         ).ToUTF8Bytes(JSONFormat),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,

@@ -182,45 +182,51 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Static definitions
 
         /// <summary>
+        /// Parking spot for customers or guests only, for example in case of a hotel or shop.
+        /// </summary>
+        public static ParkingRestriction  CUSTOMERS      { get; }
+            = new ("CUSTOMERS");
+
+        /// <summary>
+        /// Reserved parking spot for disabled people with valid identification.
+        /// </summary>
+        public static ParkingRestriction  DISABLED       { get; }
+            = new("DISABLED");
+
+        /// <summary>
         /// Parking only for people who work at a site, building, or complex that the Location belongs to.
         /// </summary>
-        public static ParkingRestriction  EMPLOYEES    { get; }
+        public static ParkingRestriction  EMPLOYEES      { get; }
             = new ("EMPLOYEES");
 
         /// <summary>
         /// Reserved parking spot for electric vehicles.
         /// </summary>
-        public static ParkingRestriction  EV_ONLY      { get; }
+        public static ParkingRestriction  EV_ONLY        { get; }
             = new ("EV_ONLY");
+
+        /// <summary>
+        /// Parking spot only suitable for (electric) motorcycles or scooters.
+        /// </summary>
+        public static ParkingRestriction  MOTORCYCLES    { get; }
+            = new ("MOTORCYCLES");
 
         /// <summary>
         /// Parking allowed only while plugged in (charging).
         /// </summary>
-        public static ParkingRestriction  PLUGGED      { get; }
+        public static ParkingRestriction  PLUGGED        { get; }
             = new ("PLUGGED");
-
-        /// <summary>
-        /// Reserved parking spot for disabled people with valid ID.
-        /// </summary>
-        public static ParkingRestriction  DISABLED     { get; }
-            = new ("DISABLED");
-
-        /// <summary>
-        /// Parking spot for customers/guests only, for example in case of a hotel or shop.
-        /// </summary>
-        public static ParkingRestriction  CUSTOMERS    { get; }
-            = new ("CUSTOMERS");
 
         /// <summary>
         /// Parking only for taxi vehicles.
         /// </summary>
-        public static ParkingRestriction  TAXIS        { get; }
+        public static ParkingRestriction  TAXIS          { get; }
             = new ("TAXIS");
 
         /// <summary>
         /// Parking only for people who live in a complex that the Location belongs to.
         /// </summary>
-        public static ParkingRestriction  TENANTS      { get; }
+        public static ParkingRestriction  TENANTS        { get; }
             = new ("TENANTS");
 
         #endregion

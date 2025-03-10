@@ -238,7 +238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         /// <example>"Europe/Oslo", "Europe/Zurich"</example>
         [Mandatory]
-        public String                              Timezone                 { get; }
+        public String                              TimeZone                 { get; }
 
         /// <summary>
         /// The optional times when the EVSEs at the location can be accessed for charging.
@@ -273,6 +273,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         [Optional]
         public IEnumerable<EnergyMeter<Location>>  EnergyMeters
             => energyMeters.Values;
+
+        /// <summary>
+        /// The optional telephone number that an EV driver charging at this location may call for assistance.
+        /// Calling this number will typically connect the caller to the CPO's customer service department.
+        /// </summary>
+        [Optional]
+        public PhoneNumber?                        HelpPhone                { get; }
 
 
         /// <summary>
@@ -329,6 +336,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="Images">An optional enumeration of images related to the location such as photos or logos.</param>
         /// <param name="EnergyMix">Optional details on the energy supplied at this location.</param>
         /// <param name="EnergyMeters">An optional enumeration of energy meters at this location.</param>
+        /// <param name="HelpPhone">An optional telephone number that an EV driver charging at this location may call for assistance.</param>
         /// 
         /// <param name="Created">An optional timestamp when this location was created.</param>
         /// <param name="LastUpdated">An optional timestamp when this location was last updated (or created).</param>
@@ -379,6 +387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         IEnumerable<Image>?                                           Images                                       = null,
                         EnergyMix?                                                    EnergyMix                                    = null,
                         IEnumerable<EnergyMeter<Location>>?                           EnergyMeters                                 = null,
+                        PhoneNumber?                                                  HelpPhone                                    = null,
 
                         DateTime?                                                     Created                                      = null,
                         DateTime?                                                     LastUpdated                                  = null,
@@ -398,6 +407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
                         CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
                         CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
+                        CustomJObjectSerializerDelegate<EVSEParking>?                 CustomEVSEParkingSerializer                  = null,
                         CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
                         CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null,
                         CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 = null,
@@ -432,6 +442,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    Images,
                    EnergyMix,
                    EnergyMeters,
+                   HelpPhone,
 
                    Created     ?? LastUpdated,
                    LastUpdated ?? Created,
@@ -450,6 +461,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    CustomDisplayTextSerializer,
                    CustomBusinessDetailsSerializer,
                    CustomHoursSerializer,
+                   CustomEVSEParkingSerializer,
                    CustomImageSerializer,
                    CustomEnergyMixSerializer,
                    CustomEnergySourceSerializer,
@@ -474,7 +486,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="City">The city or town of the location.</param>
         /// <param name="Country">The country of the location.</param>
         /// <param name="Coordinates">The geographical location of this location.</param>
-        /// <param name="Timezone">One of IANA tzdata’s TZ-values representing the time zone of the location (http://www.iana.org/time-zones).</param>
+        /// <param name="TimeZone">One of IANA tzdata’s TZ-values representing the time zone of the location (http://www.iana.org/time-zones).</param>
         /// 
         /// <param name="PublishAllowedTo">An optional enumeration of publish tokens. Only owners of tokens that match all the set fields of one publish token in the list are allowed to be shown this location.</param>
         /// <param name="Name">An optional display name of the location.</param>
@@ -526,7 +538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         String                                                        City,
                         Country                                                       Country,
                         GeoCoordinate                                                 Coordinates,
-                        String                                                        Timezone,
+                        String                                                        TimeZone,
 
                         IEnumerable<PublishToken>?                                    PublishAllowedTo                             = null,
                         String?                                                       Name                                         = null,
@@ -546,6 +558,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         IEnumerable<Image>?                                           Images                                       = null,
                         EnergyMix?                                                    EnergyMix                                    = null,
                         IEnumerable<EnergyMeter<Location>>?                           EnergyMeters                                 = null,
+                        PhoneNumber?                                                  HelpPhone                                    = null,
 
                         DateTime?                                                     Created                                      = null,
                         DateTime?                                                     LastUpdated                                  = null,
@@ -565,6 +578,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
                         CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
                         CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
+                        CustomJObjectSerializerDelegate<EVSEParking>?                 CustomEVSEParkingSerializer                  = null,
                         CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
                         CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null,
                         CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 = null,
@@ -581,7 +595,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.City                 = City;
             this.Country              = Country;
             this.Coordinates          = Coordinates;
-            this.Timezone             = Timezone;
+            this.TimeZone             = TimeZone;
 
             this.PublishAllowedTo     = PublishAllowedTo?.Distinct() ?? [];
             this.Name                 = Name;
@@ -599,6 +613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.ChargingWhenClosed   = ChargingWhenClosed;
             this.Images               = Images?.          Distinct() ?? [];
             this.EnergyMix            = EnergyMix;
+            this.HelpPhone            = HelpPhone;
 
             this.Created              = Created                      ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated          = LastUpdated                  ?? Created     ?? Timestamp.Now;
@@ -643,6 +658,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                             CustomDisplayTextSerializer,
                                             CustomBusinessDetailsSerializer,
                                             CustomHoursSerializer,
+                                            CustomEVSEParkingSerializer,
                                             CustomImageSerializer,
                                             CustomEnergyMixSerializer,
                                             CustomEnergySourceSerializer,
@@ -660,7 +676,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            this.City.               GetHashCode()        *  97 ^
                            this.Country.            GetHashCode()        *  89 ^
                            this.Coordinates.        GetHashCode()        *  83 ^
-                           this.Timezone.           GetHashCode()        *  79 ^
+                           this.TimeZone.           GetHashCode()        *  79 ^
                            this.Created.            GetHashCode()        *  73 ^
                            this.LastUpdated.        GetHashCode()        *  71 ^
 
@@ -681,7 +697,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                           (this.ChargingWhenClosed?.GetHashCode()  ?? 0) *   7 ^
                            this.Images.             CalcHashCode()       *   5 ^
                           (this.EnergyMix?.         GetHashCode()  ?? 0) *   3 ^
-                           this.EnergyMeters.       CalcHashCode();
+                           this.EnergyMeters.       CalcHashCode()       *   3 ^
+                           this.HelpPhone?.         GetHashCode() ?? 0;
 
             }
 
@@ -1159,6 +1176,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #endregion
 
+                #region Parse HelpPhone             [optional]
+
+                if (JSON.ParseOptional("help_phone",
+                                       "help phone",
+                                       PhoneNumber.TryParse,
+                                       out PhoneNumber? helpPhone,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
 
                 #region Parse Created               [optional, NonStandard]
 
@@ -1216,6 +1247,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                Images,
                                EnergyMix,
                                EnergyMeters,
+                               helpPhone,
 
                                Created,
                                LastUpdated
@@ -1258,6 +1290,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomEVSEParkingSerializer">A delegate to serialize custom EVSE parking JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
@@ -1277,6 +1310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                               CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
                               CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
                               CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
+                              CustomJObjectSerializerDelegate<EVSEParking>?                 CustomEVSEParkingSerializer                  = null,
                               CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
                               CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null,
                               CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 = null,
@@ -1339,6 +1373,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                                                                                                   CustomTransparencySoftwareStatusSerializer,
                                                                                                                                                   CustomTransparencySoftwareSerializer,
                                                                                                                                                   CustomDisplayTextSerializer,
+                                                                                                                                                  CustomEVSEParkingSerializer,
                                                                                                                                                   CustomImageSerializer))))
                                : null,
 
@@ -1366,7 +1401,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                ? new JProperty("facilities",             new JArray(Facilities.      Select (facility              => facility.ToString())))
                                : null,
 
-                           new JProperty("time_zone",                    Timezone),
+                           new JProperty("time_zone",                    TimeZone),
 
                            OpeningTimes is not null
                                ? new JProperty("opening_times",          OpeningTimes.ToJSON(CustomHoursSerializer))
@@ -1391,6 +1426,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                                                  Select (energyMeter           => energyMeter.ToJSON(CustomLocationEnergyMeterSerializer,
                                                                                                                                                      CustomTransparencySoftwareStatusSerializer,
                                                                                                                                                      CustomTransparencySoftwareSerializer))))
+                               : null,
+
+                           HelpPhone.HasValue
+                               ? new JProperty("help_phone",             HelpPhone.Value.  ToString())
                                : null,
 
 
@@ -1429,26 +1468,27 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    City.            CloneString(),
                    Country.         Clone(),
                    Coordinates.     Clone(),
-                   Timezone.        CloneString(),
+                   TimeZone.        CloneString(),
 
-                   PublishAllowedTo.Select(publishToken    => publishToken.   Clone()).ToArray(),
+                   PublishAllowedTo.Select(publishToken    => publishToken.   Clone()),
                    Name.            CloneNullableString(),
                    PostalCode.      CloneNullableString(),
                    State.           CloneNullableString(),
-                   RelatedLocations.Select(relatedLocation => relatedLocation.Clone()).ToArray(),
+                   RelatedLocations.Select(relatedLocation => relatedLocation.Clone()),
                    ParkingType?.    Clone(),
-                   EVSEs.           Select(evse            => evse.           Clone()).ToArray(),
-                   ParkingPlaces.   Select(parking         => parking.        Clone()).ToArray(),
-                   Directions.      Select(displayText     => displayText.    Clone()).ToArray(),
+                   EVSEs.           Select(evse            => evse.           Clone()),
+                   ParkingPlaces.   Select(parking         => parking.        Clone()),
+                   Directions.      Select(displayText     => displayText.    Clone()),
                    Operator?.       Clone(),
                    SubOperator?.    Clone(),
                    Owner?.          Clone(),
-                   Facilities.      Select(facility        => facility.       Clone()).ToArray(),
+                   Facilities.      Select(facility        => facility.       Clone()),
                    OpeningTimes?.   Clone(),
                    ChargingWhenClosed,
-                   Images.          Select(image           => image.          Clone()).ToArray(),
+                   Images.          Select(image           => image.          Clone()),
                    EnergyMix?.      Clone(),
-                   EnergyMeters.    Select(energyMeter     => energyMeter.    Clone()).ToArray(),
+                   EnergyMeters.    Select(energyMeter     => energyMeter.    Clone()),
+                   HelpPhone?.      Clone(),
 
                    Created,
                    LastUpdated
@@ -1880,6 +1920,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
                                      CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
                                      CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
+                                     CustomJObjectSerializerDelegate<EVSEParking>?                 CustomEVSEParkingSerializer                  = null,
                                      CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
                                      CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null,
                                      CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 = null,
@@ -1903,6 +1944,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            CustomDisplayTextSerializer,
                            CustomBusinessDetailsSerializer,
                            CustomHoursSerializer,
+                           CustomEVSEParkingSerializer,
                            CustomImageSerializer,
                            CustomEnergyMixSerializer,
                            CustomEnergySourceSerializer,
@@ -2111,7 +2153,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                City.                   Equals(Location.City)                    &&
                Country.                Equals(Location.Country)                 &&
                Coordinates.            Equals(Location.Coordinates)             &&
-               Timezone.               Equals(Location.Timezone)                &&
+               TimeZone.               Equals(Location.TimeZone)                &&
                Created.    ToIso8601().Equals(Location.Created.    ToIso8601()) &&
                LastUpdated.ToIso8601().Equals(Location.LastUpdated.ToIso8601()) &&
 
@@ -2219,7 +2261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    City,
                    Country,
                    Coordinates,
-                   Timezone,
+                   TimeZone,
 
                    PublishAllowedTo,
                    Name,
@@ -2239,6 +2281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    Images,
                    EnergyMix,
                    EnergyMeters,
+                   HelpPhone,
 
                    Created,
                    LastUpdated
@@ -2417,7 +2460,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// </summary>
             /// <example>"Europe/Oslo", "Europe/Zurich"</example>
             [Mandatory]
-            public String?                             Timezone                 { get; set; }
+            public String?                             TimeZone                 { get; set; }
 
             /// <summary>
             /// The optional times when the EVSEs at the location can be accessed for charging.
@@ -2445,6 +2488,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// </summary>
             [Optional]
             public EnergyMix?                          EnergyMix                { get; set; }
+
+            /// <summary>
+            /// The optional telephone number that an EV driver charging at this location may call for assistance.
+            /// Calling this number will typically connect the caller to the CPO's customer service department.
+            /// </summary>
+            [Optional]
+            public PhoneNumber?                        HelpPhone                { get; set; }
 
             /// <summary>
             /// The optional enumeration of energy meters at this location, e.g. at the grid connection point.
@@ -2486,7 +2536,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="City">The city or town of the location.</param>
             /// <param name="Country">The country of the location.</param>
             /// <param name="Coordinates">The geographical location of this location.</param>
-            /// <param name="Timezone">One of IANA tzdata’s TZ-values representing the time zone of the location (http://www.iana.org/time-zones).</param>
+            /// <param name="TimeZone">One of IANA tzdata’s TZ-values representing the time zone of the location (http://www.iana.org/time-zones).</param>
             /// 
             /// <param name="PublishAllowedTo">An optional enumeration of publish tokens. Only owners of tokens that match all the set fields of one publish token in the list are allowed to be shown this location.</param>
             /// <param name="Name">An optional display name of the location.</param>
@@ -2505,6 +2555,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Images">An optional enumeration of images related to the location such as photos or logos.</param>
             /// <param name="EnergyMix">Optional details on the energy supplied at this location.</param>
             /// <param name="EnergyMeters">An optional enumeration of energy meters at this location, e.g. at the grid connection point.</param>
+            /// <param name="HelpPhone">An optional telephone number that an EV driver charging at this location may call for assistance.</param>
             /// 
             /// <param name="Created">The timestamp when this location was created.</param>
             /// <param name="LastUpdated">The timestamp when this location was last updated (or created).</param>
@@ -2518,7 +2569,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            String?                              City                 = null,
                            Country?                             Country              = null,
                            GeoCoordinate?                       Coordinates          = null,
-                           String?                              Timezone             = null,
+                           String?                              TimeZone             = null,
 
                            IEnumerable<PublishToken>?           PublishAllowedTo     = null,
                            String?                              Name                 = null,
@@ -2538,6 +2589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            IEnumerable<Image>?                  Images               = null,
                            EnergyMix?                           EnergyMix            = null,
                            IEnumerable<EnergyMeter<Location>>?  EnergyMeters         = null,
+                           PhoneNumber?                         HelpPhone            = null,
 
                            DateTime?                            Created              = null,
                            DateTime?                            LastUpdated          = null)
@@ -2554,7 +2606,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 this.City                = City;
                 this.Country             = Country;
                 this.Coordinates         = Coordinates;
-                this.Timezone            = Timezone;
+                this.TimeZone            = TimeZone;
 
                 this.PublishAllowedTo    = PublishAllowedTo is not null ? new HashSet<PublishToken>         (PublishAllowedTo) : [];
                 this.Name                = Name;
@@ -2574,6 +2626,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 this.Images              = Images           is not null ? new HashSet<Image>                (Images)           : [];
                 this.EnergyMix           = EnergyMix;
                 this.EnergyMeters        = EnergyMeters     is not null ? new HashSet<EnergyMeter<Location>>(EnergyMeters)     : [];
+                this.HelpPhone           = HelpPhone;
 
                 this.Created             = Created;
                 this.LastUpdated         = LastUpdated;
@@ -2663,7 +2716,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (!Coordinates.HasValue)
                     warnings.Add(Warning.Create("The geo coordinates must not be null or empty!"));
 
-                if (Timezone is null || Timezone.IsNullOrEmpty())
+                if (TimeZone is null || TimeZone.IsNullOrEmpty())
                     warnings.Add(Warning.Create("The timezone parameter must not be null or empty!"));
 
                 Warnings = warnings;
@@ -2683,7 +2736,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                  City!,
                                  Country!,
                                  Coordinates!.Value,
-                                 Timezone!,
+                                 TimeZone!,
 
                                  PublishAllowedTo,
                                  Name,
@@ -2703,6 +2756,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                  Images,
                                  EnergyMix,
                                  EnergyMeters,
+                                 HelpPhone,
 
                                  Created     ?? Timestamp.Now,
                                  LastUpdated ?? Timestamp.Now

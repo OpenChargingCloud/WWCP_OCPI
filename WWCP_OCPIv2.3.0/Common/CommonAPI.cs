@@ -2863,6 +2863,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         public CustomJObjectSerializerDelegate<DisplayText>?                  CustomDisplayTextSerializer                   { get; set; }
         public CustomJObjectSerializerDelegate<BusinessDetails>?              CustomBusinessDetailsSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<Hours>?                        CustomHoursSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<EVSEParking>?                  CustomEVSEParkingSerializer                   { get; set; }
         public CustomJObjectSerializerDelegate<Image>?                        CustomImageSerializer                         { get; set; }
         public CustomJObjectSerializerDelegate<EnergyMix>?                    CustomEnergyMixSerializer                     { get; set; }
         public CustomJObjectSerializerDelegate<EnergySource>?                 CustomEnergySourceSerializer                  { get; set; }
@@ -6400,6 +6401,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                   CustomDisplayTextSerializer,
                                   CustomBusinessDetailsSerializer,
                                   CustomHoursSerializer,
+                                  CustomEVSEParkingSerializer,
                                   CustomImageSerializer,
                                   CustomEnergyMixSerializer,
                                   CustomEnergySourceSerializer,
@@ -6516,6 +6518,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                   CustomDisplayTextSerializer,
                                   CustomBusinessDetailsSerializer,
                                   CustomHoursSerializer,
+                                  CustomEVSEParkingSerializer,
                                   CustomImageSerializer,
                                   CustomEnergyMixSerializer,
                                   CustomEnergySourceSerializer,
@@ -6651,6 +6654,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                       CustomDisplayTextSerializer,
                                       CustomBusinessDetailsSerializer,
                                       CustomHoursSerializer,
+                                      CustomEVSEParkingSerializer,
                                       CustomImageSerializer,
                                       CustomEnergyMixSerializer,
                                       CustomEnergySourceSerializer,
@@ -6786,6 +6790,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                   CustomDisplayTextSerializer,
                                   CustomBusinessDetailsSerializer,
                                   CustomHoursSerializer,
+                                  CustomEVSEParkingSerializer,
                                   CustomImageSerializer,
                                   CustomEnergyMixSerializer,
                                   CustomEnergySourceSerializer,
@@ -6928,6 +6933,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                   CustomDisplayTextSerializer,
                                   CustomBusinessDetailsSerializer,
                                   CustomHoursSerializer,
+                                  CustomEVSEParkingSerializer,
                                   CustomImageSerializer,
                                   CustomEnergyMixSerializer,
                                   CustomEnergySourceSerializer,

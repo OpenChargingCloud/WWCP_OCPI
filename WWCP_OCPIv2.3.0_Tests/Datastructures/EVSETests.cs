@@ -91,8 +91,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                     DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                                 )
                             ],
-                            [ Parking_Id.Parse("1") ],
-                            [ VehicleType.PERSONAL_VEHICLE ],
 
                             EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                             [
@@ -168,6 +166,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                 DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                 DisplayText.Create(Languages.en, "Ken sent me!")
                             ],
+                            [ ParkingRestriction.CUSTOMERS ],
+                            [ new EVSEParking(Parking_Id.Parse("1"), EVSEPosition.CENTER) ],
                             [
                                 new Image(
                                     URL.Parse("http://example.com/pinguine.jpg"),

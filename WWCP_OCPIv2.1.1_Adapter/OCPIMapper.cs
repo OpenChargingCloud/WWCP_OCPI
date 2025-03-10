@@ -429,7 +429,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             if (!countryCode.HasValue)
             {
-                warnings.Add(Warning.Create($"The given charging station operator identificaton '{ChargingPool.Id.OperatorId}' could not be converted to an OCPI country code!"));
+                warnings.Add(Warning.Create($"The given charging station operator identification '{ChargingPool.Id.OperatorId}' could not be converted to an OCPI country code!"));
                 Warnings = warnings;
                 return null;
             }
@@ -438,7 +438,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             if (!partyId.HasValue)
             {
-                warnings.Add(Warning.Create($"The given charging station operator identificaton '{ChargingPool.Id.OperatorId}' could not be converted to an OCPI party identification!"));
+                warnings.Add(Warning.Create($"The given charging station operator identification '{ChargingPool.Id.OperatorId}' could not be converted to an OCPI party identification!"));
                 Warnings = warnings;
                 return null;
             }
@@ -447,7 +447,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             if (!locationId.HasValue)
             {
-                warnings.Add(Warning.Create($"The given charging pool identificaton '{ChargingPool.Id}' could not be converted to an OCPI location identification!"));
+                warnings.Add(Warning.Create($"The given charging pool identification '{ChargingPool.Id}' could not be converted to an OCPI location identification!"));
                 Warnings = warnings;
                 return null;
             }
@@ -778,7 +778,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     if (!evseUId.HasValue)
                     {
-                        warnings.Add(Warning.Create($"The given EVSE identificaton '{EVSE.Id}' could not be converted to an OCPI EVSE Unique identification!"));
+                        warnings.Add(Warning.Create($"The given EVSE identification '{EVSE.Id}' could not be converted to an OCPI EVSE Unique identification!"));
                         Warnings = warnings;
                         return null;
                     }
@@ -789,7 +789,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!evseId.HasValue)
                 {
-                    warnings.Add(Warning.Create($"The given EVSE identificaton '{EVSE.Id}' could not be converted to an OCPI EVSE identification!"));
+                    warnings.Add(Warning.Create($"The given EVSE identification '{EVSE.Id}' could not be converted to an OCPI EVSE identification!"));
                     Warnings = warnings;
                     return null;
                 }
