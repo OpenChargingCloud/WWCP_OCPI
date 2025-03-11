@@ -114,7 +114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual (0.0M,                                 parsedSession.kWh);
                 ClassicAssert.AreEqual (Auth_Id.Parse("DE8ACC12E46L89"),      parsedSession.AuthId);
                 ClassicAssert.AreEqual (AuthMethods.WHITELIST,                parsedSession.AuthMethod);
-                ClassicAssert.AreEqual (OCPI.Currency.EUR,                    parsedSession.Currency);
+                ClassicAssert.AreEqual (Currency.EUR,                    parsedSession.Currency);
                 ClassicAssert.AreEqual (2.50M,                                parsedSession.TotalCost);
                 ClassicAssert.AreEqual (SessionStatusTypes.PENDING,           parsedSession.Status);
                 ClassicAssert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.LastUpdated.ToIso8601());
@@ -254,7 +254,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual (41.0M,                                parsedSession.kWh);
                 ClassicAssert.AreEqual (Auth_Id.Parse("DE8ACC12E46L89"),      parsedSession.AuthId);
                 ClassicAssert.AreEqual (AuthMethods.WHITELIST,                parsedSession.AuthMethod);
-                ClassicAssert.AreEqual (OCPI.Currency.EUR,                    parsedSession.Currency);
+                ClassicAssert.AreEqual (Currency.EUR,                    parsedSession.Currency);
                 ClassicAssert.AreEqual (8.50M,                                parsedSession.TotalCost);
                 ClassicAssert.AreEqual (SessionStatusTypes.COMPLETED,         parsedSession.Status);
                 ClassicAssert.AreEqual ("2015-06-29T23:09:10.000Z",           parsedSession.LastUpdated.ToIso8601());
@@ -343,7 +343,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                    GeoCoordinate.Parse(10, 20)
                                ),
 
-                               OCPI.Currency.EUR,
+                               Currency.EUR,
                                SessionStatusTypes.ACTIVE,
                                DateTime.Parse("2020-08-22T00:00:00.000Z").ToUniversalTime(), // End
                                EnergyMeter_Id.Parse("Meter0001"),

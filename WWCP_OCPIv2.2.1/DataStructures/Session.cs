@@ -135,13 +135,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The optional identification of the kWh energy meter.
         /// </summary>
         [Optional]
-        public   EnergyMeter_Id?                           MeterId                      { get; }
+        public   EnergyMeter_Id?                     MeterId                      { get; }
 
         /// <summary>
         /// The ISO 4217 code of the currency used for this session.
         /// </summary>
         [Mandatory]
-        public   OCPI.Currency                       Currency                     { get; }
+        public   Currency                            Currency                     { get; }
 
         /// <summary>
         /// The optional enumeration of charging periods that can be used to calculate and verify the total cost.
@@ -224,12 +224,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        Location_Id                                       LocationId,
                        EVSE_UId                                          EVSEUId,
                        Connector_Id                                      ConnectorId,
-                       OCPI.Currency                                     Currency,
+                       Currency                                          Currency,
                        SessionStatusTypes                                Status,
 
                        DateTime?                                         End                              = null,
                        AuthorizationReference?                           AuthorizationReference           = null,
-                       EnergyMeter_Id?                                         MeterId                          = null,
+                       EnergyMeter_Id?                                   MeterId                          = null,
                        IEnumerable<ChargingPeriod>?                      ChargingPeriods                  = null,
                        Price?                                            TotalCosts                       = null,
 
@@ -602,8 +602,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("currency",
                                          "currency",
-                                         OCPI.Currency.TryParse,
-                                         out OCPI.Currency Currency,
+                                         Currency.TryParse,
+                                         out Currency currency,
                                          out ErrorResponse))
                 {
                     return false;
@@ -689,7 +689,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               LocationId,
                               EVSEUId,
                               ConnectorId,
-                              Currency,
+                              currency,
                               Status,
 
                               End,

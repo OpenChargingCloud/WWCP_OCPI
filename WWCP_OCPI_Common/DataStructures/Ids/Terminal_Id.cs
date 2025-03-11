@@ -45,21 +45,55 @@ namespace cloud.charging.open.protocols.OCPI
             => TerminalId.HasValue && TerminalId.Value.IsNotNullOrEmpty;
 
 
-        #region Matches(TerminalIds, Match, IgnoreCase = true)
+        #region Matches(this TerminalId,  Pattern, IgnoreCase = true)
 
         /// <summary>
-        /// Checks whether the given enumeration of EVSE identifications matches the given text.
+        /// Checks whether the given terminal identifications matches the given text.
         /// </summary>
-        /// <param name="TerminalIds">An enumeration of EVSE identifications.</param>
-        /// <param name="Match">A text to match.</param>
+        /// <param name="TerminalId">A terminal identification.</param>
+        /// <param name="Pattern">A pattern to match.</param>
+        /// <param name="IgnoreCase">Whether to ignore the case of the text.</param>
+        public static Boolean Matches(this Terminal_Id  TerminalId,
+                                      String            Pattern,
+                                      Boolean           IgnoreCase  = true)
+
+            => IgnoreCase
+                   ? TerminalId.ToString().Contains(Pattern, StringComparison.OrdinalIgnoreCase)
+                   : TerminalId.ToString().Contains(Pattern, StringComparison.Ordinal);
+
+
+        /// <summary>
+        /// Checks whether the given terminal identifications matches the given text.
+        /// </summary>
+        /// <param name="TerminalId">A terminal identification.</param>
+        /// <param name="Pattern">A pattern to match.</param>
+        /// <param name="IgnoreCase">Whether to ignore the case of the text.</param>
+        public static Boolean Matches(this Terminal_Id?  TerminalId,
+                                      String             Pattern,
+                                      Boolean            IgnoreCase  = true)
+
+            => TerminalId.HasValue &&
+               (IgnoreCase
+                    ? TerminalId.Value.ToString().Contains(Pattern, StringComparison.OrdinalIgnoreCase)
+                    : TerminalId.Value.ToString().Contains(Pattern, StringComparison.Ordinal));
+
+        #endregion
+
+        #region Matches(this TerminalIds, Pattern, IgnoreCase = true)
+
+        /// <summary>
+        /// Checks whether the given enumeration of terminal identifications matches the given text.
+        /// </summary>
+        /// <param name="TerminalIds">An enumeration of terminal identifications.</param>
+        /// <param name="Pattern">A pattern to match.</param>
         /// <param name="IgnoreCase">Whether to ignore the case of the text.</param>
         public static Boolean Matches(this IEnumerable<Terminal_Id>  TerminalIds,
-                                      String                     Match,
-                                      Boolean                    IgnoreCase  = true)
+                                      String                         Pattern,
+                                      Boolean                        IgnoreCase  = true)
 
             => TerminalIds.Any(terminalId => IgnoreCase
-                                          ? terminalId.ToString().Contains(Match, StringComparison.OrdinalIgnoreCase)
-                                          : terminalId.ToString().Contains(Match, StringComparison.Ordinal));
+                                                 ? terminalId.ToString().Contains(Pattern, StringComparison.OrdinalIgnoreCase)
+                                                 : terminalId.ToString().Contains(Pattern, StringComparison.Ordinal));
 
         #endregion
 

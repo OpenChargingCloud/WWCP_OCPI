@@ -81,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The ISO 4217 code of the currency used for this tariff.
         /// </summary>
         [Mandatory]
-        public   OCPI.Currency               Currency             { get; }
+        public   Currency                    Currency             { get; }
 
         /// <summary>
         /// The optional tariff type allows to distinguish between charging preferences.
@@ -223,7 +223,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public Tariff(CountryCode                                            CountryCode,
                       Party_Id                                               PartyId,
                       Tariff_Id                                              Id,
-                      OCPI.Currency                                          Currency,
+                      Currency                                               Currency,
                       IEnumerable<TariffElement>                             TariffElements,
                       TaxIncluded                                            TaxIncluded,
 
@@ -482,8 +482,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (!JSON.ParseMandatory("currency",
                                          "currency",
-                                         OCPI.Currency.TryParse,
-                                         out OCPI.Currency Currency,
+                                         Currency.TryParse,
+                                         out Currency currency,
                                          out ErrorResponse))
                 {
                     return false;
@@ -659,7 +659,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                              CountryCodeBody ?? CountryCodeURL!.Value,
                              PartyIdBody     ?? PartyIdURL!.    Value,
                              TariffIdBody    ?? TariffIdURL!.   Value,
-                             Currency,
+                             currency,
                              TariffElements,
                              TaxIncluded,
 

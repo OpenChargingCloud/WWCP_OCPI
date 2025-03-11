@@ -114,13 +114,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The optional identification of the kWh energy meter.
         /// </summary>
         [Optional]
-        public   EnergyMeter_Id?                           MeterId                      { get; }
+        public   EnergyMeter_Id?                     MeterId                      { get; }
 
         /// <summary>
         /// The ISO 4217 code of the currency used for this session.
         /// </summary>
         [Mandatory]
-        public   OCPI.Currency                       Currency                     { get; }
+        public   Currency                            Currency                     { get; }
 
         /// <summary>
         /// The optional enumeration of charging periods that can be used to calculate and verify the total cost.
@@ -210,7 +210,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        Auth_Id                                                       AuthId,
                        AuthMethods                                                   AuthMethod,
                        Location                                                      Location,
-                       OCPI.Currency                                                 Currency,
+                       Currency                                                      Currency,
                        SessionStatusTypes                                            Status,
 
                        DateTime?                                                     End                                          = null,
@@ -586,8 +586,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("currency",
                                          "currency",
-                                         OCPI.Currency.TryParse,
-                                         out OCPI.Currency Currency,
+                                         Currency.TryParse,
+                                         out Currency currency,
                                          out ErrorResponse))
                 {
                     return false;
@@ -661,24 +661,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                Session = new Session(CountryCodeBody ?? CountryCodeURL!.Value,
-                                      PartyIdBody     ?? PartyIdURL!.    Value,
-                                      SessionIdBody   ?? SessionIdURL!.  Value,
-                                      Start,
-                                      KWh,
-                                      AuthId,
-                                      AuthMethod,
-                                      Location,
-                                      Currency,
-                                      Status,
+                Session = new Session(
+                              CountryCodeBody ?? CountryCodeURL!.Value,
+                              PartyIdBody     ?? PartyIdURL!.    Value,
+                              SessionIdBody   ?? SessionIdURL!.  Value,
+                              Start,
+                              KWh,
+                              AuthId,
+                              AuthMethod,
+                              Location,
+                              currency,
+                              Status,
 
-                                      End,
-                                      MeterId,
-                                      ChargingPeriods,
-                                      TotalCost,
+                              End,
+                              MeterId,
+                              ChargingPeriods,
+                              TotalCost,
 
-                                      Created,
-                                      LastUpdated);
+                              Created,
+                              LastUpdated
+                          );
 
 
                 if (CustomSessionParser is not null)

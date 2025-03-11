@@ -60,7 +60,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                  CountryCode.Parse("DE"),
                                                  Party_Id.   Parse("GEF"),
                                                  Tariff_Id.  Parse("TARIFF0001"),
-                                                 OCPI.Currency.EUR,
+                                                 Currency.EUR,
                                                  new[] {
                                                      new TariffElement(
                                                          new[] {
@@ -207,7 +207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                  CountryCode.Parse("DE"),
                                                  Party_Id.   Parse("GEF"),
                                                  Tariff_Id.  Parse("TARIFF0001"),
-                                                 OCPI.Currency.EUR,
+                                                 Currency.EUR,
                                                  new[] {
                                                      new TariffElement(
                                                          new[] {
@@ -361,7 +361,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                CountryCode.Parse("DE"),
                                                Party_Id.   Parse("GEF"),
                                                Tariff_Id.  Parse("TARIFF0001"),
-                                               OCPI.Currency.EUR,
+                                               Currency.EUR,
                                                new[] {
                                                    new TariffElement(
                                                        new[] {
@@ -429,7 +429,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                CountryCode.Parse("DE"),
                                                Party_Id.   Parse("GEF"),
                                                Tariff_Id.  Parse("TARIFF0001"),
-                                               OCPI.Currency.EUR,
+                                               Currency.EUR,
                                                new[] {
                                                    new TariffElement(
                                                        new[] {
@@ -498,7 +498,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                CountryCode.Parse("DE"),
                                                Party_Id.   Parse("GEF"),
                                                Tariff_Id.  Parse("TARIFF0001"),
-                                               OCPI.Currency.EUR,
+                                               Currency.EUR,
                                                new[] {
                                                    new TariffElement(
                                                        new[] {
@@ -808,7 +808,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                  CountryCode.Parse("DE"),
                                                  Party_Id.   Parse("GEF"),
                                                  Tariff_Id.  Parse("TARIFF0001"),
-                                                 OCPI.Currency.EUR,
+                                                 Currency.EUR,
                                                  new[] {
                                                      new TariffElement(
                                                          new[] {
@@ -956,7 +956,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                  CountryCode.Parse("DE"),
                                                  Party_Id.   Parse("GEF"),
                                                  Tariff_Id.  Parse("TARIFF0001"),
-                                                 OCPI.Currency.EUR,
+                                                 Currency.EUR,
                                                  new[] {
                                                      new TariffElement(
                                                          new[] {
@@ -1111,7 +1111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                CountryCode.Parse("DE"),
                                                Party_Id.   Parse("GEF"),
                                                Tariff_Id.  Parse("TARIFF0001"),
-                                               OCPI.Currency.EUR,
+                                               Currency.EUR,
                                                new[] {
                                                    new TariffElement(
                                                        new[] {
@@ -1179,7 +1179,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                CountryCode.Parse("DE"),
                                                Party_Id.   Parse("GEF"),
                                                Tariff_Id.  Parse("TARIFF0001"),
-                                               OCPI.Currency.EUR,
+                                               Currency.EUR,
                                                new[] {
                                                    new TariffElement(
                                                        new[] {
@@ -1248,7 +1248,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                CountryCode.Parse("DE"),
                                                Party_Id.   Parse("GEF"),
                                                Tariff_Id.  Parse("TARIFF0001"),
-                                               OCPI.Currency.EUR,
+                                               Currency.EUR,
                                                new[] {
                                                    new TariffElement(
                                                        new[] {

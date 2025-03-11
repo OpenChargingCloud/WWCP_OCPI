@@ -1638,10 +1638,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 return new Tariff(
 
-                           CountryCode:      OCPI.CountryCode.Parse(ChargingTariff.Id.OperatorId.CountryCode.Alpha2Code),
-                           PartyId:          OCPI.Party_Id.   Parse(ChargingTariff.Id.OperatorId.Suffix),
-                           Id:               OCPI.Tariff_Id.  Parse(ChargingTariff.Id.ToString()),
-                           Currency:         OCPI.Currency.   Parse(ChargingTariff.Currency.ISOCode),
+                           CountryCode:      CountryCode.Parse(ChargingTariff.Id.OperatorId.CountryCode.Alpha2Code),
+                           PartyId:          Party_Id.   Parse(ChargingTariff.Id.OperatorId.Suffix),
+                           Id:               Tariff_Id.  Parse(ChargingTariff.Id.ToString()),
+                           Currency:         ChargingTariff.Currency,
                            TariffElements:   tariffElements,
 
                            TariffAltText:    ChargingTariff.Description.ToOCPI(),
@@ -1961,7 +1961,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    AuthId:                  authId.    Value,
                                    AuthMethod:              authMethod.Value,
                                    Location:                filteredLocation,
-                                   Currency:                OCPI.Currency.EUR,
+                                   Currency:                Currency.EUR,
                                    ChargingPeriods:         [
                                                                 new ChargingPeriod(
                                                                     ChargeDetailRecord.SessionTime.StartTime,

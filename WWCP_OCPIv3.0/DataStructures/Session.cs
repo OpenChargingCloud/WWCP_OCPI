@@ -114,7 +114,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The ISO 4217 code of the currency used for this session.
         /// </summary>
         [Mandatory]
-        public   OCPI.Currency                            Currency                     { get; }
+        public   Currency                                 Currency                     { get; }
 
         /// <summary>
         /// The optional enumeration of charging periods that can be used to calculate and verify the total cost.
@@ -236,7 +236,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        CDRToken                                            CDRToken,
                        AuthMethod                                          AuthMethod,
                        Location_Id                                         LocationId,
-                       OCPI.Currency                                       Currency,
+                       Currency                                            Currency,
                        TariffAssociation_Id                                TariffAssociationId,
                        Tariff_Id                                           TariffId,
                        SessionStatus                                       Status,
@@ -346,7 +346,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                          CDRToken                                            CDRToken,
                          AuthMethod                                          AuthMethod,
                          Location_Id                                         LocationId,
-                         OCPI.Currency                                       Currency,
+                         Currency                                            Currency,
                          TariffAssociation_Id                                TariffAssociationId,
                          Tariff_Id                                           TariffId,
                          SessionStatus                                       Status,
@@ -760,8 +760,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatory("currency",
                                          "currency",
-                                         OCPI.Currency.TryParse,
-                                         out OCPI.Currency Currency,
+                                         Currency.TryParse,
+                                         out Currency currency,
                                          out ErrorResponse))
                 {
                     return false;
@@ -875,7 +875,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               CDRToken,
                               AuthMethod,
                               LocationId,
-                              Currency,
+                              currency,
                               TariffAssociationId,
                               TariffId,
                               Status,
@@ -1654,7 +1654,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The ISO 4217 code of the currency used for this session.
             /// </summary>
             [Mandatory]
-            public   OCPI.Currency?                           Currency                     { get; set; }
+            public   Currency?                                Currency                     { get; set; }
 
             /// <summary>
             /// The optional enumeration of charging periods that can be used to calculate and verify the total cost.
@@ -1764,7 +1764,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                              CDRToken?                                 CDRToken                 = null,
                              AuthMethod?                               AuthMethod               = null,
                              Location_Id?                              LocationId               = null,
-                             OCPI.Currency?                            Currency                 = null,
+                             Currency?                                 Currency                 = null,
                              TariffAssociation_Id?                     TariffAssociationId      = null,
                              Tariff_Id?                                TariffId                 = null,
                              SessionStatus?                            Status                   = null,
@@ -1869,7 +1869,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                  CDRToken.           Value,
                                  AuthMethod.         Value,
                                  LocationId.         Value,
-                                 Currency.           Value,
+                                 Currency,
                                  TariffAssociationId.Value,
                                  TariffId.           Value,
                                  Status.             Value,

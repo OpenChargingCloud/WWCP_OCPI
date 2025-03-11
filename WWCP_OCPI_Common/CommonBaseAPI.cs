@@ -684,6 +684,13 @@ namespace cloud.charging.open.protocols.OCPI
         public const String removeChargeDetailRecord           = "removeChargeDetailRecord";
         public const String removeAllChargeDetailRecords       = "removeAllChargeDetailRecords";
 
+        public const String addTerminal                        = "addTerminal";
+        public const String addTerminalIfNotExists             = "addTerminalIfNotExists";
+        public const String addOrUpdateTerminal                = "addOrUpdateTerminal";
+        public const String updateTerminal                     = "updateTerminal";
+        public const String removeTerminal                     = "removeTerminal";
+        public const String removeAllTerminals                 = "removeAllTerminals";
+
         #endregion
 
         #region Properties

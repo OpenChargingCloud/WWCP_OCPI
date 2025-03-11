@@ -72,7 +72,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                    Country.Germany,
                                    GeoCoordinate.   Parse(10, 20)
                                ),
-                               OCPI.Currency.EUR,
+                               Currency.EUR,
 
                                [
                                    new ChargingPeriod(
@@ -162,7 +162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                        CountryCode.Parse("DE"),
                                        Party_Id.   Parse("GEF"),
                                        Tariff_Id.  Parse("TARIFF0001"),
-                                       OCPI.Currency.EUR,
+                                       Currency.EUR,
                                        [
                                            new TariffElement(
                                                [
@@ -662,7 +662,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                                                                         CountryCode:     CountryCode.Parse("DE"),
                                                                                                         PartyId:         Party_Id.   Parse("GEF"),
                                                                                                         Id:              Tariff_Id.  Parse("ct1"),
-                                                                                                        Currency:        OCPI.Currency.EUR,
+                                                                                                        Currency:        Currency.EUR,
                                                                                                         TariffElements:  [
                                                                                                                              new TariffElement(
                                                                                                                                  PriceComponent.Energy(
@@ -825,7 +825,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                                 Country:        Country.Germany,
                                                                 Coordinates:    GeoCoordinate.FromLatLng(50.928365, 11.589986)
                                                             ),
-                                       Currency:            OCPI.Currency.EUR,
+                                       Currency:            Currency.EUR,
                                        ChargingPeriods:     [
                                                                 new ChargingPeriod(
                                                                     start1,
@@ -868,7 +868,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                                 Country:        Country.Germany,
                                                                 Coordinates:    GeoCoordinate.FromLatLng(50.928365, 11.589986)
                                                             ),
-                                       Currency:            OCPI.Currency.EUR,
+                                       Currency:            Currency.EUR,
                                        ChargingPeriods:     [
                                                                 new ChargingPeriod(
                                                                     start2,
@@ -911,7 +911,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                                 Country:        Country.Germany,
                                                                 Coordinates:    GeoCoordinate.FromLatLng(50.928365, 11.589986)
                                                             ),
-                                       Currency:            OCPI.Currency.EUR,
+                                       Currency:            Currency.EUR,
                                        ChargingPeriods:     [
                                                                 new ChargingPeriod(
                                                                     start3,
@@ -932,7 +932,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                        CountryCode:         CountryCode.Parse("DE"),
                                        PartyId:             Party_Id.   Parse("GEF"),
                                        Id:                  Tariff_Id.  Parse("tariff1"),
-                                       Currency:            OCPI.Currency.EUR,
+                                       Currency:            Currency.EUR,
                                        TariffElements:      [
                                                                 new TariffElement(
                                                                     PriceComponent.Energy(
@@ -958,7 +958,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                        CountryCode:         CountryCode.Parse("DE"),
                                        PartyId:             Party_Id.   Parse("GEF"),
                                        Id:                  Tariff_Id.  Parse("tariff2"),
-                                       Currency:            OCPI.Currency.EUR,
+                                       Currency:            Currency.EUR,
                                        TariffElements:      [
                                                                 new TariffElement(
                                                                     [
@@ -1052,7 +1052,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 Assert.That(cdr1WithTariff1.TotalChargingTime,                                 Is.EqualTo( TimeSpan.FromHours(2)));
                 Assert.That(cdr1WithTariff1.TotalEnergy.kWh,                                   Is.EqualTo( 10m));
                 Assert.That(cdr1WithTariff1.TotalParkingTime,                                  Is.EqualTo( TimeSpan.Zero));
-                Assert.That(cdr1WithTariff1.Currency,                                          Is.EqualTo( OCPI.Currency.EUR));
+                Assert.That(cdr1WithTariff1.Currency,                                          Is.EqualTo( Currency.EUR));
                 Assert.That(cdr1WithTariff1.TotalCost,                                         Is.EqualTo( 14.78m)); // €
 
                 Assert.That(cdr1WithTariff1.ChargingPeriods.Count(),                           Is.EqualTo(1));
@@ -1099,7 +1099,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 Assert.That(cdr2WithTariff1.TotalChargingTime,                                 Is.EqualTo( TimeSpan.FromHours(3)));
                 Assert.That(cdr2WithTariff1.TotalEnergy.kWh,                                   Is.EqualTo( 18m));
                 Assert.That(cdr2WithTariff1.TotalParkingTime,                                  Is.EqualTo( TimeSpan.Zero));
-                Assert.That(cdr2WithTariff1.Currency,                                          Is.EqualTo( OCPI.Currency.EUR));
+                Assert.That(cdr2WithTariff1.Currency,                                          Is.EqualTo( Currency.EUR));
                 Assert.That(cdr2WithTariff1.TotalCost,                                         Is.EqualTo( 23.34m)); // €
 
                 Assert.That(cdr2WithTariff1.ChargingPeriods.Count(),                           Is.EqualTo(1));
@@ -1146,7 +1146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 Assert.That(cdr3WithTariff1.TotalChargingTime,                                 Is.EqualTo( TimeSpan.FromHours(7)));
                 Assert.That(cdr3WithTariff1.TotalEnergy.kWh,                                   Is.EqualTo( 20m));
                 Assert.That(cdr3WithTariff1.TotalParkingTime,                                  Is.EqualTo( TimeSpan.Zero));
-                Assert.That(cdr3WithTariff1.Currency,                                          Is.EqualTo( OCPI.Currency.EUR));
+                Assert.That(cdr3WithTariff1.Currency,                                          Is.EqualTo( Currency.EUR));
                 Assert.That(cdr3WithTariff1.TotalCost,                                         Is.EqualTo( 44.38m)); // €
 
                 Assert.That(cdr3WithTariff1.ChargingPeriods.Count(),                           Is.EqualTo(1));
@@ -1281,7 +1281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 Assert.That(cdr1WithTariff2.TotalChargingTime,                                 Is.EqualTo( TimeSpan.FromHours(2)));
                 Assert.That(cdr1WithTariff2.TotalEnergy.kWh,                                   Is.EqualTo( 10m));
                 Assert.That(cdr1WithTariff2.TotalParkingTime,                                  Is.EqualTo( TimeSpan.Zero));
-                Assert.That(cdr1WithTariff2.Currency,                                          Is.EqualTo( OCPI.Currency.EUR));
+                Assert.That(cdr1WithTariff2.Currency,                                          Is.EqualTo( Currency.EUR));
                 Assert.That(cdr1WithTariff2.TotalCost,                                         Is.EqualTo( 4.7m)); // €
 
                 Assert.That(cdr1WithTariff2.ChargingPeriods.Count(),                           Is.EqualTo(1));
@@ -1415,7 +1415,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 Assert.That(cdr2WithTariff2.TotalChargingTime,                                 Is.EqualTo( TimeSpan.FromHours(3)));
                 Assert.That(cdr2WithTariff2.TotalEnergy.kWh,                                   Is.EqualTo( 18m));
                 Assert.That(cdr2WithTariff2.TotalParkingTime,                                  Is.EqualTo( TimeSpan.Zero));
-                Assert.That(cdr2WithTariff2.Currency,                                          Is.EqualTo( OCPI.Currency.EUR));
+                Assert.That(cdr2WithTariff2.Currency,                                          Is.EqualTo( Currency.EUR));
                 Assert.That(cdr2WithTariff2.TotalCost,                                         Is.EqualTo( 8.22m)); // €
 
                 Assert.That(cdr2WithTariff2.ChargingPeriods.Count(),                           Is.EqualTo(1));
@@ -1562,7 +1562,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 Assert.That(cdr3WithTariff2.TotalChargingTime,                                 Is.EqualTo( TimeSpan.FromHours(7)));
                 Assert.That(cdr3WithTariff2.TotalEnergy.kWh,                                   Is.EqualTo( 20m));
                 Assert.That(cdr3WithTariff2.TotalParkingTime,                                  Is.EqualTo( TimeSpan.Zero));
-                Assert.That(cdr3WithTariff2.Currency,                                          Is.EqualTo( OCPI.Currency.EUR));
+                Assert.That(cdr3WithTariff2.Currency,                                          Is.EqualTo( Currency.EUR));
                 Assert.That(cdr3WithTariff2.TotalCost,                                         Is.EqualTo( 29.26m)); // €
 
                 Assert.That(cdr3WithTariff2.CostDetails?.BilledEnergy.kWh,                     Is.EqualTo( 20m));
@@ -1689,7 +1689,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                                                    )
                                                                                ]
                                                            ),
-                                      Currency:            OCPI.Currency.EUR,
+                                      Currency:            Currency.EUR,
                                       ChargingPeriods:     [
                                                                new ChargingPeriod(
                                                                    start1,
@@ -1709,7 +1709,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                       CountryCode:         CountryCode.Parse("DE"),
                                       PartyId:             Party_Id.   Parse("GEF"),
                                       Id:                  Tariff_Id.  Parse("tariff1"),
-                                      Currency:            OCPI.Currency.EUR,
+                                      Currency:            Currency.EUR,
                                       TariffElements:      [
                                                                new TariffElement(
                                                                    [
@@ -1812,7 +1812,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                                                    )
                                                                                ]
                                                            ),
-                                      Currency:            OCPI.Currency.EUR,
+                                      Currency:            Currency.EUR,
                                       ChargingPeriods:     [
                                                                new ChargingPeriod(
                                                                    chargingStart,
@@ -1832,7 +1832,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                       CountryCode:         CountryCode.Parse("DE"),
                                       PartyId:             Party_Id.   Parse("GEF"),
                                       Id:                  Tariff_Id.  Parse("tariff1"),
-                                      Currency:            OCPI.Currency.EUR,
+                                      Currency:            Currency.EUR,
                                       TariffElements:      [
                                                                new TariffElement(
                                                                    [

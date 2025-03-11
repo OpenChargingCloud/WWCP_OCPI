@@ -90,6 +90,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #region Custom JSON serializers
 
+        public CustomJObjectSerializerDelegate<Terminal>?                    CustomTerminalSerializer                      { get; set; }
         public CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                      { get; set; }
         public CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                  { get; set; }
         public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer         { get; set; }
@@ -1004,6 +1005,109 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                     OCPIResponse  Response)
 
             => OnDeleteTokenResponse.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request,
+                                             Response);
+
+        #endregion
+
+        #endregion
+
+        #region Terminal(s)
+
+        #region (protected internal) GetTerminalRequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET terminal request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetTerminalRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET terminal request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The PTP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetTerminalRequest(DateTime     Timestamp,
+                                                   HTTPAPI      API,
+                                                   OCPIRequest  Request)
+
+            => OnGetTerminalRequest.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request);
+
+        #endregion
+
+        #region (protected internal) GetTerminalResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a GET terminal response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetTerminalResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET terminal response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The PTP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetTerminalResponse(DateTime      Timestamp,
+                                                    HTTPAPI       API,
+                                                    OCPIRequest   Request,
+                                                    OCPIResponse  Response)
+
+            => OnGetTerminalResponse.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request,
+                                             Response);
+
+        #endregion
+
+
+        #region (protected internal) PostTerminalRequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a POST terminal request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPostTerminalRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a POST terminal request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The PTP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PostTerminalRequest(DateTime     Timestamp,
+                                                   HTTPAPI      API,
+                                                   OCPIRequest  Request)
+
+            => OnPostTerminalRequest.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request);
+
+        #endregion
+
+        #region (protected internal) PostTerminalResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a POST terminal response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPostTerminalResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a POST terminal response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The PTP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PostTerminalResponse(DateTime      Timestamp,
+                                                    HTTPAPI       API,
+                                                    OCPIRequest   Request,
+                                                    OCPIResponse  Response)
+
+            => OnPostTerminalResponse.WhenAll(Timestamp,
                                              API ?? this,
                                              Request,
                                              Response);
@@ -3898,6 +4002,297 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             #endregion
 
+
+
+            // Payment Terminals
+
+            #region ~/payments/terminals/{terminalId}
+
+            #region OPTIONS  ~/payments/terminals/{terminalId}
+
+            CommonAPI.AddOCPIMethod(
+
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "payments/terminals/{terminalId}",
+                OCPIRequestHandler: request =>
+
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                        })
+
+            );
+
+            #endregion
+
+            #region GET      ~/payments/terminals/{terminalId}
+
+            CommonAPI.AddOCPIMethod(
+
+                HTTPHostname.Any,
+                HTTPMethod.GET,
+                URLPathPrefix + "payments/terminals/{terminalId}",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestLogger:   GetTerminalRequest,
+                OCPIResponseLogger:  GetTerminalResponse,
+                OCPIRequestHandler:  request => {
+
+                    #region Check access token
+
+                    if (request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    {
+
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = 2000,
+                                StatusMessage        = "Invalid or blocked access token!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                }
+                            });
+
+                    }
+
+                    #endregion
+
+                    #region Check terminal
+
+                    if (!request.ParseTerminal(CommonAPI,
+                                               //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+                                               CommonAPI.OurCredentialRoles.Select(credentialRole => new Tuple<CountryCode, Party_Id>(credentialRole.CountryCode, credentialRole.PartyId)),
+                                               out var terminalId,
+                                               out var terminal,
+                                               out var ocpiResponseBuilder,
+                                               FailOnMissingTerminal: true) ||
+                         terminal is null)
+                    {
+                        return Task.FromResult(ocpiResponseBuilder!);
+                    }
+
+                    #endregion
+
+
+                    return Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               StatusCode           = 1000,
+                               StatusMessage        = "Hello world!",
+                               Data                 = terminal.ToJSON(true,
+                                                                      true,
+                                                                      CustomTerminalSerializer,
+                                                                      CustomDisplayTextSerializer,
+                                                                      CustomImageSerializer),
+                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ],
+                                   LastModified               = terminal.LastUpdated,
+                                   ETag                       = terminal.ETag
+                               }
+                        });
+
+                });
+
+            #endregion
+
+            #region POST     ~/payments/terminals/{terminalId}
+
+            CommonAPI.AddOCPIMethod(
+
+                HTTPHostname.Any,
+                HTTPMethod.POST,
+                URLPathPrefix + "payments/terminals/{terminalId}",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestLogger:   PostTerminalRequest,
+                OCPIResponseLogger:  PostTerminalResponse,
+                OCPIRequestHandler:  async Request => {
+
+                    #region Check access token
+
+                    if (Request.LocalAccessInfo.IsNot(Role.CPO) ||
+                        Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    {
+
+                        return new OCPIResponse.Builder(Request) {
+                                   StatusCode           = 2000,
+                                   StatusMessage        = "Invalid or blocked access token!",
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PATCH" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ]
+                                   }
+                               };
+
+                    }
+
+                    #endregion
+
+                    #region Check existing location
+
+                    if (!Request.ParseTerminal(CommonAPI,
+                                               out var terminalId,
+                                               out var existingTerminal,
+                                               out var ocpiResponseBuilder,
+                                               FailOnMissingTerminal: false))
+                    {
+                        return ocpiResponseBuilder;
+                    }
+
+                    #endregion
+
+                    #region Parse new or updated location JSON
+
+                    if (!Request.TryParseJObjectRequestBody(out var locationJSON, out ocpiResponseBuilder))
+                        return ocpiResponseBuilder;
+
+                    if (!Terminal.TryParse(locationJSON,
+                                           out var newOrUpdatedTerminal,
+                                           out var errorResponse,
+                                           terminalId))
+                    {
+
+                        return new OCPIResponse.Builder(Request) {
+                                   StatusCode           = 2001,
+                                   StatusMessage        = "Could not parse the given location JSON: " + errorResponse,
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PATCH" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ]
+                                   }
+                               };
+
+                    }
+
+                    #endregion
+
+
+                    var addOrUpdateResult = await CommonAPI.AddOrUpdateTerminal(
+                                                      newOrUpdatedTerminal,
+                                                      AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"),
+                                                      false, //SkipNotifications
+                                                      Request.HTTPRequest.EventTrackingId,
+                                                      CurrentUserId: null
+                                                  );
+
+                    if (addOrUpdateResult.IsSuccess &&
+                        addOrUpdateResult.Data is not null)
+                    {
+
+                        return new OCPIResponse.Builder(Request) {
+                                   StatusCode           = 1000,
+                                   StatusMessage        = "Hello world!",
+                                   Data                 = addOrUpdateResult.Data.ToJSON(true,
+                                                                                        true,
+                                                                                        CustomTerminalSerializer,
+                                                                                        CustomDisplayTextSerializer,
+                                                                                        CustomImageSerializer),
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                       HTTPStatusCode             = addOrUpdateResult.WasCreated == true
+                                                                        ? HTTPStatusCode.Created
+                                                                        : HTTPStatusCode.OK,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PATCH" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ],
+                                       LastModified               = addOrUpdateResult.Data.LastUpdated,
+                                       ETag                       = addOrUpdateResult.Data.ETag
+                                   }
+                               };
+
+                    }
+
+                    return new OCPIResponse.Builder(Request) {
+                               StatusCode           = 2000,
+                               StatusMessage        = addOrUpdateResult.ErrorResponse,
+                               Data                 = newOrUpdatedTerminal.ToJSON(true,
+                                                                                  true,
+                                                                                  CustomTerminalSerializer,
+                                                                                  CustomDisplayTextSerializer,
+                                                                                  CustomImageSerializer),
+                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PATCH" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                           };
+
+                }
+
+            );
+
+            #endregion
+
+            #endregion
+
+            #region ~/payments/financial-advice-confirmations
+
+            #region OPTIONS  ~/payments/financial-advice-confirmations
+
+            CommonAPI.AddOCPIMethod(
+
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "payments/financial-advice-confirmations",
+                OCPIRequestHandler: request =>
+
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.POST ],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                        })
+
+            );
+
+            #endregion
+
+            #region POST     ~/payments/financial-advice-confirmations
+
+
+            #endregion
+
+            #endregion
+
+            #region ~/payments/financial-advice-confirmations/{financial_advice_confirmation_id}
+
+            #region OPTIONS  ~/payments/financial-advice-confirmations/{financial_advice_confirmation_id}
+
+            CommonAPI.AddOCPIMethod(
+
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "payments/financial-advice-confirmations/{financial_advice_confirmation_id}",
+                OCPIRequestHandler: request =>
+
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                        })
+
+            );
+
+            #endregion
+
+            #region GET      ~/payments/financial-advice-confirmations/{financial_advice_confirmation_id}
+
+
+            #endregion
+
+            #endregion
 
         }
 

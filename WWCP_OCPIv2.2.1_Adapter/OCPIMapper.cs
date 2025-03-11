@@ -1391,7 +1391,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                            PostalCode:           filteredLocation.PostalCode,
                                                            State:                filteredLocation.State
                                                        ),
-                           Currency:                   OCPI.Currency.Parse(ChargeDetailRecord.ChargingPrice.Value.Currency.ISOCode),
+                           Currency:                   ChargeDetailRecord.ChargingPrice.Value.Currency,
                            ChargingPeriods:            chargingPeriods,
                            TotalCosts:                 new Price(
                                                            ExcludingVAT: (Double) ChargeDetailRecord.ChargingPrice.Value.Base,

@@ -53,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                               CountryCode.Parse("DE"),
                               Party_Id.   Parse("GEF"),
                               Tariff_Id.  Parse("TARIFF0001"),
-                              OCPI.Currency.EUR,
+                              Currency.EUR,
                               new TariffElement[] {
                                   new TariffElement(
                                       new[] {

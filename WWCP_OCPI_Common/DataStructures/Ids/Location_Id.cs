@@ -44,6 +44,26 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean IsNotNullOrEmpty(this Location_Id? LocationId)
             => LocationId.HasValue && LocationId.Value.IsNotNullOrEmpty;
 
+
+        #region Matches(LocationIds, Match, IgnoreCase = true)
+
+        /// <summary>
+        /// Checks whether the given enumeration of location identifications matches the given text.
+        /// </summary>
+        /// <param name="LocationIds">An enumeration of location identifications.</param>
+        /// <param name="Match">A text to match.</param>
+        /// <param name="IgnoreCase">Whether to ignore the case of the text.</param>
+        public static Boolean Matches(this IEnumerable<Location_Id>  LocationIds,
+                                      String                         Match,
+                                      Boolean                        IgnoreCase  = true)
+
+            => LocationIds.Any(locationId => IgnoreCase
+                                                 ? locationId.ToString().Contains(Match, StringComparison.OrdinalIgnoreCase)
+                                                 : locationId.ToString().Contains(Match, StringComparison.Ordinal));
+
+        #endregion
+
+
     }
 
 

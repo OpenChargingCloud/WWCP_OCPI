@@ -61,7 +61,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The ISO 4217 code of the currency used for this tariff.
         /// </summary>
         [Mandatory]
-        public   OCPI.Currency               Currency             { get; }
+        public   Currency                    Currency             { get; }
 
         /// <summary>
         /// The optional multi-language alternative tariff info text.
@@ -190,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                       Tariff_Id                                              Id,
                       UInt64                                                 VersionId,
 
-                      OCPI.Currency                                          Currency,
+                      Currency                                               Currency,
                       IEnumerable<TariffElement>                             TariffElements,
 
                       IEnumerable<DisplayText>?                              TariffAltText                         = null,
@@ -279,7 +279,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                         Tariff_Id                                              Id,
                         UInt64                                                 VersionId,
 
-                        OCPI.Currency                                          Currency,
+                        Currency                                               Currency,
                         IEnumerable<TariffElement>                             TariffElements,
 
                         IEnumerable<DisplayText>?                              TariffAltText                         = null,
@@ -532,8 +532,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatory("currency",
                                          "currency",
-                                         OCPI.Currency.TryParse,
-                                         out OCPI.Currency Currency,
+                                         Currency.TryParse,
+                                         out Currency currency,
                                          out ErrorResponse))
                 {
                     return false;
@@ -658,7 +658,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                              TariffIdBody  ?? TariffIdURL!. Value,
                              VersionIdBody ?? VersionIdURL!.Value,
 
-                             Currency,
+                             currency,
                              TariffElements,
 
                              TariffAltText,

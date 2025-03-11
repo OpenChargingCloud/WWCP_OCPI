@@ -511,7 +511,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The ISO 4217 code of the currency used for this charge detail record.
         /// </summary>
         [Mandatory]
-        public   OCPI.Currency                            Currency                    { get; }
+        public   Currency                                 Currency                    { get; }
 
         /// <summary>
         /// The enumeration of relevant charging tariffs.
@@ -521,7 +521,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         /// <summary>
         /// The enumeration of charging periods that make up this charging session.
-        /// A session consist of 1 or more periodes with, each period has a
+        /// A session consist of 1 or more periods with, each period has a
         /// different relevant charging tariff.
         /// </summary>
         [Mandatory]
@@ -608,7 +608,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Location">The location where the charging session took place, including only the relevant EVSE and connector.</param>
         /// <param name="AuthMethod">The authentication method used.</param>
         /// <param name="Currency">The ISO 4217 code of the currency used for this charge detail record.</param>
-        /// <param name="ChargingPeriods">The enumeration of charging periods that make up this charging session. A session consist of 1 or more periodes with, each period has a different relevant charging tariff.</param>
+        /// <param name="ChargingPeriods">The enumeration of charging periods that make up this charging session. A session consist of 1 or more periods with, each period has a different relevant charging tariff.</param>
         /// <param name="TotalCost">The total cost (excluding VAT) of this transaction.</param>
         /// <param name="TotalEnergy">The total energy charged (in kWh).</param>
         /// <param name="TotalTime">The total duration of the charging session, including the duration of charging and not charging.</param>
@@ -657,7 +657,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    Auth_Id                                                       AuthId,
                    AuthMethods                                                   AuthMethod,
                    Location                                                      Location,
-                   OCPI.Currency                                                 Currency,
+                   Currency                                                      Currency,
                    IEnumerable<ChargingPeriod>                                   ChargingPeriods,
                    Decimal                                                       TotalCost,
                    WattHour                                                      TotalEnergy,
@@ -1101,8 +1101,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("currency",
                                          "currency",
-                                         OCPI.Currency.TryParse,
-                                         out OCPI.Currency Currency,
+                                         Currency.TryParse,
+                                         out Currency currency,
                                          out ErrorResponse))
                 {
                     return false;
@@ -1255,7 +1255,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                           AuthId,
                           AuthMethod,
                           Location,
-                          Currency,
+                          currency,
                           ChargingPeriods,
                           TotalCosts,
                           TotalEnergy,
@@ -1466,7 +1466,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this charge detail record.
         /// </summary>
         public CDR Clone()
 

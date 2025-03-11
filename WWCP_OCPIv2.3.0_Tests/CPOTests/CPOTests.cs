@@ -2018,7 +2018,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                                                                   "Name?",
                                                                                   "07749"
                                                                               ),
-                                                                              OCPI.Currency.EUR,
+                                                                              Currency.EUR,
 
                                                                               [
                                                                                   ChargingPeriod.Create(
@@ -2114,7 +2114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                                                                       CountryCode.Parse("DE"),
                                                                                       Party_Id.   Parse("GEF"),
                                                                                       Tariff_Id.  Parse("TARIFF0001"),
-                                                                                      OCPI.Currency.EUR,
+                                                                                      Currency.EUR,
                                                                                       [
                                                                                           new TariffElement(
                                                                                               [

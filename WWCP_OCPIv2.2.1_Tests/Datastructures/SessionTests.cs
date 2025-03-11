@@ -67,7 +67,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                Location_Id. Parse("LOC0001"),
                                EVSE_UId.    Parse("EVSE0001"),
                                Connector_Id.Parse("C1"),
-                               OCPI.Currency.EUR,
+                               Currency.EUR,
                                SessionStatusTypes.ACTIVE,
                                DateTime.Parse("2020-08-22T00:00:00.000Z").ToUniversalTime(), // End
                                AuthorizationReference.Parse("Auth1234"),

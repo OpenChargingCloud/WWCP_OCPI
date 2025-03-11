@@ -31,6 +31,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP;
 using cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP;
+using System.Collections.Generic;
 
 #endregion
 
@@ -59,6 +60,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         public ConcurrentDictionary<Session_Id,  Session>   Sessions    = [];
         public ConcurrentDictionary<Token_Id,    Token>     Tokens      = [];
         public ConcurrentDictionary<CDR_Id,      CDR>       CDRs        = [];
+        public ConcurrentDictionary<Terminal_Id, Terminal>  Terminals   = [];
 
     }
 
@@ -181,7 +183,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="FailOnMissingLocation">Whether to fail when the location for the given location identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseLocation(this OCPIRequest           Request,
-                                            CommonAPI                    CommonAPI,
+                                            CommonAPI                  CommonAPI,
                                             out CountryCode?           CountryCode,
                                             out Party_Id?              PartyId,
                                             out Location_Id?           LocationId,
@@ -2356,6 +2358,407 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         #endregion
 
 
+        #region ParseTerminal              (this Request, CommonAPI, out TerminalId, out Terminal,                                                        out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the terminal identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="TerminalId">The parsed unique terminal identification.</param>
+        /// <param name="Terminal">The resolved user.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseTerminal(this OCPIRequest                                  Request,
+                                            CommonAPI                                         CommonAPI,
+                                            [NotNullWhen(true)]    out Terminal_Id?           TerminalId,
+                                            [MaybeNullWhen(true)]  out Terminal?              Terminal,
+                                            [NotNullWhen(false)]   out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                            Boolean                                           FailOnMissingTerminal = true)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (CommonAPI  is null)
+                throw new ArgumentNullException(nameof(CommonAPI),   "The given CPO API must not be null!");
+
+            #endregion
+
+            TerminalId           =  default;
+            Terminal             =  default;
+            OCPIResponseBuilder  =  default;
+
+            if (Request.ParsedURLParameters.Length < 1)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing terminal identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            TerminalId = Terminal_Id.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!TerminalId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid terminal identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+
+            if (!CommonAPI.TryGetTerminal(Party_Idv3.From(
+                                              CommonAPI.DefaultCountryCode,
+                                              CommonAPI.DefaultPartyId
+                                          ),
+                                          TerminalId.Value,
+                                          out Terminal))
+            {
+
+                if (FailOnMissingTerminal)
+                {
+
+                    OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                        StatusCode           = 2003,
+                        StatusMessage        = "Unknown terminal!",
+                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                            HTTPStatusCode             = HTTPStatusCode.NotFound,
+                            //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                            AccessControlAllowHeaders  = [ "Authorization" ]
+                        }
+                    };
+
+                    return false;
+
+                }
+
+                return true;
+
+            }
+
+
+            //foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
+            //{
+            //    if (CommonAPI.TryGetTerminal(Party_Idv3.From(
+            //                                     countryCodeWithPartyId.Item1,
+            //                                     countryCodeWithPartyId.Item2
+            //                                 ),
+            //                                 TerminalId.Value,
+            //                                 out Terminal))
+            //    {
+            //        return true;
+            //    }
+            //}
+
+
+            OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                StatusCode           = 2001,
+                StatusMessage        = "Unknown terminal!",
+                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                    HTTPStatusCode             = HTTPStatusCode.NotFound,
+                    //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                    AccessControlAllowHeaders  = [ "Authorization" ]
+                }
+            };
+
+            return false;
+
+        }
+
+        #endregion
+
+        #region ParseMandatoryTerminal     (this Request, CommonAPI, out TerminalId, out Terminal,                                                        out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the terminal identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="TerminalId">The parsed unique terminal identification.</param>
+        /// <param name="Terminal">The resolved user.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseMandatoryTerminal(this OCPIRequest                                Request,
+                                                     CommonAPI                                       CommonAPI,
+                                                     [NotNullWhen(true)]  out Terminal_Id?           TerminalId,
+                                                     [NotNullWhen(true)]  out Terminal?              Terminal,
+                                                     [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                                     Boolean                                         FailOnMissingTerminal = true)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (CommonAPI  is null)
+                throw new ArgumentNullException(nameof(CommonAPI),   "The given CPO API must not be null!");
+
+            #endregion
+
+            TerminalId           =  default;
+            Terminal             =  default;
+            OCPIResponseBuilder  =  default;
+
+            if (Request.ParsedURLParameters.Length < 1)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing terminal identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            TerminalId = Terminal_Id.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!TerminalId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid terminal identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+
+            if (!CommonAPI.TryGetTerminal(Party_Idv3.From(
+                                              CommonAPI.DefaultCountryCode,
+                                              CommonAPI.DefaultPartyId
+                                          ),
+                                          TerminalId.Value,
+                                          out Terminal))
+            {
+
+                if (FailOnMissingTerminal)
+                {
+
+                    OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                        StatusCode           = 2003,
+                        StatusMessage        = "Unknown terminal!",
+                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                            HTTPStatusCode             = HTTPStatusCode.NotFound,
+                            //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                            AccessControlAllowHeaders  = [ "Authorization" ]
+                        }
+                    };
+
+                    return false;
+
+                }
+
+                return true;
+
+            }
+
+
+            //foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
+            //{
+            //    if (CommonAPI.TryGetTerminal(Party_Idv3.From(
+            //                                     countryCodeWithPartyId.Item1,
+            //                                     countryCodeWithPartyId.Item2
+            //                                 ),
+            //                                 TerminalId.Value,
+            //                                 out Terminal))
+            //    {
+            //        return true;
+            //    }
+            //}
+
+
+            OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                StatusCode           = 2001,
+                StatusMessage        = "Unknown terminal!",
+                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                    HTTPStatusCode             = HTTPStatusCode.NotFound,
+                    //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                    AccessControlAllowHeaders  = [ "Authorization" ]
+                }
+            };
+
+            return false;
+
+        }
+
+        #endregion
+
+
+        #region ParseTerminal              (this Request, CommonAPI, out TerminalId, out Terminal,                                                        out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the terminal identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="TerminalId">The parsed unique terminal identification.</param>
+        /// <param name="Terminal">The resolved user.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseTerminal(this OCPIRequest                                  Request,
+                                            CommonAPI                                         CommonAPI,
+                                            IEnumerable<Tuple<CountryCode, Party_Id>>         CountryCodesWithPartyIds,
+                                            [NotNullWhen(true)]    out Terminal_Id?           TerminalId,
+                                            [MaybeNullWhen(true)]  out Terminal?              Terminal,
+                                            [NotNullWhen(false)]   out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                            Boolean                                           FailOnMissingTerminal = true)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (CommonAPI  is null)
+                throw new ArgumentNullException(nameof(CommonAPI),   "The given CPO API must not be null!");
+
+            #endregion
+
+            TerminalId           =  default;
+            Terminal             =  default;
+            OCPIResponseBuilder  =  default;
+
+            if (Request.ParsedURLParameters.Length < 1)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing terminal identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            TerminalId = Terminal_Id.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!TerminalId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid terminal identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+
+            if (!CommonAPI.TryGetTerminal(Party_Idv3.From(
+                                              CommonAPI.DefaultCountryCode,
+                                              CommonAPI.DefaultPartyId
+                                          ),
+                                          TerminalId.Value,
+                                          out Terminal))
+            {
+
+                if (FailOnMissingTerminal)
+                {
+
+                    OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                        StatusCode           = 2003,
+                        StatusMessage        = "Unknown terminal!",
+                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                            HTTPStatusCode             = HTTPStatusCode.NotFound,
+                            //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                            AccessControlAllowHeaders  = [ "Authorization" ]
+                        }
+                    };
+
+                    return false;
+
+                }
+
+                return true;
+
+            }
+
+
+            foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
+            {
+                if (CommonAPI.TryGetTerminal(Party_Idv3.From(
+                                                 countryCodeWithPartyId.Item1,
+                                                 countryCodeWithPartyId.Item2
+                                             ),
+                                             TerminalId.Value,
+                                             out Terminal))
+                {
+                    return true;
+                }
+            }
+
+
+            OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                StatusCode           = 2001,
+                StatusMessage        = "Unknown terminal!",
+                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                    HTTPStatusCode             = HTTPStatusCode.NotFound,
+                    //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                    AccessControlAllowHeaders  = [ "Authorization" ]
+                }
+            };
+
+            return false;
+
+        }
+
+        #endregion
+
+
+
+
         #region ParseCommandId             (this Request, CommonAPI, out CommandId,                                                                     out HTTPResponse)
 
         /// <summary>
@@ -2848,7 +3251,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         public CustomJObjectSerializerDelegate<VersionDetail>?                CustomVersionDetailSerializer                 { get; set; }
         public CustomJObjectSerializerDelegate<VersionEndpoint>?              CustomVersionEndpointSerializer               { get; set; }
 
-
+        public CustomJObjectSerializerDelegate<Terminal>?                     CustomTerminalSerializer                      { get; set; }
         public CustomJObjectSerializerDelegate<Location>?                     CustomLocationSerializer                      { get; set; }
         public CustomJObjectSerializerDelegate<PublishToken>?                 CustomPublishTokenSerializer                  { get; set; }
         public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?        CustomAdditionalGeoLocationSerializer         { get; set; }
@@ -11059,6 +11462,299 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         }
 
         #endregion
+
+        #endregion
+
+        #region Payment Terminals
+
+        #region Data
+
+        private readonly ConcurrentDictionary<Party_Idv3, ConcurrentDictionary<Terminal_Id, Terminal>> paymentTerminals = [];
+
+
+        public delegate Task OnPaymentTerminalAddedDelegate(Terminal PaymentTerminal);
+
+        public event OnPaymentTerminalAddedDelegate? OnPaymentTerminalAdded;
+
+
+        public delegate Task OnPaymentTerminalChangedDelegate(Terminal PaymentTerminal);
+
+        public event OnPaymentTerminalChangedDelegate? OnPaymentTerminalChanged;
+
+        #endregion
+
+
+
+        #region AddOrUpdateTerminal    (Terminal,              AllowDowngrades = false, SkipNotifications = false, ...)
+
+        public async Task<AddOrUpdateResult<Terminal>> AddOrUpdateTerminal(Terminal           Terminal,
+                                                                           Boolean?           AllowDowngrades     = false,
+                                                                           Boolean            SkipNotifications   = false,
+                                                                           EventTracking_Id?  EventTrackingId     = null,
+                                                                           User_Id?           CurrentUserId       = null)
+        {
+
+            var partyIdv3 = Party_Idv3.From(
+                                Terminal.CountryCode ?? DefaultCountryCode,
+                                Terminal.PartyId     ?? DefaultPartyId
+                            );
+
+            if (!this.paymentTerminals.TryGetValue(partyIdv3, out var terminals))
+            {
+                terminals = new ConcurrentDictionary<Terminal_Id, Terminal>();
+                paymentTerminals.TryAdd(partyIdv3, terminals);
+            }
+
+            #region Update an existing tariff
+
+            if (terminals.TryGetValue(Terminal.Id,
+                                      out var existingTerminal))
+            {
+
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Terminal.LastUpdated <= existingTerminal.LastUpdated)
+                {
+                    return AddOrUpdateResult<Terminal>.Failed(EventTrackingId, Terminal,
+                                                              "The 'lastUpdated' timestamp of the new charging tariff must be newer then the timestamp of the existing tariff!");
+                }
+
+                terminals.AddOrUpdate(Terminal.Id, key => Terminal, (key, old) => Terminal);
+                Terminal.CommonAPI = this;
+
+                await LogAsset(
+                          CommonBaseAPI.addOrUpdateTerminal,
+                          Terminal.ToJSON(true,
+                                          true,
+                                          CustomTerminalSerializer,
+                                          CustomDisplayTextSerializer,
+                                          CustomImageSerializer),
+                          EventTrackingId ?? EventTracking_Id.New,
+                          CurrentUserId
+                      );
+
+                if (!SkipNotifications)
+                {
+
+                    var OnPaymentTerminalChangedLocal = OnPaymentTerminalChanged;
+                    if (OnPaymentTerminalChangedLocal is not null)
+                    {
+                        try
+                        {
+                            OnPaymentTerminalChangedLocal(Terminal).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateTerminal), " ", nameof(OnPaymentTerminalChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
+                return AddOrUpdateResult<Terminal>.Updated(EventTrackingId, Terminal);
+
+            }
+
+            #endregion
+
+            #region Add a new tariff
+
+            if (terminals.TryAdd(Terminal.Id, Terminal))
+            {
+
+                Terminal.CommonAPI = this;
+
+                await LogAsset(
+                          CommonBaseAPI.addOrUpdateTerminal,
+                          Terminal.ToJSON(true,
+                                          true,
+                                          CustomTerminalSerializer,
+                                          CustomDisplayTextSerializer,
+                                          CustomImageSerializer),
+                          EventTrackingId ?? EventTracking_Id.New,
+                          CurrentUserId
+                      );
+
+                if (!SkipNotifications)
+                {
+
+                    var OnPaymentTerminalAddedLocal = OnPaymentTerminalAdded;
+                    if (OnPaymentTerminalAddedLocal is not null)
+                    {
+                        try
+                        {
+                            OnPaymentTerminalAddedLocal(Terminal).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateTerminal), " ", nameof(OnPaymentTerminalAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
+                return AddOrUpdateResult<Terminal>.Created(EventTrackingId, Terminal);
+
+            }
+
+            return AddOrUpdateResult<Terminal>.Failed(EventTrackingId, Terminal,
+                                                      "AddOrUpdateTerminal(Terminal.Id, Terminal) failed!");
+
+            #endregion
+
+        }
+
+        #endregion
+
+        #region TryPatchTerminal       (Terminal, TerminalPatch, AllowDowngrades = false, SkipNotifications = false, ...)
+
+        public async Task<PatchResult<Terminal>> TryPatchTerminal(Terminal           Terminal,
+                                                                  JObject            TerminalPatch,
+                                                                  Boolean?           AllowDowngrades     = false,
+                                                                  Boolean            SkipNotifications   = false,
+                                                                  EventTracking_Id?  EventTrackingId     = null,
+                                                                  User_Id?           CurrentUserId       = null)
+        {
+
+            if (!TerminalPatch.HasValues)
+                return PatchResult<Terminal>.Failed(EventTrackingId, Terminal,
+                                                    "The given payment terminal patch must not be null or empty!");
+
+            var partyIdv3 = Party_Idv3.From(
+                                Terminal.CountryCode ?? DefaultCountryCode,
+                                Terminal.PartyId     ?? DefaultPartyId
+                            );
+
+            if (!this.paymentTerminals.TryGetValue(partyIdv3, out var terminals))
+            {
+                terminals = new ConcurrentDictionary<Terminal_Id, Terminal>();
+                paymentTerminals.TryAdd(partyIdv3, terminals);
+            }
+
+            if (terminals.TryGetValue(Terminal.Id, out var existingTerminal))
+            {
+
+                var patchResult = existingTerminal.TryPatch(TerminalPatch,
+                                                            AllowDowngrades ?? this.AllowDowngrades ?? false);
+
+                if (patchResult.IsSuccess &&
+                    patchResult.PatchedData is not null)
+                {
+
+                    terminals.TryUpdate(Terminal.Id, Terminal, patchResult.PatchedData);
+
+                    await LogAsset(
+                              CommonBaseAPI.updateTerminal,
+                              Terminal.ToJSON(true,
+                                              true,
+                                              CustomTerminalSerializer,
+                                              CustomDisplayTextSerializer,
+                                              CustomImageSerializer),
+                              EventTrackingId ?? EventTracking_Id.New,
+                              CurrentUserId
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnPaymentTerminalChangedLocal = OnPaymentTerminalChanged;
+                        if (OnPaymentTerminalChangedLocal is not null)
+                        {
+                            try
+                            {
+                                OnPaymentTerminalChangedLocal(patchResult.PatchedData).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryPatchTerminal), " ", nameof(OnPaymentTerminalChanged), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                    }
+
+                }
+
+                return patchResult;
+
+            }
+
+            else
+                return PatchResult<Terminal>.Failed(EventTrackingId, Terminal,
+                                                    "The given payment terminal does not exist!");
+
+        }
+
+        #endregion
+
+
+
+        #region TryGetTerminal(PartyId, TerminalId, out Terminal)
+
+        public Boolean TryGetTerminal(Party_Idv3                         PartyId,
+                                      Terminal_Id                        TerminalId,
+                                      [NotNullWhen(true)] out Terminal?  Terminal)
+        {
+
+            if (paymentTerminals.TryGetValue(PartyId,    out var terminals) &&
+                terminals.       TryGetValue(TerminalId, out     Terminal))
+            {
+                return true;
+            }
+
+            Terminal = null;
+            return false;
+
+        }
+
+        #endregion
+
+        #region GetPaymentTerminals  (IncludePaymentTerminal)
+
+        public IEnumerable<Terminal> GetPaymentTerminals(Func<Terminal, Boolean> IncludePaymentTerminal)
+        {
+
+            var allPaymentTerminals = new List<Terminal>();
+
+            foreach (var terminals in paymentTerminals.Values)
+            {
+                foreach (var terminal in terminals.Values)
+                {
+                    if (terminal is not null &&
+                        IncludePaymentTerminal(terminal))
+                    {
+                        allPaymentTerminals.Add(terminal);
+                    }
+                }
+            }
+
+            return allPaymentTerminals;
+
+        }
+
+        #endregion
+
+        #region GetPaymentTerminals  (PartyId = null)
+
+        public IEnumerable<Terminal> GetPaymentTerminals(Party_Idv3? PartyId = null)
+        {
+
+            if (PartyId.HasValue &&
+                paymentTerminals.TryGetValue(PartyId.Value, out var terminals))
+            {
+                return terminals.Values;
+            }
+
+            return paymentTerminals.SelectMany(party => party.Value.Values);
+
+        }
+
+        #endregion
+
 
         #endregion
 
