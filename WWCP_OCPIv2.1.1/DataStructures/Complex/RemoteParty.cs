@@ -161,7 +161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The timestamp when this remote party was created.
         /// </summary>
-        [Mandatory, NonStandard("Pagination")]
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public DateTime                              Created                       { get; }
 
         /// <summary>

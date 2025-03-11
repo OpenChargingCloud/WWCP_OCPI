@@ -145,7 +145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// The timestamp when this EVSE was created.
         /// </summary>
-        [Mandatory, NonStandard("Pagination")]
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public DateTime                          Created                  { get; }
 
         /// <summary>
@@ -163,13 +163,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region Constructor(s)
 
-        #region (internal) Connector(ParentEVSE, Id, Standard, ... )
-
         /// <summary>
         /// A connector is the socket or cable available for the electric vehicle to make use of.
         /// </summary>
-        /// <param name="ParentEVSE">The parent EVSE of this connector.</param>
-        /// 
         /// <param name="Id">Identifier of the connector within the EVSE.</param>
         /// <param name="Standard">The standard of the installed connector.</param>
         /// <param name="Format">The format (socket/cable) of the installed connector.</param>
@@ -184,29 +180,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="Created">The optional timestamp when this connector was created.</param>
         /// <param name="LastUpdated">A timestamp when this connector was last updated (or created).</param>
         /// 
+        /// <param name="ParentEVSE">The parent EVSE of this connector.</param>
+        /// 
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        internal Connector(EVSE?                                        ParentEVSE,
+        public Connector(Connector_Id                                 Id,
+                         ConnectorType                                Standard,
+                         ConnectorFormats                             Format,
+                         PowerTypes                                   PowerType,
+                         Volt                                         MaxVoltage,
+                         Ampere                                       MaxAmperage,
+                         Watt?                                        MaxElectricPower            = null,
+                         IEnumerable<Tariff_Id>?                      TariffIds                   = null,
+                         URL?                                         TermsAndConditionsURL       = null,
+                         IEnumerable<ConnectorCapability>?            Capabilities                = null,
 
-                           Connector_Id                                 Id,
-                           ConnectorType                                Standard,
-                           ConnectorFormats                             Format,
-                           PowerTypes                                   PowerType,
-                           Volt                                         MaxVoltage,
-                           Ampere                                       MaxAmperage,
-                           Watt?                                        MaxElectricPower            = null,
-                           IEnumerable<Tariff_Id>?                      TariffIds                   = null,
-                           URL?                                         TermsAndConditionsURL       = null,
-                           IEnumerable<ConnectorCapability>?            Capabilities                = null,
+                         DateTime?                                    Created                     = null,
+                         DateTime?                                    LastUpdated                 = null,
 
-                           DateTime?                                    Created                     = null,
-                           DateTime?                                    LastUpdated                 = null,
-
-                           EMSP_Id?                                     EMSPId                      = null,
-                           CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
+                         EVSE?                                        ParentEVSE                  = null,
+                         EMSP_Id?                                     EMSPId                      = null,
+                         CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
         {
-
-            this.ParentEVSE             = ParentEVSE;
 
             this.Id                     = Id;
             this.Standard               = Standard;
@@ -221,6 +216,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             this.Created                = Created                  ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated            = LastUpdated              ?? Created     ?? Timestamp.Now;
+
+            this.ParentEVSE             = ParentEVSE;
 
             this.ETag                   = SHA256.HashData(
                                               ToJSON(
@@ -250,68 +247,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             }
 
         }
-
-        #endregion
-
-        #region Connector(Id, Standard, ... )
-
-        /// <summary>
-        /// A connector is the socket or cable available for the electric vehicle to make use of.
-        /// </summary>
-        /// <param name="Id">Identifier of the connector within the EVSE.</param>
-        /// <param name="Standard">The standard of the installed connector.</param>
-        /// <param name="Format">The format (socket/cable) of the installed connector.</param>
-        /// <param name="PowerType">The type of power at the connector.</param>
-        /// <param name="MaxVoltage">The maximum voltage of the connector (line to neutral for AC_3_PHASE).</param>
-        /// <param name="MaxAmperage">The maximum amperage of the connector.</param>
-        /// <param name="MaxElectricPower">The maximum electric power that can be delivered by this connector.</param>
-        /// <param name="TariffIds">An enumeration of currently valid charging tariffs identifiers.</param>
-        /// <param name="TermsAndConditionsURL">An optional URL to the operator's terms and conditions.</param>
-        /// <param name="Capabilities">An optional enumeration of connector capabilities.</param>
-        /// 
-        /// <param name="Created">The optional timestamp when this connector was created.</param>
-        /// <param name="LastUpdated">A timestamp when this connector was last updated (or created).</param>
-        /// 
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        public Connector(Connector_Id                                 Id,
-                         ConnectorType                                Standard,
-                         ConnectorFormats                             Format,
-                         PowerTypes                                   PowerType,
-                         Volt                                         MaxVoltage,
-                         Ampere                                       MaxAmperage,
-                         Watt?                                        MaxElectricPower            = null,
-                         IEnumerable<Tariff_Id>?                      TariffIds                   = null,
-                         URL?                                         TermsAndConditionsURL       = null,
-                         IEnumerable<ConnectorCapability>?            Capabilities                = null,
-
-                         DateTime?                                    Created                     = null,
-                         DateTime?                                    LastUpdated                 = null,
-
-                         EMSP_Id?                                     EMSPId                      = null,
-                         CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
-
-            : this(null,
-
-                   Id,
-                   Standard,
-                   Format,
-                   PowerType,
-                   MaxVoltage,
-                   MaxAmperage,
-                   MaxElectricPower,
-                   TariffIds,
-                   TermsAndConditionsURL,
-                   Capabilities,
-
-                   Created,
-                   LastUpdated,
-
-                   EMSPId,
-                   CustomConnectorSerializer)
-
-        { }
-
-        #endregion
 
         #endregion
 
@@ -523,7 +458,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 #endregion
 
 
-                #region Parse Created             [optional, NonStandard]
+                #region Parse Created             [optional, VendorExtension]
 
                 if (JSON.ParseOptional("created",
                                        "created",
@@ -657,8 +592,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             => new (
 
-                   ParentEVSE,
-
                    Id.                    Clone(),
                    Standard.              Clone(),
                    Format,
@@ -671,7 +604,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    Capabilities.Select(capability => capability.Clone()),
 
                    Created,
-                   LastUpdated
+                   LastUpdated,
+
+                   ParentEVSE
 
                );
 
@@ -741,7 +676,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region TryPatch(ConnectorPatch, AllowDowngrades = false))
 
         /// <summary>
-        /// Try to patch the JSON representaion of this connector.
+        /// Try to patch the JSON representation of this connector.
         /// </summary>
         /// <param name="ConnectorPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>

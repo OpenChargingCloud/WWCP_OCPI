@@ -144,7 +144,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The timestamp when this session was created.
         /// </summary>
-        [Mandatory, NonStandard("Pagination")]
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public   DateTime                            Created                      { get; }
 
         /// <summary>
@@ -922,7 +922,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region TryPatch(SessionPatch, AllowDowngrades = false)
 
         /// <summary>
-        /// Try to patch the JSON representaion of this charging session.
+        /// Try to patch the JSON representation of this charging session.
         /// </summary>
         /// <param name="SessionPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>

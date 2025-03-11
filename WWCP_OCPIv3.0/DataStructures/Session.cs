@@ -159,20 +159,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// The optional energy meter used for this session.
         /// </summary>
-        [Optional, NonStandard]
+        [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
         public   EnergyMeter<EVSE>?                       EnergyMeter                  { get; }
 
         /// <summary>
         /// The enumeration of valid transparency softwares which can be used to validate
         /// the singed charging session and metering data.
         /// </summary>
-        [Optional, NonStandard]
+        [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
         public   IEnumerable<TransparencySoftwareStatus>  TransparencySoftwares        { get; }
 
         /// <summary>
         /// The timestamp when this session was created.
         /// </summary>
-        [Mandatory, NonStandard("Pagination")]
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public   DateTime                                 Created                      { get; }
 
         /// <summary>
@@ -1123,7 +1123,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region TryPatch(SessionPatch, AllowDowngrades = false)
 
         /// <summary>
-        /// Try to patch the JSON representaion of this charging session.
+        /// Try to patch the JSON representation of this charging session.
         /// </summary>
         /// <param name="SessionPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
@@ -1699,20 +1699,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// <summary>
             /// The optional energy meter used for this session.
             /// </summary>
-            [Optional, NonStandard]
+            [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
             public   EnergyMeter<EVSE>?                       EnergyMeter                  { get; set; }
 
             /// <summary>
             /// The enumeration of valid transparency softwares which can be used to validate
             /// the singed charging session and metering data.
             /// </summary>
-            [Optional, NonStandard]
+            [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
             public   HashSet<TransparencySoftwareStatus>      TransparencySoftwares        { get; }
 
             /// <summary>
             /// The timestamp when this session was created.
             /// </summary>
-            [Mandatory, NonStandard("Pagination")]
+            [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
             public   DateTime?                                Created                      { get; set; }
 
             /// <summary>

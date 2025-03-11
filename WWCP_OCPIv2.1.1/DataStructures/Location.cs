@@ -225,13 +225,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Whether this charging location may be published on an website or app etc., or not.
         /// </summary>
-        [Optional, NonStandard("PlugSurfingExtension")]
+        [Optional, VendorExtension("PlugSurfing")]
         public    Boolean?                            Publish                  { get; }
 
         /// <summary>
         /// The timestamp when this charging location was created.
         /// </summary>
-        [Mandatory, NonStandard("Pagination")]
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public    DateTime                            Created                  { get; }
 
         /// <summary>
@@ -243,7 +243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The SHA256 hash of the JSON representation of this location.
         /// </summary>
-        [Optional, NonStandard("OCPIComputerScienceExtension")]
+        [Optional, VendorExtension(VE.GraphDefined, "OCPIComputerScienceExtension")]
         public    String                              ETag                     { get; private set; }
 
         #endregion
@@ -1421,7 +1421,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region TryPatch(LocationPatch, AllowDowngrades = false)
 
         /// <summary>
-        /// Try to patch the JSON representaion of this location.
+        /// Try to patch the JSON representation of this location.
         /// </summary>
         /// <param name="LocationPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
@@ -2182,7 +2182,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             // <summary>
             /// The timestamp when this charging location was created.
             /// </summary>
-            [Mandatory, NonStandard("Pagination")]
+            [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
             public DateTime?                           Created                  { get; set; }
 
             /// <summary>

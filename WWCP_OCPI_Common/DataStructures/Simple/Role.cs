@@ -221,6 +221,12 @@ namespace cloud.charging.open.protocols.OCPI
             = new ("EMSP");
 
         /// <summary>
+        /// A payment terminal provider.
+        /// </summary>
+        public static Role  PTP         { get; }
+            = new ("PTP");
+
+        /// <summary>
         /// A roaming hub can connect multiple CPOs to multiple eMSPs.
         /// </summary>
         public static Role  HUB         { get; }

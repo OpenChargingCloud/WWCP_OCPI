@@ -111,19 +111,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The timestamp when this tariff was created.
         /// </summary>
-        [Mandatory, NonStandard("Pagination")]
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public   DateTime                    Created              { get; }
 
         /// <summary>
         /// The optional timestamp when this tariff becomes relevant.
         /// </summary>
-        [Optional, NonStandard("TimeTraveling")]
+        [Optional, VendorExtension(VE.GraphDefined, VE.TimeTraveling)]
         public   DateTime?                   NotBefore            { get; }
 
         /// <summary>
         /// The optional timestamp when this tariff is no longer relevant.
         /// </summary>
-        [Optional, NonStandard("TimeTraveling")]
+        [Optional, VendorExtension(VE.GraphDefined, VE.TimeTraveling)]
         public   DateTime?                   NotAfter             { get; }
 
         /// <summary>
@@ -831,7 +831,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region TryPatch(TariffPatch, AllowDowngrades = false)
 
         /// <summary>
-        /// Try to patch the JSON representaion of this charging tariff.
+        /// Try to patch the JSON representation of this charging tariff.
         /// </summary>
         /// <param name="TariffPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>

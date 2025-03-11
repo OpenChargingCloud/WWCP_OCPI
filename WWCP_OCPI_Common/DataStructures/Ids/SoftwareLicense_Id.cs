@@ -50,7 +50,7 @@ namespace cloud.charging.open.protocols.OCPI
     /// <summary>
     /// The unique identification of a software license.
     /// </summary>
-    [NonStandard]
+    [VendorExtension(VE.GraphDefined)]
     public readonly struct SoftwareLicense_Id : IId<SoftwareLicense_Id>
     {
 

@@ -142,13 +142,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// The optional energy meter, e.g. for the German calibration law.
         /// </summary>
-        [Optional, NonStandard]
+        [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
         public EnergyMeter<EVSE>?               EnergyMeter                { get; }
 
         /// <summary>
         /// The timestamp when this EVSE was created.
         /// </summary>
-        [Mandatory, NonStandard("Pagination")]
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public DateTime                         Created                    { get; }
 
         /// <summary>
@@ -918,7 +918,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region TryPatch(EVSEPatch, AllowDowngrades = false)
 
         /// <summary>
-        /// Try to patch the JSON representaion of this EVSE.
+        /// Try to patch the JSON representation of this EVSE.
         /// </summary>
         /// <param name="EVSEPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
@@ -1544,13 +1544,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// <summary>
             /// The optional energy meter, e.g. for the German calibration law.
             /// </summary>
-            [Optional, NonStandard]
+            [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
             public EnergyMeter<EVSE>?               EnergyMeter                { get; set; }
 
             /// <summary>
             /// The timestamp when this EVSE was created.
             /// </summary>
-            [Mandatory, NonStandard("Pagination")]
+            [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
             public DateTime?                        Created                    { get; set; }
 
             /// <summary>

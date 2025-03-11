@@ -146,7 +146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// The timestamp when this token was created.
         /// </summary>
-        [Mandatory, NonStandard("Pagination")]
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public   DateTime         Created           { get; }
 
         /// <summary>
@@ -549,7 +549,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 #endregion
 
 
-                #region Parse Created           [optional, NonStandard]
+                #region Parse Created           [optional, VendorExtension]
 
                 if (JSON.ParseOptional("created",
                                        "created",
@@ -763,7 +763,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region TryPatch(TokenPatch, AllowDowngrades = false)
 
         /// <summary>
-        /// Try to patch the JSON representaion of this token.
+        /// Try to patch the JSON representation of this token.
         /// </summary>
         /// <param name="TokenPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>

@@ -145,7 +145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(session1.LocationId,               session2.LocationId);
             ClassicAssert.AreEqual(session1.EVSEUId,                  session2.EVSEUId);
             ClassicAssert.AreEqual(session1.ConnectorId,              session2.ConnectorId);
-            ClassicAssert.AreEqual(session1.MeterId,                  session2.MeterId);
+            ClassicAssert.AreEqual(session1.EnergyMeterId,                  session2.EnergyMeterId);
             ClassicAssert.AreEqual(session1.Currency,                 session2.Currency);
             ClassicAssert.AreEqual(session1.ChargingPeriods,          session2.ChargingPeriods);
             ClassicAssert.AreEqual(session1.TotalCosts,               session2.TotalCosts);

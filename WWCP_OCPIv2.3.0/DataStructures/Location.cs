@@ -285,7 +285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// The timestamp when this location was created.
         /// </summary>
-        [Mandatory, NonStandard("Pagination")]
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public    DateTime                         Created                  { get; }
 
         /// <summary>
@@ -302,176 +302,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
         #region Constructor(s)
-
-        #region Location(...)
-
-        /// <summary>
-        /// Create a new location.
-        /// </summary>
-        /// <param name="CountryCode">An ISO-3166 alpha-2 country code of the charge point operator that 'owns' this location.</param>
-        /// <param name="PartyId">An identification of the charge point operator that 'owns' this location (following the ISO-15118 standard).</param>
-        /// <param name="Id">An identification of the location within the CPOs platform (and suboperator platforms).</param>
-        /// <param name="Publish">Whether this location may be published on an website or app etc., or not.</param>
-        /// <param name="Address">The address of the location.</param>
-        /// <param name="City">The city or town of the location.</param>
-        /// <param name="Country">The country of the location.</param>
-        /// <param name="Coordinates">The geographical location of this location.</param>
-        /// <param name="Timezone">One of IANA tzdata’s TZ-values representing the time zone of the location (http://www.iana.org/time-zones).</param>
-        /// 
-        /// <param name="PublishAllowedTo">An optional enumeration of publish tokens. Only owners of tokens that match all the set fields of one publish token in the list are allowed to be shown this location.</param>
-        /// <param name="Name">An optional display name of the location.</param>
-        /// <param name="PostalCode">An optional postal code of the location.</param>
-        /// <param name="State">An optional state or province of the location.</param>
-        /// <param name="RelatedLocations">An optional enumeration of additional geographical locations of related geo coordinates that might be relevant to the EV driver.</param>
-        /// <param name="ParkingType">An optional general type of parking at the location.</param>
-        /// <param name="EVSEs">An optional enumeration of Electric Vehicle Supply Equipments (EVSE) at this location.</param>
-        /// <param name="ParkingPlaces">An optional enumeration of parking places that can be used by vehicles charging at this location.</param>
-        /// <param name="Directions">An optional enumeration of human-readable directions on how to reach the location.</param>
-        /// <param name="Operator">Optional information about the charging station operator.</param>
-        /// <param name="SubOperator">Optional information about the suboperator.</param>
-        /// <param name="Owner">Optional information about the owner.</param>
-        /// <param name="Facilities">An optional enumeration of facilities this location directly belongs to.</param>
-        /// <param name="OpeningTimes">An optional times when the EVSEs at the location can be accessed for charging.</param>
-        /// <param name="ChargingWhenClosed">Indicates if the EVSEs are still charging outside the opening hours of the location. </param>
-        /// <param name="Images">An optional enumeration of images related to the location such as photos or logos.</param>
-        /// <param name="EnergyMix">Optional details on the energy supplied at this location.</param>
-        /// <param name="EnergyMeters">An optional enumeration of energy meters at this location.</param>
-        /// <param name="HelpPhone">An optional telephone number that an EV driver charging at this location may call for assistance.</param>
-        /// 
-        /// <param name="Created">An optional timestamp when this location was created.</param>
-        /// <param name="LastUpdated">An optional timestamp when this location was last updated (or created).</param>
-        /// 
-        /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
-        /// <param name="CustomPublishTokenSerializer">A delegate to serialize custom publish token type JSON objects.</param>
-        /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
-        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
-        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        /// <param name="CustomLocationEnergyMeterSerializer">A delegate to serialize custom location energy meter JSON objects.</param>
-        /// <param name="CustomEVSEEnergyMeterSerializer">A delegate to serialize custom EVSE energy meter JSON objects.</param>
-        /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
-        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
-        /// <param name="CustomParkingSerializer">A delegate to serialize custom parking JSON objects.</param>
-        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
-        /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
-        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
-        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
-        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        public Location(CountryCode                                                   CountryCode,
-                        Party_Id                                                      PartyId,
-                        Location_Id                                                   Id,
-                        Boolean                                                       Publish,
-                        String                                                        Address,
-                        String                                                        City,
-                        Country                                                       Country,
-                        GeoCoordinate                                                 Coordinates,
-                        String                                                        Timezone,
-
-                        IEnumerable<PublishToken>?                                    PublishAllowedTo                             = null,
-                        String?                                                       Name                                         = null,
-                        String?                                                       PostalCode                                   = null,
-                        String?                                                       State                                        = null,
-                        IEnumerable<AdditionalGeoLocation>?                           RelatedLocations                             = null,
-                        ParkingType?                                                  ParkingType                                  = null,
-                        IEnumerable<EVSE>?                                            EVSEs                                        = null,
-                        IEnumerable<Parking>?                                         ParkingPlaces                                = null,
-                        IEnumerable<DisplayText>?                                     Directions                                   = null,
-                        BusinessDetails?                                              Operator                                     = null,
-                        BusinessDetails?                                              SubOperator                                  = null,
-                        BusinessDetails?                                              Owner                                        = null,
-                        IEnumerable<Facilities>?                                      Facilities                                   = null,
-                        Hours?                                                        OpeningTimes                                 = null,
-                        Boolean?                                                      ChargingWhenClosed                           = null,
-                        IEnumerable<Image>?                                           Images                                       = null,
-                        EnergyMix?                                                    EnergyMix                                    = null,
-                        IEnumerable<EnergyMeter<Location>>?                           EnergyMeters                                 = null,
-                        PhoneNumber?                                                  HelpPhone                                    = null,
-
-                        DateTime?                                                     Created                                      = null,
-                        DateTime?                                                     LastUpdated                                  = null,
-                        EMSP_Id?                                                      EMSPId                                       = null,
-
-                        CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
-                        CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                 = null,
-                        CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
-                        CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
-                        CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
-                        CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
-                        CustomJObjectSerializerDelegate<EnergyMeter<Location>>?       CustomLocationEnergyMeterSerializer          = null,
-                        CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer              = null,
-                        CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
-                        CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
-                        CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
-                        CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
-                        CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
-                        CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
-                        CustomJObjectSerializerDelegate<EVSEParking>?                 CustomEVSEParkingSerializer                  = null,
-                        CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
-                        CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null,
-                        CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 = null,
-                        CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer          = null)
-
-            : this(null,
-                   CountryCode,
-                   PartyId,
-                   Id,
-                   Publish,
-                   Address,
-                   City,
-                   Country,
-                   Coordinates,
-                   Timezone,
-
-                   PublishAllowedTo,
-                   Name,
-                   PostalCode,
-                   State,
-                   RelatedLocations,
-                   ParkingType,
-                   EVSEs,
-                   ParkingPlaces,
-                   Directions,
-                   Operator,
-                   SubOperator,
-                   Owner,
-                   Facilities,
-                   OpeningTimes,
-                   ChargingWhenClosed,
-                   Images,
-                   EnergyMix,
-                   EnergyMeters,
-                   HelpPhone,
-
-                   Created     ?? LastUpdated,
-                   LastUpdated ?? Created,
-                   EMSPId,
-                   CustomLocationSerializer,
-                   CustomPublishTokenSerializer,
-                   CustomAdditionalGeoLocationSerializer,
-                   CustomEVSESerializer,
-                   CustomStatusScheduleSerializer,
-                   CustomConnectorSerializer,
-                   CustomLocationEnergyMeterSerializer,
-                   CustomEVSEEnergyMeterSerializer,
-                   CustomTransparencySoftwareStatusSerializer,
-                   CustomTransparencySoftwareSerializer,
-                   CustomParkingSerializer,
-                   CustomDisplayTextSerializer,
-                   CustomBusinessDetailsSerializer,
-                   CustomHoursSerializer,
-                   CustomEVSEParkingSerializer,
-                   CustomImageSerializer,
-                   CustomEnergyMixSerializer,
-                   CustomEnergySourceSerializer,
-                   CustomEnvironmentalImpactSerializer)
-
-        { }
-
-        #endregion
-
-        #region (internal) Location(CommonAPI, ...)
 
         /// <summary>
         /// Create a new location.
@@ -528,9 +358,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        public Location(CommonAPI?                                                    CommonAPI,
-
-                        CountryCode                                                   CountryCode,
+        public Location(CountryCode                                                   CountryCode,
                         Party_Id                                                      PartyId,
                         Location_Id                                                   Id,
                         Boolean                                                       Publish,
@@ -562,6 +390,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                         DateTime?                                                     Created                                      = null,
                         DateTime?                                                     LastUpdated                                  = null,
+
+                        CommonAPI?                                                    CommonAPI                                    = null,
                         EMSP_Id?                                                      EMSPId                                       = null,
 
                         CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
@@ -586,7 +416,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         {
 
-            this.CommonAPI            = CommonAPI;
             this.CountryCode          = CountryCode;
             this.PartyId              = PartyId;
             this.Id                   = Id;
@@ -617,6 +446,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             this.Created              = Created                      ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated          = LastUpdated                  ?? Created     ?? Timestamp.Now;
+
+            this.CommonAPI            = CommonAPI;
 
             foreach (var evse in EVSEs?.Distinct() ?? [])
             {
@@ -703,8 +534,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             }
 
         }
-
-        #endregion
 
         #endregion
 
@@ -1191,7 +1020,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 #endregion
 
 
-                #region Parse Created               [optional, NonStandard]
+                #region Parse Created               [optional, VendorExtension]
 
                 if (JSON.ParseOptional("created",
                                        "created",
@@ -1401,7 +1230,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                ? new JProperty("facilities",             new JArray(Facilities.      Select (facility              => facility.ToString())))
                                : null,
 
-                           new JProperty("time_zone",                    TimeZone),
+                                 new JProperty("time_zone",              TimeZone),
 
                            OpeningTimes is not null
                                ? new JProperty("opening_times",          OpeningTimes.ToJSON(CustomHoursSerializer))
@@ -1458,8 +1287,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             => new (
 
-                   CommonAPI,
-
                    CountryCode.     Clone(),
                    PartyId.         Clone(),
                    Id.              Clone(),
@@ -1491,7 +1318,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    HelpPhone?.      Clone(),
 
                    Created,
-                   LastUpdated
+                   LastUpdated,
+
+                   CommonAPI
 
                );
 
@@ -1638,7 +1467,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region TryPatch(LocationPatch, AllowDowngrades = false)
 
         /// <summary>
-        /// Try to patch the JSON representaion of this location.
+        /// Try to patch the JSON representation of this location.
         /// </summary>
         /// <param name="LocationPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
@@ -2506,7 +2335,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <summary>
             /// The timestamp when this location was created.
             /// </summary>
-            [Mandatory, NonStandard("Pagination")]
+            [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
             public DateTime?                           Created                  { get; set; }
 
             /// <summary>
@@ -2717,7 +2546,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     warnings.Add(Warning.Create("The geo coordinates must not be null or empty!"));
 
                 if (TimeZone is null || TimeZone.IsNullOrEmpty())
-                    warnings.Add(Warning.Create("The timezone parameter must not be null or empty!"));
+                    warnings.Add(Warning.Create("The time zone parameter must not be null or empty!"));
 
                 Warnings = warnings;
 
@@ -2725,8 +2554,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 return warnings.Count > 0
                            ? null
                            : new Location(
-
-                                 CommonAPI,
 
                                  CountryCode!.Value,
                                  PartyId!.    Value,
@@ -2759,7 +2586,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                  HelpPhone,
 
                                  Created     ?? Timestamp.Now,
-                                 LastUpdated ?? Timestamp.Now
+                                 LastUpdated ?? Timestamp.Now,
+
+                                 CommonAPI
 
                              );
 

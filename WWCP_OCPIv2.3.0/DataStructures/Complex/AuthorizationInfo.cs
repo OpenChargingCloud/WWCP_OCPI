@@ -76,19 +76,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         ///  The remote party.
         /// </summary>
-        [Optional, NonStandard]
+        [Optional, VendorExtension(VE.GraphDefined)]
         public RemoteParty?             RemoteParty               { get; }
 
         /// <summary>
         ///  The EMSP identification.
         /// </summary>
-        [Optional, NonStandard]
+        [Optional, VendorExtension(VE.GraphDefined)]
         public EMSP_Id?                 EMSPId                    { get; }
 
         /// <summary>
         /// The runtime of the authorization.
         /// </summary>
-        [Optional, NonStandard]
+        [Optional, VendorExtension(VE.GraphDefined)]
         public TimeSpan                 Runtime                   { get; }
 
         #endregion

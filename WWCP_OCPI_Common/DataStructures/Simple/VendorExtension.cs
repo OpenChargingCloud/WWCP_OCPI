@@ -19,32 +19,14 @@ namespace cloud.charging.open.protocols.OCPI
 {
 
     /// <summary>
-    /// Tag a struct, class or property as 'non-standard'.
+    /// Vendor extension constants.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class | AttributeTargets.Property,
-                    AllowMultiple = false,
-                    Inherited = true)]
-    public class NonStandardAttribute : Attribute
+    public static class VE
     {
-
-        #region Tags
-
-        /// <summary>
-        /// Additional tags of the 'non-standard'-tag.
-        /// </summary>
-        public IEnumerable<String>  Tags    { get; }
-
-        #endregion
-
-        /// <summary>
-        /// Create a new 'non-standard'-tag having the given tags.
-        /// </summary>
-        /// <param name="Tags">Some tags.</param>
-        public NonStandardAttribute(params String[] Tags)
-        {
-            this.Tags = Tags?.Where(tag => !String.IsNullOrEmpty(tag)).Distinct().ToArray();
-        }
-
+        public const String GraphDefined   = "GraphDefined";
+        public const String Eichrecht      = "Eichrecht";
+        public const String Pagination     = "Pagination";
+        public const String TimeTraveling  = "TimeTraveling";
     }
 
 }

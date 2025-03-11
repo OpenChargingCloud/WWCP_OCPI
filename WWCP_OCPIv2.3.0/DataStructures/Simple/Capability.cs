@@ -184,68 +184,68 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// The EVSE supports charging profiles.
         /// </summary>
-        public static Capability CHARGING_PROFILE_CAPABLE            { get; }
+        public static Capability  CHARGING_PROFILE_CAPABLE            { get; }
             = new ("CHARGING_PROFILE_CAPABLE");
 
         /// <summary>
         /// The EVSE supports charging preferences.
         /// </summary>
-        public static Capability CHARGING_PREFERENCES_CAPABLE        { get; }
+        public static Capability  CHARGING_PREFERENCES_CAPABLE        { get; }
             = new ("CHARGING_PREFERENCES_CAPABLE");
 
         /// <summary>
         /// EVSE has a payment terminal that supports chip cards.
         /// </summary>
-        public static Capability CHIP_CARD_SUPPORT                   { get; }
+        public static Capability  CHIP_CARD_SUPPORT                   { get; }
             = new ("CHIP_CARD_SUPPORT");
 
         /// <summary>
         /// EVSE has a payment terminal that supports contactless cards.
         /// </summary>
-        public static Capability CONTACTLESS_CARD_SUPPORT            { get; }
+        public static Capability  CONTACTLESS_CARD_SUPPORT            { get; }
             = new ("CONTACTLESS_CARD_SUPPORT");
 
         /// <summary>
         /// EVSE has a payment terminal that makes it possible to pay for charging using a credit card.
         /// </summary>
-        public static Capability CREDIT_CARD_PAYABLE                 { get; }
+        public static Capability  CREDIT_CARD_PAYABLE                 { get; }
             = new ("CREDIT_CARD_PAYABLE");
 
         /// <summary>
         /// EVSE has a payment terminal that makes it possible to pay for charging using a debit card.
         /// </summary>
-        public static Capability DEBIT_CARD_PAYABLE                  { get; }
+        public static Capability  DEBIT_CARD_PAYABLE                  { get; }
             = new ("DEBIT_CARD_PAYABLE");
 
         /// <summary>
         /// EVSE has a payment terminal with a pin-code entry device.
         /// </summary>
-        public static Capability PED_TERMINAL                        { get; }
+        public static Capability  PED_TERMINAL                        { get; }
             = new ("PED_TERMINAL");
 
         /// <summary>
         /// The EVSE can remotely be started/stopped.
         /// </summary>
-        public static Capability REMOTE_START_STOP_CAPABLE           { get; }
+        public static Capability  REMOTE_START_STOP_CAPABLE           { get; }
             = new ("REMOTE_START_STOP_CAPABLE");
 
         /// <summary>
         /// The EVSE can be reserved.
         /// </summary>
-        public static Capability RESERVABLE                          { get; }
+        public static Capability  RESERVABLE                          { get; }
             = new ("RESERVABLE");
 
         /// <summary>
         /// Charging at this EVSE can be authorized with a RFID token.
         /// </summary>
-        public static Capability RFID_READER                         { get; }
+        public static Capability  RFID_READER                         { get; }
             = new ("RFID_READER");
 
         /// <summary>
         /// When a StartSession is sent to this EVSE, the MSP is required to add the
         /// optional connector_id field in the StartSession object.
         /// </summary>
-        public static Capability START_SESSION_CONNECTOR_REQUIRED    { get; }
+        public static Capability  START_SESSION_CONNECTOR_REQUIRED    { get; }
             = new ("START_SESSION_CONNECTOR_REQUIRED");
 
         /// <summary>
@@ -253,13 +253,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// started with one token and stopped with another (handy when a card and key-fob are given
         /// to the EV-driver).
         /// </summary>
-        public static Capability TOKEN_GROUP_CAPABLE                 { get; }
+        public static Capability  TOKEN_GROUP_CAPABLE                 { get; }
             = new ("TOKEN_GROUP_CAPABLE");
 
         /// <summary>
         /// Connectors have mechanical lock that can be requested by the eMSP to be unlocked.
         /// </summary>
-        public static Capability UNLOCK_CAPABLE                      { get; }
+        public static Capability  UNLOCK_CAPABLE                      { get; }
             = new ("UNLOCK_CAPABLE");
 
         #endregion

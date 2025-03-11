@@ -33,7 +33,7 @@ namespace cloud.charging.open.protocols.OCPI
     /// The transparency software status.
     /// This information will e.g. be used for the German Calibration Law.
     /// </summary>
-    [NonStandard]
+    [VendorExtension(VE.GraphDefined, VE.Eichrecht)]
     public class TransparencySoftwareStatus : IEquatable<TransparencySoftwareStatus>,
                                               IComparable<TransparencySoftwareStatus>,
                                               IComparable

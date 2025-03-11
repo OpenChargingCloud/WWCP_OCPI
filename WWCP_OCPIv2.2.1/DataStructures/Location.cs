@@ -267,7 +267,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// The timestamp when this location was created.
         /// </summary>
-        [Mandatory, NonStandard("Pagination")]
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public    DateTime                         Created                  { get; }
 
         /// <summary>
@@ -1550,7 +1550,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region TryPatch(LocationPatch, AllowDowngrades = false)
 
         /// <summary>
-        /// Try to patch the JSON representaion of this location.
+        /// Try to patch the JSON representation of this location.
         /// </summary>
         /// <param name="LocationPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
@@ -2398,7 +2398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             /// <summary>
             /// The timestamp when this location was created.
             /// </summary>
-            [Mandatory, NonStandard("Pagination")]
+            [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
             public DateTime?                           Created                  { get; set; }
 
             /// <summary>
@@ -2603,7 +2603,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     warnings.Add(Warning.Create("The geo coordinates must not be null or empty!"));
 
                 if (Timezone is null || Timezone.IsNullOrEmpty())
-                    warnings.Add(Warning.Create("The timezone parameter must not be null or empty!"));
+                    warnings.Add(Warning.Create("The time zone parameter must not be null or empty!"));
 
                 Warnings = warnings;
 

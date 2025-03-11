@@ -124,7 +124,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// The timestamp when this tariff was created.
         /// </summary>
-        [Mandatory, NonStandard("Pagination")]
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public   DateTime                    Created              { get; }
 
         ///// <summary>
@@ -883,7 +883,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region TryPatch(TariffPatch, AllowDowngrades = false)
 
         /// <summary>
-        /// Try to patch the JSON representaion of this tariff.
+        /// Try to patch the JSON representation of this tariff.
         /// </summary>
         /// <param name="TariffPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>

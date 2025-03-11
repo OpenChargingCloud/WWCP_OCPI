@@ -648,7 +648,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region TryPatch(ConnectorPatch, AllowDowngrades = false))
 
         /// <summary>
-        /// Try to patch the JSON representaion of this connector.
+        /// Try to patch the JSON representation of this connector.
         /// </summary>
         /// <param name="ConnectorPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>

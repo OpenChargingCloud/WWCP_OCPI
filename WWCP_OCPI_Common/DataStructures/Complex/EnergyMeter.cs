@@ -72,7 +72,7 @@ namespace cloud.charging.open.protocols.OCPI
     /// <summary>
     /// An energy meter.
     /// </summary>
-    [NonStandard]
+    [VendorExtension(VE.GraphDefined, VE.Eichrecht)]
     public class EnergyMeter<TParent> : AInternalData,
                                         IEquatable<EnergyMeter<TParent>>,
                                         IComparable<EnergyMeter<TParent>>,
@@ -158,11 +158,11 @@ namespace cloud.charging.open.protocols.OCPI
         public IEnumerable<DisplayText>                 Description                   { get; }
 
 
-        /// <summary>
-        /// The timestamp when this energy meter was created.
-        /// </summary>
-        [Mandatory, NonStandard("Pagination")]
-        public   DateTime                               Created                       { get; }
+        ///// <summary>
+        ///// The timestamp when this energy meter was created.
+        ///// </summary>
+        //[Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
+        //public   DateTime                               Created                       { get; }
 
         /// <summary>
         /// The timestamp when this energy meter was last updated (or created).

@@ -157,20 +157,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// The timestamp when this tariff was created.
         /// </summary>
-        [Mandatory, NonStandard("Pagination")]
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public   DateTime                    Created              { get; }
 
         /// <summary>
         /// The optional timestamp when this tariff becomes relevant.
         /// </summary>
-        [Optional, NonStandard("TimeTraveling")]
+        [Optional, VendorExtension(VE.GraphDefined, VE.TimeTraveling)]
         public   DateTime?                   NotBefore
             => Start;
 
         /// <summary>
         /// The optional timestamp when this tariff is no longer relevant.
         /// </summary>
-        [Optional, NonStandard("TimeTraveling")]
+        [Optional, VendorExtension(VE.GraphDefined, VE.TimeTraveling)]
         public   DateTime?                   NotAfter
             => End;
 
@@ -190,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new charging tariff.
+        /// Create a new tariff.
         /// </summary>
         /// <param name="CountryCode">An ISO-3166 alpha-2 country code of the charge point operator that 'owns' this session.</param>
         /// <param name="PartyId">An identification of the charge point operator that 'owns' this session (following the ISO-15118 standard).</param>
@@ -213,7 +213,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// 
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
+        /// <param name="CustomPriceLimitSerializer">A delegate to serialize custom PriceLimit JSON objects.</param>
         /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
         /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
         /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
@@ -239,100 +239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                       DateTime?                                              Created                               = null,
                       DateTime?                                              LastUpdated                           = null,
 
-                      CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                = null,
-                      CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           = null,
-                      CustomJObjectSerializerDelegate<PriceLimit>?           CustomPriceLimitSerializer            = null,
-                      CustomJObjectSerializerDelegate<TariffElement>?        CustomTariffElementSerializer         = null,
-                      CustomJObjectSerializerDelegate<PriceComponent>?       CustomPriceComponentSerializer        = null,
-                      CustomJObjectSerializerDelegate<TariffRestrictions>?   CustomTariffRestrictionsSerializer    = null,
-                      CustomJObjectSerializerDelegate<EnergyMix>?            CustomEnergyMixSerializer             = null,
-                      CustomJObjectSerializerDelegate<EnergySource>?         CustomEnergySourceSerializer          = null,
-                      CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer   = null)
-
-            : this(null,
-                   CountryCode,
-                   PartyId,
-                   Id,
-                   Currency,
-                   TariffElements,
-                   TaxIncluded,
-
-                   TariffType,
-                   TariffAltText,
-                   TariffAltURL,
-                   MinPrice,
-                   MaxPrice,
-                   Start,
-                   End,
-                   EnergyMix,
-
-                   Created,
-                   LastUpdated,
-
-                   CustomTariffSerializer,
-                   CustomDisplayTextSerializer,
-                   CustomPriceLimitSerializer,
-                   CustomTariffElementSerializer,
-                   CustomPriceComponentSerializer,
-                   CustomTariffRestrictionsSerializer,
-                   CustomEnergyMixSerializer,
-                   CustomEnergySourceSerializer,
-                   CustomEnvironmentalImpactSerializer)
-
-        { }
-
-
-        /// <summary>
-        /// Create a new charging tariff.
-        /// </summary>
-        /// <param name="CountryCode">An ISO-3166 alpha-2 country code of the charge point operator that 'owns' this session.</param>
-        /// <param name="PartyId">An identification of the charge point operator that 'owns' this session (following the ISO-15118 standard).</param>
-        /// <param name="Id">An identification of the tariff within the CPOs platform (and suboperator platforms).</param>
-        /// <param name="Currency">An ISO 4217 code of the currency used for this tariff.</param>
-        /// <param name="TariffElements">An enumeration of tariff elements.</param>
-        /// <param name="TaxIncluded">Whether taxes are included in the amounts in this Tariff.</param>
-        /// 
-        /// <param name="TariffType">An optional tariff type, that allows to distinguish between charging preferences. When omitted, this tariff is valid for all charging sessions.</param>
-        /// <param name="TariffAltText">An optional multi-language alternative tariff info text.</param>
-        /// <param name="TariffAltURL">An optional URL to a web page that contains an explanation of the tariff information in human readable form.</param>
-        /// <param name="MinPrice">When this optional field is set, a charging session with this tariff will at least cost this amount.</param>
-        /// <param name="MaxPrice">When this optional field is set, a charging session with this tariff will NOT cost more than this amount.</param>
-        /// <param name="Start">An optional timestamp when this tariff becomes active (UTC).</param>
-        /// <param name="End">An optional timestamp after which this tariff is no longer valid (UTC).</param>
-        /// <param name="EnergyMix">Optional details on the energy supplied with this tariff.</param>
-        /// 
-        /// <param name="Created">An optional timestamp when this charging tariff was created.</param>
-        /// <param name="LastUpdated">An optional timestamp when this charging tariff was last updated (or created).</param>
-        /// 
-        /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
-        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
-        /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
-        /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
-        /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
-        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
-        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
-        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        public Tariff(CommonAPI?                                             CommonAPI,
-                      CountryCode                                            CountryCode,
-                      Party_Id                                               PartyId,
-                      Tariff_Id                                              Id,
-                      OCPI.Currency                                          Currency,
-                      IEnumerable<TariffElement>                             TariffElements,
-                      TaxIncluded                                            TaxIncluded,
-
-                      TariffType?                                            TariffType                            = null,
-                      IEnumerable<DisplayText>?                              TariffAltText                         = null,
-                      URL?                                                   TariffAltURL                          = null,
-                      PriceLimit?                                            MinPrice                              = null,
-                      PriceLimit?                                            MaxPrice                              = null,
-                      DateTime?                                              Start                                 = null,
-                      DateTime?                                              End                                   = null,
-                      EnergyMix?                                             EnergyMix                             = null,
-
-                      DateTime?                                              Created                               = null,
-                      DateTime?                                              LastUpdated                           = null,
-
+                      CommonAPI?                                             CommonAPI                             = null,
                       CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                = null,
                       CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           = null,
                       CustomJObjectSerializerDelegate<PriceLimit>?           CustomPriceLimitSerializer            = null,
@@ -722,7 +629,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 #endregion
 
 
-                #region Parse Created           [optional, NonStandard]
+                #region Parse Created           [optional, VendorExtension]
 
                 if (JSON.ParseOptional("created",
                                        "created",
@@ -888,11 +795,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this tariff.
         /// </summary>
         public Tariff Clone()
 
             => new (
+
                    CountryCode.  Clone(),
                    PartyId.      Clone(),
                    Id.           Clone(),
@@ -909,7 +817,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    EnergyMix?.   Clone(),
 
                    Created,
-                   LastUpdated
+                   LastUpdated,
+
+                   CommonAPI
+
                );
 
         #endregion
@@ -986,7 +897,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region TryPatch(TariffPatch, AllowDowngrades = false)
 
         /// <summary>
-        /// Try to patch the JSON representaion of this charging tariff.
+        /// Try to patch the JSON representation of this charging tariff.
         /// </summary>
         /// <param name="TariffPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>

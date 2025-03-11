@@ -33,7 +33,7 @@ namespace cloud.charging.open.protocols.OCPI
     /// The charging transparency software.
     /// This information will e.g. be used for the German calibration law.
     /// </summary>
-    [NonStandard]
+    [VendorExtension(VE.GraphDefined, VE.Eichrecht)]
     public class TransparencySoftware : IEquatable<TransparencySoftware>,
                                         IComparable<TransparencySoftware>,
                                         IComparable

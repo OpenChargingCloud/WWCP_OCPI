@@ -98,7 +98,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// The optional energy meter, e.g. for the German calibration law.
         /// </summary>
-        [Optional, NonStandard]
+        [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
         public EnergyMeter<EVSE>?               EnergyMeter                { get; }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// The timestamp when this EVSE was created.
         /// </summary>
-        [Mandatory, NonStandard("Pagination")]
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public DateTime                         Created                    { get; }
 
         /// <summary>
@@ -187,8 +187,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
         #region Constructor(s)
-
-        #region (internal) EVSE(ParentLocation, UId, Status, VehicleTypes, Connectors, ... )
 
         /// <summary>
         /// Create a new EVSE.
@@ -222,38 +220,37 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        internal EVSE(Location?                                                     ParentLocation,
+        public EVSE(EVSE_UId                                                      UId,
+                    StatusType                                                    Status,
+                    IEnumerable<Connector>                                        Connectors,
 
-                      EVSE_UId                                                      UId,
-                      StatusType                                                    Status,
-                      IEnumerable<Connector>                                        Connectors,
+                    EVSE_Id?                                                      EVSEId                                       = null,
+                    IEnumerable<StatusSchedule>?                                  StatusSchedule                               = null,
+                    IEnumerable<Capability>?                                      Capabilities                                 = null,
+                    EnergyMeter<EVSE>?                                            EnergyMeter                                  = null,
+                    String?                                                       FloorLevel                                   = null,
+                    GeoCoordinate?                                                Coordinates                                  = null,
+                    String?                                                       PhysicalReference                            = null,
+                    IEnumerable<DisplayText>?                                     Directions                                   = null,
+                    IEnumerable<ParkingRestriction>?                              ParkingRestrictions                          = null,
+                    IEnumerable<EVSEParking>?                                     Parking                                      = null,
+                    IEnumerable<Image>?                                           Images                                       = null,
+                    IEnumerable<EMSP_Id>?                                         AcceptedServiceProviders                     = null,
 
-                      EVSE_Id?                                                      EVSEId                                       = null,
-                      IEnumerable<StatusSchedule>?                                  StatusSchedule                               = null,
-                      IEnumerable<Capability>?                                      Capabilities                                 = null,
-                      EnergyMeter<EVSE>?                                            EnergyMeter                                  = null,
-                      String?                                                       FloorLevel                                   = null,
-                      GeoCoordinate?                                                Coordinates                                  = null,
-                      String?                                                       PhysicalReference                            = null,
-                      IEnumerable<DisplayText>?                                     Directions                                   = null,
-                      IEnumerable<ParkingRestriction>?                              ParkingRestrictions                          = null,
-                      IEnumerable<EVSEParking>?                                     Parking                                      = null,
-                      IEnumerable<Image>?                                           Images                                       = null,
-                      IEnumerable<EMSP_Id>?                                         AcceptedServiceProviders                     = null,
+                    DateTime?                                                     Created                                      = null,
+                    DateTime?                                                     LastUpdated                                  = null,
 
-                      DateTime?                                                     Created                                      = null,
-                      DateTime?                                                     LastUpdated                                  = null,
-
-                      EMSP_Id?                                                      EMSPId                                       = null,
-                      CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
-                      CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
-                      CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
-                      CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer              = null,
-                      CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
-                      CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
-                      CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
-                      CustomJObjectSerializerDelegate<EVSEParking>?                 CustomEVSEParkingSerializer                  = null,
-                      CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null)
+                    Location?                                                     ParentLocation                               = null,
+                    EMSP_Id?                                                      EMSPId                                       = null,
+                    CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
+                    CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
+                    CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
+                    CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer              = null,
+                    CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
+                    CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
+                    CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
+                    CustomJObjectSerializerDelegate<EVSEParking>?                 CustomEVSEParkingSerializer                  = null,
+                    CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null)
 
         {
 
@@ -297,107 +294,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                             CustomImageSerializer);
 
         }
-
-        #endregion
-
-        #region EVSE(UId, Status, VehicleTypes, Connectors, ... )
-
-        /// <summary>
-        /// Create a new EVSE.
-        /// </summary>
-        /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
-        /// <param name="Status">A current status of the EVSE.</param>
-        /// <param name="Connectors">The enumeration of available connectors attached to this EVSE.</param>
-        /// 
-        /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
-        /// <param name="StatusSchedule">An enumeration of planned future status of the EVSE.</param>
-        /// <param name="Capabilities">An enumeration of functionalities that the EVSE is capable of.</param>
-        /// <param name="EnergyMeter">An optional energy meter, e.g. for the German calibration law.</param>
-        /// <param name="FloorLevel">An optional floor level on which the EVSE is located (in garage buildings) in the locally displayed numbering scheme.</param>
-        /// <param name="Coordinates">An optional geographical location of the EVSE.</param>
-        /// <param name="PhysicalReference">An optional number/string printed on the outside of the EVSE for visual identification.</param>
-        /// <param name="Directions">An optional multi-language human-readable directions when more detailed information on how to reach the EVSE from the location is required.</param>
-        /// <param name="Images">An optional enumeration of images related to the EVSE such as photos or logos.</param>
-        /// <param name="AcceptedServiceProviders">An optional enumeration of eMSPs offering contract-based payment options that are accepted at this EVSE.</param>
-        /// 
-        /// <param name="Created">The optional timestamp when this EVSE was created.</param>
-        /// <param name="LastUpdated">The optional timestamp when this EVSE was last updated (or created).</param>
-        /// 
-        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
-        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
-        /// <param name="CustomEVSEEnergyMeterSerializer">A delegate to serialize custom EVSE energy meter JSON objects.</param>
-        /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
-        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public EVSE(EVSE_UId                                                      UId,
-                    StatusType                                                    Status,
-                    IEnumerable<Connector>                                        Connectors,
-
-                    EVSE_Id?                                                      EVSEId                                       = null,
-                    IEnumerable<StatusSchedule>?                                  StatusSchedule                               = null,
-                    IEnumerable<Capability>?                                      Capabilities                                 = null,
-                    EnergyMeter<EVSE>?                                            EnergyMeter                                  = null,
-                    String?                                                       FloorLevel                                   = null,
-                    GeoCoordinate?                                                Coordinates                                  = null,
-                    String?                                                       PhysicalReference                            = null,
-                    IEnumerable<DisplayText>?                                     Directions                                   = null,
-                    IEnumerable<ParkingRestriction>?                              ParkingRestrictions                          = null,
-                    IEnumerable<EVSEParking>?                                     Parking                                      = null,
-                    IEnumerable<Image>?                                           Images                                       = null,
-                    IEnumerable<EMSP_Id>?                                         AcceptedServiceProviders                     = null,
-
-                    DateTime?                                                     Created                                      = null,
-                    DateTime?                                                     LastUpdated                                  = null,
-
-                    EMSP_Id?                                                      EMSPId                                       = null,
-                    CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
-                    CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
-                    CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
-                    CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer              = null,
-                    CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
-                    CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
-                    CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
-                    CustomJObjectSerializerDelegate<EVSEParking>?                 CustomEVSEParkingSerializer                  = null,
-                    CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null)
-
-            : this(null,
-
-                   UId,
-                   Status,
-                   Connectors,
-
-                   EVSEId,
-                   StatusSchedule,
-                   Capabilities,
-                   EnergyMeter,
-                   FloorLevel,
-                   Coordinates,
-                   PhysicalReference,
-                   Directions,
-                   ParkingRestrictions,
-                   Parking,
-                   Images,
-                   AcceptedServiceProviders,
-
-                   Created,
-                   LastUpdated,
-
-                   EMSPId,
-                   CustomEVSESerializer,
-                   CustomStatusScheduleSerializer,
-                   CustomConnectorSerializer,
-                   CustomEVSEEnergyMeterSerializer,
-                   CustomTransparencySoftwareStatusSerializer,
-                   CustomTransparencySoftwareSerializer,
-                   CustomDisplayTextSerializer,
-                   CustomEVSEParkingSerializer,
-                   CustomImageSerializer)
-
-            { }
-
-        #endregion
 
         #endregion
 
@@ -684,7 +580,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 #endregion
 
 
-                #region Parse Created                     [optional, NonStandard]
+                #region Parse Created                     [optional, VendorExtension]
 
                 if (JSON.ParseOptional("created",
                                        "created",
@@ -878,8 +774,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             => new (
 
-                   ParentLocation,
-
                    UId.                     Clone(),
                    Status.                  Clone(),
                    Connectors.              Select(connector      => connector.             Clone()),
@@ -898,7 +792,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    AcceptedServiceProviders.Select(emspId             => emspId.            Clone()),
 
                    Created,
-                   LastUpdated
+                   LastUpdated,
+
+                   ParentLocation
 
                );
 
@@ -1037,13 +933,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region TryPatch(EVSEPatch, AllowDowngrades = false)
 
         /// <summary>
-        /// Try to patch the JSON representaion of this EVSE.
+        /// Try to patch the JSON representation of this EVSE.
         /// </summary>
         /// <param name="EVSEPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
-        public PatchResult<EVSE> TryPatch(JObject           EVSEPatch,
-                                          Boolean           AllowDowngrades   = false,
-                                          EventTracking_Id? EventTrackingId   = null)
+        public PatchResult<EVSE> TryPatch(JObject            EVSEPatch,
+                                          Boolean            AllowDowngrades   = false,
+                                          EventTracking_Id?  EventTrackingId   = null)
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -1650,7 +1546,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <summary>
             /// The optional energy meter, e.g. for the German calibration law.
             /// </summary>
-            [Optional, NonStandard]
+            [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
             public EnergyMeter<EVSE>?               EnergyMeter                 { get; set; }
 
             /// <summary>
@@ -1709,7 +1605,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <summary>
             /// The timestamp when this EVSE was created.
             /// </summary>
-            [Mandatory, NonStandard("Pagination")]
+            [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
             public DateTime                         Created                     { get; set; }
 
             /// <summary>
@@ -1846,8 +1742,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                            : new EVSE(
 
-                                 ParentLocation,
-
                                  UId.   Value,
                                  Status.Value,
                                  Connectors,
@@ -1866,7 +1760,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                  AcceptedServiceProviders,
 
                                  Created,
-                                 LastUpdated
+                                 LastUpdated,
+
+                                 ParentLocation
 
                              );
 

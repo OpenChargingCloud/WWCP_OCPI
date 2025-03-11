@@ -547,7 +547,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            City:                 ChargingPool.Address.City.FirstText(),
                            Country:              ChargingPool.Address.Country,
                            Coordinates:          ChargingPool.GeoLocation.Value,
-                           Timezone:             ChargingPool.Address.TimeZone?.ToString() ?? "UTC",
+                           TimeZone:             ChargingPool.Address.TimeZone?.ToString() ?? "UTC",
 
                            PublishAllowedTo:     null,
                            Name:                 ChargingPool.Name.FirstText(),
@@ -847,7 +847,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            EVSEId:                evseId,
                            StatusSchedule:        [],
                            Capabilities:          EVSE.ChargingStation.ToOCPI_Capabilities(),
-                           EnergyMeter:           EVSE.EnergyMeter?.ToOCPI(),
+                           EnergyMeter:           EVSE.EnergyMeter?.   ToOCPI(),
                            FloorLevel:            EVSE.ChargingStation.Address?.FloorLevel ?? EVSE.ChargingPool.Address?.FloorLevel,
                            Coordinates:           EVSE.ChargingStation.GeoLocation         ?? EVSE.ChargingPool.GeoLocation,
                            PhysicalReference:     EVSE.PhysicalReference                   ?? EVSE.ChargingStation.PhysicalReference,

@@ -139,14 +139,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// The optional energy meter.
         /// </summary>
-        [Optional, NonStandard]
+        [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
         public   EnergyMeter<EVSE>?                  EnergyMeter                 { get; }
 
         /// <summary>
         /// The enumeration of valid transparency softwares which can be used to validate
         /// the singed charging session and metering data.
         /// </summary>
-        [Optional, NonStandard]
+        [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
         public   IEnumerable<TransparencySoftware>   TransparencySoftwares        { get; }
 
         /// <summary>
@@ -282,7 +282,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// The timestamp when this charge detail record was created.
         /// </summary>
-        [Mandatory, NonStandard("Pagination")]
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public   DateTime                            Created                     { get; }
 
         /// <summary>
@@ -1431,7 +1431,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region TryPatch(CDRPatch, AllowDowngrades = false)
 
         /// <summary>
-        /// Try to patch the JSON representaion of this charge detail record.
+        /// Try to patch the JSON representation of this charge detail record.
         /// </summary>
         /// <param name="CDRPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>

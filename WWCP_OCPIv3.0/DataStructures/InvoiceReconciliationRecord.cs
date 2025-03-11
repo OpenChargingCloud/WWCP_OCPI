@@ -65,7 +65,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// The timestamp when this invoice reconciliation record was created.
         /// </summary>
-        [Mandatory, NonStandard("Pagination")]
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public   DateTime             Created        { get; }
 
         /// <summary>
@@ -581,7 +581,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region TryPatch(InvoiceReconciliationRecordPatch, AllowDowngrades = false)
 
         /// <summary>
-        /// Try to patch the JSON representaion of this invoice reconciliation record.
+        /// Try to patch the JSON representation of this invoice reconciliation record.
         /// </summary>
         /// <param name="InvoiceReconciliationRecordPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
@@ -924,7 +924,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// <summary>
             /// The timestamp when this invoice reconciliation record was created.
             /// </summary>
-            [Mandatory, NonStandard("Pagination")]
+            [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
             public   DateTime?        Created        { get; set; }
 
             /// <summary>

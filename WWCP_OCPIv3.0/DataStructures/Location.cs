@@ -219,7 +219,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// The timestamp when this location was created.
         /// </summary>
-        [Mandatory, NonStandard("Pagination")]
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public DateTime                            Created                  { get; }
 
         /// <summary>
@@ -1533,7 +1533,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region TryPatch(LocationPatch, AllowDowngrades = false)
 
         /// <summary>
-        /// Try to patch the JSON representaion of this location.
+        /// Try to patch the JSON representation of this location.
         /// </summary>
         /// <param name="LocationPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
@@ -2282,7 +2282,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// <summary>
             /// The timestamp when this location was created.
             /// </summary>
-            [Mandatory, NonStandard("Pagination")]
+            [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
             public DateTime?                       Created                  { get; set; }
 
             /// <summary>
@@ -2439,7 +2439,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     Timezone = Timezone?.Trim();
 
                     if (Timezone.IsNullOrEmpty())
-                        throw new ArgumentNullException(nameof(Timezone),   "The timezone parameter must not be null or empty!");
+                        throw new ArgumentNullException(nameof(Timezone),   "The time zone parameter must not be null or empty!");
 
 
                     return new Location(

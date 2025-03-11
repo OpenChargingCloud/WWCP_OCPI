@@ -50,7 +50,7 @@ namespace cloud.charging.open.protocols.OCPI
     /// <summary>
     /// The unique identification of a data license.
     /// </summary>
-    [NonStandard]
+    [VendorExtension(VE.GraphDefined)]
     public readonly struct DataLicense_Id : IId<DataLicense_Id>
     {
 
