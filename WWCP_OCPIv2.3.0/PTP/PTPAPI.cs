@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Collections.Concurrent;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -24,6 +26,7 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP;
 
 #endregion
 
@@ -143,7 +146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #region Terminal(s)
 
-        #region (protected internal) GetTerminalsRequest    (Request)
+        #region (protected internal) GetTerminalsRequest             (Request)
 
         /// <summary>
         /// An event sent whenever a GET terminals request was received.
@@ -166,7 +169,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #endregion
 
-        #region (protected internal) GetTerminalsResponse   (Response)
+        #region (protected internal) GetTerminalsResponse            (Response)
 
         /// <summary>
         /// An event sent whenever a GET terminals response was sent.
@@ -193,7 +196,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         #endregion
 
 
-        #region (protected internal) GetTerminalRequest    (Request)
+        #region (protected internal) GetTerminalRequest              (Request)
 
         /// <summary>
         /// An event sent whenever a GET terminal request was received.
@@ -216,7 +219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #endregion
 
-        #region (protected internal) GetTerminalResponse   (Response)
+        #region (protected internal) GetTerminalResponse             (Response)
 
         /// <summary>
         /// An event sent whenever a GET terminal response was sent.
@@ -243,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         #endregion
 
 
-        #region (protected internal) PutTerminalRequest    (Request)
+        #region (protected internal) PutTerminalRequest              (Request)
 
         /// <summary>
         /// An event sent whenever a PUT terminal request was received.
@@ -266,7 +269,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #endregion
 
-        #region (protected internal) PutTerminalResponse   (Response)
+        #region (protected internal) PutTerminalResponse             (Response)
 
         /// <summary>
         /// An event sent whenever a PUT terminal response was sent.
@@ -293,7 +296,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         #endregion
 
 
-        #region (protected internal) PatchTerminalRequest    (Request)
+        #region (protected internal) PatchTerminalRequest            (Request)
 
         /// <summary>
         /// An event sent whenever a PATCH terminal request was received.
@@ -316,7 +319,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #endregion
 
-        #region (protected internal) PatchTerminalResponse   (Response)
+        #region (protected internal) PatchTerminalResponse           (Response)
 
         /// <summary>
         /// An event sent whenever a PATCH terminal response was sent.
@@ -339,6 +342,106 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                              API ?? this,
                                              Request,
                                              Response);
+
+        #endregion
+
+
+        #region (protected internal) PostTerminalsActivateRequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a PATCH terminal request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPostTerminalsActivateRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a PATCH terminal request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The PTP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PostTerminalsActivateRequest(DateTime     Timestamp,
+                                                             HTTPAPI      API,
+                                                             OCPIRequest  Request)
+
+            => OnPostTerminalsActivateRequest.WhenAll(Timestamp,
+                                                      API ?? this,
+                                                      Request);
+
+        #endregion
+
+        #region (protected internal) PostTerminalsActivateResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a PATCH terminal response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPostTerminalsActivateResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a PATCH terminal response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The PTP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PostTerminalsActivateResponse(DateTime      Timestamp,
+                                                              HTTPAPI       API,
+                                                              OCPIRequest   Request,
+                                                              OCPIResponse  Response)
+
+            => OnPostTerminalsActivateResponse.WhenAll(Timestamp,
+                                                       API ?? this,
+                                                       Request,
+                                                       Response);
+
+        #endregion
+
+
+        #region (protected internal) PostTerminalsDeactivateRequest  (Request)
+
+        /// <summary>
+        /// An event sent whenever a PATCH terminal request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPostTerminalsDeactivateRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a PATCH terminal request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The PTP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PostTerminalsDeactivateRequest(DateTime     Timestamp,
+                                                               HTTPAPI      API,
+                                                               OCPIRequest  Request)
+
+            => OnPostTerminalsDeactivateRequest.WhenAll(Timestamp,
+                                                        API ?? this,
+                                                        Request);
+
+        #endregion
+
+        #region (protected internal) PostTerminalsDeactivateResponse (Response)
+
+        /// <summary>
+        /// An event sent whenever a PATCH terminal response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPostTerminalsDeactivateResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a PATCH terminal response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The PTP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PostTerminalsDeactivateResponse(DateTime      Timestamp,
+                                                                HTTPAPI       API,
+                                                                OCPIRequest   Request,
+                                                                OCPIResponse  Response)
+
+            => OnPostTerminalsDeactivateResponse.WhenAll(Timestamp,
+                                                         API ?? this,
+                                                         Request,
+                                                         Response);
 
         #endregion
 
@@ -434,6 +537,172 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             RegisterURLTemplates();
 
         }
+
+        #endregion
+
+
+        #region PTP2CPO  Clients
+
+        private readonly ConcurrentDictionary<CPO_Id, PTP2CPOClient> ptp2cpoClients = new ();
+
+        /// <summary>
+        /// Return an enumeration of all PTP2CPO clients.
+        /// </summary>
+        public IEnumerable<PTP2CPOClient> PTP2CPOClients
+            => ptp2cpoClients.Values;
+
+
+        #region GetCPOClient(CountryCode, PartyId, Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote PTP.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the remote PTP.</param>
+        /// <param name="PartyId">The party identification of the remote PTP.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public PTP2CPOClient? GetCPOClient(CountryCode  CountryCode,
+                                           Party_Id     PartyId,
+                                           I18NString?  Description          = null,
+                                           Boolean      AllowCachedClients   = true)
+        {
+
+            var cpoId          = CPO_Id.        Parse(CountryCode, PartyId);
+            var remotePartyId  = RemoteParty_Id.From (cpoId);
+
+            if (AllowCachedClients &&
+                ptp2cpoClients.TryGetValue(cpoId, out var cachedCPOClient))
+            {
+                return cachedCPOClient;
+            }
+
+            if (CommonAPI.TryGetRemoteParty(remotePartyId, out var remoteParty) &&
+                remoteParty?.RemoteAccessInfos?.Any() == true)
+            {
+
+                var cpoClient = new PTP2CPOClient(
+                                    this,
+                                    remoteParty,
+                                    null,
+                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(remotePartyId),
+                                    null,
+                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(remotePartyId),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                    DNSClient
+                                );
+
+                ptp2cpoClients.TryAdd(cpoId, cpoClient);
+
+                return cpoClient;
+
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region GetCPOClient(RemoteParty,          Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote PTP.
+        /// </summary>
+        /// <param name="RemoteParty">A remote party.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public PTP2CPOClient? GetCPOClient(RemoteParty  RemoteParty,
+                                           I18NString?  Description          = null,
+                                           Boolean      AllowCachedClients   = true)
+        {
+
+            var cpoId = CPO_Id.From(RemoteParty.Id);
+
+            if (AllowCachedClients &&
+                ptp2cpoClients.TryGetValue(cpoId, out var cachedCPOClient))
+            {
+                return cachedCPOClient;
+            }
+
+            if (RemoteParty?.RemoteAccessInfos?.Any() == true)
+            {
+
+                var cpoClient = new PTP2CPOClient(
+                                    this,
+                                    RemoteParty,
+                                    null,
+                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
+                                    null,
+                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                    DNSClient
+                                );
+
+                ptp2cpoClients.TryAdd(cpoId, cpoClient);
+
+                return cpoClient;
+
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region GetCPOClient(RemotePartyId,        Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote PTP.
+        /// </summary>
+        /// <param name="RemotePartyId">A remote party identification.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public PTP2CPOClient? GetCPOClient(RemoteParty_Id  RemotePartyId,
+                                           I18NString?     Description          = null,
+                                           Boolean         AllowCachedClients   = true)
+        {
+
+            var cpoId = CPO_Id.From(RemotePartyId);
+
+            if (AllowCachedClients &&
+                ptp2cpoClients.TryGetValue(cpoId, out var cachedCPOClient))
+            {
+                return cachedCPOClient;
+            }
+
+            if (CommonAPI.TryGetRemoteParty(RemotePartyId, out var remoteParty) &&
+                remoteParty?.RemoteAccessInfos?.Any() == true)
+            {
+
+                var cpoClient = new PTP2CPOClient(
+                                    this,
+                                    remoteParty,
+                                    null,
+                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
+                                    null,
+                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                    DNSClient
+                                );
+
+                ptp2cpoClients.TryAdd(cpoId, cpoClient);
+
+                return cpoClient;
+
+            }
+
+            return null;
+
+        }
+
+        #endregion
 
         #endregion
 
@@ -728,18 +997,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PutTerminalRequest,
                 OCPIResponseLogger:  PutTerminalResponse,
-                OCPIRequestHandler:  async Request => {
+                OCPIRequestHandler:  async request => {
 
                     #region Check access token
 
-                    if (Request.LocalAccessInfo.IsNot(Role.CPO) ||
-                        Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
-                        return new OCPIResponse.Builder(Request) {
+                        return new OCPIResponse.Builder(request) {
                                    StatusCode           = 2000,
                                    StatusMessage        = "Invalid or blocked access token!",
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
                                        AccessControlAllowHeaders  = [ "Authorization" ]
@@ -752,7 +1021,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check existing location
 
-                    if (!Request.ParseTerminal(CommonAPI,
+                    if (!request.ParseTerminal(CommonAPI,
                                                out var terminalId,
                                                out var existingTerminal,
                                                out var ocpiResponseBuilder,
@@ -765,7 +1034,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Parse new or updated location JSON
 
-                    if (!Request.TryParseJObjectRequestBody(out var locationJSON, out ocpiResponseBuilder))
+                    if (!request.TryParseJObjectRequestBody(out var locationJSON, out ocpiResponseBuilder))
                         return ocpiResponseBuilder;
 
                     if (!Terminal.TryParse(locationJSON,
@@ -774,10 +1043,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                            terminalId))
                     {
 
-                        return new OCPIResponse.Builder(Request) {
+                        return new OCPIResponse.Builder(request) {
                                    StatusCode           = 2001,
                                    StatusMessage        = "Could not parse the given location JSON: " + errorResponse,
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
                                        AccessControlAllowHeaders  = [ "Authorization" ]
@@ -791,9 +1060,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     var addOrUpdateResult = await CommonAPI.AddOrUpdateTerminal(
                                                       newOrUpdatedTerminal,
-                                                      AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"),
+                                                      AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade"),
                                                       false, //SkipNotifications
-                                                      Request.HTTPRequest.EventTrackingId,
+                                                      request.HTTPRequest.EventTrackingId,
                                                       CurrentUserId: null
                                                   );
 
@@ -801,7 +1070,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                         addOrUpdateResult.Data is not null)
                     {
 
-                        return new OCPIResponse.Builder(Request) {
+                        return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
                                    Data                 = addOrUpdateResult.Data.ToJSON(true,
@@ -809,7 +1078,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                                                         CustomTerminalSerializer,
                                                                                         CustomDisplayTextSerializer,
                                                                                         CustomImageSerializer),
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                         ? HTTPStatusCode.Created
                                                                         : HTTPStatusCode.OK,
@@ -822,7 +1091,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     }
 
-                    return new OCPIResponse.Builder(Request) {
+                    return new OCPIResponse.Builder(request) {
                                StatusCode           = 2000,
                                StatusMessage        = addOrUpdateResult.ErrorResponse,
                                Data                 = newOrUpdatedTerminal.ToJSON(true,
@@ -830,7 +1099,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                                                   CustomTerminalSerializer,
                                                                                   CustomDisplayTextSerializer,
                                                                                   CustomImageSerializer),
-                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
                                    AccessControlAllowHeaders  = [ "Authorization" ]
@@ -853,18 +1122,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PatchTerminalRequest,
                 OCPIResponseLogger:  PatchTerminalResponse,
-                OCPIRequestHandler:  async Request => {
+                OCPIRequestHandler:  async request => {
 
                     #region Check access token
 
-                    if (Request.LocalAccessInfo.IsNot(Role.CPO) ||
-                        Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
-                        return new OCPIResponse.Builder(Request) {
+                        return new OCPIResponse.Builder(request) {
                                    StatusCode           = 2000,
                                    StatusMessage        = "Invalid or blocked access token!",
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
                                        AccessControlAllowHeaders  = [ "Authorization" ]
@@ -877,7 +1146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check location
 
-                    if (!Request.ParseMandatoryTerminal(CommonAPI,
+                    if (!request.ParseMandatoryTerminal(CommonAPI,
                                                        // out var countryCode,
                                                        // out var partyId,
                                                         out var locationId,
@@ -892,7 +1161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Parse Payment Terminal JSON patch
 
-                    if (!Request.TryParseJObjectRequestBody(out var paymentTerminalPatch, out ocpiResponseBuilder))
+                    if (!request.TryParseJObjectRequestBody(out var paymentTerminalPatch, out ocpiResponseBuilder))
                         return ocpiResponseBuilder;
 
                     #endregion
@@ -904,16 +1173,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     var patchedTerminal = await CommonAPI.TryPatchTerminal(
                                                     existingTerminal,
                                                     paymentTerminalPatch,
-                                                    AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"),
+                                                    AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade"),
                                                     false, //SkipNotifications,
-                                                    Request.HTTPRequest.EventTrackingId,
+                                                    request.HTTPRequest.EventTrackingId,
                                                     CurrentUserId: null
                                                 );
 
 
                     //ToDo: Handle update errors!
                     if (patchedTerminal.IsSuccess)
-                        return new OCPIResponse.Builder(Request) {
+                        return new OCPIResponse.Builder(request) {
                                        StatusCode           = 1000,
                                        StatusMessage        = "Hello world!",
                                        Data                 = patchedTerminal.PatchedData.ToJSON(true,
@@ -921,7 +1190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                                                                  CustomTerminalSerializer,
                                                                                                  CustomDisplayTextSerializer,
                                                                                                  CustomImageSerializer),
-                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                       HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                            AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
                                            AccessControlAllowHeaders  = [ "Authorization" ],
@@ -930,10 +1199,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                        }
                                    };
 
-                    return new OCPIResponse.Builder(Request) {
+                    return new OCPIResponse.Builder(request) {
                                    StatusCode           = 2000,
                                    StatusMessage        = patchedTerminal.ErrorResponse,
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
                                        AccessControlAllowHeaders  = [ "Authorization" ]
@@ -976,19 +1245,139 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             #region POST     ~/payments/terminals/activate
 
-            #endregion
+            CommonAPI.AddOCPIMethod(
+
+                HTTPHostname.Any,
+                HTTPMethod.POST,
+                URLPathPrefix + "payments/terminals/activate",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestLogger:   PostTerminalsActivateRequest,
+                OCPIResponseLogger:  PostTerminalsActivateResponse,
+                OCPIRequestHandler:  async request => {
+
+                    #region Check access token
+
+                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    {
+
+                        return new OCPIResponse.Builder(request) {
+                                   StatusCode           = 2000,
+                                   StatusMessage        = "Invalid or blocked access token!",
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ]
+                                   }
+                               };
+
+                    }
+
+                    #endregion
+
+                    #region Parse payment terminal JSON (will autogenerate a missing terminal id!)
+
+                    if (!request.TryParseJObjectRequestBody(out var terminalJSON, out var ocpiResponseBuilder))
+                        return ocpiResponseBuilder;
+
+                    if (!Terminal.TryParse(terminalJSON,
+                                           out var terminalToActivate,
+                                           out var errorResponse,
+                                           GenerateMissingTerminalId: true))
+                    {
+
+                        return new OCPIResponse.Builder(request) {
+                                   StatusCode           = 2001,
+                                   StatusMessage        = "Could not parse the given terminal JSON: " + errorResponse,
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ]
+                                   }
+                               };
+
+                    }
+
+                    #endregion
+
+                    if (terminalToActivate.Reference.IsNullOrEmpty())
+                        return new OCPIResponse.Builder(request) {
+                                   StatusCode           = 2000,
+                                   StatusMessage        = "The payment terminal reference must not be null!",
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ]
+                                   }
+                               };
+
+
+
+                    //var addOrUpdateResult = await CommonAPI.AddOrUpdateTerminal(
+                    //                                  newOrUpdatedTerminal,
+                    //                                  AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade"),
+                    //                                  false, //SkipNotifications
+                    //                                  request.HTTPRequest.EventTrackingId,
+                    //                                  CurrentUserId: null
+                    //                              );
+
+                    //if (addOrUpdateResult.IsSuccess &&
+                    //    addOrUpdateResult.Data is not null)
+                    //{
+
+                    //    return new OCPIResponse.Builder(request) {
+                    //               StatusCode           = 1000,
+                    //               StatusMessage        = "Hello world!",
+                    //               Data                 = addOrUpdateResult.Data.ToJSON(true,
+                    //                                                                    true,
+                    //                                                                    CustomTerminalSerializer,
+                    //                                                                    CustomDisplayTextSerializer,
+                    //                                                                    CustomImageSerializer),
+                    //               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                    //                   HTTPStatusCode             = addOrUpdateResult.WasCreated == true
+                    //                                                    ? HTTPStatusCode.Created
+                    //                                                    : HTTPStatusCode.OK,
+                    //                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+                    //                   AccessControlAllowHeaders  = [ "Authorization" ],
+                    //                   LastModified               = addOrUpdateResult.Data.LastUpdated,
+                    //                   ETag                       = addOrUpdateResult.Data.ETag
+                    //               }
+                    //           };
+
+                    //}
+
+                    return new OCPIResponse.Builder(request) {
+                               StatusCode           = 2000,
+                               StatusMessage        = "!",// addOrUpdateResult.ErrorResponse,
+                               //Data                 = newOrUpdatedTerminal.ToJSON(true,
+                               //                                                   true,
+                               //                                                   CustomTerminalSerializer,
+                               //                                                   CustomDisplayTextSerializer,
+                               //                                                   CustomImageSerializer),
+                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                           };
+
+                }
+
+            );
 
             #endregion
 
-            #region ~/payments/terminals/deactivate
+            #endregion
 
-            #region OPTIONS  ~/payments/terminals/deactivate
+            #region ~/payments/terminals/{terminalId}/deactivate
+
+            #region OPTIONS  ~/payments/terminals/{terminalId}/deactivate
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "payments/terminals/deactivate",
+                URLPathPrefix + "payments/terminals/{terminalId}/deactivate",
                 OCPIRequestHandler: request =>
 
                     Task.FromResult(
@@ -998,7 +1387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                    Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.POST ],
                                    AccessControlAllowMethods   = [ "OPTIONS", "POST" ],
                                    AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                                }
                         })
 
@@ -1006,7 +1395,77 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             #endregion
 
-            #region POST     ~/payments/terminals/deactivate
+            #region POST     ~/payments/terminals/{terminalId}/deactivate
+
+            CommonAPI.AddOCPIMethod(
+
+                HTTPHostname.Any,
+                HTTPMethod.POST,
+                URLPathPrefix + "payments/terminals/{terminalId}/deactivate",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestLogger:   PostTerminalsDeactivateRequest,
+                OCPIResponseLogger:  PostTerminalsDeactivateResponse,
+                OCPIRequestHandler:  async request => {
+
+                    #region Check access token
+
+                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    {
+
+                        return new OCPIResponse.Builder(request) {
+                                   StatusCode           = 2000,
+                                   StatusMessage        = "Invalid or blocked access token!",
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ]
+                                   }
+                               };
+
+                    }
+
+                    #endregion
+
+                    #region Get terminal identification
+
+                    if (!request.ParseTerminalId(CommonAPI,
+                                                 out var terminalId,
+                                                 out var ocpiResponseBuilder))
+                    {
+                        return ocpiResponseBuilder;
+                    }
+
+                    #endregion
+
+
+                    var terminalFound = false;
+
+
+                    if (terminalFound)
+                        return new OCPIResponse.Builder(request) {
+                                   StatusCode           = 1000,
+                                   StatusMessage        = "Hello world!",
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ]
+                                   }
+                               };
+
+                    return new OCPIResponse.Builder(request) {
+                               StatusCode           = 2000,
+                               StatusMessage        = "Unknown terminal!",
+                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                           };
+
+                }
+
+            );
 
             #endregion
 

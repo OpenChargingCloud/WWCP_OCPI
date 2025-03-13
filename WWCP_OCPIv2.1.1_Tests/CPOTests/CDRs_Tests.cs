@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
         public async Task CPO_PostCDR_Test()
         {
 
-            var graphDefinedEMSP1 = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP1 = cpoCPOAPI?.GetEMSPClient(
                                         CountryCode:  CountryCode.Parse("DE"),
                                         PartyId:      Party_Id.   Parse("GDF")
                                     );

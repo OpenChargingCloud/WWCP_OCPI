@@ -21,21 +21,21 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
+using cloud.charging.open.protocols.OCPIv2_3_0.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 {
 
     /// <summary>
-    /// The OCPI CPO client.
+    /// The CPO2PTP Client is used by CPOs to talk to PTPs.
     /// </summary>
-    public partial class CPOClient : IHTTPClient
+    public partial class CPO2PTPClient : IHTTPClient
     {
 
         /// <summary>
-        /// The OCPI CPO HTTP client logger.
+        /// The CPO2PTP HTTP Client Logger.
         /// </summary>
         public new sealed class Logger : CommonClient.Logger
         {
@@ -45,16 +45,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             /// <summary>
             /// The default context for this logger.
             /// </summary>
-            public new const String  DefaultContext   = $"OCPI{Version.String}_CPOClient";
+            public new const String  DefaultContext   = $"OCPI{Version.String}_CPO2PTPClient";
 
             #endregion
 
             #region Properties
 
             /// <summary>
-            /// The attached CPO client.
+            /// The attached CPO2PTP client.
             /// </summary>
-            public CPOClient  CPOClient    { get; }
+            public CPO2PTPClient  CPOClient    { get; }
 
             #endregion
 
@@ -67,7 +67,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             /// <param name="LoggingPath">The logging path.</param>
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public Logger(CPOClient                    CPOClient,
+            public Logger(CPO2PTPClient                CPOClient,
                           String?                      LoggingPath,
                           String?                      Context          = DefaultContext,
                           OCPILogfileCreatorDelegate?  LogfileCreator   = null)

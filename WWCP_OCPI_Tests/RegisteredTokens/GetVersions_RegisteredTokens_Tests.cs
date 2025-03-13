@@ -47,7 +47,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task CPO1_GetVersions_fromEMSP1_viaOCPIv2_1_1__RegisteredToken_Test1()
         {
 
-            var graphDefinedEMSP1 = cpo1CommonAPI_v2_1_1?.GetCPOClient(
+            var graphDefinedEMSP1 = cpo1CPOAPI_v2_1_1?.GetEMSPClient(
                                         CountryCode: CountryCode.Parse("DE"),
                                         PartyId:     Party_Id.   Parse("GDF")
                                     );
@@ -142,7 +142,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task CPO1_GetVersions_fromEMSP1_viaOCPIv2_2_1__RegisteredToken_Test1()
         {
 
-            var graphDefinedEMSP1 = cpo1CommonAPI_v2_2_1?.GetCPOClient(
+            var graphDefinedEMSP1 = cpo1CPOAPI_v2_2_1?.GetEMSPClient(
                                         CountryCode: CountryCode.Parse("DE"),
                                         PartyId:     Party_Id.   Parse("GDF")
                                     );
@@ -237,7 +237,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task CPO1_GetVersions_fromEMSP1_viaOCPIv2_3__RegisteredToken_Test1()
         {
 
-            var graphDefinedEMSP1 = cpo1CommonAPI_v2_3?.GetCPOClient(
+            var graphDefinedEMSP1 = cpo1CPOAPI_v2_3?.GetEMSPClient(
                                         CountryCode: CountryCode.Parse("DE"),
                                         PartyId:     Party_Id.   Parse("GDF")
                                     );
@@ -333,7 +333,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task EMSP1_GetVersions_fromCPO1_viaOCPIv2_1_1__RegisteredToken_Test1()
         {
 
-            var graphDefinedCPO1 = emsp1CommonAPI_v2_1_1?.GetEMSPClient(
+            var graphDefinedCPO1 = emsp1EMSPAPI_v2_1_1?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GEF")
                                    );
@@ -424,7 +424,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task EMSP1_GetVersions_fromCPO1_viaOCPIv2_2_1__RegisteredToken_Test1()
         {
 
-            var graphDefinedCPO1 = emsp1CommonAPI_v2_2_1?.GetEMSPClient(
+            var graphDefinedCPO1 = emsp1EMSPAPI_v2_2_1?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GEF")
                                    );
@@ -519,7 +519,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task EMSP1_GetVersions_fromCPO1_viaOCPIv2_3__RegisteredToken_Test1()
         {
 
-            var graphDefinedCPO1 = emsp1CommonAPI_v2_3?.GetEMSPClient(
+            var graphDefinedCPO1 = emsp1EMSPAPI_v2_3?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GEF")
                                    );

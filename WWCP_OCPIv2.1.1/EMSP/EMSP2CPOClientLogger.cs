@@ -29,13 +29,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 {
 
     /// <summary>
-    /// The OCPI EMSP client.
+    /// The OCPI EMSP2CPO client.
     /// </summary>
-    public partial class EMSPClient : IHTTPClient
+    public partial class EMSP2CPOClient : IHTTPClient
     {
 
         /// <summary>
-        /// The OCPI EMSP HTTP client logger.
+        /// The OCPI EMSP2CPO HTTP client logger.
         /// </summary>
         public new sealed class Logger : CommonClient.Logger
         {
@@ -54,7 +54,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             /// <summary>
             /// The attached EMSP client.
             /// </summary>
-            public EMSPClient  EMSPClient    { get; }
+            public EMSP2CPOClient  EMSPClient    { get; }
 
             #endregion
 
@@ -67,7 +67,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             /// <param name="LoggingPath">The logging path.</param>
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public Logger(EMSPClient                   EMSPClient,
+            public Logger(EMSP2CPOClient                   EMSPClient,
                           String?                      LoggingPath,
                           String?                      Context          = DefaultContext,
                           OCPILogfileCreatorDelegate?  LogfileCreator   = null)

@@ -48,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
         public async Task CPO_GetCredentials_RegisteredToken_Test1()
         {
 
-            var graphDefinedEMSP1 = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP1 = cpoCPOAPI?.GetEMSPClient(
                                         CountryCode: CountryCode.Parse("DE"),
                                         PartyId:     Party_Id.   Parse("GDF")
                                     );
@@ -144,7 +144,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
         public async Task CPO_GetCredentials_RegisteredToken_Test2()
         {
 
-            var graphDefinedEMSP2 = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP2 = cpoCPOAPI?.GetEMSPClient(
                                         CountryCode: CountryCode.Parse("DE"),
                                         PartyId:     Party_Id.   Parse("GD2")
                                     );
@@ -236,7 +236,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
         public async Task CPO_Register_PreRegisteredToken_Test1()
         {
 
-            var graphDefinedEMSP1 = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP1 = cpoCPOAPI?.GetEMSPClient(
                                         CountryCode: CountryCode.Parse("DE"),
                                         PartyId:     Party_Id.   Parse("GDF")
                                     );
@@ -400,7 +400,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 
                     #region Get a new CPOClient and validate, that it is using the new access token
 
-                    var graphDefinedEMSP1b = cpoCommonAPI?.GetCPOClient(
+                    var graphDefinedEMSP1b = cpoCPOAPI?.GetEMSPClient(
                                                  CountryCode:          CountryCode.Parse("DE"),
                                                  PartyId:              Party_Id.   Parse("GDF"),
                                                  AllowCachedClients:   false
@@ -446,7 +446,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
         public async Task CPO_DeleteCredentials_RegisteredToken_Test1()
         {
 
-            var graphDefinedEMSP1 = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP1 = cpoCPOAPI?.GetEMSPClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GDF")
                                   );

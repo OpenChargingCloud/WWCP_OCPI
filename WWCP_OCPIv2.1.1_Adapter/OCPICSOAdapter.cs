@@ -2095,9 +2095,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                            if (!Directory.Exists(remotePartyLoggingPath))
                                                                                                 Directory.CreateDirectory(remotePartyLoggingPath);
 
-                                                                                           var cpoClient = new CPO.HTTP.CPOClient(
+                                                                                           var cpoClient = new CPO.HTTP.CPO2EMSPClient(
 
-                                                                                                               CommonAPI,
+                                                                                                               CPOAPI,
                                                                                                                remoteParty,
                                                                                                                null, // VirtualHostname
                                                                                                                null, // Description
@@ -2408,9 +2408,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                       );
 
 
-                                                                                           var cpoClient = new CPO.HTTP.CPOClient(
+                                                                                           var cpoClient = new CPO.HTTP.CPO2EMSPClient(
 
-                                                                                                               CommonAPI,
+                                                                                                               CPOAPI,
                                                                                                                remoteParty,
                                                                                                                null, // VirtualHostname
                                                                                                                null, // Description
@@ -2777,9 +2777,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         //var cpoClient = CommonAPI.GetCPOClient(remoteParty);
 
-                        var cpoClient = new CPO.HTTP.CPOClient(
+                        var cpoClient = new CPO.HTTP.CPO2EMSPClient(
 
-                                            CommonAPI:         CommonAPI,
+                                            CPOAPI:            CPOAPI,
                                             RemoteParty:       remoteParty,
                                             VirtualHostname:   null,
                                             Description:       null,

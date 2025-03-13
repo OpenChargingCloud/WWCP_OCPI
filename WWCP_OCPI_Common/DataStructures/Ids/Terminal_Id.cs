@@ -153,7 +153,18 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) Parse   (Text)
+        #region (static) Random   ()
+
+        /// <summary>
+        /// Generate a new random terminal identification.
+        /// </summary>
+        public static Terminal_Id Random()
+
+            => Parse(UUIDv7.Generate().ToString());
+
+        #endregion
+
+        #region (static) Parse    (Text)
 
         /// <summary>
         /// Parse the given text as a terminal identification.
@@ -172,7 +183,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text)
+        #region (static) TryParse (Text)
 
         /// <summary>
         /// Try to parse the given text as a terminal identification.
@@ -190,7 +201,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text, out TerminalId)
+        #region (static) TryParse (Text, out TerminalId)
 
         /// <summary>
         /// Try to parse the given text as a terminal identification.

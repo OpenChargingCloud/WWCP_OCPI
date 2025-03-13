@@ -37,9 +37,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 {
 
     /// <summary>
-    /// The CPO client is used by a CPO to talk to EMSPs (and SCSPs).
+    /// The CPO2EMSP Client is used by CPOs to talk to EMSPs.
     /// </summary>
-    public partial class CPOClient : CommonClient
+    public partial class CPO2EMSPClient : CommonClient
     {
 
         #region (class) APICounters
@@ -209,16 +209,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         /// <summary>
         /// The default HTTP user agent.
         /// </summary>
-        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(CPOClient)}";
+        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(CPO2EMSPClient)}";
 
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public new const String  DefaultLoggingContext   = nameof(CPOClient);
+        public new const String  DefaultLoggingContext   = nameof(CPO2EMSPClient);
 
         #endregion
 
         #region Properties
+
+        public CPOAPI           CPOAPI      { get; }
 
         /// <summary>
         /// CPO client event counters.
@@ -833,7 +835,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 
         #region Constructor(s)
 
-        #region CPOClient(VersionsURL, AccessToken = null, ...)
+        #region CPO2EMSPClient(VersionsURL, AccessToken = null, ...)
 
         ///// <summary>
         ///// Create a new CPO client.
@@ -935,12 +937,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 
         #endregion
 
-        #region CPOClient(CommonAPI, RemoteParty, ...)
+        #region CPO2EMSPClient(CommonAPI, RemoteParty, ...)
 
         /// <summary>
-        /// Create a new EMSP client.
+        /// Create a new CPO2EMSP client.
         /// </summary>
-        /// <param name="CommonAPI">The CommonAPI.</param>
+        /// <param name="CPOAPI">The CPOAPI.</param>
         /// <param name="RemoteParty">The remote party.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
@@ -949,19 +951,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPOClient(CommonAPI                    CommonAPI,
-                         RemoteParty                  RemoteParty,
-                         HTTPHostname?                VirtualHostname   = null,
-                         I18NString?                  Description       = null,
-                         HTTPClientLogger?            HTTPLogger        = null,
+        public CPO2EMSPClient(CPOAPI                       CPOAPI,
+                              RemoteParty                  RemoteParty,
+                              HTTPHostname?                VirtualHostname   = null,
+                              I18NString?                  Description       = null,
+                              HTTPClientLogger?            HTTPLogger        = null,
 
-                         Boolean?                     DisableLogging    = false,
-                         String?                      LoggingPath       = null,
-                         String?                      LoggingContext    = null,
-                         OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                         DNSClient?                   DNSClient         = null)
+                              Boolean?                     DisableLogging    = false,
+                              String?                      LoggingPath       = null,
+                              String?                      LoggingContext    = null,
+                              OCPILogfileCreatorDelegate?  LogfileCreator    = null,
+                              DNSClient?                   DNSClient         = null)
 
-            : base(CommonAPI,
+            : base(CPOAPI.CommonAPI,
                    RemoteParty,
                    VirtualHostname,
                    Description,
@@ -975,6 +977,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 
         {
 
+            this.CPOAPI      = CPOAPI;
             this.Counters    = new APICounters();
 
             base.HTTPLogger  = this.DisableLogging == false
@@ -994,7 +997,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 
 
         public override JObject ToJSON()
-            => base.ToJSON(nameof(CPOClient));
+            => base.ToJSON(nameof(CPO2EMSPClient));
 
 
         #region GetLocation        (CountryCode, PartyId, LocationId, ...)
@@ -5270,7 +5273,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             where TDelegate : Delegate
 
             => LogEvent(
-                   nameof(CPOClient),
+                   nameof(CPO2EMSPClient),
                    Logger,
                    LogHandler,
                    EventName,

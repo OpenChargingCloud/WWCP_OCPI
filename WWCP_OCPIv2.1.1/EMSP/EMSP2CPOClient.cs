@@ -30,7 +30,6 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 
-
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
@@ -39,7 +38,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
     /// <summary>
     /// The OCPI EMSP client.
     /// </summary>
-    public partial class EMSPClient : CommonClient
+    public partial class EMSP2CPOClient : CommonClient
     {
 
         #region (class) APICounters
@@ -189,16 +188,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <summary>
         /// The default HTTP user agent.
         /// </summary>
-        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(EMSPClient)}";
+        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(EMSP2CPOClient)}";
 
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public new const String  DefaultLoggingContext   = nameof(EMSPClient);
+        public new const String  DefaultLoggingContext   = nameof(EMSP2CPOClient);
 
         #endregion
 
         #region Properties
+
+        public EMSPAPI          EMSPAPI       { get; }
 
         /// <summary>
         /// EMSP client event counters.
@@ -698,7 +699,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public EMSPClient(URL                                                        VersionsURL,
+        public EMSP2CPOClient(URL                                                        VersionsURL,
                           String?                                                    AccessToken                  = null,
 
                           HTTPHostname?                                              VirtualHostname              = null,
@@ -774,7 +775,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <summary>
         /// Create a new EMSP client.
         /// </summary>
-        /// <param name="CommonAPI">The CommonAPI.</param>
+        /// <param name="EMSPAPI">The EMSPAPI.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
         /// <param name="DisableLogging">Disable all logging.</param>
@@ -782,7 +783,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public EMSPClient(CommonAPI                    CommonAPI,
+        public EMSP2CPOClient(EMSPAPI                      EMSPAPI,
                           RemoteParty                  RemoteParty,
                           HTTPHostname?                VirtualHostname   = null,
                           I18NString?                  Description       = null,
@@ -794,7 +795,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                           OCPILogfileCreatorDelegate?  LogfileCreator    = null,
                           DNSClient?                   DNSClient         = null)
 
-            : base(CommonAPI,
+            : base(EMSPAPI.CommonAPI,
                    RemoteParty,
                    VirtualHostname,
                    Description,
@@ -808,6 +809,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
         {
 
+            this.EMSPAPI     = EMSPAPI;
             this.Counters    = new APICounters();
 
             base.HTTPLogger  = this.DisableLogging == false
@@ -827,7 +829,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
 
         public override JObject ToJSON()
-            => base.ToJSON(nameof(EMSPClient));
+            => base.ToJSON(nameof(EMSP2CPOClient));
 
 
         #region GetLocations(...)
@@ -890,7 +892,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetLocationsRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetLocationsRequest));
             }
 
             #endregion
@@ -1006,7 +1008,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetLocationsResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetLocationsResponse));
             }
 
             #endregion
@@ -1082,7 +1084,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetLocationRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetLocationRequest));
             }
 
             #endregion
@@ -1200,7 +1202,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetLocationResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetLocationResponse));
             }
 
             #endregion
@@ -1279,7 +1281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetEVSERequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetEVSERequest));
             }
 
             #endregion
@@ -1396,7 +1398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetEVSEResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetEVSEResponse));
             }
 
             #endregion
@@ -1478,7 +1480,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetConnectorRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetConnectorRequest));
             }
 
             #endregion
@@ -1596,7 +1598,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetConnectorResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetConnectorResponse));
             }
 
             #endregion
@@ -1673,7 +1675,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetTariffsRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetTariffsRequest));
             }
 
             #endregion
@@ -1797,7 +1799,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetTariffsResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetTariffsResponse));
             }
 
             #endregion
@@ -1877,7 +1879,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetTariffRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetTariffRequest));
             }
 
             #endregion
@@ -2003,7 +2005,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetTariffResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetTariffResponse));
             }
 
             #endregion
@@ -2075,7 +2077,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetSessionsRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetSessionsRequest));
             }
 
             #endregion
@@ -2191,7 +2193,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetSessionsResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetSessionsResponse));
             }
 
             #endregion
@@ -2267,7 +2269,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetSessionRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetSessionRequest));
             }
 
             #endregion
@@ -2385,7 +2387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetSessionResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetSessionResponse));
             }
 
             #endregion
@@ -2459,7 +2461,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetCDRsRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetCDRsRequest));
             }
 
             #endregion
@@ -2575,7 +2577,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetCDRsResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetCDRsResponse));
             }
 
             #endregion
@@ -2651,7 +2653,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetCDRRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetCDRRequest));
             }
 
             #endregion
@@ -2769,7 +2771,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetCDRResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetCDRResponse));
             }
 
             #endregion
@@ -2844,7 +2846,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetTokenRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetTokenRequest));
             }
 
             #endregion
@@ -2964,7 +2966,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnGetTokenResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnGetTokenResponse));
             }
 
             #endregion
@@ -3036,7 +3038,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnPutTokenRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnPutTokenRequest));
             }
 
             #endregion
@@ -3153,7 +3155,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnPutTokenResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnPutTokenResponse));
             }
 
             #endregion
@@ -3236,7 +3238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnPatchTokenRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnPatchTokenRequest));
             }
 
             #endregion
@@ -3359,7 +3361,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnPatchTokenResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnPatchTokenResponse));
             }
 
             #endregion
@@ -3444,7 +3446,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnReserveNowRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnReserveNowRequest));
             }
 
             #endregion
@@ -3593,7 +3595,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnReserveNowResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnReserveNowResponse));
             }
 
             #endregion
@@ -3665,7 +3667,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnCancelReservationRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnCancelReservationRequest));
             }
 
             #endregion
@@ -3805,7 +3807,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnCancelReservationResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnCancelReservationResponse));
             }
 
             #endregion
@@ -3881,7 +3883,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnStartSessionRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnStartSessionRequest));
             }
 
             #endregion
@@ -4026,7 +4028,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnStartSessionResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnStartSessionResponse));
             }
 
             #endregion
@@ -4098,7 +4100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnStopSessionRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnStopSessionRequest));
             }
 
             #endregion
@@ -4239,7 +4241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnStopSessionResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnStopSessionResponse));
             }
 
             #endregion
@@ -4315,7 +4317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnUnlockConnectorRequest));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnUnlockConnectorRequest));
             }
 
             #endregion
@@ -4460,7 +4462,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnUnlockConnectorResponse));
+                DebugX.LogException(e, nameof(EMSP2CPOClient) + "." + nameof(OnUnlockConnectorResponse));
             }
 
             #endregion

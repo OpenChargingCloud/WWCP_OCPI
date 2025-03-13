@@ -607,12 +607,12 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String      DefaultHTTPServerName           = "GraphDefined OCPI HTTP API v0.1";
+        public new const           String      DefaultHTTPServerName           = "GraphDefined OCPI Common HTTP API";
 
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String      DefaultHTTPServiceName          = "GraphDefined OCPI HTTP API v0.1";
+        public new const           String      DefaultHTTPServiceName          = "GraphDefined OCPI Common HTTP API";
 
         /// <summary>
         /// The default HTTP server TCP port.  
@@ -1239,7 +1239,7 @@ namespace cloud.charging.open.protocols.OCPI
                     Task.FromResult(
                         new HTTPResponse.Builder(request) {
                             HTTPStatusCode             = HTTPStatusCode.OK,
-                            Server                     = DefaultHTTPServerName,
+                            Server                     = HTTPServiceName,
                             Date                       = Timestamp.Now,
                             AccessControlAllowOrigin   = "*",
                             AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -1362,7 +1362,7 @@ namespace cloud.charging.open.protocols.OCPI
                     var httpResponseBuilder =
                         new HTTPResponse.Builder(request) {
                             HTTPStatusCode             = HTTPStatusCode.OK,
-                            Server                     = DefaultHTTPServerName,
+                            Server                     = HTTPServiceName,
                             Date                       = Timestamp.Now,
                             AccessControlAllowOrigin   = "*",
                             AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -2151,7 +2151,7 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        //ToDo: Wrap the following into a plugable interface!
+        //ToDo: Wrap the following into a pluggable interface!
 
         #region Read/Write Database Files
 

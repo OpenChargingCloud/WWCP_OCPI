@@ -46,7 +46,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
         public async Task EMSP_GetLocations_Test1()
         {
 
-            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp1EMSPAPI?.GetCPOClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -343,7 +343,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
         public async Task EMSP_GetLocations_Test2()
         {
 
-            var graphDefinedCPO = emsp2CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp2EMSPAPI?.GetCPOClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -640,7 +640,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
         public async Task EMSP_GetLocations_TariffDelegate_Test1()
         {
 
-            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp1EMSPAPI?.GetCPOClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -948,7 +948,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
         public async Task EMSP_GetLocation_Test1()
         {
 
-            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp1EMSPAPI?.GetCPOClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -1245,7 +1245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
         public async Task EMSP_GetLocation_Test2()
         {
 
-            var graphDefinedCPO = emsp2CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp2EMSPAPI?.GetCPOClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -1543,7 +1543,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
         public async Task EMSP_GetEVSE_Test1()
         {
 
-            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp1EMSPAPI?.GetCPOClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -1843,7 +1843,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
         public async Task EMSP_GetEVSE_Test2()
         {
 
-            var graphDefinedCPO = emsp2CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp2EMSPAPI?.GetCPOClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -2142,7 +2142,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
         public async Task EMSP_GetConnector_Test1()
         {
 
-            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp1EMSPAPI?.GetCPOClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -2441,7 +2441,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
         public async Task EMSP_GetConnector_Test2()
         {
 
-            var graphDefinedCPO = emsp2CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp2EMSPAPI?.GetCPOClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );

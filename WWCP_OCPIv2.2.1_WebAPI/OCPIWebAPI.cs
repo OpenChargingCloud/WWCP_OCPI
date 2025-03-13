@@ -1941,7 +1941,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                                              #region Get EMSP client
 
-                                             var emspClient = CommonAPI.GetEMSPClient(RemoteParty);
+                                             var emspClient = EMSPAPI.GetCPOClient(RemoteParty);
 
                                              if (emspClient == null)
                                                  return new HTTPResponse.Builder(Request) {
@@ -1952,8 +1952,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
-                                                                                                           "Could not find a apropriate EMSP client for this request!").
+                                                            Content                    = I18NString.Create(Languages.en,
+                                                                                                           "Could not find a appropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
                                                             Connection                 = ConnectionType.Close
@@ -2285,7 +2285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                                              #region Get EMSP client
 
-                                             var emspClient = CommonAPI.GetEMSPClient(RemoteParty);
+                                             var emspClient = EMSPAPI.GetCPOClient(RemoteParty);
 
                                              if (emspClient == null)
                                                  return new HTTPResponse.Builder(Request) {
@@ -2296,8 +2296,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
-                                                                                                           "Could not find a apropriate EMSP client for this request!").
+                                                            Content                    = I18NString.Create(Languages.en,
+                                                                                                           "Could not find a appropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
                                                             Connection                 = ConnectionType.Close
@@ -2681,7 +2681,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                                              #region Get EMSP client
 
-                                             var emspClient = CommonAPI.GetEMSPClient(RemoteParty);
+                                             var emspClient = EMSPAPI.GetCPOClient(RemoteParty);
 
                                              if (emspClient == null)
                                                  return new HTTPResponse.Builder(Request) {
@@ -2692,8 +2692,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
-                                                                                                           "Could not find a apropriate EMSP client for this request!").
+                                                            Content                    = I18NString.Create(Languages.en,
+                                                                                                           "Could not find a appropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
                                                             Connection                 = ConnectionType.Close
@@ -3023,7 +3023,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                                              #region Get EMSP client
 
-                                             var emspClient = CommonAPI.GetEMSPClient(RemoteParty);
+                                             var emspClient = EMSPAPI.GetCPOClient(RemoteParty);
 
                                              if (emspClient == null)
                                                  return new HTTPResponse.Builder(Request) {
@@ -3034,8 +3034,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
-                                                                                                           "Could not find a apropriate EMSP client for this request!").
+                                                            Content                    = I18NString.Create(Languages.en,
+                                                                                                           "Could not find a appropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
                                                             Connection                 = ConnectionType.Close
@@ -3413,7 +3413,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                                              #region Get EMSP client
 
-                                             var emspClient = CommonAPI.GetEMSPClient(RemoteParty);
+                                             var emspClient = EMSPAPI.GetCPOClient(RemoteParty);
 
                                              if (emspClient is null)
                                                  return new HTTPResponse.Builder(Request) {
@@ -3424,8 +3424,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
-                                                                                                           "Could not find a apropriate EMSP client for this request!").
+                                                            Content                    = I18NString.Create(Languages.en,
+                                                                                                           "Could not find a appropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
                                                             Connection                 = ConnectionType.Close
@@ -3490,8 +3490,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          HTTPDelegate: Request => {
 
                                              var clients = new List<CommonClient>();
-                                             clients.AddRange(CommonAPI.CPOClients);
-                                             clients.AddRange(CommonAPI.EMSPClients);
+                                             clients.AddRange(CPOAPI. CPO2EMSPClients);
+                                             clients.AddRange(EMSPAPI.EMSP2CPOClients);
 
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
@@ -3523,7 +3523,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                  {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                     Content                    = new JArray(CommonAPI.CPOClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
+                                                     Content                    = new JArray(CPOAPI.CPO2EMSPClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
                                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                                      AccessControlAllowHeaders  = [ "Authorization" ]
                                                      //LastModified               = Location.LastUpdated.ToIso8601(),
@@ -3548,7 +3548,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                     Content                    = new JArray(CommonAPI.EMSPClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
+                                                     Content                    = new JArray(EMSPAPI.EMSP2CPOClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
                                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                                      AccessControlAllowHeaders  = [ "Authorization" ]
                                                      //LastModified               = Location.LastUpdated.ToIso8601(),

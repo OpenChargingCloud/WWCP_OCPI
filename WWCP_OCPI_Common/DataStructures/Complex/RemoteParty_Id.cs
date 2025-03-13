@@ -176,6 +176,20 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
+        #region (static) From    (PTPId)
+
+        /// <summary>
+        /// Convert the given PTP identification into a remote party identification.
+        /// </summary>
+        /// <param name="PTPId">A PTP identification.</param>
+        public static RemoteParty_Id From(PTP_Id PTPId)
+
+            => new (PTPId.CountryCode,
+                    PTPId.PartyId,
+                    Role.PTP);
+
+        #endregion
+
 
         #region (static) Unknown
 

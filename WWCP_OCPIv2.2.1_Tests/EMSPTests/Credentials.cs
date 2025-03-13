@@ -42,7 +42,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
         public async Task EMSP_GetCredentials_Test1()
         {
 
-            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp1EMSPAPI?.GetCPOClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -129,7 +129,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
         public async Task EMSP_GetCredentials_Test2()
         {
 
-            var graphDefinedCPO = emsp2CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp2EMSPAPI?.GetCPOClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );

@@ -297,7 +297,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
             #endregion
 
 
-            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp1EMSPAPI?.GetCPOClient(
                                       CountryCode:  CountryCode.Parse("DE"),
                                       PartyId:      Party_Id.   Parse("GEF")
                                   );
@@ -882,7 +882,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
             #endregion
 
 
-            var graphDefinedCPO = emsp2CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp2EMSPAPI?.GetCPOClient(
                                       CountryCode:  CountryCode.Parse("DE"),
                                       PartyId:      Party_Id.   Parse("GEF")
                                   );
@@ -1239,7 +1239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
             #region Test with EMSP #1
 
-            var graphDefined1CPO = emsp1CommonAPI?.GetEMSPClient(
+            var graphDefined1CPO = emsp1EMSPAPI?.GetCPOClient(
                                        CountryCode:  CountryCode.Parse("DE"),
                                        PartyId:      Party_Id.   Parse("GEF")
                                    );
@@ -1311,7 +1311,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
             #region Test with EMSP #2
 
-            var graphDefined2CPO = emsp2CommonAPI?.GetEMSPClient(
+            var graphDefined2CPO = emsp2EMSPAPI?.GetCPOClient(
                                        CountryCode:  CountryCode.Parse("DE"),
                                        PartyId:      Party_Id.   Parse("GEF")
                                    );
@@ -1648,7 +1648,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
             #endregion
 
 
-            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp1EMSPAPI?.GetCPOClient(
                                       CountryCode:  CountryCode.Parse("DE"),
                                       PartyId:      Party_Id.   Parse("GEF")
                                   );
@@ -1985,7 +1985,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
             #endregion
 
 
-            var graphDefinedCPO = emsp2CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp2EMSPAPI?.GetCPOClient(
                                       CountryCode:  CountryCode.Parse("DE"),
                                       PartyId:      Party_Id.   Parse("GEF")
                                   );
@@ -2342,7 +2342,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
             #region Test with EMSP #1
 
-            var graphDefined1CPO = emsp1CommonAPI?.GetEMSPClient(
+            var graphDefined1CPO = emsp1EMSPAPI?.GetCPOClient(
                                        CountryCode:  CountryCode.Parse("DE"),
                                        PartyId:      Party_Id.   Parse("GEF")
                                    );
@@ -2414,7 +2414,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
             #region Test with EMSP #2
 
-            var graphDefined2CPO = emsp2CommonAPI?.GetEMSPClient(
+            var graphDefined2CPO = emsp2EMSPAPI?.GetCPOClient(
                                        CountryCode:  CountryCode.Parse("DE"),
                                        PartyId:      Party_Id.   Parse("GEF")
                                    );
@@ -2499,7 +2499,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
         public async Task EMSP_GetEVSE_Test1()
         {
 
-            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp1EMSPAPI?.GetCPOClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -2823,7 +2823,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
         public async Task EMSP_GetEVSE_Test2()
         {
 
-            var graphDefinedCPO = emsp2CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp2EMSPAPI?.GetCPOClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -3146,7 +3146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
         public async Task EMSP_GetConnector_Test1()
         {
 
-            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp1EMSPAPI?.GetCPOClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -3469,7 +3469,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
         public async Task EMSP_GetConnector_Test2()
         {
 
-            var graphDefinedCPO = emsp2CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp2EMSPAPI?.GetCPOClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );

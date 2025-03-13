@@ -43,7 +43,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
         public async Task EMSP_GetTariffs_Test1()
         {
 
-            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp1EMSPAPI?.GetCPOClient(
                                       CountryCode:  CountryCode.Parse("DE"),
                                       PartyId:      Party_Id.   Parse("GEF")
                                   );
@@ -190,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
         public async Task EMSP_GetTariffs_Test2()
         {
 
-            var graphDefinedCPO = emsp2CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp2EMSPAPI?.GetCPOClient(
                                       CountryCode:  CountryCode.Parse("DE"),
                                       PartyId:      Party_Id.   Parse("GEF")
                                   );
@@ -337,7 +337,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
         public async Task EMSP_GetTariffs_Versioned_Test1()
         {
 
-            var graphDefinedCPO = emsp2CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp2EMSPAPI?.GetCPOClient(
                                       CountryCode:  CountryCode.Parse("DE"),
                                       PartyId:      Party_Id.   Parse("GEF")
                                   );
@@ -791,7 +791,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
         public async Task EMSP_GetTariff_Test1()
         {
 
-            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp1EMSPAPI?.GetCPOClient(
                                       CountryCode:  CountryCode.Parse("DE"),
                                       PartyId:      Party_Id.   Parse("GEF")
                                   );
@@ -939,7 +939,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
         public async Task EMSP_GetTariff_Test2()
         {
 
-            var graphDefinedCPO = emsp2CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp2EMSPAPI?.GetCPOClient(
                                       CountryCode:  CountryCode.Parse("DE"),
                                       PartyId:      Party_Id.   Parse("GEF")
                                   );
@@ -1087,7 +1087,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
         public async Task EMSP_GetTariff_Versioned_Test1()
         {
 
-            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
+            var graphDefinedCPO = emsp1EMSPAPI?.GetCPOClient(
                                       CountryCode:  CountryCode.Parse("DE"),
                                       PartyId:      Party_Id.   Parse("GEF")
                                   );

@@ -375,6 +375,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                          out var terminal,
                          out var errorResponse,
                          TerminalIdURL,
+                         false,
                          CustomTerminalParser))
             {
                 return terminal;
@@ -405,6 +406,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         out Terminal,
                         out ErrorResponse,
                         null,
+                        false,
                         null);
 
 
@@ -419,8 +421,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public static Boolean TryParse(JObject                                 JSON,
                                        [NotNullWhen(true)]  out Terminal?      Terminal,
                                        [NotNullWhen(false)] out String?        ErrorResponse,
-                                       Terminal_Id?                            TerminalIdURL          = null,
-                                       CustomJObjectParserDelegate<Terminal>?  CustomTerminalParser   = null)
+                                       Terminal_Id?                            TerminalIdURL               = null,
+                                       Boolean                                 GenerateMissingTerminalId   = false,
+                                       CustomJObjectParserDelegate<Terminal>?  CustomTerminalParser        = null)
         {
 
             try
@@ -457,6 +460,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     ErrorResponse = "The optional Terminal identification given within the JSON body does not match the one given in the URL!";
                     return false;
                 }
+
+                if (!terminalIdBody.HasValue && GenerateMissingTerminalId)
+                    terminalIdBody = Terminal_Id.Random();
 
                 #endregion
 

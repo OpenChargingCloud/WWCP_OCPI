@@ -31,7 +31,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
     /// <summary>
     /// The OCPI CPO client.
     /// </summary>
-    public partial class CPOClient : IHTTPClient
+    public partial class CPO2EMSPClient : IHTTPClient
     {
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             /// <summary>
             /// The attached CPO client.
             /// </summary>
-            public CPOClient  CPOClient    { get; }
+            public CPO2EMSPClient  CPOClient    { get; }
 
             #endregion
 
@@ -67,7 +67,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             /// <param name="LoggingPath">The logging path.</param>
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public Logger(CPOClient                    CPOClient,
+            public Logger(CPO2EMSPClient                    CPOClient,
                           String?                      LoggingPath,
                           String?                      Context          = DefaultContext,
                           OCPILogfileCreatorDelegate?  LogfileCreator   = null)

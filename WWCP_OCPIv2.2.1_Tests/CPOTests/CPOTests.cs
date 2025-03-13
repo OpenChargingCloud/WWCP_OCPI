@@ -46,7 +46,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         public async Task CPO_GetVersions_Test()
         {
 
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -169,7 +169,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -307,7 +307,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -365,7 +365,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         public async Task CPO_GetVersion_Test()
         {
 
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -472,7 +472,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         public async Task CPO_GetCredentials_Test()
         {
 
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -592,7 +592,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -740,7 +740,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -860,7 +860,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -1018,7 +1018,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         public async Task CPO_PutCredentials_NotYetRegistered_Test()
         {
 
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -1135,7 +1135,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -1208,7 +1208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         public async Task CPO_Register_RR_Test()
         {
 
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -1282,7 +1282,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         public async Task CPO_PutLocation_Test()
         {
 
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -1550,7 +1550,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         public async Task CPO_PutEVSE_Test()
         {
 
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -1913,7 +1913,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         public async Task CPO_PostCDR_Test()
         {
 
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );

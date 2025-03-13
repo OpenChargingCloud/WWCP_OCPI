@@ -29,18 +29,18 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_3_0.HTTP;
-using static cloud.charging.open.protocols.OCPIv2_3_0.HTTP.OCPIRequest;
+using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
+using static cloud.charging.open.protocols.OCPIv2_2_1.HTTP.OCPIRequest;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 {
 
     /// <summary>
-    /// The OCPI EMSP client.
+    /// The EMSP2CPO client is used by an EMSP to talk to CPO.
     /// </summary>
-    public partial class EMSPClient : CommonClient
+    public partial class EMSP2CPOClient : CommonClient
     {
 
         #region (class) APICounters
@@ -194,16 +194,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <summary>
         /// The default HTTP user agent.
         /// </summary>
-        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(EMSPClient)}";
+        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(EMSP2CPOClient)}";
 
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public new const String  DefaultLoggingContext   = nameof(EMSPClient);
+        public new const String  DefaultLoggingContext   = nameof(EMSP2CPOClient);
 
         #endregion
 
         #region Properties
+
+        public EMSPAPI          EMSPAPI       { get; }
 
         /// <summary>
         /// EMSP client event counters.
@@ -672,10 +674,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
         #region Constructor(s)
 
-        #region EMSPClient(VersionsURL, AccessToken = null, ...)
+        #region EMSP2CPOClient(VersionsURL, AccessToken = null, ...)
 
         ///// <summary>
-        ///// Create a new EMSP client.
+        ///// Create a new EMSP2CPO client.
         ///// </summary>
         ///// <param name="VersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
         ///// <param name="AccessToken">The optional OCPI token.</param>
@@ -774,12 +776,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
         #endregion
 
-        #region EMSPClient(CommonAPI, RemoteParty, ...)
+        #region EMSP2CPOClient(CommonAPI, RemoteParty, ...)
 
         /// <summary>
-        /// Create a new EMSP client.
+        /// Create a new EMSP2CPO client.
         /// </summary>
-        /// <param name="CommonAPI">The CommonAPI.</param>
+        /// <param name="EMSPAPI">The EMSP API.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
         /// <param name="DisableLogging">Disable all logging.</param>
@@ -787,19 +789,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public EMSPClient(CommonAPI                    CommonAPI,
-                          RemoteParty                  RemoteParty,
-                          HTTPHostname?                VirtualHostname   = null,
-                          I18NString?                  Description       = null,
-                          HTTPClientLogger?            HTTPLogger        = null,
+        public EMSP2CPOClient(EMSPAPI                      EMSPAPI,
+                              RemoteParty                  RemoteParty,
+                              HTTPHostname?                VirtualHostname   = null,
+                              I18NString?                  Description       = null,
+                              HTTPClientLogger?            HTTPLogger        = null,
 
-                          Boolean?                     DisableLogging    = false,
-                          String?                      LoggingPath       = null,
-                          String?                      LoggingContext    = null,
-                          OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                          DNSClient?                   DNSClient         = null)
+                              Boolean?                     DisableLogging    = false,
+                              String?                      LoggingPath       = null,
+                              String?                      LoggingContext    = null,
+                              OCPILogfileCreatorDelegate?  LogfileCreator    = null,
+                              DNSClient?                   DNSClient         = null)
 
-            : base(CommonAPI,
+            : base(EMSPAPI.CommonAPI,
                    RemoteParty,
                    VirtualHostname,
                    Description,
@@ -813,6 +815,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
         {
 
+            this.EMSPAPI     = EMSPAPI;
             this.Counters    = new APICounters();
 
             base.HTTPLogger  = this.DisableLogging == false
@@ -832,7 +835,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
 
         public override JObject ToJSON()
-            => base.ToJSON(nameof(EMSPClient));
+            => base.ToJSON(nameof(EMSP2CPOClient));
 
 
         #region GetLocations      (...)
@@ -2312,7 +2315,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         // PUT     ~/sessions/{session_id}/charging_preferences
 
 
-        #region GetCDRs            (...)
+        #region GetCDRs           (...)
 
         /// <summary>
         /// Get all charge detail records from the remote API.
@@ -2856,7 +2859,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
         #endregion
 
-        #region PutToken          (Token, ...)
+        #region PutToken           (Token, ...)
 
         /// <summary>
         /// Put/store the given token on/within the remote API.
@@ -3035,7 +3038,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
         #endregion
 
-        #region PatchToken        (CountryCode, PartyId, TokenId, ...)
+        #region PatchToken         (CountryCode, PartyId, TokenId, ...)
 
         /// <summary>
         /// Start a charging token.
@@ -4278,6 +4281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         //ToDo: Add smart charging commands!
 
 
+
         #region (private) LogEvent (Logger, LogHandler, ...)
 
         private Task LogEvent<TDelegate>(TDelegate?                                         Logger,
@@ -4288,7 +4292,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             where TDelegate : Delegate
 
             => LogEvent(
-                   nameof(EMSPClient),
+                   nameof(EMSP2CPOClient),
                    Logger,
                    LogHandler,
                    EventName,

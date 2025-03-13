@@ -36,9 +36,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 {
 
     /// <summary>
-    /// The CPO client.
+    /// The CPO2EMSP client.
     /// </summary>
-    public partial class CPOClient : CommonClient
+    public partial class CPO2EMSPClient : CommonClient
     {
 
         #region (class) APICounters
@@ -200,16 +200,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <summary>
         /// The default HTTP user agent.
         /// </summary>
-        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(CPOClient)}";
+        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(CPO2EMSPClient)}";
 
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public new const String  DefaultLoggingContext   = nameof(CPOClient);
+        public new const String  DefaultLoggingContext   = nameof(CPO2EMSPClient);
 
         #endregion
 
         #region Properties
+
+        public CPOAPI           CPOAPI      { get; }
 
         /// <summary>
         /// CPO client event counters.
@@ -815,10 +817,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #region Constructor(s)
 
-        #region CPOClient(VersionsURL, AccessToken = null, ...)
+        #region CPO2EMSPClient(VersionsURL, AccessToken = null, ...)
 
         /// <summary>
-        /// Create a new CPO client.
+        /// Create a new CPO2EMSP client.
         /// </summary>
         /// <param name="VersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
         /// <param name="AccessToken">The optional OCPI token.</param>
@@ -846,32 +848,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPOClient(URL                                                        VersionsURL,
-                         String?                                                    AccessToken                  = null,
+        public CPO2EMSPClient(URL                                                        VersionsURL,
+                              String?                                                    AccessToken                  = null,
 
-                         HTTPHostname?                                              VirtualHostname              = null,
-                         I18NString?                                                Description                  = null,
-                         Boolean?                                                   PreferIPv4                   = null,
-                         RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                         LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                         X509Certificate?                                           ClientCert                   = null,
-                         SslProtocols?                                              TLSProtocol                  = null,
-                         HTTPContentType?                                           ContentType                  = null,
-                         AcceptTypes?                                               Accept                       = null,
-                         IHTTPAuthentication?                                       HTTPAuthentication           = null,
-                         String?                                                    HTTPUserAgent                = null,
-                         ConnectionType?                                            Connection                   = null,
-                         TimeSpan?                                                  RequestTimeout               = null,
-                         TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                         UInt16?                                                    MaxNumberOfRetries           = null,
-                         UInt32?                                                    InternalBufferSize           = null,
-                         Boolean?                                                   UseHTTPPipelining            = null,
-                         Boolean?                                                   DisableLogging               = null,
-                         String?                                                    LoggingPath                  = null,
-                         String?                                                    LoggingContext               = null,
-                         OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
-                         HTTPClientLogger?                                          HTTPLogger                   = null,
-                         DNSClient?                                                 DNSClient                    = null)
+                              HTTPHostname?                                              VirtualHostname              = null,
+                              I18NString?                                                Description                  = null,
+                              Boolean?                                                   PreferIPv4                   = null,
+                              RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
+                              LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
+                              X509Certificate?                                           ClientCert                   = null,
+                              SslProtocols?                                              TLSProtocol                  = null,
+                              HTTPContentType?                                           ContentType                  = null,
+                              AcceptTypes?                                               Accept                       = null,
+                              IHTTPAuthentication?                                       HTTPAuthentication           = null,
+                              String?                                                    HTTPUserAgent                = null,
+                              ConnectionType?                                            Connection                   = null,
+                              TimeSpan?                                                  RequestTimeout               = null,
+                              TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
+                              UInt16?                                                    MaxNumberOfRetries           = null,
+                              UInt32?                                                    InternalBufferSize           = null,
+                              Boolean?                                                   UseHTTPPipelining            = null,
+                              Boolean?                                                   DisableLogging               = null,
+                              String?                                                    LoggingPath                  = null,
+                              String?                                                    LoggingContext               = null,
+                              OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
+                              HTTPClientLogger?                                          HTTPLogger                   = null,
+                              DNSClient?                                                 DNSClient                    = null)
 
             : base(VersionsURL,
                    AccessToken,
@@ -917,12 +919,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
-        #region CPOClient(CommonAPI, RemoteParty, ...)
+        #region CPO2EMSPClient(CPOAPI, RemoteParty, ...)
 
         /// <summary>
-        /// Create a new CPO client.
+        /// Create a new CPO2EMSP client.
         /// </summary>
-        /// <param name="CommonAPI">The CommonAPI.</param>
+        /// <param name="CPOAPI">The CPOAPI.</param>
         /// <param name="RemoteParty">The remote party.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
@@ -931,19 +933,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPOClient(CommonAPI                    CommonAPI,
-                         RemoteParty                  RemoteParty,
-                         HTTPHostname?                VirtualHostname   = null,
-                         I18NString?                  Description       = null,
-                         HTTPClientLogger?            HTTPLogger        = null,
+        public CPO2EMSPClient(CPOAPI                       CPOAPI,
+                              RemoteParty                  RemoteParty,
+                              HTTPHostname?                VirtualHostname   = null,
+                              I18NString?                  Description       = null,
+                              HTTPClientLogger?            HTTPLogger        = null,
 
-                         Boolean?                     DisableLogging    = false,
-                         String?                      LoggingPath       = null,
-                         String?                      LoggingContext    = null,
-                         OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                         DNSClient?                   DNSClient         = null)
+                              Boolean?                     DisableLogging    = false,
+                              String?                      LoggingPath       = null,
+                              String?                      LoggingContext    = null,
+                              OCPILogfileCreatorDelegate?  LogfileCreator    = null,
+                              DNSClient?                   DNSClient         = null)
 
-            : base(CommonAPI,
+            : base(CPOAPI.CommonAPI,
                    RemoteParty,
                    VirtualHostname,
                    Description,
@@ -957,6 +959,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         {
 
+            this.CPOAPI      = CPOAPI;
             this.Counters    = new APICounters();
 
             base.HTTPLogger  = this.DisableLogging == false
@@ -976,7 +979,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
 
         public override JObject ToJSON()
-            => base.ToJSON(nameof(CPOClient));
+            => base.ToJSON(nameof(CPO2EMSPClient));
 
 
         #region GetLocation    (LocationId, ...)
@@ -1038,7 +1041,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetLocationRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetLocationRequest));
             }
 
             #endregion
@@ -1156,7 +1159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetLocationResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetLocationResponse));
             }
 
             #endregion
@@ -1229,7 +1232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutLocationRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutLocationRequest));
             }
 
             #endregion
@@ -1369,7 +1372,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutLocationResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutLocationResponse));
             }
 
             #endregion
@@ -1448,7 +1451,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchLocationRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchLocationRequest));
             }
 
             #endregion
@@ -1569,7 +1572,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchLocationResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchLocationResponse));
             }
 
             #endregion
@@ -1642,7 +1645,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetEVSERequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetEVSERequest));
             }
 
             #endregion
@@ -1762,7 +1765,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchLocationResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchLocationResponse));
             }
 
             #endregion
@@ -1882,7 +1885,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutEVSERequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutEVSERequest));
             }
 
             #endregion
@@ -2015,7 +2018,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutEVSEResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutEVSEResponse));
             }
 
             #endregion
@@ -2097,7 +2100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchEVSERequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchEVSERequest));
             }
 
             #endregion
@@ -2220,7 +2223,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchEVSEResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchEVSEResponse));
             }
 
             #endregion
@@ -2295,7 +2298,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetConnectorRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetConnectorRequest));
             }
 
             #endregion
@@ -2417,7 +2420,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetConnectorResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetConnectorResponse));
             }
 
             #endregion
@@ -2500,7 +2503,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutConnectorRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutConnectorRequest));
             }
 
             #endregion
@@ -2625,7 +2628,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutConnectorResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutConnectorResponse));
             }
 
             #endregion
@@ -2701,7 +2704,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchConnectorRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchConnectorRequest));
             }
 
             #endregion
@@ -2826,7 +2829,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchConnectorResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchConnectorResponse));
             }
 
             #endregion
@@ -2901,7 +2904,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetTariffRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetTariffRequest));
             }
 
             #endregion
@@ -3023,7 +3026,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetTariffResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetTariffResponse));
             }
 
             #endregion
@@ -3095,7 +3098,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutTariffRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutTariffRequest));
             }
 
             #endregion
@@ -3215,7 +3218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutTariffResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutTariffResponse));
             }
 
             #endregion
@@ -3298,7 +3301,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchTariffRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchTariffRequest));
             }
 
             #endregion
@@ -3423,7 +3426,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchTariffResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchTariffResponse));
             }
 
             #endregion
@@ -3497,7 +3500,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnDeleteTariffRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnDeleteTariffRequest));
             }
 
             #endregion
@@ -3619,7 +3622,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnDeleteTariffResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnDeleteTariffResponse));
             }
 
             #endregion
@@ -3694,7 +3697,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetSessionRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetSessionRequest));
             }
 
             #endregion
@@ -3816,7 +3819,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetSessionResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetSessionResponse));
             }
 
             #endregion
@@ -3888,7 +3891,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutSessionRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutSessionRequest));
             }
 
             #endregion
@@ -4008,7 +4011,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutSessionResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutSessionResponse));
             }
 
             #endregion
@@ -4091,7 +4094,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchSessionRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchSessionRequest));
             }
 
             #endregion
@@ -4216,7 +4219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchSessionResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchSessionResponse));
             }
 
             #endregion
@@ -4290,7 +4293,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnDeleteSessionRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnDeleteSessionRequest));
             }
 
             #endregion
@@ -4412,7 +4415,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnDeleteSessionResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnDeleteSessionResponse));
             }
 
             #endregion
@@ -4484,7 +4487,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostCDRRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPostCDRRequest));
             }
 
             #endregion
@@ -4632,7 +4635,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostCDRResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPostCDRResponse));
             }
 
             #endregion
@@ -4702,7 +4705,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetCDRRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetCDRRequest));
             }
 
             #endregion
@@ -4820,7 +4823,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetCDRResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetCDRResponse));
             }
 
             #endregion
@@ -4898,7 +4901,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetTokensRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetTokensRequest));
             }
 
             #endregion
@@ -5029,7 +5032,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetTokensResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetTokensResponse));
             }
 
             #endregion
@@ -5103,7 +5106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostTokenRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPostTokenRequest));
             }
 
             #endregion
@@ -5259,7 +5262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostTokenResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPostTokenResponse));
             }
 
             #endregion

@@ -1826,7 +1826,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
-                                                                                                           "Could not find a apropriate EMSP client for this request!").
+                                                                                                           "Could not find a appropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
                                                             Connection                 = ConnectionType.Close
@@ -2170,7 +2170,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
-                                                                                                           "Could not find a apropriate EMSP client for this request!").
+                                                                                                           "Could not find a appropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
                                                             Connection                 = ConnectionType.Close
@@ -2566,7 +2566,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
-                                                                                                           "Could not find a apropriate EMSP client for this request!").
+                                                                                                           "Could not find a appropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
                                                             Connection                 = ConnectionType.Close
@@ -2908,7 +2908,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
-                                                                                                           "Could not find a apropriate EMSP client for this request!").
+                                                                                                           "Could not find a appropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
                                                             Connection                 = ConnectionType.Close
@@ -3298,7 +3298,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
-                                                                                                           "Could not find a apropriate EMSP client for this request!").
+                                                                                                           "Could not find a appropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
                                                             Connection                 = ConnectionType.Close

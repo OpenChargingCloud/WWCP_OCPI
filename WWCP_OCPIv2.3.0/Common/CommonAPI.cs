@@ -30,8 +30,8 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP;
+using cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP;
 using cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP;
-using System.Collections.Generic;
 
 #endregion
 
@@ -1196,7 +1196,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="FailOnMissingTariff">Whether to fail when the tariff for the given tariff identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseTariff(this OCPIRequest           Request,
-                                          CommonAPI                    CommonAPI,
+                                          CommonAPI                  CommonAPI,
                                           out CountryCode?           CountryCode,
                                           out Party_Id?              PartyId,
                                           out Tariff_Id?             TariffId,
@@ -1394,9 +1394,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
             {
                 if (CommonAPI.TryGetTariff(countryCodeWithPartyId.Item1,
-                                                  countryCodeWithPartyId.Item2,
-                                                  TariffId.Value,
-                                                  out Tariff))
+                                           countryCodeWithPartyId.Item2,
+                                           TariffId.Value,
+                                           out Tariff))
                 {
                     return true;
                 }
@@ -1435,14 +1435,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingSession">Whether to fail when the session for the given session identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseSession(this OCPIRequest          Request,
-                                          CommonAPI                    CommonAPI,
-                                          out CountryCode?           CountryCode,
-                                          out Party_Id?              PartyId,
-                                          out Session_Id?            SessionId,
-                                          out Session?               Session,
-                                          out OCPIResponse.Builder?  OCPIResponseBuilder,
-                                          Boolean                    FailOnMissingSession = true)
+        public static Boolean ParseSession(this OCPIRequest           Request,
+                                           CommonAPI                  CommonAPI,
+                                           out CountryCode?           CountryCode,
+                                           out Party_Id?              PartyId,
+                                           out Session_Id?            SessionId,
+                                           out Session?               Session,
+                                           out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                           Boolean                    FailOnMissingSession = true)
         {
 
             #region Initial checks
@@ -2358,6 +2358,78 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         #endregion
 
 
+
+        #region ParseTerminalId            (this Request, CommonAPI, out TerminalId,                                            out OCPIResponseBuilder)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the terminal identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The EMSP API.</param>
+        /// <param name="TerminalId">The parsed unique terminal identification.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        public static Boolean ParseTerminalId(this OCPIRequest                                Request,
+                                              CommonAPI                                       CommonAPI,
+                                              [NotNullWhen(true)]  out Terminal_Id?           TerminalId,
+                                              [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),    "The given HTTP request must not be null!");
+
+            if (CommonAPI is null)
+                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
+
+            #endregion
+
+            TerminalId           = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 1)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing terminal identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            if (!Terminal_Id.TryParse(Request.ParsedURLParameters[0], out var terminalId))
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid terminal identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            TerminalId = terminalId;
+            return true;
+
+        }
+
+        #endregion
+
         #region ParseTerminal              (this Request, CommonAPI, out TerminalId, out Terminal,                                                        out HTTPResponse)
 
         /// <summary>
@@ -2382,10 +2454,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             #region Initial checks
 
             if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+                throw new ArgumentNullException(nameof(Request),    "The given HTTP request must not be null!");
 
             if (CommonAPI  is null)
-                throw new ArgumentNullException(nameof(CommonAPI),   "The given CPO API must not be null!");
+                throw new ArgumentNullException(nameof(CommonAPI),  "The given CPO API must not be null!");
 
             #endregion
 
@@ -2846,59 +2918,59 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String    DefaultHTTPServerName     = "GraphDefined OCPI HTTP API v0.1";
+        public new const           String    DefaultHTTPServerName           = $"GraphDefined OCPI {Version.String} Common HTTP API";
 
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String    DefaultHTTPServiceName    = "GraphDefined OCPI HTTP API v0.1";
+        public new const           String    DefaultHTTPServiceName          = $"GraphDefined OCPI {Version.String} Common HTTP API";
 
         /// <summary>
         /// The default HTTP server TCP port.
         /// </summary>
-        public new static readonly IPPort    DefaultHTTPServerPort     = IPPort.Parse(8080);
+        public new static readonly IPPort    DefaultHTTPServerPort           = IPPort.Parse(8080);
 
         /// <summary>
         /// The default HTTP URL path prefix.
         /// </summary>
-        public new static readonly HTTPPath  DefaultURLPathPrefix      = HTTPPath.Parse("io/OCPI/");
+        public new static readonly HTTPPath  DefaultURLPathPrefix            = HTTPPath.Parse("io/OCPI/");
 
         /// <summary>
         /// The default log file name.
         /// </summary>
-        public static readonly     String    DefaultLogfileName        = $"OCPI{Version.Id}-CommonAPI.log";
+        public static readonly     String    DefaultLogfileName              = $"OCPI{Version.Id}-CommonAPI.log";
 
         /// <summary>
         /// The default database file name for all remote party configuration.
         /// </summary>
-        public const               String      DefaultRemotePartyDBFileName    = "RemoteParties.db";
+        public const               String    DefaultRemotePartyDBFileName    = "RemoteParties.db";
 
         /// <summary>
         /// The default database file name for all OCPI assets.
         /// </summary>
-        public const               String      DefaultAssetsDBFileName         = "Assets.db";
+        public const               String    DefaultAssetsDBFileName         = "Assets.db";
 
         /// <summary>
         /// The command values store.
         /// </summary>
-        public readonly ConcurrentDictionary<Command_Id, CommandValues> CommandValueStore = new ConcurrentDictionary<Command_Id, CommandValues>();
+        public readonly ConcurrentDictionary<Command_Id, CommandValues> CommandValueStore = [];
 
         #endregion
 
         #region Properties
 
-        public CommonBaseAPI            BaseAPI                     { get; }
+        public CommonBaseAPI                 BaseAPI                     { get; }
 
         /// <summary>
         /// The (max supported) OCPI version.
         /// </summary>
-        public Version_Id               OCPIVersion                 { get; } = Version.Id;
+        public Version_Id                    OCPIVersion                 { get; } = Version.Id;
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI v2.2 does not define any behaviour for this.
         /// </summary>
-        public Boolean?                 AllowDowngrades            { get; }
+        public Boolean?                      AllowDowngrades            { get; }
 
 
         /// <summary>
@@ -2928,17 +3000,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
 
 
-        public String                   DatabaseFilePath           { get; }
+        public String                        DatabaseFilePath           { get; }
 
         /// <summary>
         /// The database file name for all remote party configuration.
         /// </summary>
-        public String                   RemotePartyDBFileName      { get; protected set; }
+        public String                        RemotePartyDBFileName      { get; protected set; }
 
         /// <summary>
         /// The database file name for all OCPI assets.
         /// </summary>
-        public String                   AssetsDBFileName           { get; }
+        public String                        AssetsDBFileName           { get; }
 
         #endregion
 
@@ -3451,10 +3523,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         private void RegisterURLTemplates()
         {
 
-            #region OPTIONS     ~/versions/2.3
+            #region OPTIONS     ~/versions/2.3.0
 
             // -------------------------------------------------------
-            // curl -v -X OPTIONS http://127.0.0.1:2502/versions/2.3
+            // curl -v -X OPTIONS http://127.0.0.1:2502/versions/2.3.0
             // -------------------------------------------------------
             this.AddOCPIMethod(
 
@@ -3478,10 +3550,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             #endregion
 
-            #region GET         ~/versions/2.3
+            #region GET         ~/versions/2.3.0
 
             // --------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions/2.3
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions/2.3.0
             // --------------------------------------------------------------------------
             this.AddOCPIMethod(
 
@@ -3748,10 +3820,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             #endregion
 
 
-            #region OPTIONS     ~/2.3/credentials
+            #region OPTIONS     ~/2.3.0/credentials
 
             // ----------------------------------------------------------
-            // curl -v -X OPTIONS http://127.0.0.1:2502/2.3/credentials
+            // curl -v -X OPTIONS http://127.0.0.1:2502/2.3.0/credentials
             // ----------------------------------------------------------
             this.AddOCPIMethod(
 
@@ -3818,10 +3890,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             #endregion
 
-            #region GET         ~/2.3/credentials
+            #region GET         ~/2.3.0/credentials
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.3/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.3.0/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(
 
@@ -3874,12 +3946,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             #endregion
 
-            #region POST        ~/2.3/credentials
+            #region POST        ~/2.3.0/credentials
 
             // REGISTER new OCPI party!
 
             // -----------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.3/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.3.0/credentials
             // -----------------------------------------------------------------------------
             this.AddOCPIMethod(
 
@@ -3923,12 +3995,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             #endregion
 
-            #region PUT         ~/2.3/credentials
+            #region PUT         ~/2.3.0/credentials
 
             // UPDATE the registration of an existing OCPI party!
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.3/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.3.0/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(
 
@@ -4001,12 +4073,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             #endregion
 
-            #region DELETE      ~/2.3/credentials
+            #region DELETE      ~/2.3.0/credentials
 
             // UNREGISTER an existing OCPI party!
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.3/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.3.0/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(
 
@@ -4549,7 +4621,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
 
 
-        //ToDo: Wrap the following into a plugable interface!
+        //ToDo: Wrap the following into a pluggable interface!
 
         #region AccessTokens
 
@@ -6072,8 +6144,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// </summary>
         /// <param name="RemotePartyId">The unique identification of the remote party.</param>
         /// <param name="RemoteParty">The remote party.</param>
-        public Boolean TryGetRemoteParty(RemoteParty_Id    RemotePartyId,
-                                         out RemoteParty?  RemoteParty)
+        public Boolean TryGetRemoteParty(RemoteParty_Id                        RemotePartyId,
+                                         [NotNullWhen(true)] out RemoteParty?  RemoteParty)
 
             => remoteParties.TryGetValue(RemotePartyId,
                                          out RemoteParty);
@@ -6163,7 +6235,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #endregion
 
-        #region GetRemoteParties   (AccessToken, out RemoteParties)
+        #region GetRemoteParties   (AccessToken,   out RemoteParties)
 
         public Boolean TryGetRemoteParties(AccessToken                   AccessToken,
                                            out IEnumerable<RemoteParty>  RemoteParties)
@@ -6316,337 +6388,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         #endregion
 
         #endregion
-
-        #region CPOClients
-
-        private readonly ConcurrentDictionary<EMSP_Id, CPOClient> cpoClients = new ();
-
-        /// <summary>
-        /// Return an enumeration of all CPO clients.
-        /// </summary>
-        public IEnumerable<CPOClient> CPOClients
-            => cpoClients.Values;
-
-
-        #region GetCPOClient(CountryCode, PartyId, Description = null, AllowCachedClients = true)
-
-        /// <summary>
-        /// As a CPO create a client to access e.g. a remote EMSP.
-        /// </summary>
-        /// <param name="CountryCode">The country code of the remote EMSP.</param>
-        /// <param name="PartyId">The party identification of the remote EMSP.</param>
-        /// <param name="Description">A description for the OCPI client.</param>
-        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public CPOClient? GetCPOClient(CountryCode  CountryCode,
-                                       Party_Id     PartyId,
-                                       I18NString?  Description          = null,
-                                       Boolean      AllowCachedClients   = true)
-        {
-
-            var emspId         = EMSP_Id.       Parse(CountryCode, PartyId);
-            var remotePartyId  = RemoteParty_Id.From (emspId);
-
-            if (AllowCachedClients &&
-                cpoClients.TryGetValue(emspId, out var cachedCPOClient))
-            {
-                return cachedCPOClient;
-            }
-
-            if (remoteParties.TryGetValue(remotePartyId, out var remoteParty) &&
-                remoteParty?.RemoteAccessInfos?.Any() == true)
-            {
-
-                var cpoClient = new CPOClient(
-                                    this,
-                                    remoteParty,
-                                    null,
-                                    Description ?? BaseAPI.ClientConfigurations.Description?.Invoke(remotePartyId),
-                                    null,
-                                    BaseAPI.ClientConfigurations.DisableLogging?.Invoke(remotePartyId),
-                                    BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
-                                    BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
-                                    BaseAPI.ClientConfigurations.LogfileCreator,
-                                    DNSClient
-                                );
-
-                cpoClients.TryAdd(emspId, cpoClient);
-
-                return cpoClient;
-
-            }
-
-            return null;
-
-        }
-
-        #endregion
-
-        #region GetCPOClient(RemoteParty,          Description = null, AllowCachedClients = true)
-
-        /// <summary>
-        /// As a CPO create a client to access e.g. a remote EMSP.
-        /// </summary>
-        /// <param name="RemoteParty">A remote party.</param>
-        /// <param name="Description">A description for the OCPI client.</param>
-        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public CPOClient? GetCPOClient(RemoteParty  RemoteParty,
-                                       I18NString?  Description          = null,
-                                       Boolean      AllowCachedClients   = true)
-        {
-
-            var emspId = EMSP_Id.From(RemoteParty.Id);
-
-            if (AllowCachedClients &&
-                cpoClients.TryGetValue(emspId, out var cachedCPOClient))
-            {
-                return cachedCPOClient;
-            }
-
-            if (RemoteParty?.RemoteAccessInfos?.Any() == true)
-            {
-
-                var cpoClient = new CPOClient(
-                                    this,
-                                    RemoteParty,
-                                    null,
-                                    Description ?? BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
-                                    null,
-                                    BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
-                                    BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
-                                    BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
-                                    BaseAPI.ClientConfigurations.LogfileCreator,
-                                    DNSClient
-                                );
-
-                cpoClients.TryAdd(emspId, cpoClient);
-
-                return cpoClient;
-
-            }
-
-            return null;
-
-        }
-
-        #endregion
-
-        #region GetCPOClient(RemotePartyId,        Description = null, AllowCachedClients = true)
-
-        /// <summary>
-        /// As a CPO create a client to access e.g. a remote EMSP.
-        /// </summary>
-        /// <param name="RemotePartyId">A remote party identification.</param>
-        /// <param name="Description">A description for the OCPI client.</param>
-        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public CPOClient? GetCPOClient(RemoteParty_Id  RemotePartyId,
-                                       I18NString?     Description          = null,
-                                       Boolean         AllowCachedClients   = true)
-        {
-
-            var emspId = EMSP_Id.From(RemotePartyId);
-
-            if (AllowCachedClients &&
-                cpoClients.TryGetValue(emspId, out var cachedCPOClient))
-            {
-                return cachedCPOClient;
-            }
-
-            if (remoteParties.TryGetValue(RemotePartyId, out var remoteParty) &&
-                remoteParty?.RemoteAccessInfos?.Any() == true)
-            {
-
-                var cpoClient = new CPOClient(
-                                    this,
-                                    remoteParty,
-                                    null,
-                                    Description ?? BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
-                                    null,
-                                    BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
-                                    BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
-                                    BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
-                                    BaseAPI.ClientConfigurations.LogfileCreator,
-                                    DNSClient
-                                );
-
-                cpoClients.TryAdd(emspId, cpoClient);
-
-                return cpoClient;
-
-            }
-
-            return null;
-
-        }
-
-        #endregion
-
-        #endregion
-
-        #region EMSPClients
-
-        private readonly ConcurrentDictionary<CPO_Id, EMSPClient> emspClients = new ();
-
-        /// <summary>
-        /// Return an enumeration of all EMSP clients.
-        /// </summary>
-        public IEnumerable<EMSPClient> EMSPClients
-            => emspClients.Values;
-
-
-        #region GetEMSPClient(CountryCode, PartyId, Description = null, AllowCachedClients = true)
-
-        /// <summary>
-        /// As a EMSP create a client to access e.g. a remote EMSP.
-        /// </summary>
-        /// <param name="CountryCode">The country code of the remote EMSP.</param>
-        /// <param name="PartyId">The party identification of the remote EMSP.</param>
-        /// <param name="Description">A description for the OCPI client.</param>
-        /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
-        public EMSPClient? GetEMSPClient(CountryCode  CountryCode,
-                                         Party_Id     PartyId,
-                                         I18NString?  Description          = null,
-                                         Boolean      AllowCachedClients   = true)
-        {
-
-            var cpoId          = CPO_Id.        Parse(CountryCode, PartyId);
-            var remotePartyId  = RemoteParty_Id.From (cpoId);
-
-            if (AllowCachedClients &&
-                emspClients.TryGetValue(cpoId, out var cachedEMSPClient))
-            {
-                return cachedEMSPClient;
-            }
-
-            if (remoteParties.TryGetValue(remotePartyId, out var remoteParty) &&
-                remoteParty?.RemoteAccessInfos?.Any() == true)
-            {
-
-                var emspClient = new EMSPClient(
-                                     this,
-                                     remoteParty,
-                                     null,
-                                     Description ?? BaseAPI.ClientConfigurations.Description?.Invoke(remotePartyId),
-                                     null,
-                                     BaseAPI.ClientConfigurations.DisableLogging?.Invoke(remotePartyId),
-                                     BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
-                                     BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
-                                     BaseAPI.ClientConfigurations.LogfileCreator,
-                                     DNSClient
-                                 );
-
-                emspClients.TryAdd(cpoId, emspClient);
-
-                return emspClient;
-
-            }
-
-            return null;
-
-        }
-
-        #endregion
-
-        #region GetEMSPClient(RemoteParty,          Description = null, AllowCachedClients = true)
-
-        /// <summary>
-        /// As a EMSP create a client to access e.g. a remote EMSP.
-        /// </summary>
-        /// <param name="RemoteParty">A remote party.</param>
-        /// <param name="Description">A description for the OCPI client.</param>
-        /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
-        public EMSPClient? GetEMSPClient(RemoteParty  RemoteParty,
-                                         I18NString?  Description          = null,
-                                         Boolean      AllowCachedClients   = true)
-        {
-
-            var cpoId = CPO_Id.From(RemoteParty.Id);
-
-            if (AllowCachedClients &&
-                emspClients.TryGetValue(cpoId, out var cachedEMSPClient))
-            {
-                return cachedEMSPClient;
-            }
-
-            if (RemoteParty?.RemoteAccessInfos?.Any() == true)
-            {
-
-                var emspClient = new EMSPClient(
-                                     this,
-                                     RemoteParty,
-                                     null,
-                                     Description ?? BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
-                                     null,
-                                     BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
-                                     BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
-                                     BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
-                                     BaseAPI.ClientConfigurations.LogfileCreator,
-                                     DNSClient
-                                 );
-
-                emspClients.TryAdd(cpoId, emspClient);
-
-                return emspClient;
-
-            }
-
-            return null;
-
-        }
-
-        #endregion
-
-        #region GetEMSPClient(RemotePartyId,        Description = null, AllowCachedClients = true)
-
-        /// <summary>
-        /// As a EMSP create a client to access e.g. a remote EMSP.
-        /// </summary>
-        /// <param name="RemotePartyId">A remote party identification.</param>
-        /// <param name="Description">A description for the OCPI client.</param>
-        /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
-        public EMSPClient? GetEMSPClient(RemoteParty_Id  RemotePartyId,
-                                         I18NString?     Description          = null,
-                                         Boolean         AllowCachedClients   = true)
-        {
-
-            var cpoId = CPO_Id.From(RemotePartyId);
-
-            if (AllowCachedClients &&
-                emspClients.TryGetValue(cpoId, out var cachedEMSPClient))
-            {
-                return cachedEMSPClient;
-            }
-
-            if (remoteParties.TryGetValue(RemotePartyId, out var remoteParty) &&
-                remoteParty?.RemoteAccessInfos?.Any() == true)
-            {
-
-                var emspClient = new EMSPClient(
-                                     this,
-                                     remoteParty,
-                                     null,
-                                     Description ?? BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
-                                     null,
-                                     BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
-                                     BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
-                                     BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
-                                     BaseAPI.ClientConfigurations.LogfileCreator,
-                                     DNSClient
-                                 );
-
-                emspClients.TryAdd(cpoId, emspClient);
-
-                return emspClient;
-
-            }
-
-            return null;
-
-        }
-
-        #endregion
-
-        #endregion
-
 
 
         #region Parties (local)
