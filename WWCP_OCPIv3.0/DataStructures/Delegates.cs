@@ -33,9 +33,9 @@ using cloud.charging.open.protocols.OCPIv3_0.HTTP;
 namespace cloud.charging.open.protocols.OCPIv3_0
 {
 
-    public delegate String OCPILogfileCreatorDelegate(String         LoggingPath,
-                                                      IRemoteParty?  RemoteParty,
-                                                      String         Context,
-                                                      String         LogfileName);
+    //public delegate String OCPILogfileCreatorDelegate(String         LoggingPath,
+    //                                                  IRemoteParty?  RemoteParty,
+    //                                                  String         Context,
+    //                                                  String         LogfileName);
 
 }

@@ -82,19 +82,19 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Indicates whether this identification is null or empty.
         /// </summary>
-        public Boolean IsNullOrEmpty
+        public Boolean      IsNullOrEmpty
             => CountryCode.IsNullOrEmpty || PartyId.IsNullOrEmpty;
 
         /// <summary>
         /// Indicates whether this identification is NOT null or empty.
         /// </summary>
-        public Boolean IsNotNullOrEmpty
+        public Boolean      IsNotNullOrEmpty
             => CountryCode.IsNotNullOrEmpty && PartyId.IsNotNullOrEmpty;
 
         /// <summary>
         /// The length of the remote party identification.
         /// </summary>
-        public UInt64 Length
+        public UInt64       Length
             => (UInt64) ToString().Length;
 
         #endregion
@@ -130,10 +130,26 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
+        #region (static) Parse   (PartyIdv3,            Role)
+
+        /// <summary>
+        /// Parse the given party identification and role as a remote party identification.
+        /// </summary>
+        /// <param name="PartyIdv3">A party identification.</param>
+        /// <param name="Role">A party role.</param>
+        public static RemoteParty_Id Parse(Party_Idv3  PartyIdv3,
+                                           Role        Role)
+
+            => new (PartyIdv3.CountryCode,
+                    PartyIdv3.Party,
+                    Role);
+
+        #endregion
+
         #region (static) Parse   (CountryCode, PartyId, Role)
 
         /// <summary>
-        /// Parse the given country code and party identification as a remote party identification.
+        /// Parse the given country code, party identification and role as a remote party identification.
         /// </summary>
         /// <param name="CountryCode">A country code.</param>
         /// <param name="PartyId">A party identification.</param>
@@ -292,7 +308,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Clone this remote party identification.
         /// </summary>
-        public RemoteParty_Id Clone
+        public RemoteParty_Id Clone()
 
             => new (
                    CountryCode.Clone(),

@@ -1,463 +1,463 @@
-﻿/*
- * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
- * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
- *
- * Licensed under the Affero GPL license, Version 3.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.gnu.org/licenses/agpl.html
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#region Usings
-
-using System.Text.RegularExpressions;
-using cloud.charging.open.protocols.OCPI;
-using org.GraphDefined.Vanaheimr.Illias;
-
-#endregion
+﻿///*
+// * Copyright (c) 2015-2025 GraphDefined GmbH <achim.friedland@graphdefined.com>
+// * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
+// *
+// * Licensed under the Affero GPL license, Version 3.0 (the "License");
+// * you may not use this file except in compliance with the License.
+// * You may obtain a copy of the License at
+// *
+// *     http://www.gnu.org/licenses/agpl.html
+// *
+// * Unless required by applicable law or agreed to in writing, software
+// * distributed under the License is distributed on an "AS IS" BASIS,
+// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// * See the License for the specific language governing permissions and
+// * limitations under the License.
+// */
+
+//#region Usings
+
+//using System.Text.RegularExpressions;
+//using cloud.charging.open.protocols.OCPI;
+//using org.GraphDefined.Vanaheimr.Illias;
+
+//#endregion
 
-namespace cloud.charging.open.protocols.OCPIv3_0
-{
+//namespace cloud.charging.open.protocols.OCPIv3_0
+//{
 
-    /// <summary>
-    /// Extension methods for remote party identifications.
-    /// </summary>
-    public static class RemotePartyIdExtensions
-    {
-
-        /// <summary>
-        /// Indicates whether this remote party identification is null or empty.
-        /// </summary>
-        /// <param name="RemotePartyId">A remote party identification.</param>
-        public static Boolean IsNullOrEmpty(this RemoteParty_Id? RemotePartyId)
-            => !RemotePartyId.HasValue || RemotePartyId.Value.IsNullOrEmpty;
+//    /// <summary>
+//    /// Extension methods for remote party identifications.
+//    /// </summary>
+//    public static class RemotePartyIdExtensions
+//    {
+
+//        /// <summary>
+//        /// Indicates whether this remote party identification is null or empty.
+//        /// </summary>
+//        /// <param name="RemotePartyId">A remote party identification.</param>
+//        public static Boolean IsNullOrEmpty(this RemoteParty_Id? RemotePartyId)
+//            => !RemotePartyId.HasValue || RemotePartyId.Value.IsNullOrEmpty;
 
-        /// <summary>
-        /// Indicates whether this remote party identification is NOT null or empty.
-        /// </summary>
-        /// <param name="RemotePartyId">A remote party identification.</param>
-        public static Boolean IsNotNullOrEmpty(this RemoteParty_Id? RemotePartyId)
-            => RemotePartyId.HasValue && RemotePartyId.Value.IsNotNullOrEmpty;
+//        /// <summary>
+//        /// Indicates whether this remote party identification is NOT null or empty.
+//        /// </summary>
+//        /// <param name="RemotePartyId">A remote party identification.</param>
+//        public static Boolean IsNotNullOrEmpty(this RemoteParty_Id? RemotePartyId)
+//            => RemotePartyId.HasValue && RemotePartyId.Value.IsNotNullOrEmpty;
 
-    }
-
+//    }
+
 
-    /// <summary>
-    /// The unique identification of a remote party.
-    /// </summary>
-    public readonly struct RemoteParty_Id : IId<RemoteParty_Id>
-    {
+//    /// <summary>
+//    /// The unique identification of a remote party.
+//    /// </summary>
+//    public readonly struct RemoteParty_Id : IId<RemoteParty_Id>
+//    {
 
-        #region Data
+//        #region Data
 
-        public static readonly Regex RemotePartyId_RegEx = new ("^([a-zA-Z0-9]{2})\\-([a-zA-Z0-9]{2,10})_([a-zA-Z0-9]{2,10})$");
+//        public static readonly Regex RemotePartyId_RegEx = new ("^([a-zA-Z0-9]{2})\\-([a-zA-Z0-9]{2,10})_([a-zA-Z0-9]{2,10})$");
 
-        #endregion
+//        #endregion
 
-        #region Properties
+//        #region Properties
 
-        /// <summary>
-        /// The party identification.
-        /// </summary>
-        public Party_Idv3  PartyId    { get;}
+//        /// <summary>
+//        /// The party identification.
+//        /// </summary>
+//        public Party_Idv3  PartyId    { get;}
 
-        /// <summary>
-        /// The party role.
-        /// </summary>
-        public Role        Role       { get;}
+//        /// <summary>
+//        /// The party role.
+//        /// </summary>
+//        public Role        Role       { get;}
 
 
-        /// <summary>
-        /// Indicates whether this identification is null or empty.
-        /// </summary>
-        public Boolean IsNullOrEmpty
-            => PartyId.IsNullOrEmpty;
+//        /// <summary>
+//        /// Indicates whether this identification is null or empty.
+//        /// </summary>
+//        public Boolean IsNullOrEmpty
+//            => PartyId.IsNullOrEmpty;
 
-        /// <summary>
-        /// Indicates whether this identification is NOT null or empty.
-        /// </summary>
-        public Boolean IsNotNullOrEmpty
-            => PartyId.IsNotNullOrEmpty;
+//        /// <summary>
+//        /// Indicates whether this identification is NOT null or empty.
+//        /// </summary>
+//        public Boolean IsNotNullOrEmpty
+//            => PartyId.IsNotNullOrEmpty;
 
-        /// <summary>
-        /// The length of the remote party identification.
-        /// </summary>
-        public UInt64 Length
-            => (UInt64) ToString().Length;
+//        /// <summary>
+//        /// The length of the remote party identification.
+//        /// </summary>
+//        public UInt64 Length
+//            => (UInt64) ToString().Length;
 
-        #endregion
+//        #endregion
 
-        #region Constructor(s)
+//        #region Constructor(s)
 
-        /// <summary>
-        /// Create a new remote party identification.
-        /// </summary>
-        /// <param name="CountryCode">A country code.</param>
-        /// <param name="PartyId">A party identification.</param>
-        /// <param name="Role">A party role.</param>
-        private RemoteParty_Id(Party_Idv3  PartyId,
-                               Role        Role)
-        {
+//        /// <summary>
+//        /// Create a new remote party identification.
+//        /// </summary>
+//        /// <param name="CountryCode">A country code.</param>
+//        /// <param name="PartyId">A party identification.</param>
+//        /// <param name="Role">A party role.</param>
+//        private RemoteParty_Id(Party_Idv3  PartyId,
+//                               Role        Role)
+//        {
 
-            this.PartyId  = PartyId;
-            this.Role     = Role;
+//            this.PartyId  = PartyId;
+//            this.Role     = Role;
 
-            unchecked
-            {
+//            unchecked
+//            {
 
-                this.hashCode = this.PartyId.GetHashCode() * 3 ^
-                                this.Role.   GetHashCode();
+//                this.hashCode = this.PartyId.GetHashCode() * 3 ^
+//                                this.Role.   GetHashCode();
 
-            }
+//            }
 
-        }
+//        }
 
-        #endregion
+//        #endregion
 
 
-        #region (static) Parse   (PartyId, Role)
+//        #region (static) Parse   (PartyId, Role)
 
-        /// <summary>
-        /// Parse the given party identification as a remote party identification.
-        /// </summary>
-        /// <param name="PartyId">A party identification.</param>
-        /// <param name="Role">A party role.</param>
-        public static RemoteParty_Id Parse(Party_Idv3  PartyId,
-                                           Role        Role)
+//        /// <summary>
+//        /// Parse the given party identification as a remote party identification.
+//        /// </summary>
+//        /// <param name="PartyId">A party identification.</param>
+//        /// <param name="Role">A party role.</param>
+//        public static RemoteParty_Id Parse(Party_Idv3  PartyId,
+//                                           Role        Role)
 
-            => new (PartyId,
-                    Role);
+//            => new (PartyId,
+//                    Role);
 
-        #endregion
+//        #endregion
 
-        #region (static) From    (CPOId)
+//        #region (static) From    (CPOId)
 
-        /// <summary>
-        /// Convert the given CPO identification into a remote party identification.
-        /// </summary>
-        /// <param name="CPOId">A CPO identification.</param>
-        public static RemoteParty_Id From(CPO_Id CPOId)
+//        /// <summary>
+//        /// Convert the given CPO identification into a remote party identification.
+//        /// </summary>
+//        /// <param name="CPOId">A CPO identification.</param>
+//        public static RemoteParty_Id From(CPO_Id CPOId)
 
-            => new (Party_Idv3.Parse(CPOId.PartyId.ToString()),
-                    Role.CPO);
+//            => new (Party_Idv3.Parse(CPOId.PartyId.ToString()),
+//                    Role.CPO);
 
-        #endregion
+//        #endregion
 
-        #region (static) From    (EMSPId)
+//        #region (static) From    (EMSPId)
 
-        /// <summary>
-        /// Convert the given EMSP identification into a remote party identification.
-        /// </summary>
-        /// <param name="EMSPId">A EMSP identification.</param>
-        public static RemoteParty_Id From(EMSP_Id EMSPId)
+//        /// <summary>
+//        /// Convert the given EMSP identification into a remote party identification.
+//        /// </summary>
+//        /// <param name="EMSPId">A EMSP identification.</param>
+//        public static RemoteParty_Id From(EMSP_Id EMSPId)
 
-            => new (Party_Idv3.Parse(EMSPId.PartyId.ToString()),
-                    Role.EMSP);
+//            => new (Party_Idv3.Parse(EMSPId.PartyId.ToString()),
+//                    Role.EMSP);
 
-        #endregion
+//        #endregion
 
 
-        #region (static) Unknown
+//        #region (static) Unknown
 
-        /// <summary>
-        /// Create a temporary unknown remote party identification.
-        /// </summary>
-        public static RemoteParty_Id Unknown
+//        /// <summary>
+//        /// Create a temporary unknown remote party identification.
+//        /// </summary>
+//        public static RemoteParty_Id Unknown
 
-            => new (Party_Idv3.Parse("XXX"),
-                    Role.OTHER);
+//            => new (Party_Idv3.Parse("XXX"),
+//                    Role.OTHER);
 
-        #endregion
+//        #endregion
 
 
-        #region (static) Parse   (Text)
+//        #region (static) Parse   (Text)
 
-        /// <summary>
-        /// Parse the given text as a remote party identification.
-        /// </summary>
-        /// <param name="Text">A text representation of a remote party identification.</param>
-        public static RemoteParty_Id Parse(String Text)
-        {
+//        /// <summary>
+//        /// Parse the given text as a remote party identification.
+//        /// </summary>
+//        /// <param name="Text">A text representation of a remote party identification.</param>
+//        public static RemoteParty_Id Parse(String Text)
+//        {
 
-            if (TryParse(Text, out var remotePartyId))
-                return remotePartyId;
+//            if (TryParse(Text, out var remotePartyId))
+//                return remotePartyId;
 
-            throw new ArgumentException($"Invalid text representation of a remote party identification: '{Text}'!",
-                                        nameof(Text));
+//            throw new ArgumentException($"Invalid text representation of a remote party identification: '{Text}'!",
+//                                        nameof(Text));
 
-        }
+//        }
 
-        #endregion
+//        #endregion
 
-        #region (static) TryParse(Text)
+//        #region (static) TryParse(Text)
 
-        /// <summary>
-        /// Try to parse the given text as a remote party identification.
-        /// </summary>
-        /// <param name="Text">A text representation of a remote party identification.</param>
-        public static RemoteParty_Id? TryParse(String Text)
-        {
+//        /// <summary>
+//        /// Try to parse the given text as a remote party identification.
+//        /// </summary>
+//        /// <param name="Text">A text representation of a remote party identification.</param>
+//        public static RemoteParty_Id? TryParse(String Text)
+//        {
 
-            if (TryParse(Text, out var remotePartyId))
-                return remotePartyId;
+//            if (TryParse(Text, out var remotePartyId))
+//                return remotePartyId;
 
-            return null;
+//            return null;
 
-        }
+//        }
 
-        #endregion
+//        #endregion
 
-        #region (static) TryParse(Text, out RemotePartyId)
+//        #region (static) TryParse(Text, out RemotePartyId)
 
-        /// <summary>
-        /// Try to parse the given text as a remote party identification.
-        /// </summary>
-        /// <param name="Text">A text representation of a remote party identification.</param>
-        /// <param name="RemotePartyId">The parsed remote party identification.</param>
-        public static Boolean TryParse(String Text, out RemoteParty_Id RemotePartyId)
-        {
+//        /// <summary>
+//        /// Try to parse the given text as a remote party identification.
+//        /// </summary>
+//        /// <param name="Text">A text representation of a remote party identification.</param>
+//        /// <param name="RemotePartyId">The parsed remote party identification.</param>
+//        public static Boolean TryParse(String Text, out RemoteParty_Id RemotePartyId)
+//        {
 
-            if (Text.IsNotNullOrEmpty())
-            {
-                try
-                {
+//            if (Text.IsNotNullOrEmpty())
+//            {
+//                try
+//                {
 
-                    var matchCollection = RemotePartyId_RegEx.Matches(Text);
+//                    var matchCollection = RemotePartyId_RegEx.Matches(Text);
 
-                    if (matchCollection.Count == 1 &&
-                        Party_Idv3.TryParse(matchCollection[0].Groups[1].Value + matchCollection[0].Groups[2].Value, out var partyId) &&
-                        Role.      TryParse(matchCollection[0].Groups[3].Value, out var role))
-                    {
+//                    if (matchCollection.Count == 1 &&
+//                        Party_Idv3.TryParse(matchCollection[0].Groups[1].Value + matchCollection[0].Groups[2].Value, out var partyId) &&
+//                        Role.      TryParse(matchCollection[0].Groups[3].Value, out var role))
+//                    {
 
-                        RemotePartyId = new RemoteParty_Id(
-                                            partyId,
-                                            role
-                                        );
+//                        RemotePartyId = new RemoteParty_Id(
+//                                            partyId,
+//                                            role
+//                                        );
 
-                        return true;
+//                        return true;
 
-                    }
+//                    }
 
-                }
-                catch
-                { }
-            }
+//                }
+//                catch
+//                { }
+//            }
 
-            RemotePartyId = default;
-            return false;
+//            RemotePartyId = default;
+//            return false;
 
-        }
+//        }
 
-        #endregion
+//        #endregion
 
-        #region Clone()
+//        #region Clone()
 
-        /// <summary>
-        /// Clone this remote party identification.
-        /// </summary>
-        public RemoteParty_Id Clone()
+//        /// <summary>
+//        /// Clone this remote party identification.
+//        /// </summary>
+//        public RemoteParty_Id Clone()
 
-            => new (
-                   PartyId.Clone(),
-                   Role.   Clone()
-               );
+//            => new (
+//                   PartyId.Clone(),
+//                   Role.   Clone()
+//               );
 
-        #endregion
+//        #endregion
 
 
-        #region Operator overloading
+//        #region Operator overloading
 
-        #region Operator == (RemotePartyId1, RemotePartyId2)
+//        #region Operator == (RemotePartyId1, RemotePartyId2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="RemotePartyId1">A remote party identification.</param>
-        /// <param name="RemotePartyId2">Another remote party identification.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator == (RemoteParty_Id RemotePartyId1,
-                                           RemoteParty_Id RemotePartyId2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="RemotePartyId1">A remote party identification.</param>
+//        /// <param name="RemotePartyId2">Another remote party identification.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator == (RemoteParty_Id RemotePartyId1,
+//                                           RemoteParty_Id RemotePartyId2)
 
-            => RemotePartyId1.Equals(RemotePartyId2);
+//            => RemotePartyId1.Equals(RemotePartyId2);
 
-        #endregion
+//        #endregion
 
-        #region Operator != (RemotePartyId1, RemotePartyId2)
+//        #region Operator != (RemotePartyId1, RemotePartyId2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="RemotePartyId1">A remote party identification.</param>
-        /// <param name="RemotePartyId2">Another remote party identification.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator != (RemoteParty_Id RemotePartyId1,
-                                           RemoteParty_Id RemotePartyId2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="RemotePartyId1">A remote party identification.</param>
+//        /// <param name="RemotePartyId2">Another remote party identification.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator != (RemoteParty_Id RemotePartyId1,
+//                                           RemoteParty_Id RemotePartyId2)
 
-            => !RemotePartyId1.Equals(RemotePartyId2);
+//            => !RemotePartyId1.Equals(RemotePartyId2);
 
-        #endregion
+//        #endregion
 
-        #region Operator <  (RemotePartyId1, RemotePartyId2)
+//        #region Operator <  (RemotePartyId1, RemotePartyId2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="RemotePartyId1">A remote party identification.</param>
-        /// <param name="RemotePartyId2">Another remote party identification.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator < (RemoteParty_Id RemotePartyId1,
-                                          RemoteParty_Id RemotePartyId2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="RemotePartyId1">A remote party identification.</param>
+//        /// <param name="RemotePartyId2">Another remote party identification.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator < (RemoteParty_Id RemotePartyId1,
+//                                          RemoteParty_Id RemotePartyId2)
 
-            => RemotePartyId1.CompareTo(RemotePartyId2) < 0;
+//            => RemotePartyId1.CompareTo(RemotePartyId2) < 0;
 
-        #endregion
+//        #endregion
 
-        #region Operator <= (RemotePartyId1, RemotePartyId2)
+//        #region Operator <= (RemotePartyId1, RemotePartyId2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="RemotePartyId1">A remote party identification.</param>
-        /// <param name="RemotePartyId2">Another remote party identification.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator <= (RemoteParty_Id RemotePartyId1,
-                                           RemoteParty_Id RemotePartyId2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="RemotePartyId1">A remote party identification.</param>
+//        /// <param name="RemotePartyId2">Another remote party identification.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator <= (RemoteParty_Id RemotePartyId1,
+//                                           RemoteParty_Id RemotePartyId2)
 
-            => RemotePartyId1.CompareTo(RemotePartyId2) <= 0;
+//            => RemotePartyId1.CompareTo(RemotePartyId2) <= 0;
 
-        #endregion
+//        #endregion
 
-        #region Operator >  (RemotePartyId1, RemotePartyId2)
+//        #region Operator >  (RemotePartyId1, RemotePartyId2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="RemotePartyId1">A remote party identification.</param>
-        /// <param name="RemotePartyId2">Another remote party identification.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator > (RemoteParty_Id RemotePartyId1,
-                                          RemoteParty_Id RemotePartyId2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="RemotePartyId1">A remote party identification.</param>
+//        /// <param name="RemotePartyId2">Another remote party identification.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator > (RemoteParty_Id RemotePartyId1,
+//                                          RemoteParty_Id RemotePartyId2)
 
-            => RemotePartyId1.CompareTo(RemotePartyId2) > 0;
+//            => RemotePartyId1.CompareTo(RemotePartyId2) > 0;
 
-        #endregion
+//        #endregion
 
-        #region Operator >= (RemotePartyId1, RemotePartyId2)
+//        #region Operator >= (RemotePartyId1, RemotePartyId2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="RemotePartyId1">A remote party identification.</param>
-        /// <param name="RemotePartyId2">Another remote party identification.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator >= (RemoteParty_Id RemotePartyId1,
-                                           RemoteParty_Id RemotePartyId2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="RemotePartyId1">A remote party identification.</param>
+//        /// <param name="RemotePartyId2">Another remote party identification.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator >= (RemoteParty_Id RemotePartyId1,
+//                                           RemoteParty_Id RemotePartyId2)
 
-            => RemotePartyId1.CompareTo(RemotePartyId2) >= 0;
+//            => RemotePartyId1.CompareTo(RemotePartyId2) >= 0;
 
-        #endregion
+//        #endregion
 
-        #endregion
+//        #endregion
 
-        #region IComparable<RemotePartyId> Members
+//        #region IComparable<RemotePartyId> Members
 
-        #region CompareTo(Object)
+//        #region CompareTo(Object)
 
-        /// <summary>
-        /// Compares two remote party identifications.
-        /// </summary>
-        /// <param name="Object">A remote party identification to compare with.</param>
-        public Int32 CompareTo(Object? Object)
+//        /// <summary>
+//        /// Compares two remote party identifications.
+//        /// </summary>
+//        /// <param name="Object">A remote party identification to compare with.</param>
+//        public Int32 CompareTo(Object? Object)
 
-            => Object is RemoteParty_Id remotePartyId
-                   ? CompareTo(remotePartyId)
-                   : throw new ArgumentException("The given object is not a remote party identification!",
-                                                 nameof(Object));
+//            => Object is RemoteParty_Id remotePartyId
+//                   ? CompareTo(remotePartyId)
+//                   : throw new ArgumentException("The given object is not a remote party identification!",
+//                                                 nameof(Object));
 
-        #endregion
+//        #endregion
 
-        #region CompareTo(RemotePartyId)
+//        #region CompareTo(RemotePartyId)
 
-        /// <summary>
-        /// Compares two remote party identifications.
-        /// </summary>
-        /// <param name="RemotePartyId">A remote party identification to compare with.</param>
-        public Int32 CompareTo(RemoteParty_Id RemotePartyId)
-        {
+//        /// <summary>
+//        /// Compares two remote party identifications.
+//        /// </summary>
+//        /// <param name="RemotePartyId">A remote party identification to compare with.</param>
+//        public Int32 CompareTo(RemoteParty_Id RemotePartyId)
+//        {
 
-            var c = PartyId.CompareTo(RemotePartyId.PartyId);
+//            var c = PartyId.CompareTo(RemotePartyId.PartyId);
 
-            if (c == 0)
-                c = Role.   CompareTo(RemotePartyId.Role);
+//            if (c == 0)
+//                c = Role.   CompareTo(RemotePartyId.Role);
 
-            return c;
+//            return c;
 
-        }
+//        }
 
-        #endregion
+//        #endregion
 
-        #endregion
+//        #endregion
 
-        #region IEquatable<RemotePartyId> Members
+//        #region IEquatable<RemotePartyId> Members
 
-        #region Equals(Object)
+//        #region Equals(Object)
 
-        /// <summary>
-        /// Compares two remote party identifications for equality.
-        /// </summary>
-        /// <param name="Object">A remote party identification to compare with.</param>
-        public override Boolean Equals(Object? Object)
+//        /// <summary>
+//        /// Compares two remote party identifications for equality.
+//        /// </summary>
+//        /// <param name="Object">A remote party identification to compare with.</param>
+//        public override Boolean Equals(Object? Object)
 
-            => Object is RemoteParty_Id remotePartyId &&
-                   Equals(remotePartyId);
+//            => Object is RemoteParty_Id remotePartyId &&
+//                   Equals(remotePartyId);
 
-        #endregion
+//        #endregion
 
-        #region Equals(RemotePartyId)
+//        #region Equals(RemotePartyId)
 
-        /// <summary>
-        /// Compares two remote party identifications for equality.
-        /// </summary>
-        /// <param name="RemotePartyId">A remote party identification to compare with.</param>
-        public Boolean Equals(RemoteParty_Id RemotePartyId)
+//        /// <summary>
+//        /// Compares two remote party identifications for equality.
+//        /// </summary>
+//        /// <param name="RemotePartyId">A remote party identification to compare with.</param>
+//        public Boolean Equals(RemoteParty_Id RemotePartyId)
 
-            => PartyId.Equals(RemotePartyId.PartyId) &&
-               Role.   Equals(RemotePartyId.Role);
+//            => PartyId.Equals(RemotePartyId.PartyId) &&
+//               Role.   Equals(RemotePartyId.Role);
 
-        #endregion
+//        #endregion
 
-        #endregion
+//        #endregion
 
-        #region (override) GetHashCode()
+//        #region (override) GetHashCode()
 
-        private readonly Int32 hashCode;
+//        private readonly Int32 hashCode;
 
-        /// <summary>
-        /// Return the hash code of this object.
-        /// </summary>
-        public override Int32 GetHashCode()
-            => hashCode;
+//        /// <summary>
+//        /// Return the hash code of this object.
+//        /// </summary>
+//        public override Int32 GetHashCode()
+//            => hashCode;
 
-        #endregion
+//        #endregion
 
-        #region (override) ToString()
+//        #region (override) ToString()
 
-        /// <summary>
-        /// Return a text representation of this object.
-        /// </summary>
-        public override String ToString()
+//        /// <summary>
+//        /// Return a text representation of this object.
+//        /// </summary>
+//        public override String ToString()
 
-            => $"{PartyId}_{Role}";
+//            => $"{PartyId}_{Role}";
 
-        #endregion
+//        #endregion
 
-    }
+//    }
 
-}
+//}

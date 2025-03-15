@@ -219,6 +219,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
         #region Properties
 
+        public CPOAPI           CPOAPI     { get; }
+
         /// <summary>
         /// CPO client event counters.
         /// </summary>
@@ -918,12 +920,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
         #endregion
 
-        #region CPOClient(CommonAPI, RemoteParty, ...)
+        #region CPOClient(CPOAPI, RemoteParty, ...)
 
         /// <summary>
-        /// Create a new EMSP client.
+        /// Create a new CPO client.
         /// </summary>
-        /// <param name="CommonAPI">The CommonAPI.</param>
+        /// <param name="CPOAPI">The CPO API.</param>
         /// <param name="RemoteParty">The remote party.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
@@ -932,7 +934,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPOClient(CommonAPI                    CommonAPI,
+        public CPOClient(CPOAPI                       CPOAPI,
                          RemoteParty                  RemoteParty,
                          HTTPHostname?                VirtualHostname   = null,
                          I18NString?                  Description       = null,
@@ -944,7 +946,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                          OCPILogfileCreatorDelegate?  LogfileCreator    = null,
                          DNSClient?                   DNSClient         = null)
 
-            : base(CommonAPI,
+            : base(CPOAPI.CommonAPI,
                    RemoteParty,
                    VirtualHostname,
                    Description,

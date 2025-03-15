@@ -29,9 +29,6 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP;
-using cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP;
-using Org.BouncyCastle.Asn1.Ocsp;
 
 #endregion
 
@@ -5923,14 +5920,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
         #endregion
-
-
-
-
-
-
-
-
 
 
         #region Locations

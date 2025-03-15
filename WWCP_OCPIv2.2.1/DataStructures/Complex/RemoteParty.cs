@@ -584,29 +584,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this remote party.
         /// </summary>
         public RemoteParty Clone()
 
-            => new(Id.Clone,
-                    Roles.            Select(credentialsRole   => credentialsRole.  Clone()),
-                    LocalAccessInfos. Select(accessInfoStatus  => accessInfoStatus. Clone()),
-                    RemoteAccessInfos.Select(remoteAccessInfos => remoteAccessInfos.Clone()),
-                    Status,
+            => new(
 
-                    PreferIPv4,
-                    RemoteCertificateValidator,
-                    LocalCertificateSelector,
-                    ClientCert,
-                    TLSProtocol,
-                    HTTPUserAgent,
-                    RequestTimeout,
-                    TransmissionRetryDelay,
-                    MaxNumberOfRetries,
-                    InternalBufferSize,
-                    UseHTTPPipelining,
+                   Id.Clone(),
+                   Roles.            Select(credentialsRole   => credentialsRole.  Clone()),
+                   LocalAccessInfos. Select(accessInfoStatus  => accessInfoStatus. Clone()),
+                   RemoteAccessInfos.Select(remoteAccessInfos => remoteAccessInfos.Clone()),
+                   Status,
 
-                    LastUpdated);
+                   PreferIPv4,
+                   RemoteCertificateValidator,
+                   LocalCertificateSelector,
+                   ClientCert,
+                   TLSProtocol,
+                   HTTPUserAgent,
+                   RequestTimeout,
+                   TransmissionRetryDelay,
+                   MaxNumberOfRetries,
+                   InternalBufferSize,
+                   UseHTTPPipelining,
+
+                   LastUpdated
+
+               );
 
         #endregion
 

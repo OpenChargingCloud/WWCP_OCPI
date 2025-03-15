@@ -24,6 +24,8 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using System.Collections.Concurrent;
+using cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP;
 
 #endregion
 
@@ -1432,6 +1434,169 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         // POST /ocpi/from/DKPTY/to/DEPTX/async-responses/<callback ID>
         //   + result type FAILED
 
+
+        #region CPOClients
+
+        private readonly ConcurrentDictionary<EMSP_Id, CPOClient> cpoClients = new ();
+
+        /// <summary>
+        /// Return an enumeration of all CPO clients.
+        /// </summary>
+        public IEnumerable<CPOClient> CPOClients
+            => cpoClients.Values;
+
+
+        #region GetCPOClient(PartyId, Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote EMSP.
+        /// </summary>
+        /// <param name="PartyId">The party identification of the remote EMSP.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPOClient? GetCPOClient(Party_Idv3   PartyId,
+                                       I18NString?  Description          = null,
+                                       Boolean      AllowCachedClients   = true)
+        {
+
+            var emspId         = EMSP_Id.       Parse(PartyId.ToString());
+            var remotePartyId  = RemoteParty_Id.From (emspId);
+
+            if (AllowCachedClients &&
+                cpoClients.TryGetValue(emspId, out var cachedCPOClient))
+            {
+                return cachedCPOClient;
+            }
+
+            if (CommonAPI.TryGetRemoteParty(remotePartyId, out var remoteParty) &&
+                remoteParty?.RemoteAccessInfos?.Any() == true)
+            {
+
+                var cpoClient = new CPOClient(
+                                    this,
+                                    remoteParty,
+                                    null,
+                                    Description,// ?? ClientConfigurations.Description?.Invoke(remotePartyId),
+                                    null,
+                                    null,//ClientConfigurations.DisableLogging?.Invoke(remotePartyId),
+                                    null,//ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
+                                    null,//ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
+                                    null,//ClientConfigurations.LogfileCreator,
+                                    DNSClient
+                                );
+
+                cpoClients.TryAdd(emspId, cpoClient);
+
+                return cpoClient;
+
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region GetCPOClient(RemoteParty,          Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote EMSP.
+        /// </summary>
+        /// <param name="RemoteParty">A remote party.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPOClient? GetCPOClient(RemoteParty  RemoteParty,
+                                       I18NString?  Description          = null,
+                                       Boolean      AllowCachedClients   = true)
+        {
+
+            var emspId = EMSP_Id.Parse(RemoteParty.Id.ToString());
+
+            if (AllowCachedClients &&
+                cpoClients.TryGetValue(emspId, out var cachedCPOClient))
+            {
+                return cachedCPOClient;
+            }
+
+            if (RemoteParty?.RemoteAccessInfos?.Any() == true)
+            {
+
+                var cpoClient = new CPOClient(
+                                    this,
+                                    RemoteParty,
+                                    null,
+                                    Description,// ?? ClientConfigurations.Description?.Invoke(RemoteParty.Id),
+                                    null,
+                                    null,//ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
+                                    null,//ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
+                                    null,//ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
+                                    null,//ClientConfigurations.LogfileCreator,
+                                    DNSClient
+                                );
+
+                cpoClients.TryAdd(emspId, cpoClient);
+
+                return cpoClient;
+
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region GetCPOClient(RemotePartyId,        Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote EMSP.
+        /// </summary>
+        /// <param name="RemotePartyId">A remote party identification.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPOClient? GetCPOClient(RemoteParty_Id  RemotePartyId,
+                                       I18NString?     Description          = null,
+                                       Boolean         AllowCachedClients   = true)
+        {
+
+            var emspId = EMSP_Id.Parse(RemotePartyId.ToString());
+
+            if (AllowCachedClients &&
+                cpoClients.TryGetValue(emspId, out var cachedCPOClient))
+            {
+                return cachedCPOClient;
+            }
+
+            if (CommonAPI.TryGetRemoteParty(RemotePartyId, out var remoteParty) &&
+                remoteParty?.RemoteAccessInfos?.Any() == true)
+            {
+
+                var cpoClient = new CPOClient(
+                                    this,
+                                    remoteParty,
+                                    null,
+                                    Description,// ?? ClientConfigurations.Description?.Invoke(RemotePartyId),
+                                    null,
+                                    null,//ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
+                                    null,//ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
+                                    null,//ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
+                                    null,//ClientConfigurations.LogfileCreator,
+                                    DNSClient
+                                );
+
+                cpoClients.TryAdd(emspId, cpoClient);
+
+                return cpoClient;
+
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+        #endregion
 
 
         #region (private) RegisterURLTemplates()

@@ -42,29 +42,29 @@ namespace cloud.charging.open.protocols.OCPI
         /// The current status of the party.
         /// </summary>
         [Mandatory]
-        PartyStatus                          Status                        { get; }
+        PartyStatus                                                Status                        { get; }
 
         /// <summary>
         /// Timestamp when this remote party was last updated (or created).
         /// </summary>
         [Mandatory]
-        DateTime                             LastUpdated                   { get; }
+        DateTime                                                   LastUpdated                   { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this remote party.
         /// </summary>
         [Mandatory]
-        String                               ETag                          { get; }
+        String                                                     ETag                          { get; }
 
         /// <summary>
         /// Local access information.
         /// </summary>
-        IEnumerable<LocalAccessInfo>         LocalAccessInfos              { get; }
+        IEnumerable<LocalAccessInfo>                               LocalAccessInfos              { get; }
 
         /// <summary>
         /// Remote access information.
         /// </summary>
-        IEnumerable<RemoteAccessInfo>        RemoteAccessInfos             { get; }
+        IEnumerable<RemoteAccessInfo>                              RemoteAccessInfos             { get; }
 
 
 
@@ -76,57 +76,57 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// A delegate to select a TLS client certificate.
         /// </summary>
-        LocalCertificateSelectionHandler?    LocalCertificateSelector     { get; }
+        LocalCertificateSelectionHandler?                          LocalCertificateSelector      { get; }
 
         /// <summary>
         /// The TLS client certificate to use of HTTP authentication.
         /// </summary>
-        X509Certificate?                     ClientCert                    { get; }
+        X509Certificate?                                           ClientCert                    { get; }
 
         /// <summary>
         /// The TLS protocol to use.
         /// </summary>
-        SslProtocols?                        TLSProtocol                   { get; }
+        SslProtocols?                                              TLSProtocol                   { get; }
 
         /// <summary>
         /// Prefer IPv4 instead of IPv6.
         /// </summary>
-        Boolean?                             PreferIPv4                    { get; }
+        Boolean?                                                   PreferIPv4                    { get; }
 
         /// <summary>
         /// The HTTP user agent identification.
         /// </summary>
-        String?                              HTTPUserAgent                 { get; }
+        String?                                                    HTTPUserAgent                 { get; }
 
         /// <summary>
         /// The optional HTTP authentication to use.
         /// </summary>
-        IHTTPAuthentication?                 HTTPAuthentication            { get; }
+        IHTTPAuthentication?                                       HTTPAuthentication            { get; }
 
         /// <summary>
         /// The timeout for upstream requests.
         /// </summary>
-        TimeSpan?                            RequestTimeout                { get; set; }
+        TimeSpan?                                                  RequestTimeout                { get; set; }
 
         /// <summary>
         /// The delay between transmission retries.
         /// </summary>
-        TransmissionRetryDelayDelegate?      TransmissionRetryDelay        { get; }
+        TransmissionRetryDelayDelegate?                            TransmissionRetryDelay        { get; }
 
         /// <summary>
-        /// The maximum number of retries when communicationg with the remote HTTP service.
+        /// The maximum number of retries when communicating with the remote HTTP service.
         /// </summary>
-        UInt16?                              MaxNumberOfRetries            { get; }
+        UInt16?                                                    MaxNumberOfRetries            { get; }
 
         /// <summary>
         /// The size of the internal buffers of HTTP clients.
         /// </summary>
-        UInt32?                              InternalBufferSize            { get; }
+        UInt32?                                                    InternalBufferSize            { get; }
 
         /// <summary>
         /// Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.
         /// </summary>
-        Boolean?                             UseHTTPPipelining             { get; }
+        Boolean?                                                   UseHTTPPipelining             { get; }
 
 
     }

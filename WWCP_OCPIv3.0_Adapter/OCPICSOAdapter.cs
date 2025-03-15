@@ -1843,7 +1843,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                                                                        var cpoClient = new CPO.HTTP.CPOClient(
 
-                                                                                                           CommonAPI,
+                                                                                                           CPOAPI,
                                                                                                            remoteParty,
                                                                                                            null, // VirtualHostname
                                                                                                            null, // Description

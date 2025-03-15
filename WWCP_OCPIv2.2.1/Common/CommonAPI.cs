@@ -29,8 +29,6 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP;
-using cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP;
 
 #endregion
 
