@@ -1413,7 +1413,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                ? new JProperty("transparency_softwares",   new JArray(TransparencySoftwares.Select(transparencySoftwareStatus => transparencySoftwareStatus.ToJSON(CustomTransparencySoftwareStatusSerializer))))
                                : null,
 
-                                 new JProperty("currency",                 Currency.                    ToString()),
+                                 new JProperty("currency",                 Currency.                    ISOCode),
 
                            Tariffs.Any()
                                ? new JProperty("tariffs",                  new JArray(Tariffs.              Select(tariff               => tariff.              ToJSON(IncludeOwnerInformation,
@@ -1923,7 +1923,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    Location.   ToString(),   ", ",
 
                    TotalCost.  ToString(),   " ",
-                   Currency.   ToString(),   ", ",
+                   Currency.   Name,         ", ",
                    TotalEnergy.ToString(),   " kWh, ",
                    TotalTime.  ToString(),   " h, ",
 

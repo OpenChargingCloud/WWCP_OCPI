@@ -632,7 +632,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            (this.SessionId?.               GetHashCode()  ?? 0) *  59 ^
                            (this.AuthorizationReference?.  GetHashCode()  ?? 0) *  53 ^
-                           (this.EnergyMeterId?.                 GetHashCode()  ?? 0) *  47 ^
+                           (this.EnergyMeterId?.           GetHashCode()  ?? 0) *  47 ^
                            (this.EnergyMeter?.             GetHashCode()  ?? 0) *  43 ^
                             this.TransparencySoftwares.    CalcHashCode()       *  41 ^
                            (this.SignedData?.              GetHashCode()  ?? 0) *  37 ^
@@ -1386,7 +1386,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                                                                                                            CustomTransparencySoftwareSerializer))))
                                : null,
 
-                                 new JProperty("currency",                     Currency.                      ToString()),
+                                 new JProperty("currency",                     Currency.                      ISOCode),
 
                                  new JProperty("tariff_association_id",        TariffAssociationId.           ToString()),
                                  new JProperty("tariff_id",                    TariffId.                      ToString()),
@@ -1477,16 +1477,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    Currency.               Clone(),
                    TariffAssociationId.    Clone(),
                    TariffId.               Clone(),
-                   ChargingPeriods.        Select(chargingPeriod       => chargingPeriod.      Clone()).ToArray(),
+                   ChargingPeriods.        Select(chargingPeriod       => chargingPeriod.      Clone()),
                    TotalCosts.             Clone(),
                    TotalEnergy,
                    TotalTime,
 
                    SessionId?.             Clone(),
                    AuthorizationReference?.Clone(),
-                   EnergyMeterId?.               Clone(),
+                   EnergyMeterId?.         Clone(),
                    EnergyMeter?.           Clone(),
-                   TransparencySoftwares.  Select(transparencySoftware => transparencySoftware.Clone()).ToArray(),
+                   TransparencySoftwares.  Select(transparencySoftware => transparencySoftware.Clone()),
                    SignedData?.            Clone(),
                    TotalFixedCosts?.       Clone(),
                    TotalEnergyCost?.       Clone(),
@@ -2330,7 +2330,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 this.Currency                  = Currency;
                 this.TariffAssociationId       = TariffAssociationId;
                 this.TariffId                  = TariffId;
-                this.ChargingPeriods           = ChargingPeriods       is not null ? new List<ChargingPeriod>(ChargingPeriods) : [];
+                this.ChargingPeriods           = ChargingPeriods       is not null ? [.. ChargingPeriods] : [];
                 this.TotalCosts                = TotalCosts;
                 this.TotalEnergy               = TotalEnergy;
                 this.TotalTime                 = TotalTime;
@@ -2339,7 +2339,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 this.AuthorizationReference    = AuthorizationReference;
                 this.EnergyMeterId             = EnergyMeterId;
                 this.EnergyMeter               = EnergyMeter;
-                this.TransparencySoftwares     = TransparencySoftwares is not null ? new HashSet<TransparencySoftwareStatus>(TransparencySoftwares) : [];
+                this.TransparencySoftwares     = TransparencySoftwares is not null ? [.. TransparencySoftwares] : [];
                 this.SignedData                = SignedData;
                 this.TotalFixedCosts           = TotalFixedCosts;
                 this.TotalEnergyCost           = TotalEnergyCost;

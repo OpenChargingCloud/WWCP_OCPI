@@ -428,7 +428,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.AuthMethod                = AuthMethod;
             this.Location                  = Location;
             this.Currency                  = Currency;
-            this.ChargingPeriods           = ChargingPeriods       ?? Array.Empty<ChargingPeriod>();
+            this.ChargingPeriods           = ChargingPeriods       ?? [];
             this.TotalCosts                = TotalCosts;
             this.TotalEnergy               = TotalEnergy;
             this.TotalTime                 = TotalTime;
@@ -437,8 +437,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.AuthorizationReference    = AuthorizationReference;
             this.EnergyMeterId             = EnergyMeterId;
             this.EnergyMeter               = EnergyMeter;
-            this.TransparencySoftwares     = TransparencySoftwares ?? Array.Empty<TransparencySoftware>();
-            this.Tariffs                   = Tariffs               ?? Array.Empty<Tariff>();
+            this.TransparencySoftwares     = TransparencySoftwares ?? [];
+            this.Tariffs                   = Tariffs               ?? [];
             this.SignedData                = SignedData;
             this.TotalFixedCosts           = TotalFixedCosts;
             this.TotalEnergyCost           = TotalEnergyCost;
@@ -502,7 +502,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                           (this.SessionId?.               GetHashCode()  ?? 0) *  59 ^
                           (this.AuthorizationReference?.  GetHashCode()  ?? 0) *  53 ^
-                          (this.EnergyMeterId?.                 GetHashCode()  ?? 0) *  47 ^
+                          (this.EnergyMeterId?.           GetHashCode()  ?? 0) *  47 ^
                           (this.EnergyMeter?.             GetHashCode()  ?? 0) *  43 ^
                            this.TransparencySoftwares.    CalcHashCode()       *  41 ^
                           (this.SignedData?.              GetHashCode()  ?? 0) *  37 ^
@@ -1232,7 +1232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                ? new JProperty("transparency_softwares",       new JArray(TransparencySoftwares.Select(transparencySoftware => transparencySoftware.ToJSON(CustomTransparencySoftwareSerializer))))
                                : null,
 
-                                 new JProperty("currency",                     Currency.                      ToString()),
+                                 new JProperty("currency",                     Currency.                      ISOCode),
 
                            Tariffs.Any()
                                ? new JProperty("tariffs",                      new JArray(Tariffs.                Select(tariff               => tariff.              ToJSON(true,
@@ -1344,7 +1344,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    AuthMethod,
                    Location.               Clone(),
                    Currency.               Clone(),
-                   ChargingPeriods.      Select(chargingPeriod       => chargingPeriod.      Clone()).ToArray(),
+                   ChargingPeriods.      Select(chargingPeriod       => chargingPeriod.      Clone()),
                    TotalCosts.             Clone(),
                    TotalEnergy,
                    TotalTime,
@@ -1353,8 +1353,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    AuthorizationReference?.Clone(),
                    EnergyMeterId?.               Clone(),
                    EnergyMeter?.           Clone(),
-                   TransparencySoftwares.Select(transparencySoftware => transparencySoftware.Clone()).ToArray(),
-                   Tariffs.              Select(tariff               => tariff.              Clone()).ToArray(),
+                   TransparencySoftwares.Select(transparencySoftware => transparencySoftware.Clone()),
+                   Tariffs.              Select(tariff               => tariff.              Clone()),
                    SignedData?.            Clone(),
                    TotalFixedCosts?.       Clone(),
                    TotalEnergyCost?.       Clone(),
@@ -1843,7 +1843,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    Location.   ToString(),   ", ",
 
                    TotalCosts. ToString(),   " ",
-                   Currency.   ToString(),   ", ",
+                   Currency.   Name,         ", ",
                    TotalEnergy.ToString(),   " kWh, ",
                    TotalTime.  ToString(),   " h, ",
 
