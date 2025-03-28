@@ -801,7 +801,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                  new JProperty("id",                Id.              ToString()),
 
-                                 new JProperty("currency",          Currency.        ToString()),
+                                 new JProperty("currency",          Currency.        ISOCode),
 
                            TariffType.HasValue
                                ? new JProperty("type",              TariffType.Value.ToString())

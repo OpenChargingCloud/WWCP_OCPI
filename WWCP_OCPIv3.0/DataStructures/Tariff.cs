@@ -736,7 +736,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                : null,
 
 
-                                 new JProperty("currency",          Currency.        ToString()),
+                                 new JProperty("currency",          Currency.        ISOCode),
 
                            TariffAltText.SafeAny()
                                ? new JProperty("tariff_alt_text",   new JArray(TariffAltText.Select(tariffAltText => tariffAltText.ToJSON(CustomDisplayTextSerializer))))

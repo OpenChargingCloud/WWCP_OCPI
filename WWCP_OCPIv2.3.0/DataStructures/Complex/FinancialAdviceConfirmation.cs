@@ -380,7 +380,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                  new JProperty("id",                        Id.                    ToString()),
                                  new JProperty("authorization_reference",   AuthorizationReference.ToString()),
                                  new JProperty("total_costs",               TotalCosts.            ToJSON()),
-                                 new JProperty("currency",                  Currency.              ToString()),
+                                 new JProperty("currency",                  Currency.              ISOCode),
                                  new JProperty("eft_data",                  new JArray(EFTData)),
                                  new JProperty("capture_status_code",       CaptureStatusCode.     ToString()),
 

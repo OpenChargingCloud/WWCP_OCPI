@@ -795,7 +795,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                ? new JProperty("meter_id",                       MeterId.               ToString())
                                : null,
 
-                                 new JProperty("currency",                       Currency.              ToString()),
+                                 new JProperty("currency",                       Currency.              ISOCode),
 
                            ChargingPeriods.Any()
                                ? new JProperty("charging_periods",               new JArray(ChargingPeriods.      Select(chargingPeriod => chargingPeriod.ToJSON(CustomChargingPeriodSerializer,
