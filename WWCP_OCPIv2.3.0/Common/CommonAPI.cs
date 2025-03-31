@@ -3584,7 +3584,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     #endregion
 
 
-                    var prefix = URLPathPrefix + BaseAPI.AdditionalURLPathPrefix + Version.String;
+                    //var prefix = URLPathPrefix + BaseAPI.AdditionalURLPathPrefix + Version.String;
+                    var prefix = URLPathPrefix + BaseAPI.AdditionalURLPathPrefix + $"{request.HTTPRequest.GetHeaderField<Version_Id?>("X-OCPIVersion") ?? Version.Id}";
 
                     #region Common credential endpoints...
 

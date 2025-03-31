@@ -28,7 +28,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// Extention methods for tariff elements.
+    /// Extension methods for tariff elements.
     /// </summary>
     public static class TariffElementExtensions
     {

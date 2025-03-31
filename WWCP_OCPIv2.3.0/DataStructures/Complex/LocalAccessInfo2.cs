@@ -31,7 +31,7 @@ using cloud.charging.open.protocols.OCPI;
 namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
-    public static class AccessInfo2Extentions
+    public static class AccessInfo2Extensions
     {
 
         public static Boolean Is(this LocalAccessInfo2?  AccessInfo,

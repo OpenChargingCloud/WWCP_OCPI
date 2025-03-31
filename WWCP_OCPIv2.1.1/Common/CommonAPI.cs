@@ -61,9 +61,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
     /// <summary>
-    /// Extention methods for the Common HTTP API.
+    /// Extension methods for the Common HTTP API.
     /// </summary>
-    public static class CommonAPIExtentions
+    public static class CommonAPIExtensions
     {
 
         #region ParseParseCountryCodePartyId (this Request,            out CountryCode, out PartyId,                                                        out HTTPResponse)
@@ -1920,11 +1920,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// 
         /// <param name="DisableMaintenanceTasks">Disable all maintenance tasks.</param>
         /// <param name="MaintenanceInitialDelay">The initial delay of the maintenance tasks.</param>
-        /// <param name="MaintenanceEvery">The maintenance intervall.</param>
+        /// <param name="MaintenanceEvery">The maintenance interval.</param>
         /// 
         /// <param name="DisableWardenTasks">Disable all warden tasks.</param>
         /// <param name="WardenInitialDelay">The initial delay of the warden tasks.</param>
-        /// <param name="WardenCheckEvery">The warden intervall.</param>
+        /// <param name="WardenCheckEvery">The warden interval.</param>
         /// 
         /// <param name="IsDevelopment">This HTTP API runs in development mode.</param>
         /// <param name="DevelopmentServers">An enumeration of server names which will imply to run this service in development mode.</param>

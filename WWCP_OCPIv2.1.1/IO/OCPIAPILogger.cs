@@ -33,7 +33,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
     //public delegate String OCPILogfileCreatorDelegate(String LoggingPath, RemoteParty? RemoteParty, String Context, String LogfileName);
 
-    public static class OCPIAPILoggerExtentions
+    public static class OCPIAPILoggerExtensions
     {
 
         #region RegisterDefaultConsoleLogTarget(this RequestLogger,  Logger)

@@ -48,8 +48,8 @@ namespace cloud.charging.open.protocols.WWCP
         /// <param name="DefaultOperator">An optional Charging Station Operator, which will be copied into the main OperatorID-section of the OCPI SOAP request.</param>
         /// <param name="OperatorNameSelector">An optional delegate to select an Charging Station Operator name, which will be copied into the OperatorName-section of the OCPI SOAP request.</param>
         /// <param name="IncludeEVSEs">Only include the EVSEs matching the given delegate.</param>
-        /// <param name="ServiceCheckEvery">The service check intervall.</param>
-        /// <param name="StatusCheckEvery">The status check intervall.</param>
+        /// <param name="ServiceCheckEvery">The service check interval.</param>
+        /// <param name="StatusCheckEvery">The status check interval.</param>
         /// 
         /// <param name="DisablePushData">This service can be disabled, e.g. for debugging reasons.</param>
         /// <param name="DisablePushStatus">This service can be disabled, e.g. for debugging reasons.</param>
