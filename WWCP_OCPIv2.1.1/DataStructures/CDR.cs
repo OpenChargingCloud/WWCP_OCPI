@@ -256,9 +256,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         {
 
                             chargingPeriod.Dimensions.Add(
-                                CDRDimension.ENERGY(
-                                    chargingPeriod.Energy.kWh
-                                )
+                                CDRDimension.ENERGY(chargingPeriod.Energy)
                             );
 
                             chargingPeriod.EnergyPrice     = priceComponent.Price;
@@ -273,7 +271,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             chargingPeriod.Dimensions.Add(
                                 CDRDimension.TIME(
-                                    Convert.ToDecimal((chargingPeriod.StopTimestamp!.Value - chargingPeriod.StartTimestamp).TotalHours)
+                                    chargingPeriod.StopTimestamp!.Value - chargingPeriod.StartTimestamp
                                 )
                             );
 

@@ -108,11 +108,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public Boolean                       AllowDowngrades               { get; }
 
 
-        public Boolean Is(Role Role)
-            =>  Roles.Any(role => role.Role == Role);
+        //public Boolean Is(Role Role)
+        //    =>  Roles.Any(role => role.Role == Role);
 
-        public Boolean IsNot(Role Role)
-            => !Roles.Any(role => role.Role == Role);
+        //public Boolean IsNot(Role Role)
+        //    => !Roles.Any(role => role.Role == Role);
 
         #endregion
 

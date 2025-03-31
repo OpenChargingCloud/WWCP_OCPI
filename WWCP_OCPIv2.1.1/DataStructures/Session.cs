@@ -89,7 +89,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The amount of kWhs that had been charged.
         /// </summary>
         [Mandatory]
-        public   Decimal                             kWh                          { get; }
+        public   WattHour                            kWh                          { get; }
 #pragma warning restore IDE1006 // Naming Styles
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        Party_Id                                                      PartyId,
                        Session_Id                                                    Id,
                        DateTime                                                      Start,
-                       Decimal                                                       kWh,
+                       WattHour                                                      kWh,
                        Auth_Id                                                       AuthId,
                        AuthMethods                                                   AuthMethod,
                        Location                                                      Location,
@@ -257,7 +257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.End              = End;
             this.MeterId          = EnergyMeterId;
-            this.ChargingPeriods  = ChargingPeriods?.Distinct() ?? Array.Empty<ChargingPeriod>();
+            this.ChargingPeriods  = ChargingPeriods?.Distinct() ?? [];
             this.TotalCost        = TotalCost;
 
             this.Created          = Created                     ?? LastUpdated ?? Timestamp.Now;
@@ -505,7 +505,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("kwh",
                                          "charged kWh",
-                                         out Decimal KWh,
+                                         WattHour.TryParseKWh,
+                                         out WattHour KWh,
                                          out ErrorResponse))
                 {
                     return false;
@@ -662,6 +663,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
                 Session = new Session(
+
                               CountryCodeBody ?? CountryCodeURL!.Value,
                               PartyIdBody     ?? PartyIdURL!.    Value,
                               SessionIdBody   ?? SessionIdURL!.  Value,
@@ -680,6 +682,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                               Created,
                               LastUpdated
+
                           );
 
 
@@ -766,7 +769,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                ? new JProperty("end_datetime",                   End.             Value.ToIso8601())
                                : null,
 
-                                 new JProperty("kwh",                            kWh),
+                                 new JProperty("kwh",                            kWh.kWh),
 
                                  new JProperty("auth_id",                        AuthId.                ToString()),
                                  new JProperty("auth_method",                    AuthMethod.            ToString()),

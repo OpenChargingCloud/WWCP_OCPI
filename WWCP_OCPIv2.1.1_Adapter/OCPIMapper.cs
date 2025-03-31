@@ -1966,7 +1966,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                 new ChargingPeriod(
                                                                     ChargeDetailRecord.SessionTime.StartTime,
                                                                     [
-                                                                        CDRDimension.ENERGY(0)
+                                                                        CDRDimension.ENERGY(WattHour.Zero)
                                                                     ]
                                                                 )
                                                             ],

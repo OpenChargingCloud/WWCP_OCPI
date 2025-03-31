@@ -89,7 +89,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The amount of kWhs that had been charged.
         /// </summary>
         [Mandatory]
-        public   Decimal                             kWh                          { get; }
+        public   WattHour                            kWh                          { get; }
 #pragma warning restore IDE1006 // Naming Styles
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The optional identification of the kWh energy meter.
         /// </summary>
         [Optional]
-        public   EnergyMeter_Id?                     MeterId                      { get; }
+        public   EnergyMeter_Id?                     EnergyMeterId                { get; }
 
         /// <summary>
         /// The ISO 4217 code of the currency used for this session.
@@ -202,7 +202,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Status">A status of the session.</param>
         /// 
         /// <param name="End">An optional timestamp when the session was completed.</param>
-        /// <param name="MeterId">The optional identification of the kWh energy meter.</param>
+        /// <param name="EnergyMeterId">The optional identification of the kWh energy meter.</param>
         /// <param name="ChargingPeriods">An optional enumeration of charging periods that can be used to calculate and verify the total cost.</param>
         /// <param name="TotalCosts">The total costs of the session in the specified currency. This is the price that the eMSP will have to pay to the CPO. A total_cost of 0.00 means free of charge. When omitted, i.e. no price information is given in the Session object, it does not imply the session is/was free of charge.</param>
         /// 
@@ -218,7 +218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        Party_Id                                          PartyId,
                        Session_Id                                        Id,
                        DateTime                                          Start,
-                       Decimal                                           kWh,
+                       WattHour                                          kWh,
                        CDRToken                                          CDRToken,
                        AuthMethods                                       AuthMethod,
                        Location_Id                                       LocationId,
@@ -229,7 +229,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                        DateTime?                                         End                              = null,
                        AuthorizationReference?                           AuthorizationReference           = null,
-                       EnergyMeter_Id?                                   MeterId                          = null,
+                       EnergyMeter_Id?                                   EnergyMeterId                    = null,
                        IEnumerable<ChargingPeriod>?                      ChargingPeriods                  = null,
                        Price?                                            TotalCosts                       = null,
 
@@ -259,8 +259,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             this.End                     = End;
             this.AuthorizationReference  = AuthorizationReference;
-            this.MeterId                 = MeterId;
-            this.ChargingPeriods         = ChargingPeriods?.Distinct() ?? Array.Empty<ChargingPeriod>();
+            this.EnergyMeterId           = EnergyMeterId;
+            this.ChargingPeriods         = ChargingPeriods?.Distinct() ?? [];
             this.TotalCosts              = TotalCosts;
 
             this.Created                 = Created                     ?? LastUpdated ?? Timestamp.Now;
@@ -292,7 +292,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                           (this.End?.                   GetHashCode() ?? 0) * 11 ^
                           (this.AuthorizationReference?.GetHashCode() ?? 0) *  7 ^
-                          (this.MeterId?.               GetHashCode() ?? 0) *  5 ^
+                          (this.EnergyMeterId?.         GetHashCode() ?? 0) *  5 ^
                            this.ChargingPeriods.        GetHashCode()       *  3 ^
                            this.TotalCosts?.            GetHashCode() ?? 0;
 
@@ -498,7 +498,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("kwh",
                                          "charged kWh",
-                                         out Decimal KWh,
+                                         WattHour.TryParseKWh,
+                                         out WattHour KWh,
                                          out ErrorResponse))
                 {
                     return false;
@@ -584,12 +585,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #endregion
 
-                #region Parse MeterId                   [optional]
+                #region Parse EnergyMeterId             [optional]
 
                 if (JSON.ParseOptional("meter_id",
                                        "meter identification",
                                        EnergyMeter_Id.TryParse,
-                                       out EnergyMeter_Id? MeterId,
+                                       out EnergyMeter_Id? energyMeterId,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -679,6 +680,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
                 Session = new Session(
+
                               CountryCodeBody ?? CountryCodeURL!.Value,
                               PartyIdBody     ?? PartyIdURL!.    Value,
                               SessionIdBody   ?? SessionIdURL!.  Value,
@@ -694,12 +696,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                               End,
                               AuthorizationReference,
-                              MeterId,
+                              energyMeterId,
                               ChargingPeriods,
                               TotalCosts,
 
                               Created,
                               LastUpdated
+
                           );
 
 
@@ -750,7 +753,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                ? new JProperty("end_date_time",             End.             Value.ToIso8601())
                                : null,
 
-                                 new JProperty("kwh",                       kWh),
+                                 new JProperty("kwh",                       kWh.kWh),
 
                                  new JProperty("cdr_token",                 CDRToken.              ToJSON(CustomCDRTokenSerializer)),
                                  new JProperty("auth_method",               AuthMethod.            ToString()),
@@ -763,8 +766,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                  new JProperty("evse_uid",                  EVSEUId.               ToString()),
                                  new JProperty("connector_id",              ConnectorId.           ToString()),
 
-                           MeterId.HasValue
-                               ? new JProperty("meter_id",                  MeterId.               ToString())
+                           EnergyMeterId.HasValue
+                               ? new JProperty("meter_id",                  EnergyMeterId.               ToString())
                                : null,
 
                                  new JProperty("currency",                  Currency.              ISOCode),
@@ -817,12 +820,114 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                    End,
                    AuthorizationReference?.Clone(),
-                   MeterId?.               Clone(),
+                   EnergyMeterId?.         Clone(),
                    ChargingPeriods.Select(chargingPeriod => chargingPeriod.Clone()).ToArray(),
                    TotalCosts,
 
                    Created,
                    LastUpdated
+               );
+
+        #endregion
+
+
+        #region Update(AdditionalConsumption = null, NewStatus = null, SessionEnd = null, NewTotalCosts = null, AdditionalChargingPeriods = null)
+
+        /// <summary>
+        /// Update the session with the given parameters.
+        /// </summary>
+        /// <param name="AdditionalConsumption">An optional amount of additional energy consumption.</param>
+        /// <param name="NewStatus">An optional new status of the session.</param>
+        /// <param name="SessionEnd">An optional new end timestamp of the session.</param>
+        /// <param name="NewTotalCosts">An optional new total costs of the session.</param>
+        /// <param name="AdditionalChargingPeriods">Optional additional charging periods.</param>
+        public Session Update(WattHour?                     AdditionalConsumption       = null,
+                              SessionStatusTypes?           NewStatus                   = null,
+                              DateTime?                     SessionEnd                  = null,
+                              Price?                        NewTotalCosts               = null,
+                              IEnumerable<ChargingPeriod>?  AdditionalChargingPeriods   = null)
+
+            => AdditionalConsumption     is null &&
+               NewStatus                 is null &&
+               SessionEnd                is null &&
+               NewTotalCosts             is null &&
+               AdditionalChargingPeriods is null
+
+                   ? this
+                   : new (
+
+                         CountryCode:              CountryCode,
+                         PartyId:                  PartyId,
+                         Id:                       Id,
+                         Start:                    Start,
+                         kWh:                      AdditionalConsumption.HasValue
+                                                       ? kWh + AdditionalConsumption.Value
+                                                       : kWh,
+                         CDRToken:                 CDRToken,
+                         AuthMethod:               AuthMethod,
+                         LocationId:               LocationId,
+                         EVSEUId:                  EVSEUId,
+                         ConnectorId:              ConnectorId,
+                         Currency:                 Currency,
+                         Status:                   NewStatus ?? Status,
+
+                         End:                      SessionEnd,
+                         AuthorizationReference:   AuthorizationReference,
+                         EnergyMeterId:                  EnergyMeterId,
+                         ChargingPeriods:          AdditionalChargingPeriods?.Count() > 0
+                                                       ? ChargingPeriods.Concat(AdditionalChargingPeriods)
+                                                       : ChargingPeriods,
+                         TotalCosts:               NewTotalCosts ?? TotalCosts,
+
+                         Created:                  null,
+                         LastUpdated:              null
+
+                     );
+
+        #endregion
+
+        #region Complete(SessionEndTimestamp, AdditionalConsumption = null, NewTotalCosts = null, AdditionalChargingPeriods = null)
+
+        /// <summary>
+        /// Update the session with the given parameters and set the status to 'completed'.
+        /// </summary>
+        /// <param name="SessionEndTimestamp">The timestamp when the session is completed.</param>
+        /// <param name="AdditionalConsumption">An optional amount of additional energy consumption.</param>
+        /// <param name="NewTotalCosts">An optional new total costs of the session.</param>
+        /// <param name="AdditionalChargingPeriods">Optional additional charging periods.</param>
+        public Session Complete(DateTime                      SessionEndTimestamp,
+                                WattHour?                     AdditionalConsumption       = null,
+                                Price?                        NewTotalCosts               = null,
+                                IEnumerable<ChargingPeriod>?  AdditionalChargingPeriods   = null)
+
+            => new (
+
+                   CountryCode:              CountryCode,
+                   PartyId:                  PartyId,
+                   Id:                       Id,
+                   Start:                    Start,
+                   kWh:                      AdditionalConsumption.HasValue
+                                                 ? kWh + AdditionalConsumption.Value
+                                                 : kWh,
+                   CDRToken:                 CDRToken,
+                   AuthMethod:               AuthMethod,
+                   LocationId:               LocationId,
+                   EVSEUId:                  EVSEUId,
+                   ConnectorId:              ConnectorId,
+                   Currency:                 Currency,
+                   Status:                   SessionStatusTypes.COMPLETED,
+
+                   End:                      SessionEndTimestamp,
+                   AuthorizationReference:   AuthorizationReference,
+                   EnergyMeterId:                  EnergyMeterId,
+                   ChargingPeriods:          AdditionalChargingPeriods?.Count() > 0
+                                                 ? ChargingPeriods.Concat(AdditionalChargingPeriods)
+                                                 : ChargingPeriods,
+                   TotalCosts:               NewTotalCosts ?? TotalCosts,
+
+                   Created:                  null,
+                   LastUpdated:              null
+
                );
 
         #endregion
@@ -1224,8 +1329,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             ((!AuthorizationReference.HasValue    && !Session.AuthorizationReference.HasValue)    ||
               (AuthorizationReference.HasValue    &&  Session.AuthorizationReference.HasValue    && AuthorizationReference.Value.Equals(Session.AuthorizationReference.Value))) &&
 
-            ((!MeterId.               HasValue    && !Session.MeterId.               HasValue)    ||
-              (MeterId.               HasValue    &&  Session.MeterId.               HasValue    && MeterId.               Value.Equals(Session.MeterId.               Value))) &&
+            ((!EnergyMeterId.               HasValue    && !Session.EnergyMeterId.               HasValue)    ||
+              (EnergyMeterId.               HasValue    &&  Session.EnergyMeterId.               HasValue    && EnergyMeterId.               Value.Equals(Session.EnergyMeterId.               Value))) &&
 
             ((!TotalCosts.            HasValue    && !Session.TotalCosts.            HasValue)    ||
               (TotalCosts.            HasValue    &&  Session.TotalCosts.            HasValue    && TotalCosts.            Value.Equals(Session.TotalCosts.            Value))) &&
@@ -1290,8 +1395,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        ? ChargingPeriods.Count() + " charging period(s), "
                        : "",
 
-                   MeterId.HasValue
-                       ? "meter: " + MeterId.Value.ToString() + ", "
+                   EnergyMeterId.HasValue
+                       ? "meter: " + EnergyMeterId.Value.ToString() + ", "
                        : "",
 
                    "last updated: " + LastUpdated.ToIso8601()

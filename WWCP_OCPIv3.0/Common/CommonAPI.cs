@@ -52,10 +52,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                                                    Connector_Id?  ConnectorId   = null,
                                                                    EMSP_Id?       EMSPId        = null);
 
-    public class PartyData(Party_Idv3 Id)
+    public class PartyData(Party_Idv3       Id,
+                           Role             Role,
+                           BusinessDetails  BusinessDetails,
+                           Boolean?         AllowDowngrades   = null)
     {
 
-        public Party_Idv3  Id    { get; } = Id;
+        public Party_Idv3                                   Id                { get; } = Id;
+        public Role                                         Role              { get; } = Role;
+        public BusinessDetails                              BusinessDetails   { get; } = BusinessDetails;
+        public Boolean                                      AllowDowngrades   { get; } = AllowDowngrades ?? false;
+
 
         public ConcurrentDictionary<Location_Id, Location>  Locations   = [];
         public ConcurrentDictionary<Tariff_Id,   Tariff>    Tariffs     = [];
@@ -1101,510 +1108,244 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         #endregion
 
 
-        //#region ParseSession               (this Request, CommonAPI, out PartyId, out SessionId, out Session,  out OCPIResponseBuilder)
-
-        ///// <summary>
-        ///// Parse the given HTTP request and return the session identification
-        ///// for the given HTTP hostname and HTTP query parameter
-        ///// or an HTTP error response.
-        ///// </summary>
-        ///// <param name="Request">A HTTP request.</param>
-        ///// <param name="CommonAPI">The Users API.</param>
-        ///// <param name="CountryCode">The parsed country code.</param>
-        ///// <param name="PartyId">The parsed party identification.</param>
-        ///// <param name="SessionId">The parsed unique session identification.</param>
-        ///// <param name="Session">The resolved session.</param>
-        ///// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        ///// <param name="FailOnMissingSession">Whether to fail when the session for the given session identification was not found.</param>
-        ///// <returns>True, when user identification was found; false else.</returns>
-        //public static Boolean ParseSession(this OCPIRequest                               Request,
-        //                                  CommonAPI                                       CommonAPI,
-        //                                  [NotNullWhen(true)]  out Party_Id?              PartyId,
-        //                                  [NotNullWhen(true)]  out Session_Id?            SessionId,
-        //                                  [NotNullWhen(true)]  out Session?               Session,
-        //                                  [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder,
-        //                                  Boolean                                         FailOnMissingSession = true)
-        //{
-
-        //    #region Initial checks
-
-        //    if (Request is null)
-        //        throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-        //    if (CommonAPI is null)
-        //        throw new ArgumentNullException(nameof(CommonAPI),  "The given CommonAPI must not be null!");
-
-        //    #endregion
-
-        //    PartyId              = default;
-        //    SessionId            = default;
-        //    Session              = default;
-        //    OCPIResponseBuilder  = default;
-
-        //    if (Request.ParsedURLParameters.Length < 2)
-        //    {
-
-        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-        //            StatusCode           = 2001,
-        //            StatusMessage        = "Missing country code, party identification and/or session identification!",
-        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-        //                AccessControlAllowHeaders  = [ "Authorization" ]
-        //            }
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    PartyId = Party_Id.TryParse(Request.ParsedURLParameters[0]);
-
-        //    if (!PartyId.HasValue)
-        //    {
-
-        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-        //            StatusCode           = 2001,
-        //            StatusMessage        = "Invalid party identification!",
-        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-        //                AccessControlAllowHeaders  = [ "Authorization" ]
-        //            }
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    SessionId = Session_Id.TryParse(Request.ParsedURLParameters[1]);
-
-        //    if (!SessionId.HasValue) {
-
-        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-        //            StatusCode           = 2001,
-        //            StatusMessage        = "Invalid session identification!",
-        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-        //                AccessControlAllowHeaders  = [ "Authorization" ]
-        //            }
-        //        };
-
-        //        return false;
-
-        //    }
-
-
-        //    if (!CommonAPI.TryGetSession(PartyId.Value, SessionId.Value, out Session) &&
-        //        FailOnMissingSession)
-        //    {
-
-        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-        //            StatusCode           = 2001,
-        //            StatusMessage        = "Unknown session identification!",
-        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-        //                HTTPStatusCode             = HTTPStatusCode.NotFound,
-        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-        //                AccessControlAllowHeaders  = [ "Authorization" ]
-        //            }
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    return true;
-
-        //}
-
-        //#endregion
-
-        //#region ParseCDR                   (this Request, CommonAPI, out CountryCode, out PartyId, out CDRId,     out CDR,      out OCPIResponseBuilder)
-
-        ///// <summary>
-        ///// Parse the given HTTP request and return the charge detail record identification
-        ///// for the given HTTP hostname and HTTP query parameter or an HTTP error response.
-        ///// </summary>
-        ///// <param name="Request">A HTTP request.</param>
-        ///// <param name="CommonAPI">The Users API.</param>
-        ///// <param name="CountryCode">The parsed country code.</param>
-        ///// <param name="PartyId">The parsed party identification.</param>
-        ///// <param name="CDRId">The parsed unique charge detail record identification.</param>
-        ///// <param name="CDR">The resolved charge detail record.</param>
-        ///// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        ///// <param name="FailOnMissingCDR">Whether to fail when the charge detail record for the given charge detail record identification was not found.</param>
-        ///// <returns>True, when user identification was found; false else.</returns>
-        //public static Boolean ParseCDR(this OCPIRequest                                Request,
-        //                               CommonAPI                                       CommonAPI,
-        //                               [NotNullWhen(true)]  out CountryCode?           CountryCode,
-        //                               [NotNullWhen(true)]  out Party_Id?              PartyId,
-        //                               [NotNullWhen(true)]  out CDR_Id?                CDRId,
-        //                               [NotNullWhen(true)]  out CDR?                   CDR,
-        //                               [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder,
-        //                               Boolean                                         FailOnMissingCDR = true)
-        //{
-
-        //    #region Initial checks
-
-        //    if (Request is null)
-        //        throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-        //    if (CommonAPI is null)
-        //        throw new ArgumentNullException(nameof(CommonAPI),  "The given CommonAPI must not be null!");
-
-        //    #endregion
-
-        //    CountryCode          = default;
-        //    PartyId              = default;
-        //    CDRId                = default;
-        //    CDR                  = default;
-        //    OCPIResponseBuilder  = default;
+        #region ParseMandatorySession      (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId, out Session,  out OCPIResponseBuilder)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the session identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="SessionId">The parsed unique session identification.</param>
+        /// <param name="Session">The resolved session.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        public static Boolean ParseMandatorySession(this OCPIRequest                                Request,
+                                                    CommonAPI                                       CommonAPI,
+                                                    [NotNullWhen(true)]  out CountryCode?           CountryCode,
+                                                    [NotNullWhen(true)]  out Party_Id?              PartyId,
+                                                    [NotNullWhen(true)]  out Session_Id?            SessionId,
+                                                    [NotNullWhen(true)]  out Session?               Session,
+                                                    [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
+        {
+
+            CountryCode          = default;
+            PartyId              = default;
+            SessionId            = default;
+            Session              = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 3)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing country code, party identification and/or session identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!CountryCode.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid country code!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+
+            if (!PartyId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid party identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            SessionId = Session_Id.TryParse(Request.ParsedURLParameters[2]);
+
+            if (!SessionId.HasValue) {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid session identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+
+            if (!CommonAPI.TryGetSession(Party_Idv3.From(CountryCode.Value, PartyId.Value), SessionId.Value, out Session))
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Unknown session identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.NotFound,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseOptionalSession       (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId, out Session,  out OCPIResponseBuilder)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the session identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="SessionId">The parsed unique session identification.</param>
+        /// <param name="Session">The resolved session.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        public static Boolean ParseOptionalSession(this OCPIRequest                                  Request,
+                                                   CommonAPI                                         CommonAPI,
+                                                   [NotNullWhen  (true)]  out CountryCode?           CountryCode,
+                                                   [NotNullWhen  (true)]  out Party_Id?              PartyId,
+                                                   [NotNullWhen  (true)]  out Session_Id?            SessionId,
+                                                   [MaybeNullWhen(true)]  out Session?               Session,
+                                                   [NotNullWhen  (false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
+        {
 
-        //    if (Request.ParsedURLParameters.Length < 3)
-        //    {
+            CountryCode          = default;
+            PartyId              = default;
+            SessionId            = default;
+            Session              = default;
+            OCPIResponseBuilder  = default;
 
-        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-        //            StatusCode           = 2001,
-        //            StatusMessage        = "Missing country code, party identification and/or charge detail record identification!",
-        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-        //                AccessControlAllowHeaders  = [ "Authorization" ]
-        //            }
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-        //    if (!CountryCode.HasValue)
-        //    {
-
-        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-        //            StatusCode           = 2001,
-        //            StatusMessage        = "Invalid country code!",
-        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-        //                AccessControlAllowHeaders  = [ "Authorization" ]
-        //            }
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
-
-        //    if (!PartyId.HasValue)
-        //    {
-
-        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-        //            StatusCode           = 2001,
-        //            StatusMessage        = "Invalid party identification!",
-        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-        //                AccessControlAllowHeaders  = [ "Authorization" ]
-        //            }
-        //        };
-
-        //        return false;
+            if (Request.ParsedURLParameters.Length < 3)
+            {
 
-        //    }
-
-        //    CDRId = CDR_Id.TryParse(Request.ParsedURLParameters[2]);
-
-        //    if (!CDRId.HasValue) {
-
-        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-        //            StatusCode           = 2001,
-        //            StatusMessage        = "Invalid charge detail record identification!",
-        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-        //                AccessControlAllowHeaders  = [ "Authorization" ]
-        //            }
-        //        };
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing country code, party identification and/or session identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
 
-        //        return false;
+                return false;
 
-        //    }
+            }
 
+            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
-        //    if (!CommonAPI.TryGetCDR(CountryCode.Value, PartyId.Value, CDRId.Value, out CDR) &&
-        //        FailOnMissingCDR)
-        //    {
+            if (!CountryCode.HasValue)
+            {
 
-        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-        //            StatusCode           = 2001,
-        //            StatusMessage        = "Unknown charge detail record identification!",
-        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-        //                HTTPStatusCode             = HTTPStatusCode.NotFound,
-        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-        //                AccessControlAllowHeaders  = [ "Authorization" ]
-        //            }
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    return true;
-
-        //}
-
-        //#endregion
-
-        //#region ParseTokenId               (this Request, CommonAPI,                               out TokenId,                 out OCPIResponseBuilder)
-
-        ///// <summary>
-        ///// Parse the given HTTP request and return the token identification
-        ///// for the given HTTP hostname and HTTP query parameter
-        ///// or an HTTP error response.
-        ///// </summary>
-        ///// <param name="Request">A HTTP request.</param>
-        ///// <param name="CommonAPI">The CommonAPI.</param>
-        ///// <param name="TokenId">The parsed unique token identification.</param>
-        ///// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        ///// <returns>True, when user identification was found; false else.</returns>
-        //public static Boolean ParseTokenId(this OCPIRequest                                Request,
-        //                                   CommonAPI                                       CommonAPI,
-        //                                   [NotNullWhen(true)]  out Token_Id?              TokenId,
-        //                                   [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
-        //{
-
-        //    #region Initial checks
-
-        //    if (Request is null)
-        //        throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-        //    if (CommonAPI is null)
-        //        throw new ArgumentNullException(nameof(CommonAPI),  "The given CommonAPI must not be null!");
-
-        //    #endregion
-
-        //    TokenId              = default;
-        //    OCPIResponseBuilder  = default;
-
-        //    if (Request.ParsedURLParameters.Length < 1)
-        //    {
-
-        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-        //            StatusCode           = 2001,
-        //            StatusMessage        = "Missing token identification!",
-        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-        //                AccessControlAllowHeaders  = [ "Authorization" ]
-        //            }
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    TokenId = Token_Id.TryParse(Request.ParsedURLParameters[0]);
-
-        //    if (!TokenId.HasValue)
-        //    {
-
-        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-        //            StatusCode           = 2001,
-        //            StatusMessage        = "Invalid token identification!",
-        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-        //                AccessControlAllowHeaders  = [ "Authorization" ]
-        //            }
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    return true;
-
-        //}
-
-        //#endregion
-
-        //#region ParseToken                 (this Request, CommonAPI,                               out TokenId,   out Token,    out OCPIResponseBuilder)
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid country code!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
 
-        ///// <summary>
-        ///// Parse the given HTTP request and return the token identification
-        ///// for the given HTTP hostname and HTTP query parameter
-        ///// or an HTTP error response.
-        ///// </summary>
-        ///// <param name="Request">A HTTP request.</param>
-        ///// <param name="CommonAPI">The Users API.</param>
-        ///// <param name="TokenId">The parsed unique token identification.</param>
-        ///// <param name="TokenStatus">The resolved user.</param>
-        ///// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        ///// <param name="FailOnMissingToken">Whether to fail when the token for the given token identification was not found.</param>
-        ///// <returns>True, when user identification was found; false else.</returns>
-        //public static Boolean ParseToken(this OCPIRequest                                Request,
-        //                                 CommonAPI                                       CommonAPI,
-        //                                 [NotNullWhen(true)]  out Token_Id?              TokenId,
-        //                                 [NotNullWhen(true)]  out TokenStatus            TokenStatus,
-        //                                 [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder,
-        //                                 Boolean                                         FailOnMissingToken = true)
-        //{
-
-        //    #region Initial checks
-
-        //    if (Request is null)
-        //        throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-        //    if (CommonAPI is null)
-        //        throw new ArgumentNullException(nameof(CommonAPI),  "The given CommonAPI must not be null!");
+                return false;
 
-        //    #endregion
-
-        //    TokenId              = default;
-        //    TokenStatus          = default;
-        //    OCPIResponseBuilder  = default;
+            }
 
-        //    if (Request.ParsedURLParameters.Length < 1)
-        //    {
-
-        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-        //            StatusCode           = 2001,
-        //            StatusMessage        = "Missing token identification!",
-        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-        //                AccessControlAllowHeaders  = [ "Authorization" ]
-        //            }
-        //        };
-
-        //        return false;
-
-        //    }
+            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
 
-        //    TokenId = Token_Id.TryParse(Request.ParsedURLParameters[0]);
+            if (!PartyId.HasValue)
+            {
 
-        //    if (!TokenId.HasValue)
-        //    {
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid party identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
 
-        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-        //            StatusCode           = 2001,
-        //            StatusMessage        = "Invalid token identification!",
-        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-        //                AccessControlAllowHeaders  = [ "Authorization" ]
-        //            }
-        //        };
-
-        //        return false;
+                return false;
 
-        //    }
+            }
 
+            SessionId = Session_Id.TryParse(Request.ParsedURLParameters[2]);
 
-        //    if (!CommonAPI.TryGetToken(Request.ToCountryCode ?? CommonAPI.DefaultCountryCode,
-        //                               Request.ToPartyId     ?? CommonAPI.DefaultPartyId,
-        //                               TokenId.Value,
-        //                               out TokenStatus) &&
-        //        FailOnMissingToken)
-        //    {
+            if (!SessionId.HasValue) {
 
-        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-        //            StatusCode           = 2001,
-        //            StatusMessage        = "Unknown token identification!",
-        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-        //                HTTPStatusCode             = HTTPStatusCode.NotFound,
-        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-        //                AccessControlAllowHeaders  = [ "Authorization" ]
-        //            }
-        //        };
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid session identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
 
-        //        return false;
+                return false;
 
-        //    }
+            }
 
-        //    return true;
 
-        //}
+            CommonAPI.TryGetSession(Party_Idv3.From(CountryCode.Value, PartyId.Value), SessionId.Value, out Session);
 
-        //#endregion
+            return true;
 
+        }
 
-        //#region ParseCommandId             (this Request, CommonAPI, out CommandId,                                                                     out HTTPResponse)
+        #endregion
 
-        ///// <summary>
-        ///// Parse the given HTTP request and return the command identification
-        ///// for the given HTTP hostname and HTTP query parameter
-        ///// or an HTTP error response.
-        ///// </summary>
-        ///// <param name="Request">A HTTP request.</param>
-        ///// <param name="CommonAPI">The CommonAPI.</param>
-        ///// <param name="CommandId">The parsed unique command identification.</param>
-        ///// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        ///// <returns>True, when user identification was found; false else.</returns>
-        //public static Boolean ParseCommandId(this OCPIRequest                                Request,
-        //                                     CommonAPI                                       CommonAPI,
-        //                                     [NotNullWhen(true)]  out Command_Id?            CommandId,
-        //                                     [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
-        //{
 
-        //    #region Initial checks
-
-        //    if (Request is null)
-        //        throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-        //    if (CommonAPI  is null)
-        //        throw new ArgumentNullException(nameof(CommonAPI),  "The given CPO API must not be null!");
-
-        //    #endregion
-
-        //    CommandId            = default;
-        //    OCPIResponseBuilder  = default;
-
-        //    if (Request.ParsedURLParameters.Length < 1)
-        //    {
-
-        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-        //            StatusCode           = 2001,
-        //            StatusMessage        = "Missing command identification!",
-        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-        //                AccessControlAllowHeaders  = [ "Authorization" ]
-        //            }
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    CommandId = Command_Id.TryParse(Request.ParsedURLParameters[0]);
-
-        //    if (!CommandId.HasValue)
-        //    {
-
-        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-        //            StatusCode           = 2001,
-        //            StatusMessage        = "Invalid command identification!",
-        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-        //                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-        //                AccessControlAllowHeaders  = [ "Authorization" ]
-        //            }
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    return true;
-
-        //}
-
-        //#endregion
 
     }
 
@@ -1682,7 +1423,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <summary>
         /// All our credential roles.
         /// </summary>
-        public IEnumerable<CredentialsRole>  OurCredentialRoles         { get; }
+        //public IEnumerable<CredentialsRole>  OurCredentialRoles         { get; }
 
         /// <summary>
         /// The default party identification to use.
@@ -2264,7 +2005,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             if (!OurCredentialRoles.SafeAny())
                 throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
 
-            this.OurCredentialRoles  = OurCredentialRoles.Distinct();
+            //this.OurCredentialRoles  = OurCredentialRoles.Distinct();
             this.DefaultPartyId      = DefaultPartyId;
 
             this.KeepRemovedEVSEs    = KeepRemovedEVSEs ?? (evse => true);
@@ -2437,7 +2178,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             if (!OurCredentialRoles.SafeAny())
                 throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
 
-            this.OurCredentialRoles    = OurCredentialRoles?.Distinct() ?? Array.Empty<CredentialsRole>();
+            //this.OurCredentialRoles    = OurCredentialRoles?.Distinct() ?? Array.Empty<CredentialsRole>();
             this.DefaultPartyId        = DefaultPartyId;
 
             this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
@@ -2722,7 +2463,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                     #region We are a CPO, the other side is unauthenticated and we export locations and AdHoc tariffs as Open Data...
 
                     if (request.RemoteParty is null &&
-                        OurCredentialRoles.Any(credentialRole => credentialRole.Role == Role.CPO))
+                        parties.Values.Any(party => party.Role == Role.CPO))
                     {
 
                         if (BaseAPI.LocationsAsOpenData)
@@ -2962,7 +2703,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                            Data                 = new Credentials(
                                                                       Request.LocalAccessInfo?.AccessToken ?? AccessToken.Parse("<any>"),
                                                                       BaseAPI.OurVersionsURL,
-                                                                      OurCredentialRoles
+                                                                      parties.Values.Select(CredentialsRole.From)
                                                                   ).ToJSON(),
                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                HTTPStatusCode             = HTTPStatusCode.OK,
@@ -3413,7 +3154,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                            Data                 = new Credentials(
                                                       CREDENTIALS_TOKEN_C,
                                                       BaseAPI.OurVersionsURL,
-                                                      OurCredentialRoles
+                                                      parties.Values.Select(CredentialsRole.From)
                                                   ).ToJSON(),
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.OK,
@@ -5502,12 +5243,18 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         private readonly ConcurrentDictionary<Party_Idv3, PartyData> parties = [];
 
+        public IEnumerable<PartyData> Parties
+            => parties.Values;
 
-        #region AddParty            (Id, SkipNotifications = false)
+
+        #region AddParty            (Id, Role, BusinessDetails, AllowDowngrades = null, ...)
 
         public async Task<AddResult<PartyData>>
 
-            AddParty(Party_Idv3           Id,
+            AddParty(Party_Idv3         Id,
+                     Role               Role,
+                     BusinessDetails    BusinessDetails,
+                     Boolean?           AllowDowngrades     = null,
                      Boolean            SkipNotifications   = false,
                      EventTracking_Id?  EventTrackingId     = null,
                      User_Id?           CurrentUserId       = null)
@@ -5516,52 +5263,38 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var newParty = new PartyData(Id);
+            var newParty = new PartyData(
+                               Id,
+                               Role,
+                               BusinessDetails,
+                               AllowDowngrades
+                           );
 
             if (parties.TryAdd(Id, newParty))
             {
 
-                //await LogAsset(
-                //          addLocation,
-                //          Location.ToJSON(true,
-                //                          true,
-                //                          true,
-                //                          CustomLocationSerializer,
-                //                          CustomPublishTokenSerializer,
-                //                          CustomAddressSerializer,
-                //                          CustomAdditionalGeoLocationSerializer,
-                //                          CustomChargingStationSerializer,
-                //                          CustomEVSESerializer,
-                //                          CustomStatusScheduleSerializer,
-                //                          CustomConnectorSerializer,
-                //                          CustomEnergyMeterSerializer,
-                //                          CustomTransparencySoftwareStatusSerializer,
-                //                          CustomTransparencySoftwareSerializer,
-                //                          CustomDisplayTextSerializer,
-                //                          CustomBusinessDetailsSerializer,
-                //                          CustomHoursSerializer,
-                //                          CustomImageSerializer,
-                //                          CustomEnergyMixSerializer,
-                //                          CustomEnergySourceSerializer,
-                //                          CustomEnvironmentalImpactSerializer,
-                //                          CustomLocationMaxPowerSerializer),
-                //          EventTrackingId,
-                //          CurrentUserId
-                //      );
+                await LogAsset(
+                          "addParty",
+                          JSONObject.Create(
+                              new JProperty("id", Id.ToString())
+                          ),
+                          EventTrackingId,
+                          CurrentUserId
+                      );
 
                 //if (!SkipNotifications)
                 //{
 
-                //    var OnLocationAddedLocal = OnLocationAdded;
-                //    if (OnLocationAddedLocal is not null)
+                //    var OnPartyAddedLocal = OnPartyAdded;
+                //    if (OnPartyAddedLocal is not null)
                 //    {
                 //        try
                 //        {
-                //            await OnLocationAddedLocal(Location);
+                //            await OnPartyAddedLocal(Party);
                 //        }
                 //        catch (Exception e)
                 //        {
-                //            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
+                //            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddParty), " ", nameof(OnPartyAdded), ": ",
                 //                        Environment.NewLine, e.Message,
                 //                        Environment.NewLine, e.StackTrace ?? "");
                 //        }
@@ -8580,15 +8313,22 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region Events
 
-        public delegate Task OnSessionAddedDelegate(Session Session);
+        public delegate Task OnSessionAddedDelegate  (Session Session);
 
-        public event OnSessionAddedDelegate? OnSessionAdded;
+        public event OnSessionAddedDelegate?    OnSessionAdded;
+
 
         public delegate Task OnSessionChangedDelegate(Session Session);
 
-        public event OnSessionChangedDelegate? OnSessionChanged;
+        public event OnSessionChangedDelegate?  OnSessionChanged;
 
         #endregion
+
+
+        public delegate Task<Session> OnSessionSlowStorageLookupDelegate(Party_Idv3   PartyId,
+                                                                         Session_Id   SessionId);
+
+        public event OnSessionSlowStorageLookupDelegate? OnSessionSlowStorageLookup;
 
 
         #region AddSession            (Session, ...)
@@ -8839,7 +8579,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                             {
                                 try
                                 {
-                                    OnSessionChangedLocal(Session).Wait();
+                                    OnSessionChangedLocal(Session).Wait(CancellationToken);
                                 }
                                 catch (Exception e)
                                 {
@@ -8848,66 +8588,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                                 Environment.NewLine, e.StackTrace ?? "");
                                 }
                             }
-
-                            //var oldEVSEUIds = new HashSet<EVSE_UId>(existingSession.EVSEs.Select(evse => evse.UId));
-                            //var newEVSEUIds = new HashSet<EVSE_UId>(Session.        EVSEs.Select(evse => evse.UId));
-
-                            //foreach (var evseUId in new HashSet<EVSE_UId>(oldEVSEUIds.Union(newEVSEUIds)))
-                            //{
-
-                            //    if      ( oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId) && existingSession.GetEVSE(evseUId)! != Session.GetEVSE(evseUId)!)
-                            //    {
-                            //        var OnEVSEChangedLocal = OnEVSEChanged;
-                            //        if (OnEVSEChangedLocal is not null)
-                            //        {
-                            //            try
-                            //            {
-                            //                await OnEVSEChangedLocal(existingSession.GetEVSE(evseUId)!);
-                            //            }
-                            //            catch (Exception e)
-                            //            {
-                            //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnEVSEChanged), ": ",
-                            //                            Environment.NewLine, e.Message,
-                            //                            Environment.NewLine, e.StackTrace ?? "");
-                            //            }
-                            //        }
-                            //    }
-                            //    else if (!oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId))
-                            //    {
-                            //        var OnEVSEAddedLocal = OnEVSEAdded;
-                            //        if (OnEVSEAddedLocal is not null)
-                            //        {
-                            //            try
-                            //            {
-                            //                await OnEVSEAddedLocal(existingSession.GetEVSE(evseUId)!);
-                            //            }
-                            //            catch (Exception e)
-                            //            {
-                            //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnEVSEAdded), ": ",
-                            //                            Environment.NewLine, e.Message,
-                            //                            Environment.NewLine, e.StackTrace ?? "");
-                            //            }
-                            //        }
-                            //    }
-                            //    else if ( oldEVSEUIds.Contains(evseUId) && !newEVSEUIds.Contains(evseUId))
-                            //    {
-                            //        var OnEVSERemovedLocal = OnEVSERemoved;
-                            //        if (OnEVSERemovedLocal is not null)
-                            //        {
-                            //            try
-                            //            {
-                            //                await OnEVSERemovedLocal(existingSession.GetEVSE(evseUId)!);
-                            //            }
-                            //            catch (Exception e)
-                            //            {
-                            //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnEVSERemoved), ": ",
-                            //                            Environment.NewLine, e.Message,
-                            //                            Environment.NewLine, e.StackTrace ?? "");
-                            //            }
-                            //        }
-                            //    }
-
-                            //}
 
                         }
 
@@ -8962,7 +8642,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                         {
                             try
                             {
-                                OnSessionAddedLocal(Session).Wait();
+                                OnSessionAddedLocal(Session).Wait(CancellationToken);
                             }
                             catch (Exception e)
                             {
@@ -8971,22 +8651,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
-
-                        //var OnEVSEAddedLocal = OnEVSEAdded;
-                        //if (OnEVSEAddedLocal is not null)
-                        //{
-                        //    try
-                        //    {
-                        //        foreach (var evse in Session.EVSEs)
-                        //            await OnEVSEAddedLocal(evse);
-                        //    }
-                        //    catch (Exception e)
-                        //    {
-                        //        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnEVSEAdded), ": ",
-                        //                    Environment.NewLine, e.Message,
-                        //                    Environment.NewLine, e.StackTrace ?? "");
-                        //    }
-                        //}
 
                     }
 
@@ -9049,9 +8713,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                 {
 
                     return UpdateResult<Session>.Failed(
-                                EventTrackingId, Session,
-                                "The 'lastUpdated' timestamp of the new charging session must be newer then the timestamp of the existing session!"
-                            );
+                               EventTrackingId, Session,
+                               "The 'lastUpdated' timestamp of the new charging session must be newer then the timestamp of the existing session!"
+                           );
 
                 }
 
@@ -9092,7 +8756,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                         {
                             try
                             {
-                                OnSessionChangedLocal(Session).Wait();
+                                OnSessionChangedLocal(Session).Wait(CancellationToken);
                             }
                             catch (Exception e)
                             {
@@ -9101,157 +8765,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
-
-                        //var oldEVSEUIds = new HashSet<EVSE_UId>(existingSession.EVSEs.Select(evse => evse.UId));
-                        //var newEVSEUIds = new HashSet<EVSE_UId>(Session.        EVSEs.Select(evse => evse.UId));
-
-                        //foreach (var evseUId in new HashSet<EVSE_UId>(oldEVSEUIds.Union(newEVSEUIds)))
-                        //{
-
-                        //    if      ( oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId))
-                        //    {
-
-                        //        if (existingSession.TryGetEVSE(evseUId, out var oldEVSE) &&
-                        //            Session.        TryGetEVSE(evseUId, out var newEVSE) &&
-                        //            oldEVSE is not null &&
-                        //            newEVSE is not null)
-                        //        {
-
-                        //            if (oldEVSE != newEVSE)
-                        //            {
-                        //                var OnEVSEChangedLocal = OnEVSEChanged;
-                        //                if (OnEVSEChangedLocal is not null)
-                        //                {
-                        //                    try
-                        //                    {
-                        //                        await OnEVSEChangedLocal(newEVSE);
-                        //                    }
-                        //                    catch (Exception e)
-                        //                    {
-                        //                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnEVSEChanged), ": ",
-                        //                                    Environment.NewLine, e.Message,
-                        //                                    Environment.NewLine, e.StackTrace ?? "");
-                        //                    }
-                        //                }
-                        //            }
-
-                        //            if (oldEVSE.Status != newEVSE.Status)
-                        //            {
-                        //                var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
-                        //                if (OnEVSEStatusChangedLocal is not null)
-                        //                {
-                        //                    try
-                        //                    {
-                        //                        await OnEVSEStatusChangedLocal(Timestamp.Now,
-                        //                                                       newEVSE,
-                        //                                                       newEVSE.Status,
-                        //                                                       oldEVSE.Status);
-                        //                    }
-                        //                    catch (Exception e)
-                        //                    {
-                        //                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnEVSEChanged), ": ",
-                        //                                    Environment.NewLine, e.Message,
-                        //                                    Environment.NewLine, e.StackTrace ?? "");
-                        //                    }
-                        //                }
-                        //            }
-
-                        //        }
-
-                        //    }
-                        //    else if (!oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId))
-                        //    {
-
-                        //        var OnEVSEAddedLocal = OnEVSEAdded;
-                        //        if (OnEVSEAddedLocal is not null)
-                        //        {
-                        //            try
-                        //            {
-                        //                if (Session.TryGetEVSE(evseUId, out var evse) &&
-                        //                    evse is not null)
-                        //                {
-                        //                    await OnEVSEAddedLocal(evse);
-                        //                }
-                        //            }
-                        //            catch (Exception e)
-                        //            {
-                        //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnEVSEAdded), ": ",
-                        //                            Environment.NewLine, e.Message,
-                        //                            Environment.NewLine, e.StackTrace ?? "");
-                        //            }
-                        //        }
-
-                        //        var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
-                        //        if (OnEVSEStatusChangedLocal is not null)
-                        //        {
-                        //            try
-                        //            {
-                        //                if (Session.TryGetEVSE(evseUId, out var evse) &&
-                        //                    evse is not null)
-                        //                {
-                        //                    await OnEVSEStatusChangedLocal(Timestamp.Now,
-                        //                                                   evse,
-                        //                                                   evse.Status);
-                        //                }
-                        //            }
-                        //            catch (Exception e)
-                        //            {
-                        //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnEVSEChanged), ": ",
-                        //                            Environment.NewLine, e.Message,
-                        //                            Environment.NewLine, e.StackTrace ?? "");
-                        //            }
-                        //        }
-
-                        //    }
-                        //    else if ( oldEVSEUIds.Contains(evseUId) && !newEVSEUIds.Contains(evseUId))
-                        //    {
-
-                        //        var OnEVSERemovedLocal = OnEVSERemoved;
-                        //        if (OnEVSERemovedLocal is not null)
-                        //        {
-                        //            try
-                        //            {
-                        //                if (existingSession.TryGetEVSE(evseUId, out var evse) &&
-                        //                    evse is not null)
-                        //                {
-                        //                    await OnEVSERemovedLocal(evse);
-                        //                }
-                        //            }
-                        //            catch (Exception e)
-                        //            {
-                        //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnEVSERemoved), ": ",
-                        //                            Environment.NewLine, e.Message,
-                        //                            Environment.NewLine, e.StackTrace ?? "");
-                        //            }
-                        //        }
-
-                        //        var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
-                        //        if (OnEVSEStatusChangedLocal is not null)
-                        //        {
-                        //            try
-                        //            {
-                        //                if (existingSession.TryGetEVSE(evseUId, out var oldEVSE) &&
-                        //                    Session.        TryGetEVSE(evseUId, out var newEVSE) &&
-                        //                    oldEVSE is not null &&
-                        //                    newEVSE is not null)
-                        //                {
-                        //                    await OnEVSEStatusChangedLocal(Timestamp.Now,
-                        //                                                   oldEVSE,
-                        //                                                   newEVSE.Status,
-                        //                                                   oldEVSE.Status);
-                        //                }
-                        //            }
-                        //            catch (Exception e)
-                        //            {
-                        //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnEVSEChanged), ": ",
-                        //                            Environment.NewLine, e.Message,
-                        //                            Environment.NewLine, e.StackTrace ?? "");
-                        //            }
-                        //        }
-
-                        //    }
-
-                        //}
 
                     }
 
@@ -9282,14 +8795,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region TryPatchSession       (PartyId, SessionId, SessionPatch, AllowDowngrades = false, ...)
 
-        public async Task<PatchResult<Session>> TryPatchSession(Party_Idv3         PartyId,
-                                                                Session_Id         SessionId,
-                                                                JObject            SessionPatch,
-                                                                Boolean?           AllowDowngrades     = false,
-                                                                Boolean            SkipNotifications   = false,
-                                                                EventTracking_Id?  EventTrackingId     = null,
-                                                                User_Id?           CurrentUserId       = null,
-                                                                CancellationToken  CancellationToken   = default)
+        public async Task<PatchResult<Session>>
+
+            TryPatchSession(Party_Idv3         PartyId,
+                            Session_Id         SessionId,
+                            JObject            SessionPatch,
+                            Boolean?           AllowDowngrades     = false,
+                            Boolean            SkipNotifications   = false,
+                            EventTracking_Id?  EventTrackingId     = null,
+                            User_Id?           CurrentUserId       = null,
+                            CancellationToken  CancellationToken   = default)
 
         {
 
@@ -9349,6 +8864,307 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #endregion
 
+
+        #region SessionExists         (PartyId, SessionId)
+
+        public Boolean SessionExists(Party_Idv3  PartyId,
+                                     Session_Id  SessionId)
+        {
+
+            if (parties.TryGetValue(PartyId, out var party))
+                return party.Sessions.ContainsKey(SessionId);
+
+            return false;
+
+        }
+
+        #endregion
+
+        #region TryGetSession         (PartyId, SessionId, out Session)
+
+        public Boolean TryGetSession(Party_Idv3                        PartyId,
+                                     Session_Id                        SessionId,
+                                     [NotNullWhen(true)] out Session?  Session)
+        {
+
+            if (parties.       TryGetValue(PartyId,   out var party) &&
+                party.Sessions.TryGetValue(SessionId, out Session))
+            {
+                return true;
+            }
+
+            var OnSessionSlowStorageLookupLocal = OnSessionSlowStorageLookup;
+            if (OnSessionSlowStorageLookupLocal is not null)
+            {
+                try
+                {
+
+                    var session = OnSessionSlowStorageLookupLocal(
+                                      PartyId,
+                                      SessionId
+                                  ).Result;
+
+                    if (session is not null)
+                    {
+                        Session = session;
+                        return true;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryGetSession), " ", nameof(OnSessionSlowStorageLookup), ": ",
+                                Environment.NewLine, e.Message,
+                                Environment.NewLine, e.StackTrace ?? "");
+                }
+            }
+
+            Session = null;
+            return false;
+
+        }
+
+        #endregion
+
+        #region GetSessions           (IncludeSession)
+
+        public IEnumerable<Session> GetSessions(Func<Session, Boolean> IncludeSession)
+        {
+
+            var sessions = new List<Session>();
+
+            foreach (var party in parties.Values)
+            {
+                foreach (var partySession in party.Sessions)
+                {
+                    if (IncludeSession(partySession.Value))
+                        sessions.Add(partySession.Value);
+                }
+            }
+
+            return sessions;
+
+        }
+
+        #endregion
+
+        #region GetSessions           (PartyId = null)
+
+        public IEnumerable<Session> GetSessions(Party_Idv3? PartyId = null)
+        {
+
+            if (PartyId.HasValue)
+            {
+                if (parties.TryGetValue(PartyId.Value, out var party))
+                    return party.Sessions.Values;
+            }
+
+            else
+            {
+
+                var sessions = new List<Session>();
+
+                foreach (var party in parties.Values)
+                    sessions.AddRange(party.Sessions.Values);
+
+                return sessions;
+
+            }
+
+            return [];
+
+        }
+
+        #endregion
+
+
+        #region RemoveSession         (Session, ...)
+
+        public async Task<RemoveResult<Session>>
+
+            RemoveSession(Session            Session,
+                          Boolean            SkipNotifications   = false,
+                          EventTracking_Id?  EventTrackingId     = null,
+                          User_Id?           CurrentUserId       = null,
+                          CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(Session.PartyId, out var party))
+            {
+
+                if (party.Sessions.TryRemove(Session.Id, out var session))
+                {
+
+                    await LogAsset(
+                              CommonBaseAPI.removeSession,
+                              session.ToJSON(
+                                  true,
+                                  true,
+                                  true,
+                                  true,
+                                  CustomSessionSerializer,
+                                  CustomCDRTokenSerializer,
+                                  CustomSessionConnectorSerializer,
+                                  CustomChargingPeriodSerializer,
+                                  CustomCDRDimensionSerializer,
+                                  CustomPriceSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    return RemoveResult<Session>.Success(
+                               EventTrackingId,
+                               session
+                           );
+
+                }
+
+                return RemoveResult<Session>.Failed(
+                           EventTrackingId,
+                           Session,
+                           "The session identification of the session is unknown!"
+                       );
+
+            }
+
+            return RemoveResult<Session>.Failed(
+                       EventTrackingId,
+                       Session,
+                       "The party identification of the session is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region RemoveSession         (PartyId, SessionId, ...)
+
+        public async Task<RemoveResult<Session>>
+
+            RemoveSession(Party_Idv3         PartyId,
+                          Session_Id         SessionId,
+                          Boolean            SkipNotifications   = false,
+                          EventTracking_Id?  EventTrackingId     = null,
+                          User_Id?           CurrentUserId       = null,
+                          CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(PartyId, out var party))
+            {
+
+                if (party.Sessions.TryRemove(SessionId, out var session))
+                {
+
+                    await LogAsset(
+                              CommonBaseAPI.removeSession,
+                              session.ToJSON(
+                                  true,
+                                  true,
+                                  true,
+                                  true,
+                                  CustomSessionSerializer,
+                                  CustomCDRTokenSerializer,
+                                  CustomSessionConnectorSerializer,
+                                  CustomChargingPeriodSerializer,
+                                  CustomCDRDimensionSerializer,
+                                  CustomPriceSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    return RemoveResult<Session>.Success(
+                               EventTrackingId,
+                               session
+                           );
+
+                }
+
+                return RemoveResult<Session>.Failed(
+                           EventTrackingId,
+                           "The session identification of the session is unknown!"
+                       );
+
+            }
+
+            return RemoveResult<Session>.Failed(
+                       EventTrackingId,
+                       "The party identification of the session is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region RemoveAllSessions     (IncludeSessions = null, ...)
+
+        /// <summary>
+        /// Remove all matching sessions.
+        /// </summary>
+        /// <param name="IncludeSessions">An optional charging session filter.</param>
+        public void RemoveAllSessions(Func<Session, Boolean>?  IncludeSessions   = null,
+                                      EventTracking_Id?        EventTrackingId   = null,
+                                      User_Id?                 CurrentUserId     = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (IncludeSessions is null)
+            {
+                foreach (var party in parties.Values)
+                    party.Sessions.Clear();
+            }
+
+            else
+            {
+
+                var sessionsToDelete = new List<Session>();
+
+                foreach (var party in parties.Values)
+                {
+                    foreach (var session in party.Sessions.Values)
+                    {
+                        if (IncludeSessions(session))
+                            sessionsToDelete.Add(session);
+                    }
+                }
+
+                foreach (var session in sessionsToDelete)
+                    parties[session.PartyId].Sessions.TryRemove(session.Id, out _);
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllSessions     (PartyId, ...)
+
+        /// <summary>
+        /// Remove all sessions owned by the given party.
+        /// </summary>
+        /// <param name="PartyId">The identification of the party.</param>
+        public void RemoveAllSessions(Party_Idv3         PartyId,
+                                      EventTracking_Id?  EventTrackingId   = null,
+                                      User_Id?           CurrentUserId     = null)
+        {
+
+            if (parties.TryGetValue(PartyId, out var party))
+                party.Sessions.Clear();
+
+        }
+
+        #endregion
+
         #endregion
 
         // Tokens
@@ -9366,6 +9182,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         public event OnCDRChangedDelegate? OnCDRChanged;
 
         #endregion
+
+
+        public delegate Task<CDR> OnChargeDetailRecordSlowStorageLookupDelegate(Party_Idv3  PartyId,
+                                                                                CDR_Id      CDRId);
+
+        public event OnChargeDetailRecordSlowStorageLookupDelegate? OnChargeDetailRecordSlowStorageLookup;
 
 
         #region AddCDR            (CDR, ...)
@@ -9453,7 +9275,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                 return AddResult<CDR>.Failed(
                            EventTrackingId,
                            CDR,
-                           "The given charge deatil record already exists!"
+                           "The given charge detail record already exists!"
                        );
 
             }
@@ -9461,7 +9283,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             return AddResult<CDR>.Failed(
                        EventTrackingId,
                        CDR,
-                       "The party identification of the charge deatil record is unknown!"
+                       "The party identification of the charge detail record is unknown!"
                    );
 
         }
@@ -9553,7 +9375,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                 return AddResult<CDR>.NoOperation(
                            EventTrackingId,
                            CDR,
-                           "The given charge deatil record already exists."
+                           "The given charge detail record already exists."
                        );
 
             }
@@ -9561,14 +9383,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             return AddResult<CDR>.Failed(
                        EventTrackingId,
                        CDR,
-                       "The party identification of the charge deatil record is unknown!"
+                       "The party identification of the charge detail record is unknown!"
                    );
 
         }
 
         #endregion
 
-        #region AddOrUpdateCDR    (CDR,                          AllowDowngrades = false, ...)
+        #region AddOrUpdateCDR    (CDR,                      AllowDowngrades = false, ...)
 
         public async Task<AddOrUpdateResult<CDR>>
 
@@ -9586,7 +9408,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             if (parties.TryGetValue(CDR.PartyId, out var party))
             {
 
-                #region Update an existing charge deatil record
+                #region Update an existing charge detail record
 
                 if (party.CDRs.TryGetValue(CDR.Id, out var existingCDR))
                 {
@@ -9596,13 +9418,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                     {
                         return AddOrUpdateResult<CDR>.Failed(
                                    EventTrackingId, CDR,
-                                   "The 'lastUpdated' timestamp of the new charge deatil record must be newer then the timestamp of the existing charge deatil record!"
+                                   "The 'lastUpdated' timestamp of the new charge detail record must be newer then the timestamp of the existing charge detail record!"
                                );
                     }
 
                     //if (CDR.LastUpdated.ToIso8601() == existingCDR.LastUpdated.ToIso8601())
                     //    return AddOrUpdateResult<CDR>.NoOperation(CDR,
-                    //                                                   "The 'lastUpdated' timestamp of the new charge deatil record must be newer then the timestamp of the existing charge deatil record!");
+                    //                                                   "The 'lastUpdated' timestamp of the new charge detail record must be newer then the timestamp of the existing charge detail record!");
 
                     var aa = existingCDR.Equals(existingCDR);
 
@@ -9734,14 +9556,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                     return AddOrUpdateResult<CDR>.Failed(
                                EventTrackingId,
                                CDR,
-                               "Updating the given charge deatil record failed!"
+                               "Updating the given charge detail record failed!"
                            );
 
                 }
 
                 #endregion
 
-                #region Add a new charge deatil record
+                #region Add a new charge detail record
 
                 if (party.CDRs.TryAdd(CDR.Id, CDR))
                 {
@@ -9827,7 +9649,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                 return AddOrUpdateResult<CDR>.Failed(
                            EventTrackingId,
                            CDR,
-                           "Adding the given charge deatil record failed because of concurrency issues!"
+                           "Adding the given charge detail record failed because of concurrency issues!"
                        );
 
             }
@@ -9835,14 +9657,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             return AddOrUpdateResult<CDR>.Failed(
                        EventTrackingId,
                        CDR,
-                       "The party identification of the charge deatil record is unknown!"
+                       "The party identification of the charge detail record is unknown!"
                    );
 
         }
 
         #endregion
 
-        #region UpdateCDR         (CDR,                          AllowDowngrades = false, ...)
+        #region UpdateCDR         (CDR,                      AllowDowngrades = false, ...)
 
         public async Task<UpdateResult<CDR>>
 
@@ -9864,7 +9686,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                     return UpdateResult<CDR>.Failed(
                                EventTrackingId,
                                CDR,
-                               $"The given charge deatil record identification '{CDR.Id}' is unknown!"
+                               $"The given charge detail record identification '{CDR.Id}' is unknown!"
                            );
 
                 #region Validate AllowDowngrades
@@ -9875,7 +9697,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
                     return UpdateResult<CDR>.Failed(
                                 EventTrackingId, CDR,
-                                "The 'lastUpdated' timestamp of the new charging charge deatil record must be newer then the timestamp of the existing charge deatil record!"
+                                "The 'lastUpdated' timestamp of the new charging charge detail record must be newer then the timestamp of the existing charge detail record!"
                             );
 
                 }
@@ -10102,7 +9924,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                 return UpdateResult<CDR>.Failed(
                            EventTrackingId,
                            CDR,
-                           "charge deatil records.TryUpdate(CDR.Id, CDR, CDR) failed!"
+                           "charge detail records.TryUpdate(CDR.Id, CDR, CDR) failed!"
                        );
 
             }
@@ -10110,7 +9932,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             return UpdateResult<CDR>.Failed(
                        EventTrackingId,
                        CDR,
-                       "The party identification of the charge deatil record is unknown!"
+                       "The party identification of the charge detail record is unknown!"
                    );
 
         }
@@ -10161,7 +9983,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                             return PatchResult<CDR>.Failed(
                                        EventTrackingId,
                                        existingCDR,
-                                       "Could not update the charge deatil record: " + updateCDRResult.ErrorResponse
+                                       "Could not update the charge detail record: " + updateCDRResult.ErrorResponse
                                    );
 
                     }
@@ -10172,15 +9994,341 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
                 return PatchResult<CDR>.Failed(
                            EventTrackingId,
-                           $"The given charge deatil record '{CDRId}' is unknown!"
+                           $"The given charge detail record '{CDRId}' is unknown!"
                        );
 
             }
 
             return PatchResult<CDR>.Failed(
                        EventTrackingId,
-                       $"The party identification '{PartyId}' of the charge deatil record is unknown!"
+                       $"The party identification '{PartyId}' of the charge detail record is unknown!"
                    );
+
+        }
+
+        #endregion
+
+
+        #region CDRExists         (PartyId, CDRId)
+
+        public Boolean CDRExists(Party_Idv3  PartyId,
+                                 CDR_Id      CDRId)
+        {
+
+            if (parties.TryGetValue(PartyId, out var party))
+                return party.CDRs.ContainsKey(CDRId);
+
+            return false;
+
+        }
+
+        #endregion
+
+        #region TryGetCDR         (PartyId, CDRId, out CDR)
+
+        public Boolean TryGetCDR(Party_Idv3                    PartyId,
+                                 CDR_Id                        CDRId,
+                                 [NotNullWhen(true)] out CDR?  CDR)
+        {
+
+            if (parties.       TryGetValue(PartyId,   out var party) &&
+                party.CDRs.TryGetValue(CDRId, out CDR))
+            {
+                return true;
+            }
+
+            var OnChargeDetailRecordLookupLocal = OnChargeDetailRecordSlowStorageLookup;
+            if (OnChargeDetailRecordLookupLocal is not null)
+            {
+                try
+                {
+
+                    var cdr = OnChargeDetailRecordLookupLocal(
+                                    PartyId,
+                                    CDRId
+                                ).Result;
+
+                    if (cdr is not null)
+                    {
+                        CDR = cdr;
+                        return true;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryGetCDR), " ", nameof(OnChargeDetailRecordSlowStorageLookup), ": ",
+                                Environment.NewLine, e.Message,
+                                Environment.NewLine, e.StackTrace ?? "");
+                }
+            }
+
+
+            CDR = null;
+            return false;
+
+        }
+
+        #endregion
+
+        #region GetCDRs           (IncludeCDR)
+
+        public IEnumerable<CDR> GetCDRs(Func<CDR, Boolean> IncludeCDR)
+        {
+
+            var sessions = new List<CDR>();
+
+            foreach (var party in parties.Values)
+            {
+                foreach (var partyCDR in party.CDRs)
+                {
+                    if (IncludeCDR(partyCDR.Value))
+                        sessions.Add(partyCDR.Value);
+                }
+            }
+
+            return sessions;
+
+        }
+
+        #endregion
+
+        #region GetCDRs           (PartyId = null)
+
+        public IEnumerable<CDR> GetCDRs(Party_Idv3? PartyId = null)
+        {
+
+            if (PartyId.HasValue)
+            {
+                if (parties.TryGetValue(PartyId.Value, out var party))
+                    return party.CDRs.Values;
+            }
+
+            else
+            {
+
+                var sessions = new List<CDR>();
+
+                foreach (var party in parties.Values)
+                    sessions.AddRange(party.CDRs.Values);
+
+                return sessions;
+
+            }
+
+            return [];
+
+        }
+
+        #endregion
+
+
+        #region RemoveCDR         (CDR, ...)
+
+        public async Task<RemoveResult<CDR>>
+
+            RemoveCDR(CDR                CDR,
+                      Boolean            SkipNotifications   = false,
+                      EventTracking_Id?  EventTrackingId     = null,
+                      User_Id?           CurrentUserId       = null,
+                      CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(CDR.PartyId, out var party))
+            {
+
+                if (party.CDRs.TryRemove(CDR.Id, out var cdr))
+                {
+
+                    await LogAsset(
+                              CommonBaseAPI.removeChargeDetailRecord,
+                              cdr.ToJSON(
+                                  true,
+                                  true,
+                                  true,
+                                  true,
+                                  CustomCDRSerializer,
+                                  CustomCDRTokenSerializer,
+                                  CustomCDRLocationSerializer,
+                                  CustomEVSEEnergyMeterSerializer,
+                                  CustomTransparencySoftwareStatusSerializer,
+                                  CustomTransparencySoftwareSerializer,
+                                  CustomDisplayTextSerializer,
+                                  CustomPriceSerializer,
+                                  CustomTariffElementSerializer,
+                                  CustomPriceComponentSerializer,
+                                  CustomTariffRestrictionsSerializer,
+                                  CustomEnergyMixSerializer,
+                                  CustomEnergySourceSerializer,
+                                  CustomEnvironmentalImpactSerializer,
+                                  CustomChargingPeriodSerializer,
+                                  CustomCDRDimensionSerializer,
+                                  CustomSignedDataSerializer,
+                                  CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    return RemoveResult<CDR>.Success(
+                               EventTrackingId,
+                               cdr
+                           );
+
+                }
+
+                return RemoveResult<CDR>.Failed(
+                           EventTrackingId,
+                           CDR,
+                           "The charge detail record identification of the charge detail record is unknown!"
+                       );
+
+            }
+
+            return RemoveResult<CDR>.Failed(
+                       EventTrackingId,
+                       CDR,
+                       "The party identification of the charge detail record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region RemoveCDR         (PartyId, CDRId, ...)
+
+        public async Task<RemoveResult<CDR>>
+
+            RemoveCDR(Party_Idv3         PartyId,
+                      CDR_Id             CDRId,
+                      Boolean            SkipNotifications   = false,
+                      EventTracking_Id?  EventTrackingId     = null,
+                      User_Id?           CurrentUserId       = null,
+                      CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(PartyId, out var party))
+            {
+
+                if (party.CDRs.TryRemove(CDRId, out var cdr))
+                {
+
+                    await LogAsset(
+                              CommonBaseAPI.removeChargeDetailRecord,
+                              cdr.ToJSON(
+                                  true,
+                                  true,
+                                  true,
+                                  true,
+                                  CustomCDRSerializer,
+                                  CustomCDRTokenSerializer,
+                                  CustomCDRLocationSerializer,
+                                  CustomEVSEEnergyMeterSerializer,
+                                  CustomTransparencySoftwareStatusSerializer,
+                                  CustomTransparencySoftwareSerializer,
+                                  CustomDisplayTextSerializer,
+                                  CustomPriceSerializer,
+                                  CustomTariffElementSerializer,
+                                  CustomPriceComponentSerializer,
+                                  CustomTariffRestrictionsSerializer,
+                                  CustomEnergyMixSerializer,
+                                  CustomEnergySourceSerializer,
+                                  CustomEnvironmentalImpactSerializer,
+                                  CustomChargingPeriodSerializer,
+                                  CustomCDRDimensionSerializer,
+                                  CustomSignedDataSerializer,
+                                  CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    return RemoveResult<CDR>.Success(
+                               EventTrackingId,
+                               cdr
+                           );
+
+                }
+
+                return RemoveResult<CDR>.Failed(
+                           EventTrackingId,
+                           "The charge detail record identification of the charge detail record is unknown!"
+                       );
+
+            }
+
+            return RemoveResult<CDR>.Failed(
+                       EventTrackingId,
+                       "The party identification of the charge detail record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region RemoveAllCDRs     (IncludeCDRs = null, ...)
+
+        /// <summary>
+        /// Remove all matching charge detail records.
+        /// </summary>
+        /// <param name="IncludeCDRs">An optional charging charge detail record filter.</param>
+        public void RemoveAllCDRs(Func<CDR, Boolean>?  IncludeCDRs       = null,
+                                  EventTracking_Id?    EventTrackingId   = null,
+                                  User_Id?             CurrentUserId     = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (IncludeCDRs is null)
+            {
+                foreach (var party in parties.Values)
+                    party.CDRs.Clear();
+            }
+
+            else
+            {
+
+                var cdrsToDelete = new List<CDR>();
+
+                foreach (var party in parties.Values)
+                {
+                    foreach (var cdr in party.CDRs.Values)
+                    {
+                        if (IncludeCDRs(cdr))
+                            cdrsToDelete.Add(cdr);
+                    }
+                }
+
+                foreach (var cdr in cdrsToDelete)
+                    parties[cdr.PartyId].CDRs.TryRemove(cdr.Id, out _);
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllCDRs     (PartyId, ...)
+
+        /// <summary>
+        /// Remove all charge detail records owned by the given party.
+        /// </summary>
+        /// <param name="PartyId">The identification of the party.</param>
+        public void RemoveAllCDRs(Party_Idv3         PartyId,
+                                  EventTracking_Id?  EventTrackingId   = null,
+                                  User_Id?           CurrentUserId     = null)
+        {
+
+            if (parties.TryGetValue(PartyId, out var party))
+                party.CDRs.Clear();
 
         }
 

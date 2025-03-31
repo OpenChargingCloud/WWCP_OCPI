@@ -234,17 +234,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                                        //OurBaseURL:                          URL.Parse("http://127.0.0.1:3301/ocpi/v2.2"),
                                        //OurVersionsURL:                      cpoVersionsAPIURL.Value,
-                                       OurCredentialRoles:                  [
-                                                                                new CredentialsRole(
-                                                                                     CountryCode.Parse("DE"),
-                                                                                     Party_Id.   Parse("GEF"),
-                                                                                     Role.       CPO,
-                                                                                     new BusinessDetails(
-                                                                                         "GraphDefined CSO Services",
-                                                                                         URL.Parse("https://www.graphdefined.com/cso")
-                                                                                     )
-                                                                                )
-                                                                            ],
+                                       //OurCredentialRoles:                  [
+                                       //                                         new CredentialsRole(
+                                       //                                              CountryCode.Parse("DE"),
+                                       //                                              Party_Id.   Parse("GEF"),
+                                       //                                              Role.       CPO,
+                                       //                                              new BusinessDetails(
+                                       //                                                  "GraphDefined CSO Services",
+                                       //                                                  URL.Parse("https://www.graphdefined.com/cso")
+                                       //                                              )
+                                       //                                         )
+                                       //                                     ],
                                        DefaultCountryCode:                  CountryCode.Parse("DE"),
                                        DefaultPartyId:                      Party_Id.   Parse("GEF"),
 
@@ -289,17 +289,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                                        //OurBaseURL:                          URL.Parse("http://127.0.0.1:3401/ocpi/v2.2"),
                                        //OurVersionsURL:                      emsp1VersionsAPIURL.Value,
-                                       OurCredentialRoles:                  [
-                                                                                new CredentialsRole(
-                                                                                     CountryCode.Parse("DE"),
-                                                                                     Party_Id.   Parse("GDF"),
-                                                                                     Role.       EMSP,
-                                                                                     new BusinessDetails(
-                                                                                         "GraphDefined EMSP #1 Services",
-                                                                                         URL.Parse("https://www.graphdefined.com/emsp1")
-                                                                                     )
-                                                                                )
-                                                                            ],
+                                       //OurCredentialRoles:                  [
+                                       //                                         new CredentialsRole(
+                                       //                                              CountryCode.Parse("DE"),
+                                       //                                              Party_Id.   Parse("GDF"),
+                                       //                                              Role.       EMSP,
+                                       //                                              new BusinessDetails(
+                                       //                                                  "GraphDefined EMSP #1 Services",
+                                       //                                                  URL.Parse("https://www.graphdefined.com/emsp1")
+                                       //                                              )
+                                       //                                         )
+                                       //                                     ],
                                        DefaultCountryCode:                  CountryCode.Parse("DE"),
                                        DefaultPartyId:                      Party_Id.   Parse("GDF"),
 
@@ -344,17 +344,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                                        //OurBaseURL:                          URL.Parse("http://127.0.0.1:3402/ocpi/v2.2"),
                                        //OurVersionsURL:                      emsp2VersionsAPIURL.Value,
-                                       OurCredentialRoles:                  [
-                                                                                new CredentialsRole(
-                                                                                     CountryCode.Parse("DE"),
-                                                                                     Party_Id.   Parse("GD2"),
-                                                                                     Role.       EMSP,
-                                                                                     new BusinessDetails(
-                                                                                         "GraphDefined EMSP #2 Services",
-                                                                                         URL.Parse("https://www.graphdefined.com/emsp2")
-                                                                                     )
-                                                                                )
-                                                                            ],
+                                       //OurCredentialRoles:                  [
+                                       //                                         new CredentialsRole(
+                                       //                                              CountryCode.Parse("DE"),
+                                       //                                              Party_Id.   Parse("GD2"),
+                                       //                                              Role.       EMSP,
+                                       //                                              new BusinessDetails(
+                                       //                                                  "GraphDefined EMSP #2 Services",
+                                       //                                                  URL.Parse("https://www.graphdefined.com/emsp2")
+                                       //                                              )
+                                       //                                         )
+                                       //                                     ],
                                        DefaultCountryCode:                  CountryCode.Parse("DE"),
                                        DefaultPartyId:                      Party_Id.   Parse("GD2"),
 
@@ -506,16 +506,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             #region Add Remote Parties
 
             await cpoCommonAPI.AddRemoteParty  (Id:                          RemoteParty_Id.Parse(
-                                                                                 emsp1CommonAPI.OurCredentialRoles.First().CountryCode,
-                                                                                 emsp1CommonAPI.OurCredentialRoles.First().PartyId,
-                                                                                 emsp1CommonAPI.OurCredentialRoles.First().Role
+                                                                                 emsp1CommonAPI.Parties.First().Id.CountryCode,
+                                                                                 emsp1CommonAPI.Parties.First().Id.Party,
+                                                                                 emsp1CommonAPI.Parties.First().Role
                                                                              ),
                                                 CredentialsRoles:            [
                                                                                  new CredentialsRole(
-                                                                                     CountryCode:       emsp1CommonAPI.OurCredentialRoles.First().CountryCode,
-                                                                                     PartyId:           emsp1CommonAPI.OurCredentialRoles.First().PartyId,
+                                                                                     CountryCode:       emsp1CommonAPI.Parties.First().Id.CountryCode,
+                                                                                     PartyId:           emsp1CommonAPI.Parties.First().Id.Party,
                                                                                      Role:              Role.EMSP,
-                                                                                     BusinessDetails:   emsp1CommonAPI.OurCredentialRoles.First().BusinessDetails,
+                                                                                     BusinessDetails:   emsp1CommonAPI.Parties.First().BusinessDetails,
                                                                                      AllowDowngrades:   false
                                                                                  )
                                                                              ],
@@ -532,16 +532,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                 PartyStatus:                 PartyStatus.ENABLED);
 
             await cpoCommonAPI.AddRemoteParty  (Id:                          RemoteParty_Id.Parse(
-                                                                                 emsp2CommonAPI.OurCredentialRoles.First().CountryCode,
-                                                                                 emsp2CommonAPI.OurCredentialRoles.First().PartyId,
-                                                                                 emsp2CommonAPI.OurCredentialRoles.First().Role
+                                                                                 emsp2CommonAPI.Parties.First().Id.CountryCode,
+                                                                                 emsp2CommonAPI.Parties.First().Id.Party,
+                                                                                 emsp2CommonAPI.Parties.First().Role
                                                                              ),
                                                 CredentialsRoles:            [
                                                                                  new CredentialsRole(
-                                                                                     CountryCode:       emsp2CommonAPI.OurCredentialRoles.First().CountryCode,
-                                                                                     PartyId:           emsp2CommonAPI.OurCredentialRoles.First().PartyId,
+                                                                                     CountryCode:       emsp2CommonAPI.Parties.First().Id.CountryCode,
+                                                                                     PartyId:           emsp2CommonAPI.Parties.First().Id.Party,
                                                                                      Role:              Role.EMSP,
-                                                                                     BusinessDetails:   emsp2CommonAPI.OurCredentialRoles.First().BusinessDetails,
+                                                                                     BusinessDetails:   emsp2CommonAPI.Parties.First().BusinessDetails,
                                                                                      AllowDowngrades:   false
                                                                                  )
                                                                              ],
@@ -558,16 +558,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
 
             await emsp1CommonAPI.AddRemoteParty(Id:                          RemoteParty_Id.Parse(
-                                                                                 cpoCommonAPI.OurCredentialRoles.First().CountryCode,
-                                                                                 cpoCommonAPI.OurCredentialRoles.First().PartyId,
-                                                                                 cpoCommonAPI.OurCredentialRoles.First().Role
+                                                                                 cpoCommonAPI.Parties.First().Id.CountryCode,
+                                                                                 cpoCommonAPI.Parties.First().Id.Party,
+                                                                                 cpoCommonAPI.Parties.First().Role
                                                                              ),
                                                 CredentialsRoles:            [
                                                                                  new CredentialsRole(
-                                                                                     CountryCode:       cpoCommonAPI.OurCredentialRoles.First().CountryCode,
-                                                                                     PartyId:           cpoCommonAPI.OurCredentialRoles.First().PartyId,
+                                                                                     CountryCode:       cpoCommonAPI.Parties.First().Id.CountryCode,
+                                                                                     PartyId:           cpoCommonAPI.Parties.First().Id.Party,
                                                                                      Role:              Role.CPO,
-                                                                                     BusinessDetails:   cpoCommonAPI.OurCredentialRoles.First().BusinessDetails,
+                                                                                     BusinessDetails:   cpoCommonAPI.Parties.First().BusinessDetails,
                                                                                      AllowDowngrades:   false
                                                                                  )
                                                                              ],
@@ -585,16 +585,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
 
             await emsp2CommonAPI.AddRemoteParty(Id:                          RemoteParty_Id.Parse(
-                                                                                 cpoCommonAPI.OurCredentialRoles.First().CountryCode,
-                                                                                 cpoCommonAPI.OurCredentialRoles.First().PartyId,
-                                                                                 cpoCommonAPI.OurCredentialRoles.First().Role
+                                                                                 cpoCommonAPI.Parties.First().Id.CountryCode,
+                                                                                 cpoCommonAPI.Parties.First().Id.Party,
+                                                                                 cpoCommonAPI.Parties.First().Role
                                                                              ),
                                                 CredentialsRoles:            [
                                                                                  new CredentialsRole(
-                                                                                     CountryCode:       cpoCommonAPI.OurCredentialRoles.First().CountryCode,
-                                                                                     PartyId:           cpoCommonAPI.OurCredentialRoles.First().PartyId,
+                                                                                     CountryCode:       cpoCommonAPI.Parties.First().Id.CountryCode,
+                                                                                     PartyId:           cpoCommonAPI.Parties.First().Id.Party,
                                                                                      Role:              Role.CPO,
-                                                                                     BusinessDetails:   cpoCommonAPI.OurCredentialRoles.First().BusinessDetails,
+                                                                                     BusinessDetails:   cpoCommonAPI.Parties.First().BusinessDetails,
                                                                                      AllowDowngrades:   false
                                                                                  )
                                                                              ],

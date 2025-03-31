@@ -338,17 +338,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
             await cpoCommonAPI.AddRemoteParty(
 
                       Id:                          RemoteParty_Id.Parse(
-                                                       ptpCommonAPI.OurCredentialRoles.First().CountryCode,
-                                                       ptpCommonAPI.OurCredentialRoles.First().PartyId,
-                                                       ptpCommonAPI.OurCredentialRoles.First().Role
+                                                       ptpCommonAPI.Parties.First().Id.CountryCode,
+                                                       ptpCommonAPI.Parties.First().Id.Party,
+                                                       ptpCommonAPI.Parties.First().Role
                                                    ),
 
                       CredentialsRoles:            [
                                                        new CredentialsRole(
-                                                           CountryCode:       ptpCommonAPI.OurCredentialRoles.First().CountryCode,
-                                                           PartyId:           ptpCommonAPI.OurCredentialRoles.First().PartyId,
+                                                           CountryCode:       ptpCommonAPI.Parties.First().Id.CountryCode,
+                                                           PartyId:           ptpCommonAPI.Parties.First().Id.Party,
                                                            Role:              Role.PTP,
-                                                           BusinessDetails:   ptpCommonAPI.OurCredentialRoles.First().BusinessDetails,
+                                                           BusinessDetails:   ptpCommonAPI.Parties.First().BusinessDetails,
                                                            AllowDowngrades:   false
                                                        )
                                                    ],
@@ -370,16 +370,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
             await ptpCommonAPI.AddRemoteParty(
 
                       Id:                          RemoteParty_Id.Parse(
-                                                       cpoCommonAPI.OurCredentialRoles.First().CountryCode,
-                                                       cpoCommonAPI.OurCredentialRoles.First().PartyId,
-                                                       cpoCommonAPI.OurCredentialRoles.First().Role
+                                                       cpoCommonAPI.Parties.First().Id.CountryCode,
+                                                       cpoCommonAPI.Parties.First().Id.Party,
+                                                       cpoCommonAPI.Parties.First().Role
                                                    ),
                       CredentialsRoles:            [
                                                        new CredentialsRole(
-                                                           CountryCode:       cpoCommonAPI.OurCredentialRoles.First().CountryCode,
-                                                           PartyId:           cpoCommonAPI.OurCredentialRoles.First().PartyId,
+                                                           CountryCode:       cpoCommonAPI.Parties.First().Id.CountryCode,
+                                                           PartyId:           cpoCommonAPI.Parties.First().Id.Party,
                                                            Role:              Role.CPO,
-                                                           BusinessDetails:   cpoCommonAPI.OurCredentialRoles.First().BusinessDetails,
+                                                           BusinessDetails:   cpoCommonAPI.Parties.First().BusinessDetails,
                                                            AllowDowngrades:   false
                                                        )
                                                    ],

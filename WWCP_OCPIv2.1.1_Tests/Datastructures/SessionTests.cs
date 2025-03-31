@@ -327,7 +327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                Party_Id.   Parse("GEF"),  // Note: The party identification is just internal!
                                Session_Id. Parse("Session0001"),
                                DateTime.   Parse("2020-08-21T00:00:00.000Z").ToUniversalTime(), // Start
-                               1.11M, // KWh
+                               WattHour.   ParseKWh(1.11M),
                                Auth_Id.    Parse("1234"),
                                AuthMethods.AUTH_REQUEST,
 
@@ -348,26 +348,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                DateTime.Parse("2020-08-22T00:00:00.000Z").ToUniversalTime(), // End
                                EnergyMeter_Id.Parse("Meter0001"),
 
-                               new[] {
+                               [
                                    new ChargingPeriod(
                                        DateTime.Parse("2020-04-12T18:21:49Z").ToUniversalTime(),
-                                       new[] {
+                                       [
                                            CDRDimension.Create(
                                                CDRDimensionType.ENERGY,
                                                1.33M
                                            )
-                                       }
+                                       ]
                                    ),
                                    new ChargingPeriod(
                                        DateTime.Parse("2020-04-12T18:21:50Z").ToUniversalTime(),
-                                       new[] {
+                                       [
                                            CDRDimension.Create(
                                                CDRDimensionType.TIME,
                                                5.12M
                                            )
-                                       }
+                                       ]
                                    )
-                               },
+                               ],
 
                                1.12M, // Total Costs
 

@@ -17,12 +17,14 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
-using System.Diagnostics.CodeAnalysis;
+using cloud.charging.open.protocols.OCPIv2_3_0.HTTP;
 
 #endregion
 
@@ -328,6 +330,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                );
 
         #endregion
+
+
+        public static CredentialsRole From(PartyData PartyData)
+
+            => new (
+                   PartyData.Id.CountryCode,
+                   PartyData.Id.Party,
+                   PartyData.Role,
+                   PartyData.BusinessDetails,
+                   PartyData.AllowDowngrades
+               );
 
 
         #region Operator overloading

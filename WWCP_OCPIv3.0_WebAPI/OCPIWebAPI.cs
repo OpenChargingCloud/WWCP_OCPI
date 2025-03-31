@@ -502,7 +502,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
             this.DebugLog              = this.AddJSONEventSource(EventIdentification:      DebugLogId,
                                                                  URLTemplate:              this.URLPathPrefix + "debugLog",
                                                                  MaxNumberOfCachedEvents:  10000,
-                                                                 RetryIntervall:           TimeSpan.FromSeconds(5),
+                                                                 RetryInterval:            TimeSpan.FromSeconds(5),
                                                                  EnableLogging:            true,
                                                                  LogfilePrefix:            LogfilePrefix);
 

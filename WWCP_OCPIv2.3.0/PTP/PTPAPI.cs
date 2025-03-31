@@ -952,7 +952,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     if (!request.ParseTerminal(CommonAPI,
                                                //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                               CommonAPI.OurCredentialRoles.Select(credentialRole => new Tuple<CountryCode, Party_Id>(credentialRole.CountryCode, credentialRole.PartyId)),
+                                               CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
                                                out var terminalId,
                                                out var terminal,
                                                out var ocpiResponseBuilder,
