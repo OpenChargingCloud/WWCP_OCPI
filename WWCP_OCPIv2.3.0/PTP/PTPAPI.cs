@@ -950,7 +950,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check terminal
 
-                    if (!request.ParseTerminal(CommonAPI,
+                    if (!request.ParsePaymentTerminal(CommonAPI,
                                                //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
                                                CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
                                                out var terminalId,
@@ -1021,7 +1021,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check existing location
 
-                    if (!request.ParseTerminal(CommonAPI,
+                    if (!request.ParsePaymentTerminal(CommonAPI,
                                                out var terminalId,
                                                out var existingTerminal,
                                                out var ocpiResponseBuilder,
@@ -1058,7 +1058,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     #endregion
 
 
-                    var addOrUpdateResult = await CommonAPI.AddOrUpdateTerminal(
+                    var addOrUpdateResult = await CommonAPI.AddOrUpdatePaymentTerminal(
                                                       newOrUpdatedTerminal,
                                                       AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade"),
                                                       false, //SkipNotifications
@@ -1146,13 +1146,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check location
 
-                    if (!request.ParseMandatoryTerminal(CommonAPI,
-                                                       // out var countryCode,
-                                                       // out var partyId,
-                                                        out var locationId,
-                                                        out var existingTerminal,
-                                                        out var ocpiResponseBuilder,
-                                                        FailOnMissingTerminal: true))
+                    if (!request.ParseMandatoryPaymentTerminal(CommonAPI,
+                                                               //out var countryCode,
+                                                               //out var partyId,
+                                                               out var locationId,
+                                                               out var existingTerminal,
+                                                               out var ocpiResponseBuilder,
+                                                               FailOnMissingTerminal: true))
                     {
                         return ocpiResponseBuilder;
                     }
@@ -1170,8 +1170,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     // Validation-Checks for PATCHes
                     // (E-Tag, Timestamp, ...)
 
-                    var patchedTerminal = await CommonAPI.TryPatchTerminal(
-                                                    existingTerminal,
+                    var patchedTerminal = await CommonAPI.TryPatchPaymentTerminal(
+                                                    Party_Idv3.From(
+                                                        existingTerminal.CountryCode.Value,
+                                                        existingTerminal.PartyId.    Value
+                                                    ),
+                                                    existingTerminal.Id,
                                                     paymentTerminalPatch,
                                                     AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade"),
                                                     false, //SkipNotifications,
@@ -1181,21 +1185,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
 
                     //ToDo: Handle update errors!
-                    if (patchedTerminal.IsSuccess)
+                    if (patchedTerminal.IsSuccessAndDataNotNull(out var data))
                         return new OCPIResponse.Builder(request) {
                                        StatusCode           = 1000,
                                        StatusMessage        = "Hello world!",
-                                       Data                 = patchedTerminal.PatchedData.ToJSON(true,
-                                                                                                 true,
-                                                                                                 CustomTerminalSerializer,
-                                                                                                 CustomDisplayTextSerializer,
-                                                                                                 CustomImageSerializer),
+                                       Data                 = data.ToJSON(true,
+                                                                          true,
+                                                                          CustomTerminalSerializer,
+                                                                          CustomDisplayTextSerializer,
+                                                                          CustomImageSerializer),
                                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                            AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
                                            AccessControlAllowHeaders  = [ "Authorization" ],
-                                           LastModified               = patchedTerminal.PatchedData.LastUpdated,
-                                           ETag                       = patchedTerminal.PatchedData.ETag
+                                           LastModified               = data.LastUpdated,
+                                           ETag                       = data.ETag
                                        }
                                    };
 
@@ -1429,7 +1433,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Get terminal identification
 
-                    if (!request.ParseTerminalId(CommonAPI,
+                    if (!request.ParsePaymentTerminalId(CommonAPI,
                                                  out var terminalId,
                                                  out var ocpiResponseBuilder))
                     {

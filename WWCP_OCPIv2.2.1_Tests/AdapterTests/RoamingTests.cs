@@ -636,11 +636,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 #region Validate, that both locations have EVSEs
 
-                if (cpoCommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
-                                                Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
-                                                Location_Id.Parse(chargingPool1.Id.Suffix),
-                                                out var location1) &&
-                    location1 is not null)
+                if (cpoCommonAPI.TryGetLocation(
+                    Party_Idv3.From(
+                        CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                        Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? "")
+                    ),
+                    Location_Id.Parse(chargingPool1.Id.Suffix),
+                    out var location1))
                 {
 
                     ClassicAssert.AreEqual(3, location1.EVSEs.Count());
@@ -650,11 +652,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                     Assert.Fail("location1 was not found!");
 
 
-                if (cpoCommonAPI.TryGetLocation(CountryCode.Parse(chargingPool2.Operator?.Id.CountryCode.Alpha2Code ?? ""),
-                                                Party_Id.   Parse(chargingPool2.Operator?.Id.Suffix                 ?? ""),
-                                                Location_Id.Parse(chargingPool2.Id.Suffix),
-                                                out var location2) &&
-                    location2 is not null)
+                if (cpoCommonAPI.TryGetLocation(
+                    Party_Idv3.From(
+                        CountryCode.Parse(chargingPool2.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                        Party_Id.   Parse(chargingPool2.Operator?.Id.Suffix                 ?? "")
+                    ),
+                    Location_Id.Parse(chargingPool2.Id.Suffix),
+                    out var location2))
                 {
 
                     ClassicAssert.AreEqual(1, location2.EVSEs.Count());
@@ -852,10 +856,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                 ClassicAssert.AreEqual("Test pool #1 (updated)",                             graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Name       [Languages.en]);
                 ClassicAssert.AreEqual("GraphDefined charging pool for tests #1 (updated)",  graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Description[Languages.en]);
 
-                cpoCommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
-                                            Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
-                                            Location_Id.Parse(chargingPool1!.Id.Suffix),
-                                            out var location);
+                cpoCommonAPI.TryGetLocation(
+                    Party_Idv3.From(
+                        CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                        Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? "")
+                    ),
+                    Location_Id.Parse(chargingPool1!.Id.Suffix),
+                    out var location
+                );
 
                 ClassicAssert.AreEqual("Test pool #1 (updated)",                             location!.Name);
                 //ClassicAssert.AreEqual("GraphDefined Charging Pool für Tests #1",            location!.Name); // Not mapped to OCPI!
@@ -1217,11 +1225,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 #region Validate, that both locations have EVSEs
 
-                if (cpoCommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
-                                                        Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
-                                                        Location_Id.Parse(chargingPool1.Id.Suffix),
-                                                        out var location1) &&
-                    location1 is not null)
+                if (cpoCommonAPI.TryGetLocation(
+                    Party_Idv3.From(
+                        CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                        Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? "")
+                    ),
+                    Location_Id.Parse(chargingPool1.Id.Suffix),
+                    out var location1))
                 {
 
                     ClassicAssert.AreEqual(3, location1.EVSEs.Count());
@@ -1231,11 +1241,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                     Assert.Fail("location1 was not found!");
 
 
-                if (cpoCommonAPI.TryGetLocation(CountryCode.Parse(chargingPool2.Operator?.Id.CountryCode.Alpha2Code ?? ""),
-                                                        Party_Id.   Parse(chargingPool2.Operator?.Id.Suffix                 ?? ""),
-                                                        Location_Id.Parse(chargingPool2.Id.Suffix),
-                                                        out var location2) &&
-                    location2 is not null)
+                if (cpoCommonAPI.TryGetLocation(
+                    Party_Idv3.From(
+                        CountryCode.Parse(chargingPool2.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                        Party_Id.   Parse(chargingPool2.Operator?.Id.Suffix                 ?? "")
+                    ),
+                    Location_Id.Parse(chargingPool2.Id.Suffix),
+                    out var location2))
                 {
 
                     ClassicAssert.AreEqual(1, location2.EVSEs.Count());
@@ -1317,12 +1329,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 {
                     if (evse1_UId.HasValue &&
-                        cpoCommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
-                                                            Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
-                                                            Location_Id.Parse(chargingPool1!.Id.Suffix),
-                                                            out var location) &&
-                        location is not null &&
-                        location.TryGetEVSE(evse1_UId.Value, out var ocpiEVSE) && ocpiEVSE is not null)
+
+                        cpoCommonAPI.TryGetLocation(
+                            Party_Idv3.From(
+                                CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                                Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? "")
+                            ),
+                            Location_Id.Parse(chargingPool1!.Id.Suffix),
+                            out var location) &&
+
+                        location.TryGetEVSE(evse1_UId.Value, out var ocpiEVSE))
                     {
                         ClassicAssert.AreEqual(StatusType.AVAILABLE, ocpiEVSE.Status);
                     }
@@ -1341,12 +1357,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 {
                     if (evse1_UId.HasValue &&
-                        cpoCommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
-                                                            Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
-                                                            Location_Id.Parse(chargingPool1!.Id.Suffix),
-                                                            out var location) &&
-                        location is not null &&
-                        location.TryGetEVSE(evse1_UId.Value, out var ocpiEVSE) && ocpiEVSE is not null)
+
+                        cpoCommonAPI.TryGetLocation(
+                            Party_Idv3.From(
+                                CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                                Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? "")
+                            ),
+                            Location_Id.Parse(chargingPool1!.Id.Suffix),
+                            out var location) &&
+
+                        location.TryGetEVSE(evse1_UId.Value, out var ocpiEVSE))
                     {
                         ClassicAssert.AreEqual(StatusType.CHARGING, ocpiEVSE.Status);
                     }

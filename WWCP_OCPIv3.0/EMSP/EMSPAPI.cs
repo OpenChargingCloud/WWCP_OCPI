@@ -6095,7 +6095,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                                                                                                             CustomEnergyContractSerializer))),
             //                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                           HTTPStatusCode             = HTTPStatusCode.OK,
-            //                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
+            //                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
             //                                           AccessControlAllowHeaders  = [ "Authorization" ]
             //                                           //LastModified               = ?
             //                                       }.
@@ -6202,7 +6202,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                           StatusMessage        = "Could not parse the given location reference JSON: " + errorResponse,
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.BadRequest,
-            //                                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
+            //                                               AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
             //                                               AccessControlAllowHeaders  = [ "Authorization" ]
             //                                           }
             //                                       };
@@ -6259,7 +6259,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                               StatusMessage        = "Unknown token!",
             //                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                                   HTTPStatusCode             = HTTPStatusCode.NotFound,
-            //                                                   AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
+            //                                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
             //                                                   AccessControlAllowHeaders  = [ "Authorization" ]
             //                                               }
             //                                           };
@@ -6307,7 +6307,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                                                       ).ToJSON(),
             //                                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-            //                                                    AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
+            //                                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
             //                                                    AccessControlAllowHeaders  = [ "Authorization" ]
             //                                                }
             //                                            };
@@ -6332,7 +6332,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                                                       ).ToJSON(),
             //                                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-            //                                                    AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
+            //                                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
             //                                                    AccessControlAllowHeaders  = [ "Authorization" ]
             //                                                }
             //                                            };
@@ -6359,7 +6359,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                                                       ).ToJSON(),
             //                                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-            //                                                    AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
+            //                                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
             //                                                    AccessControlAllowHeaders  = [ "Authorization" ]
             //                                                }
             //                                            };
@@ -6369,7 +6369,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                    }
 
 
-            //                                    //ToDo: Add a event/delegate for addditional location filters!
+            //                                    //ToDo: Add a event/delegate for additional location filters!
 
 
             //                                    if (locationReference.Value.EVSEUIds.SafeAny())
@@ -6402,7 +6402,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                                                       ).ToJSON(),
             //                                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-            //                                                    AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
+            //                                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
             //                                                    AccessControlAllowHeaders  = [ "Authorization" ]
             //                                                }
             //                                            };
@@ -6411,7 +6411,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
 
 
-            //                                        //ToDo: Add a event/delegate for addditional EVSE filters!
+            //                                        //ToDo: Add a event/delegate for additional EVSE filters!
 
             //                                    }
 
@@ -6593,7 +6593,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                                              ).ToJSON(),
             //                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                           HTTPStatusCode             = HTTPStatusCode.OK,
-            //                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
+            //                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
             //                                           AccessControlAllowHeaders  = [ "Authorization" ]
             //                                       }
             //                                   };

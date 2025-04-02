@@ -6094,7 +6094,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     //                               ).ToJSON(),
                                                     //        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                     //            HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                                    //            AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
+                                                    //            AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
                                                     //            AccessControlAllowHeaders  = [ "Authorization" ]
                                                     //        }
                                                     //    };
@@ -6121,7 +6121,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     //                               ).ToJSON(),
                                                     //        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                     //            HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                                    //            AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
+                                                    //            AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
                                                     //            AccessControlAllowHeaders  = [ "Authorization" ]
                                                     //        }
                                                     //    };
@@ -6131,7 +6131,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                 }
 
 
-                                                //ToDo: Add a event/delegate for addditional location filters!
+                                                //ToDo: Add a event/delegate for additional location filters!
 
 
                                                 if (locationReference.Value.EVSEUIds.SafeAny())
@@ -6161,7 +6161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                    ).ToJSON(),
                                                             HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                                                 HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
+                                                                AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
                                                                 AccessControlAllowHeaders  = [ "Authorization" ]
                                                             }
                                                         };
@@ -6170,7 +6170,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
 
-                                                    //ToDo: Add a event/delegate for addditional EVSE filters!
+                                                    //ToDo: Add a event/delegate for additional EVSE filters!
 
                                                 }
 

@@ -1125,8 +1125,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         /// <param name="ConnectorId">A connector identification.</param>
         /// <param name="Connector">The connector having the given connector identification.</param>
-        public Boolean TryGetConnector(Connector_Id    ConnectorId,
-                                       out Connector?  Connector)
+        public Boolean TryGetConnector(Connector_Id                        ConnectorId,
+                                       [NotNullWhen(true)] out Connector?  Connector)
         {
 
             lock (Connectors)

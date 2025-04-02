@@ -27,6 +27,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 #endregion
 
@@ -1888,11 +1889,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     if ((request.LocalAccessInfo is not null || CommonAPI.BaseAPI.LocationsAsOpenData == false) &&
                         (request.LocalAccessInfo?.Status            != AccessStatus.ALLOWED ||
-                         request.LocalAccessInfo?.IsNot(Role.EMSP) == true))
+                         request.LocalAccessInfo.IsNot(Role.EMSP) == true))
                     {
 
 
-                    //if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
+                    //if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
                     //    Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     //{
 
@@ -2073,7 +2074,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
+                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -2185,7 +2186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
+                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -2291,7 +2292,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
+                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -2393,7 +2394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
+                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -2537,7 +2538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
+                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -2628,19 +2629,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                 HTTPMethod.GET,
                 URLPathPrefix + "sessions",
                 HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: Request => {
+                OCPIRequestHandler: request => {
 
                     #region Check access token
 
-                    if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
-                        Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
                         return Task.FromResult(
-                            new OCPIResponse.Builder(Request) {
+                            new OCPIResponse.Builder(request) {
                                 StatusCode           = 2000,
                                 StatusMessage        = "Invalid or blocked access token!",
-                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                     AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                     AccessControlAllowHeaders  = [ "Authorization" ]
@@ -2652,7 +2653,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     #endregion
 
 
-                    var filters           = Request.GetDateAndPaginationFilters();
+                    var filters           = request.GetDateAndPaginationFilters();
 
                     var allSessions       = CommonAPI.//GetSessions(session => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == session.CountryCode &&
                                                       //                                                                  role.PartyId     == session.PartyId)).
@@ -2665,7 +2666,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                         ToArray();
 
 
-                    var httpResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                    var httpResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                                    Server                     = DefaultHTTPServerName,
                                                    Date                       = Timestamp.Now,
@@ -2709,7 +2710,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     #endregion
 
                     return Task.FromResult(
-                               new OCPIResponse.Builder(Request) {
+                               new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
                                    HTTPResponseBuilder  = httpResponseBuilder,
@@ -2770,7 +2771,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
+                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -2909,19 +2910,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                 HTTPMethod.GET,
                 URLPathPrefix + "cdrs",
                 HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: Request => {
+                OCPIRequestHandler: request => {
 
                     #region Check access token
 
-                    if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
-                        Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
                         return Task.FromResult(
-                            new OCPIResponse.Builder(Request) {
+                            new OCPIResponse.Builder(request) {
                                 StatusCode           = 2000,
                                 StatusMessage        = "Invalid or blocked access token!",
-                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                     AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                     AccessControlAllowHeaders  = [ "Authorization" ]
@@ -2933,7 +2934,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     #endregion
 
 
-                    var filters            = Request.GetDateAndPaginationFilters();
+                    var filters            = request.GetDateAndPaginationFilters();
 
                     var allCDRs            = CommonAPI.//GetCDRs(cdr => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == cdr.CountryCode &&
                                                        //                                                          role.PartyId     == cdr.PartyId)).
@@ -2946,7 +2947,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                      ToArray();
 
 
-                    var httpResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                    var httpResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                                    Server                     = DefaultHTTPServerName,
                                                    Date                       = Timestamp.Now,
@@ -2990,7 +2991,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     #endregion
 
                     return Task.FromResult(
-                               new OCPIResponse.Builder(Request) {
+                               new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
                                    HTTPResponseBuilder  = httpResponseBuilder,
@@ -3062,19 +3063,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                 HTTPMethod.GET,
                 URLPathPrefix + "cdrs/{CDRId}",
                 HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: Request => {
+                OCPIRequestHandler: request => {
 
                     #region Check access token
 
-                    if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
-                        Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
                         return Task.FromResult(
-                            new OCPIResponse.Builder(Request) {
+                            new OCPIResponse.Builder(request) {
                                 StatusCode           = 2000,
                                 StatusMessage        = "Invalid or blocked access token!",
-                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                     AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                     AccessControlAllowHeaders  = [ "Authorization" ]
@@ -3087,7 +3088,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check CDR
 
-                    if (!Request.ParseCDR(CommonAPI,
+                    if (!request.ParseCDR(CommonAPI,
                                           //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
                                           CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
                                           out var cdrId,
@@ -3102,7 +3103,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
 
                     return Task.FromResult(
-                        new OCPIResponse.Builder(Request) {
+                        new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
                                Data                 = cdr.ToJSON(CustomCDRSerializer,
@@ -3125,7 +3126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                                  CustomCDRDimensionSerializer,
                                                                  CustomSignedDataSerializer,
                                                                  CustomSignedValueSerializer),
-                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                    AccessControlAllowHeaders  = [ "Authorization" ],
@@ -3175,19 +3176,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                 HTTPMethod.GET,
                 URLPathPrefix + "tokens/{country_code}/{party_id}",
                 HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: Request => {
+                OCPIRequestHandler: request => {
 
                     #region Check access token
 
-                    if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
-                        Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
                         return Task.FromResult(
-                            new OCPIResponse.Builder(Request) {
+                            new OCPIResponse.Builder(request) {
                                 StatusCode           = 2000,
                                 StatusMessage        = "Invalid or blocked access token!",
-                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                     AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                     AccessControlAllowHeaders  = [ "Authorization" ]
@@ -3198,26 +3199,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #endregion
 
-                    #region Check country code and party identification
+                    #region Check party identification
 
-                    if (!Request.ParseCountryCodeAndPartyId(CommonAPI,
-                                                            out var countryCode,
-                                                            out var partyId,
-                                                            out var ocpiResponseBuilder) ||
-                        !countryCode.HasValue ||
-                        !partyId.HasValue)
+                    if (!request.ParsePartyId(CommonAPI,
+                                              out var partyId,
+                                              out var ocpiResponseBuilder))
                     {
-                        return Task.FromResult(ocpiResponseBuilder!);
+                        return Task.FromResult(ocpiResponseBuilder);
                     }
 
                     #endregion
 
 
-                    var filters         = Request.GetDateAndPaginationFilters();
+                    var filters         = request.GetDateAndPaginationFilters();
 
-                    var allTokens       = CommonAPI.GetTokens(countryCode,
-                                                              partyId).
-                                                    ToArray();
+                    var allTokens       = CommonAPI.GetTokenStatus(partyId.Value).ToArray();
 
                     var filteredTokens  = allTokens.Select(tokenStatus => tokenStatus.Token).
                                                     Where (token       => !filters.From.HasValue || token.LastUpdated >  filters.From.Value).
@@ -3225,7 +3221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                     ToArray();
 
 
-                    var httpResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                    var httpResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                                    Server                     = DefaultHTTPServerName,
                                                    Date                       = Timestamp.Now,
@@ -3262,14 +3258,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                         //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
                                                                  ? $"https://{ExternalDNSName}"
-                                                                 : $"http://127.0.0.1:{HTTPServer.IPPorts.First()}")}{URLPathPrefix}/tokens/{countryCode}/{partyId}{queryParameters}>; rel=\"next\"");
+                                                                 : $"http://127.0.0.1:{HTTPServer.IPPorts.First()}")}{URLPathPrefix}/tokens/{partyId.Value.CountryCode}/{partyId.Value.Party}{queryParameters}>; rel=\"next\"");
 
                     }
 
                     #endregion
 
                     return Task.FromResult(
-                               new OCPIResponse.Builder(Request) {
+                               new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
                                    HTTPResponseBuilder  = httpResponseBuilder,
@@ -3300,7 +3296,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
+                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -3318,12 +3314,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #endregion
 
-                    #region Check country code and party identification
+                    #region Check party identification
 
-                    if (!request.ParseCountryCodeAndPartyId(CommonAPI,
-                                                            out var countryCode,
-                                                            out var partyId,
-                                                            out var ocpiResponseBuilder))
+                    if (!request.ParsePartyId(CommonAPI,
+                                              out var partyId,
+                                              out var ocpiResponseBuilder))
                     {
                         return ocpiResponseBuilder;
                     }
@@ -3331,8 +3326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     #endregion
 
 
-                    CommonAPI.RemoveAllTokens(countryCode.Value,
-                                              partyId.    Value);
+                    await CommonAPI.RemoveAllTokens(partyId.Value);
 
 
                     return new OCPIResponse.Builder(request) {
@@ -3392,7 +3386,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     #region Check access token
 
                     if (request.LocalAccessInfo is null ||
-                        request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
                         request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                     {
 
@@ -3413,16 +3407,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check token
 
-                    if (!request.ParseToken(CommonAPI,
-                                            request.LocalAccessInfo.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                            out var countryCode,
-                                            out var partyId,
-                                            out var tokenId,
-                                            out var tokenStatus,
-                                            out var ocpiResponseBuilder) ||
-                         tokenStatus.Token is null)
+                    if (!request.ParseMandatoryToken(CommonAPI,
+                                                     request.LocalAccessInfo.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+                                                     out var countryCode,
+                                                     out var partyId,
+                                                     out var tokenId,
+                                                     out var tokenStatus,
+                                                     out var ocpiResponseBuilder))
                     {
-                        return Task.FromResult(ocpiResponseBuilder!);
+                        return Task.FromResult(ocpiResponseBuilder);
                     }
 
                     #endregion
@@ -3466,7 +3459,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     #region Check access token
 
                     if (request.LocalAccessInfo is null ||
-                        request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
                         request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                     {
 
@@ -3529,27 +3522,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     //ToDo: What exactly to do with this information?
                     var TokenType          = request.QueryString.TryParseEnum<TokenType>("type") ?? OCPIv2_3_0.TokenType.RFID;
 
-                    var addOrUpdateResult  = await CommonAPI.AddOrUpdateToken(newOrUpdatedToken,
-                                                                              AllowDowngrades: AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade"));
+                    var addOrUpdateResult  = await CommonAPI.AddOrUpdateToken(
+                                                       newOrUpdatedToken,
+                                                       AllowDowngrades: AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade")
+                                                   );
 
 
-                    if (addOrUpdateResult.IsSuccess &&
-                        addOrUpdateResult.Data is not null)
+                    if (addOrUpdateResult.IsSuccessAndDataNotNull(out var data))
                     {
 
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
-                                   Data                 = addOrUpdateResult.Data.ToJSON(CustomTokenSerializer,
-                                                                                        CustomEnergyContractSerializer),
+                                   Data                 = data.Token.ToJSON(CustomTokenSerializer,
+                                                                            CustomEnergyContractSerializer),
                             HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                         ? HTTPStatusCode.Created
                                                                         : HTTPStatusCode.OK,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                        AccessControlAllowHeaders  = [ "Authorization" ],
-                                       LastModified               = addOrUpdateResult.Data.LastUpdated,
-                                       ETag                       = addOrUpdateResult.Data.ETag
+                                       LastModified               = data.Token.LastUpdated,
+                                       ETag                       = data.Token.ETag
                                    }
                                };
 
@@ -3564,8 +3558,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                    HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                    AccessControlAllowHeaders  = [ "Authorization" ],
-                                   LastModified               = addOrUpdateResult.Data.LastUpdated,
-                                   ETag                       = addOrUpdateResult.Data.ETag
+                                   LastModified               = newOrUpdatedToken.LastUpdated,
+                                   ETag                       = newOrUpdatedToken.ETag
                                }
                            };
 
@@ -3588,7 +3582,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     #region Check access token
 
                     if (request.LocalAccessInfo is null ||
-                        request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
                         request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                     {
 
@@ -3608,16 +3602,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check token
 
-                    if (!request.ParseToken(CommonAPI,
-                                            request.LocalAccessInfo.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                            out var countryCode,
-                                            out var partyId,
-                                            out var tokenId,
-                                            out var existingTokenStatus,
-                                            out var ocpiResponseBuilder) ||
-                         existingTokenStatus.Token is null)
+                    if (!request.ParseMandatoryToken(CommonAPI,
+                                                     request.LocalAccessInfo.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+                                                     out var countryCode,
+                                                     out var partyId,
+                                                     out var tokenId,
+                                                     out var existingTokenStatus,
+                                                     out var ocpiResponseBuilder))
                     {
-                        return ocpiResponseBuilder!;
+                        return ocpiResponseBuilder;
                     }
 
                     #endregion
@@ -3635,23 +3628,29 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
 
                     //ToDo: Validation-Checks for PATCHes (E-Tag, Timestamp, ...)
-                    var patchedToken  = await CommonAPI.TryPatchToken(existingTokenStatus.Token,
-                                                                      tokenPatch,
-                                                                      AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade"));
+                    var patchedToken  = await CommonAPI.TryPatchToken(
+                                                  Party_Idv3.From(
+                                                      existingTokenStatus.Token.CountryCode,
+                                                      existingTokenStatus.Token.PartyId
+                                                  ),
+                                                  existingTokenStatus.Token.Id,
+                                                  tokenPatch,
+                                                  AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade")
+                                              );
 
 
-                    if (patchedToken.IsSuccess)
+                    if (patchedToken.IsSuccessAndDataNotNull(out var data))
                         return new OCPIResponse.Builder(request) {
                                        StatusCode           = 1000,
                                        StatusMessage        = "Hello world!",
-                                       Data                 = patchedToken.PatchedData.ToJSON(CustomTokenSerializer,
-                                                                                              CustomEnergyContractSerializer),
+                                       Data                 = data.ToJSON(CustomTokenSerializer,
+                                                                          CustomEnergyContractSerializer),
                             HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                            AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                            AccessControlAllowHeaders  = [ "Authorization" ],
-                                           LastModified               = patchedToken.PatchedData.LastUpdated,
-                                           ETag                       = patchedToken.PatchedData.ETag
+                                           LastModified               = data.LastUpdated,
+                                           ETag                       = data.ETag
                                        }
                                    };
 
@@ -3683,9 +3682,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo is null ||
-                        request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
+                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -3704,16 +3702,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check token (status)
 
-                    if (!request.ParseToken(CommonAPI,
-                                            request.LocalAccessInfo.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                            out var countryCode,
-                                            out var partyId,
-                                            out var tokenId,
-                                            out var existingTokenStatus,
-                                            out var ocpiResponseBuilder) ||
-                         existingTokenStatus.Token is null)
+                    if (!request.ParseMandatoryToken(CommonAPI,
+                                                     request.LocalAccessInfo.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+                                                     out var countryCode,
+                                                     out var partyId,
+                                                     out var tokenId,
+                                                     out var existingTokenStatus,
+                                                     out var ocpiResponseBuilder))
                     {
-                        return ocpiResponseBuilder!;
+                        return ocpiResponseBuilder;
                     }
 
                     #endregion
@@ -3722,13 +3719,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     //ToDo: What exactly to do with this information?
                     var tokenType = request.QueryString.TryParseEnum<TokenType>("type") ?? TokenType.RFID;
 
+                    var result = await CommonAPI.RemoveToken(existingTokenStatus.Token);
 
-                    if (CommonAPI.RemoveToken(existingTokenStatus.Token))
+                    if (result.IsSuccessAndDataNotNull(out var data))
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
-                                   Data                 = existingTokenStatus.Token.ToJSON(CustomTokenSerializer,
-                                                                                           CustomEnergyContractSerializer),
+                                   Data                 = data.ToJSON(CustomTokenSerializer,
+                                                                      CustomEnergyContractSerializer),
                             HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
@@ -4379,7 +4377,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
+                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -4400,7 +4398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check terminal
 
-                    if (!request.ParseTerminal(CommonAPI,
+                    if (!request.ParsePaymentTerminal(CommonAPI,
                                                //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
                                                CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
                                                out var terminalId,
@@ -4471,7 +4469,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                     #region Check existing location
 
-                    if (!Request.ParseTerminal(CommonAPI,
+                    if (!Request.ParsePaymentTerminal(CommonAPI,
                                                out var terminalId,
                                                out var existingTerminal,
                                                out var ocpiResponseBuilder,
@@ -4508,7 +4506,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     #endregion
 
 
-                    var addOrUpdateResult = await CommonAPI.AddOrUpdateTerminal(
+                    var addOrUpdateResult = await CommonAPI.AddOrUpdatePaymentTerminal(
                                                       newOrUpdatedTerminal,
                                                       AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"),
                                                       false, //SkipNotifications

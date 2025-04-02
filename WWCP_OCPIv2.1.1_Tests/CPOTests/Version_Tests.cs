@@ -175,7 +175,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 
                 ClassicAssert.IsNotNull(response);
                 ClassicAssert.AreEqual (-1,                                response.StatusCode); // local error!
-                ClassicAssert.AreEqual ("Unkown version identification!",  response.StatusMessage);
+                ClassicAssert.AreEqual ("Unknown version identification!",  response.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
                 // There is not HTTP response, as this is a local error!

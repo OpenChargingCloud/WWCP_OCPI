@@ -670,6 +670,13 @@ namespace cloud.charging.open.protocols.OCPI
         public const String removeSession                      = "removeSession";
         public const String removeAllSessions                  = "removeAllSessions";
 
+        public const String addToken                           = "addToken";
+        public const String addTokenIfNotExists                = "addTokenIfNotExists";
+        public const String addOrUpdateToken                   = "addOrUpdateToken";
+        public const String updateToken                        = "updateToken";
+        public const String removeToken                        = "removeToken";
+        public const String removeAllTokens                    = "removeAllTokens";
+
         public const String addTokenStatus                     = "addTokenStatus";
         public const String addTokenStatusIfNotExists          = "addTokenStatusIfNotExists";
         public const String addOrUpdateTokenStatus             = "addOrUpdateTokenStatus";

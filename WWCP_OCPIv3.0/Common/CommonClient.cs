@@ -1019,7 +1019,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                       CancellationToken:  CancellationToken);
 
                 if (!versions.TryGetValue(versionId.Value, out var versionURL))
-                    response = OCPIResponse<Version_Id, VersionDetail>.Error("Unkown version identification!");
+                    response = OCPIResponse<Version_Id, VersionDetail>.Error("Unknown version identification!");
 
                 else
                 {
