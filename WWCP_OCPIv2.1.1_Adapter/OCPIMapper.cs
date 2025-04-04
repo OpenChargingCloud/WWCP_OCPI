@@ -31,7 +31,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// A delegate which allows you to modify the convertion from WWCP EVSEs to OCPI EVSEs.
+    /// A delegate which allows you to modify the conversion from WWCP EVSEs to OCPI EVSEs.
     /// </summary>
     /// <param name="WWCPEVSE">A WWCP EVSE.</param>
     /// <param name="OCPIEVSE">An OCPI EVSE.</param>
@@ -39,14 +39,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                          EVSE                     OCPIEVSE);
 
     /// <summary>
-    /// A delegate which allows you to modify the convertion from OCPI EVSEs to WWCP EVSEs.
+    /// A delegate which allows you to modify the conversion from OCPI EVSEs to WWCP EVSEs.
     /// </summary>
     /// <param name="WWCPEVSE">A WWCP EVSE.</param>
     public delegate WWCP.IEVSE               EVSE_2_WWCPEVSE_Delegate                   (EVSE                     EVSE);
 
 
     /// <summary>
-    /// A delegate which allows you to modify the convertion from WWCP EVSE status updates to OCPI EVSE status types.
+    /// A delegate which allows you to modify the conversion from WWCP EVSE status updates to OCPI EVSE status types.
     /// </summary>
     /// <param name="WWCPEVSEStatusUpdate">A WWCP EVSE status update.</param>
     /// <param name="OCPIStatusType">An OCPI status type.</param>
@@ -54,14 +54,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                          StatusType               OCPIStatusType);
 
     /// <summary>
-    /// A delegate which allows you to modify the convertion from WWCP EVSE status updates to OCPI EVSE status types.
+    /// A delegate which allows you to modify the conversion from WWCP EVSE status updates to OCPI EVSE status types.
     /// </summary>
     /// <param name="OCPIStatusType">An OCPI status type.</param>
     public delegate WWCP.EVSEStatusUpdate    StatusType_2_WWCPEVSEStatusUpdate_Delegate (StatusType               OCPIStatusType);
 
 
     /// <summary>
-    /// A delegate which allows you to modify the convertion from WWCP charge detail records to OCPI charge detail records.
+    /// A delegate which allows you to modify the conversion from WWCP charge detail records to OCPI charge detail records.
     /// </summary>
     /// <param name="WWCPChargeDetailRecord">A WWCP charge detail record.</param>
     /// <param name="OCIPCDR">An OCPI charge detail record.</param>
@@ -69,7 +69,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                          CDR                      OCIPCDR);
 
     /// <summary>
-    /// A delegate which allows you to modify the convertion from OCPI charge detail records to WWCP charge detail records.
+    /// A delegate which allows you to modify the conversion from OCPI charge detail records to WWCP charge detail records.
     /// </summary>
     /// <param name="OCIPCDR">An OCPI charge detail record.</param>
     public delegate WWCP.ChargeDetailRecord  CDR_2_WWCPChargeDetailRecord_Delegate      (CDR                      OCIPCDR);
@@ -1724,22 +1724,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region ToOCPI(this ChargeDetailRecord, out Warnings)
 
-        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord    ChargeDetailRecord,
-                                  WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
-                                  WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                  GetTariffIds2_Delegate?         GetTariffIdsDelegate,
-                                  EMSP_Id?                        EMSPId,
-                                  GetTariff2_Delegate?            TariffGetter,
-                                  out IEnumerable<Warning>        Warnings)
+        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord              ChargeDetailRecord,
+                                  WWCPEVSEId_2_EVSEUId_Delegate?            CustomEVSEUIdConverter,
+                                  WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
+                                  GetTariffIds2_Delegate?                   GetTariffIdsDelegate,
+                                  EMSP_Id?                                  EMSPId,
+                                  GetTariff2_Delegate?                      TariffGetter,
+                                  out IEnumerable<Warning>                  Warnings,
+                                  Func<WWCP.ChargeDetailRecord, CDR, CDR>?  CustomCDRMapper   = null)
         {
 
             var warnings  = new List<Warning>();
-            var cdr       = ChargeDetailRecord.ToOCPI(CustomEVSEUIdConverter,
-                                                      CustomEVSEIdConverter,
-                                                      GetTariffIdsDelegate,
-                                                      EMSPId,
-                                                      TariffGetter,
-                                                      ref warnings);
+
+            var cdr       = ChargeDetailRecord.ToOCPI(
+                                CustomEVSEUIdConverter,
+                                CustomEVSEIdConverter,
+                                GetTariffIdsDelegate,
+                                EMSPId,
+                                TariffGetter,
+                                ref warnings,
+                                CustomCDRMapper
+                            );
 
             Warnings = warnings;
 
@@ -1751,13 +1756,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region ToOCPI(this ChargeDetailRecord, ref Warnings)
 
-        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord    ChargeDetailRecord,
-                                  WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
-                                  WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                  GetTariffIds2_Delegate?         GetTariffIdsDelegate,
-                                  EMSP_Id?                        EMSPId,
-                                  GetTariff2_Delegate?            TariffGetter,
-                                  ref List<Warning>               Warnings)
+        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord              ChargeDetailRecord,
+                                  WWCPEVSEId_2_EVSEUId_Delegate?            CustomEVSEUIdConverter,
+                                  WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
+                                  GetTariffIds2_Delegate?                   GetTariffIdsDelegate,
+                                  EMSP_Id?                                  EMSPId,
+                                  GetTariff2_Delegate?                      TariffGetter,
+                                  ref List<Warning>                         Warnings,
+                                  Func<WWCP.ChargeDetailRecord, CDR, CDR>?  CustomCDRMapper   = null)
         {
 
             try
@@ -2130,7 +2136,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            TotalEnergy:             ChargeDetailRecord.ConsumedEnergy.      Value,
                            TotalTime:               ChargeDetailRecord.SessionTime.Duration.Value,
 
-                           EnergyMeterId:                 ChargeDetailRecord.EnergyMeterId.ToOCPI(),
+                           EnergyMeterId:           ChargeDetailRecord.EnergyMeterId.ToOCPI(),
                            EnergyMeter:             null,                        // Our vendor extension!
                            TransparencySoftwares:   null,                        // Our vendor extension!
                            Tariffs:                 tariffs,
