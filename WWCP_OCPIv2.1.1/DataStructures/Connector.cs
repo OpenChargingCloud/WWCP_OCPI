@@ -26,9 +26,6 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Linq;
 
 #endregion
 
@@ -362,7 +359,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var tariffIds = ParentEVSE?.GetTariffIds(Id, EMSPId) ?? [];
             if (tariffIds.Any())
-                return tariffIds.First();
+            {
+
+                var now      = Timestamp.Now;
+                var tariffs  = new List<Tariff>();
+
+                foreach (var tariffId in tariffIds)
+                {
+
+                    var tariff = ParentEVSE?.ParentLocation?.CommonAPI?.GetTariff(tariffId);
+
+                    if (tariff is not null)
+                    {
+                        if (now >= tariff.NotBefore &&
+                            now <  tariff.NotAfter)
+                        {
+                            tariffs.Add(tariff);
+                        }
+                    }
+
+                }
+
+                return tariffs.FirstOrDefault()?.Id;
+
+            }
 
             if (emspTariffIds is not null &&
                 EMSPId.HasValue       &&
