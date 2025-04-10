@@ -111,7 +111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The authentication method used.
         /// </summary>
         [Mandatory]
-        public   AuthMethods                         AuthMethod                  { get; }
+        public   AuthMethod                          AuthMethod                  { get; }
 
         /// <summary>
         /// The optional reference to the authorization given by the eMSP.
@@ -363,7 +363,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    DateTime                                                Start,
                    DateTime                                                End,
                    CDRToken                                                CDRToken,
-                   AuthMethods                                             AuthMethod,
+                   AuthMethod                                              AuthMethod,
                    CDRLocation                                             Location,
                    Currency                                                Currency,
                    IEnumerable<ChargingPeriod>                             ChargingPeriods,
@@ -478,40 +478,40 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             unchecked
             {
 
-                hashCode = this.CountryCode.               GetHashCode()        * 137 ^
-                           this.PartyId.                   GetHashCode()        * 131 ^
-                           this.Id.                        GetHashCode()        * 127 ^
-                           this.Start.                     GetHashCode()        * 113 ^
-                           this.End.                       GetHashCode()        * 109 ^
-                           this.CDRToken.                  GetHashCode()        * 107 ^
-                           this.AuthMethod.                GetHashCode()        * 103 ^
-                           this.Location.                  GetHashCode()        * 101 ^
-                           this.Currency.                  GetHashCode()        *  97 ^
-                           this.ChargingPeriods.           CalcHashCode()       *  89 ^
-                           this.Tariffs.                   CalcHashCode()       *  83 ^
-                           this.TotalCosts.                GetHashCode()        *  79 ^
-                           this.TotalEnergy.               GetHashCode()        *  73 ^
-                           this.TotalTime.                 GetHashCode()        *  71 ^
-                           this.Created.                   GetHashCode()        *  67 ^
-                           this.LastUpdated.               GetHashCode()        *  61 ^
+                hashCode = this.CountryCode.              GetHashCode()        * 137 ^
+                           this.PartyId.                  GetHashCode()        * 131 ^
+                           this.Id.                       GetHashCode()        * 127 ^
+                           this.Start.                    GetHashCode()        * 113 ^
+                           this.End.                      GetHashCode()        * 109 ^
+                           this.CDRToken.                 GetHashCode()        * 107 ^
+                           this.AuthMethod.               GetHashCode()        * 103 ^
+                           this.Location.                 GetHashCode()        * 101 ^
+                           this.Currency.                 GetHashCode()        *  97 ^
+                           this.ChargingPeriods.          CalcHashCode()       *  89 ^
+                           this.Tariffs.                  CalcHashCode()       *  83 ^
+                           this.TotalCosts.               GetHashCode()        *  79 ^
+                           this.TotalEnergy.              GetHashCode()        *  73 ^
+                           this.TotalTime.                GetHashCode()        *  71 ^
+                           this.Created.                  GetHashCode()        *  67 ^
+                           this.LastUpdated.              GetHashCode()        *  61 ^
 
-                           (this.SessionId?.               GetHashCode()  ?? 0) *  59 ^
-                           (this.AuthorizationReference?.  GetHashCode()  ?? 0) *  53 ^
-                           (this.EnergyMeterId?.           GetHashCode()  ?? 0) *  47 ^
-                           (this.EnergyMeter?.             GetHashCode()  ?? 0) *  43 ^
-                            this.TransparencySoftwares.    CalcHashCode()       *  41 ^
-                           (this.SignedData?.              GetHashCode()  ?? 0) *  37 ^
-                           (this.TotalFixedCosts?.         GetHashCode()  ?? 0) *  31 ^
-                           (this.TotalEnergyCost?.         GetHashCode()  ?? 0) *  29 ^
-                           (this.TotalTimeCost?.           GetHashCode()  ?? 0) *  23 ^
-                           (this.TotalParkingTime?.        GetHashCode()  ?? 0) *  19 ^
-                           (this.TotalParkingCost?.        GetHashCode()  ?? 0) *  17 ^
-                           (this.TotalReservationCost?.    GetHashCode()  ?? 0) *  13 ^
-                           (this.Remark?.                  GetHashCode()  ?? 0) *  11 ^
-                           (this.InvoiceReferenceId?.      GetHashCode()  ?? 0) *   7 ^
-                           (this.Credit?.                  GetHashCode()  ?? 0) *   5 ^
-                           (this.CreditReferenceId?.       GetHashCode()  ?? 0) *   3 ^
-                            this.HomeChargingCompensation?.GetHashCode()  ?? 0;
+                          (this.SessionId?.               GetHashCode()  ?? 0) *  59 ^
+                          (this.AuthorizationReference?.  GetHashCode()  ?? 0) *  53 ^
+                          (this.EnergyMeterId?.           GetHashCode()  ?? 0) *  47 ^
+                          (this.EnergyMeter?.             GetHashCode()  ?? 0) *  43 ^
+                           this.TransparencySoftwares.    CalcHashCode()       *  41 ^
+                          (this.SignedData?.              GetHashCode()  ?? 0) *  37 ^
+                          (this.TotalFixedCosts?.         GetHashCode()  ?? 0) *  31 ^
+                          (this.TotalEnergyCost?.         GetHashCode()  ?? 0) *  29 ^
+                          (this.TotalTimeCost?.           GetHashCode()  ?? 0) *  23 ^
+                          (this.TotalParkingTime?.        GetHashCode()  ?? 0) *  19 ^
+                          (this.TotalParkingCost?.        GetHashCode()  ?? 0) *  17 ^
+                          (this.TotalReservationCost?.    GetHashCode()  ?? 0) *  13 ^
+                          (this.Remark?.                  GetHashCode()  ?? 0) *  11 ^
+                          (this.InvoiceReferenceId?.      GetHashCode()  ?? 0) *   7 ^
+                          (this.Credit?.                  GetHashCode()  ?? 0) *   5 ^
+                          (this.CreditReferenceId?.       GetHashCode()  ?? 0) *   3 ^
+                           this.HomeChargingCompensation?.GetHashCode()  ?? 0;
 
             }
 
@@ -740,7 +740,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatoryEnum("auth_method",
                                              "authentication method",
-                                             out AuthMethods AuthMethod,
+                                             out AuthMethod authMethod,
                                              out ErrorResponse))
                 {
                     return false;
@@ -1096,7 +1096,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           Start,
                           End,
                           CDRToken,
-                          AuthMethod,
+                          authMethod,
                           Location,
                           currency,
                           ChargingPeriods,
@@ -1326,7 +1326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    Start,
                    End,
                    CDRToken.   Clone(),
-                   AuthMethod,
+                   AuthMethod. Clone(),
                    Location.   Clone(),
                    Currency.   Clone(),
                    ChargingPeriods.      Select(chargingPeriod       => chargingPeriod.      Clone()),

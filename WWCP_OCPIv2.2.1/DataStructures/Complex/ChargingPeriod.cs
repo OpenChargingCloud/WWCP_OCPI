@@ -84,7 +84,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 throw new ArgumentNullException(nameof(Dimensions), "The given enumeration of relevant values for this charging period must not be null or empty!");
 
             this.StartTimestamp  = StartTimestamp;
-            this.Dimensions      = Dimensions?.Distinct() ?? Array.Empty<CDRDimension>();
+            this.Dimensions      = Dimensions?.Distinct() ?? [];
             this.TariffId        = TariffId;
 
         }
@@ -305,12 +305,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this charging period.
         /// </summary>
         public ChargingPeriod Clone()
 
-            => new (StartTimestamp,
-                    Dimensions.Select(cdrDimension => cdrDimension.Clone()).ToArray());
+            => new (
+                   StartTimestamp,
+                   Dimensions.Select(cdrDimension => cdrDimension.Clone())
+               );
 
         #endregion
 

@@ -65,7 +65,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                TokenType. RFID,
                                Contract_Id.Parse("C1234")
                            ),
-                           AuthMethods.AUTH_REQUEST,
+                           AuthMethod.AUTH_REQUEST,
                            new CDRLocation(
                                Location_Id.     Parse("LOC0001"),
                                "Biberweg 18",

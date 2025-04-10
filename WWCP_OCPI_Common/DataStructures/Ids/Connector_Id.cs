@@ -18,7 +18,6 @@
 #region Usings
 
 using org.GraphDefined.Vanaheimr.Illias;
-using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -121,8 +120,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         /// <param name="Text">A text representation of a connector identification.</param>
         /// <param name="ConnectorId">The parsed connector identification.</param>
-        public static Boolean TryParse(String                                Text,
-                                       [NotNullWhen(true)] out Connector_Id  ConnectorId)
+        public static Boolean TryParse(String Text, out Connector_Id ConnectorId)
         {
 
             if (Text.IsNotNullOrEmpty())

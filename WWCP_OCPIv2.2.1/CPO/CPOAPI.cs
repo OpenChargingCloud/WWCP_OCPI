@@ -3456,7 +3456,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
 
                     //ToDo: What exactly to do with this information?
-                    var TokenType          = Request.QueryString.TryParseEnum<TokenType>("type") ?? OCPIv2_2_1.TokenType.RFID;
+                    var TokenType          = Request.QueryString.TryParseEnum<TokenType>("type") ?? OCPI.TokenType.RFID;
 
                     var addOrUpdateResult  = await CommonAPI.AddOrUpdateToken(newOrUpdatedToken,
                                                                               AllowDowngrades: AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));

@@ -103,7 +103,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The method used for authentication.
         /// </summary>
         [Mandatory]
-        public   AuthMethods                         AuthMethod                   { get; }
+        public   AuthMethod                          AuthMethod                   { get; }
 
         /// <summary>
         /// The optional reference to the authorization given by the eMSP.
@@ -161,7 +161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The status of the session.
         /// </summary>
         [Mandatory]
-        public   SessionStatusTypes                  Status                       { get; }
+        public   SessionStatusType                   Status                       { get; }
 
         /// <summary>
         /// The timestamp when this session was created.
@@ -220,12 +220,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                        DateTime                                          Start,
                        Decimal                                           kWh,
                        CDRToken                                          CDRToken,
-                       AuthMethods                                       AuthMethod,
+                       AuthMethod                                        AuthMethod,
                        Location_Id                                       LocationId,
                        EVSE_UId                                          EVSEUId,
                        Connector_Id                                      ConnectorId,
                        Currency                                          Currency,
-                       SessionStatusTypes                                Status,
+                       SessionStatusType                                 Status,
 
                        DateTime?                                         End                              = null,
                        AuthorizationReference?                           AuthorizationReference           = null,
@@ -260,7 +260,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.End                     = End;
             this.AuthorizationReference  = AuthorizationReference;
             this.EnergyMeterId           = EnergyMeterId;
-            this.ChargingPeriods         = ChargingPeriods?.Distinct() ?? Array.Empty<ChargingPeriod>();
+            this.ChargingPeriods         = ChargingPeriods?.Distinct() ?? [];
             this.TotalCosts              = TotalCosts;
 
             this.Created                 = Created                     ?? LastUpdated ?? Timestamp.Now;
@@ -292,7 +292,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                           (this.End?.                   GetHashCode() ?? 0) * 11 ^
                           (this.AuthorizationReference?.GetHashCode() ?? 0) *  7 ^
-                          (this.EnergyMeterId?.               GetHashCode() ?? 0) *  5 ^
+                          (this.EnergyMeterId?.         GetHashCode() ?? 0) *  5 ^
                            this.ChargingPeriods.        GetHashCode()       *  3 ^
                            this.TotalCosts?.            GetHashCode() ?? 0;
 
@@ -510,8 +510,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (!JSON.ParseMandatoryJSON("cdr_token",
                                              "charge detail record token",
-                                             OCPIv2_3_0.CDRToken.TryParse,
-                                             out CDRToken CDRToken,
+                                             CDRToken.TryParse,
+                                             out CDRToken cdrToken,
                                              out ErrorResponse))
                 {
                     return false;
@@ -521,10 +521,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #region Parse AuthMethod                [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("auth_method",
-                                             "authentication method",
-                                             out AuthMethods AuthMethod,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("auth_method",
+                                         "authentication method",
+                                         AuthMethod.TryParse,
+                                         out AuthMethod authMethod,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -536,7 +537,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (JSON.ParseOptional("authorization_reference",
                                        "authorization reference",
                                        OCPIv2_3_0.AuthorizationReference.TryParse,
-                                       out AuthorizationReference? AuthorizationReference,
+                                       out AuthorizationReference? authorizationReference,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -641,10 +642,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #region Parse Status                    [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("status",
-                                             "session status",
-                                             out SessionStatusTypes Status,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("status",
+                                         "session status",
+                                         SessionStatusType.TryParse,
+                                         out SessionStatusType status,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -679,27 +681,29 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
 
                 Session = new Session(
+
                               CountryCodeBody ?? CountryCodeURL!.Value,
                               PartyIdBody     ?? PartyIdURL!.    Value,
                               SessionIdBody   ?? SessionIdURL!.  Value,
                               Start,
                               KWh,
-                              CDRToken,
-                              AuthMethod,
+                              cdrToken,
+                              authMethod,
                               LocationId,
                               EVSEUId,
                               ConnectorId,
                               currency,
-                              Status,
+                              status,
 
                               End,
-                              AuthorizationReference,
+                              authorizationReference,
                               MeterId,
                               ChargingPeriods,
                               TotalCosts,
 
                               Created,
                               LastUpdated
+
                           );
 
 

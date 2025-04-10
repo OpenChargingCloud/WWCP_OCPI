@@ -155,7 +155,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         /// <param name="Text">A text representation of a charge detail record identification.</param>
         /// <param name="CDRId">The parsed charge detail record identification.</param>
-        public static Boolean TryParse(String Text, out CDR_Id CDRId)
+        public static Boolean TryParse(String Text, out CDR_Id  CDRId)
         {
 
             Text = Text.Trim();

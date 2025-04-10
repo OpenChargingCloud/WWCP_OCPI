@@ -2397,8 +2397,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         #endregion
 
 
-
-
         #region (private) RegisterURLTemplates()
 
         private void RegisterURLTemplates()
@@ -5075,8 +5073,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                               out var errorResponse,
                                                               countryCode,
                                                               partyId,
-                                                              sessionId) ||
-                                             newOrUpdatedSession is null)
+                                                              sessionId))
                                         {
 
                                             return new OCPIResponse.Builder(Request) {

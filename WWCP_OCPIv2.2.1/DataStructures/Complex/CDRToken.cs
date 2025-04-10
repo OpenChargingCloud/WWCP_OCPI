@@ -202,8 +202,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("country_code",
                                          "country code",
-                                         OCPI.CountryCode.TryParse,
-                                         out CountryCode CountryCode,
+                                         CountryCode.TryParse,
+                                         out CountryCode countryCode,
                                          out ErrorResponse))
                 {
                     return false;
@@ -216,7 +216,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (!JSON.ParseMandatory("party_id",
                                          "party identification",
                                          Party_Id.TryParse,
-                                         out Party_Id PartyId,
+                                         out Party_Id partyId,
                                          out ErrorResponse))
                 {
                     return false;
@@ -241,8 +241,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("type",
                                          "token type",
-                                         OCPIv2_2_1.TokenType.TryParse,
-                                         out TokenType TokenType,
+                                         TokenType.TryParse,
+                                         out TokenType tokenType,
                                          out ErrorResponse))
                 {
                     return false;
@@ -255,7 +255,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (!JSON.ParseMandatory("contract_id",
                                          "contract identification",
                                          Contract_Id.TryParse,
-                                         out Contract_Id ContractId,
+                                         out Contract_Id contractId,
                                          out ErrorResponse))
                 {
                     return false;
@@ -265,11 +265,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
                 CDRToken = new CDRToken(
-                               CountryCode,
-                               PartyId,
+                               countryCode,
+                               partyId,
                                UID,
-                               TokenType,
-                               ContractId
+                               tokenType,
+                               contractId
                            );
 
 
@@ -540,18 +540,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         public override String ToString()
 
-            => String.Concat(
-
-                   CountryCode,
-                   "-",
-                   PartyId,
-                   "*",
-                   UID,
-                   " (", TokenType, ") => ",
-
-                   ContractId
-
-               );
+            => $"{CountryCode}-{PartyId}*{UID} ({TokenType}) => {ContractId}";
 
         #endregion
 

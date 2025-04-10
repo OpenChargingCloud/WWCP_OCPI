@@ -1136,26 +1136,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region ToOCPI(this AuthMethod)
 
-        public static AuthMethods? ToOCPI(this WWCP.AuthMethod AuthMethod)
+        public static AuthMethod? ToOCPI(this WWCP.AuthMethod AuthMethod)
         {
 
             if (AuthMethod == WWCP.AuthMethod.AUTH_REQUEST)
-                return AuthMethods.AUTH_REQUEST;
+                return OCPIv2_2_1.AuthMethod.AUTH_REQUEST;
 
             if (AuthMethod == WWCP.AuthMethod.RESERVE)
-                return AuthMethods.COMMAND;
+                return OCPIv2_2_1.AuthMethod.COMMAND;
 
             if (AuthMethod == WWCP.AuthMethod.REMOTESTART)
-                return AuthMethods.COMMAND;
+                return OCPIv2_2_1.AuthMethod.COMMAND;
 
             if (AuthMethod == WWCP.AuthMethod.WHITELIST)
-                return AuthMethods.WHITELIST;
+                return OCPIv2_2_1.AuthMethod.WHITELIST;
 
             return null;
 
         }
 
-        public static AuthMethods? ToOCPI(this WWCP.AuthMethod? AuthMethod)
+        public static AuthMethod? ToOCPI(this WWCP.AuthMethod? AuthMethod)
 
             => AuthMethod.HasValue
                    ? AuthMethod.Value.ToOCPI()
@@ -1165,20 +1165,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region ToWWCP(this AuthMethod)
 
-        public static WWCP.AuthMethod? ToWWCP(this AuthMethods AuthMethod)
+        public static WWCP.AuthMethod? ToWWCP(this AuthMethod AuthMethod)
         {
 
-            if (AuthMethod == AuthMethods.AUTH_REQUEST)
+            if (AuthMethod == AuthMethod.AUTH_REQUEST)
                 return WWCP.AuthMethod.AUTH_REQUEST;
 
-            if (AuthMethod == AuthMethods.WHITELIST)
+            if (AuthMethod == AuthMethod.WHITELIST)
                 return WWCP.AuthMethod.WHITELIST;
 
             return null;
 
         }
 
-        public static WWCP.AuthMethod? ToWWCP(this AuthMethods? AuthMethod)
+        public static WWCP.AuthMethod? ToWWCP(this AuthMethod? AuthMethod)
 
             => AuthMethod.HasValue
                    ? AuthMethod.Value.ToWWCP()

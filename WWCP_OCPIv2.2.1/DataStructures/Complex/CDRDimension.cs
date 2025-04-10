@@ -29,7 +29,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
-    /// A charging dimension.
+    /// A CDR dimension.
     /// </summary>
     public readonly struct CDRDimension : IEquatable<CDRDimension>,
                                           IComparable<CDRDimension>,
@@ -39,7 +39,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Properties
 
         /// <summary>
-        /// The charging dimension type.
+        /// The CDR dimension type.
         /// </summary>
         [Mandatory]
         public CDRDimensionType  Type      { get; }
@@ -55,9 +55,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Constructor(s)
 
         /// <summary>
-        /// Create new charging dimension.
+        /// Create new CDR dimension.
         /// </summary>
-        /// <param name="Type">The charging dimension type.</param>
+        /// <param name="Type">The CDR dimension type.</param>
         /// <param name="Volume">Volume of the dimension consumed, measured according to the dimension type.</param>
         private CDRDimension(CDRDimensionType  Type,
                              Decimal           Volume)
@@ -74,9 +74,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region (static) Create  (Type, Volume)
 
         /// <summary>
-        /// Create new charging dimension.
+        /// Create new CDR dimension.
         /// </summary>
-        /// <param name="Type">The charging dimension type.</param>
+        /// <param name="Type">The CDR dimension type.</param>
         /// <param name="Volume">Volume of the dimension consumed, measured according to the dimension type.</param>
         public static CDRDimension Create(CDRDimensionType  Type,
                                           Decimal           Volume)
@@ -89,10 +89,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region (static) Parse   (JSON, CustomCDRDimensionParser = null)
 
         /// <summary>
-        /// Parse the given JSON representation of a charging dimension.
+        /// Parse the given JSON representation of a CDR dimension.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charging dimension JSON objects.</param>
+        /// <param name="CustomCDRDimensionParser">A delegate to parse custom CDR dimension JSON objects.</param>
         public static CDRDimension Parse(JObject                                     JSON,
                                          CustomJObjectParserDelegate<CDRDimension>?  CustomCDRDimensionParser   = null)
         {
@@ -105,7 +105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 return cdrDimension;
             }
 
-            throw new ArgumentException("The given JSON representation of a charging dimension is invalid: " + errorResponse,
+            throw new ArgumentException("The given JSON representation of a CDR dimension is invalid: " + errorResponse,
                                         nameof(JSON));
 
         }
@@ -115,10 +115,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region (static) TryParse(JSON, CustomCDRDimensionParser = null)
 
         /// <summary>
-        /// Try to parse the given JSON representation of a charging dimension.
+        /// Try to parse the given JSON representation of a CDR dimension.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charging dimension JSON objects.</param>
+        /// <param name="CustomCDRDimensionParser">A delegate to parse custom CDR dimension JSON objects.</param>
         public static CDRDimension? TryParse(JObject                                     JSON,
                                              CustomJObjectParserDelegate<CDRDimension>?  CustomCDRDimensionParser   = null)
         {
@@ -142,10 +142,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
         /// <summary>
-        /// Try to parse the given JSON representation of a charging dimension.
+        /// Try to parse the given JSON representation of a CDR dimension.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CDRDimension">The parsed charging dimension.</param>
+        /// <param name="CDRDimension">The parsed CDR dimension.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject                                JSON,
                                        [NotNullWhen(true)]  out CDRDimension  CDRDimension,
@@ -158,12 +158,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
         /// <summary>
-        /// Try to parse the given JSON representation of a charging dimension.
+        /// Try to parse the given JSON representation of a CDR dimension.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CDRDimension">The parsed charging dimension.</param>
+        /// <param name="CDRDimension">The parsed CDR dimension.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charging dimension JSON objects.</param>
+        /// <param name="CustomCDRDimensionParser">A delegate to parse custom CDR dimension JSON objects.</param>
         public static Boolean TryParse(JObject                                     JSON,
                                        [NotNullWhen(true)]  out CDRDimension       CDRDimension,
                                        [NotNullWhen(false)] out String?            ErrorResponse,
@@ -184,7 +184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #region Parse Type      [mandatory]
 
                 if (!JSON.ParseMandatory("type",
-                                         "charging dimension type",
+                                         "CDR dimension type",
                                          CDRDimensionType.TryParse,
                                          out CDRDimensionType Type,
                                          out ErrorResponse))
@@ -223,7 +223,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             catch (Exception e)
             {
                 CDRDimension   = default;
-                ErrorResponse  = "The given JSON representation of a charging dimension is invalid: " + e.Message;
+                ErrorResponse  = "The given JSON representation of a CDR dimension is invalid: " + e.Message;
                 return false;
             }
 
@@ -236,7 +236,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charging dimension JSON objects.</param>
+        /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom CDR dimension JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<CDRDimension>? CustomCDRDimensionSerializer = null)
         {
 
@@ -256,7 +256,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Clone()
 
         /// <summary>
-        /// Clone this charging dimension.
+        /// Clone this CDR dimension.
         /// </summary>
         public CDRDimension Clone()
 
@@ -436,8 +436,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRDimension1">A charging dimension.</param>
-        /// <param name="CDRDimension2">Another charging dimension.</param>
+        /// <param name="CDRDimension1">A CDR dimension.</param>
+        /// <param name="CDRDimension2">Another CDR dimension.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (CDRDimension CDRDimension1,
                                            CDRDimension CDRDimension2)
@@ -451,8 +451,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRDimension1">A charging dimension.</param>
-        /// <param name="CDRDimension2">Another charging dimension.</param>
+        /// <param name="CDRDimension1">A CDR dimension.</param>
+        /// <param name="CDRDimension2">Another CDR dimension.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (CDRDimension CDRDimension1,
                                            CDRDimension CDRDimension2)
@@ -466,8 +466,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRDimension1">A charging dimension.</param>
-        /// <param name="CDRDimension2">Another charging dimension.</param>
+        /// <param name="CDRDimension1">A CDR dimension.</param>
+        /// <param name="CDRDimension2">Another CDR dimension.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (CDRDimension CDRDimension1,
                                           CDRDimension CDRDimension2)
@@ -481,8 +481,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRDimension1">A charging dimension.</param>
-        /// <param name="CDRDimension2">Another charging dimension.</param>
+        /// <param name="CDRDimension1">A CDR dimension.</param>
+        /// <param name="CDRDimension2">Another CDR dimension.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (CDRDimension CDRDimension1,
                                            CDRDimension CDRDimension2)
@@ -496,8 +496,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRDimension1">A charging dimension.</param>
-        /// <param name="CDRDimension2">Another charging dimension.</param>
+        /// <param name="CDRDimension1">A CDR dimension.</param>
+        /// <param name="CDRDimension2">Another CDR dimension.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (CDRDimension CDRDimension1,
                                           CDRDimension CDRDimension2)
@@ -511,8 +511,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRDimension1">A charging dimension.</param>
-        /// <param name="CDRDimension2">Another charging dimension.</param>
+        /// <param name="CDRDimension1">A CDR dimension.</param>
+        /// <param name="CDRDimension2">Another CDR dimension.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (CDRDimension CDRDimension1,
                                            CDRDimension CDRDimension2)
@@ -528,14 +528,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two charging dimensions.
+        /// Compares two CDR dimensions.
         /// </summary>
-        /// <param name="Object">A charging dimension to compare with.</param>
+        /// <param name="Object">A CDR dimension to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
             => Object is CDRDimension CDRDimension
                    ? CompareTo(CDRDimension)
-                   : throw new ArgumentException("The given object is not a charging dimension!",
+                   : throw new ArgumentException("The given object is not a CDR dimension!",
                                                  nameof(Object));
 
         #endregion
@@ -543,9 +543,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region CompareTo(CDRDimension)
 
         /// <summary>
-        /// Compares two charging dimensions.
+        /// Compares two CDR dimensions.
         /// </summary>
-        /// <param name="CDRDimension">A charging dimension to compare with.</param>
+        /// <param name="CDRDimension">A CDR dimension to compare with.</param>
         public Int32 CompareTo(CDRDimension CDRDimension)
 
             => Type.CompareTo(CDRDimension.Type);
@@ -559,9 +559,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two charging dimensions for equality.
+        /// Compares two CDR dimensions for equality.
         /// </summary>
-        /// <param name="Object">A charging dimension to compare with.</param>
+        /// <param name="Object">A CDR dimension to compare with.</param>
         public override Boolean Equals(Object? Object)
 
             => Object is CDRDimension CDRDimension &&
@@ -572,9 +572,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Equals(CDRDimension)
 
         /// <summary>
-        /// Compares two charging dimensions for equality.
+        /// Compares two CDR dimensions for equality.
         /// </summary>
-        /// <param name="CDRDimension">A charging dimension to compare with.</param>
+        /// <param name="CDRDimension">A CDR dimension to compare with.</param>
         public Boolean Equals(CDRDimension CDRDimension)
 
             => Type.  Equals(CDRDimension.Type) &&

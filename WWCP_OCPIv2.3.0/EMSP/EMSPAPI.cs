@@ -5117,8 +5117,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                               out var errorResponse,
                                                               countryCode,
                                                               partyId,
-                                                              sessionId) ||
-                                             newOrUpdatedSession is null)
+                                                              sessionId))
                                         {
 
                                             return new OCPIResponse.Builder(Request) {

@@ -241,8 +241,10 @@ namespace cloud.charging.open.protocols.OCPI
                         Party_Id.       TryParse(matchCollection[0].Groups[2].Value, out var partyId))
                     {
 
-                        EMSPId = new EMSP_Id(countryCode,
-                                           partyId);
+                        EMSPId = new EMSP_Id(
+                                     countryCode,
+                                     partyId
+                                 );
 
                         return true;
 

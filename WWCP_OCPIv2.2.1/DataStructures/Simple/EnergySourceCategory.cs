@@ -89,7 +89,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Create a new energy source category based on the given text.
         /// </summary>
-        /// <param name="Text">The text representation of a energy source category.</param>
+        /// <param name="Text">The text representation of an energy source category.</param>
         private EnergySourceCategory(String Text)
         {
             this.InternalId = Text;
@@ -101,16 +101,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given text as a energy source category.
+        /// Parse the given text as an energy source category.
         /// </summary>
-        /// <param name="Text">A text representation of a energy source category.</param>
+        /// <param name="Text">A text representation of an energy source category.</param>
         public static EnergySourceCategory Parse(String Text)
         {
 
             if (TryParse(Text, out var energySourceCategory))
                 return energySourceCategory;
 
-            throw new ArgumentException($"Invalid text representation of a energy source category: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of an energy source category: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -120,9 +120,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given text as a energy source category.
+        /// Try to parse the given text as an energy source category.
         /// </summary>
-        /// <param name="Text">A text representation of a energy source category.</param>
+        /// <param name="Text">A text representation of an energy source category.</param>
         public static EnergySourceCategory? TryParse(String Text)
         {
 
@@ -138,9 +138,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region (static) TryParse(Text, out EnergySourceCategory)
 
         /// <summary>
-        /// Try to parse the given text as a energy source category.
+        /// Try to parse the given text as an energy source category.
         /// </summary>
-        /// <param name="Text">A text representation of a energy source category.</param>
+        /// <param name="Text">A text representation of an energy source category.</param>
         /// <param name="EnergySourceCategory">The parsed energy source category.</param>
         public static Boolean TryParse(String Text, out EnergySourceCategory EnergySourceCategory)
         {
@@ -338,7 +338,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             => Object is EnergySourceCategory energySourceCategory
                    ? CompareTo(energySourceCategory)
-                   : throw new ArgumentException("The given object is not a energy source category!",
+                   : throw new ArgumentException("The given object is not an energy source category!",
                                                  nameof(Object));
 
         #endregion

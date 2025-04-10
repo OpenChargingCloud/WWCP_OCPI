@@ -7569,6 +7569,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
+        public Boolean TryGetEVSE(EVSE_UId                       EVSE_UId,
+                                  [NotNullWhen(true)] out EVSE?  EVSE)
+        {
+
+            EVSE = null;
+
+            foreach (var location in locations.Values)
+            {
+                if (location.TryGetEVSE(EVSE_UId, out EVSE))
+                    return true;
+            }
+
+            return false;
+
+        }
+
+
 
         #endregion
 

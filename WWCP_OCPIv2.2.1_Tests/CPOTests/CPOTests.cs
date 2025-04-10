@@ -1938,7 +1938,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                   TokenType. RFID,
                                                                                   Contract_Id.Parse("C1234")
                                                                               ),
-                                                                              AuthMethods.AUTH_REQUEST,
+                                                                              AuthMethod.AUTH_REQUEST,
                                                                               new CDRLocation(
                                                                                   Location_Id.     Parse("LOC0001"),
                                                                                   "Biberweg 18",

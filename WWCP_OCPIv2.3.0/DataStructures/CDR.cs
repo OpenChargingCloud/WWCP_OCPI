@@ -111,7 +111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The authentication method used.
         /// </summary>
         [Mandatory]
-        public   AuthMethods                         AuthMethod                  { get; }
+        public   AuthMethod                          AuthMethod                  { get; }
 
         /// <summary>
         /// The optional reference to the authorization given by the eMSP.
@@ -364,7 +364,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    DateTime                                                Start,
                    DateTime                                                End,
                    CDRToken                                                CDRToken,
-                   AuthMethods                                             AuthMethod,
+                   AuthMethod                                              AuthMethod,
                    CDRLocation                                             Location,
                    Currency                                                Currency,
                    IEnumerable<ChargingPeriod>                             ChargingPeriods,
@@ -732,8 +732,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (!JSON.ParseMandatoryJSON("cdr_token",
                                              "charge detail record token",
-                                             OCPIv2_3_0.CDRToken.TryParse,
-                                             out CDRToken CDRToken,
+                                             CDRToken.TryParse,
+                                             out CDRToken cdrToken,
                                              out ErrorResponse))
                 {
                     return false;
@@ -743,10 +743,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #region Parse AuthMethod                  [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("auth_method",
-                                             "authentication method",
-                                             out AuthMethods AuthMethod,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("auth_method",
+                                         "authentication method",
+                                         AuthMethod.TryParse,
+                                         out AuthMethod authMethod,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -1100,8 +1101,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                           CDRIdBody       ?? CDRIdURL!.      Value,
                           Start,
                           End,
-                          CDRToken,
-                          AuthMethod,
+                          cdrToken,
+                          authMethod,
                           Location,
                           currency,
                           ChargingPeriods,

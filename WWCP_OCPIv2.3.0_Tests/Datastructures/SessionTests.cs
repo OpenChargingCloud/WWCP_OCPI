@@ -63,12 +63,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                    TokenType.RFID,
                                    Contract_Id.Parse("Contract0815")
                                ),
-                               AuthMethods.AUTH_REQUEST,
+                               AuthMethod.AUTH_REQUEST,
                                Location_Id. Parse("LOC0001"),
                                EVSE_UId.    Parse("EVSE0001"),
                                Connector_Id.Parse("C1"),
                                Currency.EUR,
-                               SessionStatusTypes.ACTIVE,
+                               SessionStatusType.ACTIVE,
                                DateTime.Parse("2020-08-22T00:00:00.000Z").ToUniversalTime(), // End
                                AuthorizationReference.Parse("Auth1234"),
                                EnergyMeter_Id.Parse("Meter0001"),

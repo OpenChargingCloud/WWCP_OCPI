@@ -1190,9 +1190,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="Tariff">The resolved user.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingTariff">Whether to fail when the tariff for the given tariff identification was not found.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseTariff(this OCPIRequest           Request,
-                                          CommonAPI                    CommonAPI,
+                                          CommonAPI                  CommonAPI,
                                           out CountryCode?           CountryCode,
                                           out Party_Id?              PartyId,
                                           out Tariff_Id?             TariffId,
@@ -1200,16 +1199,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                           out OCPIResponse.Builder?  OCPIResponseBuilder,
                                           Boolean                    FailOnMissingTariff = true)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI is null)
-                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
-
-            #endregion
 
             CountryCode          = default;
             PartyId              = default;
@@ -1327,7 +1316,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="TariffId">The parsed unique tariff identification.</param>
         /// <param name="Tariff">The resolved user.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseTariff(this OCPIRequest                           Request,
                                           CommonAPI                                  CommonAPI,
                                           IEnumerable<Tuple<CountryCode, Party_Id>>  CountryCodesWithPartyIds,
@@ -1335,16 +1323,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                           out Tariff?                                Tariff,
                                           out OCPIResponse.Builder?                  OCPIResponseBuilder)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI  is null)
-                throw new ArgumentNullException(nameof(CommonAPI),   "The given CPO API must not be null!");
-
-            #endregion
 
             TariffId             =  default;
             Tariff               =  default;
@@ -1430,26 +1408,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="Session">The resolved session.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingSession">Whether to fail when the session for the given session identification was not found.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseSession(this OCPIRequest          Request,
-                                          CommonAPI                    CommonAPI,
-                                          out CountryCode?           CountryCode,
-                                          out Party_Id?              PartyId,
-                                          out Session_Id?            SessionId,
-                                          out Session?               Session,
-                                          out OCPIResponse.Builder?  OCPIResponseBuilder,
-                                          Boolean                    FailOnMissingSession = true)
+        public static Boolean ParseSession(this OCPIRequest           Request,
+                                           CommonAPI                  CommonAPI,
+                                           out CountryCode?           CountryCode,
+                                           out Party_Id?              PartyId,
+                                           out Session_Id?            SessionId,
+                                           out Session?               Session,
+                                           out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                           Boolean                    FailOnMissingSession = true)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI is null)
-                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
-
-            #endregion
 
             CountryCode          = default;
             PartyId              = default;
@@ -1576,16 +1543,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                            out OCPIResponse.Builder?                  OCPIResponseBuilder)
         {
 
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI  is null)
-                throw new ArgumentNullException(nameof(CommonAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
             SessionId            =  default;
             Session              =  default;
             OCPIResponseBuilder  =  default;
@@ -1671,7 +1628,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="FailOnMissingCDR">Whether to fail when the charge detail record for the given charge detail record identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseCDR(this OCPIRequest           Request,
-                                       CommonAPI                    CommonAPI,
+                                       CommonAPI                  CommonAPI,
                                        out CountryCode?           CountryCode,
                                        out Party_Id?              PartyId,
                                        out CDR_Id?                CDRId,
@@ -1679,16 +1636,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                        out OCPIResponse.Builder?  OCPIResponseBuilder,
                                        Boolean                    FailOnMissingCDR = true)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI is null)
-                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
-
-            #endregion
 
             CountryCode          = default;
             PartyId              = default;
@@ -1815,16 +1762,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                        out OCPIResponse.Builder?                  OCPIResponseBuilder)
         {
 
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI  is null)
-                throw new ArgumentNullException(nameof(CommonAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
             CDRId                =  default;
             CDR                  =  default;
             OCPIResponseBuilder  =  default;
@@ -1907,20 +1844,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseTokenId(this OCPIRequest           Request,
-                                           CommonAPI                    CommonAPI,
+                                           CommonAPI                  CommonAPI,
                                            out Token_Id?              TokenId,
                                            out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI is null)
-                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
-
-            #endregion
 
             TokenId              = default;
             OCPIResponseBuilder  = default;
@@ -1981,22 +1908,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="TokenId">The parsed unique tariff identification.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         public static Boolean ParseTokenId(this OCPIRequest           Request,
-                                           CommonAPI                     CommonAPI,
+                                           CommonAPI                  CommonAPI,
                                            out CountryCode?           CountryCode,
                                            out Party_Id?              PartyId,
                                            out Token_Id?              TokenId,
                                            out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI  is null)
-                throw new ArgumentNullException(nameof(CommonAPI),   "The given CPO API must not be null!");
-
-            #endregion
 
             CountryCode          = default;
             PartyId              = default;
@@ -2105,16 +2022,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                          Boolean                    FailOnMissingToken = true)
         {
 
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI is null)
-                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
-
-            #endregion
-
             TokenId              = default;
             TokenStatus          = default;
             OCPIResponseBuilder  = default;
@@ -2199,7 +2106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingToken">Whether to fail when the tariff for the given tariff identification was not found.</param>
         public static Boolean ParseToken(this OCPIRequest                           Request,
-                                         CommonAPI                                     CommonAPI,
+                                         CommonAPI                                  CommonAPI,
                                          IEnumerable<Tuple<CountryCode, Party_Id>>  CountryCodesWithPartyIds,
                                          out CountryCode?                           CountryCode,
                                          out Party_Id?                              PartyId,
@@ -2208,16 +2115,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                          out OCPIResponse.Builder?                  OCPIResponseBuilder,
                                          Boolean                                    FailOnMissingToken = true)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI  is null)
-                throw new ArgumentNullException(nameof(CommonAPI),   "The given CPO API must not be null!");
-
-            #endregion
 
             CountryCode          = default;
             PartyId              = default;
@@ -2371,16 +2268,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                              out Command_Id?            CommandId,
                                              out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI  is null)
-                throw new ArgumentNullException(nameof(CommonAPI),  "The given CPO API must not be null!");
-
-            #endregion
 
             CommandId            = default;
             OCPIResponseBuilder  = default;
