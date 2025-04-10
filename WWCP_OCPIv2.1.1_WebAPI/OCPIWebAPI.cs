@@ -36,7 +36,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
     /// <summary>
     /// OCPI WebAPI extention methods.
     /// </summary>
-    public static class ExtentionMethods
+    public static class ExtensionMethods
     {
 
         #region ParseRoamingNetwork(this HTTPRequest, HTTPServer, out RoamingNetwork, out HTTPResponse)
@@ -555,7 +555,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             this.DebugLog              = this.AddJSONEventSource(EventIdentification:      DebugLogId,
                                                                  URLTemplate:              this.URLPathPrefix + "debugLog",
                                                                  MaxNumberOfCachedEvents:  10000,
-                                                                 RetryIntervall:           TimeSpan.FromSeconds(5),
+                                                                 RetryInterval :           TimeSpan.FromSeconds(5),
                                                                  EnableLogging:            true,
                                                                  LogfilePrefix:            LogfilePrefix);
 
@@ -701,7 +701,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                              ).ToUTF8Bytes(),
                                 Connection                 = ConnectionType.Close,
                                 Vary                       = "Accept"
-                            }.AsImmutable)
+                            }.AsImmutable),
+
+                    AllowReplacement: URLReplacement.Allow
 
                 );
 
@@ -731,7 +733,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                              ).ToUTF8Bytes(),
                                 Connection                 = ConnectionType.Close,
                                 Vary                       = "Accept"
-                            }.AsImmutable)
+                            }.AsImmutable),
+
+                    AllowReplacement: URLReplacement.Allow
 
                 );
 

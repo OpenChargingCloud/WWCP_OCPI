@@ -28,7 +28,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
-    /// A delegate which allows you to modify the convertion from WWCP EVSEs to OCPI EVSEs.
+    /// A delegate which allows you to modify the conversion from WWCP EVSEs to OCPI EVSEs.
     /// </summary>
     /// <param name="WWCPEVSE">A WWCP EVSE.</param>
     /// <param name="OCPIEVSE">An OCPI EVSE.</param>
@@ -36,14 +36,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                          EVSE                     OCPIEVSE);
 
     /// <summary>
-    /// A delegate which allows you to modify the convertion from OCPI EVSEs to WWCP EVSEs.
+    /// A delegate which allows you to modify the conversion from OCPI EVSEs to WWCP EVSEs.
     /// </summary>
     /// <param name="WWCPEVSE">A WWCP EVSE.</param>
     public delegate WWCP.IEVSE               EVSE_2_WWCPEVSE_Delegate                   (EVSE                     EVSE);
 
 
     /// <summary>
-    /// A delegate which allows you to modify the convertion from WWCP EVSE status updates to OCPI EVSE status types.
+    /// A delegate which allows you to modify the conversion from WWCP EVSE status updates to OCPI EVSE status types.
     /// </summary>
     /// <param name="WWCPEVSEStatusUpdate">A WWCP EVSE status update.</param>
     /// <param name="OCPIStatusType">An OICP status type.</param>
@@ -51,14 +51,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                          StatusType               OCPIStatusType);
 
     /// <summary>
-    /// A delegate which allows you to modify the convertion from WWCP EVSE status updates to OCPI EVSE status types.
+    /// A delegate which allows you to modify the conversion from WWCP EVSE status updates to OCPI EVSE status types.
     /// </summary>
     /// <param name="OCPIStatusType">An OICP status type.</param>
     public delegate WWCP.EVSEStatusUpdate    StatusType_2_WWCPEVSEStatusUpdate_Delegate (StatusType               OCPIStatusType);
 
 
     /// <summary>
-    /// A delegate which allows you to modify the convertion from WWCP charge detail records to OICP charge detail records.
+    /// A delegate which allows you to modify the conversion from WWCP charge detail records to OICP charge detail records.
     /// </summary>
     /// <param name="WWCPChargeDetailRecord">A WWCP charge detail record.</param>
     /// <param name="OCIPCDR">An OICP charge detail record.</param>
@@ -66,7 +66,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                          CDR                      OCIPCDR);
 
     /// <summary>
-    /// A delegate which allows you to modify the convertion from OCPI charge detail records to WWCP charge detail records.
+    /// A delegate which allows you to modify the conversion from OCPI charge detail records to WWCP charge detail records.
     /// </summary>
     /// <param name="OCIPCDR">An OICP charge detail record.</param>
     public delegate WWCP.ChargeDetailRecord  CDR_2_WWCPChargeDetailRecord_Delegate      (CDR                      OCIPCDR);

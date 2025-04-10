@@ -862,7 +862,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         if (evses.Count > 0)
                         {
 
-                            if (CommonAPI.TryGetLocation(countryCode.Value, partyId.Value, locationId.Value, out var location))
+                            if (CommonAPI.TryGetLocation(Party_Idv3.From(countryCode.Value, partyId.Value), locationId.Value, out var location))
                                 result = await CommonAPI.AddOrUpdateEVSEs(
                                                    Location:            location,
                                                    EVSEs:               evses,
@@ -977,11 +977,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            (IncludeEVSEs is not null && IncludeEVSEs(EVSE)))
                         {
 
-                            if (CommonAPI.TryGetLocation(countryCode.Value,
-                                                         partyId.    Value,
-                                                         locationId. Value,
-                                                         out var location) &&
-                                location is not null)
+                            if (CommonAPI.TryGetLocation(
+                                Party_Idv3.From(
+                                    countryCode.Value,
+                                    partyId.    Value
+                                ),
+                                locationId. Value,
+                                out var location))
                             {
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
@@ -1100,11 +1102,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            (IncludeEVSEs is not null && IncludeEVSEs(EVSE)))
                         {
 
-                            if (CommonAPI.TryGetLocation(countryCode.Value,
-                                                         partyId.    Value,
-                                                         locationId. Value,
-                                                         out var location) &&
-                                location is not null)
+                            if (CommonAPI.TryGetLocation(
+                                Party_Idv3.From(
+                                    countryCode.Value,
+                                    partyId.    Value
+                                ),
+                                locationId. Value,
+                                out var location))
                             {
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
@@ -1243,11 +1247,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            (IncludeEVSEs is not null && IncludeEVSEs(EVSE)))
                         {
 
-                            if (CommonAPI.TryGetLocation(countryCode.Value,
-                                                         partyId.    Value,
-                                                         locationId. Value,
-                                                         out var location) &&
-                                location is not null)
+                            if (CommonAPI.TryGetLocation(
+                                Party_Idv3.From(
+                                    countryCode.Value,
+                                    partyId.    Value
+                                ),
+                                locationId. Value,
+                                out var location))
                             {
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
@@ -1404,11 +1410,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     locationId. HasValue)
                                 {
 
-                                    if (CommonAPI.TryGetLocation(countryCode.Value,
-                                                                 partyId.    Value,
-                                                                 locationId. Value,
-                                                                 out var location) &&
-                                        location is not null)
+                                    if (CommonAPI.TryGetLocation(
+                                        Party_Idv3.From(
+                                            countryCode.Value,
+                                            partyId.    Value
+                                        ),
+                                        locationId. Value,
+                                        out var location))
                                     {
 
                                         var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,

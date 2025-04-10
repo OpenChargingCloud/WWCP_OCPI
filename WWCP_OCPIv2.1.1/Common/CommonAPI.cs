@@ -61,12 +61,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
     /// <summary>
-    /// Extention methods for the Common HTTP API.
+    /// Extension methods for the Common HTTP API.
     /// </summary>
-    public static class CommonAPIExtentions
+    public static class CommonAPIExtensions
     {
 
-        #region ParseParseCountryCodePartyId (this Request,            out CountryCode, out PartyId,                                                        out HTTPResponse)
+        #region ParseParseCountryCodePartyId (this Request,            out CountryCode, out PartyId,                                                        out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
@@ -74,23 +74,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// or an HTTP error response.
         /// </summary>
         /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The CPO API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseParseCountryCodePartyId(this OCPIRequest           Request,
-                                                           out CountryCode?           CountryCode,
-                                                           out Party_Id?              PartyId,
-                                                           out OCPIResponse.Builder?  OCPIResponseBuilder)
+        public static Boolean ParseParseCountryCodePartyId(this OCPIRequest                                Request,
+                                                           [NotNullWhen(true)]  out CountryCode?           CountryCode,
+                                                           [NotNullWhen(true)]  out Party_Id?              PartyId,
+                                                           [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            #endregion
 
             CountryCode          = default;
             PartyId              = default;
@@ -604,9 +595,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Tariff">The resolved user.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingTariff">Whether to fail when the tariff for the given tariff identification was not found.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseTariff(this OCPIRequest           Request,
-                                          CommonAPI                    CommonAPI,
+                                          CommonAPI                  CommonAPI,
                                           CountryCode                CountryCode,
                                           Party_Id                   PartyId,
                                           out Tariff_Id?             TariffId,
@@ -614,16 +604,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                           out OCPIResponse.Builder?  OCPIResponseBuilder,
                                           Boolean                    FailOnMissingTariff = true)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI is null)
-                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
-
-            #endregion
 
             TariffId             = default;
             Tariff               = default;
@@ -692,6 +672,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
+
         #region ParseSession                 (this Request, CommonAPI, out SessionId, out Session,  out OCPIResponseBuilder)
 
         /// <summary>
@@ -705,7 +686,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Session">The resolved session.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingSession">Whether to fail when the session for the given session identification was not found.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseSession(this OCPIRequest           Request,
                                            CommonAPI                  CommonAPI,
                                            CountryCode                CountryCode,
@@ -715,16 +695,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                            out OCPIResponse.Builder?  OCPIResponseBuilder,
                                            Boolean                    FailOnMissingSession = true)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI is null)
-                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
-
-            #endregion
 
             SessionId            = default;
             Session              = default;
@@ -793,6 +763,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
+
         #region ParseCDR                     (this Request, CommonAPI, out CDRId,     out CDR,      out OCPIResponseBuilder)
 
         /// <summary>
@@ -805,9 +776,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="CDR">The resolved charge detail record.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingCDR">Whether to fail when the charge detail record for the given charge detail record identification was not found.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseCDR(this OCPIRequest           Request,
-                                       CommonAPI                    CommonAPI,
+                                       CommonAPI                  CommonAPI,
                                        CountryCode                CountryCode,
                                        Party_Id                   PartyId,
                                        out CDR_Id?                CDRId,
@@ -815,16 +785,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        out OCPIResponse.Builder?  OCPIResponseBuilder,
                                        Boolean                    FailOnMissingCDR = true)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI is null)
-                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
-
-            #endregion
 
             CDRId                = default;
             CDR                  = default;
@@ -893,6 +853,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
+
         #region ParseTokenId                 (this Request, CommonAPI, out TokenId,                 out OCPIResponseBuilder)
 
         /// <summary>
@@ -904,22 +865,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="CommonAPI">The EMSP API.</param>
         /// <param name="TokenId">The parsed unique token identification.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseTokenId(this OCPIRequest           Request,
-                                           CommonAPI                    CommonAPI,
+                                           CommonAPI                  CommonAPI,
                                            out Token_Id?              TokenId,
                                            out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI is null)
-                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
-
-            #endregion
 
             TokenId              = default;
             OCPIResponseBuilder  = default;
@@ -985,13 +935,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                            out Token_Id?              TokenId,
                                            out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            #endregion
 
             CountryCode          = default;
             PartyId              = default;
@@ -1092,7 +1035,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="TokenId">The parsed unique tariff identification.</param>
         /// <param name="TokenStatus">The resolved tariff with status.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <param name="FailOnMissingToken">Whether to fail when the tariff for the given tariff identification was not found.</param>
         public static Boolean ParseToken(this OCPIRequest           Request,
                                          CommonAPI                  CommonAPI,
                                          out CountryCode?           CountryCode,
@@ -1102,16 +1044,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                          out OCPIResponse.Builder?  OCPIResponseBuilder,
                                          Boolean                    FailOnMissingToken = true)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI  is null)
-                throw new ArgumentNullException(nameof(CommonAPI),   "The given CPO API must not be null!");
-
-            #endregion
 
             CountryCode          = default;
             PartyId              = default;
@@ -1259,7 +1191,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="TokenStatus">The resolved user.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingToken">Whether to fail when the token for the given token identification was not found.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseToken(this OCPIRequest           Request,
                                          CommonAPI                  CommonAPI,
                                          CountryCode                CountryCode,
@@ -1269,16 +1200,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                          out OCPIResponse.Builder?  OCPIResponseBuilder,
                                          Boolean                    FailOnMissingToken = true)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI is null)
-                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
-
-            #endregion
 
             TokenId              = default;
             TokenStatus          = default;
@@ -1359,22 +1280,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="CommonAPI">The EMSP API.</param>
         /// <param name="CommandId">The parsed unique command identification.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseCommandId(this OCPIRequest           Request,
-                                             CommonAPI                    CommonAPI,
+                                             CommonAPI                  CommonAPI,
                                              out Command_Id?            CommandId,
                                              out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CommonAPI  is null)
-                throw new ArgumentNullException(nameof(CommonAPI),  "The given CPO API must not be null!");
-
-            #endregion
 
             CommandId            = default;
             OCPIResponseBuilder  = default;
@@ -1920,11 +1830,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// 
         /// <param name="DisableMaintenanceTasks">Disable all maintenance tasks.</param>
         /// <param name="MaintenanceInitialDelay">The initial delay of the maintenance tasks.</param>
-        /// <param name="MaintenanceEvery">The maintenance intervall.</param>
+        /// <param name="MaintenanceEvery">The maintenance interval.</param>
         /// 
         /// <param name="DisableWardenTasks">Disable all warden tasks.</param>
         /// <param name="WardenInitialDelay">The initial delay of the warden tasks.</param>
-        /// <param name="WardenCheckEvery">The warden intervall.</param>
+        /// <param name="WardenCheckEvery">The warden interval.</param>
         /// 
         /// <param name="IsDevelopment">This HTTP API runs in development mode.</param>
         /// <param name="DevelopmentServers">An enumeration of server names which will imply to run this service in development mode.</param>
@@ -2822,7 +2732,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region updateToken
 
-                    case CommonBaseAPI.removeTokenStatus:
+                    case CommonBaseAPI.removeToken:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -3502,7 +3412,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           StatusMessage        = "The given access token '" + (Request.AccessToken?.ToString() ?? "") + "' is not yet registered!",
                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                               HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                              AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
+                                                              AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
                                                               AccessControlAllowHeaders  = [ "Authorization" ]
                                                           }
                                                       };
@@ -8722,6 +8632,742 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
+        #region Tokens
+
+        #region Data
+
+        private readonly ConcurrentDictionary<Token_Id, TokenStatus> tokenStatus = [];
+
+
+        public delegate Task               OnTokenAddedDelegate  (Token     Token);
+        public delegate Task               OnTokenChangedDelegate(Token     Token);
+        public delegate Task               OnTokenRemovedDelegate(Token     Token);
+        public delegate Task<TokenStatus>  OnVerifyTokenDelegate (Token_Id  TokenId);
+
+        public event OnTokenAddedDelegate?    OnTokenAdded;
+        public event OnTokenChangedDelegate?  OnTokenChanged;
+        public event OnTokenRemovedDelegate?  OnTokenRemoved;
+        public event OnVerifyTokenDelegate?   OnVerifyToken;
+
+        #endregion
+
+
+        #region AddToken           (Token, Status = AllowedTypes.ALLOWED,                          SkipNotifications = false)
+
+        public async Task<AddResult<Token>> AddToken(Token              Token,
+                                                     AllowedType?       Status              = null,
+                                                     Boolean            SkipNotifications   = false,
+                                                     EventTracking_Id?  EventTrackingId     = null,
+                                                     User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var newTokenStatus = new TokenStatus(Token,
+                                                 Status ??= AllowedType.ALLOWED);
+
+            if (tokenStatus.TryAdd(Token.Id, newTokenStatus))
+            {
+
+                Token.CommonAPI = this;
+
+                await LogAsset(
+                          CommonBaseAPI.addTokenStatus,
+                          newTokenStatus.ToJSON(CustomTokenStatusSerializer,
+                                                true,
+                                                CustomTokenSerializer,
+                                                CustomLocationReferenceSerializer),
+                          EventTrackingId ?? EventTracking_Id.New,
+                          CurrentUserId
+                      );
+
+                if (!SkipNotifications)
+                {
+
+                    var OnTokenAddedLocal = OnTokenAdded;
+                    if (OnTokenAddedLocal is not null)
+                    {
+                        try
+                        {
+                            OnTokenAddedLocal(Token).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenAddedLocal), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
+                return AddResult<Token>.Success(EventTrackingId, Token);
+
+            }
+
+            return AddResult<Token>.Failed(EventTrackingId, Token,
+                                           "TryAdd(Token.Id, newTokenStatus) failed!");
+
+        }
+
+        #endregion
+
+        #region AddTokenIfNotExists(Token, Status = AllowedTypes.ALLOWED,                          SkipNotifications = false)
+
+        public async Task<AddResult<Token>> AddTokenIfNotExists(Token              Token,
+                                                                AllowedType?       Status              = null,
+                                                                Boolean            SkipNotifications   = false,
+                                                                EventTracking_Id?  EventTrackingId     = null,
+                                                                User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var newTokenStatus = new TokenStatus(Token,
+                                                 Status ??= AllowedType.ALLOWED);
+
+            if (tokenStatus.TryAdd(Token.Id, newTokenStatus))
+            {
+
+                Token.CommonAPI = this;
+
+                await LogAsset(
+                          CommonBaseAPI.addTokenStatus,
+                          newTokenStatus.ToJSON(CustomTokenStatusSerializer,
+                                                true,
+                                                CustomTokenSerializer,
+                                                CustomLocationReferenceSerializer),
+                          EventTrackingId ?? EventTracking_Id.New,
+                          CurrentUserId
+                      );
+
+                if (!SkipNotifications)
+                {
+
+                    var OnTokenAddedLocal = OnTokenAdded;
+                    if (OnTokenAddedLocal is not null)
+                    {
+                        try
+                        {
+                            OnTokenAddedLocal(Token).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
+                return AddResult<Token>.Success(EventTrackingId, Token);
+
+            }
+
+            return AddResult<Token>.NoOperation(EventTrackingId, Token);
+
+        }
+
+        #endregion
+
+        #region AddOrUpdateToken   (Token, Status = AllowedTypes.ALLOWED, AllowDowngrades = false, SkipNotifications = false)
+
+        public async Task<AddOrUpdateResult<Token>> AddOrUpdateToken(Token              Token,
+                                                                     AllowedType?       Status              = null,
+                                                                     Boolean?           AllowDowngrades     = false,
+                                                                     Boolean            SkipNotifications   = false,
+                                                                     EventTracking_Id?  EventTrackingId     = null,
+                                                                     User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            #region Update an existing token
+
+            if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
+            {
+
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Token.LastUpdated <= existingTokenStatus.Token.LastUpdated)
+                {
+                    return AddOrUpdateResult<Token>.Failed(EventTrackingId, Token,
+                                                           "The 'lastUpdated' timestamp of the new token must be newer then the timestamp of the existing token!");
+                }
+
+                var updatedTokenStatus = new TokenStatus(Token,
+                                                         Status ?? existingTokenStatus.Status);
+
+                tokenStatus[Token.Id] = updatedTokenStatus;
+                Token.CommonAPI = this;
+
+                await LogAsset(
+                          CommonBaseAPI.addOrUpdateTokenStatus,
+                          updatedTokenStatus.ToJSON(CustomTokenStatusSerializer,
+                                                    true,
+                                                    CustomTokenSerializer,
+                                                    CustomLocationReferenceSerializer),
+                          EventTrackingId ?? EventTracking_Id.New,
+                          CurrentUserId
+                      );
+
+                if (!SkipNotifications)
+                {
+
+                    var OnTokenChangedLocal = OnTokenChanged;
+                    if (OnTokenChangedLocal is not null)
+                    {
+                        try
+                        {
+                            OnTokenChangedLocal(Token).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
+                return AddOrUpdateResult<Token>.Updated(EventTrackingId, Token);
+
+            }
+
+            #endregion
+
+            #region Add a new token
+
+            var newTokenStatus = new TokenStatus(Token,
+                                                 Status ??= AllowedType.ALLOWED);
+
+            if (tokenStatus.TryAdd(Token.Id, newTokenStatus))
+            {
+
+                Token.CommonAPI = this;
+
+                await LogAsset(
+                          CommonBaseAPI.addOrUpdateTokenStatus,
+                          newTokenStatus.ToJSON(CustomTokenStatusSerializer,
+                                                true,
+                                                CustomTokenSerializer,
+                                                CustomLocationReferenceSerializer),
+                          EventTrackingId ?? EventTracking_Id.New,
+                          CurrentUserId
+                      );
+
+                if (!SkipNotifications)
+                {
+
+                    var OnTokenAddedLocal = OnTokenAdded;
+                    if (OnTokenAddedLocal is not null)
+                    {
+                        try
+                        {
+                            OnTokenAddedLocal(Token).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
+                return AddOrUpdateResult<Token>.Created(EventTrackingId, Token);
+
+            }
+
+            return AddOrUpdateResult<Token>.Failed(EventTrackingId, Token,
+                                                   "AddOrUpdateToken(Token.Id, Token) failed!");
+
+            #endregion
+
+        }
+
+        #endregion
+
+        #region UpdateToken        (Token, Status = AllowedTypes.ALLOWED, AllowDowngrades = false, SkipNotifications = false)
+
+        public async Task<UpdateResult<Token>> UpdateToken(Token              Token,
+                                                           AllowedType?       Status              = null,
+                                                           Boolean?           AllowDowngrades     = false,
+                                                           Boolean            SkipNotifications   = false,
+                                                           EventTracking_Id?  EventTrackingId     = null,
+                                                           User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            #region Validate AllowDowngrades
+
+            if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
+            {
+
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Token.LastUpdated <= existingTokenStatus.Token.LastUpdated)
+                {
+
+                    return UpdateResult<Token>.Failed(EventTrackingId, Token,
+                                                      "The 'lastUpdated' timestamp of the new charging token must be newer then the timestamp of the existing token!");
+
+                }
+
+            }
+            else
+                return UpdateResult<Token>.Failed(EventTrackingId, Token,
+                                                  $"Unknown token identification '{Token.Id}'!");
+
+            #endregion
+
+
+            var updatedTokenStatus = new TokenStatus(Token,
+                                                     AllowedType.ALLOWED);
+
+            if (tokenStatus.TryUpdate(Token.Id,
+                                      updatedTokenStatus,
+                                      existingTokenStatus))
+            {
+
+                Token.CommonAPI = this;
+
+                await LogAsset(
+                          CommonBaseAPI.updateTokenStatus,
+                          updatedTokenStatus.ToJSON(CustomTokenStatusSerializer,
+                                                    true,
+                                                    CustomTokenSerializer,
+                                                    CustomLocationReferenceSerializer),
+                          EventTrackingId ?? EventTracking_Id.New,
+                          CurrentUserId
+                      );
+
+                if (!SkipNotifications)
+                {
+
+                    var OnTokenChangedLocal = OnTokenChanged;
+                    if (OnTokenChangedLocal is not null)
+                    {
+                        try
+                        {
+                            OnTokenChangedLocal(Token).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateToken), " ", nameof(OnTokenChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
+                return UpdateResult<Token>.Success(EventTrackingId, Token);
+
+            }
+
+            return UpdateResult<Token>.Failed(EventTrackingId, Token,
+                                              "UpdateToken(Token.Id, Token, Token) failed!");
+
+        }
+
+        #endregion
+
+
+        #region TryPatchToken      (Token, TokenPatch, AllowDowngrades = false, SkipNotifications = false)
+
+        public async Task<PatchResult<Token>> TryPatchToken(Token              Token,
+                                                            JObject            TokenPatch,
+                                                            Boolean?           AllowDowngrades     = false,
+                                                            Boolean            SkipNotifications   = false,
+                                                            EventTracking_Id?  EventTrackingId     = null,
+                                                            User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (TokenPatch is null || !TokenPatch.HasValues)
+                return PatchResult<Token>.Failed(EventTrackingId, Token,
+                                                 "The given token patch must not be null or empty!");
+
+            if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
+            {
+
+                var patchResult = existingTokenStatus.Token.TryPatch(TokenPatch,
+                                                                     AllowDowngrades ?? this.AllowDowngrades ?? false);
+
+                if (patchResult.IsSuccess &&
+                    patchResult.PatchedData is not null)
+                {
+
+                    var patchedTokenStatus = new TokenStatus(patchResult.PatchedData,
+                                                             existingTokenStatus.Status);
+
+                    tokenStatus[Token.Id] = patchedTokenStatus;
+
+                    await LogAsset(
+                              CommonBaseAPI.updateTokenStatus,
+                              patchedTokenStatus.ToJSON(CustomTokenStatusSerializer,
+                                                        true,
+                                                        CustomTokenSerializer,
+                                                        CustomLocationReferenceSerializer),
+                              EventTrackingId ?? EventTracking_Id.New,
+                              CurrentUserId
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnTokenChangedLocal = OnTokenChanged;
+                        if (OnTokenChangedLocal is not null)
+                        {
+                            try
+                            {
+                                OnTokenChangedLocal(patchResult.PatchedData).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryPatchToken), " ", nameof(OnTokenChanged), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                    }
+
+                }
+
+                return patchResult;
+
+            }
+
+            else
+                return PatchResult<Token>.Failed(EventTrackingId, Token,
+                                                  "The given token does not exist!");
+
+        }
+
+        #endregion
+
+
+        #region TokenExists(TokenId)
+
+        public Boolean TokenExists(Token_Id TokenId)
+
+            => tokenStatus.ContainsKey(TokenId);
+
+        #endregion
+
+        #region TryGetToken(TokenId, out TokenWithStatus)
+
+        public Boolean TryGetToken(Token_Id         TokenId,
+                                   out TokenStatus  TokenWithStatus)
+        {
+
+            if (tokenStatus.TryGetValue(TokenId, out TokenWithStatus))
+                return true;
+
+            TokenWithStatus = default;
+            return false;
+
+        }
+
+        #endregion
+
+        #region GetTokens  (IncludeToken)
+
+        public IEnumerable<TokenStatus> GetTokens(Func<Token, Boolean> IncludeToken)
+
+            => IncludeToken is null
+                   ? tokenStatus.Values
+                   : tokenStatus.Values.Where(tokenStatus => IncludeToken(tokenStatus.Token));
+
+        #endregion
+
+        #region GetTokens  (IncludeTokenStatus = null)
+
+        public IEnumerable<TokenStatus> GetTokens(Func<TokenStatus, Boolean>? IncludeTokenStatus = null)
+
+            => IncludeTokenStatus is null
+                   ? tokenStatus.Values
+                   : tokenStatus.Values.Where(IncludeTokenStatus);
+
+        #endregion
+
+        #region GetTokens  (CountryCode, PartyId)
+
+        public IEnumerable<TokenStatus> GetTokens(CountryCode  CountryCode,
+                                                  Party_Id     PartyId)
+
+            => tokenStatus.Values.Where(tokenStatus => tokenStatus.Token.CountryCode == CountryCode &&
+                                                       tokenStatus.Token.PartyId     == PartyId);
+
+        #endregion
+
+
+        #region RemoveToken    (Token,                SkipNotifications = false)
+
+        /// <summary>
+        /// Remove the given token.
+        /// </summary>
+        /// <param name="Token">A token.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public Task<RemoveResult<Token>> RemoveToken(Token              Token,
+                                                     Boolean            SkipNotifications   = false,
+                                                     EventTracking_Id?  EventTrackingId     = null,
+                                                     User_Id?           CurrentUserId       = null)
+
+            => RemoveToken(Token.Id,
+                           SkipNotifications);
+
+        #endregion
+
+        #region RemoveToken    (TokenId,              SkipNotifications = false)
+
+        /// <summary>
+        /// Remove the given token.
+        /// </summary>
+        /// <param name="TokenId">A unique identification of a token.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<Token>> RemoveToken(Token_Id           TokenId,
+                                                           Boolean            SkipNotifications   = false,
+                                                           EventTracking_Id?  EventTrackingId     = null,
+                                                           User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (tokenStatus.Remove(TokenId, out var existingTokenStatus))
+            {
+
+                await LogAsset(
+                          CommonBaseAPI.removeToken,
+                          existingTokenStatus.Token.ToJSON(true,
+                                                           CustomTokenSerializer),
+                          EventTrackingId ?? EventTracking_Id.New,
+                          CurrentUserId
+                      );
+
+                if (!SkipNotifications)
+                {
+
+                    var OnTokenRemovedLocal = OnTokenRemoved;
+                    if (OnTokenRemovedLocal is not null)
+                    {
+                        try
+                        {
+                            await OnTokenRemovedLocal(existingTokenStatus.Token);
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(RemoveToken), " ", nameof(OnTokenRemoved), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
+                return RemoveResult<Token>.Success(EventTrackingId, existingTokenStatus.Token);
+
+            }
+
+            return RemoveResult<Token>.Failed(EventTrackingId,
+                                              "RemoveToken(TokenId, ...) failed!");
+
+        }
+
+        #endregion
+
+        #region RemoveAllTokens(                      SkipNotifications = false)
+
+        /// <summary>
+        /// Remove all tokens.
+        /// </summary>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(Boolean            SkipNotifications   = false,
+                                                                            EventTracking_Id?  EventTrackingId     = null,
+                                                                            User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var existingTokenStatus = tokenStatus.Values.ToArray();
+
+            tokenStatus.Clear();
+
+            await LogAsset(
+                      CommonBaseAPI.removeAllTokenStatus,
+                      EventTrackingId ?? EventTracking_Id.New,
+                      CurrentUserId
+                  );
+
+            if (!SkipNotifications)
+            {
+
+                var OnTokenRemovedLocal = OnTokenRemoved;
+                if (OnTokenRemovedLocal is not null)
+                {
+                    try
+                    {
+                        foreach (var tokenStatus in existingTokenStatus)
+                            await OnTokenRemovedLocal(tokenStatus.Token);
+                    }
+                    catch (Exception e)
+                    {
+                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(RemoveAllTokens), " ", nameof(OnTokenRemoved), ": ",
+                                    Environment.NewLine, e.Message,
+                                    Environment.NewLine, e.StackTrace ?? "");
+                    }
+                }
+
+            }
+
+            return RemoveResult<IEnumerable<Token>>.Success(EventTrackingId, existingTokenStatus.Select(tokenStatus => tokenStatus.Token));
+
+        }
+
+        #endregion
+
+        #region RemoveAllTokens(IncludeTokens,        SkipNotifications = false)
+
+        /// <summary>
+        /// Remove all tokens.
+        /// </summary>
+        /// <param name="IncludeTokens">A token filter.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(Func<Token, Boolean>  IncludeTokens,
+                                                                            Boolean               SkipNotifications   = false,
+                                                                            EventTracking_Id?     EventTrackingId     = null,
+                                                                            User_Id?              CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var removedTokens  = new List<Token>();
+            var failedTokens   = new List<RemoveResult<Token>>();
+
+            foreach (var token_status in tokenStatus.Values.Where(tokenstatus => IncludeTokens(tokenstatus.Token)).ToArray())
+            {
+
+                var result = await RemoveToken(token_status.Token.Id,
+                                               SkipNotifications);
+
+                if (result.IsSuccess)
+                    removedTokens.Add(token_status.Token);
+                else
+                    failedTokens. Add(result);
+
+            }
+
+            return removedTokens.Any() && !failedTokens.Any()
+                       ? RemoveResult<IEnumerable<Token>>.Success(EventTrackingId, removedTokens)
+
+                       : !removedTokens.Any() && !failedTokens.Any()
+                             ? RemoveResult<IEnumerable<Token>>.NoOperation(EventTrackingId, Array.Empty<Token>())
+                             : RemoveResult<IEnumerable<Token>>.Failed     (EventTrackingId, failedTokens.Select(token => token.Data)!,
+                                                                            failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
+
+        }
+
+        #endregion
+
+        #region RemoveAllTokens(IncludeTokenIds,      SkipNotifications = false)
+
+        /// <summary>
+        /// Remove all matching tokens.
+        /// </summary>
+        /// <param name="IncludeTokenIds">A token identification filter.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(Func<Token_Id, Boolean>  IncludeTokenIds,
+                                                                            Boolean                  SkipNotifications   = false,
+                                                                            EventTracking_Id?        EventTrackingId     = null,
+                                                                            User_Id?                 CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var removedTokens  = new List<Token>();
+            var failedTokens   = new List<RemoveResult<Token>>();
+
+            foreach (var token_status in tokenStatus.Where  (kvp => IncludeTokenIds(kvp.Key)).
+                                                     Select (kvp => kvp.Value).
+                                                     ToArray())
+            {
+
+                var result = await RemoveToken(token_status.Token.Id,
+                                               SkipNotifications);
+
+                if (result.IsSuccess)
+                    removedTokens.Add(token_status.Token);
+                else
+                    failedTokens. Add(result);
+
+            }
+
+            return removedTokens.Any() && !failedTokens.Any()
+                       ? RemoveResult<IEnumerable<Token>>.Success(EventTrackingId, removedTokens)
+
+                       : !removedTokens.Any() && !failedTokens.Any()
+                             ? RemoveResult<IEnumerable<Token>>.NoOperation(EventTrackingId, Array.Empty<Token>())
+                             : RemoveResult<IEnumerable<Token>>.Failed     (EventTrackingId, failedTokens.Select(token => token.Data)!,
+                                                                             failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
+
+        }
+
+        #endregion
+
+        #region RemoveAllTokens(CountryCode, PartyId, SkipNotifications = false)
+
+        /// <summary>
+        /// Remove all tokens owned by the given party.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party.</param>
+        /// <param name="PartyId">The identification of the party.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(CountryCode        CountryCode,
+                                                                            Party_Id           PartyId,
+                                                                            Boolean            SkipNotifications   = false,
+                                                                            EventTracking_Id?  EventTrackingId     = null,
+                                                                            User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var removedTokens  = new List<Token>();
+            var failedTokens   = new List<RemoveResult<Token>>();
+
+            foreach (var token_status in tokenStatus.Values.Where  (tokenstatus => CountryCode == tokenstatus.Token.CountryCode &&
+                                                                                   PartyId     == tokenstatus.Token.PartyId).
+                                                            ToArray())
+            {
+
+                var result = await RemoveToken(token_status.Token.Id,
+                                               SkipNotifications);
+
+                if (result.IsSuccess)
+                    removedTokens.Add(token_status.Token);
+                else
+                    failedTokens. Add(result);
+
+            }
+
+            return removedTokens.Any() && !failedTokens.Any()
+                       ? RemoveResult<IEnumerable<Token>>.Success(EventTrackingId, removedTokens)
+
+                       : !removedTokens.Any() && !failedTokens.Any()
+                             ? RemoveResult<IEnumerable<Token>>.NoOperation(EventTrackingId, Array.Empty<Token>())
+                             : RemoveResult<IEnumerable<Token>>.Failed     (EventTrackingId, failedTokens.Select(token => token.Data)!,
+                                                                             failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
+
+        }
+
+        #endregion
+
+        #endregion
+
         #region Sessions
 
         #region Data
@@ -9543,742 +10189,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                              ? RemoveResult<IEnumerable<Session>>.NoOperation(EventTrackingId, Array.Empty<Session>())
                              : RemoveResult<IEnumerable<Session>>.Failed     (EventTrackingId, failedSessions.Select(session => session.Data)!,
                                                                               failedSessions.Select(session => session.ErrorResponse).AggregateWith(", "));
-
-        }
-
-        #endregion
-
-        #endregion
-
-        #region Tokens
-
-        #region Data
-
-        private readonly ConcurrentDictionary<Token_Id, TokenStatus> tokenStatus = [];
-
-
-        public delegate Task               OnTokenAddedDelegate  (Token     Token);
-        public delegate Task               OnTokenChangedDelegate(Token     Token);
-        public delegate Task               OnTokenRemovedDelegate(Token     Token);
-        public delegate Task<TokenStatus>  OnVerifyTokenDelegate (Token_Id  TokenId);
-
-        public event OnTokenAddedDelegate?    OnTokenAdded;
-        public event OnTokenChangedDelegate?  OnTokenChanged;
-        public event OnTokenRemovedDelegate?  OnTokenRemoved;
-        public event OnVerifyTokenDelegate?   OnVerifyToken;
-
-        #endregion
-
-
-        #region AddToken           (Token, Status = AllowedTypes.ALLOWED,                          SkipNotifications = false)
-
-        public async Task<AddResult<Token>> AddToken(Token              Token,
-                                                     AllowedType?       Status              = null,
-                                                     Boolean            SkipNotifications   = false,
-                                                     EventTracking_Id?  EventTrackingId     = null,
-                                                     User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            var newTokenStatus = new TokenStatus(Token,
-                                                 Status ??= AllowedType.ALLOWED);
-
-            if (tokenStatus.TryAdd(Token.Id, newTokenStatus))
-            {
-
-                Token.CommonAPI = this;
-
-                await LogAsset(
-                          CommonBaseAPI.addTokenStatus,
-                          newTokenStatus.ToJSON(CustomTokenStatusSerializer,
-                                                true,
-                                                CustomTokenSerializer,
-                                                CustomLocationReferenceSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
-                      );
-
-                if (!SkipNotifications)
-                {
-
-                    var OnTokenAddedLocal = OnTokenAdded;
-                    if (OnTokenAddedLocal is not null)
-                    {
-                        try
-                        {
-                            OnTokenAddedLocal(Token).Wait();
-                        }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenAddedLocal), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace ?? "");
-                        }
-                    }
-
-                }
-
-                return AddResult<Token>.Success(EventTrackingId, Token);
-
-            }
-
-            return AddResult<Token>.Failed(EventTrackingId, Token,
-                                           "TryAdd(Token.Id, newTokenStatus) failed!");
-
-        }
-
-        #endregion
-
-        #region AddTokenIfNotExists(Token, Status = AllowedTypes.ALLOWED,                          SkipNotifications = false)
-
-        public async Task<AddResult<Token>> AddTokenIfNotExists(Token              Token,
-                                                                AllowedType?       Status              = null,
-                                                                Boolean            SkipNotifications   = false,
-                                                                EventTracking_Id?  EventTrackingId     = null,
-                                                                User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            var newTokenStatus = new TokenStatus(Token,
-                                                 Status ??= AllowedType.ALLOWED);
-
-            if (tokenStatus.TryAdd(Token.Id, newTokenStatus))
-            {
-
-                Token.CommonAPI = this;
-
-                await LogAsset(
-                          CommonBaseAPI.addTokenStatus,
-                          newTokenStatus.ToJSON(CustomTokenStatusSerializer,
-                                                true,
-                                                CustomTokenSerializer,
-                                                CustomLocationReferenceSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
-                      );
-
-                if (!SkipNotifications)
-                {
-
-                    var OnTokenAddedLocal = OnTokenAdded;
-                    if (OnTokenAddedLocal is not null)
-                    {
-                        try
-                        {
-                            OnTokenAddedLocal(Token).Wait();
-                        }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenAdded), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace ?? "");
-                        }
-                    }
-
-                }
-
-                return AddResult<Token>.Success(EventTrackingId, Token);
-
-            }
-
-            return AddResult<Token>.NoOperation(EventTrackingId, Token);
-
-        }
-
-        #endregion
-
-        #region AddOrUpdateToken   (Token, Status = AllowedTypes.ALLOWED, AllowDowngrades = false, SkipNotifications = false)
-
-        public async Task<AddOrUpdateResult<Token>> AddOrUpdateToken(Token              Token,
-                                                                     AllowedType?       Status              = null,
-                                                                     Boolean?           AllowDowngrades     = false,
-                                                                     Boolean            SkipNotifications   = false,
-                                                                     EventTracking_Id?  EventTrackingId     = null,
-                                                                     User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            #region Update an existing token
-
-            if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
-            {
-
-                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                    Token.LastUpdated <= existingTokenStatus.Token.LastUpdated)
-                {
-                    return AddOrUpdateResult<Token>.Failed(EventTrackingId, Token,
-                                                           "The 'lastUpdated' timestamp of the new token must be newer then the timestamp of the existing token!");
-                }
-
-                var updatedTokenStatus = new TokenStatus(Token,
-                                                         Status ?? existingTokenStatus.Status);
-
-                tokenStatus[Token.Id] = updatedTokenStatus;
-                Token.CommonAPI = this;
-
-                await LogAsset(
-                          CommonBaseAPI.addOrUpdateTokenStatus,
-                          updatedTokenStatus.ToJSON(CustomTokenStatusSerializer,
-                                                    true,
-                                                    CustomTokenSerializer,
-                                                    CustomLocationReferenceSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
-                      );
-
-                if (!SkipNotifications)
-                {
-
-                    var OnTokenChangedLocal = OnTokenChanged;
-                    if (OnTokenChangedLocal is not null)
-                    {
-                        try
-                        {
-                            OnTokenChangedLocal(Token).Wait();
-                        }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenChanged), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace ?? "");
-                        }
-                    }
-
-                }
-
-                return AddOrUpdateResult<Token>.Updated(EventTrackingId, Token);
-
-            }
-
-            #endregion
-
-            #region Add a new token
-
-            var newTokenStatus = new TokenStatus(Token,
-                                                 Status ??= AllowedType.ALLOWED);
-
-            if (tokenStatus.TryAdd(Token.Id, newTokenStatus))
-            {
-
-                Token.CommonAPI = this;
-
-                await LogAsset(
-                          CommonBaseAPI.addOrUpdateTokenStatus,
-                          newTokenStatus.ToJSON(CustomTokenStatusSerializer,
-                                                true,
-                                                CustomTokenSerializer,
-                                                CustomLocationReferenceSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
-                      );
-
-                if (!SkipNotifications)
-                {
-
-                    var OnTokenAddedLocal = OnTokenAdded;
-                    if (OnTokenAddedLocal is not null)
-                    {
-                        try
-                        {
-                            OnTokenAddedLocal(Token).Wait();
-                        }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenAdded), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace ?? "");
-                        }
-                    }
-
-                }
-
-                return AddOrUpdateResult<Token>.Created(EventTrackingId, Token);
-
-            }
-
-            return AddOrUpdateResult<Token>.Failed(EventTrackingId, Token,
-                                                   "AddOrUpdateToken(Token.Id, Token) failed!");
-
-            #endregion
-
-        }
-
-        #endregion
-
-        #region UpdateToken        (Token, Status = AllowedTypes.ALLOWED, AllowDowngrades = false, SkipNotifications = false)
-
-        public async Task<UpdateResult<Token>> UpdateToken(Token              Token,
-                                                           AllowedType?       Status              = null,
-                                                           Boolean?           AllowDowngrades     = false,
-                                                           Boolean            SkipNotifications   = false,
-                                                           EventTracking_Id?  EventTrackingId     = null,
-                                                           User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            #region Validate AllowDowngrades
-
-            if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
-            {
-
-                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                    Token.LastUpdated <= existingTokenStatus.Token.LastUpdated)
-                {
-
-                    return UpdateResult<Token>.Failed(EventTrackingId, Token,
-                                                      "The 'lastUpdated' timestamp of the new charging token must be newer then the timestamp of the existing token!");
-
-                }
-
-            }
-            else
-                return UpdateResult<Token>.Failed(EventTrackingId, Token,
-                                                  $"Unknown token identification '{Token.Id}'!");
-
-            #endregion
-
-
-            var updatedTokenStatus = new TokenStatus(Token,
-                                                     AllowedType.ALLOWED);
-
-            if (tokenStatus.TryUpdate(Token.Id,
-                                      updatedTokenStatus,
-                                      existingTokenStatus))
-            {
-
-                Token.CommonAPI = this;
-
-                await LogAsset(
-                          CommonBaseAPI.updateTokenStatus,
-                          updatedTokenStatus.ToJSON(CustomTokenStatusSerializer,
-                                                    true,
-                                                    CustomTokenSerializer,
-                                                    CustomLocationReferenceSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
-                      );
-
-                if (!SkipNotifications)
-                {
-
-                    var OnTokenChangedLocal = OnTokenChanged;
-                    if (OnTokenChangedLocal is not null)
-                    {
-                        try
-                        {
-                            OnTokenChangedLocal(Token).Wait();
-                        }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateToken), " ", nameof(OnTokenChanged), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace ?? "");
-                        }
-                    }
-
-                }
-
-                return UpdateResult<Token>.Success(EventTrackingId, Token);
-
-            }
-
-            return UpdateResult<Token>.Failed(EventTrackingId, Token,
-                                              "UpdateToken(Token.Id, Token, Token) failed!");
-
-        }
-
-        #endregion
-
-
-        #region TryPatchToken      (Token, TokenPatch, AllowDowngrades = false, SkipNotifications = false)
-
-        public async Task<PatchResult<Token>> TryPatchToken(Token              Token,
-                                                            JObject            TokenPatch,
-                                                            Boolean?           AllowDowngrades     = false,
-                                                            Boolean            SkipNotifications   = false,
-                                                            EventTracking_Id?  EventTrackingId     = null,
-                                                            User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            if (TokenPatch is null || !TokenPatch.HasValues)
-                return PatchResult<Token>.Failed(EventTrackingId, Token,
-                                                 "The given token patch must not be null or empty!");
-
-            if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
-            {
-
-                var patchResult = existingTokenStatus.Token.TryPatch(TokenPatch,
-                                                                     AllowDowngrades ?? this.AllowDowngrades ?? false);
-
-                if (patchResult.IsSuccess &&
-                    patchResult.PatchedData is not null)
-                {
-
-                    var patchedTokenStatus = new TokenStatus(patchResult.PatchedData,
-                                                             existingTokenStatus.Status);
-
-                    tokenStatus[Token.Id] = patchedTokenStatus;
-
-                    await LogAsset(
-                              CommonBaseAPI.updateTokenStatus,
-                              patchedTokenStatus.ToJSON(CustomTokenStatusSerializer,
-                                                        true,
-                                                        CustomTokenSerializer,
-                                                        CustomLocationReferenceSerializer),
-                              EventTrackingId ?? EventTracking_Id.New,
-                              CurrentUserId
-                          );
-
-                    if (!SkipNotifications)
-                    {
-
-                        var OnTokenChangedLocal = OnTokenChanged;
-                        if (OnTokenChangedLocal is not null)
-                        {
-                            try
-                            {
-                                OnTokenChangedLocal(patchResult.PatchedData).Wait();
-                            }
-                            catch (Exception e)
-                            {
-                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryPatchToken), " ", nameof(OnTokenChanged), ": ",
-                                            Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace ?? "");
-                            }
-                        }
-
-                    }
-
-                }
-
-                return patchResult;
-
-            }
-
-            else
-                return PatchResult<Token>.Failed(EventTrackingId, Token,
-                                                  "The given token does not exist!");
-
-        }
-
-        #endregion
-
-
-        #region TokenExists(TokenId)
-
-        public Boolean TokenExists(Token_Id TokenId)
-
-            => tokenStatus.ContainsKey(TokenId);
-
-        #endregion
-
-        #region TryGetToken(TokenId, out TokenWithStatus)
-
-        public Boolean TryGetToken(Token_Id         TokenId,
-                                   out TokenStatus  TokenWithStatus)
-        {
-
-            if (tokenStatus.TryGetValue(TokenId, out TokenWithStatus))
-                return true;
-
-            TokenWithStatus = default;
-            return false;
-
-        }
-
-        #endregion
-
-        #region GetTokens  (IncludeToken)
-
-        public IEnumerable<TokenStatus> GetTokens(Func<Token, Boolean> IncludeToken)
-
-            => IncludeToken is null
-                   ? tokenStatus.Values
-                   : tokenStatus.Values.Where(tokenStatus => IncludeToken(tokenStatus.Token));
-
-        #endregion
-
-        #region GetTokens  (IncludeTokenStatus = null)
-
-        public IEnumerable<TokenStatus> GetTokens(Func<TokenStatus, Boolean>? IncludeTokenStatus = null)
-
-            => IncludeTokenStatus is null
-                   ? tokenStatus.Values
-                   : tokenStatus.Values.Where(IncludeTokenStatus);
-
-        #endregion
-
-        #region GetTokens  (CountryCode, PartyId)
-
-        public IEnumerable<TokenStatus> GetTokens(CountryCode  CountryCode,
-                                                  Party_Id     PartyId)
-
-            => tokenStatus.Values.Where(tokenStatus => tokenStatus.Token.CountryCode == CountryCode &&
-                                                       tokenStatus.Token.PartyId     == PartyId);
-
-        #endregion
-
-
-        #region RemoveToken    (Token,                SkipNotifications = false)
-
-        /// <summary>
-        /// Remove the given token.
-        /// </summary>
-        /// <param name="Token">A token.</param>
-        /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public Task<RemoveResult<Token>> RemoveToken(Token              Token,
-                                                     Boolean            SkipNotifications   = false,
-                                                     EventTracking_Id?  EventTrackingId     = null,
-                                                     User_Id?           CurrentUserId       = null)
-
-            => RemoveToken(Token.Id,
-                           SkipNotifications);
-
-        #endregion
-
-        #region RemoveToken    (TokenId,              SkipNotifications = false)
-
-        /// <summary>
-        /// Remove the given token.
-        /// </summary>
-        /// <param name="TokenId">A unique identification of a token.</param>
-        /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<Token>> RemoveToken(Token_Id           TokenId,
-                                                           Boolean            SkipNotifications   = false,
-                                                           EventTracking_Id?  EventTrackingId     = null,
-                                                           User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            if (tokenStatus.Remove(TokenId, out var existingTokenStatus))
-            {
-
-                await LogAsset(
-                          CommonBaseAPI.removeTokenStatus,
-                          existingTokenStatus.Token.ToJSON(true,
-                                                           CustomTokenSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
-                      );
-
-                if (!SkipNotifications)
-                {
-
-                    var OnTokenRemovedLocal = OnTokenRemoved;
-                    if (OnTokenRemovedLocal is not null)
-                    {
-                        try
-                        {
-                            await OnTokenRemovedLocal(existingTokenStatus.Token);
-                        }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(RemoveToken), " ", nameof(OnTokenRemoved), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace ?? "");
-                        }
-                    }
-
-                }
-
-                return RemoveResult<Token>.Success(EventTrackingId, existingTokenStatus.Token);
-
-            }
-
-            return RemoveResult<Token>.Failed(EventTrackingId,
-                                              "RemoveToken(TokenId, ...) failed!");
-
-        }
-
-        #endregion
-
-        #region RemoveAllTokens(                      SkipNotifications = false)
-
-        /// <summary>
-        /// Remove all tokens.
-        /// </summary>
-        /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(Boolean            SkipNotifications   = false,
-                                                                            EventTracking_Id?  EventTrackingId     = null,
-                                                                            User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            var existingTokenStatus = tokenStatus.Values.ToArray();
-
-            tokenStatus.Clear();
-
-            await LogAsset(
-                      CommonBaseAPI.removeAllTokenStatus,
-                      EventTrackingId ?? EventTracking_Id.New,
-                      CurrentUserId
-                  );
-
-            if (!SkipNotifications)
-            {
-
-                var OnTokenRemovedLocal = OnTokenRemoved;
-                if (OnTokenRemovedLocal is not null)
-                {
-                    try
-                    {
-                        foreach (var tokenStatus in existingTokenStatus)
-                            await OnTokenRemovedLocal(tokenStatus.Token);
-                    }
-                    catch (Exception e)
-                    {
-                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(RemoveAllTokens), " ", nameof(OnTokenRemoved), ": ",
-                                    Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace ?? "");
-                    }
-                }
-
-            }
-
-            return RemoveResult<IEnumerable<Token>>.Success(EventTrackingId, existingTokenStatus.Select(tokenStatus => tokenStatus.Token));
-
-        }
-
-        #endregion
-
-        #region RemoveAllTokens(IncludeTokens,        SkipNotifications = false)
-
-        /// <summary>
-        /// Remove all tokens.
-        /// </summary>
-        /// <param name="IncludeTokens">A token filter.</param>
-        /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(Func<Token, Boolean>  IncludeTokens,
-                                                                            Boolean               SkipNotifications   = false,
-                                                                            EventTracking_Id?     EventTrackingId     = null,
-                                                                            User_Id?              CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            var removedTokens  = new List<Token>();
-            var failedTokens   = new List<RemoveResult<Token>>();
-
-            foreach (var token_status in tokenStatus.Values.Where(tokenstatus => IncludeTokens(tokenstatus.Token)).ToArray())
-            {
-
-                var result = await RemoveToken(token_status.Token.Id,
-                                               SkipNotifications);
-
-                if (result.IsSuccess)
-                    removedTokens.Add(token_status.Token);
-                else
-                    failedTokens. Add(result);
-
-            }
-
-            return removedTokens.Any() && !failedTokens.Any()
-                       ? RemoveResult<IEnumerable<Token>>.Success(EventTrackingId, removedTokens)
-
-                       : !removedTokens.Any() && !failedTokens.Any()
-                             ? RemoveResult<IEnumerable<Token>>.NoOperation(EventTrackingId, Array.Empty<Token>())
-                             : RemoveResult<IEnumerable<Token>>.Failed     (EventTrackingId, failedTokens.Select(token => token.Data)!,
-                                                                            failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
-
-        }
-
-        #endregion
-
-        #region RemoveAllTokens(IncludeTokenIds,      SkipNotifications = false)
-
-        /// <summary>
-        /// Remove all matching tokens.
-        /// </summary>
-        /// <param name="IncludeTokenIds">A token identification filter.</param>
-        /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(Func<Token_Id, Boolean>  IncludeTokenIds,
-                                                                            Boolean                  SkipNotifications   = false,
-                                                                            EventTracking_Id?        EventTrackingId     = null,
-                                                                            User_Id?                 CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            var removedTokens  = new List<Token>();
-            var failedTokens   = new List<RemoveResult<Token>>();
-
-            foreach (var token_status in tokenStatus.Where  (kvp => IncludeTokenIds(kvp.Key)).
-                                                     Select (kvp => kvp.Value).
-                                                     ToArray())
-            {
-
-                var result = await RemoveToken(token_status.Token.Id,
-                                               SkipNotifications);
-
-                if (result.IsSuccess)
-                    removedTokens.Add(token_status.Token);
-                else
-                    failedTokens. Add(result);
-
-            }
-
-            return removedTokens.Any() && !failedTokens.Any()
-                       ? RemoveResult<IEnumerable<Token>>.Success(EventTrackingId, removedTokens)
-
-                       : !removedTokens.Any() && !failedTokens.Any()
-                             ? RemoveResult<IEnumerable<Token>>.NoOperation(EventTrackingId, Array.Empty<Token>())
-                             : RemoveResult<IEnumerable<Token>>.Failed     (EventTrackingId, failedTokens.Select(token => token.Data)!,
-                                                                             failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
-
-        }
-
-        #endregion
-
-        #region RemoveAllTokens(CountryCode, PartyId, SkipNotifications = false)
-
-        /// <summary>
-        /// Remove all tokens owned by the given party.
-        /// </summary>
-        /// <param name="CountryCode">The country code of the party.</param>
-        /// <param name="PartyId">The identification of the party.</param>
-        /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(CountryCode        CountryCode,
-                                                                            Party_Id           PartyId,
-                                                                            Boolean            SkipNotifications   = false,
-                                                                            EventTracking_Id?  EventTrackingId     = null,
-                                                                            User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            var removedTokens  = new List<Token>();
-            var failedTokens   = new List<RemoveResult<Token>>();
-
-            foreach (var token_status in tokenStatus.Values.Where  (tokenstatus => CountryCode == tokenstatus.Token.CountryCode &&
-                                                                                   PartyId     == tokenstatus.Token.PartyId).
-                                                            ToArray())
-            {
-
-                var result = await RemoveToken(token_status.Token.Id,
-                                               SkipNotifications);
-
-                if (result.IsSuccess)
-                    removedTokens.Add(token_status.Token);
-                else
-                    failedTokens. Add(result);
-
-            }
-
-            return removedTokens.Any() && !failedTokens.Any()
-                       ? RemoveResult<IEnumerable<Token>>.Success(EventTrackingId, removedTokens)
-
-                       : !removedTokens.Any() && !failedTokens.Any()
-                             ? RemoveResult<IEnumerable<Token>>.NoOperation(EventTrackingId, Array.Empty<Token>())
-                             : RemoveResult<IEnumerable<Token>>.Failed     (EventTrackingId, failedTokens.Select(token => token.Data)!,
-                                                                             failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
 
         }
 

@@ -1024,7 +1024,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                           );
 
                 if (!versions.TryGetValue(versionId.Value, out var versionURL))
-                    response = OCPIResponse<Version_Id, VersionDetail>.Error("Unkown version identification!");
+                    response = OCPIResponse<Version_Id, VersionDetail>.Error("Unknown version identification!");
 
                 else
                 {

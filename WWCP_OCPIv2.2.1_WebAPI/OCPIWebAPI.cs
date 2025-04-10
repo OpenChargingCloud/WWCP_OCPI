@@ -563,7 +563,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                              EventIdentification:      DebugLogId,
                                              URLTemplate:              this.URLPathPrefix + "debugLog",
                                              MaxNumberOfCachedEvents:  10000,
-                                             RetryIntervall:           TimeSpan.FromSeconds(5),
+                                             RetryInterval :           TimeSpan.FromSeconds(5),
                                              EnableLogging:            true,
                                              LogfilePrefix:            LogfilePrefix
                                          );
@@ -705,7 +705,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                              ).ToUTF8Bytes(),
                                 Connection                 = ConnectionType.Close,
                                 Vary                       = "Accept"
-                            }.AsImmutable)
+                            }.AsImmutable),
+
+                    AllowReplacement: URLReplacement.Allow
 
                 );
 
@@ -735,7 +737,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                              ).ToUTF8Bytes(),
                                 Connection                 = ConnectionType.Close,
                                 Vary                       = "Accept"
-                            }.AsImmutable)
+                            }.AsImmutable),
+
+                    AllowReplacement: URLReplacement.Allow
 
                 );
 

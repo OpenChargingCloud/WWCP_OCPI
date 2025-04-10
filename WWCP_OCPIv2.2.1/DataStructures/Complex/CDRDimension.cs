@@ -270,139 +270,144 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Static definitions
 
-        #region CURRENT         (Volume)
+        #region CURRENT          (Volume)
 
         /// <summary>
-        /// Average charging current during this ChargingPeriod: defined in A (Ampere). When negative, the current is flowing from the EV to the grid.
+        /// Average charging current during this ChargingPeriod: defined in A (Ampere).
+        /// When negative, the current is flowing from the EV to the grid.
         /// </summary>
-        public static CDRDimension CURRENT(Decimal Volume)        // Session only!
+        public static CDRDimension CURRENT(Ampere Volume)        // Session only!
 
             => new (CDRDimensionType.CURRENT,
-                    Volume);
+                    Volume.Value);
 
         #endregion
 
-        #region ENERGY          (Volume)
+        #region ENERGY           (Volume)
 
         /// <summary>
-        /// Total amount of energy (dis-)charged during this ChargingPeriod: defined in kWh. When negative, more energy was feed into the grid then charged into the EV. Default step_size is 1.
+        /// Total amount of energy (dis-)charged during this ChargingPeriod: defined in kWh.
+        /// When negative, more energy was feed into the grid then charged into the EV.
+        /// Default step_size is 1.
         /// </summary>
-        public static CDRDimension ENERGY(Decimal Volume)
+        public static CDRDimension ENERGY(WattHour Volume)
 
             => new (CDRDimensionType.ENERGY,
-                    Volume);
+                    Volume.kWh);
 
         #endregion
 
-        #region ENERGY_EXPORT   (Volume)
+        #region ENERGY_EXPORT    (Volume)
 
         /// <summary>
         /// Total amount of energy feed back into the grid: defined in kWh.
         /// </summary>
-        public static CDRDimension ENERGY_EXPORT(Decimal Volume)   // Session only!
+        public static CDRDimension ENERGY_EXPORT(WattHour Volume)   // Session only!
 
             => new (CDRDimensionType.ENERGY_EXPORT,
-                    Volume);
+                    Volume.kWh);
 
         #endregion
 
-        #region ENERGY_IMPORT   (Volume)
+        #region ENERGY_IMPORT    (Volume)
 
         /// <summary>
         /// Total amount of energy charged, defined in kWh.
         /// </summary>
-        public static CDRDimension ENERGY_IMPORT(Decimal Volume)   // Session only!
+        public static CDRDimension ENERGY_IMPORT(WattHour Volume)   // Session only!
 
             => new (CDRDimensionType.ENERGY_IMPORT,
-                    Volume);
+                    Volume.kWh);
 
         #endregion
 
-        #region MAX_CURRENT     (Volume)
+        #region MAX_CURRENT      (Volume)
 
         /// <summary>
         /// Sum of the maximum current over all phases, reached during this ChargingPeriod: defined in A (Ampere).
         /// </summary>
-        public static CDRDimension MAX_CURRENT(Decimal Volume)
+        public static CDRDimension MAX_CURRENT(Ampere Volume)
 
             => new (CDRDimensionType.MAX_CURRENT,
-                    Volume);
+                    Volume.Value);
 
         #endregion
 
-        #region MIN_CURRENT     (Volume)
+        #region MIN_CURRENT      (Volume)
 
         /// <summary>
-        /// Sum of the minimum current over all phases, reached during this ChargingPeriod, when negative, current has flowed from the EV to the grid. Defined in A (Ampere).
+        /// Sum of the minimum current over all phases, reached during this ChargingPeriod,
+        /// when negative, current has flowed from the EV to the grid. Defined in A (Ampere).
         /// </summary>
-        public static CDRDimension MIN_CURRENT(Decimal Volume)
+        public static CDRDimension MIN_CURRENT(Ampere Volume)
 
             => new (CDRDimensionType.MIN_CURRENT,
-                    Volume);
+                    Volume.Value);
 
         #endregion
 
-        #region MAX_POWER       (Volume)
+        #region MAX_POWER        (Volume)
 
         /// <summary>
         /// Maximum power reached during this ChargingPeriod: defined in kW (Kilowatt).
         /// </summary>
-        public static CDRDimension MAX_POWER(Decimal Volume)
+        public static CDRDimension MAX_POWER(Watt Volume)
 
             => new (CDRDimensionType.MAX_POWER,
-                    Volume);
+                    Volume.kW);
 
         #endregion
 
-        #region MIN_POWER       (Volume)
+        #region MIN_POWER        (Volume)
 
         /// <summary>
         /// Minimum power reached during this ChargingPeriod: defined in kW (Kilowatt), when negative, the power has flowed from the EV to the grid.
         /// </summary>
-        public static CDRDimension MIN_POWER(Decimal Volume)
+        public static CDRDimension MIN_POWER(Watt Volume)
 
             => new (CDRDimensionType.MIN_POWER,
-                    Volume);
+                    Volume.kW);
 
         #endregion
 
-        #region PARKING_TIME    (Volume)
+        #region PARKING_TIME     (Volume)
 
         /// <summary>
         /// Time during this ChargingPeriod not charging: defined in hours, default step_size multiplier is 1 second.
         /// </summary>
-        public static CDRDimension PARKING_TIME(Decimal Volume)
+        public static CDRDimension PARKING_TIME(TimeSpan Volume)
 
             => new (CDRDimensionType.PARKING_TIME,
-                    Volume);
+                    (Decimal) Volume.TotalHours);
 
         #endregion
 
-        #region POWER           (Volume)
+        #region POWER            (Volume)
 
         /// <summary>
         /// Average power during this ChargingPeriod: defined in kW (Kilowatt). When negative, the power is flowing from the EV to the grid.
         /// </summary>
-        public static CDRDimension POWER(Decimal Volume)          // Session only!
+        public static CDRDimension POWER(Watt Volume)          // Session only!
 
             => new (CDRDimensionType.POWER,
-                    Volume);
+                    Volume.kW);
 
         #endregion
 
-        #region RESERVATION_TIME(Volume)
+        #region RESERVATION_TIME (Volume)
 
         /// <summary>
-        /// Time during this ChargingPeriod Charge Point has been reserved and not yet been in use for this customer: defined in hours, default step_size multiplier is 1 second.
+        /// Time during this ChargingPeriod Charge Point has been reserved and not yet been
+        /// in use for this customer: defined in hours, default step_size multiplier is 1 second.
         /// </summary>
-        public static CDRDimension RESERVATION_TIME(Decimal Volume)
+        public static CDRDimension RESERVATION_TIME(TimeSpan Volume)
 
             => new (CDRDimensionType.RESERVATION_TIME,
-                    Volume);
+                    (Decimal) Volume.TotalHours);
 
         #endregion
 
-        #region STATE_OF_CHARGE (Volume)
+        #region STATE_OF_CHARGE  (Volume)
 
         /// <summary>
         /// Current state of charge of the EV, in percentage, values allowed: 0 to 100. See note below.
@@ -414,15 +419,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region TIME            (Volume)
+        #region TIME             (Volume)
 
         /// <summary>
         /// Time charging during this ChargingPeriod: defined in hours, default step_size multiplier is 1 second.
         /// </summary>
-        public static CDRDimension TIME(Decimal Volume)
+        public static CDRDimension TIME(TimeSpan Volume)
 
             => new (CDRDimensionType.TIME,
-                    Volume);
+                    (Decimal) Volume.TotalHours);
 
         #endregion
 

@@ -89,7 +89,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The amount of kWhs that had been charged.
         /// </summary>
         [Mandatory]
-        public   Decimal                             kWh                          { get; }
+        public   WattHour                            kWh                          { get; }
 #pragma warning restore IDE1006 // Naming Styles
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                        Party_Id                                          PartyId,
                        Session_Id                                        Id,
                        DateTime                                          Start,
-                       Decimal                                           kWh,
+                       WattHour                                          kWh,
                        CDRToken                                          CDRToken,
                        AuthMethod                                        AuthMethod,
                        Location_Id                                       LocationId,
@@ -498,7 +498,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (!JSON.ParseMandatory("kwh",
                                          "charged kWh",
-                                         out Decimal KWh,
+                                         WattHour.TryParseKWh,
+                                         out WattHour KWh,
                                          out ErrorResponse))
                 {
                     return false;
@@ -585,12 +586,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #endregion
 
-                #region Parse MeterId                   [optional]
+                #region Parse EnergyMeterId             [optional]
 
                 if (JSON.ParseOptional("meter_id",
                                        "meter identification",
                                        EnergyMeter_Id.TryParse,
-                                       out EnergyMeter_Id? MeterId,
+                                       out EnergyMeter_Id? energyMeterId,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -697,7 +698,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                               End,
                               authorizationReference,
-                              MeterId,
+                              energyMeterId,
                               ChargingPeriods,
                               TotalCosts,
 
@@ -756,7 +757,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                ? new JProperty("end_date_time",             End.             Value.ToIso8601())
                                : null,
 
-                                 new JProperty("kwh",                       kWh),
+                                 new JProperty("kwh",                       kWh.kWh),
 
                                  new JProperty("cdr_token",                 CDRToken.              ToJSON(CustomCDRTokenSerializer)),
                                  new JProperty("auth_method",               AuthMethod.            ToString()),
@@ -824,12 +825,114 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                    End,
                    AuthorizationReference?.Clone(),
-                   EnergyMeterId?.               Clone(),
+                   EnergyMeterId?.         Clone(),
                    ChargingPeriods.Select(chargingPeriod => chargingPeriod.Clone()).ToArray(),
                    TotalCosts,
 
                    Created,
                    LastUpdated
+               );
+
+        #endregion
+
+
+        #region Update(AdditionalConsumption = null, NewStatus = null, SessionEnd = null, NewTotalCosts = null, AdditionalChargingPeriods = null)
+
+        /// <summary>
+        /// Update the session with the given parameters.
+        /// </summary>
+        /// <param name="AdditionalConsumption">An optional amount of additional energy consumption.</param>
+        /// <param name="NewStatus">An optional new status of the session.</param>
+        /// <param name="SessionEnd">An optional new end timestamp of the session.</param>
+        /// <param name="NewTotalCosts">An optional new total costs of the session.</param>
+        /// <param name="AdditionalChargingPeriods">Optional additional charging periods.</param>
+        public Session Update(WattHour?                     AdditionalConsumption       = null,
+                              SessionStatusType?            NewStatus                   = null,
+                              DateTime?                     SessionEnd                  = null,
+                              Price?                        NewTotalCosts               = null,
+                              IEnumerable<ChargingPeriod>?  AdditionalChargingPeriods   = null)
+
+            => AdditionalConsumption     is null &&
+               NewStatus                 is null &&
+               SessionEnd                is null &&
+               NewTotalCosts             is null &&
+               AdditionalChargingPeriods is null
+
+                   ? this
+                   : new (
+
+                         CountryCode:              CountryCode,
+                         PartyId:                  PartyId,
+                         Id:                       Id,
+                         Start:                    Start,
+                         kWh:                      AdditionalConsumption.HasValue
+                                                       ? kWh + AdditionalConsumption.Value
+                                                       : kWh,
+                         CDRToken:                 CDRToken,
+                         AuthMethod:               AuthMethod,
+                         LocationId:               LocationId,
+                         EVSEUId:                  EVSEUId,
+                         ConnectorId:              ConnectorId,
+                         Currency:                 Currency,
+                         Status:                   NewStatus ?? Status,
+
+                         End:                      SessionEnd,
+                         AuthorizationReference:   AuthorizationReference,
+                         EnergyMeterId:            EnergyMeterId,
+                         ChargingPeriods:          AdditionalChargingPeriods?.Count() > 0
+                                                       ? ChargingPeriods.Concat(AdditionalChargingPeriods)
+                                                       : ChargingPeriods,
+                         TotalCosts:               NewTotalCosts ?? TotalCosts,
+
+                         Created:                  null,
+                         LastUpdated:              null
+
+                     );
+
+        #endregion
+
+        #region Complete(SessionEndTimestamp, AdditionalConsumption = null, NewTotalCosts = null, AdditionalChargingPeriods = null)
+
+        /// <summary>
+        /// Update the session with the given parameters and set the status to 'completed'.
+        /// </summary>
+        /// <param name="SessionEndTimestamp">The timestamp when the session is completed.</param>
+        /// <param name="AdditionalConsumption">An optional amount of additional energy consumption.</param>
+        /// <param name="NewTotalCosts">An optional new total costs of the session.</param>
+        /// <param name="AdditionalChargingPeriods">Optional additional charging periods.</param>
+        public Session Complete(DateTime                      SessionEndTimestamp,
+                                WattHour?                     AdditionalConsumption       = null,
+                                Price?                        NewTotalCosts               = null,
+                                IEnumerable<ChargingPeriod>?  AdditionalChargingPeriods   = null)
+
+            => new (
+
+                   CountryCode:              CountryCode,
+                   PartyId:                  PartyId,
+                   Id:                       Id,
+                   Start:                    Start,
+                   kWh:                      AdditionalConsumption.HasValue
+                                                 ? kWh + AdditionalConsumption.Value
+                                                 : kWh,
+                   CDRToken:                 CDRToken,
+                   AuthMethod:               AuthMethod,
+                   LocationId:               LocationId,
+                   EVSEUId:                  EVSEUId,
+                   ConnectorId:              ConnectorId,
+                   Currency:                 Currency,
+                   Status:                   SessionStatusType.COMPLETED,
+
+                   End:                      SessionEndTimestamp,
+                   AuthorizationReference:   AuthorizationReference,
+                   EnergyMeterId:            EnergyMeterId,
+                   ChargingPeriods:          AdditionalChargingPeriods?.Count() > 0
+                                                 ? ChargingPeriods.Concat(AdditionalChargingPeriods)
+                                                 : ChargingPeriods,
+                   TotalCosts:               NewTotalCosts ?? TotalCosts,
+
+                   Created:                  null,
+                   LastUpdated:              null
+
                );
 
         #endregion

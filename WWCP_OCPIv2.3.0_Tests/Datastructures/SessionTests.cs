@@ -55,7 +55,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                Party_Id.   Parse("GEF"),
                                Session_Id. Parse("Session0001"),
                                DateTime.Parse("2020-08-21T00:00:00.000Z").ToUniversalTime(), // Start
-                               1.11M, // KWh
+                               WattHour.ParseKWh(1.11M),
                                new CDRToken(
                                    CountryCode.Parse("DE"),
                                    Party_Id.   Parse("GEF"),
@@ -72,28 +72,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                DateTime.Parse("2020-08-22T00:00:00.000Z").ToUniversalTime(), // End
                                AuthorizationReference.Parse("Auth1234"),
                                EnergyMeter_Id.Parse("Meter0001"),
-                               new ChargingPeriod[] {
+                               [
                                    ChargingPeriod.Create(
                                        DateTime.Parse("2020-04-12T18:21:49Z").ToUniversalTime(),
-                                       new[] {
+                                       [
                                            CDRDimension.Create(
                                                CDRDimensionType.ENERGY,
                                                1.33M
                                            )
-                                       },
+                                       ],
                                        Tariff_Id.Parse("DE*GEF*T0001")
                                    ),
                                    ChargingPeriod.Create(
                                        DateTime.Parse("2020-04-12T18:21:50Z").ToUniversalTime(),
-                                       new[] {
+                                       [
                                            CDRDimension.Create(
                                                CDRDimensionType.TIME,
                                                5.12M
                                            )
-                                       },
+                                       ],
                                        Tariff_Id.Parse("DE*GEF*T0002")
                                    )
-                               },
+                               ],
 
                                // Total Costs
                                new Price(

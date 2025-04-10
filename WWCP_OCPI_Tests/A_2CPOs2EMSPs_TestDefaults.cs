@@ -735,18 +735,18 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             cpo1CommonAPI_v2_2_1  = new OCPIv2_2_1.HTTP.CommonAPI(
 
-                                        OurCredentialRoles:                  [
-                                                                                 new OCPIv2_2_1.CredentialsRole(
-                                                                                     CountryCode:       CountryCode.Parse("DE"),
-                                                                                     PartyId:           Party_Id.   Parse("GEF"),
-                                                                                     Role:              Role.CPO,
-                                                                                     BusinessDetails:   new BusinessDetails(
-                                                                                                            $"GraphDefined OCPI {OCPIv2_2_1.Version.String} CPO #1 Services",
-                                                                                                            URL.Parse("https://www.graphdefined.com/cpo1")
-                                                                                                        ),
-                                                                                     AllowDowngrades:   true
-                                                                                 )
-                                                                             ],
+                                        //OurCredentialRoles:                  [
+                                        //                                         new OCPIv2_2_1.CredentialsRole(
+                                        //                                             CountryCode:       CountryCode.Parse("DE"),
+                                        //                                             PartyId:           Party_Id.   Parse("GEF"),
+                                        //                                             Role:              Role.CPO,
+                                        //                                             BusinessDetails:   new BusinessDetails(
+                                        //                                                                    $"GraphDefined OCPI {OCPIv2_2_1.Version.String} CPO #1 Services",
+                                        //                                                                    URL.Parse("https://www.graphdefined.com/cpo1")
+                                        //                                                                ),
+                                        //                                             AllowDowngrades:   true
+                                        //                                         )
+                                        //                                     ],
                                         DefaultCountryCode:                  CountryCode.Parse("DE"),
                                         DefaultPartyId:                      Party_Id.   Parse("GEF"),
 
@@ -891,18 +891,18 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             cpo2CommonAPI_v2_2_1  = new OCPIv2_2_1.HTTP.CommonAPI(
 
-                                        OurCredentialRoles:                  [
-                                                                                 new OCPIv2_2_1.CredentialsRole(
-                                                                                     CountryCode:       CountryCode.Parse("DE"),
-                                                                                     PartyId:           Party_Id.   Parse("GEF"),
-                                                                                     Role:              Role.CPO,
-                                                                                     BusinessDetails:   new BusinessDetails(
-                                                                                                            $"GraphDefined OCPI {OCPIv2_2_1.Version.String} CPO #2 Services",
-                                                                                                            URL.Parse("https://www.graphdefined.com/cpo2")
-                                                                                                        ),
-                                                                                     AllowDowngrades:   true
-                                                                                 )
-                                                                             ],
+                                        //OurCredentialRoles:                  [
+                                        //                                         new OCPIv2_2_1.CredentialsRole(
+                                        //                                             CountryCode:       CountryCode.Parse("DE"),
+                                        //                                             PartyId:           Party_Id.   Parse("GEF"),
+                                        //                                             Role:              Role.CPO,
+                                        //                                             BusinessDetails:   new BusinessDetails(
+                                        //                                                                    $"GraphDefined OCPI {OCPIv2_2_1.Version.String} CPO #2 Services",
+                                        //                                                                    URL.Parse("https://www.graphdefined.com/cpo2")
+                                        //                                                                ),
+                                        //                                             AllowDowngrades:   true
+                                        //                                         )
+                                        //                                     ],
                                         DefaultCountryCode:                  CountryCode.Parse("DE"),
                                         DefaultPartyId:                      Party_Id.   Parse("GEF"),
 
@@ -1047,18 +1047,18 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             emsp1CommonAPI_v2_2_1 = new OCPIv2_2_1.HTTP.CommonAPI(
 
-                                        OurCredentialRoles:                  [
-                                                                                 new OCPIv2_2_1.CredentialsRole(
-                                                                                     CountryCode:       CountryCode.Parse("DE"),
-                                                                                     PartyId:           Party_Id.   Parse("GDF"),
-                                                                                     Role:              Role.EMSP,
-                                                                                     BusinessDetails:   new BusinessDetails(
-                                                                                                            $"GraphDefined OCPI {OCPIv2_2_1.Version.String} EMSP #1 Services",
-                                                                                                            URL.Parse("https://www.graphdefined.com/emsp1")
-                                                                                                        ),
-                                                                                     AllowDowngrades:   true
-                                                                                 )
-                                                                             ],
+                                        //OurCredentialRoles:                  [
+                                        //                                         new OCPIv2_2_1.CredentialsRole(
+                                        //                                             CountryCode:       CountryCode.Parse("DE"),
+                                        //                                             PartyId:           Party_Id.   Parse("GDF"),
+                                        //                                             Role:              Role.EMSP,
+                                        //                                             BusinessDetails:   new BusinessDetails(
+                                        //                                                                    $"GraphDefined OCPI {OCPIv2_2_1.Version.String} EMSP #1 Services",
+                                        //                                                                    URL.Parse("https://www.graphdefined.com/emsp1")
+                                        //                                                                ),
+                                        //                                             AllowDowngrades:   true
+                                        //                                         )
+                                        //                                     ],
                                         DefaultCountryCode:                  CountryCode.Parse("DE"),
                                         DefaultPartyId:                      Party_Id.   Parse("GDF"),
 
@@ -1203,18 +1203,18 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             emsp2CommonAPI_v2_2_1 = new OCPIv2_2_1.HTTP.CommonAPI(
 
-                                        OurCredentialRoles:                  [
-                                                                                 new OCPIv2_2_1.CredentialsRole(
-                                                                                     CountryCode:       CountryCode.Parse("DE"),
-                                                                                     PartyId:           Party_Id.   Parse("GDF"),
-                                                                                     Role:              Role.EMSP,
-                                                                                     BusinessDetails:   new BusinessDetails(
-                                                                                                            $"GraphDefined OCPI {OCPIv2_2_1.Version.String} EMSP #2 Services",
-                                                                                                            URL.Parse("https://www.graphdefined.com/emsp2")
-                                                                                                        ),
-                                                                                     AllowDowngrades:   true
-                                                                                 )
-                                                                             ],
+                                        //OurCredentialRoles:                  [
+                                        //                                         new OCPIv2_2_1.CredentialsRole(
+                                        //                                             CountryCode:       CountryCode.Parse("DE"),
+                                        //                                             PartyId:           Party_Id.   Parse("GDF"),
+                                        //                                             Role:              Role.EMSP,
+                                        //                                             BusinessDetails:   new BusinessDetails(
+                                        //                                                                    $"GraphDefined OCPI {OCPIv2_2_1.Version.String} EMSP #2 Services",
+                                        //                                                                    URL.Parse("https://www.graphdefined.com/emsp2")
+                                        //                                                                ),
+                                        //                                             AllowDowngrades:   true
+                                        //                                         )
+                                        //                                     ],
                                         DefaultCountryCode:                  CountryCode.Parse("DE"),
                                         DefaultPartyId:                      Party_Id.   Parse("GDF"),
 
@@ -1504,7 +1504,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                         Role.CPO
                                                                                     ),
                                                        CredentialsRoles:            [
-                                                                                        cpo1CommonAPI_v2_2_1.OurCredentialRoles.First()
+                                                                                        OCPIv2_2_1.CredentialsRole.From(cpo1CommonAPI_v2_2_1.Parties.First())
                                                                                     ],
                                                        AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
                                                        AccessStatus:                AccessStatus.ALLOWED,
@@ -1524,7 +1524,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                         Role.CPO
                                                                                     ),
                                                        CredentialsRoles:            [
-                                                                                        cpo1CommonAPI_v2_3.OurCredentialRoles.First()
+                                                                                        OCPIv2_3_0.CredentialsRole.From(cpo1CommonAPI_v2_3.Parties.First())
                                                                                     ],
                                                        AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
                                                        AccessStatus:                AccessStatus.ALLOWED,
@@ -1565,7 +1565,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                         Role.CPO
                                                                                     ),
                                                        CredentialsRoles:            [
-                                                                                        cpo1CommonAPI_v2_2_1.OurCredentialRoles.First()
+                                                                                        OCPIv2_2_1.CredentialsRole.From(cpo1CommonAPI_v2_2_1.Parties.First())
                                                                                     ],
                                                        AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
                                                        AccessStatus:                AccessStatus.ALLOWED,
@@ -1585,7 +1585,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                         Role.CPO
                                                                                     ),
                                                        CredentialsRoles:            [
-                                                                                        cpo1CommonAPI_v2_3.OurCredentialRoles.First()
+                                                                                        OCPIv2_3_0.CredentialsRole.From(cpo1CommonAPI_v2_3.Parties.First())
                                                                                     ],
                                                        AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
                                                        AccessStatus:                AccessStatus.ALLOWED,
@@ -1627,7 +1627,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                         Role.EMSP
                                                                                     ),
                                                        CredentialsRoles:            [
-                                                                                        emsp1CommonAPI_v2_2_1.OurCredentialRoles.First()
+                                                                                        OCPIv2_2_1.CredentialsRole.From(emsp1CommonAPI_v2_2_1.Parties.First())
                                                                                         //new OCPIv2_2_1.CredentialsRole(
                                                                                         //    CountryCode:       emsp1CommonAPI_v2_2_1.OurCountryCode,
                                                                                         //    PartyId:           emsp1CommonAPI_v2_2_1.OurPartyId,
@@ -1655,7 +1655,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                         Role.EMSP
                                                                                     ),
                                                        CredentialsRoles:            [
-                                                                                        emsp1CommonAPI_v2_3.OurCredentialRoles.First()
+                                                                                        OCPIv2_3_0.CredentialsRole.From(emsp1CommonAPI_v2_3.Parties.First())
                                                                                         //new OCPIv2_3_0.CredentialsRole(
                                                                                         //    CountryCode:       emsp1CommonAPI_v2_3.OurCountryCode,
                                                                                         //    PartyId:           emsp1CommonAPI_v2_3.OurPartyId,

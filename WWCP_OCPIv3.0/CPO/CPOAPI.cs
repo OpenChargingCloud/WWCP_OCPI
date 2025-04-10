@@ -2238,8 +2238,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
                                         var allTariffs       = CommonAPI.//GetTariffs(tariff => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == tariff.CountryCode &&
                                                                          //                                                                role.PartyId     == tariff.PartyId)).
-                                                                         GetTariffs(tariff => CommonAPI.OurCredentialRoles.Any(credentialRole => //credentialRole.CountryCode == tariff.CountryCode &&
-                                                                                                                                                 credentialRole.PartyId     == tariff.PartyId)).
+                                                                         GetTariffs(tariff => CommonAPI.Parties.Any(partyData => partyData.Id == tariff.PartyId)).
                                                                          ToArray();
 
                                         var filteredTariffs  = allTariffs.Where(tariff => !filters.From.HasValue || tariff.LastUpdated >  filters.From.Value).

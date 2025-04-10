@@ -829,7 +829,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                        ChargingPeriods:     [
                                                                 new ChargingPeriod(
                                                                     start1,
-                                                                    [ CDRDimension.ENERGY(1) ]
+                                                                    [ CDRDimension.ENERGY(WattHour.ParseKWh(1M)) ]
                                                                 )
                                                             ],
                                        TotalCost:           0,
@@ -872,7 +872,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                        ChargingPeriods:     [
                                                                 new ChargingPeriod(
                                                                     start2,
-                                                                    [ CDRDimension.ENERGY(2) ]
+                                                                    [ CDRDimension.ENERGY(WattHour.ParseKWh(2M)) ]
                                                                 )
                                                             ],
                                        TotalCost:           0,
@@ -915,7 +915,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                        ChargingPeriods:     [
                                                                 new ChargingPeriod(
                                                                     start3,
-                                                                    [ CDRDimension.ENERGY(2) ]
+                                                                    [ CDRDimension.ENERGY(WattHour.ParseKWh(2M)) ]
                                                                 )
                                                             ],
                                        TotalCost:           0,
@@ -1693,7 +1693,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                       ChargingPeriods:     [
                                                                new ChargingPeriod(
                                                                    start1,
-                                                                   [ CDRDimension.ENERGY(1) ]
+                                                                   [ CDRDimension.ENERGY(WattHour.ParseKWh(1M)) ]
                                                                )
                                                            ],
                                       TotalCost:           0,
@@ -1816,7 +1816,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                       ChargingPeriods:     [
                                                                new ChargingPeriod(
                                                                    chargingStart,
-                                                                   [ CDRDimension.ENERGY(1) ]
+                                                                   [ CDRDimension.ENERGY(WattHour.ParseKWh(1M)) ]
                                                                )
                                                            ],
                                       TotalCost:           0,

@@ -24,6 +24,7 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
+using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
 
 #endregion
 
@@ -329,6 +330,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                );
 
         #endregion
+
+
+        public static CredentialsRole From(PartyData PartyData)
+
+            => new (
+                   PartyData.Id.CountryCode,
+                   PartyData.Id.Party,
+                   PartyData.Role,
+                   PartyData.BusinessDetails,
+                   PartyData.AllowDowngrades
+               );
 
 
         #region Operator overloading

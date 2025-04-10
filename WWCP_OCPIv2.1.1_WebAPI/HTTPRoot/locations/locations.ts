@@ -203,7 +203,7 @@ function StartLocations()
                             evse.status_schedule.map(statusSchedule => statusSchedule.status + " (" + statusSchedule.period_begin + (statusSchedule.period_end ? " => " + statusSchedule.period_end : "") + ")").join("<br />")
                         );
 
-                    // energy_meter (OCC Calibration Law Extentions)
+                    // energy_meter (OCC Calibration Law Extensions)
 
                     const connectorsDiv     = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
                     connectorsDiv.className = "connectors";

@@ -256,9 +256,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         {
 
                             chargingPeriod.Dimensions.Add(
-                                CDRDimension.ENERGY(
-                                    chargingPeriod.Energy.kWh
-                                )
+                                CDRDimension.ENERGY(chargingPeriod.Energy)
                             );
 
                             chargingPeriod.EnergyPrice     = priceComponent.Price;
@@ -273,7 +271,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             chargingPeriod.Dimensions.Add(
                                 CDRDimension.TIME(
-                                    Convert.ToDecimal((chargingPeriod.StopTimestamp!.Value - chargingPeriod.StartTimestamp).TotalHours)
+                                    chargingPeriod.StopTimestamp!.Value - chargingPeriod.StartTimestamp
                                 )
                             );
 
@@ -631,7 +629,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomEVSEEnergyMeterSerializer">A delegate to serialize custom EVSE energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
@@ -789,7 +787,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            this.LastUpdated.          GetHashCode()        * 19 ^
 
                           (this.CostDetails?.         GetHashCode()  ?? 0) * 17 ^
-                          (this.EnergyMeterId?.             GetHashCode()  ?? 0) * 13 ^
+                          (this.EnergyMeterId?.       GetHashCode()  ?? 0) * 13 ^
                           (this.EnergyMeter?.         GetHashCode()  ?? 0) * 11 ^
                            this.TransparencySoftwares.CalcHashCode()       *  7 ^
                           (this.SignedData?.          GetHashCode()  ?? 0) *  5 ^

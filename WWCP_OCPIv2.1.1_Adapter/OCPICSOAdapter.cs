@@ -2577,6 +2577,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
+        public Func<WWCP.ChargeDetailRecord, CDR, CDR?>? CustomCDRMapper { get; set; }
+
         #region SendChargeDetailRecord (ChargeDetailRecord,  TransmissionType = Enqueue, ...)
 
         /// <summary>
@@ -2625,13 +2627,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<WWCP.SendCDRsResult>
 
-            SendChargeDetailRecords(IEnumerable<WWCP.ChargeDetailRecord>  ChargeDetailRecords,
-                                    WWCP.TransmissionTypes                TransmissionType    = WWCP.TransmissionTypes.Enqueue,
+            SendChargeDetailRecords(IEnumerable<WWCP.ChargeDetailRecord>      ChargeDetailRecords,
+                                    WWCP.TransmissionTypes                    TransmissionType    = WWCP.TransmissionTypes.Enqueue,
 
-                                    DateTime?                             Timestamp           = null,
-                                    EventTracking_Id?                     EventTrackingId     = null,
-                                    TimeSpan?                             RequestTimeout      = null,
-                                    CancellationToken                     CancellationToken   = default)
+                                    DateTime?                                 Timestamp           = null,
+                                    EventTracking_Id?                         EventTrackingId     = null,
+                                    TimeSpan?                                 RequestTimeout      = null,
+                                    CancellationToken                         CancellationToken   = default)
 
         {
 
@@ -2808,6 +2810,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                       CommonAPI.GetTariff,
                                       ref warnings
                                   );
+
+                        if (cdr is not null && CustomCDRMapper is not null)
+                            cdr = CustomCDRMapper(chargeDetailRecord, cdr);
 
                         if (cdr is null)
                         {

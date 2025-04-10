@@ -1255,7 +1255,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                ? new JProperty("total_fixed_cost",             TotalFixedCosts.         Value.ToJSON(CustomPriceSerializer))
                                : null,
 
-                                 new JProperty("total_energy",                 TotalEnergy),
+                                 new JProperty("total_energy",                 TotalEnergy.kWh),
 
                            TotalEnergyCost.HasValue
                                ? new JProperty("total_energy_cost",            TotalEnergyCost.         Value.ToJSON(CustomPriceSerializer))
