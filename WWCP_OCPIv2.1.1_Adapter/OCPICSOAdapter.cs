@@ -643,26 +643,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region AddRemoteParty(...)
 
-        public Task<Boolean> AddRemoteParty(OCPI.CountryCode               CountryCode,
-                                            OCPI.Party_Id                  PartyId,
-                                            OCPI.Role                      Role,
-                                            OCPI.BusinessDetails           BusinessDetails,
+        public Task<Boolean> AddRemoteParty(OCPI.CountryCode          CountryCode,
+                                            OCPI.Party_Id             PartyId,
+                                            OCPI.Role                 Role,
+                                            OCPI.BusinessDetails      BusinessDetails,
 
-                                            OCPI.AccessToken               AccessToken,
+                                            OCPI.AccessToken          AccessToken,
 
-                                            OCPI.AccessToken               RemoteAccessToken,
-                                            URL                            RemoteVersionsURL,
-                                            IEnumerable<OCPI.Version_Id>?  RemoteVersionIds            = null,
-                                            OCPI.Version_Id?               SelectedVersionId           = null,
+                                            OCPI.AccessToken          RemoteAccessToken,
+                                            URL                       RemoteVersionsURL,
+                                            IEnumerable<Version_Id>?  RemoteVersionIds            = null,
+                                            Version_Id?               SelectedVersionId           = null,
 
-                                            DateTime?                      LocalAccessNotBefore        = null,
-                                            DateTime?                      LocalAccessNotAfter         = null,
+                                            DateTime?                 LocalAccessNotBefore        = null,
+                                            DateTime?                 LocalAccessNotAfter         = null,
 
-                                            Boolean?                       AccessTokenBase64Encoding   = null,
-                                            Boolean?                       AllowDowngrades             = false,
-                                            OCPI.AccessStatus              AccessStatus                = OCPI.AccessStatus.      ALLOWED,
-                                            OCPI.RemoteAccessStatus?       RemoteStatus                = OCPI.RemoteAccessStatus.ONLINE,
-                                            OCPI.PartyStatus               PartyStatus                 = OCPI.PartyStatus.       ENABLED)
+                                            Boolean?                  AccessTokenBase64Encoding   = null,
+                                            Boolean?                  AllowDowngrades             = false,
+                                            OCPI.AccessStatus         AccessStatus                = OCPI.AccessStatus.      ALLOWED,
+                                            OCPI.RemoteAccessStatus?  RemoteStatus                = OCPI.RemoteAccessStatus.ONLINE,
+                                            OCPI.PartyStatus          PartyStatus                 = OCPI.PartyStatus.       ENABLED)
 
             => CommonAPI.AddRemoteParty(CountryCode,
                                         PartyId,

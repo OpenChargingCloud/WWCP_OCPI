@@ -391,8 +391,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                             OCPI.AccessToken               RemoteAccessToken,
                                             URL                            RemoteVersionsURL,
-                                            IEnumerable<OCPI.Version_Id>?  RemoteVersionIds            = null,
-                                            OCPI.Version_Id?               SelectedVersionId           = null,
+                                            IEnumerable<Version_Id>?       RemoteVersionIds            = null,
+                                            Version_Id?                    SelectedVersionId           = null,
 
                                             DateTime?                      LocalAccessNotBefore        = null,
                                             DateTime?                      LocalAccessNotAfter         = null,
