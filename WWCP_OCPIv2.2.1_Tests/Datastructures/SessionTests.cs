@@ -106,31 +106,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             #endregion
 
-            var JSON = session1.ToJSON();
+            var json = session1.ToJSON();
 
-            ClassicAssert.AreEqual("DE",                              JSON["country_code"].                    Value<String>());
-            ClassicAssert.AreEqual("GEF",                             JSON["party_id"].                        Value<String>());
-            ClassicAssert.AreEqual("Session0001",                     JSON["id"].                              Value<String>());
-            ClassicAssert.AreEqual("2020-08-21T00:00:00.000Z",        JSON["start_date_time"].                 Value<String>());
-            ClassicAssert.AreEqual("2020-08-22T00:00:00.000Z",        JSON["end_date_time"].                   Value<String>());
-            ClassicAssert.AreEqual(1.11,                              JSON["kwh"].                             Value<Decimal>());
-            ClassicAssert.AreEqual("1234",                            JSON["cdr_token"]["uid"].                Value<String>());
-            ClassicAssert.AreEqual("RFID",                            JSON["cdr_token"]["type"].               Value<String>());
-            ClassicAssert.AreEqual("Contract0815",                    JSON["cdr_token"]["contract_id"].        Value<String>());
-            ClassicAssert.AreEqual("AUTH_REQUEST",                    JSON["auth_method"].                     Value<String>());
-            ClassicAssert.AreEqual("Auth1234",                        JSON["authorization_reference"].         Value<String>());
-            ClassicAssert.AreEqual("LOC0001",                         JSON["location_id"].                     Value<String>());
-            ClassicAssert.AreEqual("EVSE0001",                        JSON["evse_uid"].                        Value<String>());
-            ClassicAssert.AreEqual("C1",                              JSON["connector_id"].                    Value<String>());
-            ClassicAssert.AreEqual("Meter0001",                       JSON["meter_id"].                        Value<String>());
-            ClassicAssert.AreEqual("EUR",                             JSON["currency"].                        Value<String>());
+            ClassicAssert.AreEqual("DE",                              json["country_code"].                    Value<String>());
+            ClassicAssert.AreEqual("GEF",                             json["party_id"].                        Value<String>());
+            ClassicAssert.AreEqual("Session0001",                     json["id"].                              Value<String>());
+            ClassicAssert.AreEqual("2020-08-21T00:00:00.000Z",        json["start_date_time"].                 Value<String>());
+            ClassicAssert.AreEqual("2020-08-22T00:00:00.000Z",        json["end_date_time"].                   Value<String>());
+            ClassicAssert.AreEqual(1.11,                              json["kwh"].                             Value<Decimal>());
+            ClassicAssert.AreEqual("1234",                            json["cdr_token"]["uid"].                Value<String>());
+            ClassicAssert.AreEqual("RFID",                            json["cdr_token"]["type"].               Value<String>());
+            ClassicAssert.AreEqual("Contract0815",                    json["cdr_token"]["contract_id"].        Value<String>());
+            ClassicAssert.AreEqual("AUTH_REQUEST",                    json["auth_method"].                     Value<String>());
+            ClassicAssert.AreEqual("Auth1234",                        json["authorization_reference"].         Value<String>());
+            ClassicAssert.AreEqual("LOC0001",                         json["location_id"].                     Value<String>());
+            ClassicAssert.AreEqual("EVSE0001",                        json["evse_uid"].                        Value<String>());
+            ClassicAssert.AreEqual("C1",                              json["connector_id"].                    Value<String>());
+            ClassicAssert.AreEqual("Meter0001",                       json["meter_id"].                        Value<String>());
+            ClassicAssert.AreEqual("EUR",                             json["currency"].                        Value<String>());
             //ClassicAssert.AreEqual("Stadtwerke Jena-Ost",             JSON["charging_periods"]["xxx"].Value<String>());
-            ClassicAssert.AreEqual(1.12,                              JSON["total_cost"]["excl_vat"].          Value<Decimal>());
-            ClassicAssert.AreEqual(2.24,                              JSON["total_cost"]["incl_vat"].          Value<Decimal>());
-            ClassicAssert.AreEqual("ACTIVE",                          JSON["status"].                          Value<String>());
-            ClassicAssert.AreEqual("2020-09-21T00:00:00.000Z",        JSON["last_updated"].                    Value<String>());
+            ClassicAssert.AreEqual(1.12,                              json["total_cost"]["excl_vat"].          Value<Decimal>());
+            ClassicAssert.AreEqual(2.24,                              json["total_cost"]["incl_vat"].          Value<Decimal>());
+            ClassicAssert.AreEqual("ACTIVE",                          json["status"].                          Value<String>());
+            ClassicAssert.AreEqual("2020-09-21T00:00:00.000Z",        json["last_updated"].                    Value<String>());
 
-            ClassicAssert.IsTrue(Session.TryParse(JSON, out var session2, out var errorResponse));
+            ClassicAssert.IsTrue(Session.TryParse(json, out var session2, out var errorResponse));
             ClassicAssert.IsNull(errorResponse);
 
             ClassicAssert.AreEqual(session1.CountryCode,              session2.CountryCode);
@@ -169,7 +169,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             #region Define JSON
 
-            var JSON = @"{
+            var json = @"{
                            ""country_code"":    ""NL"",
                            ""party_id"":        ""STK"",
                            ""id"":              ""101"",
@@ -196,7 +196,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             #endregion
 
-            var result = Session.TryParse(JObject.Parse(JSON), out var parsedSession, out var errorResponse);
+            var result = Session.TryParse(JObject.Parse(json), out var parsedSession, out var errorResponse);
             ClassicAssert.IsTrue   (result, errorResponse);
             ClassicAssert.IsNotNull(parsedSession);
             ClassicAssert.IsNull   (errorResponse);
@@ -238,7 +238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             #region Define JSON
 
-            var JSON = @"{
+            var json = @"{
                            ""country_code"":        ""BE"",
                            ""party_id"":            ""BEC"",
                            ""id"":                  ""101"",
@@ -293,7 +293,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             #endregion
 
-            var result = Session.TryParse(JObject.Parse(JSON), out var parsedSession, out var errorResponse);
+            var result = Session.TryParse(JObject.Parse(json), out var parsedSession, out var errorResponse);
             ClassicAssert.IsTrue   (result, errorResponse);
             ClassicAssert.IsNotNull(parsedSession);
             ClassicAssert.IsNull   (errorResponse);
