@@ -39,106 +39,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
     public static class ExtensionMethods
     {
 
-        #region ParseRoamingNetwork(this HTTPRequest, HTTPServer, out RoamingNetwork, out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the roaming network
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
-        /// <param name="HTTPServer">A HTTP server.</param>
-        /// <param name="RoamingNetwork">The roaming network.</param>
-        /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when roaming network was found; false else.</returns>
-        public static Boolean ParseRoamingNetwork(this HTTPRequest                             HTTPRequest,
-                                                  HTTPServer<RoamingNetworks, RoamingNetwork>  HTTPServer,
-                                                  out RoamingNetwork?                          RoamingNetwork,
-                                                  out HTTPResponse?                            HTTPResponse)
-        {
-
-            if (HTTPServer is null)
-                Console.WriteLine("HTTPServer == null!");
-
-            #region Initial checks
-
-            if (HTTPRequest is null)
-                throw new ArgumentNullException("HTTPRequest",  "The given HTTP request must not be null!");
-
-            if (HTTPServer  is null)
-                throw new ArgumentNullException("HTTPServer",   "The given HTTP server must not be null!");
-
-            #endregion
-
-            RoamingNetwork_Id RoamingNetworkId;
-                              RoamingNetwork    = null;
-                              HTTPResponse      = null;
-
-            if (HTTPRequest.ParsedURLParameters.Length < 1)
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = HTTPServer.DefaultServerName,
-                    Date            = Timestamp.Now,
-                };
-
-                return false;
-
-            }
-
-            if (!RoamingNetwork_Id.TryParse(HTTPRequest.ParsedURLParameters[0], out RoamingNetworkId))
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = HTTPServer.DefaultServerName,
-                    Date            = Timestamp.Now,
-                    ContentType     = HTTPContentType.Application.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid RoamingNetworkId!"" }".ToUTF8Bytes()
-                };
-
-                return false;
-
-            }
-
-            RoamingNetwork  = HTTPServer.
-                                  GetAllTenants(HTTPRequest.Host).
-                                  FirstOrDefault(roamingnetwork => roamingnetwork.Id == RoamingNetworkId);
-
-            if (RoamingNetwork is null) {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.NotFound,
-                    Server          = HTTPServer.DefaultServerName,
-                    Date            = Timestamp.Now,
-                    ContentType     = HTTPContentType.Application.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Unknown RoamingNetworkId!"" }".ToUTF8Bytes()
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-
         #region ParseRemotePartyId(this HTTPRequest, OCPIWebAPI, out RemotePartyId,                  out HTTPResponse)
 
         /// <summary>
-        /// Parse the given HTTP request and return the defibrillator identification
+        /// Parse the given HTTP request and return the remote party identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
         /// <param name="HTTPRequest">A HTTP request.</param>
         /// <param name="OCPIWebAPI">The OCPI WebAPI.</param>
-        /// <param name="RemotePartyId">The parsed unique defibrillator identification.</param>
+        /// <param name="RemotePartyId">The parsed unique remote party identification.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when defibrillator identification was found; false else.</returns>
+        /// <returns>True, when remote party identification was found; false else.</returns>
         public static Boolean ParseRemotePartyId(this HTTPRequest          HTTPRequest,
                                                  OCPIWebAPI                OCPIWebAPI,
                                                  out RemoteParty_Id?       RemotePartyId,
@@ -163,7 +75,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
+                    Server          = OCPIWebAPI.HTTPBaseAPI.HTTPServer.DefaultServerName,
                     Date            = Timestamp.Now,
                     Connection      = ConnectionType.Close
                 };
@@ -179,7 +91,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
+                    Server          = OCPIWebAPI.HTTPBaseAPI.HTTPServer.DefaultServerName,
                     Date            = Timestamp.Now,
                     ContentType     = HTTPContentType.Application.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid remote party identification!"" }".ToUTF8Bytes(),
@@ -199,16 +111,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         #region ParseRemoteParty  (this HTTPRequest, OCPIWebAPI, out RemotePartyId, out RemoteParty, out HTTPResponse)
 
         /// <summary>
-        /// Parse the given HTTP request and return the defibrillator identification
+        /// Parse the given HTTP request and return the remote party identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
         /// <param name="HTTPRequest">A HTTP request.</param>
         /// <param name="OCPIWebAPI">The OCPI WebAPI.</param>
-        /// <param name="RemotePartyId">The parsed unique defibrillator identification.</param>
-        /// <param name="RemoteParty">The resolved defibrillator.</param>
+        /// <param name="RemotePartyId">The parsed unique remote party identification.</param>
+        /// <param name="RemoteParty">The resolved remote party.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when defibrillator identification was found; false else.</returns>
+        /// <returns>True, when remote party identification was found; false else.</returns>
         public static Boolean ParseRemoteParty(this HTTPRequest          HTTPRequest,
                                                OCPIWebAPI                OCPIWebAPI,
                                                out RemoteParty_Id?       RemotePartyId,
@@ -234,7 +146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
+                    Server          = OCPIWebAPI.HTTPBaseAPI.HTTPServer.DefaultServerName,
                     Date            = Timestamp.Now,
                     Connection      = ConnectionType.Close
                 };
@@ -249,7 +161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
+                    Server          = OCPIWebAPI.HTTPBaseAPI.HTTPServer.DefaultServerName,
                     Date            = Timestamp.Now,
                     ContentType     = HTTPContentType.Application.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid remote party identification!"" }".ToUTF8Bytes(),
@@ -264,7 +176,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
-                    Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
+                    Server          = OCPIWebAPI.HTTPBaseAPI.HTTPServer.DefaultServerName,
                     Date            = Timestamp.Now,
                     ContentType     = HTTPContentType.Application.JSON_UTF8,
                     Content         = @"{ ""description"": ""Unknown remote party identification!"" }".ToUTF8Bytes(),
@@ -281,14 +193,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         #endregion
 
-
     }
 
 
     /// <summary>
     /// A HTTP API providing advanced OCPI data structures.
     /// </summary>
-    public class OCPIWebAPI : HTTPAPI
+    public class OCPIWebAPI : AHTTPAPIExtension<OCPI.WebAPI.OCPIWebAPI>,
+                              IHTTPAPIExtension<OCPI.WebAPI.OCPIWebAPI>
     {
 
         #region Data
@@ -363,9 +275,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         #region Properties
 
         /// <summary>
+        /// The extended HTTP API.
+        /// </summary>
+        //public OCPI.WebAPI.OCPIWebAPI  HTTPBaseAPI      { get; }
+
+
+
+        //public HTTPPath                URLPathPrefix    { get; }
+
+        /// <summary>
         /// The HTTP URI prefix.
         /// </summary>
-        public HTTPPath?                                    OverlayURLPathPrefix    { get; }
+        //public HTTPPath?                                    HTTPBaseAPI.OverlayURLPathPrefix    { get; }
 
         /// <summary>
         /// The HTTP URI prefix.
@@ -378,18 +299,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         /// <summary>
         /// The HTTP realm, if HTTP Basic Authentication is used.
         /// </summary>
-        public String                                       HTTPRealm               { get; }
+      //  public String                                       HTTPRealm               { get; }
 
         /// <summary>
         /// An enumeration of logins for an optional HTTP Basic Authentication.
         /// </summary>
-        public IEnumerable<KeyValuePair<String, String>>    HTTPLogins              { get; }
+        //public IEnumerable<KeyValuePair<String, String>>    HTTPLogins              { get; }
 
 
         /// <summary>
         /// Send debug information via HTTP Server Sent Events.
         /// </summary>
-        public HTTPEventSource<JObject>                     DebugLog                { get; }
+    //    public HTTPEventSource<JObject>                     DebugLog                { get; }
 
 
         public CommonAPI                                    CommonAPI               { get; }
@@ -459,43 +380,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         /// <summary>
         /// Attach the OCPI WebAPI to the given HTTP server.
         /// </summary>
-        /// <param name="HTTPServer">A HTTP server.</param>
+        /// <param name="HTTPBaseAPI.HTTPServer">A HTTP server.</param>
         /// <param name="WebAPIURLPathPrefix">An optional prefix for the HTTP URIs.</param>
         /// <param name="HTTPRealm">The HTTP realm, if HTTP Basic Authentication is used.</param>
         /// <param name="HTTPLogins">An enumeration of logins for an optional HTTP Basic Authentication.</param>
-        public OCPIWebAPI(CommonAPI                                   CommonAPI,
+        public OCPIWebAPI(OCPI.WebAPI.OCPIWebAPI                      BaseWebAPI,
+                          CommonAPI                                   CommonAPI,
 
-                          HTTPServer                                  HTTPServer,
-                          HTTPHostname?                               HTTPHostname              = null,
-                          String?                                     ExternalDNSName           = "",
                           String?                                     HTTPServiceName           = DefaultHTTPServiceName,
-                          //HTTPPath?                                   BasePath                  = null,
 
-                          HTTPPath?                                   OverlayURLPathPrefix      = null,
                           HTTPPath?                                   APIURLPathPrefix          = null,
                           HTTPPath?                                   WebAPIURLPathPrefix       = null,
                           HTTPPath?                                   BasePath                  = null,
-                          String                                      VersionPath               = "v2.1/",
-
-                          String                                      HTTPRealm                 = DefaultHTTPRealm,
-                          IEnumerable<KeyValuePair<String, String>>?  HTTPLogins                = null,
+                          String?                                     VersionPath               = null,
 
                           //HTTPPath?                                   URLPathPrefix             = null,
                           String?                                     HTMLTemplate              = null,
                           JObject?                                    APIVersionHashes          = null,
 
-                          Boolean?                                    DisableMaintenanceTasks   = false,
-                          TimeSpan?                                   MaintenanceInitialDelay   = null,
-                          TimeSpan?                                   MaintenanceEvery          = null,
-
-                          Boolean?                                    DisableWardenTasks        = false,
-                          TimeSpan?                                   WardenInitialDelay        = null,
-                          TimeSpan?                                   WardenCheckEvery          = null,
-
-                          //Boolean                                     SkipURLTemplates          = true,
-
-                          Boolean?                                    IsDevelopment             = false,
-                          IEnumerable<String>?                        DevelopmentServers        = null,
                           Boolean?                                    DisableLogging            = false,
                           String?                                     LoggingPath               = null,
                           String?                                     LogfileName               = null,
@@ -504,60 +406,45 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                           //TimeSpan?                                   RequestTimeout            = null
                          )
 
-            : base(HTTPServer,
-                   HTTPHostname,
-                   ExternalDNSName,
+            : base(BaseWebAPI,
                    HTTPServiceName,
+                   null, //URLPathPrefix
                    BasePath,
-
-                   WebAPIURLPathPrefix ?? DefaultURLPathPrefix, //URLPathPrefix,
                    HTMLTemplate,
-                   APIVersionHashes,
 
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
-
-                   IsDevelopment,
-                   DevelopmentServers,
+                   BaseWebAPI.IsDevelopment,
+                   BaseWebAPI.DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
                    LogfileName,
-                   LogfileCreator,
-
-                   AutoStart: false)
+                   LogfileCreator)
 
         {
 
             this.CommonAPI             = CommonAPI;
 
-            this.OverlayURLPathPrefix  = OverlayURLPathPrefix;
             this.APIURLPathPrefix      = APIURLPathPrefix;
-            this.VersionPath           = VersionPath;
+            this.VersionPath           = VersionPath ?? Version.String[..4];
 
-            this.HTTPRealm             = HTTPRealm.IsNotNullOrEmpty() ? HTTPRealm : DefaultHTTPRealm;
-            this.HTTPLogins            = HTTPLogins ?? [];
+            //this.HTTPRealm             = HTTPRealm.IsNotNullOrEmpty() ? HTTPRealm : DefaultHTTPRealm;
+            //this.HTTPLogins            = HTTPLogins ?? [];
 
             //this.cpoClients            = new List<CPOClient>();
             //this.emspClients           = new List<EMSPClient>();
 
             // Link HTTP events...
-            HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
-            HTTPServer.ResponseLog    += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
-            HTTPServer.ErrorLog       += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
+            //HTTPBaseAPI.HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
+            //HTTPBaseAPI.HTTPServer.ResponseLog    += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
+            //HTTPBaseAPI.HTTPServer.ErrorLog       += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
 
             var LogfilePrefix          = "HTTPSSEs" + Path.DirectorySeparatorChar;
 
-            this.DebugLog              = this.AddJSONEventSource(EventIdentification:      DebugLogId,
-                                                                 URLTemplate:              this.URLPathPrefix + "debugLog",
-                                                                 MaxNumberOfCachedEvents:  10000,
-                                                                 RetryInterval :           TimeSpan.FromSeconds(5),
-                                                                 EnableLogging:            true,
-                                                                 LogfilePrefix:            LogfilePrefix);
+            //this.DebugLog              = this.AddJSONEventSource(EventIdentification:      DebugLogId,
+            //                                                     URLTemplate:              this.URLPathPrefix + DebugLogId.ToString(),
+            //                                                     MaxNumberOfCachedEvents:  10000,
+            //                                                     RetryInterval :           TimeSpan.FromSeconds(5),
+            //                                                     EnableLogging:            true,
+            //                                                     LogfilePrefix:            LogfilePrefix);
 
             RegisterURITemplates();
 
@@ -578,9 +465,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             => GetResourceStream(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
-                   //new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.            HTTPRoot, typeof(OCPIWebAPI).            Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(OCPI.WebAPI.OCPIWebAPI.HTTPRoot, typeof(OCPI.WebAPI.OCPIWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.               HTTPRoot, typeof(HTTPAPI).               Assembly)
                );
 
         #endregion
@@ -591,9 +478,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             => GetResourceMemoryStream(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
-                   //new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.            HTTPRoot, typeof(OCPIWebAPI).            Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(OCPI.WebAPI.OCPIWebAPI.HTTPRoot, typeof(OCPI.WebAPI.OCPIWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.               HTTPRoot, typeof(HTTPAPI).               Assembly)
                );
 
         #endregion
@@ -604,9 +491,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             => GetResourceString(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
-                   //new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.            HTTPRoot, typeof(OCPIWebAPI).            Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(OCPI.WebAPI.OCPIWebAPI.HTTPRoot, typeof(OCPI.WebAPI.OCPIWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.               HTTPRoot, typeof(HTTPAPI).               Assembly)
                );
 
         #endregion
@@ -617,9 +504,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             => GetResourceBytes(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
-                   //new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.            HTTPRoot, typeof(OCPIWebAPI).            Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(OCPI.WebAPI.OCPIWebAPI.HTTPRoot, typeof(OCPI.WebAPI.OCPIWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.               HTTPRoot, typeof(HTTPAPI).               Assembly)
                );
 
         #endregion
@@ -630,9 +517,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             => MixWithHTMLTemplate(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
-                   //new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.            HTTPRoot, typeof(OCPIWebAPI).            Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(OCPI.WebAPI.OCPIWebAPI.HTTPRoot, typeof(OCPI.WebAPI.OCPIWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.               HTTPRoot, typeof(HTTPAPI).               Assembly)
                );
 
         #endregion
@@ -644,9 +531,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             => MixWithHTMLTemplate(
                    ResourceName,
                    HTMLConverter,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
-                   //new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.            HTTPRoot, typeof(OCPIWebAPI).            Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(OCPI.WebAPI.OCPIWebAPI.HTTPRoot, typeof(OCPI.WebAPI.OCPIWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.               HTTPRoot, typeof(HTTPAPI).               Assembly)
                );
 
         #endregion
@@ -662,9 +549,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             #region / (HTTPRoot)
 
-            this.MapResourceAssemblyFolder(
+            HTTPBaseAPI.MapResourceAssemblyFolder(
                 HTTPHostname.Any,
-                URLPathPrefix,
+                URLPathPrefix + VersionPath,
                 HTTPRoot,
                 DefaultFilename: "index.html"
             );
@@ -672,123 +559,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             #endregion
 
 
-            if (OverlayURLPathPrefix.HasValue)
+            if (HTTPBaseAPI.OverlayURLPathPrefix.HasValue)
             {
 
-                #region GET ~/
+                #region GET ~/versions/2.1.1
 
-                HTTPServer.AddMethodCallback(
+                HTTPBaseAPI.HTTPServer.AddMethodCallback(
 
-                    this,
+                    //this,
                     HTTPHostname.Any,
                     HTTPMethod.GET,
-                    OverlayURLPathPrefix.Value,
+                    HTTPBaseAPI.OverlayURLPathPrefix.Value + $"versions/{Version.Id}",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request =>
 
                         Task.FromResult(
                             new HTTPResponse.Builder(request) {
                                 HTTPStatusCode             = HTTPStatusCode.OK,
-                                Server                     = HTTPServiceName,
-                                Date                       = Timestamp.Now,
-                                AccessControlAllowOrigin   = "*",
-                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                AccessControlAllowHeaders  = [ "Authorization" ],
-                                ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                Content                    = MixWithHTMLTemplate(
-                                                                 "index.shtml",
-                                                                 html => html.Replace("{{versionPath}}", VersionPath)
-                                                             ).ToUTF8Bytes(),
-                                Connection                 = ConnectionType.Close,
-                                Vary                       = "Accept"
-                            }.AsImmutable),
-
-                    AllowReplacement: URLReplacement.Allow
-
-                );
-
-
-                // Just for convenience...
-                HTTPServer.AddMethodCallback(
-
-                    this,
-                    HTTPHostname.Any,
-                    HTTPMethod.GET,
-                    OverlayURLPathPrefix.Value + "/",
-                    HTTPContentType.Text.HTML_UTF8,
-                    HTTPDelegate: request =>
-
-                        Task.FromResult(
-                            new HTTPResponse.Builder(request) {
-                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                Server                     = HTTPServiceName,
-                                Date                       = Timestamp.Now,
-                                AccessControlAllowOrigin   = "*",
-                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                AccessControlAllowHeaders  = [ "Authorization" ],
-                                ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                Content                    = MixWithHTMLTemplate(
-                                                                 "index.shtml",
-                                                                 html => html.Replace("{{versionPath}}", "")
-                                                             ).ToUTF8Bytes(),
-                                Connection                 = ConnectionType.Close,
-                                Vary                       = "Accept"
-                            }.AsImmutable),
-
-                    AllowReplacement: URLReplacement.Allow
-
-                );
-
-                #endregion
-
-                #region GET ~/versions
-
-                HTTPServer.AddMethodCallback(
-
-                    this,
-                    HTTPHostname.Any,
-                    HTTPMethod.GET,
-                    OverlayURLPathPrefix.Value + "versions",
-                    HTTPContentType.Text.HTML_UTF8,
-                    HTTPDelegate: request =>
-
-                        Task.FromResult(
-                            new HTTPResponse.Builder(request) {
-                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                Server                     = HTTPServiceName,
-                                Date                       = Timestamp.Now,
-                                AccessControlAllowOrigin   = "*",
-                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                AccessControlAllowHeaders  = [ "Authorization" ],
-                                ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                Content                    = MixWithHTMLTemplate(
-                                                                 "versions.versions.shtml",
-                                                                 html => html.Replace("{{versionPath}}", VersionPath)
-                                                             ).ToUTF8Bytes(),
-                                Connection                 = ConnectionType.Close,
-                                Vary                       = "Accept"
-                            }.AsImmutable)
-
-                );
-
-                #endregion
-
-                #region GET ~/versions/{versionId}
-
-                HTTPServer.AddMethodCallback(
-
-                    this,
-                    HTTPHostname.Any,
-                    HTTPMethod.GET,
-                    //OverlayURLPathPrefix.Value + "versions/{versionId}",
-                    OverlayURLPathPrefix.Value + $"versions/{Version.Id}",
-                    HTTPContentType.Text.HTML_UTF8,
-                    HTTPDelegate: request =>
-
-                        Task.FromResult(
-                            new HTTPResponse.Builder(request) {
-                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                Server                     = HTTPServiceName,
+                                Server                     = HTTPBaseAPI.HTTPServiceName,
                                 Date                       = Timestamp.Now,
                                 AccessControlAllowOrigin   = "*",
                                 AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -796,7 +584,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                 ContentType                = HTTPContentType.Text.HTML_UTF8,
                                 Content                    = MixWithHTMLTemplate(
                                                                  "versions.versionDetails.shtml",
-                                                                 html => html.Replace("{{versionPath}}", VersionPath)
+                                                                 html => html.Replace("{{versionPath}}", VersionPath + "/")
                                                              ).ToUTF8Bytes(),
                                 Connection                 = ConnectionType.Close,
                                 Vary                       = "Accept"
@@ -810,12 +598,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                 #region GET ~/v2.1.1/cpo/locations
 
                 // ~/cpo/locations
-                HTTPServer.AddMethodCallback(
+                HTTPBaseAPI.HTTPServer.AddMethodCallback(
 
-                    this,
+                    //this,
                     HTTPHostname.Any,
                     HTTPMethod.GET,
-                    OverlayURLPathPrefix.Value + Version.String + "/cpo/locations",
+                    HTTPBaseAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/locations",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request => {
 
@@ -828,7 +616,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                 ? new HTTPResponse.Builder(request) {
                                       HTTPStatusCode              = HTTPStatusCode.OK,
-                                      Server                      = HTTPServer.DefaultServerName,
+                                      Server                      = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                       Date                        = Timestamp.Now,
                                       AccessControlAllowOrigin    = "*",
                                       AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
@@ -845,7 +633,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                 : new HTTPResponse.Builder(request) {
                                       HTTPStatusCode              = HTTPStatusCode.OK,
-                                      Server                      = HTTPServer.DefaultServerName,
+                                      Server                      = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                       Date                        = Timestamp.Now,
                                       AccessControlAllowOrigin    = "*",
                                       AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
@@ -853,7 +641,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       ContentType                 = HTTPContentType.Text.HTML_UTF8,
                                       Content                     = MixWithHTMLTemplate(
                                                                         "locations.locations.shtml",
-                                                                        html => html.Replace("{{versionPath}}", VersionPath)
+                                                                        html => html.Replace("{{versionPath}}", VersionPath + "/")
                                                                     ).ToUTF8Bytes(),
                                       Connection                  = ConnectionType.Close,
                                       Vary                        = "Accept"
@@ -867,24 +655,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
 
                 // ~/cpo/locationStatistics
-                HTTPServer.AddMethodCallback(this,
+                HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
                                              HTTPHostname.Any,
                                              HTTPMethod.GET,
-                                             OverlayURLPathPrefix.Value + Version.String + "/cpo/locationStatistics",
+                                             HTTPBaseAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/locationStatistics",
                                              HTTPContentType.Text.HTML_UTF8,
                                              HTTPDelegate: request => {
 
                                                  return Task.FromResult(
                                                      new HTTPResponse.Builder(request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
-                                                         Server                     = HTTPServiceName,
+                                                         Server                     = HTTPBaseAPI.HTTPServiceName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                                          AccessControlAllowHeaders  = [ "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("locations.locationStatistics.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", VersionPath)).ToUTF8Bytes(),
+                                                                                                          html => html.Replace("{{versionPath}}", VersionPath + "/")).ToUTF8Bytes(),
                                                          Connection                 = ConnectionType.Close,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
@@ -895,12 +683,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                 #region GET ~/v2.1.1/cpo/sessions
 
-                HTTPServer.AddMethodCallback(
+                HTTPBaseAPI.HTTPServer.AddMethodCallback(
 
-                    this,
+                 //   this,
                     HTTPHostname.Any,
                     HTTPMethod.GET,
-                    OverlayURLPathPrefix.Value + Version.String + "/cpo/sessions",
+                    HTTPBaseAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/sessions",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request => {
 
@@ -913,7 +701,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                 ? new HTTPResponse.Builder(request) {
                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                      Server                     = HTTPServer.DefaultServerName,
+                                      Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                       Date                       = Timestamp.Now,
                                       AccessControlAllowOrigin   = "*",
                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -929,7 +717,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                 : new HTTPResponse.Builder(request) {
                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                      Server                     = HTTPServer.DefaultServerName,
+                                      Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                       Date                       = Timestamp.Now,
                                       AccessControlAllowOrigin   = "*",
                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -937,7 +725,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       ContentType                = HTTPContentType.Text.HTML_UTF8,
                                       Content                    = MixWithHTMLTemplate(
                                                                        "sessions.sessions.shtml",
-                                                                       html => html.Replace("{{versionPath}}", VersionPath)
+                                                                       html => html.Replace("{{versionPath}}", VersionPath + "/")
                                                                    ).ToUTF8Bytes(),
                                       Connection                 = ConnectionType.Close,
                                       Vary                       = "Accept"
@@ -953,12 +741,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                 #region GET ~/v2.1.1/cpo/tariffs
 
-                HTTPServer.AddMethodCallback(
+                HTTPBaseAPI.HTTPServer.AddMethodCallback(
 
-                    this,
+                    //this,
                     HTTPHostname.Any,
                     HTTPMethod.GET,
-                    OverlayURLPathPrefix.Value + Version.String + "/cpo/tariffs",
+                    HTTPBaseAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/tariffs",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request => {
 
@@ -971,7 +759,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                 ? new HTTPResponse.Builder(request) {
                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                      Server                     = HTTPServer.DefaultServerName,
+                                      Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                       Date                       = Timestamp.Now,
                                       AccessControlAllowOrigin   = "*",
                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -987,7 +775,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                 : new HTTPResponse.Builder(request) {
                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                      Server                     = HTTPServiceName,
+                                      Server                     = HTTPBaseAPI.HTTPServiceName,
                                       Date                       = Timestamp.Now,
                                       AccessControlAllowOrigin   = "*",
                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -995,7 +783,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       ContentType                = HTTPContentType.Text.HTML_UTF8,
                                       Content                    = MixWithHTMLTemplate(
                                                                        "tariffs.tariffs.shtml",
-                                                                       html => html.Replace("{{versionPath}}", VersionPath)
+                                                                       html => html.Replace("{{versionPath}}", VersionPath + "/")
                                                                    ).ToUTF8Bytes(),
                                       Connection                 = ConnectionType.Close,
                                       Vary                       = "Accept"
@@ -1011,12 +799,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                 #region GET ~/v2.1.1/cpo/cdrs
 
-                HTTPServer.AddMethodCallback(
+                HTTPBaseAPI.HTTPServer.AddMethodCallback(
 
-                    this,
+                  //  this,
                     HTTPHostname.Any,
                     HTTPMethod.GET,
-                    OverlayURLPathPrefix.Value + Version.String + "/cpo/cdrs",
+                    HTTPBaseAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/cdrs",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request => {
 
@@ -1029,7 +817,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                 ? new HTTPResponse.Builder(request) {
                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                      Server                     = HTTPServer.DefaultServerName,
+                                      Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                       Date                       = Timestamp.Now,
                                       AccessControlAllowOrigin   = "*",
                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -1045,7 +833,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                 : new HTTPResponse.Builder(request) {
                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                      Server                     = HTTPServer.DefaultServerName,
+                                      Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                       Date                       = Timestamp.Now,
                                       AccessControlAllowOrigin   = "*",
                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -1053,7 +841,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       ContentType                = HTTPContentType.Text.HTML_UTF8,
                                       Content                    = MixWithHTMLTemplate(
                                                                        "cdrs.cdrs.shtml",
-                                                                       html => html.Replace("{{versionPath}}", VersionPath)
+                                                                       html => html.Replace("{{versionPath}}", VersionPath + "/")
                                                                    ).ToUTF8Bytes(),
                                       Connection                 = ConnectionType.Close,
                                       Vary                       = "Accept"
@@ -1069,19 +857,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                 #region GET ~/v2.1.1/cpo/commands
 
-                HTTPServer.AddMethodCallback(
+                HTTPBaseAPI.HTTPServer.AddMethodCallback(
 
-                    this,
+                 //   this,
                     HTTPHostname.Any,
                     HTTPMethod.GET,
-                    OverlayURLPathPrefix.Value + Version.String + "/cpo/commands",
+                    HTTPBaseAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/commands",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request =>
 
                         Task.FromResult(
                             new HTTPResponse.Builder(request) {
                                 HTTPStatusCode             = HTTPStatusCode.OK,
-                                Server                     = HTTPServiceName,
+                                Server                     = HTTPBaseAPI.HTTPServiceName,
                                 Date                       = Timestamp.Now,
                                 AccessControlAllowOrigin   = "*",
                                 AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -1089,7 +877,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                 ContentType                = HTTPContentType.Text.HTML_UTF8,
                                 Content                    = MixWithHTMLTemplate(
                                                                  "commands.commands.shtml",
-                                                                 html => html.Replace("{{versionPath}}", VersionPath)
+                                                                 html => html.Replace("{{versionPath}}", VersionPath + "/")
                                                              ).ToUTF8Bytes(),
                                 Connection                 = ConnectionType.Close,
                                 Vary                       = "Accept"
@@ -1101,12 +889,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                 #region GET ~/v2.1.1/cpo/tokens
 
-                HTTPServer.AddMethodCallback(
+                HTTPBaseAPI.HTTPServer.AddMethodCallback(
 
-                    this,
+                  //  this,
                     HTTPHostname.Any,
                     HTTPMethod.GET,
-                    OverlayURLPathPrefix.Value + Version.String + "/cpo/tokens",
+                    HTTPBaseAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/tokens",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request => {
 
@@ -1119,7 +907,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                 ? new HTTPResponse.Builder(request) {
                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                      Server                     = HTTPServer.DefaultServerName,
+                                      Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                       Date                       = Timestamp.Now,
                                       AccessControlAllowOrigin   = "*",
                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -1135,7 +923,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                 : new HTTPResponse.Builder(request) {
                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                      Server                     = HTTPServer.DefaultServerName,
+                                      Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                       Date                       = Timestamp.Now,
                                       AccessControlAllowOrigin   = "*",
                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -1143,7 +931,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       ContentType                = HTTPContentType.Text.HTML_UTF8,
                                       Content                    = MixWithHTMLTemplate(
                                                                        "tokens.tokens.shtml",
-                                                                       html => html.Replace("{{versionPath}}", VersionPath)
+                                                                       html => html.Replace("{{versionPath}}", VersionPath + "/")
                                                                    ).ToUTF8Bytes(),
                                       Connection                 = ConnectionType.Close,
                                       Vary                       = "Accept"
@@ -1165,8 +953,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // --------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteXXXParties
             // --------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.OPTIONS,
                                          URLPathPrefix + "remoteXXXParties",
                                          HTTPDelegate: Request => {
@@ -1174,10 +962,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "ReserveNow", "CancelReservation", "StartSession", "StopSession", "UnlockConnector" },
+                                                     AccessControlAllowMethods  = [ "OPTIONS", "GET", "ReserveNow", "CancelReservation", "StartSession", "StopSession", "UnlockConnector" ],
                                                      Allow                      = new List<HTTPMethod> {
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST,
@@ -1187,7 +975,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                       HTTP_StopSession,
                                                                                       HTTP_UnlockConnector
                                                                                   },
-                                                     AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                     AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                      Connection                 = ConnectionType.Close
                                                  }.AsImmutable);
 
@@ -1202,11 +990,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // ---------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:3001/remoteParties
             // ---------------------------------------------------------------------------
-            if (OverlayURLPathPrefix.HasValue)
-                HTTPServer.AddMethodCallback(this,
+            //if (HTTPBaseAPI.OverlayURLPathPrefix.HasValue)
+                HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
                                          HTTPHostname.Any,
                                          HTTPMethod.GET,
-                                         OverlayURLPathPrefix.Value + "remoteParties",
+                                         APIURLPathPrefix + "remoteParties",
                                          HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: Request => {
 
@@ -1258,7 +1046,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = [ "GET", "OPTIONS" ],
@@ -1287,11 +1075,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // ---------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:3001/remoteParties
             // ---------------------------------------------------------------------------
-            if (OverlayURLPathPrefix.HasValue)
-                HTTPServer.AddMethodCallback(this,
-                                             Hostname,
+            if (HTTPBaseAPI.OverlayURLPathPrefix.HasValue)
+                HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                             HTTPBaseAPI.Hostname,
                                              HTTPMethod.GET,
-                                             OverlayURLPathPrefix.Value + "remoteParties",
+                                             HTTPBaseAPI.OverlayURLPathPrefix.Value + "remoteParties",
                                              HTTPContentType.Text.HTML_UTF8,
                                              HTTPDelegate: Request => {
 
@@ -1312,7 +1100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                  return Task.FromResult(
                                                             new HTTPResponse.Builder(Request) {
                                                                 HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                Server                     = HTTPServer.DefaultServerName,
+                                                                Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                 Date                       = Timestamp.Now,
                                                                 AccessControlAllowOrigin   = "*",
                                                                 AccessControlAllowMethods  = [ "GET" ],
@@ -1323,7 +1111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                 Connection                 = ConnectionType.Close,
                                                                 Vary                       = "Accept"
                                                             }.AsImmutable);
-                                                        });
+                                                        }, AllowReplacement: URLReplacement.Allow);
 
             #endregion
 
@@ -1335,8 +1123,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // -------------------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteXXXParties/DE-GDF-CPO
             // -------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.OPTIONS,
                                          URLPathPrefix + "remoteXXXParties/{remotePartyId}",
                                          HTTPDelegate: Request => {
@@ -1344,7 +1132,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = [ "GET", "OPTIONS" ],
@@ -1352,7 +1140,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST
                                                                                   },
-                                                     AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                     AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                      Connection                 = ConnectionType.Close
                                                  }.AsImmutable);
 
@@ -1367,8 +1155,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // --------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/api/remoteXXXParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.GET,
                                          APIURLPathPrefix + "remoteXXXParties/{remotePartyId}",
                                          HTTPContentType.Application.JSON_UTF8,
@@ -1410,11 +1198,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = remoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -1434,7 +1222,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -1452,11 +1240,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // --------------------------------------------------------------------------------
             // curl -v -H "Accept: text/html" http://127.0.0.1:3001/remoteXXXParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------
-            if (OverlayURLPathPrefix.HasValue)
-                HTTPServer.AddMethodCallback(this,
-                                             Hostname,
+            if (HTTPBaseAPI.OverlayURLPathPrefix.HasValue)
+                HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                             HTTPBaseAPI.Hostname,
                                              HTTPMethod.GET,
-                                             OverlayURLPathPrefix.Value + "remoteXXXParties/{remotePartyId}",
+                                             HTTPBaseAPI.OverlayURLPathPrefix.Value + "remoteXXXParties/{remotePartyId}",
                                              HTTPContentType.Text.HTML_UTF8,
                                              HTTPDelegate: Request => {
 
@@ -1494,7 +1282,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                  return Task.FromResult(
                                                      new HTTPResponse.Builder(Request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
-                                                         Server                     = HTTPServer.DefaultServerName,
+                                                         Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = [ "GET" ],
@@ -1511,7 +1299,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                  //return Task.FromResult(
                                                  //           new HTTPResponse.Builder(Request) {
                                                  //               HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                                 //               Server                     = HTTPServer.DefaultServerName,
+                                                 //               Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                  //               Date                       = Timestamp.Now,
                                                  //               AccessControlAllowOrigin   = "*",
                                                  //               AccessControlAllowMethods  = new[] { "GET" },
@@ -1532,8 +1320,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // ------------------------------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteXXXParties/DE-GDF-CPO/reserveNow
             // ------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.OPTIONS,
                                          URLPathPrefix + "/{remotePartyId}/reserveNow",
                                          HTTPDelegate: Request => {
@@ -1541,7 +1329,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = [ "GET", "OPTIONS" ],
@@ -1549,7 +1337,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST
                                                                                   },
-                                                     AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                     AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                      Connection                 = ConnectionType.Close
                                                  }.AsImmutable);
 
@@ -1564,8 +1352,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // ---------------------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteXXXParties/DE-GDF-CPO/reserveNow
             // ---------------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.GET,
                                          APIURLPathPrefix + "remoteXXXParties/{remotePartyId}/reserveNow",
                                          HTTPContentType.Application.JSON_UTF8,
@@ -1607,11 +1395,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -1631,7 +1419,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -1649,8 +1437,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // --------------------------------------------------------------------------------------------
             // curl -v -H "Accept: text/html" http://127.0.0.1:3001/remoteXXXParties/DE-GDF-CPO/reserveNow
             // --------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteXXXParties/{remotePartyId}/reserveNow",
                                          HTTPContentType.Text.HTML_UTF8,
@@ -1690,7 +1478,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                  return Task.FromResult(
                                                      new HTTPResponse.Builder(Request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
-                                                         Server                     = HTTPServer.DefaultServerName,
+                                                         Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = new[] { "GET" },
@@ -1706,7 +1494,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              //return Task.FromResult(
                                              //           new HTTPResponse.Builder(Request) {
                                              //               HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                             //               Server                     = HTTPServer.DefaultServerName,
+                                             //               Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                              //               Date                       = Timestamp.Now,
                                              //               AccessControlAllowOrigin   = "*",
                                              //               AccessControlAllowMethods  = new[] { "GET" },
@@ -1726,8 +1514,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // --------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteXXXParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTP_ReserveNow,
                                          APIURLPathPrefix + "remoteXXXParties/{remotePartyId}",
                                          HTTPContentType.Application.JSON_UTF8,
@@ -1776,7 +1564,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -1803,7 +1591,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -1831,7 +1619,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -1859,7 +1647,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -1888,7 +1676,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                  if (ErrorResponse != null)
                                                      return new HTTPResponse.Builder(Request) {
                                                                 HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                                Server                     = HTTPServer.DefaultServerName,
+                                                                Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                 Date                       = Timestamp.Now,
                                                                 AccessControlAllowOrigin   = "*",
                                                                 AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -1914,7 +1702,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              if (emspClient == null)
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -1943,11 +1731,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -1967,7 +1755,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -1986,8 +1774,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // -------------------------------------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteXXXParties/DE-GDF-CPO/cancelReservation
             // -------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.OPTIONS,
                                          URLPathPrefix + "/{remotePartyId}/cancelReservation",
                                          HTTPDelegate: Request => {
@@ -1995,7 +1783,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = [ "GET", "OPTIONS" ],
@@ -2003,7 +1791,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST
                                                                                   },
-                                                     AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                     AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                      Connection                 = ConnectionType.Close
                                                  }.AsImmutable);
 
@@ -2018,8 +1806,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // --------------------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteXXXParties/DE-GDF-CPO/cancelReservation
             // --------------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.GET,
                                          APIURLPathPrefix + "remoteXXXParties/{remotePartyId}/cancelReservation",
                                          HTTPContentType.Application.JSON_UTF8,
@@ -2061,11 +1849,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -2085,7 +1873,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -2103,8 +1891,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // -------------------------------------------------------------------------------------------
             // curl -v -H "Accept: text/html" http://127.0.0.1:3001/remoteXXXParties/DE-GDF-CPO/cancelReservation
             // -------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteXXXParties/{remotePartyId}/cancelReservation",
                                          HTTPContentType.Text.HTML_UTF8,
@@ -2144,7 +1932,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                  return Task.FromResult(
                                                      new HTTPResponse.Builder(Request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
-                                                         Server                     = HTTPServer.DefaultServerName,
+                                                         Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = new[] { "GET" },
@@ -2160,7 +1948,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              //return Task.FromResult(
                                              //           new HTTPResponse.Builder(Request) {
                                              //               HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                             //               Server                     = HTTPServer.DefaultServerName,
+                                             //               Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                              //               Date                       = Timestamp.Now,
                                              //               AccessControlAllowOrigin   = "*",
                                              //               AccessControlAllowMethods  = new[] { "GET" },
@@ -2180,8 +1968,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // --------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteXXXParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTP_CancelReservation,
                                          APIURLPathPrefix + "remoteXXXParties/{remotePartyId}",
                                          HTTPContentType.Application.JSON_UTF8,
@@ -2230,7 +2018,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -2256,7 +2044,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              if (emspClient == null)
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -2281,11 +2069,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -2305,7 +2093,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -2324,8 +2112,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // --------------------------------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteXXXParties/DE-GDF-CPO/startSession
             // --------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.OPTIONS,
                                          URLPathPrefix + "/{remotePartyId}/startSession",
                                          HTTPDelegate: Request => {
@@ -2333,7 +2121,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = [ "GET", "OPTIONS" ],
@@ -2341,7 +2129,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST
                                                                                   },
-                                                     AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                     AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                      Connection                 = ConnectionType.Close
                                                  }.AsImmutable);
 
@@ -2356,8 +2144,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // ---------------------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteXXXParties/DE-GDF-CPO/startSession
             // ---------------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.GET,
                                          APIURLPathPrefix + "remoteXXXParties/{remotePartyId}/startSession",
                                          HTTPContentType.Application.JSON_UTF8,
@@ -2399,11 +2187,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -2423,7 +2211,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -2441,8 +2229,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // --------------------------------------------------------------------------------------------
             // curl -v -H "Accept: text/html" http://127.0.0.1:3001/remoteXXXParties/DE-GDF-CPO/startSession
             // --------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteXXXParties/{remotePartyId}/startSession",
                                          HTTPContentType.Text.HTML_UTF8,
@@ -2482,7 +2270,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                  return Task.FromResult(
                                                      new HTTPResponse.Builder(Request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
-                                                         Server                     = HTTPServer.DefaultServerName,
+                                                         Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = new[] { "GET" },
@@ -2498,7 +2286,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              //return Task.FromResult(
                                              //           new HTTPResponse.Builder(Request) {
                                              //               HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                             //               Server                     = HTTPServer.DefaultServerName,
+                                             //               Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                              //               Date                       = Timestamp.Now,
                                              //               AccessControlAllowOrigin   = "*",
                                              //               AccessControlAllowMethods  = new[] { "GET" },
@@ -2518,8 +2306,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // --------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteXXXParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTP_StartSession,
                                          APIURLPathPrefix + "remoteXXXParties/{remotePartyId}",
                                          HTTPContentType.Application.JSON_UTF8,
@@ -2568,7 +2356,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -2596,7 +2384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -2624,7 +2412,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -2650,7 +2438,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              if (emspClient == null)
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -2677,11 +2465,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -2701,7 +2489,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -2720,8 +2508,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // -------------------------------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteXXXParties/DE-GDF-CPO/stopSession
             // -------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.OPTIONS,
                                          URLPathPrefix + "/{remotePartyId}/stopSession",
                                          HTTPDelegate: Request => {
@@ -2729,7 +2517,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = [ "GET", "OPTIONS" ],
@@ -2737,7 +2525,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST
                                                                                   },
-                                                     AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                     AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                      Connection                 = ConnectionType.Close
                                                  }.AsImmutable);
 
@@ -2752,8 +2540,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // --------------------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteXXXParties/DE-GDF-CPO/stopSession
             // --------------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.GET,
                                          APIURLPathPrefix + "remoteXXXParties/{remotePartyId}/stopSession",
                                          HTTPContentType.Application.JSON_UTF8,
@@ -2795,11 +2583,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -2819,7 +2607,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -2837,8 +2625,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // -------------------------------------------------------------------------------------------
             // curl -v -H "Accept: text/html" http://127.0.0.1:3001/remoteXXXParties/DE-GDF-CPO/stopSession
             // -------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteXXXParties/{remotePartyId}/stopSession",
                                          HTTPContentType.Text.HTML_UTF8,
@@ -2878,7 +2666,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                  return Task.FromResult(
                                                      new HTTPResponse.Builder(Request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
-                                                         Server                     = HTTPServer.DefaultServerName,
+                                                         Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = new[] { "GET" },
@@ -2894,7 +2682,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              //return Task.FromResult(
                                              //           new HTTPResponse.Builder(Request) {
                                              //               HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                             //               Server                     = HTTPServer.DefaultServerName,
+                                             //               Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                              //               Date                       = Timestamp.Now,
                                              //               AccessControlAllowOrigin   = "*",
                                              //               AccessControlAllowMethods  = new[] { "GET" },
@@ -2914,8 +2702,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // --------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteXXXParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTP_StopSession,
                                          APIURLPathPrefix + "remoteXXXParties/{remotePartyId}",
                                          HTTPContentType.Application.JSON_UTF8,
@@ -2964,7 +2752,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -2990,7 +2778,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              if (emspClient == null)
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -3015,11 +2803,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -3034,7 +2822,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -3053,8 +2841,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // -----------------------------------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteXXXParties/DE-GDF-CPO/unlockConnector
             // -----------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.OPTIONS,
                                          URLPathPrefix + "/{remotePartyId}/unlockConnector",
                                          HTTPDelegate: Request => {
@@ -3062,7 +2850,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = [ "GET", "OPTIONS" ],
@@ -3070,7 +2858,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST
                                                                                   },
-                                                     AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                     AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                      Connection                 = ConnectionType.Close
                                                  }.AsImmutable);
 
@@ -3085,8 +2873,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // ------------------------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteXXXParties/DE-GDF-CPO/unlockConnector
             // ------------------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.GET,
                                          APIURLPathPrefix + "remoteXXXParties/{remotePartyId}/unlockConnector",
                                          HTTPContentType.Application.JSON_UTF8,
@@ -3128,11 +2916,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -3152,7 +2940,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -3170,8 +2958,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // -------------------------------------------------------------------------------------------
             // curl -v -H "Accept: text/html" http://127.0.0.1:3001/remoteXXXParties/DE-GDF-CPO/unlockConnector
             // -------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteXXXParties/{remotePartyId}/unlockConnector",
                                          HTTPContentType.Text.HTML_UTF8,
@@ -3211,7 +2999,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                  return Task.FromResult(
                                                      new HTTPResponse.Builder(Request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
-                                                         Server                     = HTTPServer.DefaultServerName,
+                                                         Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = new[] { "GET" },
@@ -3227,7 +3015,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              //return Task.FromResult(
                                              //           new HTTPResponse.Builder(Request) {
                                              //               HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                             //               Server                     = HTTPServer.DefaultServerName,
+                                             //               Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                              //               Date                       = Timestamp.Now,
                                              //               AccessControlAllowOrigin   = "*",
                                              //               AccessControlAllowMethods  = new[] { "GET" },
@@ -3247,8 +3035,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // --------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteXXXParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(this,
-                                         Hostname,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
+                                         HTTPBaseAPI.Hostname,
                                          HTTP_UnlockConnector,
                                          APIURLPathPrefix + "remoteXXXParties/{remotePartyId}",
                                          HTTPContentType.Application.JSON_UTF8,
@@ -3297,7 +3085,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -3325,7 +3113,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -3353,7 +3141,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -3379,7 +3167,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              if (emspClient is null)
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
-                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -3406,11 +3194,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -3425,7 +3213,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
-                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Server                     = HTTPBaseAPI.HTTPServer.DefaultServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
@@ -3443,7 +3231,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             #region GET      ~/clients
 
-            HTTPServer.AddMethodCallback(this,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
                                          HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "clients",
@@ -3465,13 +3253,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                      //ETag                       = Location.SHA256Hash
                                                  }.AsImmutable);
 
-                                         });
+                                         }, AllowReplacement: URLReplacement.Allow);
 
             #endregion
 
             #region GET      ~/cpoclients
 
-            HTTPServer.AddMethodCallback(this,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
                                          HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "cpoclients",
@@ -3491,13 +3279,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                      //ETag                       = Location.SHA256Hash
                                                  }.AsImmutable);
 
-                                         });
+                                         }, AllowReplacement: URLReplacement.Allow);
 
             #endregion
 
             #region GET      ~/emspclients
 
-            HTTPServer.AddMethodCallback(this,
+            HTTPBaseAPI.HTTPServer.AddMethodCallback(//this,
                                          HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "emspclients",
@@ -3516,40 +3304,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                      //ETag                       = Location.SHA256Hash
                                                  }.AsImmutable);
 
-                                         });
+                                         }, AllowReplacement: URLReplacement.Allow);
 
             #endregion
-
-
-            #region GET      ~/support
-
-            if (OverlayURLPathPrefix.HasValue)
-                HTTPServer.AddMethodCallback(this,
-                                             HTTPHostname.Any,
-                                             HTTPMethod.GET,
-                                             OverlayURLPathPrefix.Value + "/support",
-                                             HTTPContentType.Text.HTML_UTF8,
-                                             HTTPDelegate: request => {
-
-                                                 return Task.FromResult(
-                                                            new HTTPResponse.Builder(request) {
-                                                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                Server                     = HTTPServer.DefaultServerName,
-                                                                Date                       = Timestamp.Now,
-                                                                AccessControlAllowOrigin   = "*",
-                                                                AccessControlAllowMethods  = [ "GET" ],
-                                                                AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                                ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                                Content                    = MixWithHTMLTemplate("support.support.shtml").ToUTF8Bytes(),
-                                                                Connection                 = ConnectionType.Close,
-                                                                Vary                       = "Accept"
-                                                            }.AsImmutable
-                                                        );
-
-                                             });
-
-            #endregion
-
 
         }
 

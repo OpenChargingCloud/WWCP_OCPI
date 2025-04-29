@@ -2243,6 +2243,8 @@ namespace cloud.charging.open.protocols.OCPI
                        );
 
             }
+            catch (FileNotFoundException)
+            { }
             catch (Exception e)
             {
                 DebugX.Log(e, $"OCPI.CommonAPIBase.ReadDatabaseFile({DBFileName})");

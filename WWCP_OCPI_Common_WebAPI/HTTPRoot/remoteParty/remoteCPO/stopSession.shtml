@@ -1,0 +1,39 @@
+﻿
+<link href="../../remoteParty/remoteCPO/stopSession.min.css" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="../../remoteParty/remoteCPO/stopSession.js"></script>
+
+<div id="stopSessionInfos" class="entity headline">
+
+    <div id="headline">
+        <div id="title">
+            Remote Party <div id="id"></div>
+        </div>
+    </div>
+
+    <div id="about">
+        Stop the following charging session
+    </div>
+
+    <div id="stopSession">
+
+        <div id="data">
+
+            <div class="row">
+                <div class="key">Session Id</div>
+                <div class="value"><input id="sessionId" type="text" placeholder="The charging session identification"></div>
+            </div>
+
+        </div>
+
+        <div class="lowerButtons">
+            <button id="stopSession">Stop Session</button>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    StartStopSession();
+</script>

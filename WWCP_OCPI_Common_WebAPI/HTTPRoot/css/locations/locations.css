@@ -1,0 +1,168 @@
+﻿body #page #bottom {
+  overflow-y: auto;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 {
+  padding: 1vh 2vw;
+  border-radius: 6px;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 .description {
+  font-weight: bold;
+  padding-bottom: 3px;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations {
+  display: flex;
+  flex-direction: column;
+  border-top: none;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .properties {
+  display: table;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .properties .row {
+  display: table-row;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .properties .row .key {
+  display: table-cell;
+  padding-right: 10px;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .properties .row .value {
+  display: table-cell;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location {
+  padding: 15px 22px;
+  display: inline-block;
+  color: #5272a3;
+  font-weight: bold;
+  background-color: #efefef;
+  border-top: 1px solid #ffffff;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .counter {
+  display: inline-block;
+  color: #7a96c1;
+  margin-right: 3px;
+  padding-bottom: 3px;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .title {
+  display: inline-block;
+  padding-bottom: 3px;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .businessDetails {
+  font-size: 95%;
+  font-weight: normal;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .businessDetails a {
+  color: #2d4f83;
+  text-decoration: none;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .operator {
+  font-size: 95%;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .suboperator {
+  font-size: 95%;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .owner {
+  font-size: 95%;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .type {
+  font-size: 80%;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .address {
+  font-size: 80%;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .coordinates {
+  font-size: 80%;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses {
+  padding-left: 10px;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evse {
+  background-color: #e2e2e2;
+  padding: 10px 15px;
+  margin-top: 1px;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evse .evseId {
+  font-size: 90%;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evse .evseStatus {
+  font-size: 67%;
+  padding-bottom: 4px;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evse .evseStatus_AVAILABLE {
+  color: rgb(178, 239, 170);
+  background-color: unset;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evse .evseStatus_CHARGING {
+  color: rgba(206, 3, 3, 0.5);
+  background-color: unset;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evse .evseStatus_OUTOFORDER {
+  color: rgba(215, 146, 3, 0.5);
+  background-color: unset;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evse .evseStatus_INOPERATIVE {
+  color: rgba(204, 91, 0, 0.5);
+  background-color: unset;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evse .evseStatus_UNKNOWN {
+  color: rgba(130, 130, 130, 0.5);
+  background-color: unset;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evse .connectors {
+  padding-left: 10px;
+  font-size: 90%;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evse .connectors .connector {
+  padding: 10px 20px;
+  border-radius: 6px;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evse .connectors .connector .dates {
+  margin-top: 15px;
+  font-size: 70%;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evse .dates {
+  margin-top: 15px;
+  font-size: 70%;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evse:first-child {
+  margin-top: unset;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evseStatus_AVAILABLE {
+  background-color: rgba(0, 255, 0, 0.25);
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evseStatus_CHARGING {
+  background-color: rgba(255, 0, 0, 0.25);
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evseStatus_OUTOFORDER {
+  background-color: rgba(255, 172, 0, 0.25);
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evseStatus_INOPERATIVE {
+  background-color: rgba(255, 114, 0, 0.25);
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evseStatus_UNKNOWN {
+  background-color: rgba(175, 175, 175, 0.25);
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evse:first-child {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .evses .evse:last-child {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .dates {
+  margin-top: 15px;
+  font-size: 70%;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location:hover {
+  background-color: rgba(188, 201, 221, 0.5);
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location:hover .evses .evseStatus_AVAILABLE {
+  background-color: rgb(207, 249, 202);
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location:first-child {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location:last-child {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}

@@ -738,10 +738,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #region Parse AuthMethod                  [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("auth_method",
-                                             "authentication method",
-                                             out AuthMethod authMethod,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("auth_method",
+                                         "authentication method",
+                                         AuthMethod.TryParse,
+                                         out AuthMethod authMethod,
+                                         out ErrorResponse))
                 {
                     return false;
                 }

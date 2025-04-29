@@ -131,15 +131,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
         #region ParseRemotePartyId(this HTTPRequest, OCPIWebAPI, out RemotePartyId,                  out HTTPResponse)
 
         /// <summary>
-        /// Parse the given HTTP request and return the defibrillator identification
+        /// Parse the given HTTP request and return the remote party identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
         /// <param name="HTTPRequest">A HTTP request.</param>
         /// <param name="OCPIWebAPI">The OCPI WebAPI.</param>
-        /// <param name="RemotePartyId">The parsed unique defibrillator identification.</param>
+        /// <param name="RemotePartyId">The parsed unique remote party identification.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when defibrillator identification was found; false else.</returns>
+        /// <returns>True, when remote party identification was found; false else.</returns>
         public static Boolean ParseRemotePartyId(this HTTPRequest           HTTPRequest,
                                                  OCPIWebAPI                 OCPIWebAPI,
                                                  out RemoteParty_Id?        RemotePartyId,
@@ -200,16 +200,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
         #region ParseRemoteParty  (this HTTPRequest, OCPIWebAPI, out RemotePartyId, out RemoteParty, out HTTPResponse)
 
         /// <summary>
-        /// Parse the given HTTP request and return the defibrillator identification
+        /// Parse the given HTTP request and return the remote party identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
         /// <param name="HTTPRequest">A HTTP request.</param>
         /// <param name="OCPIWebAPI">The OCPI WebAPI.</param>
-        /// <param name="RemotePartyId">The parsed unique defibrillator identification.</param>
-        /// <param name="RemoteParty">The resolved defibrillator.</param>
+        /// <param name="RemotePartyId">The parsed unique remote party identification.</param>
+        /// <param name="RemoteParty">The resolved remote party.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when defibrillator identification was found; false else.</returns>
+        /// <returns>True, when remote party identification was found; false else.</returns>
         public static Boolean ParseRemoteParty(this HTTPRequest           HTTPRequest,
                                                OCPIWebAPI                 OCPIWebAPI,
                                                out RemoteParty_Id?        RemotePartyId,
@@ -1080,7 +1080,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                      Server                     = HTTPServer.DefaultServerName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "ReserveNow", "CancelReservation", "StartSession", "StopSession", "UnlockConnector" },
+                                                     AccessControlAllowMethods  = [ "OPTIONS", "GET", "ReserveNow", "CancelReservation", "StartSession", "StopSession", "UnlockConnector" ],
                                                      Allow                      = new List<HTTPMethod> {
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST,
@@ -1090,7 +1090,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                                       HTTP_StopSession,
                                                                                       HTTP_UnlockConnector
                                                                                   },
-                                                     AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                     AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                      Connection                 = ConnectionType.Close
                                                  }.AsImmutable);
 
@@ -1255,7 +1255,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST
                                                                                   },
-                                                     AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                     AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                      Connection                 = ConnectionType.Close
                                                  }.AsImmutable);
 
@@ -1317,7 +1317,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = remoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -1453,7 +1453,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST
                                                                                   },
-                                                     AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                     AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                      Connection                 = ConnectionType.Close
                                                  }.AsImmutable);
 
@@ -1515,7 +1515,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -1852,7 +1852,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -1909,7 +1909,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST
                                                                                   },
-                                                     AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                     AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                      Connection                 = ConnectionType.Close
                                                  }.AsImmutable);
 
@@ -1971,7 +1971,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -2192,7 +2192,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -2249,7 +2249,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST
                                                                                   },
-                                                     AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                     AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                      Connection                 = ConnectionType.Close
                                                  }.AsImmutable);
 
@@ -2311,7 +2311,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -2590,7 +2590,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -2647,7 +2647,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST
                                                                                   },
-                                                     AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                     AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                      Connection                 = ConnectionType.Close
                                                  }.AsImmutable);
 
@@ -2709,7 +2709,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -2930,7 +2930,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -2981,7 +2981,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST
                                                                                   },
-                                                     AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                     AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                      Connection                 = ConnectionType.Close
                                                  }.AsImmutable);
 
@@ -3043,7 +3043,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
@@ -3322,7 +3322,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
-                                                                  AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
+                                                                  AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)

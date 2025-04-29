@@ -1330,16 +1330,19 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             #region Create cpo1/cpo2/emsp1/emsp2 OCPI WebAPIs
 
             cpo1WebAPI_v2_1_1    = new OCPIv2_1_1.WebAPI.OCPIWebAPI(
+                                       BaseWebAPI:                          new WebAPI.OCPIWebAPI(
+                                                                                cpo1BaseAPI,
+                                                                                HTTPServer:             cpo1HTTPAPI.HTTPServer,
+                                                                                OverlayURLPathPrefix:   HTTPPath.Parse("/ocpi/v2.1"),
+                                                                                HTTPRealm:              "GraphDefined OCPI CPO #1 WebAPI",
+                                                                                HTTPLogins:             [
+                                                                                                            new KeyValuePair<String, String>("a", "b")
+                                                                                                        ]
+                                                                            ),
                                        CommonAPI:                           cpo1CommonAPI_v2_1_1,
-                                       HTTPServer:                          cpo1HTTPAPI.HTTPServer,
-                                       OverlayURLPathPrefix:                HTTPPath.Parse("/ocpi/v2.1"),
                                        APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.1/api"),
                                        WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.1/webapi"),
-                                       BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
-                                       HTTPRealm:                           "GraphDefined OCPI CPO #1 WebAPI",
-                                       HTTPLogins:                          [
-                                                                                new KeyValuePair<String, String>("a", "b")
-                                                                            ]
+                                       BasePath:                            HTTPPath.Parse("/ocpi/v2.1")
                                    );
 
             //emsp1WebAPI          = new OCPIWebAPI(

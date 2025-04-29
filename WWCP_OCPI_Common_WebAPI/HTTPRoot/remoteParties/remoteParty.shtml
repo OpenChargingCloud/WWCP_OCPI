@@ -1,0 +1,93 @@
+﻿
+<link href="../remoteParty/remoteParty.min.css" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="../remoteParty/remoteParty.js"></script>
+
+<div id="remotePartyInfos" class="entity headline">
+
+    <div id="headline">
+        <div id="title">
+            Remote Party <div id="id"></div>
+        </div>
+    </div>
+
+    <div id="remoteParty">
+
+        <div id="data">
+
+            <div class="row">
+                <div class="key">Country Code</div>
+                <div class="value"><input id="countryCode" type="text" readonly></div>
+            </div>
+
+            <div class="row">
+                <div class="key">Party Id</div>
+                <div class="value"><input id="partyId" type="text" readonly></div>
+            </div>
+
+            <div class="row">
+                <div class="key">Role</div>
+                <div class="value"><input id="role" type="text" readonly></div>
+            </div>
+
+            <div class="group">
+                Business Details
+            </div>
+
+            <div class="row">
+                <div class="subkey">Name</div>
+                <div class="value"><input id="businessDetailsName" type="text" readonly></div>
+            </div>
+
+            <div class="row">
+                <div class="subkey">Website</div>
+                <div class="value"><input id="businessDetailsWebsite" type="text" readonly></div>
+            </div>
+
+            <div class="row">
+                <div class="subkey">Logo URL</div>
+                <div class="value"><input id="businessDetailsLogo" type="text" readonly></div>
+            </div>
+
+        </div>
+
+        <div id="remoteAccessInfosDiv" class="subGroup">
+
+            <div class="headline">
+                Remote Access Infos
+            </div>
+
+            <div id="remoteAccessInfos" class="subGroup2"></div>
+
+        </div>
+
+        <div id="accessInfosDiv" class="subGroup">
+
+            <div class="headline">
+                Access Infos
+            </div>
+
+            <div id="accessInfos" class="subGroup2"></div>
+
+        </div>
+
+        <div class="lowerButtons">
+
+            <button id="register">Register</button><br />
+            <button id="registrationUpdate">Registration Update</button><br />
+
+            <button id="reserveNow">Reserve Now</button>
+            <button id="cancelReservation">Cancel Reservation</button>
+            <button id="startSession">Start Session</button>
+            <button id="stopSession">Stop Session</button>
+            <button id="unlockConnector">Unlock Connector</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    StartRemoteParty();
+</script>

@@ -148,6 +148,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WWCP_OCPIv2.2.1\WWCP_OCPIv2.2.1.csproj" />
+    <ProjectReference Include="..\WWCP_OCPI_Common_WebAPI\WWCP_OCPI_Common_WebAPI.csproj" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

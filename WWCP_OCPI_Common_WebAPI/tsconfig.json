@@ -1,0 +1,18 @@
+﻿{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "module": "system",
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "allowJs": false,
+    "target": "ES2018"
+  },
+  "files": [
+
+    "HTTPRoot/defaults/defaults.ts",
+    "HTTPRoot/defaults/OCPIv2.3.0.ts",
+
+    "HTTPRoot/versions/versions.ts"
+
+  ]
+}

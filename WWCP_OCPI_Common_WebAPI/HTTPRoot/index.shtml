@@ -1,0 +1,24 @@
+﻿
+<link href="{{BasePath}}/webapi/css/index.min.css" type="text/css" rel="stylesheet" />
+
+<div id="versionInfos" class="entity">
+
+    <div id="versionInfos2">
+
+        <div id="description">
+            This is an Open Charge Point Interface HTTP service!
+        </div>
+
+        <div id="versions">
+            <ul>
+                <li><a href="{{versionPath}}versions">Versions</a></li>
+                <li><a href="{{BasePath}}/webapi/remoteParties">Remote Parties</a></li>
+                <li><a href="{{BasePath}}/webapi/clients">Clients</a></li>
+                <li><a href="{{BasePath}}/webapi/cpoclients">CPO Clients</a></li>
+                <li><a href="{{BasePath}}/webapi/emspclients">EMSP Clients</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+</div>

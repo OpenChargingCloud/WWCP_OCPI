@@ -1,0 +1,120 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>cloud.charging.open.protocols.OCPI.WebAPI</RootNamespace>
+    <AssemblyName>cloud.charging.open.protocols.OCPI.WebAPI</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\css\cdrs\cdrs.css" />
+    <EmbeddedResource Include="HTTPRoot\css\cdrs\cdrs.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\css\all.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-brands-400.ttf" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-brands-400.woff2" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-regular-400.ttf" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-regular-400.woff2" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-solid-900.ttf" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-solid-900.woff2" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-v4compatibility.ttf" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-v4compatibility.woff2" />
+    <EmbeddedResource Include="HTTPRoot\css\index.css" />
+    <EmbeddedResource Include="HTTPRoot\css\index.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\locations\locations.css" />
+    <EmbeddedResource Include="HTTPRoot\css\locations\locations.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\locations\locationStatistics.css" />
+    <EmbeddedResource Include="HTTPRoot\css\locations\locationStatistics.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParties\remoteParties.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParties\remoteParties.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParties\remoteParty.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParties\remoteParty.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\startSession.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\startSession.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\stopSession.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\stopSession.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\unlockConnector.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\unlockConnector.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\sessions\sessions.css" />
+    <EmbeddedResource Include="HTTPRoot\css\sessions\sessions.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\tariffs\tariffs.css" />
+    <EmbeddedResource Include="HTTPRoot\css\tariffs\tariffs.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\template.css" />
+    <EmbeddedResource Include="HTTPRoot\css\template.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\tokens\tokens.css" />
+    <EmbeddedResource Include="HTTPRoot\css\tokens\tokens.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.css" />
+    <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\versions\versions.css" />
+    <EmbeddedResource Include="HTTPRoot\css\versions\versions.min.css" />
+    <EmbeddedResource Include="HTTPRoot\defaults\defaults.js" />
+    <EmbeddedResource Include="HTTPRoot\defaults\defaults.js.map" />
+    <EmbeddedResource Include="HTTPRoot\defaults\defaults.ts" />
+    <EmbeddedResource Include="HTTPRoot\defaults\OCPIv2.3.0.js" />
+    <EmbeddedResource Include="HTTPRoot\defaults\OCPIv2.3.0.js.map" />
+    <EmbeddedResource Include="HTTPRoot\defaults\OCPIv2.3.0.ts" />
+    <EmbeddedResource Include="HTTPRoot\defaults\_defaults.scss" />
+    <EmbeddedResource Include="HTTPRoot\favicon.png" />
+    <EmbeddedResource Include="HTTPRoot\images\favicon_big.png" />
+    <EmbeddedResource Include="HTTPRoot\index.scss" />
+    <EmbeddedResource Include="HTTPRoot\index.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParties.js" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParties.js.map" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParties.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParties.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParties.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParty.js" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParty.js.map" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParty.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParty.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParty.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js.map" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.js" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.js.map" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.js" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.js.map" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.js" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.js.map" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.js" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.js.map" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.ts" />
+    <EmbeddedResource Include="HTTPRoot\support\support.shtml" />
+    <EmbeddedResource Include="HTTPRoot\template.html" />
+    <EmbeddedResource Include="HTTPRoot\template.scss" />
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.js" />
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.js.map" />
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.scss" />
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.shtml" />
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.ts" />
+    <EmbeddedResource Include="HTTPRoot\versions\versions.js" />
+    <EmbeddedResource Include="HTTPRoot\versions\versions.js.map" />
+    <EmbeddedResource Include="HTTPRoot\versions\versions.scss" />
+    <EmbeddedResource Include="HTTPRoot\versions\versions.shtml" />
+    <EmbeddedResource Include="HTTPRoot\versions\versions.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WWCP_OCPI_Common\WWCP_OCPI_Common.csproj" />
+  </ItemGroup>
+
+</Project>

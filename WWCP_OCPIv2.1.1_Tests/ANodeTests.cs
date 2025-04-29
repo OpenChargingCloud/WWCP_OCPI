@@ -424,6 +424,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             ClassicAssert.IsNotNull(ocpiBaseAPI);
 
+            var commonWebAPI = new OCPI.WebAPI.OCPIWebAPI(
+                                   ocpiBaseAPI,
+                                   HTTPServer: cpoHTTPAPI.HTTPServer
+                               );
+
 
             #region Create cpo/emsp1/emsp2 OCPI Common API
 
@@ -604,42 +609,51 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Create cpo/emsp1/emsp2 OCPI WebAPI
 
             cpoWebAPI            = new OCPIWebAPI(
-                                       HTTPServer:                          cpoHTTPAPI.HTTPServer,
+                                       BaseWebAPI:                          new OCPI.WebAPI.OCPIWebAPI(
+                                                                                ocpiBaseAPI,
+                                                                                HTTPServer:             cpoHTTPAPI.HTTPServer,
+                                                                                OverlayURLPathPrefix:   HTTPPath.Parse("/ocpi/v2.1"),
+                                                                                HTTPRealm:              "GraphDefined OCPI CPO WebAPI",
+                                                                                HTTPLogins:             [
+                                                                                                            new KeyValuePair<String, String>("a", "b")
+                                                                                                        ]
+                                                                            ),
                                        CommonAPI:                           cpoCommonAPI,
-                                       OverlayURLPathPrefix:                HTTPPath.Parse("/ocpi/v2.1"),
                                        APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.1/api"),
                                        WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.1/webapi"),
-                                       BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
-                                       HTTPRealm:                           "GraphDefined OCPI CPO WebAPI",
-                                       HTTPLogins:                          [
-                                                                                new KeyValuePair<String, String>("a", "b")
-                                                                            ]
+                                       BasePath:                            HTTPPath.Parse("/ocpi/v2.1")
                                    );
 
             emsp1WebAPI          = new OCPIWebAPI(
-                                       HTTPServer:                          emsp1HTTPAPI.HTTPServer,
+                                       BaseWebAPI:                          new OCPI.WebAPI.OCPIWebAPI(
+                                                                                ocpiBaseAPI,
+                                                                                HTTPServer:             emsp1HTTPAPI.HTTPServer,
+                                                                                OverlayURLPathPrefix:   HTTPPath.Parse("/ocpi/v2.1"),
+                                                                                HTTPRealm:              "GraphDefined OCPI EMSP #1 WebAPI",
+                                                                                HTTPLogins:             [
+                                                                                                            new KeyValuePair<String, String>("c", "d")
+                                                                                                        ]
+                                                                            ),
                                        CommonAPI:                           emsp1CommonAPI,
-                                       OverlayURLPathPrefix:                HTTPPath.Parse("/ocpi/v2.1"),
                                        APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.1/api"),
                                        WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.1/webapi"),
-                                       BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
-                                       HTTPRealm:                           "GraphDefined OCPI EMSP #1 WebAPI",
-                                       HTTPLogins:                          [
-                                                                                new KeyValuePair<String, String>("c", "d")
-                                                                            ]
+                                       BasePath:                            HTTPPath.Parse("/ocpi/v2.1")
                                    );
 
             emsp2WebAPI          = new OCPIWebAPI(
-                                       HTTPServer:                          emsp2HTTPAPI.HTTPServer,
+                                       BaseWebAPI:                          new OCPI.WebAPI.OCPIWebAPI(
+                                                                                ocpiBaseAPI,
+                                                                                HTTPServer:             emsp2HTTPAPI.HTTPServer,
+                                                                                OverlayURLPathPrefix:   HTTPPath.Parse("/ocpi/v2.1"),
+                                                                                HTTPRealm:              "GraphDefined OCPI EMSP #2 WebAPI",
+                                                                                HTTPLogins:             [
+                                                                                                            new KeyValuePair<String, String>("e", "f")
+                                                                                                        ]
+                                                                            ),
                                        CommonAPI:                           emsp2CommonAPI,
-                                       OverlayURLPathPrefix:                HTTPPath.Parse("/ocpi/v2.1"),
                                        APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.1/api"),
                                        WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.1/webapi"),
-                                       BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
-                                       HTTPRealm:                           "GraphDefined OCPI EMSP #2 WebAPI",
-                                       HTTPLogins:                          [
-                                                                                new KeyValuePair<String, String>("e", "f")
-                                                                            ]
+                                       BasePath:                            HTTPPath.Parse("/ocpi/v2.1")
                                    );
 
             ClassicAssert.IsNotNull(cpoWebAPI);

@@ -1,0 +1,41 @@
+﻿
+<link href="{{BasePath}}/webapi/css/versions/versionDetails.min.css" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="{{BasePath}}/webapi/versions/versionDetails.js"></script>
+
+<div id="versionDetailInfos" class="entity">
+
+    <div id="accessTokenBar">
+
+        <div id="accessTokenConfig">
+
+            <input id="accessTokenInput" name="accessToken">
+
+            <div id="accessTokenEncoding">
+                <input id="accessTokenEncodingCheck" type="checkbox" name="accessTokenEncoding">
+                Base64 Encoding?
+            </div>
+
+        </div>
+
+        <button id="accessTokenButton">Update OCPI Access Token</button>
+
+    </div>
+
+    <div id="versionDetails">
+
+        <div id="versionId">
+
+        </div>
+
+        <div id="endpoints">
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    StartVersionDetails();
+</script>
