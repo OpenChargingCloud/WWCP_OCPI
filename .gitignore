@@ -118,6 +118,12 @@ UpgradeLog*.XML
 
 # ------------------------------------------------------------------------
 
+WWCP_OCPI_Common_WebAPI/HTTPRoot/css/*.css
+WWCP_OCPI_Common_WebAPI/HTTPRoot/css/*.min.css
+WWCP_OCPI_Common_WebAPI/HTTPRoot/css/versions
+
+# ------------------------------------------------------------------------
+
 WWCP_OCPIv2.1.1_WebAPI/HTTPRoot/css/*.css
 WWCP_OCPIv2.1.1_WebAPI/HTTPRoot/css/*.min.css
 WWCP_OCPIv2.1.1_WebAPI/HTTPRoot/css/cdrs
