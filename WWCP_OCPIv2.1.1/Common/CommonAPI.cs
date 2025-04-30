@@ -3864,28 +3864,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Log/Read   Assets
 
-        #region LogAsset              (Command,              ...)
+        #region LogAsset               (Command,              ...)
 
-        public Task LogAsset(String            Command,
-                             EventTracking_Id  EventTrackingId,
-                             User_Id?          CurrentUserId   = null)
+        public Task LogAsset(String             Command,
+                             EventTracking_Id   EventTrackingId,
+                             User_Id?           CurrentUserId       = null,
+                             CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    AssetsDBFileName,
                    Command,
                    null,
                    EventTrackingId,
-                   CurrentUserId
+                   CurrentUserId,
+                   CancellationToken
                );
 
         #endregion
 
-        #region LogAsset              (Command, Text = null, ...)
+        #region LogAsset               (Command, Text = null, ...)
 
         public Task LogAsset(String             Command,
                              String?            Text,
-                             EventTracking_Id?  EventTrackingId   = null,
-                             User_Id?           CurrentUserId     = null)
+                             EventTracking_Id?  EventTrackingId     = null,
+                             User_Id?           CurrentUserId       = null,
+                             CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    AssetsDBFileName,
@@ -3894,12 +3897,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                        ? JToken.Parse(Text)
                        : null,
                    EventTrackingId ?? EventTracking_Id.New,
-                   CurrentUserId
+                   CurrentUserId,
+                   CancellationToken
                );
 
         #endregion
 
-        #region LogAsset              (Command, JSONObject,  ...)
+        #region LogAsset               (Command, JSONObject,  ...)
 
         public Task LogAsset(String             Command,
                              JObject            JSONObject,
@@ -3918,57 +3922,63 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region LogAsset              (Command, JSONArray,   ...)
+        #region LogAsset               (Command, JSONArray,   ...)
 
-        public Task LogAsset(String            Command,
-                             JArray            JSONArray,
-                             EventTracking_Id  EventTrackingId,
-                             User_Id?          CurrentUserId   = null)
+        public Task LogAsset(String             Command,
+                             JArray             JSONArray,
+                             EventTracking_Id   EventTrackingId,
+                             User_Id?           CurrentUserId       = null,
+                             CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    AssetsDBFileName,
                    Command,
                    JSONArray,
                    EventTrackingId,
-                   CurrentUserId
+                   CurrentUserId,
+                   CancellationToken
                );
 
         #endregion
 
-        #region LogAsset              (Command, Number,      ...)
+        #region LogAsset               (Command, Number,      ...)
 
-        public Task LogAsset(String            Command,
-                             Int64             Number,
-                             EventTracking_Id  EventTrackingId,
-                             User_Id?          CurrentUserId   = null)
+        public Task LogAsset(String             Command,
+                             Int64              Number,
+                             EventTracking_Id   EventTrackingId,
+                             User_Id?           CurrentUserId       = null,
+                             CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    AssetsDBFileName,
                    Command,
                    Number,
                    EventTrackingId,
-                   CurrentUserId
+                   CurrentUserId,
+                   CancellationToken
                );
 
         #endregion
 
-        #region LogAssetComment       (Text,                 ...)
+        #region LogAssetComment        (Text,                 ...)
 
-        public Task LogAssetComment(String            Text,
-                                    EventTracking_Id  EventTrackingId,
-                                    User_Id?          CurrentUserId   = null)
+        public Task LogAssetComment(String             Text,
+                                    EventTracking_Id   EventTrackingId,
+                                    User_Id?           CurrentUserId       = null,
+                                    CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteCommentToDatabase(
                    AssetsDBFileName,
                    Text,
                    EventTrackingId,
-                   CurrentUserId
+                   CurrentUserId,
+                   CancellationToken
                );
 
         #endregion
 
 
-        #region ReadAssetsDatabaseFile            (DatabaseFileName = null)
+        #region ReadAssetsDatabaseFile (DatabaseFileName = null)
 
         public IEnumerable<Command> ReadAssetsDatabaseFile(String? DatabaseFileName = null)
 
@@ -4028,7 +4038,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     await LogAsset(
                               CommonBaseAPI.removeRemoteParty,
                               remoteParty.ToJSON(true),
-                              EventTrackingId ?? EventTracking_Id.New,
+                              EventTrackingId,
                               CurrentUserId
                           );
 
@@ -4060,7 +4070,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         await LogRemoteParty(
                                   CommonBaseAPI.updateRemoteParty,
                                   newRemoteParty.ToJSON(true),
-                                  EventTrackingId ?? EventTracking_Id.New,
+                                  EventTrackingId,
                                   CurrentUserId
                               );
 
@@ -4222,7 +4232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.addRemoteParty,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -4302,7 +4312,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.addRemoteParty,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -4389,7 +4399,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.addRemoteParty,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -4466,7 +4476,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.addRemoteParty,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -4569,7 +4579,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.addRemotePartyIfNotExists,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -4652,7 +4662,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.addRemotePartyIfNotExists,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -4741,7 +4751,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.addRemotePartyIfNotExists,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -4820,7 +4830,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.addRemotePartyIfNotExists,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -4932,7 +4942,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             await LogRemoteParty(
                       CommonBaseAPI.addOrUpdateRemoteParty,
                       newRemoteParty.ToJSON(true),
-                      EventTrackingId ?? EventTracking_Id.New,
+                      EventTrackingId,
                       CurrentUserId
                   );
 
@@ -5020,7 +5030,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             await LogRemoteParty(
                       CommonBaseAPI.addOrUpdateRemoteParty,
                       newRemoteParty.ToJSON(true),
-                      EventTrackingId ?? EventTracking_Id.New,
+                      EventTrackingId,
                       CurrentUserId
                   );
 
@@ -5114,7 +5124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             await LogRemoteParty(
                       CommonBaseAPI.addOrUpdateRemoteParty,
                       newRemoteParty.ToJSON(true),
-                      EventTrackingId ?? EventTracking_Id.New,
+                      EventTrackingId,
                       CurrentUserId
                   );
 
@@ -5198,7 +5208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             await LogRemoteParty(
                       CommonBaseAPI.addOrUpdateRemoteParty,
                       newRemoteParty.ToJSON(true),
-                      EventTrackingId ?? EventTracking_Id.New,
+                      EventTrackingId,
                       CurrentUserId
                   );
 
@@ -5294,7 +5304,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.updateRemoteParty,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -5374,7 +5384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.updateRemoteParty,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -5460,7 +5470,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.updateRemoteParty,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -5536,7 +5546,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.updateRemoteParty,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -5708,7 +5718,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.removeRemoteParty,
                           remoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -5735,7 +5745,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.removeRemoteParty,
                           remoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -5768,7 +5778,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.removeRemoteParty,
                           remoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -5799,7 +5809,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.removeRemoteParty,
                           remoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -5821,7 +5831,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             await LogRemoteParty(
                       CommonBaseAPI.removeAllRemoteParties,
-                      EventTrackingId ?? EventTracking_Id.New,
+                      EventTrackingId,
                       CurrentUserId
                   );
 
@@ -6737,7 +6747,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                           CustomEnergyMixSerializer,
                                           CustomEnergySourceSerializer,
                                           CustomEnvironmentalImpactSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -6807,7 +6817,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             await LogAsset(
                       CommonBaseAPI.removeAllLocations,
-                      EventTrackingId ?? EventTracking_Id.New,
+                      EventTrackingId,
                       CurrentUserId
                   );
 
@@ -7841,7 +7851,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public async Task<AddResult<Tariff>> AddTariff(Tariff             Tariff,
                                                        Boolean            SkipNotifications   = false,
                                                        EventTracking_Id?  EventTrackingId     = null,
-                                                       User_Id?           CurrentUserId       = null)
+                                                       User_Id?           CurrentUserId       = null,
+                                                       CancellationToken  CancellationToken   = default)
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -7863,8 +7874,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         CustomEnergyMixSerializer,
                                         CustomEnergySourceSerializer,
                                         CustomEnvironmentalImpactSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
                       );
 
                 if (!SkipNotifications)
@@ -7903,7 +7915,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public async Task<AddResult<Tariff>> AddTariffIfNotExists(Tariff             Tariff,
                                                                   Boolean            SkipNotifications   = false,
                                                                   EventTracking_Id?  EventTrackingId     = null,
-                                                                  User_Id?           CurrentUserId       = null)
+                                                                  User_Id?           CurrentUserId       = null,
+                                                                  CancellationToken  CancellationToken   = default)
         {
 
 
@@ -7926,8 +7939,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         CustomEnergyMixSerializer,
                                         CustomEnergySourceSerializer,
                                         CustomEnvironmentalImpactSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
                       );
 
                 if (!SkipNotifications)
@@ -7966,7 +7980,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                        Boolean?           AllowDowngrades     = false,
                                                                        Boolean            SkipNotifications   = false,
                                                                        EventTracking_Id?  EventTrackingId     = null,
-                                                                       User_Id?           CurrentUserId       = null)
+                                                                       User_Id?           CurrentUserId       = null,
+                                                                       CancellationToken  CancellationToken   = default)
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -8000,8 +8015,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         CustomEnergyMixSerializer,
                                         CustomEnergySourceSerializer,
                                         CustomEnvironmentalImpactSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
                       );
 
                 if (!SkipNotifications)
@@ -8049,8 +8065,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         CustomEnergyMixSerializer,
                                         CustomEnergySourceSerializer,
                                         CustomEnvironmentalImpactSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
                       );
 
                 if (!SkipNotifications)
@@ -8092,7 +8109,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              Boolean?           AllowDowngrades     = false,
                                                              Boolean            SkipNotifications   = false,
                                                              EventTracking_Id?  EventTrackingId     = null,
-                                                             User_Id?           CurrentUserId       = null)
+                                                             User_Id?           CurrentUserId       = null,
+                                                             CancellationToken  CancellationToken   = default)
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -8135,8 +8153,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         CustomEnergyMixSerializer,
                                         CustomEnergySourceSerializer,
                                         CustomEnvironmentalImpactSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
                       );
 
                 if (!SkipNotifications)
@@ -8177,7 +8196,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                               Boolean?           AllowDowngrades     = false,
                                                               Boolean            SkipNotifications   = false,
                                                               EventTracking_Id?  EventTrackingId     = null,
-                                                              User_Id?           CurrentUserId       = null)
+                                                              User_Id?           CurrentUserId       = null,
+                                                              CancellationToken  CancellationToken   = default)
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -8210,8 +8230,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             CustomEnergyMixSerializer,
                                             CustomEnergySourceSerializer,
                                             CustomEnvironmentalImpactSerializer),
-                              EventTrackingId ?? EventTracking_Id.New,
-                              CurrentUserId
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
                           );
 
                     if (!SkipNotifications)
@@ -8259,12 +8280,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public Task<RemoveResult<IEnumerable<Tariff>>> RemoveTariff(Tariff             Tariff,
                                                                     Boolean            SkipNotifications   = false,
                                                                     EventTracking_Id?  EventTrackingId     = null,
-                                                                    User_Id?           CurrentUserId       = null)
+                                                                    User_Id?           CurrentUserId       = null,
+                                                                    CancellationToken  CancellationToken   = default)
 
             => RemoveTariff(Tariff.Id,
                             SkipNotifications,
                             EventTrackingId,
-                            CurrentUserId);
+                            CurrentUserId,
+                            CancellationToken);
 
         #endregion
 
@@ -8278,7 +8301,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveTariff(Tariff_Id          TariffId,
                                                                           Boolean            SkipNotifications   = false,
                                                                           EventTracking_Id?  EventTrackingId     = null,
-                                                                          User_Id?           CurrentUserId       = null)
+                                                                          User_Id?           CurrentUserId       = null,
+                                                                          CancellationToken  CancellationToken   = default)
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -8298,8 +8322,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                                  CustomEnergyMixSerializer,
                                                                                                  CustomEnergySourceSerializer,
                                                                                                  CustomEnvironmentalImpactSerializer))),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
                       );
 
                 if (!SkipNotifications)
@@ -8352,7 +8377,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             await LogAsset(
                       CommonBaseAPI.removeAllTariffs,
-                      EventTrackingId ?? EventTracking_Id.New,
+                      EventTrackingId,
                       CurrentUserId
                   );
 
@@ -8492,7 +8517,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             await LogAssetComment(
                       $"{CommonBaseAPI.removeAllTariffs}: {CountryCode} {PartyId}",
-                      EventTrackingId ?? EventTracking_Id.New,
+                      EventTrackingId,
                       CurrentUserId
                   );
 
@@ -8677,7 +8702,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                 true,
                                                 CustomTokenSerializer,
                                                 CustomLocationReferenceSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -8737,7 +8762,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                 true,
                                                 CustomTokenSerializer,
                                                 CustomLocationReferenceSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -8807,7 +8832,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     true,
                                                     CustomTokenSerializer,
                                                     CustomLocationReferenceSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -8853,7 +8878,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                 true,
                                                 CustomTokenSerializer,
                                                 CustomLocationReferenceSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -8940,7 +8965,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     true,
                                                     CustomTokenSerializer,
                                                     CustomLocationReferenceSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -9013,7 +9038,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                         true,
                                                         CustomTokenSerializer,
                                                         CustomLocationReferenceSerializer),
-                              EventTrackingId ?? EventTracking_Id.New,
+                              EventTrackingId,
                               CurrentUserId
                           );
 
@@ -9146,7 +9171,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                           CommonBaseAPI.removeToken,
                           existingTokenStatus.Token.ToJSON(true,
                                                            CustomTokenSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -9200,7 +9225,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             await LogAsset(
                       CommonBaseAPI.removeAllTokenStatus,
-                      EventTrackingId ?? EventTracking_Id.New,
+                      EventTrackingId,
                       CurrentUserId
                   );
 
@@ -9425,7 +9450,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                          CustomEnvironmentalImpactSerializer,
                                          CustomChargingPeriodSerializer,
                                          CustomCDRDimensionSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -9499,7 +9524,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                          CustomEnvironmentalImpactSerializer,
                                          CustomChargingPeriodSerializer,
                                          CustomCDRDimensionSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -9583,7 +9608,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                          CustomEnvironmentalImpactSerializer,
                                          CustomChargingPeriodSerializer,
                                          CustomCDRDimensionSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -9644,7 +9669,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                          CustomEnvironmentalImpactSerializer,
                                          CustomChargingPeriodSerializer,
                                          CustomCDRDimensionSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -9743,7 +9768,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                          CustomEnvironmentalImpactSerializer,
                                          CustomChargingPeriodSerializer,
                                          CustomCDRDimensionSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -9831,7 +9856,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                              CustomEnvironmentalImpactSerializer,
                                              CustomChargingPeriodSerializer,
                                              CustomCDRDimensionSerializer),
-                               EventTrackingId ?? EventTracking_Id.New,
+                               EventTrackingId,
                                CurrentUserId
                            );
 
@@ -9974,7 +9999,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                          CustomEnvironmentalImpactSerializer,
                                          CustomChargingPeriodSerializer,
                                          CustomCDRDimensionSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -10028,7 +10053,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             await LogAsset(
                       CommonBaseAPI.removeAllSessions,
-                      EventTrackingId ?? EventTracking_Id.New,
+                      EventTrackingId,
                       CurrentUserId
                   );
 
@@ -10261,7 +10286,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      CustomCDRCostDetailsSerializer,
                                      CustomSignedDataSerializer,
                                      CustomSignedValueSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -10343,7 +10368,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      CustomCDRCostDetailsSerializer,
                                      CustomSignedDataSerializer,
                                      CustomSignedValueSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -10435,7 +10460,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      CustomCDRCostDetailsSerializer,
                                      CustomSignedDataSerializer,
                                      CustomSignedValueSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -10578,7 +10603,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      CustomCDRCostDetailsSerializer,
                                      CustomSignedDataSerializer,
                                      CustomSignedValueSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -10675,7 +10700,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                          CustomCDRCostDetailsSerializer,
                                          CustomSignedDataSerializer,
                                          CustomSignedValueSerializer),
-                              EventTrackingId ?? EventTracking_Id.New,
+                              EventTrackingId,
                               CurrentUserId
                           );
 
@@ -10835,7 +10860,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      CustomCDRCostDetailsSerializer,
                                      CustomSignedDataSerializer,
                                      CustomSignedValueSerializer),
-                          EventTrackingId ?? EventTracking_Id.New,
+                          EventTrackingId,
                           CurrentUserId
                       );
 
@@ -10889,7 +10914,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             await LogAsset(
                       CommonBaseAPI.removeAllChargeDetailRecords,
-                      EventTrackingId ?? EventTracking_Id.New,
+                      EventTrackingId,
                       CurrentUserId
                   );
 
