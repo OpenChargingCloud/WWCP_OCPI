@@ -162,7 +162,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Location">The resolved user.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingLocation">Whether to fail when the location for the given location identification was not found.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseLocation(this OCPIRequest                                Request,
                                             CommonAPI                                       CommonAPI,
                                             CountryCode                                     CountryCode,
@@ -4038,7 +4037,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     await LogAsset(
                               CommonBaseAPI.removeRemoteParty,
                               remoteParty.ToJSON(true),
-                              EventTrackingId,
+                              EventTrackingId ?? EventTracking_Id.New,
                               CurrentUserId
                           );
 
@@ -4070,7 +4069,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         await LogRemoteParty(
                                   CommonBaseAPI.updateRemoteParty,
                                   newRemoteParty.ToJSON(true),
-                                  EventTrackingId,
+                                  EventTrackingId ?? EventTracking_Id.New,
                                   CurrentUserId
                               );
 
@@ -4090,7 +4089,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region TryGetLocalAccessInfo(AccessToken, out LocalAccessInfo)
 
-        public Boolean TryGetLocalAccessInfo(AccessToken AccessToken, out LocalAccessInfo LocalAccessInfo)
+        public Boolean TryGetLocalAccessInfo(AccessToken AccessToken, out LocalAccessInfo? LocalAccessInfo)
         {
 
             var accessInfos = remoteParties.Values.Where     (remoteParty => remoteParty.LocalAccessInfos.Any(accessInfo => accessInfo.AccessToken == AccessToken)).
@@ -4103,7 +4102,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 return true;
             }
 
-            LocalAccessInfo = default;
+            LocalAccessInfo = null;
             return false;
 
         }
@@ -4232,7 +4231,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.addRemoteParty,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId,
+                          EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
                       );
 
@@ -4312,7 +4311,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.addRemoteParty,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId,
+                          EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
                       );
 
@@ -4399,7 +4398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.addRemoteParty,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId,
+                          EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
                       );
 
@@ -4476,7 +4475,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.addRemoteParty,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId,
+                          EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
                       );
 
@@ -4579,7 +4578,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.addRemotePartyIfNotExists,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId,
+                          EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
                       );
 
@@ -4662,7 +4661,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.addRemotePartyIfNotExists,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId,
+                          EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
                       );
 
@@ -4751,7 +4750,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.addRemotePartyIfNotExists,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId,
+                          EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
                       );
 
@@ -4830,7 +4829,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.addRemotePartyIfNotExists,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId,
+                          EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
                       );
 
@@ -4942,7 +4941,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             await LogRemoteParty(
                       CommonBaseAPI.addOrUpdateRemoteParty,
                       newRemoteParty.ToJSON(true),
-                      EventTrackingId,
+                      EventTrackingId ?? EventTracking_Id.New,
                       CurrentUserId
                   );
 
@@ -5030,7 +5029,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             await LogRemoteParty(
                       CommonBaseAPI.addOrUpdateRemoteParty,
                       newRemoteParty.ToJSON(true),
-                      EventTrackingId,
+                      EventTrackingId ?? EventTracking_Id.New,
                       CurrentUserId
                   );
 
@@ -5124,7 +5123,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             await LogRemoteParty(
                       CommonBaseAPI.addOrUpdateRemoteParty,
                       newRemoteParty.ToJSON(true),
-                      EventTrackingId,
+                      EventTrackingId ?? EventTracking_Id.New,
                       CurrentUserId
                   );
 
@@ -5208,7 +5207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             await LogRemoteParty(
                       CommonBaseAPI.addOrUpdateRemoteParty,
                       newRemoteParty.ToJSON(true),
-                      EventTrackingId,
+                      EventTrackingId ?? EventTracking_Id.New,
                       CurrentUserId
                   );
 
@@ -5304,7 +5303,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.updateRemoteParty,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId,
+                          EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
                       );
 
@@ -5384,7 +5383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.updateRemoteParty,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId,
+                          EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
                       );
 
@@ -5470,7 +5469,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.updateRemoteParty,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId,
+                          EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
                       );
 
@@ -5546,7 +5545,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.updateRemoteParty,
                           newRemoteParty.ToJSON(true),
-                          EventTrackingId,
+                          EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
                       );
 
@@ -5718,7 +5717,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.removeRemoteParty,
                           remoteParty.ToJSON(true),
-                          EventTrackingId,
+                          EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
                       );
 
@@ -5745,7 +5744,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.removeRemoteParty,
                           remoteParty.ToJSON(true),
-                          EventTrackingId,
+                          EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
                       );
 
@@ -5778,7 +5777,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.removeRemoteParty,
                           remoteParty.ToJSON(true),
-                          EventTrackingId,
+                          EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
                       );
 
@@ -5809,7 +5808,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogRemoteParty(
                           CommonBaseAPI.removeRemoteParty,
                           remoteParty.ToJSON(true),
-                          EventTrackingId,
+                          EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
                       );
 
@@ -5831,7 +5830,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             await LogRemoteParty(
                       CommonBaseAPI.removeAllRemoteParties,
-                      EventTrackingId,
+                      EventTrackingId ?? EventTracking_Id.New,
                       CurrentUserId
                   );
 

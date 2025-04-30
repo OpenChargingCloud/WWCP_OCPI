@@ -8668,6 +8668,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             var ConnectorExistedBefore = EVSE.TryGetConnector(newOrUpdatedConnector.Id, out var existingConnector);
 
             if (existingConnector is not null)
