@@ -12,6 +12,8 @@
         <div id="versions">
             <ul>
                 <li><a href="{{versionPath}}versions">Versions</a></li>
+                <li><a href="versions">Versions</a></li>
+                <li><a href="{{BasePath}}/versions">Versions</a></li>
                 <li><a href="{{BasePath}}/webapi/remoteParties">Remote Parties</a></li>
                 <li><a href="{{BasePath}}/webapi/clients">Clients</a></li>
                 <li><a href="{{BasePath}}/webapi/cpoclients">CPO Clients</a></li>

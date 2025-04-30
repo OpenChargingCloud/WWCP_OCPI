@@ -36,7 +36,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 {
 
     /// <summary>
-    /// OCPI WebAPI extention methods.
+    /// OCPI WebAPI extension methods.
     /// </summary>
     public static class ExtensionMethods
     {
@@ -223,7 +223,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
         public     const            String              DefaultHTTPRealm          = $"Open Charging Cloud OCPI {Version.String} WebAPI";
 
         /// <summary>
-        /// The HTTP root for embedded ressources.
+        /// The HTTP root for embedded resources.
         /// </summary>
         public new const            String              HTTPRoot                  = "cloud.charging.open.protocols.OCPIv2_3_0.WebAPI.HTTPRoot.";
 
@@ -547,18 +547,27 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 
             #region / (HTTPRoot)
 
-            HTTPBaseAPI.MapResourceAssemblyFolder(
-                HTTPHostname.Any,
-                URLPathPrefix + VersionPath,
-                HTTPRoot,
-                DefaultFilename: "index.html"
-            );
+            //HTTPBaseAPI.MapResourceAssemblyFolder(
+            //    HTTPHostname.Any,
+            //    URLPathPrefix + VersionPath,
+            //    HTTPRoot,
+            //    DefaultFilename: "index.html"
+            //);
 
             #endregion
 
 
             if (HTTPBaseAPI.OverlayURLPathPrefix.HasValue)
             {
+
+                // Export static files js/css/...
+                HTTPBaseAPI.MapResourceAssemblyFolder(
+                    HTTPHostname.Any,
+                    HTTPBaseAPI.OverlayURLPathPrefix.Value + VersionPath + "webapi",
+                    HTTPRoot,
+                    DefaultFilename: "index.html"
+                );
+
 
                 #region GET ~/versions/2.3.0
 

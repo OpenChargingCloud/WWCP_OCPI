@@ -1,7 +1,7 @@
 ﻿
-<link href="{{BasePath}}/webapi/css/locations/locationStatistics.min.css" type="text/css" rel="stylesheet" />
+<link href="{{BasePath}}/v2.1/webapi/css/locations/locationStatistics.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="{{BasePath}}/webapi/locations/locationStatistics.js"></script>
+<script type="text/javascript" src="{{BasePath}}/v2.1/webapi/locations/locationStatistics.js"></script>
 
 <div class="topLinks">
     <a href="locations">Search</a> | <a href="locationStatistics" class="active">Statistics</a>

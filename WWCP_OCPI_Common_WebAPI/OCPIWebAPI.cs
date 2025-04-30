@@ -33,7 +33,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 {
 
     /// <summary>
-    /// OCPI WebAPI extention methods.
+    /// OCPI WebAPI extension methods.
     /// </summary>
     public static class ExtensionMethods
     {
@@ -138,7 +138,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         public     const            String              DefaultHTTPRealm          = $"Open Charging Cloud OCPI WebAPI";
 
         /// <summary>
-        /// The HTTP root for embedded ressources.
+        /// The HTTP root for embedded resources.
         /// </summary>
         public new const            String              HTTPRoot                  = "cloud.charging.open.protocols.OCPI.WebAPI.HTTPRoot.";
 
@@ -612,7 +612,8 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                                 AccessControlAllowHeaders  = [ "Authorization" ],
                                 ContentType                = HTTPContentType.Text.HTML_UTF8,
                                 Content                    = MixWithHTMLTemplate(
-                                                                 "index.shtml"
+                                                                 "index.shtml",
+                                                                 html => html.Replace("{{versionPath}}", "")
                                                              ).ToUTF8Bytes(),
                                 Connection                 = ConnectionType.Close,
                                 Vary                       = "Accept"
@@ -680,7 +681,8 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                                 AccessControlAllowHeaders  = [ "Authorization" ],
                                 ContentType                = HTTPContentType.Text.HTML_UTF8,
                                 Content                    = MixWithHTMLTemplate(
-                                                                 "versions.versions.shtml"
+                                                                 "versions.versions.shtml",
+                                                                 html => html.Replace("{{versionPath}}", "")
                                                              ).ToUTF8Bytes(),
                                 Connection                 = ConnectionType.Close,
                                 Vary                       = "Accept"
@@ -720,6 +722,36 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                 );
 
                 #endregion
+
+                #region GET ~/favicon.png
+
+                HTTPServer.AddMethodCallback(
+
+                    this,
+                    HTTPHostname.Any,
+                    HTTPMethod.GET,
+                    OverlayURLPathPrefix.Value + "/favicon.png",
+                    //HTTPContentType.Image.PNG,
+                    HTTPDelegate: request =>
+
+                        Task.FromResult(
+                            new HTTPResponse.Builder(request) {
+                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                Server                     = HTTPServer.DefaultServerName,
+                                Date                       = Timestamp.Now,
+                                AccessControlAllowOrigin   = "*",
+                                AccessControlAllowMethods  = [ "GET" ],
+                                AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
+                                ContentType                = HTTPContentType.Image.PNG,
+                                Content                    = GetResourceBytes("images.favicon_big.png"),
+                                Connection                 = ConnectionType.Close
+                            }.AsImmutable
+                        )
+
+                );
+
+                #endregion
+
 
             }
 

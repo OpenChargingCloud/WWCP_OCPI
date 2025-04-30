@@ -35,7 +35,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
 {
 
     /// <summary>
-    /// OCPI WebAPI extention methods.
+    /// OCPI WebAPI extension methods.
     /// </summary>
     public static class ExtensionMethods
     {
@@ -304,7 +304,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
         public const String DefaultHTTPRealm = "Open Charging Cloud OCPIPlus WebAPI";
 
         /// <summary>
-        /// The HTTP root for embedded ressources.
+        /// The HTTP root for embedded resources.
         /// </summary>
         public new const       String                               HTTPRoot                    = "cloud.charging.open.protocols.OCPIv2_3_0.WebAPI.HTTPRoot.";
 
