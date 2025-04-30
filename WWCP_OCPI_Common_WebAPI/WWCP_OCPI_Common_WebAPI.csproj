@@ -9,8 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="HTTPRoot\css\cdrs\cdrs.css" />
-    <EmbeddedResource Include="HTTPRoot\css\cdrs\cdrs.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\FontAwesome\css\all.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-brands-400.ttf" />
     <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-brands-400.woff2" />
@@ -20,44 +18,10 @@
     <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-solid-900.woff2" />
     <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-v4compatibility.ttf" />
     <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-v4compatibility.woff2" />
-    <EmbeddedResource Include="HTTPRoot\css\index.css" />
-    <EmbeddedResource Include="HTTPRoot\css\index.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\locations\locations.css" />
-    <EmbeddedResource Include="HTTPRoot\css\locations\locations.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\locations\locationStatistics.css" />
-    <EmbeddedResource Include="HTTPRoot\css\locations\locationStatistics.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParties\remoteParties.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParties\remoteParties.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParties\remoteParty.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParties\remoteParty.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\startSession.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\startSession.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\stopSession.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\stopSession.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\unlockConnector.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\unlockConnector.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\sessions\sessions.css" />
-    <EmbeddedResource Include="HTTPRoot\css\sessions\sessions.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\tariffs\tariffs.css" />
-    <EmbeddedResource Include="HTTPRoot\css\tariffs\tariffs.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\template.css" />
-    <EmbeddedResource Include="HTTPRoot\css\template.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\tokens\tokens.css" />
-    <EmbeddedResource Include="HTTPRoot\css\tokens\tokens.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.css" />
-    <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\versions\versions.css" />
-    <EmbeddedResource Include="HTTPRoot\css\versions\versions.min.css" />
     <EmbeddedResource Include="HTTPRoot\defaults\defaults.js" />
     <EmbeddedResource Include="HTTPRoot\defaults\defaults.js.map" />
     <EmbeddedResource Include="HTTPRoot\defaults\defaults.ts" />
-    <EmbeddedResource Include="HTTPRoot\defaults\OCPIv2.3.0.js" />
-    <EmbeddedResource Include="HTTPRoot\defaults\OCPIv2.3.0.js.map" />
-    <EmbeddedResource Include="HTTPRoot\defaults\OCPIv2.3.0.ts" />
+    <EmbeddedResource Include="HTTPRoot\defaults\OCPI.ts" />
     <EmbeddedResource Include="HTTPRoot\defaults\_defaults.scss" />
     <EmbeddedResource Include="HTTPRoot\favicon.png" />
     <EmbeddedResource Include="HTTPRoot\images\favicon_big.png" />

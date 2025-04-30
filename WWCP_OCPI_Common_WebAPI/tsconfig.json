@@ -10,7 +10,7 @@
   "files": [
 
     "HTTPRoot/defaults/defaults.ts",
-    "HTTPRoot/defaults/OCPIv2.3.0.ts",
+    "HTTPRoot/defaults/OCPI.ts",
 
     "HTTPRoot/versions/versions.ts"
 
