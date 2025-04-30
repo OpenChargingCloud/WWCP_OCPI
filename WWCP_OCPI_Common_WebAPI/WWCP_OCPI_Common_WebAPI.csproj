@@ -27,51 +27,9 @@
     <EmbeddedResource Include="HTTPRoot\images\favicon_big.png" />
     <EmbeddedResource Include="HTTPRoot\index.scss" />
     <EmbeddedResource Include="HTTPRoot\index.shtml" />
-    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParties.js" />
-    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParties.js.map" />
-    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParties.scss" />
-    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParties.shtml" />
-    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParties.ts" />
-    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParty.js" />
-    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParty.js.map" />
-    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParty.scss" />
-    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParty.shtml" />
-    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParty.ts" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js.map" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.scss" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.shtml" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.ts" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.js" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.js.map" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.scss" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.shtml" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.ts" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.js" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.js.map" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.scss" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.shtml" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.ts" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.js" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.js.map" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.scss" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.shtml" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.ts" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.js" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.js.map" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.scss" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.shtml" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.ts" />
     <EmbeddedResource Include="HTTPRoot\support\support.shtml" />
     <EmbeddedResource Include="HTTPRoot\template.html" />
     <EmbeddedResource Include="HTTPRoot\template.scss" />
-    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.js" />
-    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.js.map" />
-    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.scss" />
-    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.shtml" />
-    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.ts" />
-    <EmbeddedResource Include="HTTPRoot\versions\versions.js" />
-    <EmbeddedResource Include="HTTPRoot\versions\versions.js.map" />
     <EmbeddedResource Include="HTTPRoot\versions\versions.scss" />
     <EmbeddedResource Include="HTTPRoot\versions\versions.shtml" />
     <EmbeddedResource Include="HTTPRoot\versions\versions.ts" />
@@ -80,5 +38,9 @@
   <ItemGroup>
     <ProjectReference Include="..\WWCP_OCPI_Common\WWCP_OCPI_Common.csproj" />
   </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="tsc" />
+  </Target>
 
 </Project>
