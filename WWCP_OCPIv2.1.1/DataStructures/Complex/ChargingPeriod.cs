@@ -521,7 +521,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #region Parse StartTimestamp    [mandatory]
 
                 if (!JSON.ParseMandatory("start_date_time",
-                                         "energy supplier name",
+                                         "start timestamp",
                                          out DateTime StartTimestamp,
                                          out ErrorResponse))
                 {
