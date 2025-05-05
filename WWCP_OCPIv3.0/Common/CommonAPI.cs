@@ -3133,28 +3133,31 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region Log/Read   Remote Parties
 
-        #region LogRemoteParty        (Command,              ...)
+        #region LogRemoteParty              (Command,              ...)
 
-        public Task LogRemoteParty(String            Command,
-                                   EventTracking_Id  EventTrackingId,
-                                   User_Id?          CurrentUserId   = null)
+        public Task LogRemoteParty(String             Command,
+                                   EventTracking_Id   EventTrackingId,
+                                   User_Id?           CurrentUserId       = null,
+                                   CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    RemotePartyDBFileName,
                    Command,
                    null,
                    EventTrackingId,
-                   CurrentUserId
+                   CurrentUserId,
+                   CancellationToken
                );
 
         #endregion
 
-        #region LogRemoteParty        (Command, Text = null, ...)
+        #region LogRemoteParty              (Command, Text = null, ...)
 
-        public Task LogRemoteParty(String            Command,
-                                   String?           Text,
-                                   EventTracking_Id  EventTrackingId,
-                                   User_Id?          CurrentUserId   = null)
+        public Task LogRemoteParty(String             Command,
+                                   String?            Text,
+                                   EventTracking_Id   EventTrackingId,
+                                   User_Id?           CurrentUserId       = null,
+                                   CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    RemotePartyDBFileName,
@@ -3163,62 +3166,69 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                        ? JToken.Parse(Text)
                        : null,
                    EventTrackingId,
-                   CurrentUserId
+                   CurrentUserId,
+                   CancellationToken
                );
 
         #endregion
 
-        #region LogRemoteParty        (Command, JSON,        ...)
+        #region LogRemoteParty              (Command, JSON,        ...)
 
-        public Task LogRemoteParty(String            Command,
-                                   JObject           JSON,
-                                   EventTracking_Id  EventTrackingId,
-                                   User_Id?          CurrentUserId   = null)
+        public Task LogRemoteParty(String             Command,
+                                   JObject            JSON,
+                                   EventTracking_Id   EventTrackingId,
+                                   User_Id?           CurrentUserId       = null,
+                                   CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    RemotePartyDBFileName,
                    Command,
                    JSON,
                    EventTrackingId,
-                   CurrentUserId
+                   CurrentUserId,
+                   CancellationToken
                );
 
         #endregion
 
-        #region LogRemoteParty        (Command, Number,      ...)
+        #region LogRemoteParty              (Command, Number,      ...)
 
-        public Task Log(String            Command,
-                        Int64             Number,
-                        EventTracking_Id  EventTrackingId,
-                        User_Id?          CurrentUserId   = null)
+        public Task Log(String             Command,
+                        Int64              Number,
+                        EventTracking_Id   EventTrackingId,
+                        User_Id?           CurrentUserId       = null,
+                        CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    RemotePartyDBFileName,
                    Command,
                    Number,
                    EventTrackingId,
-                   CurrentUserId
+                   CurrentUserId,
+                   CancellationToken
                );
 
         #endregion
 
-        #region LogRemotePartyComment (Text,                 ...)
+        #region LogRemotePartyComment       (Text,                 ...)
 
-        public Task LogRemotePartyComment(String           Text,
-                                          EventTracking_Id  EventTrackingId,
-                                          User_Id?          CurrentUserId   = null)
+        public Task LogRemotePartyComment(String             Text,
+                                          EventTracking_Id   EventTrackingId,
+                                          User_Id?           CurrentUserId       = null,
+                                          CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteCommentToDatabase(
                    RemotePartyDBFileName,
                    Text,
                    EventTrackingId,
-                   CurrentUserId
+                   CurrentUserId,
+                   CancellationToken
                );
 
         #endregion
 
 
-        #region ReadRemotePartyDatabaseFile       (DatabaseFileName = null)
+        #region ReadRemotePartyDatabaseFile (DatabaseFileName = null)
 
         public IEnumerable<Command> ReadRemotePartyDatabaseFile(String? DatabaseFileName = null)
 
@@ -7213,6 +7223,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                                                     EventTracking_Id?  EventTrackingId   = null,
                                                                     User_Id?           CurrentUserId     = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             if (EVSE is null)
                 return PatchResult<Connector>.Failed(EventTrackingId, Connector,

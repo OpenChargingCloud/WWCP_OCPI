@@ -5339,7 +5339,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #region Log/Read   Assets
 
-        #region LogAsset              (Command,              ...)
+        #region LogAsset               (Command,              ...)
 
         public Task LogAsset(String             Command,
                              EventTracking_Id   EventTrackingId,
@@ -5357,7 +5357,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #endregion
 
-        #region LogAsset              (Command, Text = null, ...)
+        #region LogAsset               (Command, Text = null, ...)
 
         public Task LogAsset(String             Command,
                              String?            Text,
@@ -5378,7 +5378,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #endregion
 
-        #region LogAsset              (Command, JSONObject,  ...)
+        #region LogAsset               (Command, JSONObject,  ...)
 
         public Task LogAsset(String             Command,
                              JObject            JSONObject,
@@ -5397,7 +5397,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #endregion
 
-        #region LogAsset              (Command, JSONArray,   ...)
+        #region LogAsset               (Command, JSONArray,   ...)
 
         public Task LogAsset(String             Command,
                              JArray             JSONArray,
@@ -5416,7 +5416,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #endregion
 
-        #region LogAsset              (Command, Number,      ...)
+        #region LogAsset               (Command, Number,      ...)
 
         public Task LogAsset(String             Command,
                              Int64              Number,
@@ -5435,7 +5435,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #endregion
 
-        #region LogAssetComment       (Text,                 ...)
+        #region LogAssetComment        (Text,                 ...)
 
         public Task LogAssetComment(String             Text,
                                     EventTracking_Id   EventTrackingId,
@@ -5453,7 +5453,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         #endregion
 
 
-        #region ReadAssetsDatabaseFile            (DatabaseFileName = null)
+        #region ReadAssetsDatabaseFile (DatabaseFileName = null)
 
         public IEnumerable<Command> ReadAssetsDatabaseFile(String? DatabaseFileName = null)
 
@@ -9097,6 +9097,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             var ConnectorExistedBefore = EVSE.TryGetConnector(newOrUpdatedConnector.Id, out var existingConnector);
 
             if (existingConnector is not null)
@@ -9662,7 +9664,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId), out var party))
+            var partyId = Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId);
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (party.Tariffs.TryAdd(Tariff.Id, Tariff))
@@ -9730,7 +9734,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             return AddResult<Tariff>.Failed(
                        EventTrackingId,
                        Tariff,
-                       "The party identification of the tariff is unknown!"
+                       $"The party identification '{partyId}' of the tariff is unknown!"
                    );
 
         }
@@ -9751,7 +9755,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId), out var party))
+            var partyId = Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId);
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (party.Tariffs.TryAdd(Tariff.Id, Tariff))
@@ -9817,7 +9823,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             return AddResult<Tariff>.Failed(
                        EventTrackingId,
                        Tariff,
-                       "The party identification of the tariff is unknown!"
+                       $"The party identification '{partyId}' of the tariff is unknown!"
                    );
 
         }
@@ -9839,7 +9845,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId), out var party))
+            var partyId = Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId);
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 #region Update an existing tariff
@@ -9990,7 +9998,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             return AddOrUpdateResult<Tariff>.Failed(
                        EventTrackingId,
                        Tariff,
-                       "The party identification of the tariff is unknown!"
+                       $"The party identification '{partyId}' of the tariff is unknown!"
                    );
 
         }
@@ -10012,7 +10020,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId), out var party))
+            var partyId = Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId);
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (!party.Tariffs.TryGetValue(Tariff.Id, out var existingTariff))
@@ -10104,7 +10114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             return UpdateResult<Tariff>.Failed(
                        EventTrackingId,
                        Tariff,
-                       "The party identification of the tariff is unknown!"
+                       $"The party identification '{partyId}' of the tariff is unknown!"
                    );
 
         }
@@ -10201,7 +10211,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId), out var party))
+            var partyId = Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId);
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (party.Tariffs.TryRemove(Tariff.Id, out var tariffVersions))
@@ -10249,7 +10261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             return RemoveResult<IEnumerable<Tariff>>.Failed(
                        EventTrackingId,
                        [ Tariff ],
-                       "The party identification of the tariff is unknown!"
+                       $"The party identification '{partyId}' of the tariff is unknown!"
                    );
 
         }
