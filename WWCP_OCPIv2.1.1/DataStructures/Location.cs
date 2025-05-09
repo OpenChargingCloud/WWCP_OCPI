@@ -1224,8 +1224,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                : null,
 
 
-                                 new JProperty("created",                Created.    ToIso8601()),
-                                 new JProperty("last_updated",           LastUpdated.ToIso8601())
+                                 new JProperty("created",                Created.    ToISO8601()),
+                                 new JProperty("last_updated",           LastUpdated.ToISO8601())
 
                        );
 
@@ -1443,11 +1443,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 if (LocationPatch["last_updated"] is null)
-                    LocationPatch["last_updated"] = Timestamp.Now.ToIso8601();
+                    LocationPatch["last_updated"] = Timestamp.Now.ToISO8601();
 
                 else if (AllowDowngrades == false &&
                         LocationPatch["last_updated"]?.Type == JTokenType.Date &&
-                       (LocationPatch["last_updated"]?.Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
+                       (LocationPatch["last_updated"]?.Value<DateTime>().ToISO8601().CompareTo(LastUpdated.ToISO8601()) < 1))
                 {
                     return PatchResult<Location>.Failed(EventTrackingId, this,
                                                         "The 'lastUpdated' timestamp of the location patch must be newer then the timestamp of the existing location!");
@@ -1879,8 +1879,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                PostalCode.             Equals(Location.PostalCode)              &&
                Country.                Equals(Location.Country)                 &&
                Coordinates.            Equals(Location.Coordinates)             &&
-               Created.    ToIso8601().Equals(Location.Created.    ToIso8601()) &&
-               LastUpdated.ToIso8601().Equals(Location.LastUpdated.ToIso8601()) &&
+               Created.    ToISO8601().Equals(Location.Created.    ToISO8601()) &&
+               LastUpdated.ToISO8601().Equals(Location.LastUpdated.ToISO8601()) &&
 
              ((Name               is     null &&  Location.Name               is     null) ||
               (Name               is not null &&  Location.Name               is not null && Name.                    Equals(Location.Name)))                     &&
@@ -1952,7 +1952,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                    EVSEs.Count(), " EVSE(s), ",
 
-                   LastUpdated.ToIso8601()
+                   LastUpdated.ToISO8601()
 
                );
 

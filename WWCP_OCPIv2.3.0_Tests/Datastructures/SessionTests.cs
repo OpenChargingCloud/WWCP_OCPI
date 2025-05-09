@@ -136,8 +136,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(session1.CountryCode,              session2.CountryCode);
             ClassicAssert.AreEqual(session1.PartyId,                  session2.PartyId);
             ClassicAssert.AreEqual(session1.Id,                       session2.Id);
-            ClassicAssert.AreEqual(session1.Start.    ToIso8601(),    session2.Start.    ToIso8601());
-            ClassicAssert.AreEqual(session1.End.Value.ToIso8601(),    session2.End.Value.ToIso8601());
+            ClassicAssert.AreEqual(session1.Start.    ToISO8601(),    session2.Start.    ToISO8601());
+            ClassicAssert.AreEqual(session1.End.Value.ToISO8601(),    session2.End.Value.ToISO8601());
             ClassicAssert.AreEqual(session1.kWh,                      session2.kWh);
             ClassicAssert.AreEqual(session1.CDRToken,                 session2.CDRToken);
             ClassicAssert.AreEqual(session1.AuthMethod,               session2.AuthMethod);
@@ -150,7 +150,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(session1.ChargingPeriods,          session2.ChargingPeriods);
             ClassicAssert.AreEqual(session1.TotalCosts,               session2.TotalCosts);
             ClassicAssert.AreEqual(session1.Status,                   session2.Status);
-            ClassicAssert.AreEqual(session1.LastUpdated.ToIso8601(),  session2.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual(session1.LastUpdated.ToISO8601(),  session2.LastUpdated.ToISO8601());
 
         }
 
@@ -204,8 +204,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(CountryCode.Parse("NL"),                   parsedSession.CountryCode);
             ClassicAssert.AreEqual(Party_Id.   Parse("STK"),                  parsedSession.PartyId);
             ClassicAssert.AreEqual(Session_Id. Parse("101"),                  parsedSession.Id);
-            //ClassicAssert.AreEqual(Session1.Start.    ToIso8601(),    parsedSession.Start.    ToIso8601());
-            //ClassicAssert.AreEqual(Session1.End.Value.ToIso8601(),    parsedSession.End.Value.ToIso8601());
+            //ClassicAssert.AreEqual(Session1.Start.    ToISO8601(),    parsedSession.Start.    ToISO8601());
+            //ClassicAssert.AreEqual(Session1.End.Value.ToISO8601(),    parsedSession.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(Session1.kWh,                      parsedSession.kWh);
             //ClassicAssert.AreEqual(Session1.CDRToken,                 parsedSession.CDRToken);
             //ClassicAssert.AreEqual(Session1.AuthMethod,               parsedSession.AuthMethod);
@@ -220,7 +220,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Session1.ChargingPeriods,          parsedSession.ChargingPeriods);
             //ClassicAssert.AreEqual(Session1.TotalCosts,               parsedSession.TotalCosts);
             //ClassicAssert.AreEqual(Session1.Status,                   parsedSession.Status);
-            //ClassicAssert.AreEqual(Session1.LastUpdated.ToIso8601(),  parsedSession.LastUpdated.ToIso8601());
+            //ClassicAssert.AreEqual(Session1.LastUpdated.ToISO8601(),  parsedSession.LastUpdated.ToISO8601());
 
         }
 
@@ -301,8 +301,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(CountryCode.Parse("BE"),                   parsedSession.CountryCode);
             ClassicAssert.AreEqual(Party_Id.   Parse("BEC"),                  parsedSession.PartyId);
             ClassicAssert.AreEqual(Session_Id. Parse("101"),                  parsedSession.Id);
-            //ClassicAssert.AreEqual(Session1.Start.    ToIso8601(),    parsedSession.Start.    ToIso8601());
-            //ClassicAssert.AreEqual(Session1.End.Value.ToIso8601(),    parsedSession.End.Value.ToIso8601());
+            //ClassicAssert.AreEqual(Session1.Start.    ToISO8601(),    parsedSession.Start.    ToISO8601());
+            //ClassicAssert.AreEqual(Session1.End.Value.ToISO8601(),    parsedSession.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(Session1.kWh,                      parsedSession.kWh);
             //ClassicAssert.AreEqual(Session1.CDRToken,                 parsedSession.CDRToken);
             //ClassicAssert.AreEqual(Session1.AuthMethod,               parsedSession.AuthMethod);
@@ -317,7 +317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Session1.ChargingPeriods,          parsedSession.ChargingPeriods);
             //ClassicAssert.AreEqual(Session1.TotalCosts,               parsedSession.TotalCosts);
             //ClassicAssert.AreEqual(Session1.Status,                   parsedSession.Status);
-            //ClassicAssert.AreEqual(Session1.LastUpdated.ToIso8601(),  parsedSession.LastUpdated.ToIso8601());
+            //ClassicAssert.AreEqual(Session1.LastUpdated.ToISO8601(),  parsedSession.LastUpdated.ToISO8601());
 
         }
 

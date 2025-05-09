@@ -460,7 +460,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (MeterSample is null)
                 throw new ArgumentNullException(nameof(MeterSample), "The given meter sample must not be null!");
 
-            var c = Timestamp.ToIso8601().CompareTo(MeterSample.Timestamp.ToIso8601());
+            var c = Timestamp.ToISO8601().CompareTo(MeterSample.Timestamp.ToISO8601());
             if (c != 0)
                 return c;
 

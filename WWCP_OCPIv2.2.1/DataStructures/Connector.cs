@@ -547,7 +547,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      ? new JProperty("terms_and_conditions",   TermsAndConditionsURL.ToString())
                                      : null,
 
-                                       new JProperty("last_updated",           LastUpdated.          ToIso8601())
+                                       new JProperty("last_updated",           LastUpdated.          ToISO8601())
 
                              );
 
@@ -666,11 +666,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             {
 
                 if (ConnectorPatch["last_updated"] is null)
-                    ConnectorPatch["last_updated"] = Timestamp.Now.ToIso8601();
+                    ConnectorPatch["last_updated"] = Timestamp.Now.ToISO8601();
 
                 else if (AllowDowngrades == false &&
                         ConnectorPatch["last_updated"].Type == JTokenType.Date &&
-                       (ConnectorPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
+                       (ConnectorPatch["last_updated"].Value<DateTime>().ToISO8601().CompareTo(LastUpdated.ToISO8601()) < 1))
                 {
                     return PatchResult<Connector>.Failed(EventTrackingId, this,
                                                          "The 'lastUpdated' timestamp of the connector patch must be newer then the timestamp of the existing connector!");
@@ -909,7 +909,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                MaxVoltage.             Equals(Connector.MaxVoltage)              &&
                MaxAmperage.            Equals(Connector.MaxAmperage)             &&
                MaxElectricPower.       Equals(Connector.MaxElectricPower)        &&
-               LastUpdated.ToIso8601().Equals(Connector.LastUpdated.ToIso8601()) &&
+               LastUpdated.ToISO8601().Equals(Connector.LastUpdated.ToISO8601()) &&
 
                TariffIds.Count().Equals(Connector.TariffIds.Count()) &&
                TariffIds.All(tariffId => Connector.TariffIds.Contains(tariffId)) &&

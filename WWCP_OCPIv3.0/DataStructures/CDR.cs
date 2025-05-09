@@ -1357,8 +1357,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                : null,
 
 
-                                 new JProperty("start_date_time",              Start.                         ToIso8601()),
-                                 new JProperty("end_date_time",                End.                           ToIso8601()),
+                                 new JProperty("start_date_time",              Start.                         ToISO8601()),
+                                 new JProperty("end_date_time",                End.                           ToISO8601()),
 
                            SessionId.HasValue
                                ? new JProperty("session_id",                   SessionId.               Value.ToString())
@@ -1440,10 +1440,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                : null,
 
                            IncludeCreatedTimestamp
-                               ? new JProperty("created",                      Created.                       ToIso8601())
+                               ? new JProperty("created",                      Created.                       ToISO8601())
                                : null,
 
-                                 new JProperty("last_updated",                 LastUpdated.                   ToIso8601())
+                                 new JProperty("last_updated",                 LastUpdated.                   ToISO8601())
 
                        );
 
@@ -1595,11 +1595,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 if (CDRPatch["last_updated"] is null)
-                    CDRPatch["last_updated"] = Timestamp.Now.ToIso8601();
+                    CDRPatch["last_updated"] = Timestamp.Now.ToISO8601();
 
                 else if (AllowDowngrades == false &&
                         CDRPatch["last_updated"].Type == JTokenType.Date &&
-                       (CDRPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
+                       (CDRPatch["last_updated"].Value<DateTime>().ToISO8601().CompareTo(LastUpdated.ToISO8601()) < 1))
                 {
                     return PatchResult<CDR>.Failed(EventTrackingId, this,
                                                       "The 'lastUpdated' timestamp of the charge detail record patch must be newer then the timestamp of the existing charge detail record!");
@@ -1862,8 +1862,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                TotalCosts.             Equals(CDR.TotalCosts)              &&
                TotalEnergy.            Equals(CDR.TotalEnergy)             &&
                TotalTime.              Equals(CDR.TotalTime)               &&
-               Created.    ToIso8601().Equals(CDR.Created.    ToIso8601()) &&
-               LastUpdated.ToIso8601().Equals(CDR.LastUpdated.ToIso8601()) &&
+               Created.    ToISO8601().Equals(CDR.Created.    ToISO8601()) &&
+               LastUpdated.ToISO8601().Equals(CDR.LastUpdated.ToISO8601()) &&
 
             ((!SessionId.               HasValue    && !CDR.SessionId.               HasValue)  ||
               (SessionId.               HasValue    &&  CDR.SessionId.               HasValue    && SessionId.               Value.Equals(CDR.SessionId.               Value))) &&
@@ -1936,10 +1936,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             => String.Concat(
 
-                   $"{PartyId}:{Id} ({VersionId}, {LastUpdated.ToIso8601()})",
+                   $"{PartyId}:{Id} ({VersionId}, {LastUpdated.ToISO8601()})",
 
-                   Start.      ToIso8601(),  ", ",
-                   End.        ToIso8601(),  ", ",
+                   Start.      ToISO8601(),  ", ",
+                   End.        ToISO8601(),  ", ",
                    CDRToken.   ToString(),   ", ",
                    AuthMethod. ToString(),   ", ",
                    CDRLocation.ToString(),   ", ",
@@ -1977,7 +1977,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        ? "remark: " + Remark + ", "
                        : "",
 
-                   LastUpdated.ToIso8601()
+                   LastUpdated.ToISO8601()
 
                );
 

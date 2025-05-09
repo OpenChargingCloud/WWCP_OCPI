@@ -331,7 +331,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(Location1.Images,                   Location2.Images);
             ClassicAssert.AreEqual(Location1.EnergyMix,                Location2.EnergyMix);
 
-            ClassicAssert.AreEqual(Location1.LastUpdated.ToIso8601(),  Location2.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual(Location1.LastUpdated.ToISO8601(),  Location2.LastUpdated.ToISO8601());
 
         }
 
@@ -601,7 +601,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.IsNotNull(patchResult.PatchedData);
 
             ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),                                           patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                             patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                             patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 
@@ -870,7 +870,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.IsNotNull(patchResult.PatchedData);
 
             ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),                                                   patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                                     patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                                     patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 
@@ -1139,7 +1139,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.IsNotNull(patchResult.PatchedData);
 
             ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),                                             patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                               patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                               patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 
@@ -1679,7 +1679,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
             ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),  patchResult.PatchedData.Id);
             ClassicAssert.AreEqual ("Location 0001a",              patchResult.PatchedData.Name);
-            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 
@@ -1951,7 +1951,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual (2,                             patchResult.PatchedData.Facilities.        Count());
             ClassicAssert.AreEqual (Facilities.Parse("CAFE"),      patchResult.PatchedData.Facilities.        First());
             ClassicAssert.AreEqual (Facilities.Parse("AIRPORT"),   patchResult.PatchedData.Facilities.Skip(1).First());
-            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 
@@ -2221,7 +2221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),  patchResult.PatchedData.Id);
             ClassicAssert.AreEqual ("Location 0001",               patchResult.PatchedData.Name);
             ClassicAssert.AreEqual (0,                             patchResult.PatchedData.Facilities. Count());
-            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 
@@ -2490,7 +2490,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
             ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),  patchResult.PatchedData.Id);
             ClassicAssert.IsTrue   (patchResult.PatchedData.Name.IsNullOrEmpty());
-            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 
@@ -2759,7 +2759,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.IsNotNull(patchResult.PatchedData);
 
             ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),                                          patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                            patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                            patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 
@@ -3028,7 +3028,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.IsNotNull(patchResult.PatchedData);
 
             ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),                                           patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                             patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                             patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 
@@ -3297,7 +3297,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.IsNotNull(patchResult.PatchedData);
 
             ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),                                                 patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                                   patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                                   patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 
@@ -3400,8 +3400,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(Party_Id.   Parse("BEC"),                                   parsedLocation.PartyId);
             ClassicAssert.AreEqual(Location_Id.Parse("LOC1"),                                  parsedLocation.Id);
             ClassicAssert.AreEqual(true,                                                       parsedLocation.Publish);
-            //ClassicAssert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
-            //ClassicAssert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
+            //ClassicAssert.AreEqual(Location1.Start.    ToISO8601(),                            parsedLocation.Start.    ToISO8601());
+            //ClassicAssert.AreEqual(Location1.End.Value.ToISO8601(),                            parsedLocation.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
             //ClassicAssert.AreEqual(Location1.CDRToken,                                         parsedLocation.CDRToken);
             //ClassicAssert.AreEqual(Location1.AuthMethod,                                       parsedLocation.AuthMethod);
@@ -3416,7 +3416,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
             //ClassicAssert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
             //ClassicAssert.AreEqual(Location1.Status,                                           parsedLocation.Status);
-            //ClassicAssert.AreEqual(Location1.LastUpdated.ToIso8601(),                          parsedLocation.LastUpdated.ToIso8601());
+            //ClassicAssert.AreEqual(Location1.LastUpdated.ToISO8601(),                          parsedLocation.LastUpdated.ToISO8601());
 
         }
 
@@ -3511,8 +3511,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(Party_Id.   Parse("EVC"),                                   parsedLocation.PartyId);
             ClassicAssert.AreEqual(Location_Id.Parse("cbb0df21-d17d-40ba-a4aa-dc588c8f98cb"),  parsedLocation.Id);
             ClassicAssert.AreEqual(true,                                                       parsedLocation.Publish);
-            //ClassicAssert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
-            //ClassicAssert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
+            //ClassicAssert.AreEqual(Location1.Start.    ToISO8601(),                            parsedLocation.Start.    ToISO8601());
+            //ClassicAssert.AreEqual(Location1.End.Value.ToISO8601(),                            parsedLocation.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
             //ClassicAssert.AreEqual(Location1.CDRToken,                                         parsedLocation.CDRToken);
             //ClassicAssert.AreEqual(Location1.AuthMethod,                                       parsedLocation.AuthMethod);
@@ -3527,7 +3527,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
             //ClassicAssert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
             //ClassicAssert.AreEqual(Location1.Status,                                           parsedLocation.Status);
-            //ClassicAssert.AreEqual(Location1.LastUpdated.ToIso8601(),                          parsedLocation.LastUpdated.ToIso8601());
+            //ClassicAssert.AreEqual(Location1.LastUpdated.ToISO8601(),                          parsedLocation.LastUpdated.ToISO8601());
 
         }
 
@@ -3590,8 +3590,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(Party_Id.   Parse("ALF"),                                   parsedLocation.PartyId);
             ClassicAssert.AreEqual(Location_Id.Parse("3e7b39c2-10d0-4138-a8b3-8509a25f9920"),  parsedLocation.Id);
             ClassicAssert.AreEqual(true,                                                       parsedLocation.Publish);
-            //ClassicAssert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
-            //ClassicAssert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
+            //ClassicAssert.AreEqual(Location1.Start.    ToISO8601(),                            parsedLocation.Start.    ToISO8601());
+            //ClassicAssert.AreEqual(Location1.End.Value.ToISO8601(),                            parsedLocation.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
             //ClassicAssert.AreEqual(Location1.CDRToken,                                         parsedLocation.CDRToken);
             //ClassicAssert.AreEqual(Location1.AuthMethod,                                       parsedLocation.AuthMethod);
@@ -3606,7 +3606,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
             //ClassicAssert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
             //ClassicAssert.AreEqual(Location1.Status,                                           parsedLocation.Status);
-            //ClassicAssert.AreEqual(Location1.LastUpdated.ToIso8601(),                          parsedLocation.LastUpdated.ToIso8601());
+            //ClassicAssert.AreEqual(Location1.LastUpdated.ToISO8601(),                          parsedLocation.LastUpdated.ToISO8601());
 
         }
 
@@ -3668,8 +3668,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(Party_Id.   Parse("ALF"),                                   parsedLocation.PartyId);
             ClassicAssert.AreEqual(Location_Id.Parse("3e7b39c2-10d0-4138-a8b3-8509a25f9920"),  parsedLocation.Id);
             ClassicAssert.AreEqual(false,                                                      parsedLocation.Publish);
-            //ClassicAssert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
-            //ClassicAssert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
+            //ClassicAssert.AreEqual(Location1.Start.    ToISO8601(),                            parsedLocation.Start.    ToISO8601());
+            //ClassicAssert.AreEqual(Location1.End.Value.ToISO8601(),                            parsedLocation.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
             //ClassicAssert.AreEqual(Location1.CDRToken,                                         parsedLocation.CDRToken);
             //ClassicAssert.AreEqual(Location1.AuthMethod,                                       parsedLocation.AuthMethod);
@@ -3684,7 +3684,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
             //ClassicAssert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
             //ClassicAssert.AreEqual(Location1.Status,                                           parsedLocation.Status);
-            //ClassicAssert.AreEqual(Location1.LastUpdated.ToIso8601(),                          parsedLocation.LastUpdated.ToIso8601());
+            //ClassicAssert.AreEqual(Location1.LastUpdated.ToISO8601(),                          parsedLocation.LastUpdated.ToISO8601());
 
         }
 
@@ -3756,8 +3756,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(Party_Id.   Parse("ALL"),                                   parsedLocation.PartyId);
             ClassicAssert.AreEqual(Location_Id.Parse("f76c2e0c-a6ef-4f67-bf23-6a187e5ca0e0"),  parsedLocation.Id);
             ClassicAssert.AreEqual(false,                                                      parsedLocation.Publish);
-            //ClassicAssert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
-            //ClassicAssert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
+            //ClassicAssert.AreEqual(Location1.Start.    ToISO8601(),                            parsedLocation.Start.    ToISO8601());
+            //ClassicAssert.AreEqual(Location1.End.Value.ToISO8601(),                            parsedLocation.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
             //ClassicAssert.AreEqual(Location1.CDRToken,                                         parsedLocation.CDRToken);
             //ClassicAssert.AreEqual(Location1.AuthMethod,                                       parsedLocation.AuthMethod);
@@ -3772,7 +3772,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
             //ClassicAssert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
             //ClassicAssert.AreEqual(Location1.Status,                                           parsedLocation.Status);
-            //ClassicAssert.AreEqual(Location1.LastUpdated.ToIso8601(),                          parsedLocation.LastUpdated.ToIso8601());
+            //ClassicAssert.AreEqual(Location1.LastUpdated.ToISO8601(),                          parsedLocation.LastUpdated.ToISO8601());
 
         }
 
@@ -3837,8 +3837,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(Party_Id.   Parse("ALL"),                                   parsedLocation.PartyId);
             ClassicAssert.AreEqual(Location_Id.Parse("a5295927-09b9-4a71-b4b9-a5fffdfa0b77"),  parsedLocation.Id);
             ClassicAssert.AreEqual(false,                                                      parsedLocation.Publish);
-            //ClassicAssert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
-            //ClassicAssert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
+            //ClassicAssert.AreEqual(Location1.Start.    ToISO8601(),                            parsedLocation.Start.    ToISO8601());
+            //ClassicAssert.AreEqual(Location1.End.Value.ToISO8601(),                            parsedLocation.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
             //ClassicAssert.AreEqual(Location1.CDRToken,                                         parsedLocation.CDRToken);
             //ClassicAssert.AreEqual(Location1.AuthMethod,                                       parsedLocation.AuthMethod);
@@ -3853,7 +3853,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
             //ClassicAssert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
             //ClassicAssert.AreEqual(Location1.Status,                                           parsedLocation.Status);
-            //ClassicAssert.AreEqual(Location1.LastUpdated.ToIso8601(),                          parsedLocation.LastUpdated.ToIso8601());
+            //ClassicAssert.AreEqual(Location1.LastUpdated.ToISO8601(),                          parsedLocation.LastUpdated.ToISO8601());
 
         }
 

@@ -512,8 +512,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                                                               true,
                                                                                                                               CustomTokenSerializer,
                                                                                                                               CustomEnergyContractSerializer)),
-                                               new JProperty("authorization_timestamp",   AuthorizationTimestamp.      ToIso8601()),
-                                               new JProperty("authorized_until",          AuthorizedUntil.             ToIso8601()),
+                                               new JProperty("authorization_timestamp",   AuthorizationTimestamp.      ToISO8601()),
+                                               new JProperty("authorized_until",          AuthorizedUntil.             ToISO8601()),
 
                                          AuthorizationReference.HasValue
                                              ? new JProperty("authorization_reference",   AuthorizationReference.Value.ToString())

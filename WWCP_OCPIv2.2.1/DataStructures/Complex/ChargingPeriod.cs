@@ -284,7 +284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var json = JSONObject.Create(
 
-                                 new JProperty("start_date_time",   StartTimestamp.ToIso8601()),
+                                 new JProperty("start_date_time",   StartTimestamp.ToISO8601()),
 
                                  new JProperty("dimensions",        new JArray(Dimensions.Select(cdrDimension => cdrDimension.ToJSON(CustomCDRDimensionSerializer)))),
 
@@ -473,7 +473,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ChargingPeriod">A charging period to compare with.</param>
         public Boolean Equals(ChargingPeriod ChargingPeriod)
 
-            => StartTimestamp.ToIso8601().Equals(ChargingPeriod.StartTimestamp.ToIso8601()) &&
+            => StartTimestamp.ToISO8601().Equals(ChargingPeriod.StartTimestamp.ToISO8601()) &&
 
             ((!TariffId.HasValue && !ChargingPeriod.TariffId.HasValue) ||
               (TariffId.HasValue &&  ChargingPeriod.TariffId.HasValue && TariffId.Value.Equals(ChargingPeriod.TariffId.Value))) &&

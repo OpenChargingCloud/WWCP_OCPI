@@ -200,8 +200,8 @@ namespace cloud.charging.open.protocols.OCPI
         {
 
             var JSON = JSONObject.Create(
-                           new JProperty("period_begin",  Begin.ToIso8601()),
-                           new JProperty("period_end",    End.  ToIso8601())
+                           new JProperty("period_begin",  Begin.ToISO8601()),
+                           new JProperty("period_end",    End.  ToISO8601())
                        );
 
             return CustomExceptionalPeriodSerializer is not null

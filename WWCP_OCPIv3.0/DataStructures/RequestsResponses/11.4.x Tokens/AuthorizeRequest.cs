@@ -335,7 +335,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            JSONObject.Create(
 
                                      new JProperty("token_uid",                TokenUId.             ToString()),
-                                     new JProperty("presentation_timestamp",   PresentationTimestamp.ToIso8601()),
+                                     new JProperty("presentation_timestamp",   PresentationTimestamp.ToISO8601()),
                                      new JProperty("location_id",              LocationId.           ToString()),
 
                                Type.HasValue

@@ -84,7 +84,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual("TheNewMotion",                      parsedToken.Issuer);
                 ClassicAssert.AreEqual(true,                                parsedToken.IsValid);
                 ClassicAssert.AreEqual(WhitelistTypes.ALLOWED,              parsedToken.WhitelistType);
-                ClassicAssert.AreEqual("2015-06-29T22:39:09.000Z",          parsedToken.LastUpdated.ToIso8601());
+                ClassicAssert.AreEqual("2015-06-29T22:39:09.000Z",          parsedToken.LastUpdated.ToISO8601());
 
             }
 
@@ -150,7 +150,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual(token1.WhitelistType,            token2.WhitelistType);
                 ClassicAssert.AreEqual(token1.VisualNumber,             token2.VisualNumber);
                 ClassicAssert.AreEqual(token1.UILanguage,               token2.UILanguage);
-                ClassicAssert.AreEqual(token1.LastUpdated.ToIso8601(),  token2.LastUpdated.ToIso8601());
+                ClassicAssert.AreEqual(token1.LastUpdated.ToISO8601(),  token2.LastUpdated.ToISO8601());
 
             }
 

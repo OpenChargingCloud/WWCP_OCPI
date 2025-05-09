@@ -333,8 +333,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(cdr1.PartyId,                  cdr2.PartyId);
             ClassicAssert.AreEqual(cdr1.Id,                       cdr2.Id);
 
-            ClassicAssert.AreEqual(cdr1.Start.ToIso8601(),        cdr2.Start.ToIso8601());
-            ClassicAssert.AreEqual(cdr1.End.  ToIso8601(),        cdr2.End.  ToIso8601());
+            ClassicAssert.AreEqual(cdr1.Start.ToISO8601(),        cdr2.Start.ToISO8601());
+            ClassicAssert.AreEqual(cdr1.End.  ToISO8601(),        cdr2.End.  ToISO8601());
             ClassicAssert.AreEqual(cdr1.CDRToken,                 cdr2.CDRToken);
             ClassicAssert.AreEqual(cdr1.AuthMethod,               cdr2.AuthMethod);
             ClassicAssert.AreEqual(cdr1.Location,                 cdr2.Location);
@@ -362,7 +362,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(cdr1.Credit,                   cdr2.Credit);
             ClassicAssert.AreEqual(cdr1.CreditReferenceId,        cdr2.CreditReferenceId);
 
-            ClassicAssert.AreEqual(cdr1.LastUpdated.ToIso8601(),  cdr2.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual(cdr1.LastUpdated.ToISO8601(),  cdr2.LastUpdated.ToISO8601());
 
         }
 
@@ -461,8 +461,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(Party_Id.   Parse("BEC"),                              parsedCDR.PartyId);
             ClassicAssert.AreEqual(CDR_Id.Parse("12345"),                                 parsedCDR.Id);
             //ClassicAssert.AreEqual(true,                                                  parsedCDR.Publish);
-            //ClassicAssert.AreEqual(CDR1.Start.    ToIso8601(),                            parsedCDR.Start.    ToIso8601());
-            //ClassicAssert.AreEqual(CDR1.End.Value.ToIso8601(),                            parsedCDR.End.Value.ToIso8601());
+            //ClassicAssert.AreEqual(CDR1.Start.    ToISO8601(),                            parsedCDR.Start.    ToISO8601());
+            //ClassicAssert.AreEqual(CDR1.End.Value.ToISO8601(),                            parsedCDR.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(CDR1.kWh,                                              parsedCDR.kWh);
             //ClassicAssert.AreEqual(CDR1.CDRToken,                                         parsedCDR.CDRToken);
             //ClassicAssert.AreEqual(CDR1.AuthMethod,                                       parsedCDR.AuthMethod);
@@ -477,7 +477,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             //ClassicAssert.AreEqual(CDR1.ChargingPeriods,                                  parsedCDR.ChargingPeriods);
             //ClassicAssert.AreEqual(CDR1.TotalCosts,                                       parsedCDR.TotalCosts);
             //ClassicAssert.AreEqual(CDR1.Status,                                           parsedCDR.Status);
-            //ClassicAssert.AreEqual(CDR1.LastUpdated.ToIso8601(),                          parsedCDR.LastUpdated.ToIso8601());
+            //ClassicAssert.AreEqual(CDR1.LastUpdated.ToISO8601(),                          parsedCDR.LastUpdated.ToISO8601());
 
         }
 

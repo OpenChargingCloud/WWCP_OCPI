@@ -5595,7 +5595,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                );
                     }
 
-                    //if (Location.LastUpdated.ToIso8601() == existingLocation.LastUpdated.ToIso8601())
+                    //if (Location.LastUpdated.ToISO8601() == existingLocation.LastUpdated.ToISO8601())
                     //    return AddOrUpdateResult<Location>.NoOperation(Location,
                     //                                                   "The 'lastUpdated' timestamp of the new location must be newer then the timestamp of the existing location!");
 
@@ -6600,7 +6600,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                    );
                         }
 
-                        if (newOrUpdatedChargingStation.LastUpdated.ToIso8601() == existingChargingStation.LastUpdated.ToIso8601())
+                        if (newOrUpdatedChargingStation.LastUpdated.ToISO8601() == existingChargingStation.LastUpdated.ToISO8601())
                             return AddOrUpdateResult<ChargingStation>.NoOperation(
                                        EventTrackingId,
                                        newOrUpdatedChargingStation,
@@ -6973,7 +6973,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                            );
                 }
 
-                if (newOrUpdatedEVSE.LastUpdated.ToIso8601() == existingEVSE.LastUpdated.ToIso8601())
+                if (newOrUpdatedEVSE.LastUpdated.ToISO8601() == existingEVSE.LastUpdated.ToISO8601())
                     return AddOrUpdateResult<EVSE>.NoOperation(
                                EventTrackingId,
                                newOrUpdatedEVSE,
@@ -7171,7 +7171,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                );
                     }
 
-                    if (newOrUpdatedConnector.LastUpdated.ToIso8601() == existingConnector.LastUpdated.ToIso8601())
+                    if (newOrUpdatedConnector.LastUpdated.ToISO8601() == existingConnector.LastUpdated.ToISO8601())
                         return AddOrUpdateResult<Connector>.NoOperation(
                                    EventTrackingId,
                                    newOrUpdatedConnector,
@@ -8533,7 +8533,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                );
                     }
 
-                    //if (Token.LastUpdated.ToIso8601() == existingToken.LastUpdated.ToIso8601())
+                    //if (Token.LastUpdated.ToISO8601() == existingToken.LastUpdated.ToISO8601())
                     //    return AddOrUpdateResult<Token>.NoOperation(Token,
                     //                                                   "The 'lastUpdated' timestamp of the new token status must be newer then the timestamp of the existing token status!");
 
@@ -9589,7 +9589,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                );
                     }
 
-                    //if (Session.LastUpdated.ToIso8601() == existingSession.LastUpdated.ToIso8601())
+                    //if (Session.LastUpdated.ToISO8601() == existingSession.LastUpdated.ToISO8601())
                     //    return AddOrUpdateResult<Session>.NoOperation(Session,
                     //                                                   "The 'lastUpdated' timestamp of the new session must be newer then the timestamp of the existing session!");
 
@@ -10618,7 +10618,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                );
                     }
 
-                    //if (CDR.LastUpdated.ToIso8601() == existingCDR.LastUpdated.ToIso8601())
+                    //if (CDR.LastUpdated.ToISO8601() == existingCDR.LastUpdated.ToISO8601())
                     //    return AddOrUpdateResult<CDR>.NoOperation(CDR,
                     //                                                   "The 'lastUpdated' timestamp of the new charge detail record must be newer then the timestamp of the existing charge detail record!");
 

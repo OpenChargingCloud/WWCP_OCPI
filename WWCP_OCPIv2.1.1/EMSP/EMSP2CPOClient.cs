@@ -1729,7 +1729,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestBuilder.Set("X-Correlation-ID",  correlationId);
 
                                                                          if (Timestamp.HasValue)
-                                                                             requestBuilder.QueryString.Add("timestamp", Timestamp.Value.ToIso8601());
+                                                                             requestBuilder.QueryString.Add("timestamp", Timestamp.Value.ToISO8601());
 
                                                                          if (Tolerance.HasValue)
                                                                              requestBuilder.QueryString.Add("tolerance", Tolerance.Value.TotalSeconds);
@@ -1933,7 +1933,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestBuilder.Set("X-Correlation-ID",  correlationId);
 
                                                                          if (Timestamp.HasValue)
-                                                                             requestBuilder.QueryString.Add("timestamp", Timestamp.Value.ToIso8601());
+                                                                             requestBuilder.QueryString.Add("timestamp", Timestamp.Value.ToISO8601());
 
                                                                          if (Tolerance.HasValue)
                                                                              requestBuilder.QueryString.Add("tolerance", Tolerance.Value.TotalSeconds);

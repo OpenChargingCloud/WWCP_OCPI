@@ -383,7 +383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                  new JProperty("token",                     Token.                 ToJSON(CustomTokenSerializer,
                                                                                                           CustomEnergyContractSerializer)),
-                                 new JProperty("expiry_date",               ExpiryDate.            ToIso8601()),
+                                 new JProperty("expiry_date",               ExpiryDate.            ToISO8601()),
                                  new JProperty("reservation_id",            ReservationId.         ToString()),
                                  new JProperty("location_id",               LocationId.            ToString()),
 

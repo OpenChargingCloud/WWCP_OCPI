@@ -775,10 +775,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                : null,
 
                            IncludeCreatedTimestamp
-                               ? new JProperty("created",              Created.     ToIso8601())
+                               ? new JProperty("created",              Created.     ToISO8601())
                                : null,
 
-                                 new JProperty("last_updated",         LastUpdated. ToIso8601())
+                                 new JProperty("last_updated",         LastUpdated. ToISO8601())
 
                        );
 
@@ -970,11 +970,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 if (ChargingStationPatch["last_updated"] is null)
-                    ChargingStationPatch["last_updated"] = Timestamp.Now.ToIso8601();
+                    ChargingStationPatch["last_updated"] = Timestamp.Now.ToISO8601();
 
                 else if (AllowDowngrades == false &&
                         ChargingStationPatch["last_updated"].Type == JTokenType.Date &&
-                       (ChargingStationPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
+                       (ChargingStationPatch["last_updated"].Value<DateTime>().ToISO8601().CompareTo(LastUpdated.ToISO8601()) < 1))
                 {
                     return PatchResult<ChargingStation>.Failed(EventTrackingId, this,
                                                     "The 'lastUpdated' timestamp of the ChargingStation patch must be newer then the timestamp of the existing ChargingStation!");
@@ -1346,8 +1346,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                Id.                     Equals(ChargingStation.Id)                      &&
 
-               Created.    ToIso8601().Equals(ChargingStation.Created.    ToIso8601()) &&
-               LastUpdated.ToIso8601().Equals(ChargingStation.LastUpdated.ToIso8601()) &&
+               Created.    ToISO8601().Equals(ChargingStation.Created.    ToISO8601()) &&
+               LastUpdated.ToISO8601().Equals(ChargingStation.LastUpdated.ToISO8601()) &&
 
             ((!Coordinates.      HasValue    && !ChargingStation.Coordinates.      HasValue)    ||
               (Coordinates.      HasValue    &&  ChargingStation.Coordinates.      HasValue    && Coordinates.Value.Equals(ChargingStation.Coordinates.Value))) &&
@@ -1432,7 +1432,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    ", ",
                    EVSEs.Count(), " EVSE(s), ",
 
-                   LastUpdated.ToIso8601()
+                   LastUpdated.ToISO8601()
 
                );
 

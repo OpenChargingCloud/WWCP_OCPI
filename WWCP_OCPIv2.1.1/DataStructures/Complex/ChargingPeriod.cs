@@ -108,7 +108,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ChargingPeriod">A metering value to compare with.</param>
         public Boolean Equals(MeteringValue MeteringValue)
 
-            => Timestamp.ToIso8601().Equals(MeteringValue.Timestamp.ToIso8601()) &&
+            => Timestamp.ToISO8601().Equals(MeteringValue.Timestamp.ToISO8601()) &&
                WattHours.            Equals(MeteringValue.WattHours)             &&
                Source.               Equals(MeteringValue.Source);
 
@@ -581,7 +581,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var json = JSONObject.Create(
 
-                           new JProperty("start_date_time",   StartTimestamp.ToIso8601()),
+                           new JProperty("start_date_time",   StartTimestamp.ToISO8601()),
 
                            new JProperty("dimensions",        new JArray(Dimensions.Select(cdrDimension => cdrDimension.ToJSON(CustomCDRDimensionSerializer))))
 
@@ -772,7 +772,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public Boolean Equals(ChargingPeriod? ChargingPeriod)
 
             => ChargingPeriod is not null &&
-               StartTimestamp.ToIso8601().Equals(ChargingPeriod.StartTimestamp.ToIso8601()) &&
+               StartTimestamp.ToISO8601().Equals(ChargingPeriod.StartTimestamp.ToISO8601()) &&
 
                Dimensions.Count.          Equals(ChargingPeriod.Dimensions.    Count) &&
                Dimensions.All(ChargingPeriod.Dimensions.Contains);

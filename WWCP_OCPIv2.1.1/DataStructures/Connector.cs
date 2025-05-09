@@ -746,7 +746,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                       ? new JProperty("terms_and_conditions",   TermsAndConditionsURL.ToString())
                                       : null,
 
-                                        new JProperty("last_updated",           LastUpdated.          ToIso8601())
+                                        new JProperty("last_updated",           LastUpdated.          ToISO8601())
 
                               );
 
@@ -877,11 +877,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 if (ConnectorPatch["last_updated"] is null)
-                    ConnectorPatch["last_updated"] = Timestamp.Now.ToIso8601();
+                    ConnectorPatch["last_updated"] = Timestamp.Now.ToISO8601();
 
                 else if (AllowDowngrades == false &&
                         ConnectorPatch["last_updated"]?.Type == JTokenType.Date &&
-                       (ConnectorPatch["last_updated"]?.Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
+                       (ConnectorPatch["last_updated"]?.Value<DateTime>().ToISO8601().CompareTo(LastUpdated.ToISO8601()) < 1))
                 {
                     return PatchResult<Connector>.Failed(EventTrackingId,
                                                          this,
@@ -1124,7 +1124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    PowerType.              Equals(Connector.PowerType)               &&
                    Voltage.                Equals(Connector.Voltage)                 &&
                    Amperage.               Equals(Connector.Amperage)                &&
-                   LastUpdated.ToIso8601().Equals(Connector.LastUpdated.ToIso8601()) &&
+                   LastUpdated.ToISO8601().Equals(Connector.LastUpdated.ToISO8601()) &&
 
                 ((!thisTariffId.         HasValue && !thatTariffId.                   HasValue) ||
                   (thisTariffId.         HasValue &&  thatTariffId.                   HasValue && thisTariffId.         Value.Equals(thatTariffId.                   Value))) &&

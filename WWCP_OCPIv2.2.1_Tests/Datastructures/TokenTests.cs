@@ -102,7 +102,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             ClassicAssert.AreEqual(Token1.UILanguage,               Token2.UILanguage);
             ClassicAssert.AreEqual(Token1.DefaultProfile,           Token2.DefaultProfile);
             ClassicAssert.AreEqual(Token1.EnergyContract,           Token2.EnergyContract);
-            ClassicAssert.AreEqual(Token1.LastUpdated.ToIso8601(),  Token2.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual(Token1.LastUpdated.ToISO8601(),  Token2.LastUpdated.ToISO8601());
 
         }
 
@@ -152,7 +152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             ClassicAssert.AreEqual(Group_Id.   Parse("DF000-2001-8999"),                parsedToken.GroupId);
             ClassicAssert.AreEqual(true,                                                parsedToken.IsValid);
             ClassicAssert.AreEqual(WhitelistTypes.ALWAYS,                               parsedToken.WhitelistType);
-            ClassicAssert.AreEqual(DateTime.Parse("2015-06-29T22:39:09Z").ToIso8601(),  parsedToken.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual(DateTime.Parse("2015-06-29T22:39:09Z").ToISO8601(),  parsedToken.LastUpdated.ToISO8601());
 
         }
 
@@ -211,7 +211,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             //ClassicAssert.AreEqual(ProfileTypes.GREEN,                                  parsedToken.DefaultProfile);
             //ClassicAssert.AreEqual("Greenpeace Energy eG",                              parsedToken.EnergyContract.Value.SupplierName);
             //ClassicAssert.AreEqual(EnergyContract_Id.Parse("0123456789"),               parsedToken.EnergyContract.Value.ContractId);
-            ClassicAssert.AreEqual(DateTime.Parse("2018-12-10T17:25:10Z").ToIso8601(),  parsedToken.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual(DateTime.Parse("2018-12-10T17:25:10Z").ToISO8601(),  parsedToken.LastUpdated.ToISO8601());
 
         }
 
@@ -256,7 +256,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             ClassicAssert.AreEqual("TheNewMotion",                                             parsedToken.Issuer);
             ClassicAssert.AreEqual(true,                                                       parsedToken.IsValid);
             ClassicAssert.AreEqual(WhitelistTypes.ALLOWED,                                     parsedToken.WhitelistType);
-            ClassicAssert.AreEqual(DateTime.Parse("2018-12-10T17:16:15Z").ToIso8601(),         parsedToken.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual(DateTime.Parse("2018-12-10T17:16:15Z").ToISO8601(),         parsedToken.LastUpdated.ToISO8601());
 
         }
 

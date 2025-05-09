@@ -354,7 +354,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("country_code",  CountryCode.ToString()),
                            new JProperty("party_id",      PartyId.    ToString()),
                            new JProperty("status",        Status.     ToString()),
-                           new JProperty("last_updated",  LastUpdated.ToIso8601())
+                           new JProperty("last_updated",  LastUpdated.ToISO8601())
                        );
 
             return CustomClientInfoSerializer is not null

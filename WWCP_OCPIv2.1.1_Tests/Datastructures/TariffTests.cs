@@ -284,7 +284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                     ClassicAssert.AreEqual(tariff1.TariffAltURL,              tariff2.TariffAltURL);
                     ClassicAssert.AreEqual(tariff1.EnergyMix,                 tariff2.EnergyMix);
 
-                    ClassicAssert.AreEqual(tariff1.LastUpdated.ToIso8601(),   tariff2.LastUpdated.ToIso8601());
+                    ClassicAssert.AreEqual(tariff1.LastUpdated.ToISO8601(),   tariff2.LastUpdated.ToISO8601());
 
                 }
 

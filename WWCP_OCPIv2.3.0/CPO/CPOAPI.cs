@@ -3731,7 +3731,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                        AccessControlAllowHeaders  = [ "Authorization" ]
-                                       //LastModified               = Timestamp.Now.ToIso8601()
+                                       //LastModified               = Timestamp.Now.ToISO8601()
                                    }
                                };
 
@@ -3745,7 +3745,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                        AccessControlAllowHeaders  = [ "Authorization" ]
-                                       //LastModified               = Timestamp.Now.ToIso8601()
+                                       //LastModified               = Timestamp.Now.ToISO8601()
                                    }
                                };
 

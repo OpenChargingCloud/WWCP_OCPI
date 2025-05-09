@@ -97,7 +97,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             ClassicAssert.AreEqual(Connector1.MaxElectricPower,          Connector2.MaxElectricPower);
             ClassicAssert.AreEqual(Connector1.TariffIds,                 Connector2.TariffIds);
             ClassicAssert.AreEqual(Connector1.TermsAndConditionsURL,     Connector2.TermsAndConditionsURL);
-            ClassicAssert.AreEqual(Connector1.LastUpdated.ToIso8601(),   Connector2.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual(Connector1.LastUpdated.ToISO8601(),   Connector2.LastUpdated.ToISO8601());
 
         }
 
@@ -149,7 +149,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             ClassicAssert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),                                 patchResult.PatchedData.TariffIds.        First());
             ClassicAssert.AreEqual (Tariff_Id.Parse("DE*GEF*T0002"),                                 patchResult.PatchedData.TariffIds.Skip(1).First());
             ClassicAssert.AreEqual (URL.Parse("https://open.charging.cloud/terms"),                  patchResult.PatchedData.TermsAndConditionsURL);
-            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                      patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                      patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 
@@ -251,7 +251,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             ClassicAssert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),                 patchResult.PatchedData.TariffIds.        First());
             ClassicAssert.AreEqual (Tariff_Id.Parse("DE*GEF*T0002"),                 patchResult.PatchedData.TariffIds.Skip(1).First());
             ClassicAssert.AreEqual (URL.Parse("https://open.charging.cloud/terms"),  patchResult.PatchedData.TermsAndConditionsURL);
-            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",                      patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",                      patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 
@@ -300,7 +300,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             ClassicAssert.AreEqual (1,                                               patchResult.PatchedData.TariffIds.Count());
             ClassicAssert.AreEqual (Tariff_Id.Parse("DE*GEF*T0003"),                 patchResult.PatchedData.TariffIds.First());
             ClassicAssert.AreEqual (URL.Parse("https://open.charging.cloud/terms"),  patchResult.PatchedData.TermsAndConditionsURL);
-            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",                      patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",                      patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 
@@ -348,7 +348,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             ClassicAssert.AreEqual (12,                                              patchResult.PatchedData.MaxElectricPower);
             ClassicAssert.AreEqual (0,                                               patchResult.PatchedData.TariffIds.Count());
             ClassicAssert.AreEqual (URL.Parse("https://open.charging.cloud/terms"),  patchResult.PatchedData.TermsAndConditionsURL);
-            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",                      patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",                      patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 
@@ -398,7 +398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             ClassicAssert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),  patchResult.PatchedData.TariffIds.        First());
             ClassicAssert.AreEqual (Tariff_Id.Parse("DE*GEF*T0002"),  patchResult.PatchedData.TariffIds.Skip(1).First());
             ClassicAssert.AreEqual (null,                             patchResult.PatchedData.TermsAndConditionsURL);
-            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",       patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",       patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 
@@ -449,7 +449,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             ClassicAssert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),                                     patchResult.PatchedData.TariffIds.        First());
             ClassicAssert.AreEqual (Tariff_Id.Parse("DE*GEF*T0002"),                                     patchResult.PatchedData.TariffIds.Skip(1).First());
             ClassicAssert.AreEqual (URL.Parse("https://open.charging.cloud/terms"),                      patchResult.PatchedData.TermsAndConditionsURL);
-            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                          patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                          patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 
@@ -500,7 +500,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             ClassicAssert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),                                     patchResult.PatchedData.TariffIds.        First());
             ClassicAssert.AreEqual (Tariff_Id.Parse("DE*GEF*T0002"),                                     patchResult.PatchedData.TariffIds.Skip(1).First());
             ClassicAssert.AreEqual (URL.Parse("https://open.charging.cloud/terms"),                      patchResult.PatchedData.TermsAndConditionsURL);
-            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                          patchResult.PatchedData.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                          patchResult.PatchedData.LastUpdated.ToISO8601());
 
         }
 

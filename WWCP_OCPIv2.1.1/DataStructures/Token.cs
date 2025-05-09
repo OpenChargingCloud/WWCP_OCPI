@@ -565,7 +565,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                ? new JProperty("language",        UILanguage.Value.ToString())
                                : null,
 
-                                 new JProperty("last_updated",    LastUpdated.     ToIso8601())
+                                 new JProperty("last_updated",    LastUpdated.     ToISO8601())
 
                        );
 
@@ -686,11 +686,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 if (TokenPatch["last_updated"] is null)
-                    TokenPatch["last_updated"] = Timestamp.Now.ToIso8601();
+                    TokenPatch["last_updated"] = Timestamp.Now.ToISO8601();
 
                 else if (AllowDowngrades == false &&
                         TokenPatch["last_updated"].Type == JTokenType.Date &&
-                       (TokenPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
+                       (TokenPatch["last_updated"].Value<DateTime>().ToISO8601().CompareTo(LastUpdated.ToISO8601()) < 1))
                 {
                     return PatchResult<Token>.Failed(EventTrackingId, this,
                                                      "The 'lastUpdated' timestamp of the token patch must be newer then the timestamp of the existing token!");
@@ -931,8 +931,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                Issuer.                 Equals(Token.Issuer)                  &&
                IsValid.                Equals(Token.IsValid)                 &&
                WhitelistType.          Equals(Token.WhitelistType)           &&
-               Created.    ToIso8601().Equals(Token.Created.    ToIso8601()) &&
-               LastUpdated.ToIso8601().Equals(Token.LastUpdated.ToIso8601()) &&
+               Created.    ToISO8601().Equals(Token.Created.    ToISO8601()) &&
+               LastUpdated.ToISO8601().Equals(Token.LastUpdated.ToISO8601()) &&
 
              ((VisualNumber is     null &&  Token.VisualNumber is     null) ||
               (VisualNumber is not null &&  Token.VisualNumber is not null && VisualNumber.      Equals(Token.VisualNumber))) &&

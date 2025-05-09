@@ -214,8 +214,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     Limit. HasValue)
 
                     ? "?" + new String[] {
-                          From.  HasValue ? "date_from=" + From.  Value.ToIso8601() : "",
-                          To.    HasValue ? "date_to="   + To.    Value.ToIso8601() : "",
+                          From.  HasValue ? "date_from=" + From.  Value.ToISO8601() : "",
+                          To.    HasValue ? "date_to="   + To.    Value.ToISO8601() : "",
                           Offset.HasValue ? "offset="    + Offset.Value.ToString()  : "",
                           Limit. HasValue ? "limit="     + Limit. Value.ToString()  : ""
                       }.Where(text => text.IsNotNullOrEmpty()).

@@ -227,10 +227,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var json = JSONObject.Create(
 
-                           new JProperty("period_begin",      Begin.    ToIso8601()),
+                           new JProperty("period_begin",      Begin.    ToISO8601()),
 
                            End.HasValue
-                               ? new JProperty("period_end",  End.Value.ToIso8601())
+                               ? new JProperty("period_end",  End.Value.ToISO8601())
                                : null,
 
                            new JProperty("status",            Status.   ToString())
@@ -381,14 +381,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public Int32 CompareTo(StatusSchedule StatusSchedule)
         {
 
-            var c = Begin.ToIso8601().CompareTo(StatusSchedule.Begin.ToIso8601());
+            var c = Begin.ToISO8601().CompareTo(StatusSchedule.Begin.ToISO8601());
 
             if (c == 0)
                 c = Status.           CompareTo(StatusSchedule.Status);
 
             if (c == 0)
                 c = End.HasValue && StatusSchedule.End.HasValue
-                        ? End.Value.ToIso8601().CompareTo(StatusSchedule.End.Value.ToIso8601())
+                        ? End.Value.ToISO8601().CompareTo(StatusSchedule.End.Value.ToISO8601())
                         : 0;
 
             return c;
@@ -424,11 +424,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             // Note: We compare ISO8601 timestamps to avoid inaccuracies!
 
-            => Begin. ToIso8601().Equals(StatusSchedule.Begin.ToIso8601()) &&
+            => Begin. ToISO8601().Equals(StatusSchedule.Begin.ToISO8601()) &&
                Status.            Equals(StatusSchedule.Status)            &&
 
             ((!End.HasValue && !StatusSchedule.End.HasValue) ||
-              (End.HasValue &&  StatusSchedule.End.HasValue && End.Value.ToIso8601().Equals(StatusSchedule.End.Value.ToIso8601())));
+              (End.HasValue &&  StatusSchedule.End.HasValue && End.Value.ToISO8601().Equals(StatusSchedule.End.Value.ToISO8601())));
 
         #endregion
 
@@ -445,10 +445,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return Begin. ToIso8601().GetHashCode() * 5 ^
+                return Begin. ToISO8601().GetHashCode() * 5 ^
                        Status.            GetHashCode() * 3 ^
 
-                       End?.  ToIso8601().GetHashCode() ?? 0;
+                       End?.  ToISO8601().GetHashCode() ?? 0;
 
             }
         }

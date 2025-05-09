@@ -5352,7 +5352,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                                               HTTPStatusCode             = HTTPStatusCode.OK,
             //                                               AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
             //                                               AccessControlAllowHeaders  = [ "Authorization" ]
-            //                                               //LastModified               = Timestamp.Now.ToIso8601()
+            //                                               //LastModified               = Timestamp.Now.ToISO8601()
             //                                           }
             //                                       };
 

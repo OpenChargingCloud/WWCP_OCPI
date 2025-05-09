@@ -247,7 +247,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            new JProperty("id",         Id.       ToString()),
                            new JProperty("status",     Status.   ToString()),
-                           new JProperty("timestamp",  Timestamp.ToIso8601())
+                           new JProperty("timestamp",  Timestamp.ToISO8601())
 
                        );
 
@@ -417,7 +417,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 c = Status.               CompareTo(EVSEStatus.Status);
 
             if (c == 0)
-                c = Timestamp.ToIso8601().CompareTo(EVSEStatus.Timestamp.ToIso8601());
+                c = Timestamp.ToISO8601().CompareTo(EVSEStatus.Timestamp.ToISO8601());
 
             return c;
 
@@ -454,7 +454,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                Id.                   Equals(EVSEStatus.Id)     &&
                Status.               Equals(EVSEStatus.Status) &&
-               Timestamp.ToIso8601().Equals(EVSEStatus.Timestamp.ToIso8601());
+               Timestamp.ToISO8601().Equals(EVSEStatus.Timestamp.ToISO8601());
 
         #endregion
 
@@ -479,7 +479,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         public override String ToString()
 
-            => $"{Id} => {Status} @ {Timestamp.ToIso8601()}";
+            => $"{Id} => {Status} @ {Timestamp.ToISO8601()}";
 
         #endregion
 

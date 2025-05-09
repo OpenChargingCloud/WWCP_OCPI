@@ -274,8 +274,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual (cdr1.PartyId,                  parsedCDR.PartyId);
                 ClassicAssert.AreEqual (cdr1.Id,                       parsedCDR.Id);
 
-                ClassicAssert.AreEqual (cdr1.Start.ToIso8601(),        parsedCDR.Start.ToIso8601());
-                ClassicAssert.AreEqual (cdr1.Stop. ToIso8601(),        parsedCDR.Stop.  ToIso8601());
+                ClassicAssert.AreEqual (cdr1.Start.ToISO8601(),        parsedCDR.Start.ToISO8601());
+                ClassicAssert.AreEqual (cdr1.Stop. ToISO8601(),        parsedCDR.Stop.  ToISO8601());
                 ClassicAssert.AreEqual (cdr1.AuthId,                   parsedCDR.AuthId);
                 ClassicAssert.AreEqual (cdr1.AuthMethod,               parsedCDR.AuthMethod);
                 ClassicAssert.IsTrue   (cdr1.Location.Equals(parsedCDR.Location));
@@ -293,7 +293,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual (cdr1.TotalParkingTime,         parsedCDR.TotalParkingTime);
                 ClassicAssert.AreEqual (cdr1.Remark,                   parsedCDR.Remark);
 
-                ClassicAssert.AreEqual (cdr1.LastUpdated.ToIso8601(),  parsedCDR.LastUpdated.ToIso8601());
+                ClassicAssert.AreEqual (cdr1.LastUpdated.ToISO8601(),  parsedCDR.LastUpdated.ToISO8601());
 
             }
 
@@ -396,8 +396,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             ClassicAssert.AreEqual (CDR_Id.Parse("12345"),                                 parsedCDR!.Id);
             //ClassicAssert.AreEqual(true,                                                  parsedCDR.Publish);
-            //ClassicAssert.AreEqual(cdr1.Start.    ToIso8601(),                            parsedCDR.Start.    ToIso8601());
-            //ClassicAssert.AreEqual(cdr1.End.Value.ToIso8601(),                            parsedCDR.End.Value.ToIso8601());
+            //ClassicAssert.AreEqual(cdr1.Start.    ToISO8601(),                            parsedCDR.Start.    ToISO8601());
+            //ClassicAssert.AreEqual(cdr1.End.Value.ToISO8601(),                            parsedCDR.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(cdr1.kWh,                                              parsedCDR.kWh);
             //ClassicAssert.AreEqual(cdr1.CDRToken,                                         parsedCDR.CDRToken);
             //ClassicAssert.AreEqual(cdr1.AuthMethod,                                       parsedCDR.AuthMethod);
@@ -412,7 +412,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             //ClassicAssert.AreEqual(cdr1.ChargingPeriods,                                  parsedCDR.ChargingPeriods);
             //ClassicAssert.AreEqual(cdr1.TotalCosts,                                       parsedCDR.TotalCosts);
             //ClassicAssert.AreEqual(cdr1.Status,                                           parsedCDR.Status);
-            //ClassicAssert.AreEqual(cdr1.LastUpdated.ToIso8601(),                          parsedCDR.LastUpdated.ToIso8601());
+            //ClassicAssert.AreEqual(cdr1.LastUpdated.ToISO8601(),                          parsedCDR.LastUpdated.ToISO8601());
 
         }
 
@@ -731,13 +731,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             ClassicAssert.IsNotNull(chargingPeriod5);
             ClassicAssert.IsNotNull(chargingPeriod6);
 
-            ClassicAssert.AreEqual (energyMeteringValue1.Timestamp.ToIso8601(),                                chargingPeriod1.StartTimestamp.      ToIso8601());
-            ClassicAssert.AreEqual (energyMeteringValue2.Timestamp.ToIso8601(),                                chargingPeriod2.StartTimestamp.      ToIso8601());
-            ClassicAssert.AreEqual (energyMeteringValue3.Timestamp.ToIso8601(),                                chargingPeriod3.StartTimestamp.      ToIso8601());
-            ClassicAssert.AreEqual (energyMeteringValue4.Timestamp.ToIso8601(),                                chargingPeriod4.StartTimestamp.      ToIso8601());
-            ClassicAssert.AreEqual (energyMeteringValue5.Timestamp.ToIso8601(),                                chargingPeriod5.StartTimestamp.      ToIso8601());
-            ClassicAssert.AreEqual (energyMeteringValue6.Timestamp.ToIso8601(),                                chargingPeriod6.StartTimestamp.      ToIso8601());
-            ClassicAssert.AreEqual (energyMeteringValue7.Timestamp.ToIso8601(),                                chargingPeriod6.StopTimestamp!.Value.ToIso8601());
+            ClassicAssert.AreEqual (energyMeteringValue1.Timestamp.ToISO8601(),                                chargingPeriod1.StartTimestamp.      ToISO8601());
+            ClassicAssert.AreEqual (energyMeteringValue2.Timestamp.ToISO8601(),                                chargingPeriod2.StartTimestamp.      ToISO8601());
+            ClassicAssert.AreEqual (energyMeteringValue3.Timestamp.ToISO8601(),                                chargingPeriod3.StartTimestamp.      ToISO8601());
+            ClassicAssert.AreEqual (energyMeteringValue4.Timestamp.ToISO8601(),                                chargingPeriod4.StartTimestamp.      ToISO8601());
+            ClassicAssert.AreEqual (energyMeteringValue5.Timestamp.ToISO8601(),                                chargingPeriod5.StartTimestamp.      ToISO8601());
+            ClassicAssert.AreEqual (energyMeteringValue6.Timestamp.ToISO8601(),                                chargingPeriod6.StartTimestamp.      ToISO8601());
+            ClassicAssert.AreEqual (energyMeteringValue7.Timestamp.ToISO8601(),                                chargingPeriod6.StopTimestamp!.Value.ToISO8601());
 
             ClassicAssert.IsNotNull(chargingPeriod1.Dimensions);
             ClassicAssert.IsNotNull(chargingPeriod2.Dimensions);
@@ -1046,8 +1046,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.Multiple(() => {
 
                 Assert.That(cdr1WithTariff1,                                                   Is.Not.Null);
-                Assert.That(cdr1WithTariff1.Start.ToIso8601(),                                 Is.EqualTo( start1.  ToIso8601()));
-                Assert.That(cdr1WithTariff1.Stop. ToIso8601(),                                 Is.EqualTo( stop1.   ToIso8601()));
+                Assert.That(cdr1WithTariff1.Start.ToISO8601(),                                 Is.EqualTo( start1.  ToISO8601()));
+                Assert.That(cdr1WithTariff1.Stop. ToISO8601(),                                 Is.EqualTo( stop1.   ToISO8601()));
                 Assert.That(cdr1WithTariff1.TotalTime,                                         Is.EqualTo( TimeSpan.FromHours(2)));
                 Assert.That(cdr1WithTariff1.TotalChargingTime,                                 Is.EqualTo( TimeSpan.FromHours(2)));
                 Assert.That(cdr1WithTariff1.TotalEnergy.kWh,                                   Is.EqualTo( 10m));
@@ -1062,14 +1062,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 var chargingPeriod1 = cdr1WithTariff1.ChargingPeriods.First();
                 Assert.That(chargingPeriod1,                                                   Is.Not.Null);
 
-                Assert.That(chargingPeriod1.StartTimestamp.                     ToIso8601(),   Is.EqualTo( cdr1WithTariff1.Start.                         ToIso8601()));
-                Assert.That(chargingPeriod1.StartMeteringValue!.Value.Timestamp.ToIso8601(),   Is.EqualTo( cdr1WithTariff1.Start.                         ToIso8601()));
+                Assert.That(chargingPeriod1.StartTimestamp.                     ToISO8601(),   Is.EqualTo( cdr1WithTariff1.Start.                         ToISO8601()));
+                Assert.That(chargingPeriod1.StartMeteringValue!.Value.Timestamp.ToISO8601(),   Is.EqualTo( cdr1WithTariff1.Start.                         ToISO8601()));
                 Assert.That(chargingPeriod1.StartMeteringValue!.Value.WattHours.kWh,           Is.EqualTo(  1m));
 
                 Assert.That(chargingPeriod1.Duration,                                          Is.EqualTo( TimeSpan.FromHours(2)));
 
-                Assert.That(chargingPeriod1.StopTimestamp!.     Value.          ToIso8601(),   Is.EqualTo((cdr1WithTariff1.Start + TimeSpan.FromHours(2)).ToIso8601()));
-                Assert.That(chargingPeriod1.StopMeteringValue!. Value.Timestamp.ToIso8601(),   Is.EqualTo((cdr1WithTariff1.Start + TimeSpan.FromHours(2)).ToIso8601()));
+                Assert.That(chargingPeriod1.StopTimestamp!.     Value.          ToISO8601(),   Is.EqualTo((cdr1WithTariff1.Start + TimeSpan.FromHours(2)).ToISO8601()));
+                Assert.That(chargingPeriod1.StopMeteringValue!. Value.Timestamp.ToISO8601(),   Is.EqualTo((cdr1WithTariff1.Start + TimeSpan.FromHours(2)).ToISO8601()));
                 Assert.That(chargingPeriod1.StopMeteringValue!. Value.WattHours.kWh,           Is.EqualTo( 11m));
 
                 Assert.That(chargingPeriod1.Energy.kWh,                                        Is.EqualTo( 10m));
@@ -1093,8 +1093,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.Multiple(() => {
 
                 Assert.That(cdr2WithTariff1,                                                   Is.Not.Null);
-                Assert.That(cdr2WithTariff1.Start.ToIso8601(),                                 Is.EqualTo( start2.  ToIso8601()));
-                Assert.That(cdr2WithTariff1.Stop. ToIso8601(),                                 Is.EqualTo( stop2.   ToIso8601()));
+                Assert.That(cdr2WithTariff1.Start.ToISO8601(),                                 Is.EqualTo( start2.  ToISO8601()));
+                Assert.That(cdr2WithTariff1.Stop. ToISO8601(),                                 Is.EqualTo( stop2.   ToISO8601()));
                 Assert.That(cdr2WithTariff1.TotalTime,                                         Is.EqualTo( TimeSpan.FromHours(3)));
                 Assert.That(cdr2WithTariff1.TotalChargingTime,                                 Is.EqualTo( TimeSpan.FromHours(3)));
                 Assert.That(cdr2WithTariff1.TotalEnergy.kWh,                                   Is.EqualTo( 18m));
@@ -1109,14 +1109,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 var chargingPeriod1 = cdr2WithTariff1.ChargingPeriods.First();
                 Assert.That(chargingPeriod1,                                                   Is.Not.Null);
 
-                Assert.That(chargingPeriod1.StartTimestamp.                     ToIso8601(),   Is.EqualTo( cdr2WithTariff1.Start.                         ToIso8601()));
-                Assert.That(chargingPeriod1.StartMeteringValue!.Value.Timestamp.ToIso8601(),   Is.EqualTo( cdr2WithTariff1.Start.                         ToIso8601()));
+                Assert.That(chargingPeriod1.StartTimestamp.                     ToISO8601(),   Is.EqualTo( cdr2WithTariff1.Start.                         ToISO8601()));
+                Assert.That(chargingPeriod1.StartMeteringValue!.Value.Timestamp.ToISO8601(),   Is.EqualTo( cdr2WithTariff1.Start.                         ToISO8601()));
                 Assert.That(chargingPeriod1.StartMeteringValue!.Value.WattHours.kWh,           Is.EqualTo(  2m));
 
                 Assert.That(chargingPeriod1.Duration,                                          Is.EqualTo( TimeSpan.FromHours(3)));
 
-                Assert.That(chargingPeriod1.StopTimestamp!.     Value.          ToIso8601(),   Is.EqualTo((cdr2WithTariff1.Start + TimeSpan.FromHours(3)).ToIso8601()));
-                Assert.That(chargingPeriod1.StopMeteringValue!. Value.Timestamp.ToIso8601(),   Is.EqualTo((cdr2WithTariff1.Start + TimeSpan.FromHours(3)).ToIso8601()));
+                Assert.That(chargingPeriod1.StopTimestamp!.     Value.          ToISO8601(),   Is.EqualTo((cdr2WithTariff1.Start + TimeSpan.FromHours(3)).ToISO8601()));
+                Assert.That(chargingPeriod1.StopMeteringValue!. Value.Timestamp.ToISO8601(),   Is.EqualTo((cdr2WithTariff1.Start + TimeSpan.FromHours(3)).ToISO8601()));
                 Assert.That(chargingPeriod1.StopMeteringValue!. Value.WattHours.kWh,           Is.EqualTo( 20m));
 
                 Assert.That(chargingPeriod1.Energy.kWh,                                        Is.EqualTo( 18m));
@@ -1140,8 +1140,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.Multiple(() => {
 
                 Assert.That(cdr3WithTariff1,                                                   Is.Not.Null);
-                Assert.That(cdr3WithTariff1.Start.ToIso8601(),                                 Is.EqualTo( start3.  ToIso8601()));
-                Assert.That(cdr3WithTariff1.Stop. ToIso8601(),                                 Is.EqualTo( stop3.   ToIso8601()));
+                Assert.That(cdr3WithTariff1.Start.ToISO8601(),                                 Is.EqualTo( start3.  ToISO8601()));
+                Assert.That(cdr3WithTariff1.Stop. ToISO8601(),                                 Is.EqualTo( stop3.   ToISO8601()));
                 Assert.That(cdr3WithTariff1.TotalTime,                                         Is.EqualTo( TimeSpan.FromHours(7)));
                 Assert.That(cdr3WithTariff1.TotalChargingTime,                                 Is.EqualTo( TimeSpan.FromHours(7)));
                 Assert.That(cdr3WithTariff1.TotalEnergy.kWh,                                   Is.EqualTo( 20m));
@@ -1156,14 +1156,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 var chargingPeriod1 = cdr3WithTariff1.ChargingPeriods.First();
                 Assert.That(chargingPeriod1,                                                   Is.Not.Null);
 
-                Assert.That(chargingPeriod1.StartTimestamp.                     ToIso8601(),   Is.EqualTo( cdr3WithTariff1.Start.                         ToIso8601()));
-                Assert.That(chargingPeriod1.StartMeteringValue!.Value.Timestamp.ToIso8601(),   Is.EqualTo( cdr3WithTariff1.Start.                         ToIso8601()));
+                Assert.That(chargingPeriod1.StartTimestamp.                     ToISO8601(),   Is.EqualTo( cdr3WithTariff1.Start.                         ToISO8601()));
+                Assert.That(chargingPeriod1.StartMeteringValue!.Value.Timestamp.ToISO8601(),   Is.EqualTo( cdr3WithTariff1.Start.                         ToISO8601()));
                 Assert.That(chargingPeriod1.StartMeteringValue!.Value.WattHours.kWh,           Is.EqualTo(  2m));
 
                 Assert.That(chargingPeriod1.Duration,                                          Is.EqualTo( TimeSpan.FromHours(7)));
 
-                Assert.That(chargingPeriod1.StopTimestamp!.     Value.          ToIso8601(),   Is.EqualTo((cdr3WithTariff1.Start + TimeSpan.FromHours(7)).ToIso8601()));
-                Assert.That(chargingPeriod1.StopMeteringValue!. Value.Timestamp.ToIso8601(),   Is.EqualTo((cdr3WithTariff1.Start + TimeSpan.FromHours(7)).ToIso8601()));
+                Assert.That(chargingPeriod1.StopTimestamp!.     Value.          ToISO8601(),   Is.EqualTo((cdr3WithTariff1.Start + TimeSpan.FromHours(7)).ToISO8601()));
+                Assert.That(chargingPeriod1.StopMeteringValue!. Value.Timestamp.ToISO8601(),   Is.EqualTo((cdr3WithTariff1.Start + TimeSpan.FromHours(7)).ToISO8601()));
                 Assert.That(chargingPeriod1.StopMeteringValue!. Value.WattHours.kWh,           Is.EqualTo( 22m));
 
                 Assert.That(chargingPeriod1.Energy.kWh,                                        Is.EqualTo( 20m));
@@ -1275,8 +1275,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.Multiple(() => {
 
                 Assert.That(cdr1WithTariff2,                                                   Is.Not.Null);
-                Assert.That(cdr1WithTariff2.Start.ToIso8601(),                                 Is.EqualTo( start1.  ToIso8601()));
-                Assert.That(cdr1WithTariff2.Stop. ToIso8601(),                                 Is.EqualTo( stop1.   ToIso8601()));
+                Assert.That(cdr1WithTariff2.Start.ToISO8601(),                                 Is.EqualTo( start1.  ToISO8601()));
+                Assert.That(cdr1WithTariff2.Stop. ToISO8601(),                                 Is.EqualTo( stop1.   ToISO8601()));
                 Assert.That(cdr1WithTariff2.TotalTime,                                         Is.EqualTo( TimeSpan.FromHours(2)));
                 Assert.That(cdr1WithTariff2.TotalChargingTime,                                 Is.EqualTo( TimeSpan.FromHours(2)));
                 Assert.That(cdr1WithTariff2.TotalEnergy.kWh,                                   Is.EqualTo( 10m));
@@ -1291,14 +1291,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 var chargingPeriod1 = cdr1WithTariff2.ChargingPeriods.First();
                 Assert.That(chargingPeriod1,                                                   Is.Not.Null);
 
-                Assert.That(chargingPeriod1.StartTimestamp.                     ToIso8601(),   Is.EqualTo( cdr1WithTariff2.Start.                         ToIso8601()));
-                Assert.That(chargingPeriod1.StartMeteringValue!.Value.Timestamp.ToIso8601(),   Is.EqualTo( cdr1WithTariff2.Start.                         ToIso8601()));
+                Assert.That(chargingPeriod1.StartTimestamp.                     ToISO8601(),   Is.EqualTo( cdr1WithTariff2.Start.                         ToISO8601()));
+                Assert.That(chargingPeriod1.StartMeteringValue!.Value.Timestamp.ToISO8601(),   Is.EqualTo( cdr1WithTariff2.Start.                         ToISO8601()));
                 Assert.That(chargingPeriod1.StartMeteringValue!.Value.WattHours.kWh,           Is.EqualTo(  1m));
 
                 Assert.That(chargingPeriod1.Duration,                                          Is.EqualTo( TimeSpan.FromHours(2)));
 
-                Assert.That(chargingPeriod1.StopTimestamp!.     Value.          ToIso8601(),   Is.EqualTo((cdr1WithTariff2.Start + TimeSpan.FromHours(2)).ToIso8601()));
-                Assert.That(chargingPeriod1.StopMeteringValue!. Value.Timestamp.ToIso8601(),   Is.EqualTo((cdr1WithTariff2.Start + TimeSpan.FromHours(2)).ToIso8601()));
+                Assert.That(chargingPeriod1.StopTimestamp!.     Value.          ToISO8601(),   Is.EqualTo((cdr1WithTariff2.Start + TimeSpan.FromHours(2)).ToISO8601()));
+                Assert.That(chargingPeriod1.StopMeteringValue!. Value.Timestamp.ToISO8601(),   Is.EqualTo((cdr1WithTariff2.Start + TimeSpan.FromHours(2)).ToISO8601()));
                 Assert.That(chargingPeriod1.StopMeteringValue!. Value.WattHours.kWh,           Is.EqualTo( 11m));
 
                 Assert.That(chargingPeriod1.Energy.kWh,                                        Is.EqualTo( 10m));
@@ -1409,8 +1409,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.Multiple(() => {
 
                 Assert.That(cdr2WithTariff2,                                                   Is.Not.Null);
-                Assert.That(cdr2WithTariff2.Start.ToIso8601(),                                 Is.EqualTo( start2.  ToIso8601()));
-                Assert.That(cdr2WithTariff2.Stop. ToIso8601(),                                 Is.EqualTo( stop2.   ToIso8601()));
+                Assert.That(cdr2WithTariff2.Start.ToISO8601(),                                 Is.EqualTo( start2.  ToISO8601()));
+                Assert.That(cdr2WithTariff2.Stop. ToISO8601(),                                 Is.EqualTo( stop2.   ToISO8601()));
                 Assert.That(cdr2WithTariff2.TotalTime,                                         Is.EqualTo( TimeSpan.FromHours(3)));
                 Assert.That(cdr2WithTariff2.TotalChargingTime,                                 Is.EqualTo( TimeSpan.FromHours(3)));
                 Assert.That(cdr2WithTariff2.TotalEnergy.kWh,                                   Is.EqualTo( 18m));
@@ -1425,14 +1425,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 var chargingPeriod1 = cdr2WithTariff2.ChargingPeriods.First();
                 Assert.That(chargingPeriod1,                                                   Is.Not.Null);
 
-                Assert.That(chargingPeriod1.StartTimestamp.                     ToIso8601(),   Is.EqualTo( cdr2WithTariff2.Start.                         ToIso8601()));
-                Assert.That(chargingPeriod1.StartMeteringValue!.Value.Timestamp.ToIso8601(),   Is.EqualTo( cdr2WithTariff2.Start.                         ToIso8601()));
+                Assert.That(chargingPeriod1.StartTimestamp.                     ToISO8601(),   Is.EqualTo( cdr2WithTariff2.Start.                         ToISO8601()));
+                Assert.That(chargingPeriod1.StartMeteringValue!.Value.Timestamp.ToISO8601(),   Is.EqualTo( cdr2WithTariff2.Start.                         ToISO8601()));
                 Assert.That(chargingPeriod1.StartMeteringValue!.Value.WattHours.kWh,           Is.EqualTo(  2m));
 
                 Assert.That(chargingPeriod1.Duration,                                          Is.EqualTo( TimeSpan.FromHours(3)));
 
-                Assert.That(chargingPeriod1.StopTimestamp!.     Value.          ToIso8601(),   Is.EqualTo((cdr2WithTariff2.Start + TimeSpan.FromHours(3)).ToIso8601()));
-                Assert.That(chargingPeriod1.StopMeteringValue!. Value.Timestamp.ToIso8601(),   Is.EqualTo((cdr2WithTariff2.Start + TimeSpan.FromHours(3)).ToIso8601()));
+                Assert.That(chargingPeriod1.StopTimestamp!.     Value.          ToISO8601(),   Is.EqualTo((cdr2WithTariff2.Start + TimeSpan.FromHours(3)).ToISO8601()));
+                Assert.That(chargingPeriod1.StopMeteringValue!. Value.Timestamp.ToISO8601(),   Is.EqualTo((cdr2WithTariff2.Start + TimeSpan.FromHours(3)).ToISO8601()));
                 Assert.That(chargingPeriod1.StopMeteringValue!. Value.WattHours.kWh,           Is.EqualTo( 20m));
 
                 Assert.That(chargingPeriod1.Energy.kWh,                                        Is.EqualTo( 18m));
@@ -1556,8 +1556,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.Multiple(() => {
 
                 Assert.That(cdr3WithTariff2,                                                   Is.Not.Null);
-                Assert.That(cdr3WithTariff2.Start.ToIso8601(),                                 Is.EqualTo( start3.  ToIso8601()));
-                Assert.That(cdr3WithTariff2.Stop. ToIso8601(),                                 Is.EqualTo( stop3.   ToIso8601()));
+                Assert.That(cdr3WithTariff2.Start.ToISO8601(),                                 Is.EqualTo( start3.  ToISO8601()));
+                Assert.That(cdr3WithTariff2.Stop. ToISO8601(),                                 Is.EqualTo( stop3.   ToISO8601()));
                 Assert.That(cdr3WithTariff2.TotalTime,                                         Is.EqualTo( TimeSpan.FromHours(7)));
                 Assert.That(cdr3WithTariff2.TotalChargingTime,                                 Is.EqualTo( TimeSpan.FromHours(7)));
                 Assert.That(cdr3WithTariff2.TotalEnergy.kWh,                                   Is.EqualTo( 20m));
@@ -1577,14 +1577,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 var chargingPeriod1 = cdr3WithTariff2.ChargingPeriods.ElementAt(0);
                 Assert.That(chargingPeriod1,                                                   Is.Not.Null);
 
-                Assert.That(chargingPeriod1.StartTimestamp.                     ToIso8601(),   Is.EqualTo( cdr3WithTariff2.Start.                         ToIso8601()));
-                Assert.That(chargingPeriod1.StartMeteringValue!.Value.Timestamp.ToIso8601(),   Is.EqualTo( cdr3WithTariff2.Start.                         ToIso8601()));
+                Assert.That(chargingPeriod1.StartTimestamp.                     ToISO8601(),   Is.EqualTo( cdr3WithTariff2.Start.                         ToISO8601()));
+                Assert.That(chargingPeriod1.StartMeteringValue!.Value.Timestamp.ToISO8601(),   Is.EqualTo( cdr3WithTariff2.Start.                         ToISO8601()));
                 Assert.That(chargingPeriod1.StartMeteringValue!.Value.WattHours.kWh,           Is.EqualTo(  2m));
 
                 Assert.That(chargingPeriod1.Duration,                                          Is.EqualTo( TimeSpan.FromHours(3)));
 
-                Assert.That(chargingPeriod1.StopTimestamp!.     Value.          ToIso8601(),   Is.EqualTo((cdr3WithTariff2.Start + TimeSpan.FromHours(3)).ToIso8601()));
-                Assert.That(chargingPeriod1.StopMeteringValue!. Value.Timestamp.ToIso8601(),   Is.EqualTo((cdr3WithTariff2.Start + TimeSpan.FromHours(3)).ToIso8601()));
+                Assert.That(chargingPeriod1.StopTimestamp!.     Value.          ToISO8601(),   Is.EqualTo((cdr3WithTariff2.Start + TimeSpan.FromHours(3)).ToISO8601()));
+                Assert.That(chargingPeriod1.StopMeteringValue!. Value.Timestamp.ToISO8601(),   Is.EqualTo((cdr3WithTariff2.Start + TimeSpan.FromHours(3)).ToISO8601()));
                 Assert.That(chargingPeriod1.StopMeteringValue!. Value.WattHours.kWh,           Is.EqualTo( 10.571428571428571428571428572m));
 
                 Assert.That(chargingPeriod1.Energy.kWh,                                        Is.EqualTo( 8.571428571428571428571428572m));
@@ -1602,14 +1602,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 var chargingPeriod2 = cdr3WithTariff2.ChargingPeriods.ElementAt(1);
                 Assert.That(chargingPeriod2,                                                   Is.Not.Null);
 
-                Assert.That(chargingPeriod2.StartTimestamp.                     ToIso8601(),   Is.EqualTo((cdr3WithTariff2.Start + TimeSpan.FromHours(3)).ToIso8601()));
-                Assert.That(chargingPeriod2.StartMeteringValue!.Value.Timestamp.ToIso8601(),   Is.EqualTo((cdr3WithTariff2.Start + TimeSpan.FromHours(3)).ToIso8601()));
+                Assert.That(chargingPeriod2.StartTimestamp.                     ToISO8601(),   Is.EqualTo((cdr3WithTariff2.Start + TimeSpan.FromHours(3)).ToISO8601()));
+                Assert.That(chargingPeriod2.StartMeteringValue!.Value.Timestamp.ToISO8601(),   Is.EqualTo((cdr3WithTariff2.Start + TimeSpan.FromHours(3)).ToISO8601()));
                 Assert.That(chargingPeriod2.StartMeteringValue!.Value.WattHours.kWh,           Is.EqualTo( 10.571428571428571428571428572m));
 
                 Assert.That(chargingPeriod2.Duration,                                          Is.EqualTo( TimeSpan.FromHours(4)));
 
-                Assert.That(chargingPeriod2.StopTimestamp!.     Value.          ToIso8601(),   Is.EqualTo( cdr3WithTariff2.Stop.                          ToIso8601()));
-                Assert.That(chargingPeriod2.StopMeteringValue!. Value.Timestamp.ToIso8601(),   Is.EqualTo( cdr3WithTariff2.Stop.                          ToIso8601()));
+                Assert.That(chargingPeriod2.StopTimestamp!.     Value.          ToISO8601(),   Is.EqualTo( cdr3WithTariff2.Stop.                          ToISO8601()));
+                Assert.That(chargingPeriod2.StopMeteringValue!. Value.Timestamp.ToISO8601(),   Is.EqualTo( cdr3WithTariff2.Stop.                          ToISO8601()));
                 Assert.That(chargingPeriod2.StopMeteringValue!. Value.WattHours.kWh,           Is.EqualTo( 22m));
 
                 Assert.That(chargingPeriod2.Energy.kWh,                                        Is.EqualTo( 11.428571428571428571428571428m));

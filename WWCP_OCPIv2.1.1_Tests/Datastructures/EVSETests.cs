@@ -232,7 +232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual(EVSE1.Directions,                evse2.Directions);
                 ClassicAssert.AreEqual(EVSE1.ParkingRestrictions,       evse2.ParkingRestrictions);
                 ClassicAssert.AreEqual(EVSE1.Images,                    evse2.Images);
-                ClassicAssert.AreEqual(EVSE1.LastUpdated.ToIso8601(),   evse2.LastUpdated.ToIso8601());
+                ClassicAssert.AreEqual(EVSE1.LastUpdated.ToISO8601(),   evse2.LastUpdated.ToISO8601());
 
             }
             else

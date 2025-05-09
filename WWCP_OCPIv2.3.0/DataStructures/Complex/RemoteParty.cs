@@ -570,7 +570,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                ? new JProperty("remoteAccessInfos",  new JArray(remoteAccessInfos.Select(remoteAccessInfo => remoteAccessInfo.ToJSON(CustomRemoteAccessInfoSerializer))))
                                : null,
 
-                                 new JProperty("last_updated",       LastUpdated.ToIso8601())
+                                 new JProperty("last_updated",       LastUpdated.ToISO8601())
 
                        );
 
