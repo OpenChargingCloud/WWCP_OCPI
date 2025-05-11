@@ -191,7 +191,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// Reserved parking spot for disabled people with valid identification.
         /// </summary>
         public static ParkingRestriction  DISABLED       { get; }
-            = new("DISABLED");
+            = new ("DISABLED");
 
         /// <summary>
         /// Parking only for people who work at a site, building, or complex that the Location belongs to.

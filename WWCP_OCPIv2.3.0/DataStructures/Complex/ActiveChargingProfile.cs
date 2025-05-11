@@ -67,6 +67,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.Start            = Start;
             this.ChargingProfile  = ChargingProfile;
 
+            unchecked
+            {
+
+                hashCode = this.Start.          GetHashCode() * 3 ^
+                           this.ChargingProfile.GetHashCode();
+
+            }
+
         }
 
         #endregion
@@ -415,20 +423,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
-        /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return Start.          GetHashCode() * 3 ^
-                       ChargingProfile.GetHashCode();
-
-            }
-        }
+            => hashCode;
 
         #endregion
 

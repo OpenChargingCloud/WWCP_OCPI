@@ -17,13 +17,14 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -78,7 +79,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             this.Token  = Token;
             this.URL    = URL;
-            this.Roles  = Roles?.Distinct() ?? Array.Empty<CredentialsRole>();
+            this.Roles  = Roles?.Distinct() ?? [];
+
+            unchecked
+            {
+
+                hashCode = this.Token.GetHashCode() * 5 ^
+                           this.URL.  GetHashCode() * 3 ^
+                           this.Roles.CalcHashCode();
+
+            }
 
         }
 
@@ -254,7 +264,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone these credentials.
         /// </summary>
         public Credentials Clone()
 
@@ -455,21 +465,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
-        /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return Token.GetHashCode() * 5 ^
-                       URL.  GetHashCode() * 3 ^
-                       Roles.CalcHashCode();
-
-            }
-        }
+            => hashCode;
 
         #endregion
 

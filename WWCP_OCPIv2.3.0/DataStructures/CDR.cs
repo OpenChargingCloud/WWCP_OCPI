@@ -1705,8 +1705,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         }
 
-
-
         #endregion
 
         #endregion

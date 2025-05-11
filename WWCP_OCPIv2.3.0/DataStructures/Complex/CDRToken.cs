@@ -33,9 +33,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// <summary>
     /// The CDR token.
     /// </summary>
-    public readonly struct CDRToken : IEquatable<CDRToken>,
-                                      IComparable<CDRToken>,
-                                      IComparable
+    public class CDRToken : IEquatable<CDRToken>,
+                            IComparable<CDRToken>,
+                            IComparable
     {
 
         #region Properties
@@ -98,6 +98,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.TokenType    = TokenType;
             this.ContractId   = ContractId;
 
+            unchecked
+            {
+
+                hashCode = this.CountryCode.GetHashCode() * 11 ^
+                           this.PartyId.    GetHashCode() *  7 ^
+                           this.UID.        GetHashCode() *  5 ^
+                           this.TokenType.  GetHashCode() *  3 ^
+                           this.ContractId. GetHashCode();
+
+            }
+
         }
 
         #endregion
@@ -129,31 +140,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region (static) TryParse(JSON, CustomCDRTokenParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a charge detail record token.
-        /// </summary>
-        /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomCDRTokenParser">A delegate to parse custom charge detail record token JSON objects.</param>
-        public static CDRToken? TryParse(JObject                                 JSON,
-                                         CustomJObjectParserDelegate<CDRToken>?  CustomCDRTokenParser   = null)
-        {
-
-            if (TryParse(JSON,
-                         out var cdrToken,
-                         out var errorResponse,
-                         CustomCDRTokenParser))
-            {
-                return cdrToken;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
         #region (static) TryParse(JSON, out CDRToken, out ErrorResponse, CustomCDRTokenParser = null)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
@@ -164,9 +150,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CDRToken">The parsed charge detail record token.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                            JSON,
-                                       [NotNullWhen(true)]  out CDRToken  CDRToken,
-                                       [NotNullWhen(false)] out String?   ErrorResponse)
+        public static Boolean TryParse(JObject                             JSON,
+                                       [NotNullWhen(true)]  out CDRToken?  CDRToken,
+                                       [NotNullWhen(false)] out String?    ErrorResponse)
 
             => TryParse(JSON,
                         out CDRToken,
@@ -182,7 +168,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCDRTokenParser">A delegate to parse custom charge detail record token JSON objects.</param>
         public static Boolean TryParse(JObject                                 JSON,
-                                       [NotNullWhen(true)]  out CDRToken       CDRToken,
+                                       [NotNullWhen(true)]  out CDRToken?      CDRToken,
                                        [NotNullWhen(false)] out String?        ErrorResponse,
                                        CustomJObjectParserDelegate<CDRToken>?  CustomCDRTokenParser   = null)
         {
@@ -190,7 +176,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             try
             {
 
-                CDRToken = default;
+                CDRToken = null;
 
                 if (JSON?.HasValues != true)
                 {
@@ -321,7 +307,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this CDR token.
         /// </summary>
         public CDRToken Clone()
 
@@ -346,10 +332,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="CDRToken1">A CDR token.</param>
         /// <param name="CDRToken2">Another CDR token.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (CDRToken CDRToken1,
-                                           CDRToken CDRToken2)
+        public static Boolean operator == (CDRToken? CDRToken1,
+                                           CDRToken? CDRToken2)
+        {
 
-            => CDRToken1.Equals(CDRToken2);
+            if (Object.ReferenceEquals(CDRToken1, CDRToken2))
+                return true;
+
+            if (CDRToken1 is null || CDRToken2 is null)
+                return false;
+
+            return CDRToken1.Equals(CDRToken2);
+
+        }
 
         #endregion
 
@@ -361,10 +356,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="CDRToken1">A CDR token.</param>
         /// <param name="CDRToken2">Another CDR token.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (CDRToken CDRToken1,
-                                           CDRToken CDRToken2)
+        public static Boolean operator != (CDRToken? CDRToken1,
+                                           CDRToken? CDRToken2)
 
-            => !CDRToken1.Equals(CDRToken2);
+            => !(CDRToken1 == CDRToken2);
 
         #endregion
 
@@ -376,10 +371,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="CDRToken1">A CDR token.</param>
         /// <param name="CDRToken2">Another CDR token.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (CDRToken CDRToken1,
-                                          CDRToken CDRToken2)
+        public static Boolean operator < (CDRToken? CDRToken1,
+                                          CDRToken? CDRToken2)
 
-            => CDRToken1.CompareTo(CDRToken2) < 0;
+            => CDRToken1 is null
+                   ? throw new ArgumentNullException(nameof(CDRToken1), "The given CDR token must not be null!")
+                   : CDRToken1.CompareTo(CDRToken2) < 0;
 
         #endregion
 
@@ -391,10 +388,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="CDRToken1">A CDR token.</param>
         /// <param name="CDRToken2">Another CDR token.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (CDRToken CDRToken1,
-                                           CDRToken CDRToken2)
+        public static Boolean operator <= (CDRToken? CDRToken1,
+                                           CDRToken? CDRToken2)
 
-            => CDRToken1.CompareTo(CDRToken2) <= 0;
+            => !(CDRToken1 > CDRToken2);
 
         #endregion
 
@@ -406,10 +403,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="CDRToken1">A CDR token.</param>
         /// <param name="CDRToken2">Another CDR token.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (CDRToken CDRToken1,
-                                          CDRToken CDRToken2)
+        public static Boolean operator > (CDRToken? CDRToken1,
+                                          CDRToken? CDRToken2)
 
-            => CDRToken1.CompareTo(CDRToken2) > 0;
+            => CDRToken1 is null
+                   ? throw new ArgumentNullException(nameof(CDRToken1), "The given CDR token must not be null!")
+                   : CDRToken1.CompareTo(CDRToken2) > 0;
 
         #endregion
 
@@ -421,10 +420,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="CDRToken1">A CDR token.</param>
         /// <param name="CDRToken2">Another CDR token.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (CDRToken CDRToken1,
-                                           CDRToken CDRToken2)
+        public static Boolean operator >= (CDRToken? CDRToken1,
+                                           CDRToken? CDRToken2)
 
-            => CDRToken1.CompareTo(CDRToken2) >= 0;
+            => !(CDRToken1 < CDRToken2);
 
         #endregion
 
@@ -434,14 +433,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region CompareTo(Object)
 
-        /// <summary>
+        /// <summary>s
         /// Compares two CDR tokens.
         /// </summary>
         /// <param name="Object">A CDR token to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
-            => Object is CDRToken cdrToken
-                   ? CompareTo(cdrToken)
+            => Object is CDRToken cdr
+                   ? CompareTo(cdr)
                    : throw new ArgumentException("The given object is not a CDR token!",
                                                  nameof(Object));
 
@@ -449,26 +448,29 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region CompareTo(CDRToken)
 
-        /// <summary>
+        /// <summary>s
         /// Compares two CDR tokens.
         /// </summary>
-        /// <param name="CDRToken">A CDR token to compare with.</param>
-        public Int32 CompareTo(CDRToken CDRToken)
+        /// <param name="Object">A CDR token to compare with.</param>
+        public Int32 CompareTo(CDRToken? CDRToken)
         {
 
-            var c = CountryCode.CompareTo(CDRToken.CountryCode);
+            if (CDRToken is null)
+                throw new ArgumentNullException(nameof(CDRToken), "The given CDR token must not be null!");
+
+            var c = CountryCode. CompareTo(CDRToken.CountryCode);
 
             if (c == 0)
-                c = PartyId.    CompareTo(CDRToken.PartyId);
+                c = PartyId.     CompareTo(CDRToken.PartyId);
 
             if (c == 0)
-                c = UID.        CompareTo(CDRToken.UID);
+                c = UID.         CompareTo(CDRToken.UID);
 
             if (c == 0)
-                c = TokenType.  CompareTo(CDRToken.TokenType);
+                c = TokenType.   CompareTo(CDRToken.TokenType);
 
             if (c == 0)
-                c = ContractId. CompareTo(CDRToken.ContractId);
+                c = ContractId.  CompareTo(CDRToken.ContractId);
 
             return c;
 
@@ -499,9 +501,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// Compares two CDR tokens for equality.
         /// </summary>
         /// <param name="CDRToken">A CDR token to compare with.</param>
-        public Boolean Equals(CDRToken CDRToken)
+        public Boolean Equals(CDRToken? CDRToken)
 
-            => CountryCode.Equals(CDRToken.CountryCode) &&
+            => CDRToken is not null &&
+
+               CountryCode.Equals(CDRToken.CountryCode) &&
                PartyId.    Equals(CDRToken.PartyId)     &&
                UID.        Equals(CDRToken.UID)         &&
                TokenType.  Equals(CDRToken.TokenType)   &&
@@ -513,23 +517,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
-        /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return CountryCode.GetHashCode() * 11 ^
-                       PartyId.    GetHashCode() *  7 ^
-                       UID.        GetHashCode() *  5 ^
-                       TokenType.  GetHashCode() *  3 ^
-                       ContractId. GetHashCode();
-
-            }
-        }
+            => hashCode;
 
         #endregion
 

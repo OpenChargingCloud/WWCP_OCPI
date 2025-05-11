@@ -208,7 +208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// GREEN is set for the charging session.
         /// </summary>
         public static TariffType  PROFILE_GREEN     { get; }
-            = new("PROFILE_GREEN");
+            = new ("PROFILE_GREEN");
 
         /// <summary>
         /// Used to describe that a tariff is valid when using an RFID, without
