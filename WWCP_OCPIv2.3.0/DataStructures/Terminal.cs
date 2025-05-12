@@ -214,8 +214,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public   DateTime                         LastUpdated          { get; }
 
         /// <summary>
-        /// The SHA256 hash of the JSON representation of this terminal.
+        /// The SHA256 hash of the JSON representation of this terminal used as HTTP ETag.
         /// </summary>
+        [Mandatory, VendorExtension(VE.GraphDefined)]
         public   String                           ETag                 { get; private set; }
 
         #endregion
@@ -280,6 +281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                         DateTime?                                      Created                       = null,
                         DateTime?                                      LastUpdated                   = null,
+                        String?                                        ETag                          = null,
 
                         CommonAPI?                                     CommonAPI                     = null,
                         CustomJObjectSerializerDelegate<Terminal>?     CustomTerminalSerializer      = null,
@@ -311,16 +313,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.LocationIds        = LocationIds?.   Distinct() ?? [];
             this.EVSEUIds           = EVSEUIds?.      Distinct() ?? [];
 
-            this.Created            = Created     ?? LastUpdated ?? Timestamp.Now;
-            this.LastUpdated        = LastUpdated ?? Created     ?? Timestamp.Now;
+            var created             = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.Created            = created;
+            this.LastUpdated        = LastUpdated ?? created;
 
             this.CommonAPI          = CommonAPI;
 
-            this.ETag               = CalcSHA256Hash(
-                                          CustomTerminalSerializer,
-                                          CustomDisplayTextSerializer,
-                                          CustomImageSerializer
-                                      );
+            this.ETag               = ETag ?? CalcSHA256Hash(
+                                                  CustomTerminalSerializer,
+                                                  CustomDisplayTextSerializer,
+                                                  CustomImageSerializer
+                                              );
 
             unchecked
             {
@@ -901,7 +904,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this Terminal.
+        /// Clone this terminal.
         /// </summary>
         public Terminal Clone()
 
@@ -932,6 +935,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                    Created,
                    LastUpdated,
+                   ETag.                CloneString(),
 
                    CommonAPI
 
@@ -1748,6 +1752,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                  Created,
                                  LastUpdated,
+                                 null,
 
                                  CommonAPI
 

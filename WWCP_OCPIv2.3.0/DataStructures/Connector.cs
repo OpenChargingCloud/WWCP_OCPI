@@ -155,8 +155,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public DateTime                          LastUpdated              { get; }
 
         /// <summary>
-        /// The SHA256 hash of the JSON representation of this connector.
+        /// The SHA256 hash of the JSON representation of this connector used as HTTP ETag.
         /// </summary>
+        [Mandatory, VendorExtension(VE.GraphDefined)]
         public String                            ETag                     { get; }
 
         #endregion
@@ -196,6 +197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                          DateTime?                                    Created                     = null,
                          DateTime?                                    LastUpdated                 = null,
+                         String?                                      ETag                        = null,
 
                          EVSE?                                        ParentEVSE                  = null,
                          EMSP_Id?                                     EMSPId                      = null,
@@ -214,19 +216,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.TermsAndConditionsURL  = TermsAndConditionsURL;
             this.Capabilities           = Capabilities?.Distinct() ?? [];
 
-            this.Created                = Created                  ?? LastUpdated ?? Timestamp.Now;
-            this.LastUpdated            = LastUpdated              ?? Created     ?? Timestamp.Now;
+            var created                 = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.Created                = created;
+            this.LastUpdated            = LastUpdated ?? created;
 
             this.ParentEVSE             = ParentEVSE;
 
-            this.ETag                   = SHA256.HashData(
-                                              ToJSON(
-                                                  true,
-                                                  true,
-                                                  EMSPId,
-                                                  CustomConnectorSerializer
-                                              ).ToUTF8Bytes()
-                                          ).ToBase64();
+            this.ETag                   = ETag ?? SHA256.HashData(
+                                                      ToJSON(
+                                                          true,
+                                                          true,
+                                                          EMSPId,
+                                                          CustomConnectorSerializer
+                                                      ).ToUTF8Bytes()
+                                                  ).ToBase64();
 
             unchecked
             {
@@ -605,6 +608,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                    Created,
                    LastUpdated,
+                   ETag.                  CloneString(),
 
                    ParentEVSE
 

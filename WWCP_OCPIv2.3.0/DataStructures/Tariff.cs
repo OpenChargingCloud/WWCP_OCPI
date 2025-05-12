@@ -181,8 +181,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public   DateTime                    LastUpdated          { get; }
 
         /// <summary>
-        /// The SHA256 hash of the JSON representation of this charging tariff.
+        /// The SHA256 hash of the JSON representation of this tariff used as HTTP ETag.
         /// </summary>
+        [Mandatory, VendorExtension(VE.GraphDefined)]
         public   String                      ETag                 { get; }
 
         #endregion
@@ -238,6 +239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                       DateTime?                                              Created                               = null,
                       DateTime?                                              LastUpdated                           = null,
+                      String?                                                ETag                                  = null,
 
                       CommonAPI?                                             CommonAPI                             = null,
                       CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                = null,
@@ -271,8 +273,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.End             = End;
             this.EnergyMix       = EnergyMix;
 
-            this.Created         = Created                   ?? LastUpdated ?? Timestamp.Now;
-            this.LastUpdated     = LastUpdated               ?? Created     ?? Timestamp.Now;
+            var created          = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.Created         = created;
+            this.LastUpdated     = LastUpdated ?? created;
 
             this.ETag            = SHA256.HashData(ToJSON(true,
                                                           true,
@@ -801,23 +804,24 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             => new (
 
-                   CountryCode.  Clone(),
-                   PartyId.      Clone(),
-                   Id.           Clone(),
-                   Currency.     Clone(),
+                   CountryCode.   Clone(),
+                   PartyId.       Clone(),
+                   Id.            Clone(),
+                   Currency.      Clone(),
                    TariffElements.Select(tariffElement => tariffElement.Clone()).ToArray(),
                    TaxIncluded,
                    TariffType,
                    TariffAltText. Select(displayText   => displayText.  Clone()).ToArray(),
-                   TariffAltURL?.Clone(),
+                   TariffAltURL?. Clone(),
                    MinPrice,
                    MaxPrice,
                    Start,
                    End,
-                   EnergyMix?.   Clone(),
+                   EnergyMix?.    Clone(),
 
                    Created,
                    LastUpdated,
+                   ETag.          CloneString(),
 
                    CommonAPI
 

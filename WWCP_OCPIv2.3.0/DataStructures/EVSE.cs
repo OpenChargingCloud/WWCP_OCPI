@@ -180,8 +180,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public DateTime                         LastUpdated                { get; }
 
         /// <summary>
-        /// The SHA256 hash of the JSON representation of this EVSE.
+        /// The SHA256 hash of the JSON representation of this EVSE used as HTTP ETag.
         /// </summary>
+        [Mandatory, VendorExtension(VE.GraphDefined)]
         public String                           ETag                       { get; private set; }
 
         #endregion
@@ -239,6 +240,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     DateTime?                                                     Created                                      = null,
                     DateTime?                                                     LastUpdated                                  = null,
+                    String?                                                       ETag                                         = null,
 
                     Location?                                                     ParentLocation                               = null,
                     EMSP_Id?                                                      EMSPId                                       = null,
@@ -276,22 +278,25 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.Images                    = Images?.                  Distinct() ?? [];
             this.AcceptedServiceProviders  = AcceptedServiceProviders?.Distinct() ?? [];
 
-            this.Created                   = Created                              ?? LastUpdated ?? Timestamp.Now;
-            this.LastUpdated               = LastUpdated                          ?? Created     ?? Timestamp.Now;
+            var created                    = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.Created                   = created;
+            this.LastUpdated               = LastUpdated ?? created;
 
             foreach (var connector in this.Connectors)
                 connector.ParentEVSE = this;
 
-            this.ETag                      = CalcSHA256Hash(EMSPId,
-                                                            CustomEVSESerializer,
-                                                            CustomStatusScheduleSerializer,
-                                                            CustomConnectorSerializer,
-                                                            CustomEVSEEnergyMeterSerializer,
-                                                            CustomTransparencySoftwareStatusSerializer,
-                                                            CustomTransparencySoftwareSerializer,
-                                                            CustomDisplayTextSerializer,
-                                                            CustomEVSEParkingSerializer,
-                                                            CustomImageSerializer);
+            this.ETag                      = ETag ?? CalcSHA256Hash(
+                                                         EMSPId,
+                                                         CustomEVSESerializer,
+                                                         CustomStatusScheduleSerializer,
+                                                         CustomConnectorSerializer,
+                                                         CustomEVSEEnergyMeterSerializer,
+                                                         CustomTransparencySoftwareStatusSerializer,
+                                                         CustomTransparencySoftwareSerializer,
+                                                         CustomDisplayTextSerializer,
+                                                         CustomEVSEParkingSerializer,
+                                                         CustomImageSerializer
+                                                     );
 
         }
 
@@ -776,11 +781,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                    UId.                     Clone(),
                    Status.                  Clone(),
-                   Connectors.              Select(connector      => connector.             Clone()),
+                   Connectors.              Select(connector          => connector.         Clone()),
 
                    EVSEId?.                 Clone(),
-                   StatusSchedule.          Select(statusSchedule => statusSchedule.        Clone()),
-                   Capabilities.            Select(capability     => capability.            Clone()),
+                   StatusSchedule.          Select(statusSchedule     => statusSchedule.    Clone()),
+                   Capabilities.            Select(capability         => capability.        Clone()),
                    EnergyMeter?.            Clone(),
                    FloorLevel.              CloneNullableString(),
                    Coordinates?.            Clone(),
@@ -793,6 +798,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                    Created,
                    LastUpdated,
+                   ETag.                    CloneString(),
 
                    ParentLocation
 
@@ -1761,6 +1767,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                  Created,
                                  LastUpdated,
+                                 null,
 
                                  ParentLocation
 

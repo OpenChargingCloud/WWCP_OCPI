@@ -506,7 +506,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two calendar for equality.
+        /// Compares two calendars for equality.
         /// </summary>
         /// <param name="Object">Calendar to compare with.</param>
         public override Boolean Equals(Object? Object)
@@ -519,7 +519,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Equals(Calendar)
 
         /// <summary>
-        /// Compares two calendar for equality.
+        /// Compares two calendars for equality.
         /// </summary>
         /// <param name="Calendar">Calendar to compare with.</param>
         public Boolean Equals(Calendar? Calendar)

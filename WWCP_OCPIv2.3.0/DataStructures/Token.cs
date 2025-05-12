@@ -156,8 +156,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public   DateTime         LastUpdated       { get; }
 
         /// <summary>
-        /// The base64 encoded SHA256 hash of the JSON representation of this token.
+        /// The SHA256 hash of the JSON representation of this token used as HTTP ETag.
         /// </summary>
+        [Mandatory, VendorExtension(VE.GraphDefined)]
         public   String           ETag              { get; }
 
         #endregion
@@ -204,6 +205,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                      DateTime?                                         Created                          = null,
                      DateTime?                                         LastUpdated                      = null,
+                     String?                                           ETag                             = null,
+
                      CustomJObjectSerializerDelegate<Token>?           CustomTokenSerializer            = null,
                      CustomJObjectSerializerDelegate<EnergyContract>?  CustomEnergyContractSerializer   = null)
 
@@ -227,11 +230,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.DefaultProfile  = DefaultProfile;
             this.EnergyContract  = EnergyContract;
 
-            this.Created         = Created     ?? LastUpdated ?? Timestamp.Now;
-            this.LastUpdated     = LastUpdated ?? Created     ?? Timestamp.Now;
+            var created          = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.Created         = created;
+            this.LastUpdated     = LastUpdated ?? created;
 
-            this.ETag            = SHA256.HashData(ToJSON(CustomTokenSerializer,
-                                                          CustomEnergyContractSerializer).ToUTF8Bytes()).ToBase64();
+            this.ETag            = ETag ?? SHA256.HashData(
+                                               ToJSON(
+                                                   CustomTokenSerializer,
+                                                   CustomEnergyContractSerializer
+                                               ).ToUTF8Bytes()
+                                           ).ToBase64();
 
             unchecked
             {
@@ -673,11 +681,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this token.
         /// </summary>
         public Token Clone()
 
             => new (
+
                    CountryCode.    Clone(),
                    PartyId.        Clone(),
                    Id.             Clone(),
@@ -694,7 +703,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    EnergyContract?.Clone(),
 
                    Created,
-                   LastUpdated
+                   LastUpdated,
+                   ETag.           CloneString()
+
                );
 
         #endregion

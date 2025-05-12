@@ -295,8 +295,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public DateTime                            LastUpdated              { get; }
 
         /// <summary>
-        /// The SHA256 hash of the JSON representation of this location.
+        /// The SHA256 hash of the JSON representation of this location used as HTTP ETag.
         /// </summary>
+        [Mandatory, VendorExtension(VE.GraphDefined)]
         public String                              ETag                     { get; private set; }
 
         #endregion
@@ -390,6 +391,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                         DateTime?                                                     Created                                      = null,
                         DateTime?                                                     LastUpdated                                  = null,
+                        String?                                                       ETag                                         = null,
 
                         CommonAPI?                                                    CommonAPI                                    = null,
                         EMSP_Id?                                                      EMSPId                                       = null,
@@ -444,8 +446,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.EnergyMix            = EnergyMix;
             this.HelpPhone            = HelpPhone;
 
-            this.Created              = Created                      ?? LastUpdated ?? Timestamp.Now;
-            this.LastUpdated          = LastUpdated                  ?? Created     ?? Timestamp.Now;
+            var created               = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.Created              = created;
+            this.LastUpdated          = LastUpdated ?? created;
 
             this.CommonAPI            = CommonAPI;
 
@@ -473,28 +476,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            this.ETag                 = CalcSHA256Hash(
-                                            EMSPId,
-                                            CustomLocationSerializer,
-                                            CustomPublishTokenSerializer,
-                                            CustomAdditionalGeoLocationSerializer,
-                                            CustomEVSESerializer,
-                                            CustomStatusScheduleSerializer,
-                                            CustomConnectorSerializer,
-                                            CustomLocationEnergyMeterSerializer,
-                                            CustomEVSEEnergyMeterSerializer,
-                                            CustomTransparencySoftwareStatusSerializer,
-                                            CustomTransparencySoftwareSerializer,
-                                            CustomParkingSerializer,
-                                            CustomDisplayTextSerializer,
-                                            CustomBusinessDetailsSerializer,
-                                            CustomHoursSerializer,
-                                            CustomEVSEParkingSerializer,
-                                            CustomImageSerializer,
-                                            CustomEnergyMixSerializer,
-                                            CustomEnergySourceSerializer,
-                                            CustomEnvironmentalImpactSerializer
-                                        );
+            this.ETag                 = ETag ?? CalcSHA256Hash(
+                                                    EMSPId,
+                                                    CustomLocationSerializer,
+                                                    CustomPublishTokenSerializer,
+                                                    CustomAdditionalGeoLocationSerializer,
+                                                    CustomEVSESerializer,
+                                                    CustomStatusScheduleSerializer,
+                                                    CustomConnectorSerializer,
+                                                    CustomLocationEnergyMeterSerializer,
+                                                    CustomEVSEEnergyMeterSerializer,
+                                                    CustomTransparencySoftwareStatusSerializer,
+                                                    CustomTransparencySoftwareSerializer,
+                                                    CustomParkingSerializer,
+                                                    CustomDisplayTextSerializer,
+                                                    CustomBusinessDetailsSerializer,
+                                                    CustomHoursSerializer,
+                                                    CustomEVSEParkingSerializer,
+                                                    CustomImageSerializer,
+                                                    CustomEnergyMixSerializer,
+                                                    CustomEnergySourceSerializer,
+                                                    CustomEnvironmentalImpactSerializer
+                                                );
 
             unchecked
             {
@@ -1319,6 +1322,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                    Created,
                    LastUpdated,
+                   ETag.            CloneString(),
 
                    CommonAPI
 
@@ -2587,6 +2591,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                  Created     ?? Timestamp.Now,
                                  LastUpdated ?? Timestamp.Now,
+                                 null,
 
                                  CommonAPI
 

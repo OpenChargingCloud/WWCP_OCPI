@@ -291,8 +291,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public   DateTime                            LastUpdated                 { get; }
 
         /// <summary>
-        /// The SHA256 hash of the JSON representation of this charge detail record.
+        /// The SHA256 hash of the JSON representation of this charge detail record used as HTTP ETag.
         /// </summary>
+        [Mandatory, VendorExtension(VE.GraphDefined)]
         public   String                              ETag                        { get; }
 
         #endregion
@@ -393,6 +394,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                    DateTime?                                               Created                                = null,
                    DateTime?                                               LastUpdated                            = null,
+                   String?                                                 ETag                                   = null,
+
                    CustomJObjectSerializerDelegate<CDR>?                   CustomCDRSerializer                    = null,
                    CustomJObjectSerializerDelegate<CDRToken>?              CustomCDRTokenSerializer               = null,
                    CustomJObjectSerializerDelegate<CDRLocation>?           CustomCDRLocationSerializer            = null,
@@ -452,33 +455,34 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.CreditReferenceId         = CreditReferenceId;
             this.HomeChargingCompensation  = HomeChargingCompensation;
 
-            this.Created                   = Created               ?? LastUpdated ?? Timestamp.Now;
-            this.LastUpdated               = LastUpdated           ?? Created     ?? Timestamp.Now;
+            var created                    = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.Created                   = created;
+            this.LastUpdated               = LastUpdated ?? created;
 
-            this.ETag                      = SHA256.HashData(
-                                                 ToJSON(
-                                                     CustomCDRSerializer,
-                                                     CustomCDRTokenSerializer,
-                                                     CustomCDRLocationSerializer,
-                                                     CustomEVSEEnergyMeterSerializer,
-                                                     CustomTransparencySoftwareSerializer,
-                                                     CustomTariffSerializer,
-                                                     CustomDisplayTextSerializer,
-                                                     CustomPriceSerializer,
-                                                     CustomPriceLimitSerializer,
-                                                     CustomTariffElementSerializer,
-                                                     CustomPriceComponentSerializer,
-                                                     CustomTaxAmountSerializer,
-                                                     CustomTariffRestrictionsSerializer,
-                                                     CustomEnergyMixSerializer,
-                                                     CustomEnergySourceSerializer,
-                                                     CustomEnvironmentalImpactSerializer,
-                                                     CustomChargingPeriodSerializer,
-                                                     CustomCDRDimensionSerializer,
-                                                     CustomSignedDataSerializer,
-                                                     CustomSignedValueSerializer
-                                                 ).ToUTF8Bytes()
-                                             ).ToBase64();
+            this.ETag                      = ETag ?? SHA256.HashData(
+                                                         ToJSON(
+                                                             CustomCDRSerializer,
+                                                             CustomCDRTokenSerializer,
+                                                             CustomCDRLocationSerializer,
+                                                             CustomEVSEEnergyMeterSerializer,
+                                                             CustomTransparencySoftwareSerializer,
+                                                             CustomTariffSerializer,
+                                                             CustomDisplayTextSerializer,
+                                                             CustomPriceSerializer,
+                                                             CustomPriceLimitSerializer,
+                                                             CustomTariffElementSerializer,
+                                                             CustomPriceComponentSerializer,
+                                                             CustomTaxAmountSerializer,
+                                                             CustomTariffRestrictionsSerializer,
+                                                             CustomEnergyMixSerializer,
+                                                             CustomEnergySourceSerializer,
+                                                             CustomEnvironmentalImpactSerializer,
+                                                             CustomChargingPeriodSerializer,
+                                                             CustomCDRDimensionSerializer,
+                                                             CustomSignedDataSerializer,
+                                                             CustomSignedValueSerializer
+                                                         ).ToUTF8Bytes()
+                                                     ).ToBase64();
 
             unchecked
             {
@@ -617,20 +621,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (JSON.ParseOptional("country_code",
                                        "country code",
                                        CountryCode.TryParse,
-                                       out CountryCode? CountryCodeBody,
+                                       out CountryCode? countryCodeBody,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
                 }
 
-                if (!CountryCodeURL.HasValue && !CountryCodeBody.HasValue)
+                if (!CountryCodeURL.HasValue && !countryCodeBody.HasValue)
                 {
                     ErrorResponse = "The country code is missing!";
                     return false;
                 }
 
-                if (CountryCodeURL.HasValue && CountryCodeBody.HasValue && CountryCodeURL.Value != CountryCodeBody.Value)
+                if (CountryCodeURL.HasValue && countryCodeBody.HasValue && CountryCodeURL.Value != countryCodeBody.Value)
                 {
                     ErrorResponse = "The optional country code given within the JSON body does not match the one given in the URL!";
                     return false;
@@ -643,20 +647,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (JSON.ParseOptional("party_id",
                                        "party identification",
                                        Party_Id.TryParse,
-                                       out Party_Id? PartyIdBody,
+                                       out Party_Id? partyIdBody,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
                 }
 
-                if (!PartyIdURL.HasValue && !PartyIdBody.HasValue)
+                if (!PartyIdURL.HasValue && !partyIdBody.HasValue)
                 {
                     ErrorResponse = "The party identification is missing!";
                     return false;
                 }
 
-                if (PartyIdURL.HasValue && PartyIdBody.HasValue && PartyIdURL.Value != PartyIdBody.Value)
+                if (PartyIdURL.HasValue && partyIdBody.HasValue && PartyIdURL.Value != partyIdBody.Value)
                 {
                     ErrorResponse = "The optional party identification given within the JSON body does not match the one given in the URL!";
                     return false;
@@ -664,25 +668,25 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #endregion
 
-                #region Parse Id                          [optional]
+                #region Parse CDRId                       [optional]
 
                 if (JSON.ParseOptional("id",
                                        "CDR identification",
                                        CDR_Id.TryParse,
-                                       out CDR_Id? CDRIdBody,
+                                       out CDR_Id? cdrIdBody,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
                 }
 
-                if (!CDRIdURL.HasValue && !CDRIdBody.HasValue)
+                if (!CDRIdURL.HasValue && !cdrIdBody.HasValue)
                 {
                     ErrorResponse = "The CDR identification is missing!";
                     return false;
                 }
 
-                if (CDRIdURL.HasValue && CDRIdBody.HasValue && CDRIdURL.Value != CDRIdBody.Value)
+                if (CDRIdURL.HasValue && cdrIdBody.HasValue && CDRIdURL.Value != cdrIdBody.Value)
                 {
                     ErrorResponse = "The optional CDR identification given within the JSON body does not match the one given in the URL!";
                     return false;
@@ -1096,9 +1100,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 CDR = new CDR(
 
-                          CountryCodeBody ?? CountryCodeURL!.Value,
-                          PartyIdBody     ?? PartyIdURL!.    Value,
-                          CDRIdBody       ?? CDRIdURL!.      Value,
+                          countryCodeBody ?? CountryCodeURL!.Value,
+                          partyIdBody     ?? PartyIdURL!.    Value,
+                          cdrIdBody       ?? CDRIdURL!.      Value,
                           Start,
                           End,
                           cdrToken,
@@ -1315,7 +1319,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                ? new JProperty("home_charging_compensation",   HomeChargingCompensation.Value)
                                : null,
 
-                                 new JProperty("create",                       Created.                       ToISO8601()),
+                                 new JProperty("created",                      Created.                       ToISO8601()),
                                  new JProperty("last_updated",                 LastUpdated.                   ToISO8601())
 
                        );
@@ -1331,11 +1335,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this charge detail record.
         /// </summary>
         public CDR Clone()
 
             => new (
+
                    CountryCode.            Clone(),
                    PartyId.                Clone(),
                    Id.                     Clone(),
@@ -1370,7 +1375,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    HomeChargingCompensation,
 
                    Created,
-                   LastUpdated
+                   LastUpdated,
+                   ETag.                   CloneString()
+
                );
 
         #endregion

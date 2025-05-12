@@ -32,7 +32,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// <summary>
     /// Bookable
     /// </summary>
-    public class Bookable : IEquatable<Bookable>
+    public class Bookable : IEquatable<Bookable>,
+                            IComparable<Bookable>,
+                            IComparable
     {
 
         #region Properties
@@ -277,6 +279,112 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                            Bookable Bookable2)
 
             => !(Bookable1 == Bookable2);
+
+        #endregion
+
+        #region Operator <  (Bookable1, Bookable2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Bookable1">A booking location.</param>
+        /// <param name="Bookable2">Another booking location.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator < (Bookable? Bookable1,
+                                          Bookable? Bookable2)
+
+            => Bookable1 is null
+                   ? throw new ArgumentNullException(nameof(Bookable1), "The given bookingLocation must not be null!")
+                   : Bookable1.CompareTo(Bookable2) < 0;
+
+        #endregion
+
+        #region Operator <= (Bookable1, Bookable2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Bookable1">A booking location.</param>
+        /// <param name="Bookable2">Another booking location.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator <= (Bookable? Bookable1,
+                                           Bookable? Bookable2)
+
+            => !(Bookable1 > Bookable2);
+
+        #endregion
+
+        #region Operator >  (Bookable1, Bookable2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Bookable1">A booking location.</param>
+        /// <param name="Bookable2">Another booking location.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator > (Bookable? Bookable1,
+                                          Bookable? Bookable2)
+
+            => Bookable1 is null
+                   ? throw new ArgumentNullException(nameof(Bookable1), "The given bookingLocation must not be null!")
+                   : Bookable1.CompareTo(Bookable2) > 0;
+
+        #endregion
+
+        #region Operator >= (Bookable1, Bookable2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Bookable1">A booking location.</param>
+        /// <param name="Bookable2">Another booking location.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator >= (Bookable? Bookable1,
+                                           Bookable? Bookable2)
+
+            => !(Bookable1 < Bookable2);
+
+        #endregion
+
+        #endregion
+
+        #region IComparable<Bookable> Members
+
+        #region CompareTo(Object)
+
+        /// <summary>s
+        /// Compares two bookables.
+        /// </summary>
+        /// <param name="Object">A bookable to compare with.</param>
+        public Int32 CompareTo(Object? Object)
+
+            => Object is Bookable bookable
+                   ? CompareTo(bookable)
+                   : throw new ArgumentException("The given object is not a bookable!",
+                                                 nameof(Object));
+
+        #endregion
+
+        #region CompareTo(Bookable)
+
+        /// <summary>s
+        /// Compares two bookables.
+        /// </summary>
+        /// <param name="Object">A bookable to compare with.</param>
+        public Int32 CompareTo(Bookable? Bookable)
+        {
+
+            if (Bookable is null)
+                throw new ArgumentNullException(nameof(Bookable), "The given bookable must not be null!");
+
+            var c = ReservationRequired.CompareTo(Bookable.ReservationRequired);
+
+            if (c == 0 && AdHoc.HasValue && Bookable.AdHoc.HasValue)
+                c = AdHoc.Value.CompareTo(Bookable.AdHoc.Value);
+
+            return c;
+
+        }
 
         #endregion
 

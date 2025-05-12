@@ -33,7 +33,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
-    /// A charging session.
+    /// A session.
     /// </summary>
     public class Session : IHasId<Session_Id>,
                            IEquatable<Session>,
@@ -176,8 +176,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public   DateTime                            LastUpdated                  { get; }
 
         /// <summary>
-        /// The SHA256 hash of the JSON representation of this charging session.
+        /// The SHA256 hash of the JSON representation of this session used as HTTP ETag.
         /// </summary>
+        [Mandatory, VendorExtension(VE.GraphDefined)]
         public   String                              ETag                         { get; private set; }
 
         #endregion
@@ -185,7 +186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new charging session.
+        /// Create a new session.
         /// </summary>
         /// <param name="CountryCode">An ISO-3166 alpha-2 country code of the charge point operator that 'owns' this session.</param>
         /// <param name="PartyId">An identification of the charge point operator that 'owns' this session (following the ISO-15118 standard).</param>
@@ -235,6 +236,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                        DateTime?                                         Created                          = null,
                        DateTime?                                         LastUpdated                      = null,
+                       String?                                           ETag                             = null,
 
                        CustomJObjectSerializerDelegate<Session>?         CustomSessionSerializer          = null,
                        CustomJObjectSerializerDelegate<CDRToken>?        CustomCDRTokenSerializer         = null,
@@ -263,14 +265,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.ChargingPeriods         = ChargingPeriods?.Distinct() ?? [];
             this.TotalCosts              = TotalCosts;
 
-            this.Created                 = Created                     ?? LastUpdated ?? Timestamp.Now;
-            this.LastUpdated             = LastUpdated                 ?? Created     ?? Timestamp.Now;
+            var created                  = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.Created                 = created;
+            this.LastUpdated             = LastUpdated ?? created;
 
-            this.ETag                    = CalcSHA256Hash(CustomSessionSerializer,
-                                                          CustomCDRTokenSerializer,
-                                                          CustomChargingPeriodSerializer,
-                                                          CustomCDRDimensionSerializer,
-                                                          CustomPriceSerializer);
+            this.ETag                    = ETag ?? CalcSHA256Hash(
+                                                       CustomSessionSerializer,
+                                                       CustomCDRTokenSerializer,
+                                                       CustomChargingPeriodSerializer,
+                                                       CustomCDRDimensionSerializer,
+                                                       CustomPriceSerializer
+                                                   );
 
             unchecked
             {
@@ -805,11 +810,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this session.
         /// </summary>
         public Session Clone()
 
             => new (
+
                    CountryCode.            Clone(),
                    PartyId.                Clone(),
                    Id.                     Clone(),
@@ -826,11 +832,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    End,
                    AuthorizationReference?.Clone(),
                    EnergyMeterId?.         Clone(),
-                   ChargingPeriods.Select(chargingPeriod => chargingPeriod.Clone()).ToArray(),
+                   ChargingPeriods.        Select(chargingPeriod => chargingPeriod.Clone()),
                    TotalCosts,
 
                    Created,
-                   LastUpdated
+                   LastUpdated,
+                   ETag.                   CloneString()
+
                );
 
         #endregion
