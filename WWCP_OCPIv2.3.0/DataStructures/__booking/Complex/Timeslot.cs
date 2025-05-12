@@ -29,42 +29,42 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
-    /// A timeslot.
+    /// A time slot.
     /// </summary>
-    public class Timeslot : IEquatable<Timeslot>,
-                            IComparable<Timeslot>,
+    public class TimeSlot : IEquatable<TimeSlot>,
+                            IComparable<TimeSlot>,
                             IComparable
     {
 
         #region Properties
 
         /// <summary>
-        /// Start time of this timeslot.
+        /// Start time of this time slot.
         /// </summary>
         [Mandatory]
         public DateTimeOffset  Start                 { get; }
 
         /// <summary>
-        /// End time of this timeslot.
+        /// End time of this time slot.
         /// </summary>
         [Mandatory]
         public DateTimeOffset  End                   { get; }
 
         /// <summary>
-        /// The optional minimum power guaranteed during this timeslot.
+        /// The optional minimum power guaranteed during this time slot.
         /// </summary>
         [Optional]
         public Watt?           MinPower              { get; }
 
         /// <summary>
-        /// The optional maximum power guaranteed during this timeslot.
+        /// The optional maximum power guaranteed during this time slot.
         /// Can be requested lower.
         /// </summary>
         [Optional]
         public Watt?           MaxPower              { get; }
 
         /// <summary>
-        /// Optional indication wheather green energy is available during this timeslot.
+        /// Optional indication wheather green energy is available during this time slot.
         /// </summary>
         [Optional]
         public Boolean?        GreenEnergySupport    { get; }
@@ -76,12 +76,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="Start">The start time of this timeslot.</param>
-        /// <param name="End">The end time of this timeslot.</param>
-        /// <param name="MinPower">An optional minimum power guaranteed during this timeslot.</param>
-        /// <param name="MaxPower">An optional maximum power guaranteed during this timeslot. Can be requested lower.</param>
-        /// <param name="GreenEnergySupport">Optional indication wheather green energy is available during this timeslot.</param>
-        public Timeslot(DateTimeOffset  Start,
+        /// <param name="Start">The start time of this time slot.</param>
+        /// <param name="End">The end time of this time slot.</param>
+        /// <param name="MinPower">An optional minimum power guaranteed during this time slot.</param>
+        /// <param name="MaxPower">An optional maximum power guaranteed during this time slot. Can be requested lower.</param>
+        /// <param name="GreenEnergySupport">Optional indication wheather green energy is available during this time slot.</param>
+        public TimeSlot(DateTimeOffset  Start,
                         DateTimeOffset  End,
                         Watt?           MinPower             = null,
                         Watt?           MaxPower             = null,
@@ -110,69 +110,69 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
-        #region (static) Parse   (JSON, CustomTimeslotParser = null)
+        #region (static) Parse   (JSON, CustomTimeSlotParser = null)
 
         /// <summary>
-        /// Parse the given JSON representation of a timeslot.
+        /// Parse the given JSON representation of a time slot.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomTimeslotParser">A delegate to parse custom timeslot JSON objects.</param>
-        public static Timeslot Parse(JObject                                 JSON,
-                                     CustomJObjectParserDelegate<Timeslot>?  CustomTimeslotParser   = null)
+        /// <param name="CustomTimeSlotParser">A delegate to parse custom time slot JSON objects.</param>
+        public static TimeSlot Parse(JObject                                 JSON,
+                                     CustomJObjectParserDelegate<TimeSlot>?  CustomTimeSlotParser   = null)
         {
 
             if (TryParse(JSON,
-                         out var timeslot,
+                         out var timeSlot,
                          out var errorResponse,
-                         CustomTimeslotParser))
+                         CustomTimeSlotParser))
             {
-                return timeslot;
+                return timeSlot;
             }
 
-            throw new ArgumentException("The given JSON representation of a timeslot is invalid: " + errorResponse,
+            throw new ArgumentException("The given JSON representation of a time slot is invalid: " + errorResponse,
                                         nameof(JSON));
 
         }
 
         #endregion
 
-        #region (static) TryParse(JSON, out Timeslot, out ErrorResponse, CustomTimeslotParser = null)
+        #region (static) TryParse(JSON, out TimeSlot, out ErrorResponse, CustomTimeSlotParser = null)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
         /// <summary>
-        /// Try to parse the given JSON representation of a timeslot.
+        /// Try to parse the given JSON representation of a time slot.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="Timeslot">The parsed timeslot.</param>
+        /// <param name="TimeSlot">The parsed time slot.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject                             JSON,
-                                       [NotNullWhen(true)]  out Timeslot?  Timeslot,
+                                       [NotNullWhen(true)]  out TimeSlot?  TimeSlot,
                                        [NotNullWhen(false)] out String?    ErrorResponse)
 
             => TryParse(JSON,
-                        out Timeslot,
+                        out TimeSlot,
                         out ErrorResponse,
                         null);
 
 
         /// <summary>
-        /// Try to parse the given JSON representation of a timeslot.
+        /// Try to parse the given JSON representation of a time slot.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="Timeslot">The parsed timeslot.</param>
+        /// <param name="TimeSlot">The parsed time slot.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomTimeslotParser">A delegate to parse custom timeslot JSON objects.</param>
+        /// <param name="CustomTimeSlotParser">A delegate to parse custom time slot JSON objects.</param>
         public static Boolean TryParse(JObject                                 JSON,
-                                       [NotNullWhen(true)]  out Timeslot?      Timeslot,
+                                       [NotNullWhen(true)]  out TimeSlot?      TimeSlot,
                                        [NotNullWhen(false)] out String?        ErrorResponse,
-                                       CustomJObjectParserDelegate<Timeslot>?  CustomTimeslotParser   = null)
+                                       CustomJObjectParserDelegate<TimeSlot>?  CustomTimeSlotParser   = null)
         {
 
             try
             {
 
-                Timeslot = null;
+                TimeSlot = null;
 
                 if (JSON?.HasValues != true)
                 {
@@ -247,7 +247,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
 
 
-                Timeslot = new Timeslot(
+                TimeSlot = new TimeSlot(
                                start,
                                end,
                                minPower,
@@ -256,17 +256,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            );
 
 
-                if (CustomTimeslotParser is not null)
-                    Timeslot = CustomTimeslotParser(JSON,
-                                                    Timeslot);
+                if (CustomTimeSlotParser is not null)
+                    TimeSlot = CustomTimeSlotParser(JSON,
+                                                    TimeSlot);
 
                 return true;
 
             }
             catch (Exception e)
             {
-                Timeslot       = default;
-                ErrorResponse  = "The given JSON representation of a timeslot is invalid: " + e.Message;
+                TimeSlot       = default;
+                ErrorResponse  = "The given JSON representation of a time slot is invalid: " + e.Message;
                 return false;
             }
 
@@ -274,13 +274,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region ToJSON(CustomTimeslotSerializer = null)
+        #region ToJSON(CustomTimeSlotSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        /// <param name="CustomTimeslotSerializer">A delegate to serialize custom timeslot JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Timeslot>? CustomTimeslotSerializer = null)
+        /// <param name="CustomTimeSlotSerializer">A delegate to serialize custom time slot JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<TimeSlot>? CustomTimeSlotSerializer = null)
         {
 
             var json = JSONObject.Create(
@@ -302,8 +302,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                        );
 
-            return CustomTimeslotSerializer is not null
-                       ? CustomTimeslotSerializer(this, json)
+            return CustomTimeSlotSerializer is not null
+                       ? CustomTimeSlotSerializer(this, json)
                        : json;
 
         }
@@ -313,9 +313,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this timeslot.
+        /// Clone this time slot.
         /// </summary>
-        public Timeslot Clone()
+        public TimeSlot Clone()
 
             => new (
                    Start,
@@ -330,153 +330,153 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region Operator overloading
 
-        #region Operator == (Timeslot1, Timeslot2)
+        #region Operator == (TimeSlot1, TimeSlot2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Timeslot1">A timeslot.</param>
-        /// <param name="Timeslot2">Another timeslot.</param>
+        /// <param name="TimeSlot1">A time slot.</param>
+        /// <param name="TimeSlot2">Another time slot.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (Timeslot? Timeslot1,
-                                           Timeslot? Timeslot2)
+        public static Boolean operator == (TimeSlot? TimeSlot1,
+                                           TimeSlot? TimeSlot2)
         {
 
-            if (Object.ReferenceEquals(Timeslot1, Timeslot2))
+            if (Object.ReferenceEquals(TimeSlot1, TimeSlot2))
                 return true;
 
-            if (Timeslot1 is null || Timeslot2 is null)
+            if (TimeSlot1 is null || TimeSlot2 is null)
                 return false;
 
-            return Timeslot1.Equals(Timeslot2);
+            return TimeSlot1.Equals(TimeSlot2);
 
         }
 
         #endregion
 
-        #region Operator != (Timeslot1, Timeslot2)
+        #region Operator != (TimeSlot1, TimeSlot2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Timeslot1">A timeslot.</param>
-        /// <param name="Timeslot2">Another timeslot.</param>
+        /// <param name="TimeSlot1">A time slot.</param>
+        /// <param name="TimeSlot2">Another time slot.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (Timeslot? Timeslot1,
-                                           Timeslot? Timeslot2)
+        public static Boolean operator != (TimeSlot? TimeSlot1,
+                                           TimeSlot? TimeSlot2)
 
-            => !(Timeslot1 == Timeslot2);
+            => !(TimeSlot1 == TimeSlot2);
 
         #endregion
 
-        #region Operator <  (Timeslot1, Timeslot2)
+        #region Operator <  (TimeSlot1, TimeSlot2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Timeslot1">A timeslot.</param>
-        /// <param name="Timeslot2">Another timeslot.</param>
+        /// <param name="TimeSlot1">A time slot.</param>
+        /// <param name="TimeSlot2">Another time slot.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (Timeslot? Timeslot1,
-                                          Timeslot? Timeslot2)
+        public static Boolean operator < (TimeSlot? TimeSlot1,
+                                          TimeSlot? TimeSlot2)
 
-            => Timeslot1 is null
-                   ? throw new ArgumentNullException(nameof(Timeslot1), "The given timeslot must not be null!")
-                   : Timeslot1.CompareTo(Timeslot2) < 0;
+            => TimeSlot1 is null
+                   ? throw new ArgumentNullException(nameof(TimeSlot1), "The given time slot must not be null!")
+                   : TimeSlot1.CompareTo(TimeSlot2) < 0;
 
         #endregion
 
-        #region Operator <= (Timeslot1, Timeslot2)
+        #region Operator <= (TimeSlot1, TimeSlot2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Timeslot1">A timeslot.</param>
-        /// <param name="Timeslot2">Another timeslot.</param>
+        /// <param name="TimeSlot1">A time slot.</param>
+        /// <param name="TimeSlot2">Another time slot.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (Timeslot? Timeslot1,
-                                           Timeslot? Timeslot2)
+        public static Boolean operator <= (TimeSlot? TimeSlot1,
+                                           TimeSlot? TimeSlot2)
 
-            => !(Timeslot1 > Timeslot2);
+            => !(TimeSlot1 > TimeSlot2);
 
         #endregion
 
-        #region Operator >  (Timeslot1, Timeslot2)
+        #region Operator >  (TimeSlot1, TimeSlot2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Timeslot1">A timeslot.</param>
-        /// <param name="Timeslot2">Another timeslot.</param>
+        /// <param name="TimeSlot1">A time slot.</param>
+        /// <param name="TimeSlot2">Another time slot.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (Timeslot? Timeslot1,
-                                          Timeslot? Timeslot2)
+        public static Boolean operator > (TimeSlot? TimeSlot1,
+                                          TimeSlot? TimeSlot2)
 
-            => Timeslot1 is null
-                   ? throw new ArgumentNullException(nameof(Timeslot1), "The given timeslot must not be null!")
-                   : Timeslot1.CompareTo(Timeslot2) > 0;
+            => TimeSlot1 is null
+                   ? throw new ArgumentNullException(nameof(TimeSlot1), "The given time slot must not be null!")
+                   : TimeSlot1.CompareTo(TimeSlot2) > 0;
 
         #endregion
 
-        #region Operator >= (Timeslot1, Timeslot2)
+        #region Operator >= (TimeSlot1, TimeSlot2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Timeslot1">A timeslot.</param>
-        /// <param name="Timeslot2">Another timeslot.</param>
+        /// <param name="TimeSlot1">A time slot.</param>
+        /// <param name="TimeSlot2">Another time slot.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (Timeslot? Timeslot1,
-                                           Timeslot? Timeslot2)
+        public static Boolean operator >= (TimeSlot? TimeSlot1,
+                                           TimeSlot? TimeSlot2)
 
-            => !(Timeslot1 < Timeslot2);
-
-        #endregion
+            => !(TimeSlot1 < TimeSlot2);
 
         #endregion
 
-        #region IComparable<Timeslot> Members
+        #endregion
+
+        #region IComparable<TimeSlot> Members
 
         #region CompareTo(Object)
 
         /// <summary>s
-        /// Compares two timeslots.
+        /// Compares two time slots.
         /// </summary>
-        /// <param name="Object">A timeslot to compare with.</param>
+        /// <param name="Object">A time slot to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
-            => Object is Timeslot timeslot
-                   ? CompareTo(timeslot)
-                   : throw new ArgumentException("The given object is not a timeslot!",
+            => Object is TimeSlot timeSlot
+                   ? CompareTo(timeSlot)
+                   : throw new ArgumentException("The given object is not a time slot!",
                                                  nameof(Object));
 
         #endregion
 
-        #region CompareTo(Timeslot)
+        #region CompareTo(TimeSlot)
 
         /// <summary>s
-        /// Compares two timeslots.
+        /// Compares two time slots.
         /// </summary>
-        /// <param name="Object">A timeslot to compare with.</param>
-        public Int32 CompareTo(Timeslot? Timeslot)
+        /// <param name="Object">A time slot to compare with.</param>
+        public Int32 CompareTo(TimeSlot? TimeSlot)
         {
 
-            if (Timeslot is null)
-                throw new ArgumentNullException(nameof(Timeslot), "The given timeslot must not be null!");
+            if (TimeSlot is null)
+                throw new ArgumentNullException(nameof(TimeSlot), "The given time slot must not be null!");
 
-            var c = Start. CompareTo(Timeslot.Start);
+            var c = Start. CompareTo(TimeSlot.Start);
 
             if (c == 0)
-                c = End.     CompareTo(Timeslot.End);
+                c = End.     CompareTo(TimeSlot.End);
 
-            if (c == 0 && MinPower.          HasValue && Timeslot.MinPower.          HasValue)
-                c = MinPower.          Value.CompareTo(Timeslot.MinPower.          Value);
+            if (c == 0 && MinPower.          HasValue && TimeSlot.MinPower.          HasValue)
+                c = MinPower.          Value.CompareTo(TimeSlot.MinPower.          Value);
 
-            if (c == 0 && MaxPower.          HasValue && Timeslot.MaxPower.          HasValue)
-                c = MaxPower.          Value.CompareTo(Timeslot.MaxPower.          Value);
+            if (c == 0 && MaxPower.          HasValue && TimeSlot.MaxPower.          HasValue)
+                c = MaxPower.          Value.CompareTo(TimeSlot.MaxPower.          Value);
 
-            if (c == 0 && GreenEnergySupport.HasValue && Timeslot.GreenEnergySupport.HasValue)
-                c = GreenEnergySupport.Value.CompareTo(Timeslot.GreenEnergySupport.Value);
+            if (c == 0 && GreenEnergySupport.HasValue && TimeSlot.GreenEnergySupport.HasValue)
+                c = GreenEnergySupport.Value.CompareTo(TimeSlot.GreenEnergySupport.Value);
 
             return c;
 
@@ -486,42 +486,42 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region IEquatable<Timeslot> Members
+        #region IEquatable<TimeSlot> Members
 
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two timeslots for equality.
+        /// Compares two time slots for equality.
         /// </summary>
-        /// <param name="Object">A timeslot to compare with.</param>
+        /// <param name="Object">A time slot to compare with.</param>
         public override Boolean Equals(Object? Object)
 
-            => Object is Timeslot timeslot &&
-                   Equals(timeslot);
+            => Object is TimeSlot timeSlot &&
+                   Equals(timeSlot);
 
         #endregion
 
-        #region Equals(Timeslot)
+        #region Equals(TimeSlot)
 
         /// <summary>
-        /// Compares two timeslots for equality.
+        /// Compares two time slots for equality.
         /// </summary>
-        /// <param name="Timeslot">A timeslot to compare with.</param>
-        public Boolean Equals(Timeslot? Timeslot)
+        /// <param name="TimeSlot">A time slot to compare with.</param>
+        public Boolean Equals(TimeSlot? TimeSlot)
 
-            => Timeslot is not null &&
+            => TimeSlot is not null &&
 
-               Start.Equals(Timeslot.Start) &&
-               End.  Equals(Timeslot.End)   &&
+               Start.Equals(TimeSlot.Start) &&
+               End.  Equals(TimeSlot.End)   &&
 
-            ((!MinPower.          HasValue && !Timeslot.MinPower.          HasValue) ||
-              (MinPower.          HasValue &&  Timeslot.MinPower.          HasValue && MinPower.          Value.Equals(Timeslot.MinPower.          Value))) &&
+            ((!MinPower.          HasValue && !TimeSlot.MinPower.          HasValue) ||
+              (MinPower.          HasValue &&  TimeSlot.MinPower.          HasValue && MinPower.          Value.Equals(TimeSlot.MinPower.          Value))) &&
 
-            ((!MaxPower.          HasValue && !Timeslot.MaxPower.          HasValue) ||
-              (MaxPower.          HasValue &&  Timeslot.MaxPower.          HasValue && MaxPower.          Value.Equals(Timeslot.MaxPower.          Value))) &&
+            ((!MaxPower.          HasValue && !TimeSlot.MaxPower.          HasValue) ||
+              (MaxPower.          HasValue &&  TimeSlot.MaxPower.          HasValue && MaxPower.          Value.Equals(TimeSlot.MaxPower.          Value))) &&
 
-            ((!GreenEnergySupport.HasValue && !Timeslot.GreenEnergySupport.HasValue)  ||
-              (GreenEnergySupport.HasValue &&  Timeslot.GreenEnergySupport.HasValue && GreenEnergySupport.Value.Equals(Timeslot.GreenEnergySupport.Value)));
+            ((!GreenEnergySupport.HasValue && !TimeSlot.GreenEnergySupport.HasValue)  ||
+              (GreenEnergySupport.HasValue &&  TimeSlot.GreenEnergySupport.HasValue && GreenEnergySupport.Value.Equals(TimeSlot.GreenEnergySupport.Value)));
 
         #endregion
 

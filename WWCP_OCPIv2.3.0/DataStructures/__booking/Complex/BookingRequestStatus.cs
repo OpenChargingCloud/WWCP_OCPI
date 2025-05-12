@@ -23,8 +23,6 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
-using cloud.charging.open.protocols.OCPI;
-
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_3_0
@@ -176,11 +174,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #region Parse BookingRequest     [mandatory]
 
-                if (!JSON.ParseMandatory("booking_request",
-                                         "booking request",
-                                         BookingRequest.TryParse,
-                                         out BookingRequest bookingRequest,
-                                         out ErrorResponse))
+                if (!JSON.ParseMandatoryJSON("booking_request",
+                                             "booking request",
+                                             BookingRequest.TryParse,
+                                             out BookingRequest? bookingRequest,
+                                             out ErrorResponse))
                 {
                     return false;
                 }
