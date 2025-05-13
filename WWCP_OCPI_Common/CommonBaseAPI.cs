@@ -698,6 +698,20 @@ namespace cloud.charging.open.protocols.OCPI
         public const String removeTerminal                     = "removeTerminal";
         public const String removeAllTerminals                 = "removeAllTerminals";
 
+        public const String addBooking                         = "addBooking";
+        public const String addBookingIfNotExists              = "addBookingIfNotExists";
+        public const String addOrUpdateBooking                 = "addOrUpdateBooking";
+        public const String updateBooking                      = "updateBooking";
+        public const String removeBooking                      = "removeBooking";
+        public const String removeAllBookings                  = "removeAllBookings";
+
+        public const String addBookingLocation                 = "addBookingLocation";
+        public const String addBookingLocationIfNotExists      = "addBookingLocationIfNotExists";
+        public const String addOrUpdateBookingLocation         = "addOrUpdateBookingLocation";
+        public const String updateBookingLocation              = "updateBookingLocation";
+        public const String removeBookingLocation              = "removeBookingLocation";
+        public const String removeAllBookingLocations          = "removeAllBookingLocations";
+
         #endregion
 
         #region Properties

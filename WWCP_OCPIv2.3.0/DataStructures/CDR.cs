@@ -52,7 +52,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Properties
 
         /// <summary>
-        /// The parent CommonAPI of this charging location.
+        /// The parent CommonAPI of this charge detail record.
         /// </summary>
         internal CommonAPI?                          CommonAPI                   { get; set; }
 

@@ -77,6 +77,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             public APICounterValues  GetTokens             { get; }
             public APICounterValues  PostToken             { get; }
 
+            public APICounterValues  PutBooking            { get; }
+
             public APICounterValues  SetChargingProfile    { get; }
 
             #endregion
@@ -805,6 +807,33 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         public event OnPostTokenResponseDelegate?  OnPostTokenResponse;
 
         #endregion
+
+
+
+        #region OnPutBookingRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever a PUT ~/booking request will be send.
+        /// </summary>
+        public event OnPutBookingRequestDelegate?   OnPutBookingRequest;
+
+        /// <summary>
+        /// An event fired whenever a PUT ~/booking HTTP request will be send.
+        /// </summary>
+        public event ClientRequestLogHandler?       OnPutBookingHTTPRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a PUT ~/booking HTTP request had been received.
+        /// </summary>
+        public event ClientResponseLogHandler?      OnPutBookingHTTPResponse;
+
+        /// <summary>
+        /// An event fired whenever a response to a PUT ~/booking request had been received.
+        /// </summary>
+        public event OnPutBookingResponseDelegate?  OnPutBookingResponse;
+
+        #endregion
+
 
 
         #region OnSetChargingProfileRequest/-Response
@@ -5068,6 +5097,200 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         }
 
         #endregion
+
+
+
+        #region PutBooking          (Booking, ...)
+
+        /// <summary>
+        /// Put/store the given booking on/within the remote API.
+        /// </summary>
+        /// <param name="Booking">The booking to store/put at/onto the remote API.</param>
+        /// 
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
+        public async Task<OCPIResponse<Booking>>
+
+            PutBooking(Booking             Booking,
+
+                       Request_Id?         RequestId           = null,
+                       Correlation_Id?     CorrelationId       = null,
+                       Version_Id?         VersionId           = null,
+
+                       EventTracking_Id?   EventTrackingId     = null,
+                       TimeSpan?           RequestTimeout      = null,
+                       CancellationToken   CancellationToken   = default)
+
+        {
+
+            #region Init
+
+            var startTime        = Timestamp.Now;
+            var requestId        = RequestId       ?? Request_Id.    NewRandom();
+            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
+            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+
+            Counters.PutBooking.IncRequests_OK();
+
+            OCPIResponse<Booking> response;
+
+            #endregion
+
+            #region Send OnPutBookingRequest event
+
+            await LogEvent(
+                      OnPutBookingRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
+
+                          Booking,
+
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
+
+            #endregion
+
+
+            try
+            {
+
+                var remoteURL = await GetRemoteURL(
+                                          Module_Id.Bookings,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
+
+                if (remoteURL.HasValue)
+                {
+
+                    #region Upstream HTTP request...
+
+                    var httpResponse = await HTTPClientFactory.Create(
+                                                 remoteURL.Value,
+                                                 VirtualHostname,
+                                                 Description,
+                                                 PreferIPv4,
+                                                 RemoteCertificateValidator,
+                                                 LocalCertificateSelector,
+                                                 ClientCert,
+                                                 TLSProtocol,
+                                                 ContentType,
+                                                 Accept,
+                                                 Authentication,
+                                                 HTTPUserAgent,
+                                                 Connection,
+                                                 RequestTimeout,
+                                                 TransmissionRetryDelay,
+                                                 MaxNumberOfRetries,
+                                                 InternalBufferSize,
+                                                 UseHTTPPipelining,
+                                                 DisableLogging,
+                                                 HTTPLogger,
+                                                 DNSClient
+                                             ).
+
+                                             PUT(remoteURL.Value.Path + Booking.CountryCode.ToString() +
+                                                                        Booking.PartyId.    ToString() +
+                                                                        Booking.Id.         ToString(),
+                                                 Content:               Booking.ToJSON(
+                                                                            //true,
+                                                                            //true,
+                                                                            //CustomBookingSerializer,
+                                                                            //CustomDisplayTextSerializer,
+                                                                            //CustomPriceLimitSerializer,
+                                                                            //CustomBookingElementSerializer,
+                                                                            //CustomPriceComponentSerializer,
+                                                                            //CustomBookingRestrictionsSerializer,
+                                                                            //CustomEnergyMixSerializer,
+                                                                            //CustomEnergySourceSerializer,
+                                                                            //CustomEnvironmentalImpactSerializer
+                                                                        ).ToUTF8Bytes(JSONFormat),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnPutBookingHTTPRequest,
+                                                 ResponseLogDelegate:   OnPutBookingHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
+
+                                             ConfigureAwait(false);
+
+                    #endregion
+
+                    response = OCPIResponse<Booking>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Booking.Parse(json)
+                               );
+
+                    Counters.PutBooking.IncResponses_OK();
+
+                }
+
+                else
+                {
+                    response = OCPIResponse<String, Booking>.Error("No remote URL available!");
+                    Counters.PutBooking.IncRequests_Error();
+                }
+
+            }
+
+            catch (Exception e)
+            {
+                response = OCPIResponse<String, Booking>.Exception(e);
+                Counters.PutBooking.IncResponses_Error();
+            }
+
+
+            #region Send OnPutBookingResponse event
+
+            var endtime = Timestamp.Now;
+
+            await LogEvent(
+                      OnPutBookingResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
+
+                          Booking,
+
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
+
+                          response,
+                          endtime - startTime
+                      )
+                  );
+
+            #endregion
+
+            return response;
+
+        }
+
+        #endregion
+
 
 
         // Commands

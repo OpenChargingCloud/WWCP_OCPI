@@ -6528,6 +6528,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
 
 
+            // {booking_endpoint_url}/{country_code}/{party_id}/{booking_id}
+            // GET, PUT, PATCH
+
+            // {booking_endpoint_url}/{country_code}/{party_id}/booking_locations/{booking_location_id}
+            // GET, PUT, PATCH
+
+            // {booking_endpoint_url}/{country_code}/{party_id}/booking_locations/{booking_location_id}/{calendar_id}
+            // GET, PUT, PATCH
+
+
             // Command result callbacks
 
             #region ~/commands/RESERVE_NOW/{commandId}

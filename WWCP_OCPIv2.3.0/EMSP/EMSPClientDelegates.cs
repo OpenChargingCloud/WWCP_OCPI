@@ -488,6 +488,73 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     #endregion
 
 
+    #region OnGetBookingsRequest/-Response
+
+    /// <summary>
+    /// A delegate called whenever a GET ~/bookings request will be send.
+    /// </summary>
+    public delegate Task OnGetBookingsRequestDelegate(DateTime                             LogTimestamp,
+                                                      EMSP2CPOClient                       Sender,
+                                                      Request_Id                           RequestId,
+                                                      Correlation_Id                       CorrelationId,
+
+                                                      CancellationToken                    CancellationToken,
+                                                      EventTracking_Id                     EventTrackingId,
+                                                      TimeSpan                             RequestTimeout);
+
+    /// <summary>
+    /// A delegate called whenever a response to a GET ~/bookings request had been received.
+    /// </summary>
+    public delegate Task OnGetBookingsResponseDelegate(DateTime                            LogTimestamp,
+                                                       EMSP2CPOClient                      Sender,
+                                                       Request_Id                          RequestId,
+                                                       Correlation_Id                      CorrelationId,
+
+                                                       CancellationToken                   CancellationToken,
+                                                       EventTracking_Id                    EventTrackingId,
+                                                       TimeSpan                            RequestTimeout,
+
+                                                       OCPIResponse<IEnumerable<Booking>>  Response,
+                                                       TimeSpan                            Runtime);
+
+    #endregion
+
+    #region OnPostBookingsRequest/-Response
+
+    /// <summary>
+    /// A delegate called whenever a POST ~/bookings request will be send.
+    /// </summary>
+    public delegate Task OnPostBookingsRequestDelegate(DateTime                 LogTimestamp,
+                                                       EMSP2CPOClient           Sender,
+                                                       Request_Id               RequestId,
+                                                       Correlation_Id           CorrelationId,
+
+                                                       BookingRequest           BookingRequest,
+
+                                                       CancellationToken        CancellationToken,
+                                                       EventTracking_Id         EventTrackingId,
+                                                       TimeSpan                 RequestTimeout);
+
+    /// <summary>
+    /// A delegate called whenever a response to a POST ~/bookings request had been received.
+    /// </summary>
+    public delegate Task OnPostBookingsResponseDelegate(DateTime                 LogTimestamp,
+                                                        EMSP2CPOClient           Sender,
+                                                        Request_Id               RequestId,
+                                                        Correlation_Id           CorrelationId,
+
+                                                        BookingRequest           BookingRequest,
+
+                                                        CancellationToken        CancellationToken,
+                                                        EventTracking_Id         EventTrackingId,
+                                                        TimeSpan                 RequestTimeout,
+
+                                                        OCPIResponse<Booking>    Response,
+                                                        TimeSpan                 Runtime);
+
+    #endregion
+
+
     #region OnReserveNowRequest/-Response
 
     /// <summary>

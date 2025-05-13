@@ -49,17 +49,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                            Boolean?         AllowDowngrades   = null)
     {
 
-        public Party_Idv3                                      Id                 { get; } = Id;
-        public Role                                            Role               { get; } = Role;
-        public BusinessDetails                                 BusinessDetails    { get; } = BusinessDetails;
-        public Boolean                                         AllowDowngrades    { get; } = AllowDowngrades ?? false;
+        public Party_Idv3       Id                 { get; } = Id;
+        public Role             Role               { get; } = Role;
+        public BusinessDetails  BusinessDetails    { get; } = BusinessDetails;
+        public Boolean          AllowDowngrades    { get; } = AllowDowngrades ?? false;
 
-        public ConcurrentDictionary<Location_Id, Location>     Locations          { get; } =  [];
-        public ConcurrentDictionary<Terminal_Id, Terminal>     PaymentTerminals          { get; } =  [];
-        public TimeRangeDictionary <Tariff_Id,   Tariff>       Tariffs            { get; } =  [];
-        public ConcurrentDictionary<Session_Id,  Session>      Sessions           { get; } =  [];
-        public ConcurrentDictionary<Token_Id,    TokenStatus>  Tokens             { get; } =  [];
-        public ConcurrentDictionary<CDR_Id,      CDR>          CDRs               { get; } =  [];
+
+        public ConcurrentDictionary<Location_Id,        Location>         Locations          { get; } =  [];
+        public ConcurrentDictionary<Terminal_Id,        Terminal>         PaymentTerminals   { get; } =  [];
+        public TimeRangeDictionary <Tariff_Id,          Tariff>           Tariffs            { get; } =  [];
+        public ConcurrentDictionary<Session_Id,         Session>          Sessions           { get; } =  [];
+        public ConcurrentDictionary<Token_Id,           TokenStatus>      Tokens             { get; } =  [];
+        public ConcurrentDictionary<CDR_Id,             CDR>              CDRs               { get; } =  [];
+        public ConcurrentDictionary<Booking_Id,         Booking>          Bookings           { get; } =  [];
+        public ConcurrentDictionary<BookingLocation_Id, BookingLocation>  BookingLocations   { get; } =  [];
 
     }
 
@@ -13775,6 +13778,2150 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                 foreach (var party in parties.Values)
                     sessions.AddRange(party.CDRs.Values);
+
+                return sessions;
+
+            }
+
+            return [];
+
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Bookings
+
+        #region Events
+
+        public delegate Task OnBookingAddedDelegate  (Booking Booking);
+
+        public event OnBookingAddedDelegate?    OnBookingAdded;
+
+
+        public delegate Task OnBookingChangedDelegate(Booking Booking);
+
+        public event OnBookingChangedDelegate?  OnBookingChanged;
+
+        #endregion
+
+
+        public delegate Task<Booking> OnBookingSlowStorageLookupDelegate(Party_Idv3  PartyId,
+                                                                         Booking_Id  BookingId);
+
+        public event OnBookingSlowStorageLookupDelegate? OnBookingSlowStorageLookup;
+
+
+        #region AddBooking            (Booking, ...)
+
+        public async Task<AddResult<Booking>>
+
+            AddBooking(Booking            Booking,
+                       Boolean            SkipNotifications   = false,
+                       EventTracking_Id?  EventTrackingId     = null,
+                       User_Id?           CurrentUserId       = null,
+                       CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(Party_Idv3.From(Booking.CountryCode, Booking.PartyId), out var party))
+            {
+
+                if (party.Bookings.TryAdd(Booking.Id, Booking))
+                {
+
+                    DebugX.Log($"OCPI {Version.String} Booking '{Booking.Id}': '{Booking}' added...");
+
+                    Booking.CommonAPI = this;
+
+                    await LogAsset(
+                              CommonBaseAPI.addBooking,
+                              Booking.ToJSON(
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //CustomBookingSerializer,
+                                  //CustomBookingTokenSerializer,
+                                  //CustomBookingLocationSerializer,
+                                  //CustomEVSEEnergyMeterSerializer,
+                                  //CustomTransparencySoftwareSerializer,
+                                  //CustomTariffSerializer,
+                                  //CustomDisplayTextSerializer,
+                                  //CustomPriceSerializer,
+                                  //CustomPriceLimitSerializer,
+                                  //CustomTariffElementSerializer,
+                                  //CustomPriceComponentSerializer,
+                                  //CustomTaxAmountSerializer,
+                                  //CustomTariffRestrictionsSerializer,
+                                  //CustomEnergyMixSerializer,
+                                  //CustomEnergySourceSerializer,
+                                  //CustomEnvironmentalImpactSerializer,
+                                  //CustomChargingPeriodSerializer,
+                                  //CustomBookingDimensionSerializer,
+                                  //CustomSignedDataSerializer,
+                                  //CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnBookingAddedLocal = OnBookingAdded;
+                        if (OnBookingAddedLocal is not null)
+                        {
+                            try
+                            {
+                                await OnBookingAddedLocal(Booking);
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddBooking), " ", nameof(OnBookingAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                    }
+
+                    return AddResult<Booking>.Success(
+                               EventTrackingId,
+                               Booking
+                           );
+
+                }
+
+                return AddResult<Booking>.Failed(
+                           EventTrackingId,
+                           Booking,
+                           "The given charge detail record already exists!"
+                       );
+
+            }
+
+            return AddResult<Booking>.Failed(
+                       EventTrackingId,
+                       Booking,
+                       "The party identification of the charge detail record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region AddBookingIfNotExists (Booking, ...)
+
+        public async Task<AddResult<Booking>>
+
+            AddBookingIfNotExists(Booking            Booking,
+                                  Boolean            SkipNotifications   = false,
+                                  EventTracking_Id?  EventTrackingId     = null,
+                                  User_Id?           CurrentUserId       = null,
+                                  CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(Party_Idv3.From(Booking.CountryCode, Booking.PartyId), out var party))
+            {
+
+                if (party.Bookings.TryAdd(Booking.Id, Booking))
+                {
+
+                    DebugX.Log($"OCPI {Version.String} Booking '{Booking.Id}': '{Booking}' added...");
+
+                    Booking.CommonAPI = this;
+
+                    await LogAsset(
+                              CommonBaseAPI.addBookingIfNotExists,
+                              Booking.ToJSON(
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //CustomBookingSerializer,
+                                  //CustomBookingTokenSerializer,
+                                  //CustomBookingLocationSerializer,
+                                  //CustomEVSEEnergyMeterSerializer,
+                                  //CustomTransparencySoftwareSerializer,
+                                  //CustomTariffSerializer,
+                                  //CustomDisplayTextSerializer,
+                                  //CustomPriceSerializer,
+                                  //CustomPriceLimitSerializer,
+                                  //CustomTariffElementSerializer,
+                                  //CustomPriceComponentSerializer,
+                                  //CustomTaxAmountSerializer,
+                                  //CustomTariffRestrictionsSerializer,
+                                  //CustomEnergyMixSerializer,
+                                  //CustomEnergySourceSerializer,
+                                  //CustomEnvironmentalImpactSerializer,
+                                  //CustomChargingPeriodSerializer,
+                                  //CustomBookingDimensionSerializer,
+                                  //CustomSignedDataSerializer,
+                                  //CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnBookingAddedLocal = OnBookingAdded;
+                        if (OnBookingAddedLocal is not null)
+                        {
+                            try
+                            {
+                                await OnBookingAddedLocal(Booking);
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddBooking), " ", nameof(OnBookingAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                    }
+
+                    return AddResult<Booking>.Success(
+                               EventTrackingId,
+                               Booking
+                           );
+
+                }
+
+                return AddResult<Booking>.NoOperation(
+                           EventTrackingId,
+                           Booking,
+                           "The given charge detail record already exists."
+                       );
+
+            }
+
+            return AddResult<Booking>.Failed(
+                       EventTrackingId,
+                       Booking,
+                       "The party identification of the charge detail record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region AddOrUpdateBooking    (Booking, AllowDowngrades = false, ...)
+
+        public async Task<AddOrUpdateResult<Booking>>
+
+            AddOrUpdateBooking(Booking            Booking,
+                               Boolean?           AllowDowngrades     = false,
+                               Boolean            SkipNotifications   = false,
+                               EventTracking_Id?  EventTrackingId     = null,
+                               User_Id?           CurrentUserId       = null,
+                               CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(Party_Idv3.From(Booking.CountryCode, Booking.PartyId), out var party))
+            {
+
+                #region Update an existing charge detail record
+
+                if (party.Bookings.TryGetValue(Booking.Id, out var existingBooking))
+                {
+
+                    if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                        Booking.LastUpdated <= existingBooking.LastUpdated)
+                    {
+                        return AddOrUpdateResult<Booking>.Failed(
+                                   EventTrackingId,
+                                   Booking,
+                                   "The 'lastUpdated' timestamp of the new charge detail record must be newer then the timestamp of the existing charge detail record!"
+                               );
+                    }
+
+                    //if (Booking.LastUpdated.ToISO8601() == existingBooking.LastUpdated.ToISO8601())
+                    //    return AddOrUpdateResult<Booking>.NoOperation(Booking,
+                    //                                                   "The 'lastUpdated' timestamp of the new charge detail record must be newer then the timestamp of the existing charge detail record!");
+
+                    var aa = existingBooking.Equals(existingBooking);
+
+                    if (party.Bookings.TryUpdate(Booking.Id,
+                                             Booking,
+                                             existingBooking))
+                    {
+
+                        Booking.CommonAPI = this;
+
+                        await LogAsset(
+                                  CommonBaseAPI.addOrUpdateBooking,
+                                  Booking.ToJSON(
+                                      //true,
+                                      //true,
+                                      //true,
+                                      //true,
+                                      //CustomBookingSerializer,
+                                      //CustomBookingTokenSerializer,
+                                      //CustomBookingLocationSerializer,
+                                      //CustomEVSEEnergyMeterSerializer,
+                                      //CustomTransparencySoftwareSerializer,
+                                      //CustomTariffSerializer,
+                                      //CustomDisplayTextSerializer,
+                                      //CustomPriceSerializer,
+                                      //CustomPriceLimitSerializer,
+                                      //CustomTariffElementSerializer,
+                                      //CustomPriceComponentSerializer,
+                                      //CustomTaxAmountSerializer,
+                                      //CustomTariffRestrictionsSerializer,
+                                      //CustomEnergyMixSerializer,
+                                      //CustomEnergySourceSerializer,
+                                      //CustomEnvironmentalImpactSerializer,
+                                      //CustomChargingPeriodSerializer,
+                                      //CustomBookingDimensionSerializer,
+                                      //CustomSignedDataSerializer,
+                                      //CustomSignedValueSerializer
+                                  ),
+                                  EventTrackingId,
+                                  CurrentUserId,
+                                  CancellationToken
+                              );
+
+                        if (!SkipNotifications)
+                        {
+
+                            var OnBookingChangedLocal = OnBookingChanged;
+                            if (OnBookingChangedLocal is not null)
+                            {
+                                try
+                                {
+                                    OnBookingChangedLocal(Booking).Wait(CancellationToken);
+                                }
+                                catch (Exception e)
+                                {
+                                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateBooking), " ", nameof(OnBookingChanged), ": ",
+                                                Environment.NewLine, e.Message,
+                                                Environment.NewLine, e.StackTrace ?? "");
+                                }
+                            }
+
+                        }
+
+                        return AddOrUpdateResult<Booking>.Updated(
+                                   EventTrackingId,
+                                   Booking
+                               );
+
+                    }
+
+                    return AddOrUpdateResult<Booking>.Failed(
+                               EventTrackingId,
+                               Booking,
+                               "Updating the given charge detail record failed!"
+                           );
+
+                }
+
+                #endregion
+
+                #region Add a new charge detail record
+
+                if (party.Bookings.TryAdd(Booking.Id, Booking))
+                {
+
+                    Booking.CommonAPI = this;
+
+                    await LogAsset(
+                              CommonBaseAPI.addOrUpdateBooking,
+                              Booking.ToJSON(
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //CustomBookingSerializer,
+                                  //CustomBookingTokenSerializer,
+                                  //CustomBookingLocationSerializer,
+                                  //CustomEVSEEnergyMeterSerializer,
+                                  //CustomTransparencySoftwareSerializer,
+                                  //CustomTariffSerializer,
+                                  //CustomDisplayTextSerializer,
+                                  //CustomPriceSerializer,
+                                  //CustomPriceLimitSerializer,
+                                  //CustomTariffElementSerializer,
+                                  //CustomPriceComponentSerializer,
+                                  //CustomTaxAmountSerializer,
+                                  //CustomTariffRestrictionsSerializer,
+                                  //CustomEnergyMixSerializer,
+                                  //CustomEnergySourceSerializer,
+                                  //CustomEnvironmentalImpactSerializer,
+                                  //CustomChargingPeriodSerializer,
+                                  //CustomBookingDimensionSerializer,
+                                  //CustomSignedDataSerializer,
+                                  //CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnBookingAddedLocal = OnBookingAdded;
+                        if (OnBookingAddedLocal is not null)
+                        {
+                            try
+                            {
+                                OnBookingAddedLocal(Booking).Wait(CancellationToken);
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateBooking), " ", nameof(OnBookingAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                    }
+
+                    return AddOrUpdateResult<Booking>.Created(
+                               EventTrackingId,
+                               Booking
+                           );
+
+                }
+
+                #endregion
+
+                return AddOrUpdateResult<Booking>.Failed(
+                           EventTrackingId,
+                           Booking,
+                           "Adding the given charge detail record failed because of concurrency issues!"
+                       );
+
+            }
+
+            return AddOrUpdateResult<Booking>.Failed(
+                       EventTrackingId,
+                       Booking,
+                       "The party identification of the charge detail record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region UpdateBooking         (Booking, AllowDowngrades = false, ...)
+
+        public async Task<UpdateResult<Booking>>
+
+            UpdateBooking(Booking            Booking,
+                          Boolean?           AllowDowngrades     = false,
+                          Boolean            SkipNotifications   = false,
+                          EventTracking_Id?  EventTrackingId     = null,
+                          User_Id?           CurrentUserId       = null,
+                          CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(Party_Idv3.From(Booking.CountryCode, Booking.PartyId), out var party))
+            {
+
+                if (!party.Bookings.TryGetValue(Booking.Id, out var existingBooking))
+                    return UpdateResult<Booking>.Failed(
+                               EventTrackingId,
+                               Booking,
+                               $"The given charge detail record identification '{Booking.Id}' is unknown!"
+                           );
+
+                #region Validate AllowDowngrades
+
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Booking.LastUpdated <= existingBooking.LastUpdated)
+                {
+
+                    return UpdateResult<Booking>.Failed(
+                               EventTrackingId, Booking,
+                               "The 'lastUpdated' timestamp of the new charging charge detail record must be newer then the timestamp of the existing charge detail record!"
+                           );
+
+                }
+
+                #endregion
+
+
+                if (party.Bookings.TryUpdate(Booking.Id,
+                                         Booking,
+                                         existingBooking))
+                {
+
+                    Booking.CommonAPI = this;
+
+                    await LogAsset(
+                              CommonBaseAPI.updateBooking,
+                              Booking.ToJSON(
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //CustomBookingSerializer,
+                                  //CustomBookingTokenSerializer,
+                                  //CustomBookingLocationSerializer,
+                                  //CustomEVSEEnergyMeterSerializer,
+                                  //CustomTransparencySoftwareSerializer,
+                                  //CustomTariffSerializer,
+                                  //CustomDisplayTextSerializer,
+                                  //CustomPriceSerializer,
+                                  //CustomPriceLimitSerializer,
+                                  //CustomTariffElementSerializer,
+                                  //CustomPriceComponentSerializer,
+                                  //CustomTaxAmountSerializer,
+                                  //CustomTariffRestrictionsSerializer,
+                                  //CustomEnergyMixSerializer,
+                                  //CustomEnergySourceSerializer,
+                                  //CustomEnvironmentalImpactSerializer,
+                                  //CustomChargingPeriodSerializer,
+                                  //CustomBookingDimensionSerializer,
+                                  //CustomSignedDataSerializer,
+                                  //CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnBookingChangedLocal = OnBookingChanged;
+                        if (OnBookingChangedLocal is not null)
+                        {
+                            try
+                            {
+                                OnBookingChangedLocal(Booking).Wait(CancellationToken);
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateBooking), " ", nameof(OnBookingChanged), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                    }
+
+                    return UpdateResult<Booking>.Success(
+                               EventTrackingId,
+                               Booking
+                           );
+
+                }
+
+                return UpdateResult<Booking>.Failed(
+                           EventTrackingId,
+                           Booking,
+                           "charge detail records.TryUpdate(Booking.Id, Booking, Booking) failed!"
+                       );
+
+            }
+
+            return UpdateResult<Booking>.Failed(
+                       EventTrackingId,
+                       Booking,
+                       "The party identification of the charge detail record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region RemoveBooking         (Booking, ...)
+
+        public async Task<RemoveResult<Booking>>
+
+            RemoveBooking(Booking            Booking,
+                          Boolean            SkipNotifications   = false,
+                          EventTracking_Id?  EventTrackingId     = null,
+                          User_Id?           CurrentUserId       = null,
+                          CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(Party_Idv3.From(Booking.CountryCode, Booking.PartyId), out var party))
+            {
+
+                if (party.Bookings.TryRemove(Booking.Id, out var cdr))
+                {
+
+                    await LogAsset(
+                              CommonBaseAPI.removeBooking,
+                              cdr.ToJSON(
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //CustomBookingSerializer,
+                                  //CustomBookingTokenSerializer,
+                                  //CustomBookingLocationSerializer,
+                                  //CustomEVSEEnergyMeterSerializer,
+                                  //CustomTransparencySoftwareSerializer,
+                                  //CustomTariffSerializer,
+                                  //CustomDisplayTextSerializer,
+                                  //CustomPriceSerializer,
+                                  //CustomPriceLimitSerializer,
+                                  //CustomTariffElementSerializer,
+                                  //CustomPriceComponentSerializer,
+                                  //CustomTaxAmountSerializer,
+                                  //CustomTariffRestrictionsSerializer,
+                                  //CustomEnergyMixSerializer,
+                                  //CustomEnergySourceSerializer,
+                                  //CustomEnvironmentalImpactSerializer,
+                                  //CustomChargingPeriodSerializer,
+                                  //CustomBookingDimensionSerializer,
+                                  //CustomSignedDataSerializer,
+                                  //CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    return RemoveResult<Booking>.Success(
+                               EventTrackingId,
+                               cdr
+                           );
+
+                }
+
+                return RemoveResult<Booking>.Failed(
+                           EventTrackingId,
+                           Booking,
+                           "The charge detail record identification of the charge detail record is unknown!"
+                       );
+
+            }
+
+            return RemoveResult<Booking>.Failed(
+                       EventTrackingId,
+                       Booking,
+                       "The party identification of the charge detail record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region RemoveBooking         (PartyId, BookingId, ...)
+
+        public async Task<RemoveResult<Booking>>
+
+            RemoveBooking(Party_Idv3         PartyId,
+                          Booking_Id         BookingId,
+                          Boolean            SkipNotifications   = false,
+                          EventTracking_Id?  EventTrackingId     = null,
+                          User_Id?           CurrentUserId       = null,
+                          CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(PartyId, out var party))
+            {
+
+                if (party.Bookings.TryRemove(BookingId, out var cdr))
+                {
+
+                    await LogAsset(
+                              CommonBaseAPI.removeBooking,
+                              cdr.ToJSON(
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //CustomBookingSerializer,
+                                  //CustomBookingTokenSerializer,
+                                  //CustomBookingLocationSerializer,
+                                  //CustomEVSEEnergyMeterSerializer,
+                                  //CustomTransparencySoftwareSerializer,
+                                  //CustomTariffSerializer,
+                                  //CustomDisplayTextSerializer,
+                                  //CustomPriceSerializer,
+                                  //CustomPriceLimitSerializer,
+                                  //CustomTariffElementSerializer,
+                                  //CustomPriceComponentSerializer,
+                                  //CustomTaxAmountSerializer,
+                                  //CustomTariffRestrictionsSerializer,
+                                  //CustomEnergyMixSerializer,
+                                  //CustomEnergySourceSerializer,
+                                  //CustomEnvironmentalImpactSerializer,
+                                  //CustomChargingPeriodSerializer,
+                                  //CustomBookingDimensionSerializer,
+                                  //CustomSignedDataSerializer,
+                                  //CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    return RemoveResult<Booking>.Success(
+                               EventTrackingId,
+                               cdr
+                           );
+
+                }
+
+                return RemoveResult<Booking>.Failed(
+                           EventTrackingId,
+                           "The charge detail record identification of the charge detail record is unknown!"
+                       );
+
+            }
+
+            return RemoveResult<Booking>.Failed(
+                       EventTrackingId,
+                       "The party identification of the charge detail record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region RemoveAllBookings     (IncludeBookings = null, ...)
+
+        /// <summary>
+        /// Remove all matching charge detail records.
+        /// </summary>
+        /// <param name="IncludeBookings">An optional charging charge detail record filter.</param>
+        public async Task<RemoveResult<IEnumerable<Booking>>>
+
+            RemoveAllBookings(Func<Booking, Boolean>?  IncludeBookings     = null,
+                              EventTracking_Id?        EventTrackingId     = null,
+                              User_Id?                 CurrentUserId       = null,
+                              CancellationToken        CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var removedBookings = new List<Booking>();
+
+            if (IncludeBookings is null)
+            {
+                foreach (var party in parties.Values)
+                {
+                    removedBookings.AddRange(party.Bookings.Values);
+                    party.Bookings.Clear();
+                }
+            }
+
+            else
+            {
+
+                foreach (var party in parties.Values)
+                {
+                    foreach (var cdr in party.Bookings.Values)
+                    {
+                        if (IncludeBookings(cdr))
+                            removedBookings.Add(cdr);
+                    }
+                }
+
+                foreach (var cdr in removedBookings)
+                    parties[Party_Idv3.From(cdr.CountryCode, cdr.PartyId)].Bookings.TryRemove(cdr.Id, out _);
+
+            }
+
+
+            await LogAsset(
+                      CommonBaseAPI.removeAllBookings,
+                      new JArray(
+                          removedBookings.Select(
+                              cdr => cdr.ToJSON(
+                                         //true,
+                                         //true,
+                                         //true,
+                                         //true,
+                                         //CustomBookingSerializer,
+                                         //CustomBookingTokenSerializer,
+                                         //CustomBookingLocationSerializer,
+                                         //CustomEVSEEnergyMeterSerializer,
+                                         //CustomTransparencySoftwareSerializer,
+                                         //CustomTariffSerializer,
+                                         //CustomDisplayTextSerializer,
+                                         //CustomPriceSerializer,
+                                         //CustomPriceLimitSerializer,
+                                         //CustomTariffElementSerializer,
+                                         //CustomPriceComponentSerializer,
+                                         //CustomTaxAmountSerializer,
+                                         //CustomTariffRestrictionsSerializer,
+                                         //CustomEnergyMixSerializer,
+                                         //CustomEnergySourceSerializer,
+                                         //CustomEnvironmentalImpactSerializer,
+                                         //CustomChargingPeriodSerializer,
+                                         //CustomBookingDimensionSerializer,
+                                         //CustomSignedDataSerializer,
+                                         //CustomSignedValueSerializer
+                                     )
+                              )
+                      ),
+                      EventTrackingId,
+                      CurrentUserId,
+                      CancellationToken
+                  );
+
+            return RemoveResult<IEnumerable<Booking>>.Success(
+                       EventTrackingId,
+                       removedBookings
+                   );
+
+        }
+
+        #endregion
+
+        #region RemoveAllBookings     (IncludeBookingIds, ...)
+
+        /// <summary>
+        /// Remove all matching charge detail records.
+        /// </summary>
+        /// <param name="IncludeBookingIds">An optional charging charge detail record filter.</param>
+        public async Task<RemoveResult<IEnumerable<Booking>>>
+
+            RemoveAllBookings(Func<Booking_Id, Boolean>  IncludeBookingIds,
+                              EventTracking_Id?          EventTrackingId     = null,
+                              User_Id?                   CurrentUserId       = null,
+                              CancellationToken          CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var removedBookings = new List<Booking>();
+
+            foreach (var party in parties.Values)
+            {
+                foreach (var cdr in party.Bookings.Values)
+                {
+                    if (IncludeBookingIds(cdr.Id))
+                        removedBookings.Add(cdr);
+                }
+            }
+
+            foreach (var cdr in removedBookings)
+                parties[Party_Idv3.From(cdr.CountryCode, cdr.PartyId)].Bookings.TryRemove(cdr.Id, out _);
+
+
+            await LogAsset(
+                      CommonBaseAPI.removeAllBookings,
+                      new JArray(
+                          removedBookings.Select(
+                              cdr => cdr.ToJSON(
+                                         //true,
+                                         //true,
+                                         //true,
+                                         //true,
+                                         //CustomBookingSerializer,
+                                         //CustomBookingTokenSerializer,
+                                         //CustomBookingLocationSerializer,
+                                         //CustomEVSEEnergyMeterSerializer,
+                                         //CustomTransparencySoftwareSerializer,
+                                         //CustomTariffSerializer,
+                                         //CustomDisplayTextSerializer,
+                                         //CustomPriceSerializer,
+                                         //CustomPriceLimitSerializer,
+                                         //CustomTariffElementSerializer,
+                                         //CustomPriceComponentSerializer,
+                                         //CustomTaxAmountSerializer,
+                                         //CustomTariffRestrictionsSerializer,
+                                         //CustomEnergyMixSerializer,
+                                         //CustomEnergySourceSerializer,
+                                         //CustomEnvironmentalImpactSerializer,
+                                         //CustomChargingPeriodSerializer,
+                                         //CustomBookingDimensionSerializer,
+                                         //CustomSignedDataSerializer,
+                                         //CustomSignedValueSerializer
+                                     )
+                              )
+                      ),
+                      EventTrackingId,
+                      CurrentUserId,
+                      CancellationToken
+                  );
+
+            return RemoveResult<IEnumerable<Booking>>.Success(
+                       EventTrackingId,
+                       removedBookings
+                   );
+
+        }
+
+        #endregion
+
+        #region RemoveAllBookings     (PartyId, ...)
+
+        /// <summary>
+        /// Remove all charge detail records owned by the given party.
+        /// </summary>
+        /// <param name="PartyId">The identification of the party.</param>
+        public async Task<RemoveResult<IEnumerable<Booking>>>
+
+            RemoveAllBookings(Party_Idv3         PartyId,
+                              EventTracking_Id?  EventTrackingId     = null,
+                              User_Id?           CurrentUserId       = null,
+                              CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(PartyId, out var party))
+            {
+
+                var removedBookings = party.Bookings.Values.ToArray();
+                party.Bookings.Clear();
+
+                await LogAsset(
+                          CommonBaseAPI.removeAllBookings,
+                          new JArray(
+                              removedBookings.Select(
+                                  cdr => cdr.ToJSON(
+                                             //true,
+                                             //true,
+                                             //true,
+                                             //true,
+                                             //CustomBookingSerializer,
+                                             //CustomBookingTokenSerializer,
+                                             //CustomBookingLocationSerializer,
+                                             //CustomEVSEEnergyMeterSerializer,
+                                             //CustomTransparencySoftwareSerializer,
+                                             //CustomTariffSerializer,
+                                             //CustomDisplayTextSerializer,
+                                             //CustomPriceSerializer,
+                                             //CustomPriceLimitSerializer,
+                                             //CustomTariffElementSerializer,
+                                             //CustomPriceComponentSerializer,
+                                             //CustomTaxAmountSerializer,
+                                             //CustomTariffRestrictionsSerializer,
+                                             //CustomEnergyMixSerializer,
+                                             //CustomEnergySourceSerializer,
+                                             //CustomEnvironmentalImpactSerializer,
+                                             //CustomChargingPeriodSerializer,
+                                             //CustomBookingDimensionSerializer,
+                                             //CustomSignedDataSerializer,
+                                             //CustomSignedValueSerializer
+                                         )
+                                  )
+                          ),
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
+                      );
+
+                return RemoveResult<IEnumerable<Booking>>.Success(
+                           EventTrackingId,
+                           removedBookings
+                       );
+
+            }
+
+            return RemoveResult<IEnumerable<Booking>>.Failed(
+                       EventTrackingId,
+                       "The party identification of the charge detail record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+
+        #region BookingExists         (PartyId, BookingId)
+
+        public Boolean BookingExists(Party_Idv3  PartyId,
+                                 Booking_Id      BookingId)
+        {
+
+            if (parties.TryGetValue(PartyId, out var party))
+                return party.Bookings.ContainsKey(BookingId);
+
+            return false;
+
+        }
+
+        #endregion
+
+        #region TryGetBooking         (PartyId, BookingId, out Booking)
+
+        public Boolean TryGetBooking(Party_Idv3                        PartyId,
+                                     Booking_Id                        BookingId,
+                                     [NotNullWhen(true)] out Booking?  Booking)
+        {
+
+            if (parties.       TryGetValue(PartyId,   out var party) &&
+                party.Bookings.TryGetValue(BookingId, out Booking))
+            {
+                return true;
+            }
+
+            var OnBookingLookupLocal = OnBookingSlowStorageLookup;
+            if (OnBookingLookupLocal is not null)
+            {
+                try
+                {
+
+                    var cdr = OnBookingLookupLocal(
+                                    PartyId,
+                                    BookingId
+                                ).Result;
+
+                    if (cdr is not null)
+                    {
+                        Booking = cdr;
+                        return true;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryGetBooking), " ", nameof(OnBookingSlowStorageLookup), ": ",
+                                Environment.NewLine, e.Message,
+                                Environment.NewLine, e.StackTrace ?? "");
+                }
+            }
+
+
+            Booking = null;
+            return false;
+
+        }
+
+        #endregion
+
+        #region GetBookings           (IncludeBooking)
+
+        public IEnumerable<Booking> GetBookings(Func<Booking, Boolean> IncludeBooking)
+        {
+
+            var sessions = new List<Booking>();
+
+            foreach (var party in parties.Values)
+            {
+                foreach (var cdr in party.Bookings.Values)
+                {
+                    if (IncludeBooking(cdr))
+                        sessions.Add(cdr);
+                }
+            }
+
+            return sessions;
+
+        }
+
+        #endregion
+
+        #region GetBookings           (PartyId = null)
+
+        public IEnumerable<Booking> GetBookings(Party_Idv3? PartyId = null)
+        {
+
+            if (PartyId.HasValue)
+            {
+                if (parties.TryGetValue(PartyId.Value, out var party))
+                    return party.Bookings.Values;
+            }
+
+            else
+            {
+
+                var sessions = new List<Booking>();
+
+                foreach (var party in parties.Values)
+                    sessions.AddRange(party.Bookings.Values);
+
+                return sessions;
+
+            }
+
+            return [];
+
+        }
+
+        #endregion
+
+        #endregion
+
+        #region BookingLocations
+
+        #region Events
+
+        public delegate Task OnBookingLocationAddedDelegate  (BookingLocation BookingLocation);
+
+        public event OnBookingLocationAddedDelegate?    OnBookingLocationAdded;
+
+
+        public delegate Task OnBookingLocationChangedDelegate(BookingLocation BookingLocation);
+
+        public event OnBookingLocationChangedDelegate?  OnBookingLocationChanged;
+
+        #endregion
+
+
+        public delegate Task<BookingLocation> OnBookingLocationSlowStorageLookupDelegate(Party_Idv3          PartyId,
+                                                                                         BookingLocation_Id  BookingLocationId);
+
+        public event OnBookingLocationSlowStorageLookupDelegate? OnBookingLocationSlowStorageLookup;
+
+
+        #region AddBookingLocation            (BookingLocation, ...)
+
+        public async Task<AddResult<BookingLocation>>
+
+            AddBookingLocation(BookingLocation    BookingLocation,
+                               Boolean            SkipNotifications   = false,
+                               EventTracking_Id?  EventTrackingId     = null,
+                               User_Id?           CurrentUserId       = null,
+                               CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(Party_Idv3.From(BookingLocation.CountryCode, BookingLocation.PartyId), out var party))
+            {
+
+                if (party.BookingLocations.TryAdd(BookingLocation.Id, BookingLocation))
+                {
+
+                    DebugX.Log($"OCPI {Version.String} BookingLocation '{BookingLocation.Id}': '{BookingLocation}' added...");
+
+                    BookingLocation.CommonAPI = this;
+
+                    await LogAsset(
+                              CommonBaseAPI.addBookingLocation,
+                              BookingLocation.ToJSON(
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //CustomBookingLocationSerializer,
+                                  //CustomBookingLocationTokenSerializer,
+                                  //CustomBookingLocationLocationSerializer,
+                                  //CustomEVSEEnergyMeterSerializer,
+                                  //CustomTransparencySoftwareSerializer,
+                                  //CustomTariffSerializer,
+                                  //CustomDisplayTextSerializer,
+                                  //CustomPriceSerializer,
+                                  //CustomPriceLimitSerializer,
+                                  //CustomTariffElementSerializer,
+                                  //CustomPriceComponentSerializer,
+                                  //CustomTaxAmountSerializer,
+                                  //CustomTariffRestrictionsSerializer,
+                                  //CustomEnergyMixSerializer,
+                                  //CustomEnergySourceSerializer,
+                                  //CustomEnvironmentalImpactSerializer,
+                                  //CustomChargingPeriodSerializer,
+                                  //CustomBookingLocationDimensionSerializer,
+                                  //CustomSignedDataSerializer,
+                                  //CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnBookingLocationAddedLocal = OnBookingLocationAdded;
+                        if (OnBookingLocationAddedLocal is not null)
+                        {
+                            try
+                            {
+                                await OnBookingLocationAddedLocal(BookingLocation);
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddBookingLocation), " ", nameof(OnBookingLocationAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                    }
+
+                    return AddResult<BookingLocation>.Success(
+                               EventTrackingId,
+                               BookingLocation
+                           );
+
+                }
+
+                return AddResult<BookingLocation>.Failed(
+                           EventTrackingId,
+                           BookingLocation,
+                           "The given charge detail record already exists!"
+                       );
+
+            }
+
+            return AddResult<BookingLocation>.Failed(
+                       EventTrackingId,
+                       BookingLocation,
+                       "The party identification of the charge detail record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region AddBookingLocationIfNotExists (BookingLocation, ...)
+
+        public async Task<AddResult<BookingLocation>>
+
+            AddBookingLocationIfNotExists(BookingLocation    BookingLocation,
+                                          Boolean            SkipNotifications   = false,
+                                          EventTracking_Id?  EventTrackingId     = null,
+                                          User_Id?           CurrentUserId       = null,
+                                          CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(Party_Idv3.From(BookingLocation.CountryCode, BookingLocation.PartyId), out var party))
+            {
+
+                if (party.BookingLocations.TryAdd(BookingLocation.Id, BookingLocation))
+                {
+
+                    DebugX.Log($"OCPI {Version.String} BookingLocation '{BookingLocation.Id}': '{BookingLocation}' added...");
+
+                    BookingLocation.CommonAPI = this;
+
+                    await LogAsset(
+                              CommonBaseAPI.addBookingLocationIfNotExists,
+                              BookingLocation.ToJSON(
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //CustomBookingLocationSerializer,
+                                  //CustomBookingLocationTokenSerializer,
+                                  //CustomBookingLocationLocationSerializer,
+                                  //CustomEVSEEnergyMeterSerializer,
+                                  //CustomTransparencySoftwareSerializer,
+                                  //CustomTariffSerializer,
+                                  //CustomDisplayTextSerializer,
+                                  //CustomPriceSerializer,
+                                  //CustomPriceLimitSerializer,
+                                  //CustomTariffElementSerializer,
+                                  //CustomPriceComponentSerializer,
+                                  //CustomTaxAmountSerializer,
+                                  //CustomTariffRestrictionsSerializer,
+                                  //CustomEnergyMixSerializer,
+                                  //CustomEnergySourceSerializer,
+                                  //CustomEnvironmentalImpactSerializer,
+                                  //CustomChargingPeriodSerializer,
+                                  //CustomBookingLocationDimensionSerializer,
+                                  //CustomSignedDataSerializer,
+                                  //CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnBookingLocationAddedLocal = OnBookingLocationAdded;
+                        if (OnBookingLocationAddedLocal is not null)
+                        {
+                            try
+                            {
+                                await OnBookingLocationAddedLocal(BookingLocation);
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddBookingLocation), " ", nameof(OnBookingLocationAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                    }
+
+                    return AddResult<BookingLocation>.Success(
+                               EventTrackingId,
+                               BookingLocation
+                           );
+
+                }
+
+                return AddResult<BookingLocation>.NoOperation(
+                           EventTrackingId,
+                           BookingLocation,
+                           "The given charge detail record already exists."
+                       );
+
+            }
+
+            return AddResult<BookingLocation>.Failed(
+                       EventTrackingId,
+                       BookingLocation,
+                       "The party identification of the charge detail record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region AddOrUpdateBookingLocation    (BookingLocation, AllowDowngrades = false, ...)
+
+        public async Task<AddOrUpdateResult<BookingLocation>>
+
+            AddOrUpdateBookingLocation(BookingLocation    BookingLocation,
+                                       Boolean?           AllowDowngrades     = false,
+                                       Boolean            SkipNotifications   = false,
+                                       EventTracking_Id?  EventTrackingId     = null,
+                                       User_Id?           CurrentUserId       = null,
+                                       CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(Party_Idv3.From(BookingLocation.CountryCode, BookingLocation.PartyId), out var party))
+            {
+
+                #region Update an existing charge detail record
+
+                if (party.BookingLocations.TryGetValue(BookingLocation.Id, out var existingBookingLocation))
+                {
+
+                    if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                        BookingLocation.LastUpdated <= existingBookingLocation.LastUpdated)
+                    {
+                        return AddOrUpdateResult<BookingLocation>.Failed(
+                                   EventTrackingId,
+                                   BookingLocation,
+                                   "The 'lastUpdated' timestamp of the new charge detail record must be newer then the timestamp of the existing charge detail record!"
+                               );
+                    }
+
+                    //if (BookingLocation.LastUpdated.ToISO8601() == existingBookingLocation.LastUpdated.ToISO8601())
+                    //    return AddOrUpdateResult<BookingLocation>.NoOperation(BookingLocation,
+                    //                                                   "The 'lastUpdated' timestamp of the new charge detail record must be newer then the timestamp of the existing charge detail record!");
+
+                    var aa = existingBookingLocation.Equals(existingBookingLocation);
+
+                    if (party.BookingLocations.TryUpdate(BookingLocation.Id,
+                                             BookingLocation,
+                                             existingBookingLocation))
+                    {
+
+                        BookingLocation.CommonAPI = this;
+
+                        await LogAsset(
+                                  CommonBaseAPI.addOrUpdateBookingLocation,
+                                  BookingLocation.ToJSON(
+                                      //true,
+                                      //true,
+                                      //true,
+                                      //true,
+                                      //CustomBookingLocationSerializer,
+                                      //CustomBookingLocationTokenSerializer,
+                                      //CustomBookingLocationLocationSerializer,
+                                      //CustomEVSEEnergyMeterSerializer,
+                                      //CustomTransparencySoftwareSerializer,
+                                      //CustomTariffSerializer,
+                                      //CustomDisplayTextSerializer,
+                                      //CustomPriceSerializer,
+                                      //CustomPriceLimitSerializer,
+                                      //CustomTariffElementSerializer,
+                                      //CustomPriceComponentSerializer,
+                                      //CustomTaxAmountSerializer,
+                                      //CustomTariffRestrictionsSerializer,
+                                      //CustomEnergyMixSerializer,
+                                      //CustomEnergySourceSerializer,
+                                      //CustomEnvironmentalImpactSerializer,
+                                      //CustomChargingPeriodSerializer,
+                                      //CustomBookingLocationDimensionSerializer,
+                                      //CustomSignedDataSerializer,
+                                      //CustomSignedValueSerializer
+                                  ),
+                                  EventTrackingId,
+                                  CurrentUserId,
+                                  CancellationToken
+                              );
+
+                        if (!SkipNotifications)
+                        {
+
+                            var OnBookingLocationChangedLocal = OnBookingLocationChanged;
+                            if (OnBookingLocationChangedLocal is not null)
+                            {
+                                try
+                                {
+                                    OnBookingLocationChangedLocal(BookingLocation).Wait(CancellationToken);
+                                }
+                                catch (Exception e)
+                                {
+                                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateBookingLocation), " ", nameof(OnBookingLocationChanged), ": ",
+                                                Environment.NewLine, e.Message,
+                                                Environment.NewLine, e.StackTrace ?? "");
+                                }
+                            }
+
+                        }
+
+                        return AddOrUpdateResult<BookingLocation>.Updated(
+                                   EventTrackingId,
+                                   BookingLocation
+                               );
+
+                    }
+
+                    return AddOrUpdateResult<BookingLocation>.Failed(
+                               EventTrackingId,
+                               BookingLocation,
+                               "Updating the given charge detail record failed!"
+                           );
+
+                }
+
+                #endregion
+
+                #region Add a new charge detail record
+
+                if (party.BookingLocations.TryAdd(BookingLocation.Id, BookingLocation))
+                {
+
+                    BookingLocation.CommonAPI = this;
+
+                    await LogAsset(
+                              CommonBaseAPI.addOrUpdateBookingLocation,
+                              BookingLocation.ToJSON(
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //CustomBookingLocationSerializer,
+                                  //CustomBookingLocationTokenSerializer,
+                                  //CustomBookingLocationLocationSerializer,
+                                  //CustomEVSEEnergyMeterSerializer,
+                                  //CustomTransparencySoftwareSerializer,
+                                  //CustomTariffSerializer,
+                                  //CustomDisplayTextSerializer,
+                                  //CustomPriceSerializer,
+                                  //CustomPriceLimitSerializer,
+                                  //CustomTariffElementSerializer,
+                                  //CustomPriceComponentSerializer,
+                                  //CustomTaxAmountSerializer,
+                                  //CustomTariffRestrictionsSerializer,
+                                  //CustomEnergyMixSerializer,
+                                  //CustomEnergySourceSerializer,
+                                  //CustomEnvironmentalImpactSerializer,
+                                  //CustomChargingPeriodSerializer,
+                                  //CustomBookingLocationDimensionSerializer,
+                                  //CustomSignedDataSerializer,
+                                  //CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnBookingLocationAddedLocal = OnBookingLocationAdded;
+                        if (OnBookingLocationAddedLocal is not null)
+                        {
+                            try
+                            {
+                                OnBookingLocationAddedLocal(BookingLocation).Wait(CancellationToken);
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateBookingLocation), " ", nameof(OnBookingLocationAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                    }
+
+                    return AddOrUpdateResult<BookingLocation>.Created(
+                               EventTrackingId,
+                               BookingLocation
+                           );
+
+                }
+
+                #endregion
+
+                return AddOrUpdateResult<BookingLocation>.Failed(
+                           EventTrackingId,
+                           BookingLocation,
+                           "Adding the given charge detail record failed because of concurrency issues!"
+                       );
+
+            }
+
+            return AddOrUpdateResult<BookingLocation>.Failed(
+                       EventTrackingId,
+                       BookingLocation,
+                       "The party identification of the charge detail record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region UpdateBookingLocation         (BookingLocation, AllowDowngrades = false, ...)
+
+        public async Task<UpdateResult<BookingLocation>>
+
+            UpdateBookingLocation(BookingLocation    BookingLocation,
+                                  Boolean?           AllowDowngrades     = false,
+                                  Boolean            SkipNotifications   = false,
+                                  EventTracking_Id?  EventTrackingId     = null,
+                                  User_Id?           CurrentUserId       = null,
+                                  CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(Party_Idv3.From(BookingLocation.CountryCode, BookingLocation.PartyId), out var party))
+            {
+
+                if (!party.BookingLocations.TryGetValue(BookingLocation.Id, out var existingBookingLocation))
+                    return UpdateResult<BookingLocation>.Failed(
+                               EventTrackingId,
+                               BookingLocation,
+                               $"The given charge detail record identification '{BookingLocation.Id}' is unknown!"
+                           );
+
+                #region Validate AllowDowngrades
+
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    BookingLocation.LastUpdated <= existingBookingLocation.LastUpdated)
+                {
+
+                    return UpdateResult<BookingLocation>.Failed(
+                               EventTrackingId, BookingLocation,
+                               "The 'lastUpdated' timestamp of the new charging charge detail record must be newer then the timestamp of the existing charge detail record!"
+                           );
+
+                }
+
+                #endregion
+
+
+                if (party.BookingLocations.TryUpdate(BookingLocation.Id,
+                                         BookingLocation,
+                                         existingBookingLocation))
+                {
+
+                    BookingLocation.CommonAPI = this;
+
+                    await LogAsset(
+                              CommonBaseAPI.updateBookingLocation,
+                              BookingLocation.ToJSON(
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //CustomBookingLocationSerializer,
+                                  //CustomBookingLocationTokenSerializer,
+                                  //CustomBookingLocationLocationSerializer,
+                                  //CustomEVSEEnergyMeterSerializer,
+                                  //CustomTransparencySoftwareSerializer,
+                                  //CustomTariffSerializer,
+                                  //CustomDisplayTextSerializer,
+                                  //CustomPriceSerializer,
+                                  //CustomPriceLimitSerializer,
+                                  //CustomTariffElementSerializer,
+                                  //CustomPriceComponentSerializer,
+                                  //CustomTaxAmountSerializer,
+                                  //CustomTariffRestrictionsSerializer,
+                                  //CustomEnergyMixSerializer,
+                                  //CustomEnergySourceSerializer,
+                                  //CustomEnvironmentalImpactSerializer,
+                                  //CustomChargingPeriodSerializer,
+                                  //CustomBookingLocationDimensionSerializer,
+                                  //CustomSignedDataSerializer,
+                                  //CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnBookingLocationChangedLocal = OnBookingLocationChanged;
+                        if (OnBookingLocationChangedLocal is not null)
+                        {
+                            try
+                            {
+                                OnBookingLocationChangedLocal(BookingLocation).Wait(CancellationToken);
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateBookingLocation), " ", nameof(OnBookingLocationChanged), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                    }
+
+                    return UpdateResult<BookingLocation>.Success(
+                               EventTrackingId,
+                               BookingLocation
+                           );
+
+                }
+
+                return UpdateResult<BookingLocation>.Failed(
+                           EventTrackingId,
+                           BookingLocation,
+                           "charge detail records.TryUpdate(BookingLocation.Id, BookingLocation, BookingLocation) failed!"
+                       );
+
+            }
+
+            return UpdateResult<BookingLocation>.Failed(
+                       EventTrackingId,
+                       BookingLocation,
+                       "The party identification of the charge detail record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region RemoveBookingLocation         (BookingLocation, ...)
+
+        public async Task<RemoveResult<BookingLocation>>
+
+            RemoveBookingLocation(BookingLocation    BookingLocation,
+                                  Boolean            SkipNotifications   = false,
+                                  EventTracking_Id?  EventTrackingId     = null,
+                                  User_Id?           CurrentUserId       = null,
+                                  CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(Party_Idv3.From(BookingLocation.CountryCode, BookingLocation.PartyId), out var party))
+            {
+
+                if (party.BookingLocations.TryRemove(BookingLocation.Id, out var cdr))
+                {
+
+                    await LogAsset(
+                              CommonBaseAPI.removeBookingLocation,
+                              cdr.ToJSON(
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //CustomBookingLocationSerializer,
+                                  //CustomBookingLocationTokenSerializer,
+                                  //CustomBookingLocationLocationSerializer,
+                                  //CustomEVSEEnergyMeterSerializer,
+                                  //CustomTransparencySoftwareSerializer,
+                                  //CustomTariffSerializer,
+                                  //CustomDisplayTextSerializer,
+                                  //CustomPriceSerializer,
+                                  //CustomPriceLimitSerializer,
+                                  //CustomTariffElementSerializer,
+                                  //CustomPriceComponentSerializer,
+                                  //CustomTaxAmountSerializer,
+                                  //CustomTariffRestrictionsSerializer,
+                                  //CustomEnergyMixSerializer,
+                                  //CustomEnergySourceSerializer,
+                                  //CustomEnvironmentalImpactSerializer,
+                                  //CustomChargingPeriodSerializer,
+                                  //CustomBookingLocationDimensionSerializer,
+                                  //CustomSignedDataSerializer,
+                                  //CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    return RemoveResult<BookingLocation>.Success(
+                               EventTrackingId,
+                               cdr
+                           );
+
+                }
+
+                return RemoveResult<BookingLocation>.Failed(
+                           EventTrackingId,
+                           BookingLocation,
+                           "The charge detail record identification of the charge detail record is unknown!"
+                       );
+
+            }
+
+            return RemoveResult<BookingLocation>.Failed(
+                       EventTrackingId,
+                       BookingLocation,
+                       "The party identification of the charge detail record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region RemoveBookingLocation         (PartyId, BookingLocationId, ...)
+
+        public async Task<RemoveResult<BookingLocation>>
+
+            RemoveBookingLocation(Party_Idv3          PartyId,
+                                  BookingLocation_Id  BookingLocationId,
+                                  Boolean             SkipNotifications   = false,
+                                  EventTracking_Id?   EventTrackingId     = null,
+                                  User_Id?            CurrentUserId       = null,
+                                  CancellationToken   CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(PartyId, out var party))
+            {
+
+                if (party.BookingLocations.TryRemove(BookingLocationId, out var cdr))
+                {
+
+                    await LogAsset(
+                              CommonBaseAPI.removeBookingLocation,
+                              cdr.ToJSON(
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //true,
+                                  //CustomBookingLocationSerializer,
+                                  //CustomBookingLocationTokenSerializer,
+                                  //CustomBookingLocationLocationSerializer,
+                                  //CustomEVSEEnergyMeterSerializer,
+                                  //CustomTransparencySoftwareSerializer,
+                                  //CustomTariffSerializer,
+                                  //CustomDisplayTextSerializer,
+                                  //CustomPriceSerializer,
+                                  //CustomPriceLimitSerializer,
+                                  //CustomTariffElementSerializer,
+                                  //CustomPriceComponentSerializer,
+                                  //CustomTaxAmountSerializer,
+                                  //CustomTariffRestrictionsSerializer,
+                                  //CustomEnergyMixSerializer,
+                                  //CustomEnergySourceSerializer,
+                                  //CustomEnvironmentalImpactSerializer,
+                                  //CustomChargingPeriodSerializer,
+                                  //CustomBookingLocationDimensionSerializer,
+                                  //CustomSignedDataSerializer,
+                                  //CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    return RemoveResult<BookingLocation>.Success(
+                               EventTrackingId,
+                               cdr
+                           );
+
+                }
+
+                return RemoveResult<BookingLocation>.Failed(
+                           EventTrackingId,
+                           "The charge detail record identification of the charge detail record is unknown!"
+                       );
+
+            }
+
+            return RemoveResult<BookingLocation>.Failed(
+                       EventTrackingId,
+                       "The party identification of the charge detail record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region RemoveAllBookingLocations     (IncludeBookingLocations = null, ...)
+
+        /// <summary>
+        /// Remove all matching charge detail records.
+        /// </summary>
+        /// <param name="IncludeBookingLocations">An optional charging charge detail record filter.</param>
+        public async Task<RemoveResult<IEnumerable<BookingLocation>>>
+
+            RemoveAllBookingLocations(Func<BookingLocation, Boolean>?  IncludeBookingLocations   = null,
+                                      EventTracking_Id?                EventTrackingId           = null,
+                                      User_Id?                         CurrentUserId             = null,
+                                      CancellationToken                CancellationToken         = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var removedBookingLocations = new List<BookingLocation>();
+
+            if (IncludeBookingLocations is null)
+            {
+                foreach (var party in parties.Values)
+                {
+                    removedBookingLocations.AddRange(party.BookingLocations.Values);
+                    party.BookingLocations.Clear();
+                }
+            }
+
+            else
+            {
+
+                foreach (var party in parties.Values)
+                {
+                    foreach (var cdr in party.BookingLocations.Values)
+                    {
+                        if (IncludeBookingLocations(cdr))
+                            removedBookingLocations.Add(cdr);
+                    }
+                }
+
+                foreach (var cdr in removedBookingLocations)
+                    parties[Party_Idv3.From(cdr.CountryCode, cdr.PartyId)].BookingLocations.TryRemove(cdr.Id, out _);
+
+            }
+
+
+            await LogAsset(
+                      CommonBaseAPI.removeAllBookingLocations,
+                      new JArray(
+                          removedBookingLocations.Select(
+                              cdr => cdr.ToJSON(
+                                         //true,
+                                         //true,
+                                         //true,
+                                         //true,
+                                         //CustomBookingLocationSerializer,
+                                         //CustomBookingLocationTokenSerializer,
+                                         //CustomBookingLocationLocationSerializer,
+                                         //CustomEVSEEnergyMeterSerializer,
+                                         //CustomTransparencySoftwareSerializer,
+                                         //CustomTariffSerializer,
+                                         //CustomDisplayTextSerializer,
+                                         //CustomPriceSerializer,
+                                         //CustomPriceLimitSerializer,
+                                         //CustomTariffElementSerializer,
+                                         //CustomPriceComponentSerializer,
+                                         //CustomTaxAmountSerializer,
+                                         //CustomTariffRestrictionsSerializer,
+                                         //CustomEnergyMixSerializer,
+                                         //CustomEnergySourceSerializer,
+                                         //CustomEnvironmentalImpactSerializer,
+                                         //CustomChargingPeriodSerializer,
+                                         //CustomBookingLocationDimensionSerializer,
+                                         //CustomSignedDataSerializer,
+                                         //CustomSignedValueSerializer
+                                     )
+                              )
+                      ),
+                      EventTrackingId,
+                      CurrentUserId,
+                      CancellationToken
+                  );
+
+            return RemoveResult<IEnumerable<BookingLocation>>.Success(
+                       EventTrackingId,
+                       removedBookingLocations
+                   );
+
+        }
+
+        #endregion
+
+        #region RemoveAllBookingLocations     (IncludeBookingLocationIds, ...)
+
+        /// <summary>
+        /// Remove all matching charge detail records.
+        /// </summary>
+        /// <param name="IncludeBookingLocationIds">An optional charging charge detail record filter.</param>
+        public async Task<RemoveResult<IEnumerable<BookingLocation>>>
+
+            RemoveAllBookingLocations(Func<BookingLocation_Id, Boolean>  IncludeBookingLocationIds,
+                                      EventTracking_Id?                  EventTrackingId     = null,
+                                      User_Id?                           CurrentUserId       = null,
+                                      CancellationToken                  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var removedBookingLocations = new List<BookingLocation>();
+
+            foreach (var party in parties.Values)
+            {
+                foreach (var cdr in party.BookingLocations.Values)
+                {
+                    if (IncludeBookingLocationIds(cdr.Id))
+                        removedBookingLocations.Add(cdr);
+                }
+            }
+
+            foreach (var cdr in removedBookingLocations)
+                parties[Party_Idv3.From(cdr.CountryCode, cdr.PartyId)].BookingLocations.TryRemove(cdr.Id, out _);
+
+
+            await LogAsset(
+                      CommonBaseAPI.removeAllBookingLocations,
+                      new JArray(
+                          removedBookingLocations.Select(
+                              cdr => cdr.ToJSON(
+                                         //true,
+                                         //true,
+                                         //true,
+                                         //true,
+                                         //CustomBookingLocationSerializer,
+                                         //CustomBookingLocationTokenSerializer,
+                                         //CustomBookingLocationLocationSerializer,
+                                         //CustomEVSEEnergyMeterSerializer,
+                                         //CustomTransparencySoftwareSerializer,
+                                         //CustomTariffSerializer,
+                                         //CustomDisplayTextSerializer,
+                                         //CustomPriceSerializer,
+                                         //CustomPriceLimitSerializer,
+                                         //CustomTariffElementSerializer,
+                                         //CustomPriceComponentSerializer,
+                                         //CustomTaxAmountSerializer,
+                                         //CustomTariffRestrictionsSerializer,
+                                         //CustomEnergyMixSerializer,
+                                         //CustomEnergySourceSerializer,
+                                         //CustomEnvironmentalImpactSerializer,
+                                         //CustomChargingPeriodSerializer,
+                                         //CustomBookingLocationDimensionSerializer,
+                                         //CustomSignedDataSerializer,
+                                         //CustomSignedValueSerializer
+                                     )
+                              )
+                      ),
+                      EventTrackingId,
+                      CurrentUserId,
+                      CancellationToken
+                  );
+
+            return RemoveResult<IEnumerable<BookingLocation>>.Success(
+                       EventTrackingId,
+                       removedBookingLocations
+                   );
+
+        }
+
+        #endregion
+
+        #region RemoveAllBookingLocations     (PartyId, ...)
+
+        /// <summary>
+        /// Remove all charge detail records owned by the given party.
+        /// </summary>
+        /// <param name="PartyId">The identification of the party.</param>
+        public async Task<RemoveResult<IEnumerable<BookingLocation>>>
+
+            RemoveAllBookingLocations(Party_Idv3         PartyId,
+                                      EventTracking_Id?  EventTrackingId     = null,
+                                      User_Id?           CurrentUserId       = null,
+                                      CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(PartyId, out var party))
+            {
+
+                var removedBookingLocations = party.BookingLocations.Values.ToArray();
+                party.BookingLocations.Clear();
+
+                await LogAsset(
+                          CommonBaseAPI.removeAllBookingLocations,
+                          new JArray(
+                              removedBookingLocations.Select(
+                                  cdr => cdr.ToJSON(
+                                             //true,
+                                             //true,
+                                             //true,
+                                             //true,
+                                             //CustomBookingLocationSerializer,
+                                             //CustomBookingLocationTokenSerializer,
+                                             //CustomBookingLocationLocationSerializer,
+                                             //CustomEVSEEnergyMeterSerializer,
+                                             //CustomTransparencySoftwareSerializer,
+                                             //CustomTariffSerializer,
+                                             //CustomDisplayTextSerializer,
+                                             //CustomPriceSerializer,
+                                             //CustomPriceLimitSerializer,
+                                             //CustomTariffElementSerializer,
+                                             //CustomPriceComponentSerializer,
+                                             //CustomTaxAmountSerializer,
+                                             //CustomTariffRestrictionsSerializer,
+                                             //CustomEnergyMixSerializer,
+                                             //CustomEnergySourceSerializer,
+                                             //CustomEnvironmentalImpactSerializer,
+                                             //CustomChargingPeriodSerializer,
+                                             //CustomBookingLocationDimensionSerializer,
+                                             //CustomSignedDataSerializer,
+                                             //CustomSignedValueSerializer
+                                         )
+                                  )
+                          ),
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
+                      );
+
+                return RemoveResult<IEnumerable<BookingLocation>>.Success(
+                           EventTrackingId,
+                           removedBookingLocations
+                       );
+
+            }
+
+            return RemoveResult<IEnumerable<BookingLocation>>.Failed(
+                       EventTrackingId,
+                       "The party identification of the charge detail record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+
+        #region BookingLocationExists         (PartyId, BookingLocationId)
+
+        public Boolean BookingLocationExists(Party_Idv3          PartyId,
+                                             BookingLocation_Id  BookingLocationId)
+        {
+
+            if (parties.TryGetValue(PartyId, out var party))
+                return party.BookingLocations.ContainsKey(BookingLocationId);
+
+            return false;
+
+        }
+
+        #endregion
+
+        #region TryGetBookingLocation         (PartyId, BookingLocationId, out BookingLocation)
+
+        public Boolean TryGetBookingLocation(Party_Idv3                                PartyId,
+                                             BookingLocation_Id                        BookingLocationId,
+                                             [NotNullWhen(true)] out BookingLocation?  BookingLocation)
+        {
+
+            if (parties.       TryGetValue(PartyId,   out var party) &&
+                party.BookingLocations.TryGetValue(BookingLocationId, out BookingLocation))
+            {
+                return true;
+            }
+
+            var OnBookingLocationLookupLocal = OnBookingLocationSlowStorageLookup;
+            if (OnBookingLocationLookupLocal is not null)
+            {
+                try
+                {
+
+                    var cdr = OnBookingLocationLookupLocal(
+                                    PartyId,
+                                    BookingLocationId
+                                ).Result;
+
+                    if (cdr is not null)
+                    {
+                        BookingLocation = cdr;
+                        return true;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryGetBookingLocation), " ", nameof(OnBookingLocationSlowStorageLookup), ": ",
+                                Environment.NewLine, e.Message,
+                                Environment.NewLine, e.StackTrace ?? "");
+                }
+            }
+
+
+            BookingLocation = null;
+            return false;
+
+        }
+
+        #endregion
+
+        #region GetBookingLocations           (IncludeBookingLocation)
+
+        public IEnumerable<BookingLocation> GetBookingLocations(Func<BookingLocation, Boolean> IncludeBookingLocation)
+        {
+
+            var sessions = new List<BookingLocation>();
+
+            foreach (var party in parties.Values)
+            {
+                foreach (var cdr in party.BookingLocations.Values)
+                {
+                    if (IncludeBookingLocation(cdr))
+                        sessions.Add(cdr);
+                }
+            }
+
+            return sessions;
+
+        }
+
+        #endregion
+
+        #region GetBookingLocations           (PartyId = null)
+
+        public IEnumerable<BookingLocation> GetBookingLocations(Party_Idv3? PartyId = null)
+        {
+
+            if (PartyId.HasValue)
+            {
+                if (parties.TryGetValue(PartyId.Value, out var party))
+                    return party.BookingLocations.Values;
+            }
+
+            else
+            {
+
+                var sessions = new List<BookingLocation>();
+
+                foreach (var party in parties.Values)
+                    sessions.AddRange(party.BookingLocations.Values);
 
                 return sessions;
 

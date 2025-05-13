@@ -26,6 +26,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using cloud.charging.open.protocols.OCPIv2_3_0.HTTP;
 
 #endregion
 
@@ -43,10 +44,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Properties
 
         /// <summary>
+        /// The parent CommonAPI of this booking.
+        /// </summary>
+        internal CommonAPI?                       CommonAPI                 { get; set; }
+
+        /// <summary>
         /// ID for the CPO side
         /// </summary>
         [Mandatory]
-        public String                             Id                        { get; }
+        public Booking_Id                         Id                        { get; }
 
         /// <summary>
         /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this booking request.
@@ -169,7 +175,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region Constructor(s)
 
-        public Booking(String                              Id,
+        public Booking(Booking_Id                          Id,
                        CountryCode                         CountryCode,
                        Party_Id                            PartyId,
                        Request_Id                          RequestId,
@@ -343,10 +349,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #region Parse Id                        [mandatory]
 
-                if (!JSON.ParseMandatoryText("id",
-                                             "booking identification",
-                                             out String? id,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("id",
+                                         "booking identification",
+                                         Booking_Id.TryParse,
+                                         out Booking_Id id,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -746,7 +753,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public Booking Clone()
 
             => new (
-                   Id.                    CloneString(),
+                   Id.                    Clone(),
                    CountryCode.           Clone(),
                    PartyId.               Clone(),
                    RequestId.             Clone(),

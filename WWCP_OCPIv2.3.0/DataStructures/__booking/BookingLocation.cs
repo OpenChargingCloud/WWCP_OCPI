@@ -26,6 +26,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using cloud.charging.open.protocols.OCPIv2_3_0.HTTP;
 
 #endregion
 
@@ -41,6 +42,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     {
 
         #region Properties
+
+        /// <summary>
+        /// The parent CommonAPI of this booking.
+        /// </summary>
+        internal CommonAPI?                         CommonAPI                 { get; set; }
 
         /// <summary>
         /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this booking location.
@@ -59,7 +65,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The unique identification of the booking location within the CPO platform.
         /// </summary>
         [Mandatory]
-        public BookingLocation_Id                   BookingLocationId         { get; }
+        public BookingLocation_Id                   Id                        { get; }
 
         /// <summary>
         /// Location identification of the location of this CPO, on which the reservation can be made.
@@ -134,7 +140,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         /// <param name="CountryCode">The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this booking location.</param>
         /// <param name="PartyId">The identification of the charge point operator that 'owns' this booking location (following the ISO-15118 standard).</param>
-        /// <param name="BookingLocationId">The unique identification of the booking location within the CPO platform.</param>
+        /// <param name="Id">The unique identification of the booking location within the CPO platform.</param>
         /// <param name="LocationId">The location identification of the location of this CPO, on which the reservation can be made.</param>
         /// <param name="EVSEUIds">An optional enumeration of bookable EVSEs at this location on which the reservation will be made.</param>
         /// <param name="BookableParkingOptions">An optional enumeration of parking specification that can be booked by drivers that want to charge at this location.</param>
@@ -147,7 +153,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="LastUpdated">An optional timestamp when this charge detail record was last updated (or created).</param>
         public BookingLocation(CountryCode                           CountryCode,
                                Party_Id                              PartyId,
-                               BookingLocation_Id                    BookingLocationId,
+                               BookingLocation_Id                    Id,
                                Location_Id                           LocationId,
                                IEnumerable<EVSE_UId>?                EVSEUIds,
                                IEnumerable<BookableParkingOptions>?  BookableParkingOptions   = null,
@@ -164,7 +170,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             this.CountryCode               = CountryCode;
             this.PartyId                   = PartyId;
-            this.BookingLocationId         = BookingLocationId;
+            this.Id                        = Id;
             this.LocationId                = LocationId;
             this.EVSEUIds                  = EVSEUIds?.              Distinct() ?? [];
             this.BookableParkingOptions    = BookableParkingOptions?.Distinct() ?? [];
@@ -207,7 +213,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 hashCode = this.CountryCode.           GetHashCode()       * 37 ^
                            this.PartyId.               GetHashCode()       * 31 ^
-                           this.BookingLocationId.     GetHashCode()       * 29 ^
+                           this.Id.     GetHashCode()       * 29 ^
                            this.LocationId.            GetHashCode()       * 23 ^
                            this.EVSEUIds.              CalcHashCode()      * 19 ^
                            this.BookableParkingOptions.CalcHashCode()      * 17^
@@ -543,7 +549,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                  new JProperty("country_code",               CountryCode.      ToString()),
                                  new JProperty("party_id",                   PartyId.          ToString()),
-                                 new JProperty("id",                         BookingLocationId.ToString()),
+                                 new JProperty("id",                         Id.ToString()),
                                  new JProperty("location_id",                LocationId.       ToString()),
 
                            EVSEUIds.Any()
@@ -594,7 +600,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                    CountryCode.           Clone(),
                    PartyId.               Clone(),
-                   BookingLocationId.     Clone(),
+                   Id.     Clone(),
                    LocationId.            Clone(),
                    EVSEUIds.              Select(evseUIds              => evseUIds.             Clone()),
                    BookableParkingOptions.Select(bookableParkingOption => bookableParkingOption.Clone()),
@@ -754,7 +760,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 c = PartyId.          CompareTo(BookingLocation.PartyId);
 
             if (c == 0)
-                c = BookingLocationId.CompareTo(BookingLocation.BookingLocationId);
+                c = Id.CompareTo(BookingLocation.Id);
 
             if (c == 0)
                 c = LocationId.       CompareTo(BookingLocation.LocationId);
@@ -820,7 +826,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                CountryCode.      Equals(BookingLocation.CountryCode)       &&
                PartyId.          Equals(BookingLocation.PartyId)           &&
-               BookingLocationId.Equals(BookingLocation.BookingLocationId) &&
+               Id.Equals(BookingLocation.Id) &&
                LocationId.       Equals(BookingLocation.LocationId)        &&
 
                Created.          Equals(BookingLocation.Created)           &&
@@ -860,7 +866,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             => String.Concat(
 
-                   $"{CountryCode}*{PartyId} / {BookingLocationId} / {LocationId}",
+                   $"{CountryCode}*{PartyId} / {Id} / {LocationId}",
 
                    EVSEUIds.Any()
                        ? $", EVSE UIds: '{EVSEUIds.AggregateWith(", ")}'"

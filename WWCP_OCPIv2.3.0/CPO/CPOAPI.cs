@@ -2883,7 +2883,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                 HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "CDRs",
+                URLPathPrefix + "cdrs",
                 OCPIRequestHandler: request =>
 
                     Task.FromResult(
@@ -3755,6 +3755,240 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             #endregion
 
+
+            #region ~/bookings
+
+            #region OPTIONS  ~/bookings
+
+            CommonAPI.AddOCPIMethod(
+
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "bookings",
+                OCPIRequestHandler: request =>
+
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode              = HTTPStatusCode.OK,
+                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                   AccessControlAllowHeaders   = [ "Authorization" ],
+                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                               }
+                        })
+
+            );
+
+            #endregion
+
+            #region GET      ~/bookings
+
+            // https://example.com/ocpi/2.2/cpo/bookings/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
+            CommonAPI.AddOCPIMethod(
+
+                HTTPHostname.Any,
+                HTTPMethod.GET,
+                URLPathPrefix + "bookings",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestHandler: request => {
+
+                    #region Check access token
+
+                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    {
+
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = 2000,
+                                StatusMessage        = "Invalid or blocked access token!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                }
+                            });
+
+                    }
+
+                    #endregion
+
+
+                    var filters              = request.GetDateAndPaginationFilters();
+
+                    var allBookings          = CommonAPI.//Getbookings(booking => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == booking.CountryCode &&
+                                                     //                                                          role.PartyId     == booking.PartyId)).
+                                                     GetBookings(booking => CommonAPI.Parties.Any(partyData => partyData.Id.CountryCode == booking.CountryCode &&
+                                                                                                  partyData.Id.Party       == booking.PartyId)).
+                                                     ToArray();
+
+                    var filteredBookings     = allBookings.Where(booking => !filters.From.HasValue || booking.LastUpdated >  filters.From.Value).
+                                                   Where(booking => !filters.To.  HasValue || booking.LastUpdated <= filters.To.  Value).
+                                                   ToArray();
+
+
+                    var httpResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                                   Server                     = DefaultHTTPServerName,
+                                                   Date                       = Timestamp.Now,
+                                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                                               }.
+
+                                               // The overall number of bookings
+                                               Set("X-Total-Count",  allBookings.Length).
+
+                                               // The maximum number of bookings that the server WILL return within a single request
+                                               Set("X-Limit",        allBookings.Length);
+
+
+                    #region When the limit query parameter was set & this is not the last pagination page...
+
+                    if (filters.Limit.HasValue &&
+                        allBookings.ULongLength() > ((filters.Offset ?? 0) + (filters.Limit ?? 0)))
+                    {
+
+                        // The new query parameters for the "next" page of pagination within the HTTP Link header
+                        var queryParameters    = new List<String?>() {
+                                                     filters.From. HasValue ? $"from={filters.From.Value}" :                             null,
+                                                     filters.To.   HasValue ? $"to={filters.To.Value}" :                                 null,
+                                                     filters.Limit.HasValue ? $"offset={(filters.Offset ?? 0) + (filters.Limit ?? 0)}" : null,
+                                                     filters.Limit.HasValue ? $"limit={filters.Limit ?? 0}" :                            null
+                                                 }.Where(queryParameter => queryParameter is not null).
+                                                   AggregateWith("&");
+
+                        if (queryParameters.Length > 0)
+                            queryParameters = "?" + queryParameters;
+
+                        // Link to the 'next' page should be provided when this is NOT the last page, e.g.:
+                        //   - Link: <https://www.server.com/ocpi/cpo/2.0/bookings/?offset=150&limit=50>; rel="next"
+                        httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
+                                                    ? $"https://{ExternalDNSName}"
+                                                    : $"http://127.0.0.1:{HTTPServer.IPPorts.First()}")}{URLPathPrefix}/bookings{queryParameters}>; rel=\"next\"");
+
+                    }
+
+                    #endregion
+
+                    return Task.FromResult(
+                               new OCPIResponse.Builder(request) {
+                                   StatusCode           = 1000,
+                                   StatusMessage        = "Hello world!",
+                                   HTTPResponseBuilder  = httpResponseBuilder,
+                                   Data                 = new JArray(
+                                                              filteredBookings.
+                                                              OrderBy       (booking => booking.Created).
+                                                              SkipTakeFilter(filters.Offset,
+                                                                             filters.Limit).
+                                                              Select        (booking => booking.ToJSON(
+                                                                                               //CustombookingSerializer,
+                                                                                               //CustombookingTokenSerializer,
+                                                                                               //CustombookingLocationSerializer,
+                                                                                               //CustomEVSEEnergyMeterSerializer,
+                                                                                               //CustomTransparencySoftwareSerializer,
+                                                                                               //CustomTariffSerializer,
+                                                                                               //CustomDisplayTextSerializer,
+                                                                                               //CustomPriceSerializer,
+                                                                                               //CustomPriceLimitSerializer,
+                                                                                               //CustomTariffElementSerializer,
+                                                                                               //CustomPriceComponentSerializer,
+                                                                                               //CustomTaxAmountSerializer,
+                                                                                               //CustomTariffRestrictionsSerializer,
+                                                                                               //CustomEnergyMixSerializer,
+                                                                                               //CustomEnergySourceSerializer,
+                                                                                               //CustomEnvironmentalImpactSerializer,
+                                                                                               //CustomChargingPeriodSerializer,
+                                                                                               //CustombookingDimensionSerializer,
+                                                                                               //CustomSignedDataSerializer,
+                                                                                               //CustomSignedValueSerializer
+                                                                                               ))
+                                                          )
+                               }
+                           );
+
+                });
+
+            #endregion
+
+            #region POST     ~/bookings
+
+            CommonAPI.AddOCPIMethod(
+
+                HTTPHostname.Any,
+                HTTPMethod.POST,
+                URLPathPrefix + "bookings",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestHandler: request => {
+
+                    #region Check access token
+
+                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    {
+
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = 2000,
+                                StatusMessage        = "Invalid or blocked access token!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                }
+                            });
+
+                    }
+
+                    #endregion
+
+
+                    return Task.FromResult(
+                               new OCPIResponse.Builder(request) {
+                                   StatusCode           = 1000,
+                                   StatusMessage        = "Hello world!",
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                                              HTTPStatusCode             = HTTPStatusCode.OK,
+                                                              Server                     = DefaultHTTPServerName,
+                                                              Date                       = Timestamp.Now,
+                                                              AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                              AccessControlAllowHeaders  = [ "Authorization" ]
+                                                          },
+                                   Data                 = new JArray(
+                                                              
+                                                          )
+                               }
+                           );
+
+                });
+
+            #endregion
+
+            #endregion
+
+            #region ~/bookings/booking_locations
+
+            #region OPTIONS  ~/bookings/booking_locations
+            #endregion
+
+            #region GET      ~/bookings/booking_locations
+            #endregion
+
+            #endregion
+
+            #region ~/bookings/booking_locations/{booking_location_id}
+
+            #endregion
+
+            #region ~/bookings/booking_locations/{booking_location_id}/{calendar_id}
+
+            #region OPTIONS  ~/bookings/booking_locations/{booking_location_id}/{calendar_id}
+            #endregion
+
+            #region GET      ~/bookings/booking_locations/{booking_location_id}/{calendar_id}
+            #endregion
+
+            #endregion
 
 
             // Commands

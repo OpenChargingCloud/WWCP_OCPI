@@ -237,6 +237,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public static Module_Id Tokens
             => new ("tokens");
 
+        /// <summary>
+        /// The bookings module.
+        /// </summary>
+        public static Module_Id Bookings
+            => new ("bookings");
+
         #endregion
 
 

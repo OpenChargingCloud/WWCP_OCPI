@@ -848,6 +848,42 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #endregion
 
 
+    #region OnPutBookingRequest/-Response
+
+    /// <summary>
+    /// A delegate called whenever a PUT ~/booking request will be send.
+    /// </summary>
+    public delegate Task OnPutBookingRequestDelegate(DateTime                  LogTimestamp,
+                                                     CPO2EMSPClient            Sender,
+                                                     Request_Id                RequestId,
+                                                     Correlation_Id            CorrelationId,
+
+                                                     Booking                   Booking,
+
+                                                     CancellationToken         CancellationToken,
+                                                     EventTracking_Id          EventTrackingId,
+                                                     TimeSpan                  RequestTimeout);
+
+    /// <summary>
+    /// A delegate called whenever a response to a PUT ~/booking request had been received.
+    /// </summary>
+    public delegate Task OnPutBookingResponseDelegate(DateTime                  LogTimestamp,
+                                                      CPO2EMSPClient            Sender,
+                                                      Request_Id                RequestId,
+                                                      Correlation_Id            CorrelationId,
+
+                                                      Booking                   Booking,
+
+                                                      CancellationToken         CancellationToken,
+                                                      EventTracking_Id          EventTrackingId,
+                                                      TimeSpan                  RequestTimeout,
+
+                                                      OCPIResponse<Booking>     Response,
+                                                      TimeSpan                  Runtime);
+
+    #endregion
+
+
     #region OnSetChargingProfileRequest/-Response
 
     /// <summary>
