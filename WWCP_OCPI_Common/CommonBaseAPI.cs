@@ -87,7 +87,7 @@ namespace cloud.charging.open.protocols.OCPI
 
 
         /// <summary>
-        /// The Subject of the certifcate signing request.
+        /// The Subject of the certificate signing request.
         /// </summary>
         public X509Name                      Subject             { get; set; } = Subject;
 
