@@ -583,6 +583,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            Images:               null,
                            EnergyMix:            null,
 
+                           CustomData:           ChargingPool.CustomData,
+                           InternalData:         ChargingPool.InternalData,
+
                            LastUpdated:          ChargingPool.LastChangeDate
 
                        );
@@ -778,7 +781,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 EVSE_UId? evseUId = null;
 
-                // Favor the OCPI EVSE Unique identification over the WWCP EVSE identification!
+                // Favour the OCPI EVSE Unique identification over the WWCP EVSE identification!
                 if (EVSE_UId.TryParse(EVSE.CustomData?[OCPI_EVSEUId]?.Value<String>() ?? "", out var uid))
                 {
                     evseUId = uid;
@@ -854,6 +857,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            Directions:            EVSE.ChargingStation.ArrivalInstructions.ToOCPI(),
                            Parking:               null,
                            Images:                [],
+
+                           CustomData:            EVSE.CustomData,
+                           InternalData:          EVSE.InternalData,
 
                            LastUpdated:           LastUpdate ?? EVSE.LastChangeDate
 

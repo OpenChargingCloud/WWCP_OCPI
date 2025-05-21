@@ -740,12 +740,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                             DateTime?               Timestamp           = null,
                             EventTracking_Id?       EventTrackingId     = null,
                             TimeSpan?               RequestTimeout      = null,
+                            User_Id?                CurrentUserId       = null,
                             CancellationToken       CancellationToken   = default)
 
         {
 
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
-                                                              CancellationToken);
+            var lockTaken = await DataAndStatusLock.WaitAsync(
+                                      MaxLockWaitingTime,
+                                      CancellationToken
+                                  );
 
             try
             {
@@ -843,11 +846,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                     DateTime?               Timestamp           = null,
                                     EventTracking_Id?       EventTrackingId     = null,
                                     TimeSpan?               RequestTimeout      = null,
+                                    User_Id?                CurrentUserId       = null,
                                     CancellationToken       CancellationToken   = default)
 
         {
 
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
+            var lockTaken = await DataAndStatusLock.WaitAsync(
+                                      MaxLockWaitingTime,
+                                      CancellationToken
+                                  );
 
             EventTrackingId ??= EventTracking_Id.New;
 
@@ -864,19 +871,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     {
 
 
-                        var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
-                                                           CustomEVSEIdConverter,
-                                                           evseId      => true,
-                                                           connectorId => true,
-                                                           null,
-                                                           out warnings);
+                        var location = ChargingPool.ToOCPI(
+                                           CustomEVSEUIdConverter,
+                                           CustomEVSEIdConverter,
+                                           evseId      => true,
+                                           connectorId => true,
+                                           null,
+                                           out warnings
+                                       );
 
                         if (location is not null)
                         {
 
-                            var result = await CommonAPI.AddLocation(location,
-                                                                     false,
-                                                                     EventTrackingId);
+                            var result = await CommonAPI.AddLocation(
+                                                   location,
+                                                   false,
+                                                   EventTrackingId,
+                                                   CurrentUserId,
+                                                   CancellationToken
+                                               );
 
                             //ToDo: Handle errors!
 
@@ -949,11 +962,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                DateTime?               Timestamp           = null,
                                EventTracking_Id?       EventTrackingId     = null,
                                TimeSpan?               RequestTimeout      = null,
+                               User_Id?                CurrentUserId       = null,
                                CancellationToken       CancellationToken   = default)
         {
 
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
-                                                              CancellationToken);
+            var lockTaken = await DataAndStatusLock.WaitAsync(
+                                      MaxLockWaitingTime,
+                                      CancellationToken
+                                  );
 
             EventTrackingId ??= EventTracking_Id.New;
 
@@ -1055,12 +1071,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                              DateTime?                        Timestamp           = null,
                              EventTracking_Id?                EventTrackingId     = null,
                              TimeSpan?                        RequestTimeout      = null,
+                             User_Id?                         CurrentUserId       = null,
                              CancellationToken                CancellationToken   = default)
 
         {
 
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
-                                                              CancellationToken);
+            var lockTaken = await DataAndStatusLock.WaitAsync(
+                                      MaxLockWaitingTime,
+                                      CancellationToken
+                                  );
 
             EventTrackingId ??= EventTracking_Id.New;
 
@@ -1144,12 +1163,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                      DateTime?                        Timestamp           = null,
                                      EventTracking_Id?                EventTrackingId     = null,
                                      TimeSpan?                        RequestTimeout      = null,
+                                     User_Id?                         CurrentUserId       = null,
                                      CancellationToken                CancellationToken   = default)
 
         {
 
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
-                                                              CancellationToken);
+            var lockTaken = await DataAndStatusLock.WaitAsync(
+                                      MaxLockWaitingTime,
+                                      CancellationToken
+                                  );
 
             try
             {
@@ -1231,11 +1253,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                 DateTime?                        Timestamp           = null,
                                 EventTracking_Id?                EventTrackingId     = null,
                                 TimeSpan?                        RequestTimeout      = null,
+                                User_Id?                         CurrentUserId       = null,
                                 CancellationToken                CancellationToken   = default)
 
         {
 
-            await Task.Delay(100);
+            await Task.Delay(100, CancellationToken);
 
             return WWCP.UpdateChargingPoolsResult.NoOperation(
                        ChargingPools,
@@ -1279,12 +1302,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                   DateTime?               Timestamp           = null,
                                   EventTracking_Id?       EventTrackingId     = null,
                                   TimeSpan?               RequestTimeout      = null,
+                                  User_Id?                CurrentUserId       = null,
                                   CancellationToken       CancellationToken   = default)
 
         {
 
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
-                                                              CancellationToken);
+            var lockTaken = await DataAndStatusLock.WaitAsync(
+                                      MaxLockWaitingTime,
+                                      CancellationToken
+                                  );
 
             EventTrackingId ??= EventTracking_Id.New;
 
@@ -1425,12 +1451,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     DateTime?               Timestamp           = null,
                     EventTracking_Id?       EventTrackingId     = null,
                     TimeSpan?               RequestTimeout      = null,
+                    User_Id?                CurrentUserId       = null,
                     CancellationToken       CancellationToken   = default)
 
         {
 
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
-                                                              CancellationToken);
+            var lockTaken = await DataAndStatusLock.WaitAsync(
+                                      MaxLockWaitingTime,
+                                      CancellationToken
+                                  );
 
             EventTrackingId ??= EventTracking_Id.New;
 
@@ -1548,12 +1577,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                             DateTime?               Timestamp           = null,
                             EventTracking_Id?       EventTrackingId     = null,
                             TimeSpan?               RequestTimeout      = null,
+                            User_Id?                CurrentUserId       = null,
                             CancellationToken       CancellationToken   = default)
 
         {
 
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
-                                                              CancellationToken);
+            var lockTaken = await DataAndStatusLock.WaitAsync(
+                                      MaxLockWaitingTime,
+                                      CancellationToken
+                                  );
 
             EventTrackingId ??= EventTracking_Id.New;
 
@@ -1694,12 +1726,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        DateTime?               Timestamp           = null,
                        EventTracking_Id?       EventTrackingId     = null,
                        TimeSpan?               RequestTimeout      = null,
+                       User_Id?                CurrentUserId       = null,
                        CancellationToken       CancellationToken   = default)
 
         {
 
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
-                                                              CancellationToken);
+            var lockTaken = await DataAndStatusLock.WaitAsync(
+                                      MaxLockWaitingTime,
+                                      CancellationToken
+                                  );
 
             EventTrackingId ??= EventTracking_Id.New;
 
@@ -1822,6 +1857,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        DateTime?               Timestamp           = null,
                        EventTracking_Id?       EventTrackingId     = null,
                        TimeSpan?               RequestTimeout      = null,
+                       User_Id?                CurrentUserId       = null,
                        CancellationToken       CancellationToken   = default)
 
         {
@@ -1853,12 +1889,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               DateTime?                           Timestamp,
                                               EventTracking_Id?                   EventTrackingId,
                                               TimeSpan?                           RequestTimeout,
+                                              User_Id?                            CurrentUserId,
                                               CancellationToken                   CancellationToken)
 
         {
 
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
-                                                              CancellationToken);
+            var lockTaken = await DataAndStatusLock.WaitAsync(
+                                      MaxLockWaitingTime,
+                                      CancellationToken
+                                  );
 
             try
             {

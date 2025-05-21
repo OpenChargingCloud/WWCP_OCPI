@@ -216,6 +216,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             => energyMeters.Values;
 
 
+        public JObject                             CustomData               { get; }
+        public UserDefinedDictionary               InternalData             { get; }
+
+
         /// <summary>
         /// The timestamp when this location was created.
         /// </summary>
@@ -317,6 +321,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                         LocationMaxPower?                                               MaxPower                                     = null,
                         PhoneNumber?                                                    HelpPhone                                    = null,
 
+                        JObject?                                                        CustomData                                   = null,
+                        UserDefinedDictionary?                                          InternalData                                 = null,
+
                         DateTime?                                                       Created                                      = null,
                         DateTime?                                                       LastUpdated                                  = null,
 
@@ -370,6 +377,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    EnergyMeters,
                    MaxPower,
                    HelpPhone,
+
+                   CustomData,
+                   InternalData,
 
                    Created     ?? LastUpdated,
                    LastUpdated ?? Created,
@@ -482,6 +492,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                           IEnumerable<EnergyMeter<Location>>?                             EnergyMeters                                 = null,
                           LocationMaxPower?                                               MaxPower                                     = null,
                           PhoneNumber?                                                    HelpPhone                                    = null,
+
+                          JObject?                                                        CustomData                                   = null,
+                          UserDefinedDictionary?                                          InternalData                                 = null,
 
                           DateTime?                                                       Created                                      = null,
                           DateTime?                                                       LastUpdated                                  = null,
@@ -1134,6 +1147,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                MaxPower,
                                HelpPhone,
 
+                               null,
+                               null,
+
                                Created,
                                LastUpdated
 
@@ -1384,6 +1400,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    EnergyMeters,
                    MaxPower?.       Clone(),
                    HelpPhone?.      Clone(),
+
+                   CustomData,
+                   InternalData,
 
                    Created,
                    LastUpdated
@@ -2123,6 +2142,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    MaxPower,
                    HelpPhone,
 
+                   CustomData,
+                   InternalData,
+
                    Created,
                    LastUpdated
 
@@ -2279,6 +2301,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             [Optional]
             public PhoneNumber?                    HelpPhone                { get; set; }
 
+
+            public JObject                         CustomData               { get; }
+            public UserDefinedDictionary           InternalData             { get; }
+
+
             /// <summary>
             /// The timestamp when this location was created.
             /// </summary>
@@ -2354,6 +2381,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            IEnumerable<EnergyMeter<Location>>?  EnergyMeters         = null,
                            LocationMaxPower?                    MaxPower             = null,
                            PhoneNumber?                         HelpPhone            = null,
+
+                           JObject?                             CustomData           = null,
+                           UserDefinedDictionary?               InternalData         = null,
 
                            DateTime?                            Created              = null,
                            DateTime?                            LastUpdated          = null)
@@ -2471,6 +2501,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                EnergyMeters,
                                MaxPower,
                                HelpPhone,
+
+                               CustomData,
+                               InternalData,
 
                                Created     ?? Timestamp.Now,
                                LastUpdated ?? Timestamp.Now

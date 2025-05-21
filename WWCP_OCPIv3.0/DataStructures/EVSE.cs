@@ -145,6 +145,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
         public EnergyMeter<EVSE>?               EnergyMeter                { get; }
 
+
+        public JObject                          CustomData                 { get; }
+        public UserDefinedDictionary            InternalData               { get; }
+
+
         /// <summary>
         /// The timestamp when this EVSE was created.
         /// </summary>
@@ -210,6 +215,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     URL?                                                          CalibrationInfoURL                           = null,
                     EnergyMeter<EVSE>?                                            EnergyMeter                                  = null,
 
+                    JObject?                                                      CustomData                                   = null,
+                    UserDefinedDictionary?                                        InternalData                                 = null,
+
                     DateTime?                                                     Created                                      = null,
                     DateTime?                                                     LastUpdated                                  = null,
 
@@ -237,6 +245,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    Images,
                    CalibrationInfoURL,
                    EnergyMeter,
+
+                   CustomData,
+                   InternalData,
 
                    Created,
                    LastUpdated,
@@ -303,6 +314,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                       URL?                                                          CalibrationInfoURL                           = null,
                       EnergyMeter<EVSE>?                                            EnergyMeter                                  = null,
 
+                      JObject?                                                      CustomData                                   = null,
+                      UserDefinedDictionary?                                        InternalData                                 = null,
+
                       DateTime?                                                     Created                                      = null,
                       DateTime?                                                     LastUpdated                                  = null,
 
@@ -335,6 +349,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.Images                 = Images?.        Distinct() ?? [];
             this.CalibrationInfoURL     = CalibrationInfoURL;
             this.EnergyMeter            = EnergyMeter;
+
+            this.CustomData             = CustomData                 ?? [];
+            this.InternalData           = InternalData               ?? new UserDefinedDictionary();
 
             this.Created                = Created                    ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated            = LastUpdated                ?? Created     ?? Timestamp.Now;
@@ -636,6 +653,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            CalibrationInfoURL,
                            EnergyMeter,
 
+                           null,
+                           null,
+
                            Created,
                            LastUpdated
 
@@ -757,7 +777,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this EVSE.
         /// </summary>
         public EVSE Clone()
 
@@ -777,6 +797,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    Images.             Select(image          => image.         Clone()).ToArray(),
                    CalibrationInfoURL?.Clone(),
                    EnergyMeter?.       Clone(),
+
+                   CustomData,
+                   InternalData,
 
                    Created,
                    LastUpdated
@@ -1448,6 +1471,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    CalibrationInfoURL,
                    EnergyMeter,
 
+                   CustomData,
+                   InternalData,
+
                    Created,
                    LastUpdated
 
@@ -1547,6 +1573,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
             public EnergyMeter<EVSE>?               EnergyMeter                { get; set; }
 
+
+            public JObject                          CustomData                 { get; }
+            public UserDefinedDictionary            InternalData               { get; }
+
+
             /// <summary>
             /// The timestamp when this EVSE was created.
             /// </summary>
@@ -1602,6 +1633,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                              URL?                          CalibrationInfoURL      = null,
                              EnergyMeter<EVSE>?            EnergyMeter             = null,
 
+                             JObject?                      CustomData              = null,
+                             UserDefinedDictionary?        InternalData            = null,
 
                              DateTime?                     Created                 = null,
                              DateTime?                     LastUpdated             = null)
@@ -1616,19 +1649,22 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 this.UId                    = UId;
                 this.Presence               = Presence;
-                this.Connectors             = Connectors     is not null ? new HashSet<Connector>     (Connectors)     : [];
+                this.Connectors             = Connectors     is not null ? [.. Connectors]     : [];
                 this.Parking                = Parking;
 
                 this.EVSEId                 = EVSEId;
                 this.Status                 = Status;
-                this.StatusSchedule         = StatusSchedule is not null ? new HashSet<StatusSchedule>(StatusSchedule) : [];
+                this.StatusSchedule         = StatusSchedule is not null ? [.. StatusSchedule] : [];
                 this.PhysicalReference      = PhysicalReference;
-                this.Images                 = Images         is not null ? new HashSet<Image>         (Images)         : [];
+                this.Images                 = Images         is not null ? [.. Images]         : [];
                 this.CalibrationInfoURL     = CalibrationInfoURL;
                 this.EnergyMeter            = EnergyMeter;
 
-                this.Created                = Created     ?? LastUpdated ?? Timestamp.Now;
-                this.LastUpdated            = LastUpdated ?? Created     ?? Timestamp.Now;
+                this.CustomData             = CustomData   ?? [];
+                this.InternalData           = InternalData ?? new UserDefinedDictionary();
+
+                this.Created                = Created      ?? LastUpdated ?? Timestamp.Now;
+                this.LastUpdated            = LastUpdated  ?? Created     ?? Timestamp.Now;
 
             }
 
@@ -1702,6 +1738,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                  Images,
                                  CalibrationInfoURL,
                                  EnergyMeter,
+
+                                 CustomData,
+                                 InternalData,
 
                                  Created,
                                  LastUpdated

@@ -46,13 +46,13 @@ namespace cloud.charging.open.protocols.OCPI
         public String  Name       { get; }
 
         /// <summary>
-        /// The optinal URL of the company’s website.
+        /// The optional URL of the company’s website.
         /// </summary>
         [Optional]
         public URL?    Website    { get; }
 
         /// <summary>
-        /// The optinal image link to the operator's logo.
+        /// The optional image link to the operator's logo.
         /// </summary>
         [Optional]
         public Image?  Logo       { get; }
@@ -65,8 +65,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// Create new business details.
         /// </summary>
         /// <param name="Name">Name of the operator.</param>
-        /// <param name="Website">An optinal URL of the company’s website.</param>
-        /// <param name="Logo">An optinal image link to the operator's logo.</param>
+        /// <param name="Website">An optional URL of the company’s website.</param>
+        /// <param name="Logo">An optional image link to the operator's logo.</param>
         public BusinessDetails(String  Name,
                                URL?    Website   = null,
                                Image?  Logo      = null)

@@ -282,6 +282,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public PhoneNumber?                        HelpPhone                { get; }
 
 
+        public JObject                             CustomData               { get; }
+        public UserDefinedDictionary               InternalData             { get; }
+
+
         /// <summary>
         /// The timestamp when this location was created.
         /// </summary>
@@ -389,6 +393,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         IEnumerable<EnergyMeter<Location>>?                           EnergyMeters                                 = null,
                         PhoneNumber?                                                  HelpPhone                                    = null,
 
+                        JObject?                                                      CustomData                                   = null,
+                        UserDefinedDictionary?                                        InternalData                                 = null,
+
                         DateTime?                                                     Created                                      = null,
                         DateTime?                                                     LastUpdated                                  = null,
                         String?                                                       ETag                                         = null,
@@ -446,9 +453,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.EnergyMix            = EnergyMix;
             this.HelpPhone            = HelpPhone;
 
-            var created               = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.CustomData           = CustomData                   ?? [];
+            this.InternalData         = InternalData                 ?? new UserDefinedDictionary();
+
+            var created               = Created                      ?? LastUpdated ?? Timestamp.Now;
             this.Created              = created;
-            this.LastUpdated          = LastUpdated ?? created;
+            this.LastUpdated          = LastUpdated                  ?? created;
 
             this.CommonAPI            = CommonAPI;
 
@@ -1081,6 +1091,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                EnergyMeters,
                                helpPhone,
 
+                               null,
+                               null,
+
                                Created,
                                LastUpdated
 
@@ -1319,6 +1332,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    EnergyMix?.      Clone(),
                    EnergyMeters.    Select(energyMeter     => energyMeter.    Clone()),
                    HelpPhone?.      Clone(),
+
+                   CustomData,
+                   InternalData,
 
                    Created,
                    LastUpdated,
@@ -2116,6 +2132,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    EnergyMeters,
                    HelpPhone,
 
+                   CustomData,
+                   InternalData,
+
                    Created,
                    LastUpdated
 
@@ -2336,6 +2355,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             public HashSet<EnergyMeter<Location>>      EnergyMeters             { get; }
 
 
+            public JObject                             CustomData               { get; }
+            public UserDefinedDictionary               InternalData             { get; }
+
+
             /// <summary>
             /// The timestamp when this location was created.
             /// </summary>
@@ -2424,6 +2447,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            IEnumerable<EnergyMeter<Location>>?  EnergyMeters         = null,
                            PhoneNumber?                         HelpPhone            = null,
 
+                           JObject?                             CustomData           = null,
+                           UserDefinedDictionary?               InternalData         = null,
+
                            DateTime?                            Created              = null,
                            DateTime?                            LastUpdated          = null)
 
@@ -2441,25 +2467,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 this.Coordinates         = Coordinates;
                 this.TimeZone            = TimeZone;
 
-                this.PublishAllowedTo    = PublishAllowedTo is not null ? new HashSet<PublishToken>         (PublishAllowedTo) : [];
+                this.PublishAllowedTo    = PublishAllowedTo is not null ? [.. PublishAllowedTo] : [];
                 this.Name                = Name;
                 this.PostalCode          = PostalCode;
                 this.State               = State;
-                this.RelatedLocations    = RelatedLocations is not null ? new HashSet<AdditionalGeoLocation>(RelatedLocations) : [];
+                this.RelatedLocations    = RelatedLocations is not null ? [.. RelatedLocations] : [];
                 this.ParkingType         = ParkingType;
-                this.EVSEs               = EVSEs            is not null ? new HashSet<EVSE>                 (EVSEs)            : [];
-                this.ParkingPlaces       = ParkingPlaces    is not null ? new HashSet<Parking>              (ParkingPlaces)    : [];
-                this.Directions          = Directions       is not null ? new HashSet<DisplayText>          (Directions)       : [];
+                this.EVSEs               = EVSEs            is not null ? [.. EVSEs]            : [];
+                this.ParkingPlaces       = ParkingPlaces    is not null ? [.. ParkingPlaces]    : [];
+                this.Directions          = Directions       is not null ? [.. Directions]       : [];
                 this.Operator            = Operator;
                 this.SubOperator         = SubOperator;
                 this.Owner               = Owner;
-                this.Facilities          = Facilities       is not null ? new HashSet<Facilities>           (Facilities)       : [];
+                this.Facilities          = Facilities       is not null ? [.. Facilities]       : [];
                 this.OpeningTimes        = OpeningTimes;
                 this.ChargingWhenClosed  = ChargingWhenClosed;
-                this.Images              = Images           is not null ? new HashSet<Image>                (Images)           : [];
+                this.Images              = Images           is not null ? [.. Images]           : [];
                 this.EnergyMix           = EnergyMix;
-                this.EnergyMeters        = EnergyMeters     is not null ? new HashSet<EnergyMeter<Location>>(EnergyMeters)     : [];
+                this.EnergyMeters        = EnergyMeters     is not null ? [.. EnergyMeters]     : [];
                 this.HelpPhone           = HelpPhone;
+
+                this.CustomData          = CustomData   ?? [];
+                this.InternalData        = InternalData ?? new UserDefinedDictionary();
 
                 this.Created             = Created;
                 this.LastUpdated         = LastUpdated;
@@ -2588,6 +2617,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                  EnergyMix,
                                  EnergyMeters,
                                  HelpPhone,
+
+                                 CustomData,
+                                 InternalData,
 
                                  Created     ?? Timestamp.Now,
                                  LastUpdated ?? Timestamp.Now,

@@ -133,6 +133,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
         public EnergyMeter<ChargingStation>?    EnergyMeter                { get; }
 
+
+        public JObject                          CustomData                 { get; }
+        public UserDefinedDictionary            InternalData               { get; }
+
+
         /// <summary>
         /// The timestamp when this ChargingStation was created.
         /// </summary>
@@ -195,6 +200,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                IEnumerable<Image>?                                             Images                                       = null,
                                EnergyMeter<ChargingStation>?                                   EnergyMeter                                  = null,
 
+                               JObject?                                                        CustomData                                   = null,
+                               UserDefinedDictionary?                                          InternalData                                 = null,
+
                                DateTime?                                                       Created                                      = null,
                                DateTime?                                                       LastUpdated                                  = null,
 
@@ -223,6 +231,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    Directions,
                    Images,
                    EnergyMeter,
+
+                   CustomData,
+                   InternalData,
 
                    Created,
                    LastUpdated,
@@ -288,6 +299,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                  IEnumerable<Image>?                                             Images                                       = null,
                                  EnergyMeter<ChargingStation>?                                   EnergyMeter                                  = null,
 
+                                 JObject?                                                        CustomData                                   = null,
+                                 UserDefinedDictionary?                                          InternalData                                 = null,
+
                                  DateTime?                                                       Created                                      = null,
                                  DateTime?                                                       LastUpdated                                  = null,
 
@@ -317,6 +331,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.Directions            = Directions?.       Distinct() ?? [];
             this.Images                = Images?.           Distinct() ?? [];
             this.EnergyMeter           = EnergyMeter;
+
+            this.CustomData            = CustomData                    ?? [];
+            this.InternalData          = InternalData                  ?? new UserDefinedDictionary();
 
             this.Created               = Created                       ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated           = LastUpdated                   ?? Created     ?? Timestamp.Now;
@@ -653,6 +670,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                       Images,
                                       EnergyMeter,
 
+                                      null,
+                                      null,
+
                                       Created,
                                       LastUpdated
 
@@ -798,6 +818,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public ChargingStation Clone()
 
             => new (
+
                    ParentLocation,
                    //PartyId.          Clone(),
                    Id.               Clone(),
@@ -812,8 +833,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    Images.           Select(image       => image.      Clone()),
                    EnergyMeter?.     Clone(),
 
+                   CustomData,
+                   InternalData,
+
                    Created,
                    LastUpdated
+
                );
 
         #endregion
@@ -1461,6 +1486,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    Images,
                    EnergyMeter,
 
+                   CustomData,
+                   InternalData,
+
                    Created,
                    LastUpdated
 
@@ -1542,6 +1570,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
             public EnergyMeter<ChargingStation>?    EnergyMeter                { get; set; }
 
+
+            public JObject                          CustomData                 { get; }
+            public UserDefinedDictionary            InternalData               { get; }
+
+
             /// <summary>
             /// The timestamp when this ChargingStation was created.
             /// </summary>
@@ -1586,6 +1619,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                              IEnumerable<Image>?            Images              = null,
                              EnergyMeter<ChargingStation>?  EnergyMeter         = null,
 
+                             JObject?                       CustomData          = null,
+                             UserDefinedDictionary?         InternalData        = null,
+
                              DateTime?                      Created             = null,
                              DateTime?                      LastUpdated         = null)
 
@@ -1594,13 +1630,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             {
 
-                this.Capabilities       = Capabilities is not null ? new HashSet<Capability> (Capabilities) : [];
+                this.Capabilities       = Capabilities is not null ? [.. Capabilities] : [];
                 this.FloorLevel         = FloorLevel;
                 this.Coordinates        = Coordinates;
                 this.PhysicalReference  = PhysicalReference;
-                this.Directions         = Directions   is not null ? new HashSet<DisplayText>(Directions)   : [];
-                this.Images             = Images       is not null ? new HashSet<Image>      (Images)       : [];
+                this.Directions         = Directions   is not null ? [.. Directions]   : [];
+                this.Images             = Images       is not null ? [.. Images]       : [];
                 this.EnergyMeter        = EnergyMeter;
+
+                this.CustomData         = CustomData                 ?? [];
+                this.InternalData       = InternalData               ?? new UserDefinedDictionary();
 
                 this.Created            = Created     ?? LastUpdated ?? Timestamp.Now;
                 this.LastUpdated        = LastUpdated ?? Created     ?? Timestamp.Now;
@@ -1679,6 +1718,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                  Directions,
                                  Images,
                                  EnergyMeter,
+
+                                 CustomData,
+                                 InternalData,
 
                                  Created,
                                  LastUpdated

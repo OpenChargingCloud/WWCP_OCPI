@@ -187,7 +187,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                               URL.Parse("http://example.com/kleine_pinguine.jpg")
                                           )
                                       ],
-                                      DateTime.Parse("2020-09-22")
+                                      LastUpdated: DateTime.Parse("2020-09-22")
                                   )
                               ],
                               [
@@ -772,7 +772,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                               URL.Parse("http://example.com/kleine_pinguine.jpg")
                                           )
                                       ],
-                                      DateTime.Parse("2020-09-22")
+                                      LastUpdated: DateTime.Parse("2020-09-22")
                                   )
                               ],
                               [
@@ -1128,7 +1128,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                               URL.Parse("http://example.com/kleine_pinguine.jpg")
                                           )
                                       ],
-                                      DateTime.Parse("2020-09-22")
+                                      LastUpdated: DateTime.Parse("2020-09-22")
                                   )
                               ],
                               [
@@ -1538,7 +1538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                               URL.Parse("http://example.com/kleine_pinguine.jpg")
                                           )
                                       ],
-                                      DateTime.Parse("2020-09-22")
+                                      LastUpdated: DateTime.Parse("2020-09-22")
                                   )
                               ],
                               [
@@ -1875,7 +1875,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                               URL.Parse("http://example.com/kleine_pinguine.jpg")
                                           )
                                       ],
-                                      DateTime.Parse("2020-09-22")
+                                      LastUpdated: DateTime.Parse("2020-09-22")
                                   )
                               ],
                               [
@@ -2231,7 +2231,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                               URL.Parse("http://example.com/kleine_pinguine.jpg")
                                           )
                                       ],
-                                      DateTime.Parse("2020-09-22")
+                                      LastUpdated: DateTime.Parse("2020-09-22")
                                   )
                               ],
                               [
@@ -2646,7 +2646,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                                    URL.Parse("http://example.com/kleine_pinguine.jpg")
                                                                )
                                                            },
-                                                           DateTime.Parse("2020-09-22")
+                                                           LastUpdated: DateTime.Parse("2020-09-22")
                                                        )
                                                    },
                                                    new[] {
@@ -2970,7 +2970,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                                    URL.Parse("http://example.com/kleine_pinguine.jpg")
                                                                )
                                                            },
-                                                           DateTime.Parse("2020-09-22")
+                                                           LastUpdated: DateTime.Parse("2020-09-22")
                                                        )
                                                    },
                                                    new[] {
@@ -3293,7 +3293,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                                    URL.Parse("http://example.com/kleine_pinguine.jpg")
                                                                )
                                                            },
-                                                           DateTime.Parse("2020-09-22")
+                                                           LastUpdated: DateTime.Parse("2020-09-22")
                                                        )
                                                    },
                                                    new[] {
@@ -3616,7 +3616,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                                    URL.Parse("http://example.com/kleine_pinguine.jpg")
                                                                )
                                                            },
-                                                           DateTime.Parse("2020-09-22")
+                                                           LastUpdated: DateTime.Parse("2020-09-22")
                                                        )
                                                    },
                                                    new[] {

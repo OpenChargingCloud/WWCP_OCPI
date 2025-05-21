@@ -61,51 +61,51 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// The parent location of this EVSE.
         /// </summary>
-        public Location?                        ParentLocation             { get; internal set; }
+        public Location?                        ParentLocation              { get; internal set; }
 
         /// <summary>
         /// The unique identification of the EVSE within the CPOs platform.
         /// For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!
         /// </summary>
         [Mandatory]
-        public EVSE_UId                         UId                        { get; }
+        public EVSE_UId                         UId                         { get; }
 
         /// <summary>
         /// The official unique identification of the EVSE.
         /// For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!
         /// </summary>
         [Optional]
-        public EVSE_Id?                         EVSEId                     { get; }
+        public EVSE_Id?                         EVSEId                      { get; }
 
         /// <summary>
         /// The current status of the EVSE.
         /// </summary>
         [Mandatory]
-        public StatusType                       Status                     { get; }
+        public StatusType                       Status                      { get; }
 
         /// <summary>
         /// The enumeration of planned future status of the EVSE.
         /// </summary>
         [Optional]
-        public IEnumerable<StatusSchedule>      StatusSchedule             { get; }
+        public IEnumerable<StatusSchedule>      StatusSchedule              { get; }
 
         /// <summary>
         /// The enumeration of functionalities that the EVSE is capable of.
         /// </summary>
         [Optional]
-        public IEnumerable<Capability>          Capabilities               { get; }
+        public IEnumerable<Capability>          Capabilities                { get; }
 
         /// <summary>
         /// The optional energy meter, e.g. for the German calibration law.
         /// </summary>
         [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
-        public EnergyMeter<EVSE>?               EnergyMeter                { get; }
+        public EnergyMeter<EVSE>?               EnergyMeter                 { get; }
 
         /// <summary>
         /// The enumeration of available connectors attached to this EVSE.
         /// </summary>
         [Mandatory]
-        public IEnumerable<Connector>           Connectors                 { get; private set; }
+        public IEnumerable<Connector>           Connectors                  { get; private set; }
 
         /// <summary>
         /// The enumeration of connector identifications attached to this EVSE.
@@ -120,70 +120,74 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// string(4)
         /// </summary>
         [Optional]
-        public String?                          FloorLevel                 { get; }
+        public String?                          FloorLevel                  { get; }
 
         /// <summary>
         /// The optional geographical location of the EVSE.
         /// </summary>
         [Optional]
-        public GeoCoordinate?                   Coordinates                { get; }
+        public GeoCoordinate?                   Coordinates                 { get; }
 
         /// <summary>
         /// The optional number/string printed on the outside of the EVSE for visual identification.
         /// string(16)
         /// </summary>
         [Optional]
-        public String?                          PhysicalReference          { get; }
+        public String?                          PhysicalReference           { get; }
 
         /// <summary>
         /// The optional multi-language human-readable directions when more detailed
         /// information on how to reach the EVSE from the location is required.
         /// </summary>
         [Optional]
-        public IEnumerable<DisplayText>         Directions                 { get; }
+        public IEnumerable<DisplayText>         Directions                  { get; }
 
         /// <summary>
         /// Optional applicable restrictions on who can charge at the EVSE, apart from those related to the vehicle type.
         /// </summary>
         [Optional]
-        public IEnumerable<ParkingRestriction>  ParkingRestrictions        { get; }
+        public IEnumerable<ParkingRestriction>  ParkingRestrictions         { get; }
 
         /// <summary>
         /// Optional references to the parking space or spaces that can be used by vehicles charging at this EVSE.
         /// </summary>
         [Optional]
-        public IEnumerable<EVSEParking>         Parking                    { get; }
+        public IEnumerable<EVSEParking>         Parking                     { get; }
 
         /// <summary>
         /// The optional enumeration of images related to the EVSE such as photos or logos.
         /// </summary>
         [Optional]
-        public IEnumerable<Image>               Images                     { get; }
+        public IEnumerable<Image>               Images                      { get; }
 
         /// <summary>
         /// The optional enumeration of eMSPs offering contract-based payment options that are accepted at this EVSE.
         /// </summary>
         [Optional]
-        public IEnumerable<EMSP_Id>             AcceptedServiceProviders { get; }
+        public IEnumerable<EMSP_Id>             AcceptedServiceProviders    { get; }
+
+
+        public JObject                          CustomData                  { get; }
+        public UserDefinedDictionary            InternalData                { get; }
 
 
         /// <summary>
         /// The timestamp when this EVSE was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public DateTime                         Created                    { get; }
+        public DateTime                         Created                     { get; }
 
         /// <summary>
         /// Timestamp when this EVSE was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                         LastUpdated                { get; }
+        public DateTime                         LastUpdated                 { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this EVSE used as HTTP ETag.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined)]
-        public String                           ETag                       { get; private set; }
+        public String                           ETag                        { get; private set; }
 
         #endregion
 
@@ -238,6 +242,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     IEnumerable<Image>?                                           Images                                       = null,
                     IEnumerable<EMSP_Id>?                                         AcceptedServiceProviders                     = null,
 
+                    JObject?                                                      CustomData                                   = null,
+                    UserDefinedDictionary?                                        InternalData                                 = null,
+
                     DateTime?                                                     Created                                      = null,
                     DateTime?                                                     LastUpdated                                  = null,
                     String?                                                       ETag                                         = null,
@@ -278,9 +285,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.Images                    = Images?.                  Distinct() ?? [];
             this.AcceptedServiceProviders  = AcceptedServiceProviders?.Distinct() ?? [];
 
-            var created                    = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.CustomData                = CustomData                           ?? [];
+            this.InternalData              = InternalData                         ?? new UserDefinedDictionary();
+
+            var created                    = Created                              ?? LastUpdated ?? Timestamp.Now;
             this.Created                   = created;
-            this.LastUpdated               = LastUpdated ?? created;
+            this.LastUpdated               = LastUpdated                          ?? created;
 
             foreach (var connector in this.Connectors)
                 connector.ParentEVSE = this;
@@ -630,6 +640,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            Images,
                            AcceptedServiceProviders,
 
+                           null,
+                           null,
+
                            Created,
                            LastUpdated
 
@@ -795,6 +808,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    Parking.                 Select(parking            => parking.           Clone()),
                    Images.                  Select(image              => image.             Clone()),
                    AcceptedServiceProviders.Select(emspId             => emspId.            Clone()),
+
+                   CustomData,
+                   InternalData,
 
                    Created,
                    LastUpdated,
@@ -1482,6 +1498,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    Images,
                    AcceptedServiceProviders,
 
+                   CustomData,
+                   InternalData,
+
                    Created,
                    LastUpdated
 
@@ -1608,6 +1627,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             public IEnumerable<EMSP_Id>             AcceptedServiceProviders    { get; }
 
 
+            public JObject                          CustomData                  { get; }
+            public UserDefinedDictionary            InternalData                { get; }
+
+
             /// <summary>
             /// The timestamp when this EVSE was created.
             /// </summary>
@@ -1666,6 +1689,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                              IEnumerable<Image>?               Images                     = null,
                              IEnumerable<EMSP_Id>?             AcceptedServiceProviders   = null,
 
+                             JObject?                          CustomData                 = null,
+                             UserDefinedDictionary?            InternalData               = null,
+
                              DateTime?                         Created                    = null,
                              DateTime?                         LastUpdated                = null)
 
@@ -1690,8 +1716,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 this.Images                    = Images                   is not null ? [.. Images]                   : [];
                 this.AcceptedServiceProviders  = AcceptedServiceProviders is not null ? [.. AcceptedServiceProviders] : [];
 
-                this.Created                   = Created     ?? LastUpdated ?? Timestamp.Now;
-                this.LastUpdated               = LastUpdated ?? Created     ?? Timestamp.Now;
+                this.CustomData                = CustomData   ?? [];
+                this.InternalData              = InternalData ?? new UserDefinedDictionary();
+
+                this.Created                   = Created      ?? LastUpdated ?? Timestamp.Now;
+                this.LastUpdated               = LastUpdated  ?? Created     ?? Timestamp.Now;
 
             }
 
@@ -1764,6 +1793,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                  Parking,
                                  Images,
                                  AcceptedServiceProviders,
+
+                                 CustomData,
+                                 InternalData,
 
                                  Created,
                                  LastUpdated,

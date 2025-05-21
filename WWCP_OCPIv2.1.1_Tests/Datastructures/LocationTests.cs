@@ -186,7 +186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         ],
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 ],
                                 [
@@ -285,7 +285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     "New Green Deal"
                                 ),
                                 null,
-                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                LastUpdated: DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -489,7 +489,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -758,7 +758,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -1027,7 +1027,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -1296,7 +1296,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -1564,7 +1564,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -1665,7 +1665,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     "New Green Deal"
                                 ),
                                 null,
-                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                LastUpdated: DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -1835,7 +1835,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -1936,7 +1936,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     "New Green Deal"
                                 ),
                                 null,
-                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                LastUpdated: DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -2109,7 +2109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -2210,7 +2210,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     "New Green Deal"
                                 ),
                                 null,
-                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                LastUpdated: DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -2379,7 +2379,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -2480,7 +2480,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     "New Green Deal"
                                 ),
                                 null,
-                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                LastUpdated: DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -2652,7 +2652,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -2753,7 +2753,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     "New Green Deal"
                                 ),
                                 null,
-                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                LastUpdated: DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -2923,7 +2923,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -3024,7 +3024,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     "New Green Deal"
                                 ),
                                 null,
-                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                LastUpdated: DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -3193,7 +3193,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -3294,7 +3294,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     "New Green Deal"
                                 ),
                                 null,
-                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                LastUpdated: DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -3462,7 +3462,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -3563,7 +3563,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     "New Green Deal"
                                 ),
                                 null,
-                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                LastUpdated: DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion

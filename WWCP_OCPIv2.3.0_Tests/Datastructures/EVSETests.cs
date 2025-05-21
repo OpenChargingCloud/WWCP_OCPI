@@ -187,8 +187,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                 )
                             ],
                             [EMSP_Id.Parse("DE*GDF")],
-                            DateTime.Parse("2020-09-18"),
-                            DateTime.Parse("2020-09-18T00:00:00Z").ToUniversalTime()
+                            Created:     DateTime.Parse("2020-09-18"),
+                            LastUpdated: DateTime.Parse("2020-09-18T00:00:00Z").ToUniversalTime()
                         );
 
             #endregion

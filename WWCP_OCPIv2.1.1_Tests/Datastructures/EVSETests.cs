@@ -175,6 +175,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     URL.Parse("http://example.com/kleine_wellensittiche.jpg")
                                 )
                             ],
+                            null,
+                            null,
                             DateTime.Parse("2020-09-18T00:00:00Z")
                         );
 

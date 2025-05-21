@@ -148,6 +148,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         [Optional]
         public IEnumerable<Image>               Images                     { get; }
 
+
+        public JObject                          CustomData                 { get; }
+        public UserDefinedDictionary            InternalData               { get; }
+
+
         /// <summary>
         /// The timestamp when this EVSE was created.
         /// </summary>
@@ -219,6 +224,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                       IEnumerable<ParkingRestriction>?                              ParkingRestrictions                          = null,
                       IEnumerable<Image>?                                           Images                                       = null,
 
+                      JObject?                                                      CustomData                                   = null,
+                      UserDefinedDictionary?                                        InternalData                                 = null,
+
                       DateTime?                                                     Created                                      = null,
                       DateTime?                                                     LastUpdated                                  = null,
 
@@ -251,21 +259,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.ParkingRestrictions   = ParkingRestrictions?.Distinct() ?? [];
             this.Images                = Images?.             Distinct() ?? [];
 
+            this.CustomData            = CustomData                      ?? [];
+            this.InternalData          = InternalData                    ?? new UserDefinedDictionary();
+
             this.Created               = Created                         ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated           = LastUpdated                     ?? Created     ?? Timestamp.Now;
 
             foreach (var connector in this.Connectors)
                 connector.ParentEVSE = this;
 
-            this.ETag                  = CalcSHA256Hash(EMSPId,
-                                                        CustomEVSESerializer,
-                                                        CustomStatusScheduleSerializer,
-                                                        CustomConnectorSerializer,
-                                                        CustomEVSEEnergyMeterSerializer,
-                                                        CustomTransparencySoftwareStatusSerializer,
-                                                        CustomTransparencySoftwareSerializer,
-                                                        CustomDisplayTextSerializer,
-                                                        CustomImageSerializer);
+            this.ETag                  = CalcSHA256Hash(
+                                             EMSPId,
+                                             CustomEVSESerializer,
+                                             CustomStatusScheduleSerializer,
+                                             CustomConnectorSerializer,
+                                             CustomEVSEEnergyMeterSerializer,
+                                             CustomTransparencySoftwareStatusSerializer,
+                                             CustomTransparencySoftwareSerializer,
+                                             CustomDisplayTextSerializer,
+                                             CustomImageSerializer
+                                         );
 
         }
 
@@ -317,6 +330,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     IEnumerable<ParkingRestriction>?                              ParkingRestrictions                          = null,
                     IEnumerable<Image>?                                           Images                                       = null,
 
+                    JObject?                                                      CustomData                                   = null,
+                    UserDefinedDictionary?                                        InternalData                                 = null,
+
                     DateTime?                                                     Created                                      = null,
                     DateTime?                                                     LastUpdated                                  = null,
 
@@ -346,6 +362,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    Directions,
                    ParkingRestrictions,
                    Images,
+
+                   CustomData,
+                   InternalData,
 
                    Created,
                    LastUpdated,
@@ -664,6 +683,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            ParkingRestrictions,
                            Images,
 
+                           null,
+                           null,
+
                            Created,
                            LastUpdated
 
@@ -783,11 +805,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this EVSE.
         /// </summary>
         public EVSE Clone()
 
             => new (
+
                    ParentLocation,
 
                    UId.                Clone(),
@@ -805,8 +828,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    ParkingRestrictions.Select(parkingRestriction => parkingRestriction),
                    Images.             Select(image              => image.             Clone()),
 
+                   CustomData,
+                   InternalData,
+
                    Created,
                    LastUpdated
+
                );
 
         #endregion
@@ -1472,6 +1499,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     ParkingRestrictions,
                     Images,
 
+                    CustomData,
+                    InternalData,
+
                     Created,
                     LastUpdated);
 
@@ -1583,6 +1613,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             [Optional]
             public HashSet<Image>                   Images                     { get; }
 
+
+            public JObject                          CustomData                 { get; }
+            public UserDefinedDictionary            InternalData               { get; }
+
+
             /// <summary>
             /// The timestamp when this EVSE was created.
             /// </summary>
@@ -1638,30 +1673,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                              IEnumerable<ParkingRestriction>?  ParkingRestrictions   = null,
                              IEnumerable<Image>?               Images                = null,
 
+                             JObject?                          CustomData            = null,
+                             UserDefinedDictionary?            InternalData          = null,
+
                              DateTime?                         Created               = null,
                              DateTime?                         LastUpdated           = null)
 
             {
 
-                this.ParentLocation        = ParentLocation;
+                this.ParentLocation       = ParentLocation;
 
-                this.UId                   = UId;
-                this.Status                = Status;
-                this.Connectors            = Connectors          is not null ? new HashSet<Connector>         (Connectors)          : [];
+                this.UId                  = UId;
+                this.Status               = Status;
+                this.Connectors           = Connectors          is not null ? [.. Connectors]          : [];
 
-                this.EVSEId                = EVSEId;
-                this.StatusSchedule        = StatusSchedule      is not null ? new HashSet<StatusSchedule>    (StatusSchedule)      : [];
-                this.Capabilities          = Capabilities        is not null ? new HashSet<Capability>        (Capabilities)        : [];
-                this.EnergyMeter           = EnergyMeter;
-                this.FloorLevel            = FloorLevel;
-                this.Coordinates           = Coordinates;
-                this.PhysicalReference     = PhysicalReference;
-                this.Directions            = Directions          is not null ? new HashSet<DisplayText>       (Directions)          : [];
-                this.ParkingRestrictions   = ParkingRestrictions is not null ? new HashSet<ParkingRestriction>(ParkingRestrictions) : [];
-                this.Images                = Images              is not null ? new HashSet<Image>             (Images)              : [];
+                this.EVSEId               = EVSEId;
+                this.StatusSchedule       = StatusSchedule      is not null ? [.. StatusSchedule]      : [];
+                this.Capabilities         = Capabilities        is not null ? [.. Capabilities]        : [];
+                this.EnergyMeter          = EnergyMeter;
+                this.FloorLevel           = FloorLevel;
+                this.Coordinates          = Coordinates;
+                this.PhysicalReference    = PhysicalReference;
+                this.Directions           = Directions          is not null ? [.. Directions]          : [];
+                this.ParkingRestrictions  = ParkingRestrictions is not null ? [.. ParkingRestrictions] : [];
+                this.Images               = Images              is not null ? [.. Images]              : [];
 
-                this.Created               = Created     ?? LastUpdated ?? Timestamp.Now;
-                this.LastUpdated           = LastUpdated ?? Created     ?? Timestamp.Now;
+                this.CustomData           = CustomData   ?? [];
+                this.InternalData         = InternalData ?? new UserDefinedDictionary();
+
+                this.Created              = Created      ?? LastUpdated ?? Timestamp.Now;
+                this.LastUpdated          = LastUpdated  ?? Created     ?? Timestamp.Now;
 
             }
 
@@ -1734,6 +1775,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                  Directions,
                                  ParkingRestrictions,
                                  Images,
+
+                                 CustomData,
+                                 InternalData,
 
                                  Created,
                                  LastUpdated

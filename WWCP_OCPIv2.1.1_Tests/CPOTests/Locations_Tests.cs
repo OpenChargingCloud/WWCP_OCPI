@@ -74,7 +74,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                Name: DisplayText.Create(Languages.de, "Postkasten")
                                                                            )
                                                                        ],
-                                                                       new[] {
+                                                                       [
                                                                            new EVSE(
                                                                                EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                                                StatusType.AVAILABLE,
@@ -131,7 +131,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                    null,
                                                                                    null,
                                                                                    null,
-                                                                                   new[] {
+                                                                                   [
                                                                                        new TransparencySoftwareStatus(
                                                                                            new TransparencySoftware(
                                                                                                "Chargy Transparency Software Desktop Application",
@@ -166,21 +166,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                            NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
                                                                                            NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
                                                                                        )
-                                                                                   }
+                                                                                   ]
                                                                                ),
 
                                                                                "1. Stock",
                                                                                GeoCoordinate.Parse(10.1, 20.2),
                                                                                "Ladestation #1",
-                                                                               new[] {
+                                                                               [
                                                                                    DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                                                                    DisplayText.Create(Languages.en, "Ken sent me!")
-                                                                               },
-                                                                               new[] {
+                                                                               ],
+                                                                               [
                                                                                    ParkingRestriction.EV_ONLY,
                                                                                    ParkingRestriction.PLUGGED
-                                                                               },
-                                                                               new[] {
+                                                                               ],
+                                                                               [
                                                                                    new Image(
                                                                                        URL.Parse("http://example.com/pinguine.jpg"),
                                                                                        ImageFileType.jpeg,
@@ -189,14 +189,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                        150,
                                                                                        URL.Parse("http://example.com/kleine_pinguine.jpg")
                                                                                    )
-                                                                               },
+                                                                               ],
+                                                                               null,
+                                                                               null,
                                                                                DateTime.Parse("2020-09-22")
                                                                            )
-                                                                       },
-                                                                       new[] {
+                                                                       ],
+                                                                       [
                                                                            new DisplayText(Languages.de, "Hallo Welt!"),
                                                                            new DisplayText(Languages.en, "Hello world!")
-                                                                       },
+                                                                       ],
                                                                        new BusinessDetails(
                                                                            "Open Charging Cloud",
                                                                            URL.Parse("https://open.charging.cloud"),
@@ -233,33 +235,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                URL.Parse("http://ahzf.de/logo_small.gif")
                                                                            )
                                                                        ),
-                                                                       new[] {
+                                                                       [
                                                                            Facilities.CAFE
-                                                                       },
+                                                                       ],
                                                                        "Europe/Berlin",
                                                                        new Hours(
-                                                                           new[] {
+                                                                           [
                                                                                new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                                                                new OCPI.RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                                                                new OCPI.RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                                                                new OCPI.RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                                                                new OCPI.RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
-                                                                           },
-                                                                           new[] {
+                                                                           ],
+                                                                           [
                                                                                new OCPI.ExceptionalPeriod(
                                                                                    DateTime.Parse("2020-09-21T00:00:00Z"),
                                                                                    DateTime.Parse("2020-09-22T00:00:00Z")
                                                                                )
-                                                                           },
-                                                                           new[] {
+                                                                           ],
+                                                                           [
                                                                                new OCPI.ExceptionalPeriod(
                                                                                    DateTime.Parse("2020-12-24T00:00:00Z"),
                                                                                    DateTime.Parse("2020-12-26T00:00:00Z")
                                                                                )
-                                                                           }
+                                                                           ]
                                                                        ),
                                                                        false,
-                                                                       new[] {
+                                                                       [
                                                                            new Image(
                                                                                URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                                                                ImageFileType.jpeg,
@@ -268,10 +270,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                400,
                                                                                URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
                                                                            )
-                                                                       },
+                                                                       ],
                                                                        new EnergyMix(
                                                                            true,
-                                                                           new[] {
+                                                                           [
                                                                                new EnergySource(
                                                                                    EnergySourceCategory.SOLAR,
                                                                                    80
@@ -280,13 +282,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                    EnergySourceCategory.WIND,
                                                                                    20
                                                                                )
-                                                                           },
-                                                                           new[] {
+                                                                           ],
+                                                                           [
                                                                                new EnvironmentalImpact(
                                                                                    EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                                                                    0.1
                                                                                )
-                                                                           },
+                                                                           ],
                                                                            "Stadtwerke Jena-Ost",
                                                                            "New Green Deal"
                                                                        ),
@@ -467,15 +469,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                           "1. Stock",
                                                                                           GeoCoordinate.Parse(10.1, 20.2),
                                                                                           "Ladestation #1",
-                                                                                          new[] {
+                                                                                          [
                                                                                               DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                                                                               DisplayText.Create(Languages.en, "Ken sent me!")
-                                                                                          },
-                                                                                          new[] {
+                                                                                          ],
+                                                                                          [
                                                                                               ParkingRestriction.EV_ONLY,
                                                                                               ParkingRestriction.PLUGGED
-                                                                                          },
-                                                                                          new[] {
+                                                                                          ],
+                                                                                          [
                                                                                               new Image(
                                                                                                   URL.Parse("http://example.com/pinguine.jpg"),
                                                                                                   ImageFileType.jpeg,
@@ -484,14 +486,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                                   150,
                                                                                                   URL.Parse("http://example.com/kleine_pinguine.jpg")
                                                                                               )
-                                                                                          },
+                                                                                          ],
+                                                                                          null,
+                                                                                          null,
                                                                                           DateTime.Parse("2020-09-22")
                                                                                       )
                                                                                   },
-                                                                                  new[] {
+                                                                                  [
                                                                                       new DisplayText(Languages.de, "Hallo Welt!"),
                                                                                       new DisplayText(Languages.en, "Hello world!")
-                                                                                  },
+                                                                                  ],
                                                                                   new BusinessDetails(
                                                                                       "Open Charging Cloud",
                                                                                       URL.Parse("https://open.charging.cloud"),
@@ -528,9 +532,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                           URL.Parse("http://ahzf.de/logo_small.gif")
                                                                                       )
                                                                                   ),
-                                                                                  new[] {
+                                                                                  [
                                                                                       Facilities.CAFE
-                                                                                  },
+                                                                                  ],
                                                                                   "Europe/Berlin",
                                                                                   new Hours(
                                                                                       new[] {

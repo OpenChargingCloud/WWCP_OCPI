@@ -475,6 +475,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             DateTime?               Timestamp,
                             EventTracking_Id?       EventTrackingId,
                             TimeSpan?               RequestTimeout,
+                            User_Id?                CurrentUserId,
                             CancellationToken       CancellationToken)
 
         {
@@ -574,6 +575,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                     DateTime?               Timestamp,
                                     EventTracking_Id?       EventTrackingId,
                                     TimeSpan?               RequestTimeout,
+                                    User_Id?                CurrentUserId,
                                     CancellationToken       CancellationToken)
 
         {
@@ -674,6 +676,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                DateTime?               Timestamp,
                                EventTracking_Id?       EventTrackingId,
                                TimeSpan?               RequestTimeout,
+                               User_Id?                CurrentUserId,
                                CancellationToken       CancellationToken)
         {
 
@@ -782,6 +785,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                DateTime?               Timestamp           = null,
                                EventTracking_Id?       EventTrackingId     = null,
                                TimeSpan?               RequestTimeout      = null,
+                               User_Id?                CurrentUserId       = null,
                                CancellationToken       CancellationToken   = default)
 
         {
@@ -901,13 +905,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public override async Task<WWCP.AddOrUpdateChargingStationResult>
 
-            AddOrUpdateChargingStation(WWCP.IChargingStation              ChargingStation,
-                            WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
+            AddOrUpdateChargingStation(WWCP.IChargingStation   ChargingStation,
+                                       WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
 
-                            DateTime?               Timestamp           = null,
-                            EventTracking_Id?       EventTrackingId     = null,
-                            TimeSpan?               RequestTimeout      = null,
-                            CancellationToken       CancellationToken   = default)
+                                       DateTime?               Timestamp           = null,
+                                       EventTracking_Id?       EventTrackingId     = null,
+                                       TimeSpan?               RequestTimeout      = null,
+                                       User_Id?                CurrentUserId       = null,
+                                       CancellationToken       CancellationToken   = default)
 
         {
 
@@ -1039,17 +1044,18 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         public override async Task<WWCP.UpdateChargingStationResult>
 
-            UpdateChargingStation(WWCP.IChargingStation              ChargingStation,
-                       String                  PropertyName,
-                       Object?                 NewValue,
-                       Object?                 OldValue,
-                       Context?                DataSource,
-                       WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
+            UpdateChargingStation(WWCP.IChargingStation   ChargingStation,
+                                  String                  PropertyName,
+                                  Object?                 NewValue,
+                                  Object?                 OldValue,
+                                  Context?                DataSource,
+                                  WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
 
-                       DateTime?               Timestamp           = null,
-                       EventTracking_Id?       EventTrackingId     = null,
-                       TimeSpan?               RequestTimeout      = null,
-                       CancellationToken       CancellationToken   = default)
+                                  DateTime?               Timestamp           = null,
+                                  EventTracking_Id?       EventTrackingId     = null,
+                                  TimeSpan?               RequestTimeout      = null,
+                                  User_Id?                CurrentUserId       = null,
+                                  CancellationToken       CancellationToken   = default)
 
         {
 
@@ -1168,13 +1174,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         public override Task<WWCP.DeleteChargingStationResult>
 
-            DeleteChargingStation(WWCP.IChargingStation              ChargingStation,
-                       WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
+            DeleteChargingStation(WWCP.IChargingStation   ChargingStation,
+                                  WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
 
-                       DateTime?               Timestamp           = null,
-                       EventTracking_Id?       EventTrackingId     = null,
-                       TimeSpan?               RequestTimeout      = null,
-                       CancellationToken       CancellationToken   = default)
+                                  DateTime?               Timestamp           = null,
+                                  EventTracking_Id?       EventTrackingId     = null,
+                                  TimeSpan?               RequestTimeout      = null,
+                                  User_Id?                CurrentUserId       = null,
+                                  CancellationToken       CancellationToken   = default)
 
         {
 
@@ -1208,6 +1215,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     DateTime?               Timestamp           = null,
                     EventTracking_Id?       EventTrackingId     = null,
                     TimeSpan?               RequestTimeout      = null,
+                    User_Id?                CurrentUserId       = null,
                     CancellationToken       CancellationToken   = default)
 
         {
@@ -1327,6 +1335,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             DateTime?               Timestamp           = null,
                             EventTracking_Id?       EventTrackingId     = null,
                             TimeSpan?               RequestTimeout      = null,
+                            User_Id?                CurrentUserId       = null,
                             CancellationToken       CancellationToken   = default)
 
         {
@@ -1452,7 +1461,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public override async Task<WWCP.UpdateEVSEResult>
 
             UpdateEVSE(WWCP.IEVSE              EVSE,
-                       String                  PropertyName,
+                       String?                 PropertyName,
                        Object?                 NewValue,
                        Object?                 OldValue,
                        Context?                DataSource,
@@ -1461,6 +1470,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        DateTime?               Timestamp           = null,
                        EventTracking_Id?       EventTrackingId     = null,
                        TimeSpan?               RequestTimeout      = null,
+                       User_Id?                CurrentUserId       = null,
                        CancellationToken       CancellationToken   = default)
 
         {
@@ -1578,6 +1588,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        DateTime?               Timestamp           = null,
                        EventTracking_Id?       EventTrackingId     = null,
                        TimeSpan?               RequestTimeout      = null,
+                       User_Id?                CurrentUserId       = null,
                        CancellationToken       CancellationToken   = default)
 
         {
@@ -1609,6 +1620,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                               DateTime?                           Timestamp,
                                               EventTracking_Id?                   EventTrackingId,
                                               TimeSpan?                           RequestTimeout,
+                                              User_Id?                            CurrentUserId,
                                               CancellationToken                   CancellationToken)
 
         {

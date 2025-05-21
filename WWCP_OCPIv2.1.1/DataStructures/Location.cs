@@ -228,6 +228,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         [Optional, VendorExtension("PlugSurfing")]
         public    Boolean?                            Publish                  { get; }
 
+        public JObject                                CustomData               { get; }
+        public UserDefinedDictionary                  InternalData             { get; }
+
+
         /// <summary>
         /// The timestamp when this charging location was created.
         /// </summary>
@@ -322,6 +326,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         // Non-Standard extensions
                         Boolean?                                                      Publish                                      = null,
 
+                        JObject?                                                      CustomData                                   = null,
+                        UserDefinedDictionary?                                        InternalData                                 = null,
+
                         DateTime?                                                     Created                                      = null,
                         DateTime?                                                     LastUpdated                                  = null,
                         EMSP_Id?                                                      EMSPId                                       = null,
@@ -367,6 +374,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    EnergyMix,
 
                    Publish,
+
+                   CustomData,
+                   InternalData,
 
                    Created,
                    LastUpdated,
@@ -463,6 +473,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         // Non-Standard extensions
                         Boolean?                                                      Publish                                      = null,
 
+                        JObject?                                                      CustomData                                   = null,
+                        UserDefinedDictionary?                                        InternalData                                 = null,
+
                         DateTime?                                                     Created                                      = null,
                         DateTime?                                                     LastUpdated                                  = null,
                         EMSP_Id?                                                      EMSPId                                       = null,
@@ -510,6 +523,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             // Non-Standard extensions
             this.Publish              = Publish;
+
+            this.CustomData           = CustomData                   ?? [];
+            this.InternalData         = InternalData                 ?? new UserDefinedDictionary();
 
             this.Created              = Created                      ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated          = LastUpdated                  ?? Created     ?? Timestamp.Now;
@@ -1061,6 +1077,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                Publish,
 
+                               null,
+                               null,
+
                                Created,
                                LastUpdated
 
@@ -1272,6 +1291,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    EnergyMix?.      Clone(),
 
                    Publish,
+
+                   CustomData,
+                   InternalData,
 
                    Created,
                    LastUpdated
@@ -1994,6 +2016,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     Publish,
 
+                    CustomData,
+                    InternalData,
+
                     Created,
                     LastUpdated);
 
@@ -2179,6 +2204,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             [Mandatory]
             public Boolean?                            Publish                  { get; set; }
 
+
+            public JObject                             CustomData               { get; }
+            public UserDefinedDictionary               InternalData             { get; }
+
+
             // <summary>
             /// The timestamp when this charging location was created.
             /// </summary>
@@ -2250,6 +2280,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            Boolean?                             Publish              = null,
 
+                           JObject?                             CustomData           = null,
+                           UserDefinedDictionary?               InternalData         = null,
+
                            DateTime?                            Created              = null,
                            DateTime?                            LastUpdated          = null)
 
@@ -2267,20 +2300,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 this.Coordinates         = Coordinates;
 
                 this.Name                = Name;
-                this.RelatedLocations    = RelatedLocations is not null ? new HashSet<AdditionalGeoLocation>(RelatedLocations) : new HashSet<AdditionalGeoLocation>();
-                this.EVSEs               = EVSEs            is not null ? new HashSet<EVSE>                 (EVSEs)            : new HashSet<EVSE>();
-                this.Directions          = Directions       is not null ? new HashSet<DisplayText>          (Directions)       : new HashSet<DisplayText>();
+                this.RelatedLocations    = RelatedLocations is not null ? [.. RelatedLocations] : [];
+                this.EVSEs               = EVSEs            is not null ? [.. EVSEs]            : [];
+                this.Directions          = Directions       is not null ? [.. Directions]       : [];
                 this.Operator            = Operator;
                 this.SubOperator         = SubOperator;
                 this.Owner               = Owner;
-                this.Facilities          = Facilities       is not null ? new HashSet<Facilities>           (Facilities)       : new HashSet<Facilities>();
+                this.Facilities          = Facilities       is not null ? [.. Facilities]       : [];
                 this.Timezone            = Timezone;
                 this.OpeningTimes        = OpeningTimes;
                 this.ChargingWhenClosed  = ChargingWhenClosed;
-                this.Images              = Images           is not null ? new HashSet<Image>                (Images)           : new HashSet<Image>();
+                this.Images              = Images           is not null ? [.. Images]           : [];
                 this.EnergyMix           = EnergyMix;
 
                 this.Publish             = Publish;
+
+                this.CustomData          = CustomData   ?? [];
+                this.InternalData        = InternalData ?? new UserDefinedDictionary();
 
                 this.Created             = Created;
                 this.LastUpdated         = LastUpdated;
@@ -2406,6 +2442,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                  EnergyMix,
 
                                  Publish,
+
+                                 CustomData,
+                                 InternalData,
 
                                  Created     ?? Timestamp.Now,
                                  LastUpdated ?? Timestamp.Now

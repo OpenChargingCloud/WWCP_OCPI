@@ -183,7 +183,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                     URL.Parse("http://example.com/kleine_wellensittiche.jpg")
                                 )
                             },
-                            DateTime.Parse("2020-09-18T00:00:00Z").ToUniversalTime()
+                            LastUpdated: DateTime.Parse("2020-09-18T00:00:00Z").ToUniversalTime()
                         );
 
             #endregion

@@ -162,7 +162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -431,7 +431,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -672,7 +672,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -913,7 +913,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -1154,7 +1154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -1397,7 +1397,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -1638,7 +1638,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -1882,7 +1882,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -2124,7 +2124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -2365,7 +2365,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -2606,7 +2606,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {
@@ -2847,7 +2847,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
                                         },
-                                        DateTime.Parse("2020-09-22")
+                                        LastUpdated: DateTime.Parse("2020-09-22")
                                     )
                                 },
                                 new[] {

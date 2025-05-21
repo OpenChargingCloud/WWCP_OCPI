@@ -474,6 +474,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                             DateTime?               Timestamp,
                             EventTracking_Id?       EventTrackingId,
                             TimeSpan?               RequestTimeout,
+                            User_Id?                CurrentUserId,
                             CancellationToken       CancellationToken)
 
         {
@@ -580,6 +581,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                     DateTime?               Timestamp,
                                     EventTracking_Id?       EventTrackingId,
                                     TimeSpan?               RequestTimeout,
+                                    User_Id?                CurrentUserId,
                                     CancellationToken       CancellationToken)
 
         {
@@ -680,6 +682,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                DateTime?               Timestamp           = null,
                                EventTracking_Id?       EventTrackingId     = null,
                                TimeSpan?               RequestTimeout      = null,
+                               User_Id?                CurrentUserId       = null,
                                CancellationToken       CancellationToken   = default)
         {
 
@@ -794,6 +797,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   DateTime?               Timestamp           = null,
                                   EventTracking_Id?       EventTrackingId     = null,
                                   TimeSpan?               RequestTimeout      = null,
+                                  User_Id?                CurrentUserId       = null,
                                   CancellationToken       CancellationToken   = default)
 
         {
@@ -945,6 +949,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     DateTime?               Timestamp           = null,
                     EventTracking_Id?       EventTrackingId     = null,
                     TimeSpan?               RequestTimeout      = null,
+                    User_Id?                CurrentUserId       = null,
                     CancellationToken       CancellationToken   = default)
 
         {
@@ -1070,6 +1075,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                             DateTime?               Timestamp           = null,
                             EventTracking_Id?       EventTrackingId     = null,
                             TimeSpan?               RequestTimeout      = null,
+                            User_Id?                CurrentUserId       = null,
                             CancellationToken       CancellationToken   = default)
 
         {
@@ -1213,6 +1219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                        DateTime?               Timestamp           = null,
                        EventTracking_Id?       EventTrackingId     = null,
                        TimeSpan?               RequestTimeout      = null,
+                       User_Id?                CurrentUserId       = null,
                        CancellationToken       CancellationToken   = default)
 
         {
@@ -1340,6 +1347,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                        DateTime?               Timestamp           = null,
                        EventTracking_Id?       EventTrackingId     = null,
                        TimeSpan?               RequestTimeout      = null,
+                       User_Id?                CurrentUserId       = null,
                        CancellationToken       CancellationToken   = default)
 
         {
@@ -1371,6 +1379,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                               DateTime?                           Timestamp,
                                               EventTracking_Id?                   EventTrackingId,
                                               TimeSpan?                           RequestTimeout,
+                                              User_Id?                            CurrentUserId,
                                               CancellationToken                   CancellationToken)
 
         {

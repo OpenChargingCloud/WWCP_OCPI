@@ -17,12 +17,13 @@
 
 #region Usings
 
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Styx;
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
-using Newtonsoft.Json.Linq;
 
 #endregion
 
@@ -469,7 +470,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             try
             {
 
-                Warnings = Array.Empty<Warning>();
+                Warnings = [];
 
                 var evses = new List<EVSE>();
 
@@ -556,6 +557,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            ChargingWhenClosed:   ChargingPool.ChargingWhenClosed,
                            Images:               null,
                            EnergyMix:            null,
+
+                           CustomData:           ChargingPool.CustomData,
+                           InternalData:         ChargingPool.InternalData,
 
                            LastUpdated:          ChargingPool.LastChangeDate
 
@@ -701,6 +705,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static EnergyMeter<EVSE> ToOCPI(this WWCP.EnergyMeter EnergyMeter)
 
             => new (
+
                    EnergyMeter_Id.Parse(EnergyMeter.Id.ToString()),
                    EnergyMeter.Model,
                    EnergyMeter.ModelURL,
@@ -716,6 +721,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    EnergyMeter.LastChangeDate,
                    EnergyMeter.CustomData,
                    EnergyMeter.InternalData
+
                );
 
         #endregion
@@ -766,7 +772,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 EVSE_UId? evseUId = null;
 
-                // Favor the OCPI EVSE Unique identification over the WWCP EVSE identification!
+                // Favour the OCPI EVSE Unique identification over the WWCP EVSE identification!
                 if (EVSE_UId.TryParse(EVSE.CustomData?[OCPI_EVSEUId]?.Value<String>() ?? "", out var uid))
                 {
                     evseUId = uid;
@@ -864,6 +870,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Directions:            EVSE.ChargingStation.ArrivalInstructions.ToOCPI(),
                            ParkingRestrictions:   [],
                            Images:                [],
+
+                           CustomData:            EVSE.CustomData,
+                           InternalData:          EVSE.InternalData,
 
                            LastUpdated:           LastUpdate ?? EVSE.LastChangeDate
 
