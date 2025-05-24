@@ -2549,14 +2549,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #endregion
 
-        #region (virtual)   HandleErrors (Module, Caller, ExceptionOccured)
+        #region (virtual)   HandleErrors (Module, Caller, ExceptionOccurred)
 
         public virtual Task HandleErrors(String     Module,
                                          String     Caller,
-                                         Exception  ExceptionOccured)
+                                         Exception  ExceptionOccurred)
         {
 
-            DebugX.LogException(ExceptionOccured, $"{Module}.{Caller}");
+            DebugX.LogException(ExceptionOccurred, $"{Module}.{Caller}");
 
             return Task.CompletedTask;
 
