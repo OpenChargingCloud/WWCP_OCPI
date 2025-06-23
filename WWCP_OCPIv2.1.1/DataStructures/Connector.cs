@@ -380,12 +380,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 }
 
-                return tariffs.FirstOrDefault()?.Id;
+                // When there are multiple tariffs...
+                // prefer the one that is valid for the longest remaining time!
+                return tariffs.OrderBy(tariff => now - tariff.NotAfter).FirstOrDefault()?.Id;
 
             }
 
             if (emspTariffIds is not null &&
-                EMSPId.HasValue       &&
+                EMSPId.HasValue           &&
                 emspTariffIds.TryGetValue(EMSPId.Value, out var emspTariffId))
             {
                 return emspTariffId;
