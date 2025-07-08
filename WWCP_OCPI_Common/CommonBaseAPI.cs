@@ -49,6 +49,7 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
+using org.GraphDefined.Vanaheimr.Illias.Logging;
 
 #endregion
 
@@ -607,33 +608,34 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String      DefaultHTTPServerName           = "GraphDefined OCPI Common HTTP API";
+        public new const           String         DefaultHTTPServerName           = "GraphDefined OCPI Common HTTP API";
 
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String      DefaultHTTPServiceName          = "GraphDefined OCPI Common HTTP API";
+        public new const           String         DefaultHTTPServiceName          = "GraphDefined OCPI Common HTTP API";
 
         /// <summary>
         /// The default HTTP server TCP port.  
         /// </summary>
-        public new static readonly IPPort      DefaultHTTPServerPort           = IPPort.Parse(8080);
+        public new static readonly IPPort         DefaultHTTPServerPort           = IPPort.Parse(8080);
 
         /// <summary>
         /// The default HTTP URL path prefix.  
         /// </summary>
-        public new static readonly HTTPPath    DefaultURLPathPrefix            = HTTPPath.Parse("io/OCPI/");
+        public new static readonly HTTPPath       DefaultURLPathPrefix            = HTTPPath.Parse("io/OCPI/");
 
         /// <summary>
         /// The default database file name for all remote party configuration.
         /// </summary>
-        public const               String      DefaultRemotePartyDBFileName    = "RemoteParties.db";
+        public const               String         DefaultRemotePartyDBFileName    = "RemoteParties.db";
 
         /// <summary>
         /// The default database file name for all OCPI assets.
         /// </summary>
-        public const               String      DefaultAssetsDBFileName         = "Assets.db";
+        public const               String         DefaultAssetsDBFileName         = "Assets.db";
 
+        private readonly           LogFileWriter  logFileWriter                   = new (10000);
 
         public const String addRemoteParty                     = "addRemoteParty";
         public const String addRemotePartyIfNotExists          = "addRemotePartyIfNotExists";
@@ -2178,27 +2180,26 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region WriteToDatabase                          (FileName, Text, ...)
 
-        public Task WriteToDatabase(String             FileName,
-                                    String             Text,
-                                    CancellationToken  CancellationToken   = default)
+        public ValueTask WriteToDatabase(String             FileName,
+                                         String             Text,
+                                         CancellationToken  CancellationToken   = default)
 
-            => File.AppendAllTextAsync(
-                   FileName,
-                   Text + Environment.NewLine,
-                   Encoding.UTF8,
-                   CancellationToken
-               );
+          => logFileWriter.EnqueueAsync(
+                 FileName,
+                 Text,
+                 CancellationToken
+             );
 
         #endregion
 
         #region WriteToDatabase                          (FileName, JToken, ...)
 
-        public Task WriteToDatabase(String             FileName,
-                                    String             Command,
-                                    JToken?            JToken,
-                                    EventTracking_Id   EventTrackingId,
-                                    User_Id?           CurrentUserId       = null,
-                                    CancellationToken  CancellationToken   = default)
+        public ValueTask WriteToDatabase(String             FileName,
+                                         String             Command,
+                                         JToken?            JToken,
+                                         EventTracking_Id   EventTrackingId,
+                                         User_Id?           CurrentUserId       = null,
+                                         CancellationToken  CancellationToken   = default)
 
             => WriteToDatabase(
 
@@ -2225,16 +2226,15 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region WriteCommentToDatabase                   (FileName, Text, ...)
 
-        public Task WriteCommentToDatabase(String             FileName,
-                                           String             Text,
-                                           EventTracking_Id   EventTrackingId,
-                                           User_Id?           CurrentUserId       = null,
-                                           CancellationToken  CancellationToken   = default)
+        public ValueTask WriteCommentToDatabase(String             FileName,
+                                                String             Text,
+                                                EventTracking_Id   EventTrackingId,
+                                                User_Id?           CurrentUserId       = null,
+                                                CancellationToken  CancellationToken   = default)
 
-            => File.AppendAllTextAsync(
+            => WriteToDatabase(
                    FileName,
                    $"//{Timestamp.Now.ToISO8601()} {EventTrackingId} {(CurrentUserId is not null ? CurrentUserId : "-")}: {Text}{Environment.NewLine}",
-                   Encoding.UTF8,
                    CancellationToken
                );
 

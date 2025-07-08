@@ -3135,10 +3135,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region LogRemoteParty              (Command,              ...)
 
-        public Task LogRemoteParty(String             Command,
-                                   EventTracking_Id   EventTrackingId,
-                                   User_Id?           CurrentUserId       = null,
-                                   CancellationToken  CancellationToken   = default)
+        public ValueTask LogRemoteParty(String             Command,
+                                        EventTracking_Id   EventTrackingId,
+                                        User_Id?           CurrentUserId       = null,
+                                        CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    RemotePartyDBFileName,
@@ -3153,11 +3153,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region LogRemoteParty              (Command, Text = null, ...)
 
-        public Task LogRemoteParty(String             Command,
-                                   String?            Text,
-                                   EventTracking_Id   EventTrackingId,
-                                   User_Id?           CurrentUserId       = null,
-                                   CancellationToken  CancellationToken   = default)
+        public ValueTask LogRemoteParty(String             Command,
+                                        String?            Text,
+                                        EventTracking_Id   EventTrackingId,
+                                        User_Id?           CurrentUserId       = null,
+                                        CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    RemotePartyDBFileName,
@@ -3174,11 +3174,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region LogRemoteParty              (Command, JSON,        ...)
 
-        public Task LogRemoteParty(String             Command,
-                                   JObject            JSON,
-                                   EventTracking_Id   EventTrackingId,
-                                   User_Id?           CurrentUserId       = null,
-                                   CancellationToken  CancellationToken   = default)
+        public ValueTask LogRemoteParty(String             Command,
+                                        JObject            JSON,
+                                        EventTracking_Id   EventTrackingId,
+                                        User_Id?           CurrentUserId       = null,
+                                        CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    RemotePartyDBFileName,
@@ -3193,11 +3193,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region LogRemoteParty              (Command, Number,      ...)
 
-        public Task Log(String             Command,
-                        Int64              Number,
-                        EventTracking_Id   EventTrackingId,
-                        User_Id?           CurrentUserId       = null,
-                        CancellationToken  CancellationToken   = default)
+        public ValueTask Log(String             Command,
+                             Int64              Number,
+                             EventTracking_Id   EventTrackingId,
+                             User_Id?           CurrentUserId       = null,
+                             CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    RemotePartyDBFileName,
@@ -3212,10 +3212,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region LogRemotePartyComment       (Text,                 ...)
 
-        public Task LogRemotePartyComment(String             Text,
-                                          EventTracking_Id   EventTrackingId,
-                                          User_Id?           CurrentUserId       = null,
-                                          CancellationToken  CancellationToken   = default)
+        public ValueTask LogRemotePartyComment(String             Text,
+                                               EventTracking_Id   EventTrackingId,
+                                               User_Id?           CurrentUserId       = null,
+                                               CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteCommentToDatabase(
                    RemotePartyDBFileName,
@@ -3242,10 +3242,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region LogAsset              (Command,              ...)
 
-        public Task LogAsset(String             Command,
-                             EventTracking_Id   EventTrackingId,
-                             User_Id?           CurrentUserId       = null,
-                             CancellationToken  CancellationToken   = default)
+        public ValueTask LogAsset(String             Command,
+                                  EventTracking_Id   EventTrackingId,
+                                  User_Id?           CurrentUserId       = null,
+                                  CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    AssetsDBFileName,
@@ -3260,11 +3260,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region LogAsset              (Command, Text = null, ...)
 
-        public Task LogAsset(String             Command,
-                             String?            Text,
-                             EventTracking_Id?  EventTrackingId     = null,
-                             User_Id?           CurrentUserId       = null,
-                             CancellationToken  CancellationToken   = default)
+        public ValueTask LogAsset(String             Command,
+                                  String?            Text,
+                                  EventTracking_Id?  EventTrackingId     = null,
+                                  User_Id?           CurrentUserId       = null,
+                                  CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    AssetsDBFileName,
@@ -3281,11 +3281,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region LogAsset              (Command, JSONObject,  ...)
 
-        public Task LogAsset(String             Command,
-                             JObject            JSONObject,
-                             EventTracking_Id   EventTrackingId,
-                             User_Id?           CurrentUserId       = null,
-                             CancellationToken  CancellationToken   = default)
+        public ValueTask LogAsset(String             Command,
+                                  JObject            JSONObject,
+                                  EventTracking_Id   EventTrackingId,
+                                  User_Id?           CurrentUserId       = null,
+                                  CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    AssetsDBFileName,
@@ -3300,11 +3300,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region LogAsset              (Command, JSONArray,   ...)
 
-        public Task LogAsset(String             Command,
-                             JArray             JSONArray,
-                             EventTracking_Id   EventTrackingId,
-                             User_Id?           CurrentUserId       = null,
-                             CancellationToken  CancellationToken   = default)
+        public ValueTask LogAsset(String             Command,
+                                  JArray             JSONArray,
+                                  EventTracking_Id   EventTrackingId,
+                                  User_Id?           CurrentUserId       = null,
+                                  CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    AssetsDBFileName,
@@ -3319,11 +3319,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region LogAsset              (Command, Number,      ...)
 
-        public Task LogAsset(String             Command,
-                             Int64              Number,
-                             EventTracking_Id   EventTrackingId,
-                             User_Id?           CurrentUserId       = null,
-                             CancellationToken  CancellationToken   = default)
+        public ValueTask LogAsset(String             Command,
+                                  Int64              Number,
+                                  EventTracking_Id   EventTrackingId,
+                                  User_Id?           CurrentUserId       = null,
+                                  CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteToDatabase(
                    AssetsDBFileName,
@@ -3338,10 +3338,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region LogAssetComment       (Text,                 ...)
 
-        public Task LogAssetComment(String             Text,
-                                    EventTracking_Id   EventTrackingId,
-                                    User_Id?           CurrentUserId       = null,
-                                    CancellationToken  CancellationToken   = default)
+        public ValueTask LogAssetComment(String             Text,
+                                         EventTracking_Id   EventTrackingId,
+                                         User_Id?           CurrentUserId       = null,
+                                         CancellationToken  CancellationToken   = default)
 
             => BaseAPI.WriteCommentToDatabase(
                    AssetsDBFileName,

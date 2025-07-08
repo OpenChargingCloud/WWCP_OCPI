@@ -1111,12 +1111,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                         _     => ConnectorFormats.SOCKET
                                                     },
                            PowerType:               powerType.Value,
-                           Voltage:                 EVSE.AverageVoltage.HasValue && EVSE.AverageVoltage.Value.Value != 0
+                           Voltage:                 EVSE.RMSVoltage.HasValue && EVSE.RMSVoltage.Value.Value != 0
                                                         ? powerType.Value switch {
-                                                              PowerTypes.AC_1_PHASE  => EVSE.AverageVoltage.Value,
+                                                              PowerTypes.AC_1_PHASE  => EVSE.RMSVoltage.Value,
                                                                                       // 400 V between two conductors => 230 V between conductor and neutral (OCPI design flaw!)
-                                                              PowerTypes.AC_3_PHASE  => Volt.ParseV(EVSE.AverageVoltage.Value.Value / ((Decimal) Math.Sqrt(3))),
-                                                              _                      => EVSE.AverageVoltage.Value
+                                                              PowerTypes.AC_3_PHASE  => Volt.ParseV(EVSE.RMSVoltage.Value.Value / ((Decimal) Math.Sqrt(3))),
+                                                              _                      => EVSE.RMSVoltage.Value
                                                           }
                                                         : powerType.Value switch {
                                                               PowerTypes.AC_1_PHASE  => Volt.ParseV(230),
