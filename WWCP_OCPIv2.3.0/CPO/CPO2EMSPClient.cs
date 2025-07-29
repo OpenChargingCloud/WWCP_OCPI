@@ -17,6 +17,7 @@
 
 #region Usings
 
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 using Newtonsoft.Json.Linq;
@@ -1053,6 +1054,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -1177,6 +1179,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnGetLocationResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetLocationResponse,
@@ -1195,7 +1198,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -1235,6 +1238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -1380,6 +1384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnPutLocationResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPutLocationResponse,
@@ -1396,7 +1401,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -1444,6 +1449,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -1569,6 +1575,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnPatchLocationResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPatchLocationResponse,
@@ -1586,7 +1593,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -1627,6 +1634,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -1751,6 +1759,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnGetEVSEResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetEVSEResponse,
@@ -1768,7 +1777,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -1862,6 +1871,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -2004,6 +2014,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnPutEVSEResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPutEVSEResponse,
@@ -2023,7 +2034,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -2071,6 +2082,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -2200,6 +2212,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnPatchEVSEResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPatchEVSEResponse,
@@ -2220,7 +2233,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -2262,6 +2275,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -2390,6 +2404,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnGetConnectorResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetConnectorResponse,
@@ -2410,7 +2425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -2460,6 +2475,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -2591,6 +2607,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnPutConnectorResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPutConnectorResponse,
@@ -2607,7 +2624,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -2649,6 +2666,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -2780,6 +2798,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnPatchConnectorResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPatchConnectorResponse,
@@ -2801,7 +2820,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -2841,6 +2860,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -2965,6 +2985,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnGetTariffResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetTariffResponse,
@@ -2983,7 +3004,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -3022,6 +3043,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -3158,6 +3180,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnPutTariffResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPutTariffResponse,
@@ -3174,7 +3197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -3221,6 +3244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -3348,6 +3372,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnPatchTariffResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPatchTariffResponse,
@@ -3367,7 +3392,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -3406,6 +3431,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -3530,6 +3556,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnDeleteTariffResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnDeleteTariffResponse,
@@ -3548,7 +3575,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -3588,6 +3615,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -3712,6 +3740,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnGetSessionResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetSessionResponse,
@@ -3730,7 +3759,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -3769,6 +3798,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -3900,6 +3930,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnPutSessionResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPutSessionResponse,
@@ -3916,7 +3947,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -3963,6 +3994,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -4090,6 +4122,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnPatchSessionResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPatchSessionResponse,
@@ -4109,7 +4142,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -4148,6 +4181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -4272,6 +4306,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnDeleteSessionResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnDeleteSessionResponse,
@@ -4290,7 +4325,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -4328,6 +4363,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -4473,6 +4509,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnPostCDRResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPostCDRResponse,
@@ -4489,7 +4526,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -4528,6 +4565,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -4652,6 +4690,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnGetCDRResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetCDRResponse,
@@ -4670,7 +4709,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -4714,6 +4753,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -4847,6 +4887,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnGetTokensResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetTokensResponse,
@@ -4864,7 +4905,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -4903,6 +4944,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -5065,6 +5107,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnPostTokenResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPostTokenResponse,
@@ -5083,7 +5126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -5124,6 +5167,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -5260,6 +5304,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnPutBookingResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPutBookingResponse,
@@ -5276,7 +5321,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -5320,6 +5365,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -5453,6 +5499,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             #region Send OnSetChargingProfileResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnSetChargingProfileResponse,
@@ -5470,7 +5517,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 

@@ -17,6 +17,7 @@
 
 #region Usings
 
+using System.Diagnostics;
 using System.Security.Authentication;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
@@ -929,6 +930,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -1049,6 +1051,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnGetLocationsResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetLocationsResponse,
@@ -1063,7 +1066,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -1106,6 +1109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -1226,6 +1230,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnGetLocationResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetLocationResponse,
@@ -1242,7 +1247,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -1287,6 +1292,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -1408,6 +1414,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnGetEVSEResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetEVSEResponse,
@@ -1425,7 +1432,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -1472,6 +1479,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -1594,6 +1602,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnGetConnectorResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetConnectorResponse,
@@ -1612,7 +1621,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -1662,6 +1671,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -1782,6 +1792,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnGetTariffsResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetTariffsResponse,
@@ -1796,7 +1807,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -1839,6 +1850,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -1959,6 +1971,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnGetTariffResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetTariffResponse,
@@ -1975,7 +1988,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -2025,6 +2038,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -2161,6 +2175,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnGetSessionsResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetSessionsResponse,
@@ -2175,7 +2190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -2218,6 +2233,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -2338,6 +2354,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnGetSessionResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetSessionResponse,
@@ -2354,7 +2371,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -2406,6 +2423,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -2526,6 +2544,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnGetCDRsResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetCDRsResponse,
@@ -2540,7 +2559,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -2583,6 +2602,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -2703,6 +2723,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnGetCDRResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetCDRResponse,
@@ -2719,7 +2740,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -2759,6 +2780,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -2883,6 +2905,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnGetTokenResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetTokenResponse,
@@ -2901,7 +2924,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -2940,6 +2963,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -3064,6 +3088,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnPutTokenResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPutTokenResponse,
@@ -3080,7 +3105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -3127,6 +3152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -3254,6 +3280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnPatchTokenResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPatchTokenResponse,
@@ -3273,7 +3300,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -3323,6 +3350,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -3443,6 +3471,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnGetBookingsResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetBookingsResponse,
@@ -3457,7 +3486,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -3488,6 +3517,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -3608,6 +3638,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnPostBookingResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPostBookingsResponse,
@@ -3624,7 +3655,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -3671,6 +3702,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var commandId        = CommandId       ?? Command_Id.    NewRandom();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
@@ -3827,6 +3859,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnReserveNowResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnReserveNowResponse,
@@ -3848,7 +3881,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -3886,6 +3919,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var commandId        = CommandId       ?? Command_Id.    NewRandom();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
@@ -4031,6 +4065,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnCancelReservationResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnCancelReservationResponse,
@@ -4047,7 +4082,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -4089,6 +4124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var commandId        = CommandId       ?? Command_Id.    NewRandom();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
@@ -4243,6 +4279,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnStartSessionResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnStartSessionResponse,
@@ -4263,7 +4300,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -4301,6 +4338,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var commandId        = CommandId       ?? Command_Id.    NewRandom();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
@@ -4447,6 +4485,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnStopSessionResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnStopSessionResponse,
@@ -4463,7 +4502,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -4503,6 +4542,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var commandId        = CommandId       ?? Command_Id.    NewRandom();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
@@ -4653,6 +4693,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Send OnUnlockConnectorResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnUnlockConnectorResponse,
@@ -4671,7 +4712,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 

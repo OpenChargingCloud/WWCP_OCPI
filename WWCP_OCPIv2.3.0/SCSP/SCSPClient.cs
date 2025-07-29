@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -445,6 +447,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -566,6 +569,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             #region Send OnGetLocationsResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             try
             {
@@ -583,7 +587,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     stopwatch.Elapsed))).
                                        ConfigureAwait(false);
 
             }
@@ -631,6 +635,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -754,6 +759,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             #region Send OnGetLocationResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             try
             {
@@ -773,7 +779,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     stopwatch.Elapsed))).
                                        ConfigureAwait(false);
 
             }
@@ -823,6 +829,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -947,6 +954,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             #region Send OnGetEVSEResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             try
             {
@@ -967,7 +975,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     stopwatch.Elapsed))).
                                        ConfigureAwait(false);
 
             }
@@ -1019,6 +1027,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -1144,6 +1153,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             #region Send OnGetConnectorResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             try
             {
@@ -1165,7 +1175,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     stopwatch.Elapsed))).
                                        ConfigureAwait(false);
 
             }
@@ -1211,6 +1221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -1332,6 +1343,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             #region Send OnGetSessionsResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             try
             {
@@ -1349,7 +1361,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     stopwatch.Elapsed))).
                                        ConfigureAwait(false);
 
             }
@@ -1397,6 +1409,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             #region Init
 
             var startTime        = Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -1520,6 +1533,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             #region Send OnGetSessionResponse event
 
             var endtime = Timestamp.Now;
+            stopwatch.Stop();
 
             try
             {
@@ -1539,7 +1553,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     stopwatch.Elapsed))).
                                        ConfigureAwait(false);
 
             }

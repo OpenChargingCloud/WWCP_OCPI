@@ -17,6 +17,7 @@
 
 #region Usings
 
+using System.Diagnostics;
 using System.Collections.Concurrent;
 using System.Security.Authentication;
 using System.Runtime.CompilerServices;
@@ -724,6 +725,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             var requestTimeout   = RequestTimeout  ?? base.RequestTimeout;
 
             var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
 
             Counters.GetVersions.IncRequests_OK();
 
@@ -891,7 +893,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                           requestTimeout,
                           response.Data ?? [],
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -939,6 +941,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             var requestTimeout   = RequestTimeout  ?? base.RequestTimeout;
 
             var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
 
             Counters.GetVersionDetails.IncRequests_OK();
 
@@ -1171,7 +1174,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                           requestTimeout,
                           response.Data,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -1282,6 +1285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             var requestTimeout   = RequestTimeout  ?? base.RequestTimeout;
 
             var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
 
             Counters.GetCredentials.IncRequests_OK();
 
@@ -1436,7 +1440,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                           requestTimeout,
                           response.Data,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -1489,6 +1493,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             var requestTimeout   = RequestTimeout  ?? base.RequestTimeout;
 
             var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
 
             Counters.PostCredentials.IncRequests_OK();
 
@@ -1647,7 +1652,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                           requestTimeout,
                           response.Data,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -1700,6 +1705,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             var requestTimeout   = RequestTimeout  ?? base.RequestTimeout;
 
             var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
 
             Counters.PutCredentials.IncRequests_OK();
 
@@ -1924,7 +1930,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                           requestTimeout,
                           response.Data,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -1973,6 +1979,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             var requestTimeout   = RequestTimeout  ?? base.RequestTimeout;
 
             var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
 
             Counters.DeleteCredentials.IncRequests_OK();
 
@@ -2122,7 +2129,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                           versionId,
 
                           requestTimeout,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
@@ -2193,6 +2200,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             var requestTimeout   = RequestTimeout  ?? base.RequestTimeout;
 
             var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var stopwatch        = Stopwatch.StartNew();
 
             Counters.Register.IncRequests_OK();
 
@@ -2470,7 +2478,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                           versionId,
 
                           requestTimeout,
-                          endtime - startTime
+                          stopwatch.Elapsed
                       )
                   );
 
