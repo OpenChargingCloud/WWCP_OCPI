@@ -2261,7 +2261,7 @@ namespace cloud.charging.open.protocols.OCPI
             { }
             catch (Exception e)
             {
-                DebugX.Log(e, $"OCPI.CommonAPIBase.ReadDatabaseFile({DBFileName})");
+                DebugX.LogException(e, $"OCPI.CommonAPIBase.ReadDatabaseFile({DBFileName})");
             }
 
             return [];
@@ -2343,7 +2343,7 @@ namespace cloud.charging.open.protocols.OCPI
                     }
                     catch (Exception e)
                     {
-                        DebugX.Log(e, $"OCPI.CommonAPIBase.ProcessCommands()");
+                        DebugX.LogException(e, $"OCPI.CommonAPIBase.ProcessCommands()");
                     }
 
                 }
@@ -2378,7 +2378,7 @@ namespace cloud.charging.open.protocols.OCPI
             }
             catch (Exception e)
             {
-                DebugX.Log(e, $"OCPI.CommonAPIBase.ReadDatabaseFileWithMetadata({DBFileName})");
+                DebugX.LogException(e, $"OCPI.CommonAPIBase.ReadDatabaseFileWithMetadata({DBFileName})");
             }
 
             return [];

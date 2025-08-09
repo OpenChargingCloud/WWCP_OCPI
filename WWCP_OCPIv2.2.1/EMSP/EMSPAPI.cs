@@ -6096,7 +6096,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                             }
                                             catch (Exception e)
                                             {
-                                                DebugX.Log(e, "Could not do an RFID auth!");
+                                                DebugX.LogException(e, "Could not do an RFID auth!");
                                             }
 
                                         }
