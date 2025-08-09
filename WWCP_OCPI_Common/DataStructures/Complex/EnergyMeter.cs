@@ -168,7 +168,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// The timestamp when this energy meter was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                                 LastUpdated                   { get; }
+        public DateTimeOffset                           LastUpdated                   { get; }
 
         #endregion
 
@@ -203,8 +203,8 @@ namespace cloud.charging.open.protocols.OCPI
                            IEnumerable<TransparencySoftwareStatus>?  TransparencySoftwares       = null,
                            IEnumerable<DisplayText>?                 Description                 = null,
 
-                           DateTime?                                 Created                     = null,
-                           DateTime?                                 LastUpdated                 = null,
+                           DateTimeOffset?                           Created                     = null,
+                           DateTimeOffset?                           LastUpdated                 = null,
 
                            JObject?                                  CustomData                  = null,
                            UserDefinedDictionary?                    InternalData                = null)

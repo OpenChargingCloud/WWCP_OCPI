@@ -55,8 +55,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// <param name="DayOfWeek">All day(s) of the week this tariff element is active.</param>
     public class TariffRestrictions(Time?                    StartTime     = null,
                                     Time?                    EndTime       = null,
-                                    DateTime?                StartDate     = null,
-                                    DateTime?                EndDate       = null,
+                                    DateTimeOffset?          StartDate     = null,
+                                    DateTimeOffset?          EndDate       = null,
                                     Decimal?                 MinkWh        = null,
                                     Decimal?                 MaxkWh        = null,
                                     Decimal?                 MinPower      = null,
@@ -84,13 +84,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The start date, for example: 2015-12-24, valid from this day until that day (excluding that day).
         /// </summary>
         [Optional]
-        public DateTime?               StartDate      { get; } = StartDate;
+        public DateTimeOffset?         StartDate      { get; } = StartDate;
 
         /// <summary>
         /// The end date, for example: 2015-12-24, valid from this day until that day (excluding that day).
         /// </summary>
         [Optional]
-        public DateTime?               EndDate        { get; } = EndDate;
+        public DateTimeOffset?         EndDate        { get; } = EndDate;
 
         /// <summary>
         /// The minimum consumed energy in kWh, for example 20, valid from this amount of energy

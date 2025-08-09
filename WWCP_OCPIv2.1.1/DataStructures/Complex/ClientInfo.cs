@@ -60,7 +60,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Timestamp when this client info was last updated.
         /// </summary>
         [Mandatory]
-        public DateTime          LastUpdated    { get; }
+        public DateTimeOffset    LastUpdated    { get; }
 
         #endregion
 
@@ -76,7 +76,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public ClientInfo(CountryCode       CountryCode,
                           Party_Id          PartyId,
                           ConnectionStatus  Status,
-                          DateTime?         LastUpdated = null)
+                          DateTimeOffset?   LastUpdated = null)
         {
 
             this.CountryCode  = CountryCode;

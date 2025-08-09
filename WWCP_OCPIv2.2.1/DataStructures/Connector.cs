@@ -134,7 +134,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The timestamp when this connector was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                LastUpdated              { get; }
+        public DateTimeOffset          LastUpdated              { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this connector.
@@ -176,7 +176,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            IEnumerable<Tariff_Id>?                      TariffIds                   = null,
                            URL?                                         TermsAndConditionsURL       = null,
 
-                           DateTime?                                    LastUpdated                 = null,
+                           DateTimeOffset?                              LastUpdated                 = null,
                            EMSP_Id?                                     EMSPId                      = null,
                            CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
@@ -245,7 +245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          IEnumerable<Tariff_Id>?                      TariffIds                   = null,
                          URL?                                         TermsAndConditionsURL       = null,
 
-                         DateTime?                                    LastUpdated                 = null,
+                         DateTimeOffset?                              LastUpdated                 = null,
                          EMSP_Id?                                     EMSPId                      = null,
                          CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 

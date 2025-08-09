@@ -148,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// Timestamp when this remote party was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                             LastUpdated                   { get; }
+        public DateTimeOffset                       LastUpdated                   { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this remote party.
@@ -258,8 +258,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            AccessStatus                                               AccessStatus                 = AccessStatus.ALLOWED,
                            PartyStatus                                                Status                       = PartyStatus.ENABLED,
 
-                           DateTime?                                                  LocalAccessNotBefore         = null,
-                           DateTime?                                                  LocalAccessNotAfter          = null,
+                           DateTimeOffset?                                            LocalAccessNotBefore         = null,
+                           DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
                            Boolean?                                                   PreferIPv4                   = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
@@ -323,8 +323,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.ONLINE,
                            PartyStatus                                                Status                       = PartyStatus.ENABLED,
-                           DateTime?                                                  RemoteAccessNotBefore        = null,
-                           DateTime?                                                  RemoteAccessNotAfter         = null,
+                           DateTimeOffset?                                            RemoteAccessNotBefore        = null,
+                           DateTimeOffset?                                            RemoteAccessNotAfter         = null,
 
                            Boolean?                                                   PreferIPv4                   = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
@@ -338,7 +338,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            UInt32?                                                    InternalBufferSize           = null,
                            Boolean?                                                   UseHTTPPipelining            = null,
 
-                           DateTime?                                                  LastUpdated                  = null)
+                           DateTimeOffset?                                            LastUpdated                  = null)
 
             : this(Id,
                    Roles,
@@ -389,16 +389,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                            Version_Id?                                                SelectedVersionId            = null,
 
-                           DateTime?                                                  LocalAccessNotBefore         = null,
-                           DateTime?                                                  LocalAccessNotAfter          = null,
+                           DateTimeOffset?                                            LocalAccessNotBefore         = null,
+                           DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
                            Boolean?                                                   AccessTokenBase64Encoding    = null,
                            Boolean?                                                   AllowDowngrades              = false,
                            AccessStatus                                               AccessStatus                 = AccessStatus.ALLOWED,
                            RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.ONLINE,
                            PartyStatus                                                Status                       = PartyStatus.ENABLED,
-                           DateTime?                                                  RemoteAccessNotBefore        = null,
-                           DateTime?                                                  RemoteAccessNotAfter         = null,
+                           DateTimeOffset?                                            RemoteAccessNotBefore        = null,
+                           DateTimeOffset?                                            RemoteAccessNotAfter         = null,
 
                            Boolean?                                                   PreferIPv4                   = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
@@ -412,7 +412,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            UInt32?                                                    InternalBufferSize           = null,
                            Boolean?                                                   UseHTTPPipelining            = null,
 
-                           DateTime?                                                  LastUpdated                  = null)
+                           DateTimeOffset?                                            LastUpdated                  = null)
 
             : this(Id,
                    Roles,
@@ -482,7 +482,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            UInt32?                                                    InternalBufferSize           = null,
                            Boolean?                                                   UseHTTPPipelining            = null,
 
-                           DateTime?                                                  LastUpdated                  = null)
+                           DateTimeOffset?                                            LastUpdated                  = null)
 
         {
 
@@ -492,7 +492,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             this.PreferIPv4                  = PreferIPv4;
             this.RemoteCertificateValidator  = RemoteCertificateValidator;
-            this.LocalCertificateSelector   = LocalCertificateSelector;
+            this.LocalCertificateSelector    = LocalCertificateSelector;
             this.ClientCert                  = ClientCert;
             this.TLSProtocol                 = TLSProtocol;
             this.HTTPUserAgent               = HTTPUserAgent;
@@ -504,8 +504,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             this.LastUpdated                 = LastUpdated ?? Timestamp.Now;
 
-            this.localAccessInfos            = LocalAccessInfos. IsNeitherNullNorEmpty() ? new List<LocalAccessInfo> (LocalAccessInfos)  : [];
-            this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? new List<RemoteAccessInfo>(RemoteAccessInfos) : [];
+            this.localAccessInfos            = LocalAccessInfos. IsNeitherNullNorEmpty() ? [.. LocalAccessInfos] : [];
+            this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? [.. RemoteAccessInfos] : [];
 
             this.ETag                        = CalcSHA256Hash();
 

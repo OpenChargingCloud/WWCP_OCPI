@@ -76,13 +76,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The timestamp when the session became active.
         /// </summary>
         [Mandatory]
-        public   DateTime                            Start                        { get; }
+        public   DateTimeOffset                      Start                        { get; }
 
         /// <summary>
         /// The optional timestamp when the session was completed.
         /// </summary>
         [Optional]
-        public   DateTime?                           End                          { get; }
+        public   DateTimeOffset?                     End                          { get; }
 
 #pragma warning disable IDE1006 // Naming Styles
         /// <summary>
@@ -145,13 +145,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The timestamp when this session was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public   DateTime                            Created                      { get; }
+        public   DateTimeOffset                      Created                      { get; }
 
         /// <summary>
         /// The timestamp when this session was last updated (or created).
         /// </summary>
         [Mandatory]
-        public   DateTime                            LastUpdated                  { get; }
+        public   DateTimeOffset                      LastUpdated                  { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this charging session.
@@ -205,7 +205,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public Session(CountryCode                                                   CountryCode,
                        Party_Id                                                      PartyId,
                        Session_Id                                                    Id,
-                       DateTime                                                      Start,
+                       DateTimeOffset                                                Start,
                        WattHour                                                      kWh,
                        Auth_Id                                                       AuthId,
                        AuthMethods                                                   AuthMethod,
@@ -213,13 +213,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        Currency                                                      Currency,
                        SessionStatusTypes                                            Status,
 
-                       DateTime?                                                     End                                          = null,
+                       DateTimeOffset?                                               End                                          = null,
                        EnergyMeter_Id?                                               EnergyMeterId                                = null,
                        IEnumerable<ChargingPeriod>?                                  ChargingPeriods                              = null,
                        Decimal?                                                      TotalCost                                    = null,
 
-                       DateTime?                                                     Created                                      = null,
-                       DateTime?                                                     LastUpdated                                  = null,
+                       DateTimeOffset?                                               Created                                      = null,
+                       DateTimeOffset?                                               LastUpdated                                  = null,
                        EMSP_Id?                                                      EMSPId                                       = null,
 
                        CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                      = null,

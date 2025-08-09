@@ -42,7 +42,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public Int32             StatusCode                { get; }
         public String            StatusMessage             { get; }
         public String?           AdditionalInformation     { get; }
-        public DateTime          Timestamp                 { get; }
+        public DateTimeOffset    Timestamp                 { get; }
 
 
         public HTTPResponse?     HTTPResponse              { get; }
@@ -59,7 +59,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                             Int32             StatusCode,
                             String            StatusMessage,
                             String?           AdditionalInformation   = null,
-                            DateTime?         Timestamp               = null,
+                            DateTimeOffset?   Timestamp               = null,
 
                             HTTPResponse?     HTTPResponse            = null,
                             Request_Id?       RequestId               = null,
@@ -85,7 +85,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public OCPIResponse(Int32             StatusCode,
                             String            StatusMessage,
                             String?           AdditionalInformation   = null,
-                            DateTime?         Timestamp               = null,
+                            DateTimeOffset?   Timestamp               = null,
 
                             HTTPResponse?     HTTPResponse            = null,
                             Request_Id?       RequestId               = null,
@@ -383,7 +383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             public String?                StatusMessage            { get; set; }
 
             public String?                AdditionalInformation    { get; set; }
-            public DateTime?              Timestamp                { get; set; }
+            public DateTimeOffset?        Timestamp                { get; set; }
 
 
             public Request_Id?            RequestId                { get; set; }
@@ -528,7 +528,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                             Int32             StatusCode,
                             String            StatusMessage,
                             String?           AdditionalInformation   = null,
-                            DateTime?         Timestamp               = null,
+                            DateTimeOffset?   Timestamp               = null,
 
                             HTTPResponse?     HTTPResponse            = null,
                             Request_Id?       RequestId               = null,
@@ -554,7 +554,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public OCPIResponse(Int32             StatusCode,
                             String            StatusMessage,
                             String?           AdditionalInformation   = null,
-                            DateTime?         Timestamp               = null,
+                            DateTimeOffset?   Timestamp               = null,
 
                             HTTPResponse?     HTTPResponse            = null,
                             Request_Id?       RequestId               = null,
@@ -579,7 +579,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public new static OCPIResponse<TResponse> Error(String           StatusMessage,
                                                         String?          AdditionalInformation   = null,
-                                                        DateTime?        Timestamp               = null,
+                                                        DateTimeOffset?  Timestamp               = null,
 
                                                         HTTPResponse?    HTTPResponse            = null,
                                                         Request_Id?      RequestId               = null,
@@ -597,7 +597,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public new static OCPIResponse<TResponse> Error(Int32            StatusCode,
                                                         String           StatusMessage,
                                                         String?          AdditionalInformation   = null,
-                                                        DateTime?        Timestamp               = null,
+                                                        DateTimeOffset?  Timestamp               = null,
 
                                                         HTTPResponse?    HTTPResponse            = null,
                                                         Request_Id?      RequestId               = null,
@@ -614,7 +614,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
         public new static OCPIResponse<TResponse> Exception(Exception        Exception,
-                                                            DateTime?        Timestamp               = null,
+                                                            DateTimeOffset?  Timestamp               = null,
 
                                                             HTTPResponse?    HTTPResponse            = null,
                                                             Request_Id?      RequestId               = null,
@@ -635,7 +635,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                      Int32                    StatusCode,
                                      String                   StatusMessage,
                                      String?                  AdditionalInformation   = null,
-                                     DateTime?                Timestamp               = null,
+                                     DateTimeOffset?          Timestamp               = null,
 
                                      HTTPResponse?            Response                = null,
                                      Request_Id?              RequestId               = null,
@@ -953,7 +953,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                             Int32             StatusCode,
                             String            StatusMessage,
                             String?           AdditionalInformation   = null,
-                            DateTime?         Timestamp               = null,
+                            DateTimeOffset?   Timestamp               = null,
 
                             HTTPResponse?     HTTPResponse            = null,
                             Request_Id?       RequestId               = null,
@@ -985,7 +985,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                               Int32            StatusCode,
                                                               String           StatusMessage,
                                                               String?          AdditionalInformation   = null,
-                                                              DateTime?        Timestamp               = null,
+                                                              DateTimeOffset?  Timestamp               = null,
 
                                                               HTTPResponse?    HTTPResponse            = null,
                                                               Request_Id?      RequestId               = null,
@@ -1006,7 +1006,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static OCPIResponse<TRequest, TResponse> Error(TRequest         Request,
                                                               String           StatusMessage,
                                                               String?          AdditionalInformation   = null,
-                                                              DateTime?        Timestamp               = null,
+                                                              DateTimeOffset?  Timestamp               = null,
 
                                                               HTTPResponse?    HTTPResponse            = null,
                                                               Request_Id?      RequestId               = null,
@@ -1027,7 +1027,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static new OCPIResponse<TRequest, TResponse> Error(Int32            StatusCode,
                                                                   String           StatusMessage,
                                                                   String?          AdditionalInformation   = null,
-                                                                  DateTime?        Timestamp               = null,
+                                                                  DateTimeOffset?  Timestamp               = null,
 
                                                                   HTTPResponse?    HTTPResponse            = null,
                                                                   Request_Id?      RequestId               = null,
@@ -1047,7 +1047,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public static new OCPIResponse<TRequest, TResponse> Error(String           StatusMessage,
                                                                   String?          AdditionalInformation   = null,
-                                                                  DateTime?        Timestamp               = null,
+                                                                  DateTimeOffset?  Timestamp               = null,
 
                                                                   HTTPResponse?    HTTPResponse            = null,
                                                                   Request_Id?      RequestId               = null,
@@ -1066,7 +1066,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
         public static new OCPIResponse<TRequest, TResponse> Exception(Exception        Exception,
-                                                                      DateTime?        Timestamp       = null,
+                                                                      DateTimeOffset?  Timestamp       = null,
 
                                                                       HTTPResponse?    HTTPResponse    = null,
                                                                       Request_Id?      RequestId       = null,

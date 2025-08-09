@@ -56,7 +56,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                    EMSP_Id?       EMSPId           = null);
 
     public delegate Tariff?                 GetTariff2_Delegate   (Tariff_Id      TariffId,
-                                                                   DateTime?      StartTimestamp   = null,
+                                                                   DateTimeOffset?StartTimestamp   = null,
                                                                    TimeSpan?      EVSEUId          = null);
 
 
@@ -1467,9 +1467,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetVersionsRequest(DateTime     Timestamp,
-                                                   HTTPAPI      API,
-                                                   OCPIRequest  Request)
+        protected internal Task GetVersionsRequest(DateTimeOffset  Timestamp,
+                                                   HTTPAPI         API,
+                                                   OCPIRequest     Request)
 
             => OnGetVersionsRequest.WhenAll(Timestamp,
                                             API ?? this,
@@ -1491,10 +1491,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetVersionsResponse(DateTime      Timestamp,
-                                                    HTTPAPI       API,
-                                                    OCPIRequest   Request,
-                                                    OCPIResponse  Response)
+        protected internal Task GetVersionsResponse(DateTimeOffset  Timestamp,
+                                                    HTTPAPI         API,
+                                                    OCPIRequest     Request,
+                                                    OCPIResponse    Response)
 
             => OnGetVersionsResponse.WhenAll(Timestamp,
                                              API ?? this,
@@ -1517,9 +1517,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetVersionRequest(DateTime     Timestamp,
-                                                  HTTPAPI      API,
-                                                  OCPIRequest  Request)
+        protected internal Task GetVersionRequest(DateTimeOffset  Timestamp,
+                                                  HTTPAPI         API,
+                                                  OCPIRequest     Request)
 
             => OnGetVersionRequest.WhenAll(Timestamp,
                                            API ?? this,
@@ -1541,10 +1541,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetVersionResponse(DateTime      Timestamp,
-                                                   HTTPAPI       API,
-                                                   OCPIRequest   Request,
-                                                   OCPIResponse  Response)
+        protected internal Task GetVersionResponse(DateTimeOffset  Timestamp,
+                                                   HTTPAPI         API,
+                                                   OCPIRequest     Request,
+                                                   OCPIResponse    Response)
 
             => OnGetVersionResponse.WhenAll(Timestamp,
                                             API ?? this,
@@ -1567,9 +1567,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetCredentialsRequest(DateTime     Timestamp,
-                                                      HTTPAPI      API,
-                                                      OCPIRequest  Request)
+        protected internal Task GetCredentialsRequest(DateTimeOffset  Timestamp,
+                                                      HTTPAPI         API,
+                                                      OCPIRequest     Request)
 
             => OnGetCredentialsRequest.WhenAll(Timestamp,
                                                API ?? this,
@@ -1591,10 +1591,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetCredentialsResponse(DateTime      Timestamp,
-                                                       HTTPAPI       API,
-                                                       OCPIRequest   Request,
-                                                       OCPIResponse  Response)
+        protected internal Task GetCredentialsResponse(DateTimeOffset  Timestamp,
+                                                       HTTPAPI         API,
+                                                       OCPIRequest     Request,
+                                                       OCPIResponse    Response)
 
             => OnGetCredentialsResponse.WhenAll(Timestamp,
                                                 API ?? this,
@@ -1617,9 +1617,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PostCredentialsRequest(DateTime     Timestamp,
-                                                       HTTPAPI      API,
-                                                       OCPIRequest  Request)
+        protected internal Task PostCredentialsRequest(DateTimeOffset  Timestamp,
+                                                       HTTPAPI         API,
+                                                       OCPIRequest     Request)
 
             => OnPostCredentialsRequest.WhenAll(Timestamp,
                                                 API ?? this,
@@ -1641,10 +1641,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PostCredentialsResponse(DateTime      Timestamp,
-                                                        HTTPAPI       API,
-                                                        OCPIRequest   Request,
-                                                        OCPIResponse  Response)
+        protected internal Task PostCredentialsResponse(DateTimeOffset  Timestamp,
+                                                        HTTPAPI         API,
+                                                        OCPIRequest     Request,
+                                                        OCPIResponse    Response)
 
             => OnPostCredentialsResponse.WhenAll(Timestamp,
                                                  API ?? this,
@@ -1667,9 +1667,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PutCredentialsRequest(DateTime     Timestamp,
-                                                      HTTPAPI      API,
-                                                      OCPIRequest  Request)
+        protected internal Task PutCredentialsRequest(DateTimeOffset  Timestamp,
+                                                      HTTPAPI         API,
+                                                      OCPIRequest     Request)
 
             => OnPutCredentialsRequest.WhenAll(Timestamp,
                                                API ?? this,
@@ -1691,10 +1691,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PutCredentialsResponse(DateTime      Timestamp,
-                                                       HTTPAPI       API,
-                                                       OCPIRequest   Request,
-                                                       OCPIResponse  Response)
+        protected internal Task PutCredentialsResponse(DateTimeOffset  Timestamp,
+                                                       HTTPAPI         API,
+                                                       OCPIRequest     Request,
+                                                       OCPIResponse    Response)
 
             => OnPutCredentialsResponse.WhenAll(Timestamp,
                                                 API ?? this,
@@ -1717,9 +1717,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task DeleteCredentialsRequest(DateTime     Timestamp,
-                                                         HTTPAPI      API,
-                                                         OCPIRequest  Request)
+        protected internal Task DeleteCredentialsRequest(DateTimeOffset  Timestamp,
+                                                         HTTPAPI         API,
+                                                         OCPIRequest     Request)
 
             => OnDeleteCredentialsRequest.WhenAll(Timestamp,
                                                   API ?? this,
@@ -1741,10 +1741,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteCredentialsResponse(DateTime      Timestamp,
-                                                          HTTPAPI       API,
-                                                          OCPIRequest   Request,
-                                                          OCPIResponse  Response)
+        protected internal Task DeleteCredentialsResponse(DateTimeOffset  Timestamp,
+                                                          HTTPAPI         API,
+                                                          OCPIRequest     Request,
+                                                          OCPIResponse    Response)
 
             => OnDeleteCredentialsResponse.WhenAll(Timestamp,
                                                    API ?? this,
@@ -4160,16 +4160,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                   IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                   Version_Id?                                                SelectedVersionId            = null,
 
-                                                  DateTime?                                                  LocalAccessNotBefore         = null,
-                                                  DateTime?                                                  LocalAccessNotAfter          = null,
+                                                  DateTimeOffset?                                            LocalAccessNotBefore         = null,
+                                                  DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
                                                   Boolean?                                                   AccessTokenBase64Encoding    = null,
                                                   Boolean?                                                   AllowDowngrades              = false,
                                                   AccessStatus                                               AccessStatus                 = AccessStatus.      ALLOWED,
                                                   RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.ONLINE,
                                                   PartyStatus                                                PartyStatus                  = PartyStatus.       ENABLED,
-                                                  DateTime?                                                  RemoteAccessNotBefore        = null,
-                                                  DateTime?                                                  RemoteAccessNotAfter         = null,
+                                                  DateTimeOffset?                                            RemoteAccessNotBefore        = null,
+                                                  DateTimeOffset?                                            RemoteAccessNotAfter         = null,
 
                                                   Boolean?                                                   PreferIPv4                   = null,
                                                   RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
@@ -4253,8 +4253,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                   BusinessDetails                                            BusinessDetails,
 
                                                   AccessToken                                                AccessToken,
-                                                  DateTime?                                                  LocalAccessNotBefore         = null,
-                                                  DateTime?                                                  LocalAccessNotAfter          = null,
+                                                  DateTimeOffset?                                            LocalAccessNotBefore         = null,
+                                                  DateTimeOffset?                                            LocalAccessNotAfter          = null,
                                                   Boolean?                                                   AccessTokenBase64Encoding    = null,
                                                   Boolean?                                                   AllowDowngrades              = false,
                                                   AccessStatus                                               AccessStatus                 = AccessStatus.ALLOWED,
@@ -4341,8 +4341,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                   Boolean?                                                   AllowDowngrades              = null,
                                                   RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.UNKNOWN,
                                                   PartyStatus                                                PartyStatus                  = PartyStatus.       ENABLED,
-                                                  DateTime?                                                  RemoteAccessNotBefore        = null,
-                                                  DateTime?                                                  RemoteAccessNotAfter         = null,
+                                                  DateTimeOffset?                                            RemoteAccessNotBefore        = null,
+                                                  DateTimeOffset?                                            RemoteAccessNotAfter         = null,
 
                                                   Boolean?                                                   PreferIPv4                   = null,
                                                   RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
@@ -4436,7 +4436,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                   UInt32?                                                    InternalBufferSize           = null,
                                                   Boolean?                                                   UseHTTPPipelining            = null,
 
-                                                  DateTime?                                                  LastUpdated                  = null,
+                                                  DateTimeOffset?                                            LastUpdated                  = null,
 
                                                   EventTracking_Id?                                          EventTrackingId              = null,
                                                   User_Id?                                                   CurrentUserId                = null)
@@ -4504,16 +4504,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                              Version_Id?                                                SelectedVersionId            = null,
 
-                                                             DateTime?                                                  LocalAccessNotBefore         = null,
-                                                             DateTime?                                                  LocalAccessNotAfter          = null,
+                                                             DateTimeOffset?                                            LocalAccessNotBefore         = null,
+                                                             DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
                                                              Boolean?                                                   AccessTokenBase64Encoding    = null,
                                                              Boolean?                                                   AllowDowngrades              = false,
                                                              AccessStatus                                               AccessStatus                 = AccessStatus.      ALLOWED,
                                                              RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.ONLINE,
                                                              PartyStatus                                                PartyStatus                  = PartyStatus.       ENABLED,
-                                                             DateTime?                                                  RemoteAccessNotBefore        = null,
-                                                             DateTime?                                                  RemoteAccessNotAfter         = null,
+                                                             DateTimeOffset?                                            RemoteAccessNotBefore        = null,
+                                                             DateTimeOffset?                                            RemoteAccessNotAfter         = null,
 
                                                              Boolean?                                                   PreferIPv4                   = null,
                                                              RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
@@ -4600,8 +4600,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              BusinessDetails                                            BusinessDetails,
 
                                                              AccessToken                                                AccessToken,
-                                                             DateTime?                                                  LocalAccessNotBefore         = null,
-                                                             DateTime?                                                  LocalAccessNotAfter          = null,
+                                                             DateTimeOffset?                                            LocalAccessNotBefore         = null,
+                                                             DateTimeOffset?                                            LocalAccessNotAfter          = null,
                                                              Boolean?                                                   AccessTokenBase64Encoding    = null,
                                                              Boolean?                                                   AllowDowngrades              = false,
                                                              AccessStatus                                               AccessStatus                 = AccessStatus.ALLOWED,
@@ -4691,8 +4691,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              Boolean?                                                   AllowDowngrades              = null,
                                                              RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.UNKNOWN,
                                                              PartyStatus                                                PartyStatus                  = PartyStatus.       ENABLED,
-                                                             DateTime?                                                  RemoteAccessNotBefore        = null,
-                                                             DateTime?                                                  RemoteAccessNotAfter         = null,
+                                                             DateTimeOffset?                                            RemoteAccessNotBefore        = null,
+                                                             DateTimeOffset?                                            RemoteAccessNotAfter         = null,
 
                                                              Boolean?                                                   PreferIPv4                   = null,
                                                              RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
@@ -4788,7 +4788,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              UInt32?                                                    InternalBufferSize           = null,
                                                              Boolean?                                                   UseHTTPPipelining            = null,
 
-                                                             DateTime?                                                  LastUpdated                  = null,
+                                                             DateTimeOffset?                                            LastUpdated                  = null,
 
                                                              EventTracking_Id?                                          EventTrackingId              = null,
                                                              User_Id?                                                   CurrentUserId                = null)
@@ -4858,16 +4858,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                           Version_Id?                                                SelectedVersionId            = null,
 
-                                                          DateTime?                                                  LocalAccessNotBefore         = null,
-                                                          DateTime?                                                  LocalAccessNotAfter          = null,
+                                                          DateTimeOffset?                                            LocalAccessNotBefore         = null,
+                                                          DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
                                                           Boolean?                                                   AccessTokenBase64Encoding    = null,
                                                           Boolean?                                                   AllowDowngrades              = false,
                                                           AccessStatus                                               AccessStatus                 = AccessStatus.      ALLOWED,
                                                           RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.ONLINE,
                                                           PartyStatus                                                PartyStatus                  = PartyStatus.       ENABLED,
-                                                          DateTime?                                                  RemoteAccessNotBefore        = null,
-                                                          DateTime?                                                  RemoteAccessNotAfter         = null,
+                                                          DateTimeOffset?                                            RemoteAccessNotBefore        = null,
+                                                          DateTimeOffset?                                            RemoteAccessNotAfter         = null,
 
                                                           Boolean?                                                   PreferIPv4                   = null,
                                                           RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
@@ -4959,8 +4959,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           BusinessDetails                                            BusinessDetails,
 
                                                           AccessToken                                                AccessToken,
-                                                          DateTime?                                                  LocalAccessNotBefore         = null,
-                                                          DateTime?                                                  LocalAccessNotAfter          = null,
+                                                          DateTimeOffset?                                            LocalAccessNotBefore         = null,
+                                                          DateTimeOffset?                                            LocalAccessNotAfter          = null,
                                                           Boolean?                                                   AccessTokenBase64Encoding    = null,
                                                           Boolean?                                                   AllowDowngrades              = false,
                                                           AccessStatus                                               AccessStatus                 = AccessStatus.ALLOWED,
@@ -5055,8 +5055,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           Boolean?                                                   AllowDowngrades              = null,
                                                           RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.UNKNOWN,
                                                           PartyStatus                                                PartyStatus                  = PartyStatus.       ENABLED,
-                                                          DateTime?                                                  RemoteAccessNotBefore        = null,
-                                                          DateTime?                                                  RemoteAccessNotAfter         = null,
+                                                          DateTimeOffset?                                            RemoteAccessNotBefore        = null,
+                                                          DateTimeOffset?                                            RemoteAccessNotAfter         = null,
 
                                                           Boolean?                                                   PreferIPv4                   = null,
                                                           RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
@@ -5157,7 +5157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           UInt32?                                                    InternalBufferSize           = null,
                                                           Boolean?                                                   UseHTTPPipelining            = null,
 
-                                                          DateTime?                                                  LastUpdated                  = null,
+                                                          DateTimeOffset?                                            LastUpdated                  = null,
 
                                                           EventTracking_Id?                                          EventTrackingId              = null,
                                                           User_Id?                                                   CurrentUserId                = null)
@@ -5230,16 +5230,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                      Version_Id?                                                SelectedVersionId            = null,
 
-                                                     DateTime?                                                  LocalAccessNotBefore         = null,
-                                                     DateTime?                                                  LocalAccessNotAfter          = null,
+                                                     DateTimeOffset?                                            LocalAccessNotBefore         = null,
+                                                     DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
                                                      Boolean?                                                   AccessTokenBase64Encoding    = null,
                                                      Boolean?                                                   AllowDowngrades              = false,
                                                      AccessStatus                                               AccessStatus                 = AccessStatus.      ALLOWED,
                                                      RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.ONLINE,
                                                      PartyStatus                                                PartyStatus                  = PartyStatus.       ENABLED,
-                                                     DateTime?                                                  RemoteAccessNotBefore        = null,
-                                                     DateTime?                                                  RemoteAccessNotAfter         = null,
+                                                     DateTimeOffset?                                            RemoteAccessNotBefore        = null,
+                                                     DateTimeOffset?                                            RemoteAccessNotAfter         = null,
 
                                                      Boolean?                                                   PreferIPv4                   = null,
                                                      RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
@@ -5323,8 +5323,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      BusinessDetails                                            BusinessDetails,
 
                                                      AccessToken                                                AccessToken,
-                                                     DateTime?                                                  LocalAccessNotBefore         = null,
-                                                     DateTime?                                                  LocalAccessNotAfter          = null,
+                                                     DateTimeOffset?                                            LocalAccessNotBefore         = null,
+                                                     DateTimeOffset?                                            LocalAccessNotAfter          = null,
                                                      Boolean?                                                   AccessTokenBase64Encoding    = null,
                                                      Boolean?                                                   AllowDowngrades              = false,
                                                      AccessStatus                                               AccessStatus                 = AccessStatus.ALLOWED,
@@ -5411,8 +5411,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      Boolean?                                                   AllowDowngrades              = null,
                                                      RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.UNKNOWN,
                                                      PartyStatus                                                PartyStatus                  = PartyStatus.       ENABLED,
-                                                     DateTime?                                                  RemoteAccessNotBefore        = null,
-                                                     DateTime?                                                  RemoteAccessNotAfter         = null,
+                                                     DateTimeOffset?                                            RemoteAccessNotBefore        = null,
+                                                     DateTimeOffset?                                            RemoteAccessNotAfter         = null,
 
                                                      Boolean?                                                   PreferIPv4                   = null,
                                                      RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
@@ -5505,7 +5505,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      UInt32?                                                    InternalBufferSize           = null,
                                                      Boolean?                                                   UseHTTPPipelining            = null,
 
-                                                     DateTime?                                                  LastUpdated                  = null,
+                                                     DateTimeOffset?                                            LastUpdated                  = null,
 
                                                      EventTracking_Id?                                          EventTrackingId              = null,
                                                      User_Id?                                                   CurrentUserId                = null)
@@ -5847,13 +5847,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Events
 
-        public delegate Task OnLocationAddedDelegate    (Location  Location);
-        public delegate Task OnLocationChangedDelegate  (Location  Location);
-        public delegate Task OnLocationRemovedDelegate  (Location  Location);
-        public delegate Task OnEVSEAddedDelegate        (EVSE      EVSE);
-        public delegate Task OnEVSEChangedDelegate      (EVSE      EVSE);
-        public delegate Task OnEVSEStatusChangedDelegate(DateTime  Timestamp, EVSE EVSE, StatusType NewEVSEStatus, StatusType? OldEVSEStatus = null);
-        public delegate Task OnEVSERemovedDelegate      (EVSE      EVSE);
+        public delegate Task OnLocationAddedDelegate    (Location        Location);
+        public delegate Task OnLocationChangedDelegate  (Location        Location);
+        public delegate Task OnLocationRemovedDelegate  (Location        Location);
+        public delegate Task OnEVSEAddedDelegate        (EVSE            EVSE);
+        public delegate Task OnEVSEChangedDelegate      (EVSE            EVSE);
+        public delegate Task OnEVSEStatusChangedDelegate(DateTimeOffset  Timestamp, EVSE EVSE, StatusType NewEVSEStatus, StatusType? OldEVSEStatus = null);
+        public delegate Task OnEVSERemovedDelegate      (EVSE            EVSE);
 
         public event OnLocationAddedDelegate?      OnLocationAdded;
         public event OnLocationChangedDelegate?    OnLocationChanged;
@@ -8551,9 +8551,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region TariffExists(TariffId, Timestamp = null, Tolerance = null)
 
-        public Boolean TariffExists(Tariff_Id  TariffId,
-                                    DateTime?  Timestamp   = null,
-                                    TimeSpan?  Tolerance   = null)
+        public Boolean TariffExists(Tariff_Id        TariffId,
+                                    DateTimeOffset?  Timestamp   = null,
+                                    TimeSpan?        Tolerance   = null)
 
             => tariffs.ContainsKey(TariffId,
                                    Timestamp,
@@ -8563,10 +8563,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region TryGetTariff(TariffId, out Tariff, Timestamp = null, Tolerance = null)
 
-        public Boolean TryGetTariff(Tariff_Id    TariffId,
-                                    out Tariff?  Tariff,
-                                    DateTime?    Timestamp   = null,
-                                    TimeSpan?    Tolerance   = null)
+        public Boolean TryGetTariff(Tariff_Id        TariffId,
+                                    out Tariff?      Tariff,
+                                    DateTimeOffset?  Timestamp   = null,
+                                    TimeSpan?        Tolerance   = null)
         {
 
             if (tariffs.TryGetValue(TariffId,
@@ -8586,9 +8586,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region GetTariff   (TariffId, Timestamp = null, Tolerance = null)
 
-        public Tariff? GetTariff(Tariff_Id  TariffId,
-                                 DateTime?  Timestamp   = null,
-                                 TimeSpan?  Tolerance   = null)
+        public Tariff? GetTariff(Tariff_Id        TariffId,
+                                 DateTimeOffset?  Timestamp   = null,
+                                 TimeSpan?        Tolerance   = null)
         {
 
             if (tariffs.TryGetValue(TariffId,
@@ -8608,7 +8608,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region GetTariffs  (IncludeTariff = null, Timestamp = null, Tolerance = null)
 
         public IEnumerable<Tariff> GetTariffs(Func<Tariff, Boolean>?  IncludeTariff   = null,
-                                              DateTime?               Timestamp       = null,
+                                              DateTimeOffset?         Timestamp       = null,
                                               TimeSpan?               Tolerance       = null)
 
             => IncludeTariff is null
@@ -8619,10 +8619,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region GetTariffs  (CountryCode, PartyId, Timestamp = null, Tolerance = null)
 
-        public IEnumerable<Tariff> GetTariffs(CountryCode  CountryCode,
-                                              Party_Id     PartyId,
-                                              DateTime?    Timestamp   = null,
-                                              TimeSpan?    Tolerance   = null)
+        public IEnumerable<Tariff> GetTariffs(CountryCode      CountryCode,
+                                              Party_Id         PartyId,
+                                              DateTimeOffset?  Timestamp   = null,
+                                              TimeSpan?        Tolerance   = null)
 
             => tariffs.Values(Timestamp, Tolerance).
                        Where (tariff => tariff.CountryCode == CountryCode &&

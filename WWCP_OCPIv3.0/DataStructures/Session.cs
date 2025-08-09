@@ -58,14 +58,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// When a session goes from PENDING to ACTIVE, this field SHALL be updated to the moment the session went to ACTIVE in the charging station.
         /// </summary>
         [Mandatory]
-        public   DateTime                                 Start                        { get; }
+        public   DateTimeOffset                           Start                        { get; }
 
         /// <summary>
         /// The timestamp when the session was completed/finished, charging might have finished before the session ends,
         /// for example: EV is full, but parking cost also has to be paid.
         /// </summary>
         [Optional]
-        public   DateTime?                                End                          { get; }
+        public   DateTimeOffset?                          End                          { get; }
 
         /// <summary>
         /// How many kWh of energy were transferred through the EVSE into the vehicle.
@@ -173,13 +173,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The timestamp when this session was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public   DateTime                                 Created                      { get; }
+        public   DateTimeOffset                           Created                      { get; }
 
         /// <summary>
         /// The timestamp when this session was last updated (or created).
         /// </summary>
         [Mandatory]
-        public   DateTime                                 LastUpdated                  { get; }
+        public   DateTimeOffset                           LastUpdated                  { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this charging session.
@@ -231,7 +231,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        Session_Id                                          Id,
                        UInt64                                              VersionId,
 
-                       DateTime                                            Start,
+                       DateTimeOffset                                      Start,
                        WattHour                                            Energy,
                        CDRToken                                            CDRToken,
                        AuthMethod                                          AuthMethod,
@@ -241,7 +241,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        Tariff_Id                                           TariffId,
                        SessionStatus                                       Status,
 
-                       DateTime?                                           End                                = null,
+                       DateTimeOffset?                                     End                                = null,
                        AuthorizationReference?                             AuthorizationReference             = null,
                        SessionConnector?                                   Connector                          = null,
                        IEnumerable<ChargingPeriod>?                        ChargingPeriods                    = null,
@@ -250,8 +250,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        EnergyMeter<EVSE>?                                  EnergyMeter                        = null,
                        IEnumerable<TransparencySoftwareStatus>?            TransparencySoftwares              = null,
 
-                       DateTime?                                           Created                            = null,
-                       DateTime?                                           LastUpdated                        = null,
+                       DateTimeOffset?                                     Created                            = null,
+                       DateTimeOffset?                                     LastUpdated                        = null,
 
                        CustomJObjectSerializerDelegate<Session>?           CustomSessionSerializer            = null,
                        CustomJObjectSerializerDelegate<CDRToken>?          CustomCDRTokenSerializer           = null,
@@ -341,7 +341,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                          Session_Id                                          Id,
                          UInt64                                              VersionId,
 
-                         DateTime                                            Start,
+                         DateTimeOffset                                      Start,
                          WattHour                                            Energy,
                          CDRToken                                            CDRToken,
                          AuthMethod                                          AuthMethod,
@@ -351,7 +351,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                          Tariff_Id                                           TariffId,
                          SessionStatus                                       Status,
 
-                         DateTime?                                           End                                = null,
+                         DateTimeOffset?                                     End                                = null,
                          AuthorizationReference?                             AuthorizationReference             = null,
                          SessionConnector?                                   Connector                          = null,
                          IEnumerable<ChargingPeriod>?                        ChargingPeriods                    = null,
@@ -360,8 +360,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                          EnergyMeter<EVSE>?                                  EnergyMeter                        = null,
                          IEnumerable<TransparencySoftwareStatus>?            TransparencySoftwares              = null,
 
-                         DateTime?                                           Created                            = null,
-                         DateTime?                                           LastUpdated                        = null,
+                         DateTimeOffset?                                     Created                            = null,
+                         DateTimeOffset?                                     LastUpdated                        = null,
 
                          CustomJObjectSerializerDelegate<Session>?           CustomSessionSerializer            = null,
                          CustomJObjectSerializerDelegate<CDRToken>?          CustomCDRTokenSerializer           = null,
@@ -1598,14 +1598,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// When a session goes from PENDING to ACTIVE, this field SHALL be updated to the moment the session went to ACTIVE in the charging station.
             /// </summary>
             [Mandatory]
-            public   DateTime?                                Start                        { get; set; }
+            public   DateTimeOffset?                          Start                        { get; set; }
 
             /// <summary>
             /// The timestamp when the session was completed/finished, charging might have finished before the session ends,
             /// for example: EV is full, but parking cost also has to be paid.
             /// </summary>
             [Optional]
-            public   DateTime?                                End                          { get; set; }
+            public   DateTimeOffset?                          End                          { get; set; }
 
             /// <summary>
             /// How many kWh of energy were transferred through the EVSE into the vehicle.
@@ -1713,13 +1713,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The timestamp when this session was created.
             /// </summary>
             [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-            public   DateTime?                                Created                      { get; set; }
+            public   DateTimeOffset?                          Created                      { get; set; }
 
             /// <summary>
             /// The timestamp when this session was last updated (or created).
             /// </summary>
             [Mandatory]
-            public   DateTime?                                LastUpdated                  { get; set; }
+            public   DateTimeOffset?                          LastUpdated                  { get; set; }
 
             #endregion
 
@@ -1759,7 +1759,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                              Session_Id?                               Id                       = null,
                              UInt64?                                   VersionId                = null,
 
-                             DateTime?                                 Start                    = null,
+                             DateTimeOffset?                           Start                    = null,
                              WattHour?                                 Energy                   = null,
                              CDRToken?                                 CDRToken                 = null,
                              AuthMethod?                               AuthMethod               = null,
@@ -1769,7 +1769,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                              Tariff_Id?                                TariffId                 = null,
                              SessionStatus?                            Status                   = null,
 
-                             DateTime?                                 End                      = null,
+                             DateTimeOffset?                           End                      = null,
                              AuthorizationReference?                   AuthorizationReference   = null,
                              SessionConnector?                         Connector                = null,
                              IEnumerable<ChargingPeriod>?              ChargingPeriods          = null,
@@ -1778,8 +1778,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                              EnergyMeter<EVSE>?                        EnergyMeter              = null,
                              IEnumerable<TransparencySoftwareStatus>?  TransparencySoftwares    = null,
 
-                             DateTime?                                 Created                  = null,
-                             DateTime?                                 LastUpdated              = null)
+                             DateTimeOffset?                           Created                  = null,
+                             DateTimeOffset?                           LastUpdated              = null)
 
                 : base(CommonAPI,
                        PartyId,

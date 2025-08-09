@@ -53,19 +53,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The unique identification of the EVSE within the CPOs platform.
         /// </summary>
         [Mandatory]
-        public EVSE_UId    Id           { get; }
+        public EVSE_UId        Id           { get; }
 
         /// <summary>
         /// The current status of the EVSE.
         /// </summary>
         [Mandatory]
-        public StatusType  Status       { get; }
+        public StatusType      Status       { get; }
 
         /// <summary>
         /// The optional timestamp of the status update.
         /// </summary>
         [Mandatory]
-        public DateTime    Timestamp    { get; }
+        public DateTimeOffset  Timestamp    { get; }
 
         #endregion
 
@@ -77,9 +77,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Id">An unique identification of the EVSE within the CPOs platform.</param>
         /// <param name="Status">A current status of the EVSE.</param>
         /// <param name="Timestamp">An optional timestamp of the status update.</param>
-        public EVSEStatus(EVSE_UId    Id,
-                          StatusType  Status,
-                          DateTime?   Timestamp   = null)
+        public EVSEStatus(EVSE_UId         Id,
+                          StatusType       Status,
+                          DateTimeOffset?  Timestamp   = null)
         {
 
             this.Id         = Id;

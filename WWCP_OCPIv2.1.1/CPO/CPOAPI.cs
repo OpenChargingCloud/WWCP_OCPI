@@ -149,9 +149,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetLocationsRequest(DateTime     Timestamp,
-                                                    HTTPAPI      API,
-                                                    OCPIRequest  Request)
+        protected internal Task GetLocationsRequest(DateTimeOffset  Timestamp,
+                                                    HTTPAPI         API,
+                                                    OCPIRequest     Request)
 
             => OnGetLocationsRequest.WhenAll(Timestamp,
                                              API ?? this,
@@ -173,10 +173,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetLocationsResponse(DateTime      Timestamp,
-                                                     HTTPAPI       API,
-                                                     OCPIRequest   Request,
-                                                     OCPIResponse  Response)
+        protected internal Task GetLocationsResponse(DateTimeOffset  Timestamp,
+                                                     HTTPAPI         API,
+                                                     OCPIRequest     Request,
+                                                     OCPIResponse    Response)
 
             => OnGetLocationsResponse.WhenAll(Timestamp,
                                               API ?? this,
@@ -199,9 +199,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetLocationRequest(DateTime     Timestamp,
-                                                   HTTPAPI      API,
-                                                   OCPIRequest  Request)
+        protected internal Task GetLocationRequest(DateTimeOffset  Timestamp,
+                                                   HTTPAPI         API,
+                                                   OCPIRequest     Request)
 
             => OnGetLocationRequest.WhenAll(Timestamp,
                                             API ?? this,
@@ -223,10 +223,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetLocationResponse(DateTime      Timestamp,
-                                                    HTTPAPI       API,
-                                                    OCPIRequest   Request,
-                                                    OCPIResponse  Response)
+        protected internal Task GetLocationResponse(DateTimeOffset  Timestamp,
+                                                    HTTPAPI         API,
+                                                    OCPIRequest     Request,
+                                                    OCPIResponse    Response)
 
             => OnGetLocationResponse.WhenAll(Timestamp,
                                              API ?? this,
@@ -252,9 +252,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetEVSERequest(DateTime     Timestamp,
-                                               HTTPAPI      API,
-                                               OCPIRequest  Request)
+        protected internal Task GetEVSERequest(DateTimeOffset  Timestamp,
+                                               HTTPAPI         API,
+                                               OCPIRequest     Request)
 
             => OnGetEVSERequest.WhenAll(Timestamp,
                                         API ?? this,
@@ -276,10 +276,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetEVSEResponse(DateTime      Timestamp,
-                                                HTTPAPI       API,
-                                                OCPIRequest   Request,
-                                                OCPIResponse  Response)
+        protected internal Task GetEVSEResponse(DateTimeOffset  Timestamp,
+                                                HTTPAPI         API,
+                                                OCPIRequest     Request,
+                                                OCPIResponse    Response)
 
             => OnGetEVSEResponse.WhenAll(Timestamp,
                                          API ?? this,
@@ -305,9 +305,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetConnectorRequest(DateTime     Timestamp,
-                                                    HTTPAPI      API,
-                                                    OCPIRequest  Request)
+        protected internal Task GetConnectorRequest(DateTimeOffset  Timestamp,
+                                                    HTTPAPI         API,
+                                                    OCPIRequest     Request)
 
             => OnGetConnectorRequest.WhenAll(Timestamp,
                                              API ?? this,
@@ -329,10 +329,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetConnectorResponse(DateTime      Timestamp,
-                                                     HTTPAPI       API,
-                                                     OCPIRequest   Request,
-                                                     OCPIResponse  Response)
+        protected internal Task GetConnectorResponse(DateTimeOffset  Timestamp,
+                                                     HTTPAPI         API,
+                                                     OCPIRequest     Request,
+                                                     OCPIResponse    Response)
 
             => OnGetConnectorResponse.WhenAll(Timestamp,
                                               API ?? this,
@@ -358,9 +358,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetTariffsRequest(DateTime     Timestamp,
-                                                  HTTPAPI      API,
-                                                  OCPIRequest  Request)
+        protected internal Task GetTariffsRequest(DateTimeOffset  Timestamp,
+                                                  HTTPAPI         API,
+                                                  OCPIRequest     Request)
 
             => OnGetTariffsRequest.WhenAll(Timestamp,
                                            API ?? this,
@@ -382,10 +382,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTariffsResponse(DateTime      Timestamp,
-                                                   HTTPAPI       API,
-                                                   OCPIRequest   Request,
-                                                   OCPIResponse  Response)
+        protected internal Task GetTariffsResponse(DateTimeOffset  Timestamp,
+                                                   HTTPAPI         API,
+                                                   OCPIRequest     Request,
+                                                   OCPIResponse    Response)
 
             => OnGetTariffsResponse.WhenAll(Timestamp,
                                             API ?? this,
@@ -408,9 +408,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetTariffRequest(DateTime     Timestamp,
-                                                 HTTPAPI      API,
-                                                 OCPIRequest  Request)
+        protected internal Task GetTariffRequest(DateTimeOffset  Timestamp,
+                                                 HTTPAPI         API,
+                                                 OCPIRequest     Request)
 
             => OnGetTariffRequest.WhenAll(Timestamp,
                                           API ?? this,
@@ -432,10 +432,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTariffResponse(DateTime      Timestamp,
-                                                  HTTPAPI       API,
-                                                  OCPIRequest   Request,
-                                                  OCPIResponse  Response)
+        protected internal Task GetTariffResponse(DateTimeOffset  Timestamp,
+                                                  HTTPAPI         API,
+                                                  OCPIRequest     Request,
+                                                  OCPIResponse    Response)
 
             => OnGetTariffResponse.WhenAll(Timestamp,
                                            API ?? this,
@@ -461,9 +461,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetSessionsRequest(DateTime     Timestamp,
-                                                   HTTPAPI      API,
-                                                   OCPIRequest  Request)
+        protected internal Task GetSessionsRequest(DateTimeOffset  Timestamp,
+                                                   HTTPAPI         API,
+                                                   OCPIRequest     Request)
 
             => OnGetSessionsRequest.WhenAll(Timestamp,
                                             API ?? this,
@@ -485,10 +485,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetSessionsResponse(DateTime      Timestamp,
-                                                    HTTPAPI       API,
-                                                    OCPIRequest   Request,
-                                                    OCPIResponse  Response)
+        protected internal Task GetSessionsResponse(DateTimeOffset  Timestamp,
+                                                    HTTPAPI         API,
+                                                    OCPIRequest     Request,
+                                                    OCPIResponse    Response)
 
             => OnGetSessionsResponse.WhenAll(Timestamp,
                                              API ?? this,
@@ -511,9 +511,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetSessionRequest(DateTime     Timestamp,
-                                                  HTTPAPI      API,
-                                                  OCPIRequest  Request)
+        protected internal Task GetSessionRequest(DateTimeOffset  Timestamp,
+                                                  HTTPAPI         API,
+                                                  OCPIRequest     Request)
 
             => OnGetSessionRequest.WhenAll(Timestamp,
                                            API ?? this,
@@ -535,10 +535,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetSessionResponse(DateTime      Timestamp,
-                                                   HTTPAPI       API,
-                                                   OCPIRequest   Request,
-                                                   OCPIResponse  Response)
+        protected internal Task GetSessionResponse(DateTimeOffset  Timestamp,
+                                                   HTTPAPI         API,
+                                                   OCPIRequest     Request,
+                                                   OCPIResponse    Response)
 
             => OnGetSessionResponse.WhenAll(Timestamp,
                                             API ?? this,
@@ -564,9 +564,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetCDRsRequest(DateTime     Timestamp,
-                                               HTTPAPI      API,
-                                               OCPIRequest  Request)
+        protected internal Task GetCDRsRequest(DateTimeOffset  Timestamp,
+                                               HTTPAPI         API,
+                                               OCPIRequest     Request)
 
             => OnGetCDRsRequest.WhenAll(Timestamp,
                                         API ?? this,
@@ -588,10 +588,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetCDRsResponse(DateTime      Timestamp,
-                                                HTTPAPI       API,
-                                                OCPIRequest   Request,
-                                                OCPIResponse  Response)
+        protected internal Task GetCDRsResponse(DateTimeOffset  Timestamp,
+                                                HTTPAPI         API,
+                                                OCPIRequest     Request,
+                                                OCPIResponse    Response)
 
             => OnGetCDRsResponse.WhenAll(Timestamp,
                                          API ?? this,
@@ -614,9 +614,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetCDRRequest(DateTime     Timestamp,
-                                              HTTPAPI      API,
-                                              OCPIRequest  Request)
+        protected internal Task GetCDRRequest(DateTimeOffset  Timestamp,
+                                              HTTPAPI         API,
+                                              OCPIRequest     Request)
 
             => OnGetCDRRequest.WhenAll(Timestamp,
                                        API ?? this,
@@ -638,10 +638,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetCDRResponse(DateTime      Timestamp,
-                                               HTTPAPI       API,
-                                               OCPIRequest   Request,
-                                               OCPIResponse  Response)
+        protected internal Task GetCDRResponse(DateTimeOffset  Timestamp,
+                                               HTTPAPI         API,
+                                               OCPIRequest     Request,
+                                               OCPIResponse    Response)
 
             => OnGetCDRResponse.WhenAll(Timestamp,
                                         API ?? this,
@@ -667,9 +667,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetTokensRequest(DateTime     Timestamp,
-                                                 HTTPAPI      API,
-                                                 OCPIRequest  Request)
+        protected internal Task GetTokensRequest(DateTimeOffset  Timestamp,
+                                                 HTTPAPI         API,
+                                                 OCPIRequest     Request)
 
             => OnGetTokensRequest.WhenAll(Timestamp,
                                           API ?? this,
@@ -691,10 +691,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTokensResponse(DateTime      Timestamp,
-                                                  HTTPAPI       API,
-                                                  OCPIRequest   Request,
-                                                  OCPIResponse  Response)
+        protected internal Task GetTokensResponse(DateTimeOffset  Timestamp,
+                                                  HTTPAPI         API,
+                                                  OCPIRequest     Request,
+                                                  OCPIResponse    Response)
 
             => OnGetTokensResponse.WhenAll(Timestamp,
                                            API ?? this,
@@ -717,9 +717,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task DeleteTokensRequest(DateTime     Timestamp,
-                                                    HTTPAPI      API,
-                                                    OCPIRequest  Request)
+        protected internal Task DeleteTokensRequest(DateTimeOffset  Timestamp,
+                                                    HTTPAPI         API,
+                                                    OCPIRequest     Request)
 
             => OnDeleteTokensRequest.WhenAll(Timestamp,
                                              API ?? this,
@@ -741,10 +741,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteTokensResponse(DateTime      Timestamp,
-                                                     HTTPAPI       API,
-                                                     OCPIRequest   Request,
-                                                     OCPIResponse  Response)
+        protected internal Task DeleteTokensResponse(DateTimeOffset  Timestamp,
+                                                     HTTPAPI         API,
+                                                     OCPIRequest     Request,
+                                                     OCPIResponse    Response)
 
             => OnDeleteTokensResponse.WhenAll(Timestamp,
                                               API ?? this,
@@ -769,9 +769,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetTokenRequest(DateTime     Timestamp,
-                                                HTTPAPI      API,
-                                                OCPIRequest  Request)
+        protected internal Task GetTokenRequest(DateTimeOffset  Timestamp,
+                                                HTTPAPI         API,
+                                                OCPIRequest     Request)
 
             => OnGetTokenRequest.WhenAll(Timestamp,
                                          API ?? this,
@@ -793,10 +793,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTokenResponse(DateTime      Timestamp,
-                                                 HTTPAPI       API,
-                                                 OCPIRequest   Request,
-                                                 OCPIResponse  Response)
+        protected internal Task GetTokenResponse(DateTimeOffset  Timestamp,
+                                                 HTTPAPI         API,
+                                                 OCPIRequest     Request,
+                                                 OCPIResponse    Response)
 
             => OnGetTokenResponse.WhenAll(Timestamp,
                                           API ?? this,
@@ -819,9 +819,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PostTokenRequest(DateTime     Timestamp,
-                                                 HTTPAPI      API,
-                                                 OCPIRequest  Request)
+        protected internal Task PostTokenRequest(DateTimeOffset  Timestamp,
+                                                 HTTPAPI         API,
+                                                 OCPIRequest     Request)
 
             => OnPostTokenRequest.WhenAll(Timestamp,
                                           API ?? this,
@@ -843,10 +843,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PostTokenResponse(DateTime      Timestamp,
-                                                  HTTPAPI       API,
-                                                  OCPIRequest   Request,
-                                                  OCPIResponse  Response)
+        protected internal Task PostTokenResponse(DateTimeOffset  Timestamp,
+                                                  HTTPAPI         API,
+                                                  OCPIRequest     Request,
+                                                  OCPIResponse    Response)
 
             => OnPostTokenResponse.WhenAll(Timestamp,
                                            API ?? this,
@@ -869,9 +869,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PutTokenRequest(DateTime     Timestamp,
-                                                HTTPAPI      API,
-                                                OCPIRequest  Request)
+        protected internal Task PutTokenRequest(DateTimeOffset  Timestamp,
+                                                HTTPAPI         API,
+                                                OCPIRequest     Request)
 
             => OnPutTokenRequest.WhenAll(Timestamp,
                                          API ?? this,
@@ -893,10 +893,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PutTokenResponse(DateTime      Timestamp,
-                                                 HTTPAPI       API,
-                                                 OCPIRequest   Request,
-                                                 OCPIResponse  Response)
+        protected internal Task PutTokenResponse(DateTimeOffset  Timestamp,
+                                                 HTTPAPI         API,
+                                                 OCPIRequest     Request,
+                                                 OCPIResponse    Response)
 
             => OnPutTokenResponse.WhenAll(Timestamp,
                                           API ?? this,
@@ -919,9 +919,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PatchTokenRequest(DateTime     Timestamp,
-                                                  HTTPAPI      API,
-                                                  OCPIRequest  Request)
+        protected internal Task PatchTokenRequest(DateTimeOffset  Timestamp,
+                                                  HTTPAPI         API,
+                                                  OCPIRequest     Request)
 
             => OnPatchTokenRequest.WhenAll(Timestamp,
                                            API ?? this,
@@ -943,10 +943,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PatchTokenResponse(DateTime      Timestamp,
-                                                   HTTPAPI       API,
-                                                   OCPIRequest   Request,
-                                                   OCPIResponse  Response)
+        protected internal Task PatchTokenResponse(DateTimeOffset  Timestamp,
+                                                   HTTPAPI         API,
+                                                   OCPIRequest     Request,
+                                                   OCPIResponse    Response)
 
             => OnPatchTokenResponse.WhenAll(Timestamp,
                                             API ?? this,
@@ -969,9 +969,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task DeleteTokenRequest(DateTime     Timestamp,
-                                                   HTTPAPI      API,
-                                                   OCPIRequest  Request)
+        protected internal Task DeleteTokenRequest(DateTimeOffset  Timestamp,
+                                                   HTTPAPI         API,
+                                                   OCPIRequest     Request)
 
             => OnDeleteTokenRequest.WhenAll(Timestamp,
                                             API ?? this,
@@ -993,10 +993,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteTokenResponse(DateTime      Timestamp,
-                                                    HTTPAPI       API,
-                                                    OCPIRequest   Request,
-                                                    OCPIResponse  Response)
+        protected internal Task DeleteTokenResponse(DateTimeOffset  Timestamp,
+                                                    HTTPAPI         API,
+                                                    OCPIRequest     Request,
+                                                    OCPIResponse    Response)
 
             => OnDeleteTokenResponse.WhenAll(Timestamp,
                                              API ?? this,
@@ -1023,9 +1023,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the command request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task ReserveNowRequest(DateTime     Timestamp,
-                                                  HTTPAPI      API,
-                                                  OCPIRequest  Request)
+        protected internal Task ReserveNowRequest(DateTimeOffset  Timestamp,
+                                                  HTTPAPI         API,
+                                                  OCPIRequest     Request)
 
             => OnReserveNowRequest.WhenAll(Timestamp,
                                            API ?? this,
@@ -1056,10 +1056,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task ReserveNowResponse(DateTime      Timestamp,
-                                                   HTTPAPI       API,
-                                                   OCPIRequest   Request,
-                                                   OCPIResponse  Response)
+        protected internal Task ReserveNowResponse(DateTimeOffset  Timestamp,
+                                                   HTTPAPI         API,
+                                                   OCPIRequest     Request,
+                                                   OCPIResponse    Response)
 
             => OnReserveNowResponse.WhenAll(Timestamp,
                                             API ?? this,
@@ -1082,9 +1082,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the command request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task CancelReservationRequest(DateTime     Timestamp,
-                                                         HTTPAPI      API,
-                                                         OCPIRequest  Request)
+        protected internal Task CancelReservationRequest(DateTimeOffset  Timestamp,
+                                                         HTTPAPI         API,
+                                                         OCPIRequest     Request)
 
             => OnCancelReservationRequest.WhenAll(Timestamp,
                                                   API ?? this,
@@ -1115,10 +1115,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task CancelReservationResponse(DateTime      Timestamp,
-                                                          HTTPAPI       API,
-                                                          OCPIRequest   Request,
-                                                          OCPIResponse  Response)
+        protected internal Task CancelReservationResponse(DateTimeOffset  Timestamp,
+                                                          HTTPAPI         API,
+                                                          OCPIRequest     Request,
+                                                          OCPIResponse    Response)
 
             => OnCancelReservationResponse.WhenAll(Timestamp,
                                                    API ?? this,
@@ -1141,9 +1141,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the command request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task StartSessionRequest(DateTime     Timestamp,
-                                                    HTTPAPI      API,
-                                                    OCPIRequest  Request)
+        protected internal Task StartSessionRequest(DateTimeOffset  Timestamp,
+                                                    HTTPAPI         API,
+                                                    OCPIRequest     Request)
 
             => OnStartSessionRequest.WhenAll(Timestamp,
                                              API ?? this,
@@ -1174,10 +1174,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task StartSessionResponse(DateTime      Timestamp,
-                                                     HTTPAPI       API,
-                                                     OCPIRequest   Request,
-                                                     OCPIResponse  Response)
+        protected internal Task StartSessionResponse(DateTimeOffset  Timestamp,
+                                                     HTTPAPI         API,
+                                                     OCPIRequest     Request,
+                                                     OCPIResponse    Response)
 
             => OnStartSessionResponse.WhenAll(Timestamp,
                                               API ?? this,
@@ -1200,9 +1200,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the command request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task StopSessionRequest(DateTime     Timestamp,
-                                                   HTTPAPI      API,
-                                                   OCPIRequest  Request)
+        protected internal Task StopSessionRequest(DateTimeOffset  Timestamp,
+                                                   HTTPAPI         API,
+                                                   OCPIRequest     Request)
 
             => OnStopSessionRequest.WhenAll(Timestamp,
                                             API ?? this,
@@ -1233,10 +1233,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task StopSessionResponse(DateTime      Timestamp,
-                                                    HTTPAPI       API,
-                                                    OCPIRequest   Request,
-                                                    OCPIResponse  Response)
+        protected internal Task StopSessionResponse(DateTimeOffset  Timestamp,
+                                                    HTTPAPI         API,
+                                                    OCPIRequest     Request,
+                                                    OCPIResponse    Response)
 
             => OnStopSessionResponse.WhenAll(Timestamp,
                                              API ?? this,
@@ -1259,9 +1259,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Timestamp">The timestamp of the command request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task UnlockConnectorRequest(DateTime     Timestamp,
-                                                       HTTPAPI      API,
-                                                       OCPIRequest  Request)
+        protected internal Task UnlockConnectorRequest(DateTimeOffset  Timestamp,
+                                                       HTTPAPI         API,
+                                                       OCPIRequest     Request)
 
             => OnUnlockConnectorRequest.WhenAll(Timestamp,
                                                 API ?? this,
@@ -1292,10 +1292,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task UnlockConnectorResponse(DateTime      Timestamp,
-                                                        HTTPAPI       API,
-                                                        OCPIRequest   Request,
-                                                        OCPIResponse  Response)
+        protected internal Task UnlockConnectorResponse(DateTimeOffset  Timestamp,
+                                                        HTTPAPI         API,
+                                                        OCPIRequest     Request,
+                                                        OCPIResponse    Response)
 
             => OnUnlockConnectorResponse.WhenAll(Timestamp,
                                                  API ?? this,

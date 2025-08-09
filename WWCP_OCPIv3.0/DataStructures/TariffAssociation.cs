@@ -58,7 +58,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The timestamp at which this Tariff Association comes into (inclusive).
         /// </summary>
         [Mandatory]
-        public   DateTime                         Start          { get; }
+        public   DateTimeOffset                   Start          { get; }
 
         /// <summary>
         /// The ID of the Tariff that is applied by this Tariff Association.
@@ -83,13 +83,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The timestamp when this tariff association was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public   DateTime                         Created        { get; }
+        public   DateTimeOffset                   Created        { get; }
 
         /// <summary>
         /// The timestamp when this tariff association was last updated (or created).
         /// </summary>
         [Mandatory]
-        public   DateTime                         LastUpdated    { get; }
+        public   DateTimeOffset                   LastUpdated    { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this tariff association.
@@ -123,13 +123,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                  TariffAssociation_Id                                  Id,
                                  UInt64                                                VersionId,
 
-                                 DateTime                                              Start,
+                                 DateTimeOffset                                        Start,
                                  Tariff_Id                                             TariffId,
                                  IEnumerable<ConnectorReference>                       Connectors,
                                  TariffAudience                                        Audience,
 
-                                 DateTime?                                             Created                              = null,
-                                 DateTime?                                             LastUpdated                          = null,
+                                 DateTimeOffset?                                       Created                              = null,
+                                 DateTimeOffset?                                       LastUpdated                          = null,
 
                                  CustomJObjectSerializerDelegate<TariffAssociation>?   CustomTariffAssociationSerializer    = null,
                                  CustomJObjectSerializerDelegate<ConnectorReference>?  CustomConnectorReferenceSerializer   = null)
@@ -179,13 +179,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                    TariffAssociation_Id                                  Id,
                                    UInt64                                                VersionId,
 
-                                   DateTime                                              Start,
+                                   DateTimeOffset                                        Start,
                                    Tariff_Id                                             TariffId,
                                    IEnumerable<ConnectorReference>                       Connectors,
                                    TariffAudience                                        Audience,
 
-                                   DateTime?                                             Created                              = null,
-                                   DateTime?                                             LastUpdated                          = null,
+                                   DateTimeOffset?                                       Created                              = null,
+                                   DateTimeOffset?                                       LastUpdated                          = null,
 
                                    CustomJObjectSerializerDelegate<TariffAssociation>?   CustomTariffAssociationSerializer    = null,
                                    CustomJObjectSerializerDelegate<ConnectorReference>?  CustomConnectorReferenceSerializer   = null)

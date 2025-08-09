@@ -48,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// Timestamp when this remote party was last updated (or created).
         /// </summary>
         [Mandatory]
-        DateTime                                                   LastUpdated                   { get; }
+        DateTimeOffset                                             LastUpdated                   { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this remote party.

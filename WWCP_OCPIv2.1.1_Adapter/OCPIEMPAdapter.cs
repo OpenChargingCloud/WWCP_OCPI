@@ -396,8 +396,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               UInt16                                            MaxStatusScheduleSize               = DefaultMaxStatusScheduleSize,
 
                               String?                                           DataSource                          = null,
-                              DateTime?                                         Created                             = null,
-                              DateTime?                                         LastChange                          = null,
+                              DateTimeOffset?                                         Created                             = null,
+                              DateTimeOffset?                                         LastChange                          = null,
 
                               JObject?                                          CustomData                          = null,
                               UserDefinedDictionary?                            InternalData                        = null)
@@ -494,8 +494,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               UInt16                                            MaxStatusScheduleSize               = DefaultMaxStatusScheduleSize,
 
                               String?                                           DataSource                          = null,
-                              DateTime?                                         Created                             = null,
-                              DateTime?                                         LastChange                          = null,
+                              DateTimeOffset?                                         Created                             = null,
+                              DateTimeOffset?                                         LastChange                          = null,
 
                               JObject?                                          CustomData                          = null,
                               UserDefinedDictionary?                            InternalData                        = null)
@@ -615,8 +615,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             IEnumerable<Version_Id>?  RemoteVersionIds            = null,
                                             Version_Id?               SelectedVersionId           = null,
 
-                                            DateTime?                 LocalAccessNotBefore        = null,
-                                            DateTime?                 LocalAccessNotAfter         = null,
+                                            DateTimeOffset?                 LocalAccessNotBefore        = null,
+                                            DateTimeOffset?                 LocalAccessNotAfter         = null,
 
                                             Boolean?                  AccessTokenBase64Encoding   = null,
                                             Boolean?                  AllowDowngrades             = false,
@@ -655,8 +655,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             OCPI.BusinessDetails  BusinessDetails,
 
                                             OCPI.AccessToken      AccessToken,
-                                            DateTime?             LocalAccessNotBefore        = null,
-                                            DateTime?             LocalAccessNotAfter         = null,
+                                            DateTimeOffset?             LocalAccessNotBefore        = null,
+                                            DateTimeOffset?             LocalAccessNotAfter         = null,
                                             Boolean?              AccessTokenBase64Encoding   = null,
                                             Boolean?              AllowDowngrades             = false,
 
@@ -686,12 +686,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         Boolean IPullEVSEData.PullEVSEData_IsDisabled { get; set; }
 
 
-        Task<POIDataPull<WWCP.EVSE>> IPullEVSEData.PullEVSEData(DateTime? LastCall, GeoCoordinate? SearchCenter, Single DistanceKM, EMobilityProvider_Id? ProviderId, IEnumerable<ChargingStationOperator_Id> OperatorIdFilter, IEnumerable<Country> CountryCodeFilter, DateTime? Timestamp, CancellationToken CancellationToken, EventTracking_Id EventTrackingId, TimeSpan? RequestTimeout)
+        Task<POIDataPull<WWCP.EVSE>> IPullEVSEData.PullEVSEData(DateTimeOffset? LastCall, GeoCoordinate? SearchCenter, Single DistanceKM, EMobilityProvider_Id? ProviderId, IEnumerable<ChargingStationOperator_Id> OperatorIdFilter, IEnumerable<Country> CountryCodeFilter, DateTimeOffset? Timestamp, EventTracking_Id EventTrackingId, TimeSpan? RequestTimeout, CancellationToken CancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        Task<StatusPull<EVSEStatus>> IPullEVSEStatus.PullEVSEStatus(DateTime? LastCall, GeoCoordinate? SearchCenter, Single DistanceKM, EVSEStatusType? EVSEStatusFilter, EMobilityProvider_Id? ProviderId, DateTime? Timestamp, CancellationToken CancellationToken, EventTracking_Id EventTrackingId, TimeSpan? RequestTimeout)
+        Task<StatusPull<EVSEStatus>> IPullEVSEStatus.PullEVSEStatus(DateTimeOffset? LastCall, GeoCoordinate? SearchCenter, Single DistanceKM, EVSEStatusType? EVSEStatusFilter, EMobilityProvider_Id? ProviderId, DateTimeOffset? Timestamp, EventTracking_Id EventTrackingId, TimeSpan? RequestTimeout, CancellationToken CancellationToken)
         {
             throw new NotImplementedException();
         }
@@ -706,7 +706,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         Task<ReservationResult> IChargingReservations.Reserve(ChargingLocation                   ChargingLocation,
                                                               ChargingReservationLevel           ReservationLevel,
-                                                              DateTime?                          StartTime,
+                                                              DateTimeOffset?                          StartTime,
                                                               TimeSpan?                          Duration,
                                                               ChargingReservation_Id?            ReservationId,
                                                               ChargingReservation_Id?            LinkedReservationId,
@@ -718,7 +718,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                               IEnumerable<EMobilityAccount_Id>?  eMAIds,
                                                               IEnumerable<UInt32>?               PINs,
 
-                                                              DateTime?                          Timestamp,
+                                                              DateTimeOffset?                          Timestamp,
                                                               EventTracking_Id?                  EventTrackingId,
                                                               TimeSpan?                          RequestTimeout,
                                                               CancellationToken                  CancellationToken)
@@ -728,7 +728,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         Task<CancelReservationResult> IChargingReservations.CancelReservation(ChargingReservation_Id                 ReservationId,
                                                                               ChargingReservationCancellationReason  Reason,
-                                                                              DateTime?                              Timestamp,
+                                                                              DateTimeOffset?                              Timestamp,
                                                                               EventTracking_Id?                      EventTrackingId,
                                                                               TimeSpan?                              RequestTimeout,
                                                                               CancellationToken                      CancellationToken)
@@ -770,7 +770,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                    JObject?                 AdditionalSessionInfos,
                                                                    Auth_Path?               AuthenticationPath,
 
-                                                                   DateTime?                Timestamp,
+                                                                   DateTimeOffset?                Timestamp,
                                                                    EventTracking_Id?        EventTrackingId,
                                                                    TimeSpan?                RequestTimeout,
                                                                    CancellationToken        CancellationToken)
@@ -885,7 +885,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                            RemoteAuthentication?  RemoteAuthentication,
                                                            Auth_Path?             AuthenticationPath,
 
-                                                           DateTime?              Timestamp,
+                                                           DateTimeOffset?              Timestamp,
                                                            EventTracking_Id?      EventTrackingId,
                                                            TimeSpan?              RequestTimeout,
                                                            CancellationToken      CancellationToken)
@@ -945,7 +945,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Charge Detail Records
 
-        Task<IEnumerable<ChargeDetailRecord>> IEMPRoamingProvider.GetChargeDetailRecords(DateTime From, DateTime? To, EMobilityProvider_Id? ProviderId, DateTime? Timestamp, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout, CancellationToken CancellationToken)
+        Task<IEnumerable<ChargeDetailRecord>> IEMPRoamingProvider.GetChargeDetailRecords(DateTimeOffset From, DateTimeOffset? To, EMobilityProvider_Id? ProviderId, DateTimeOffset? Timestamp, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout, CancellationToken CancellationToken)
         {
             return Task.FromResult((IEnumerable<ChargeDetailRecord>) Array.Empty<ChargeDetailRecord>());
         }
@@ -1173,7 +1173,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                           ChargingSession_Id?          CPOPartnerSessionId   = null,
                                                           ChargingStationOperator_Id?  OperatorId            = null,
 
-                                                          DateTime?                    Timestamp             = null,
+                                                          DateTimeOffset?                    Timestamp             = null,
                                                           EventTracking_Id?            EventTrackingId       = null,
                                                           TimeSpan?                    RequestTimeout        = null,
                                                           CancellationToken            CancellationToken     = default)
@@ -1203,7 +1203,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                         ChargingSession_Id?          CPOPartnerSessionId   = null,
                                                         ChargingStationOperator_Id?  OperatorId            = null,
 
-                                                        DateTime?                    Timestamp             = null,
+                                                        DateTimeOffset?                    Timestamp             = null,
                                                         EventTracking_Id?            EventTrackingId       = null,
                                                         TimeSpan?                    RequestTimeout        = null,
                                                         CancellationToken            CancellationToken     = default)
@@ -1228,7 +1228,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public async Task<SendCDRsResult> ReceiveChargeDetailRecords(IEnumerable<ChargeDetailRecord>  ChargeDetailRecords,
 
-                                                                     DateTime?                        Timestamp             = null,
+                                                                     DateTimeOffset?                        Timestamp             = null,
                                                                      EventTracking_Id?                EventTrackingId       = null,
                                                                      TimeSpan?                        RequestTimeout        = null,
                                                                      CancellationToken                CancellationToken     = default)

@@ -394,8 +394,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             IEnumerable<Version_Id>?       RemoteVersionIds            = null,
                                             Version_Id?                    SelectedVersionId           = null,
 
-                                            DateTime?                      LocalAccessNotBefore        = null,
-                                            DateTime?                      LocalAccessNotAfter         = null,
+                                            DateTimeOffset?                LocalAccessNotBefore        = null,
+                                            DateTimeOffset?                LocalAccessNotAfter         = null,
 
                                             Boolean?                       AccessTokenBase64Encoding   = null,
                                             Boolean?                       AllowDowngrades             = false,
@@ -430,8 +430,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             IEnumerable<CredentialsRole>  CredentialsRoles,
 
                                             OCPI.AccessToken              AccessToken,
-                                            DateTime?                     LocalAccessNotBefore        = null,
-                                            DateTime?                     LocalAccessNotAfter         = null,
+                                            DateTimeOffset?               LocalAccessNotBefore        = null,
+                                            DateTimeOffset?               LocalAccessNotAfter         = null,
                                             Boolean?                      AccessTokenBase64Encoding   = null,
                                             Boolean?                      AllowDowngrades             = false,
                                             OCPI.AccessStatus             AccessStatus                = OCPI.AccessStatus.ALLOWED,
@@ -471,7 +471,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             AddChargingPool(WWCP.IChargingPool      ChargingPool,
                             WWCP.TransmissionTypes  TransmissionType,
 
-                            DateTime?               Timestamp,
+                            DateTimeOffset?         Timestamp,
                             EventTracking_Id?       EventTrackingId,
                             TimeSpan?               RequestTimeout,
                             User_Id?                CurrentUserId,
@@ -580,7 +580,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             AddOrUpdateChargingPool(WWCP.IChargingPool      ChargingPool,
                                     WWCP.TransmissionTypes  TransmissionType,
 
-                                    DateTime?               Timestamp,
+                                    DateTimeOffset?         Timestamp,
                                     EventTracking_Id?       EventTrackingId,
                                     TimeSpan?               RequestTimeout,
                                     User_Id?                CurrentUserId,
@@ -683,7 +683,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                Context?                DataSource          = null,
                                WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
 
-                               DateTime?               Timestamp           = null,
+                               DateTimeOffset?         Timestamp           = null,
                                EventTracking_Id?       EventTrackingId     = null,
                                TimeSpan?               RequestTimeout      = null,
                                User_Id?                CurrentUserId       = null,
@@ -800,7 +800,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   Context?                DataSource          = null,
                                   WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
 
-                                  DateTime?               Timestamp           = null,
+                                  DateTimeOffset?         Timestamp           = null,
                                   EventTracking_Id?       EventTrackingId     = null,
                                   TimeSpan?               RequestTimeout      = null,
                                   User_Id?                CurrentUserId       = null,
@@ -847,7 +847,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
                                                         //connectorId => true,
-                                                        new DateTime[] {
+                                                        new DateTimeOffset[] {
                                                             evse.Status.Timestamp,
                                                             evse.LastChangeDate,
                                                             ChargingStation.LastChangeDate
@@ -952,7 +952,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             AddEVSE(WWCP.IEVSE              EVSE,
                     WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
 
-                    DateTime?               Timestamp           = null,
+                    DateTimeOffset?         Timestamp           = null,
                     EventTracking_Id?       EventTrackingId     = null,
                     TimeSpan?               RequestTimeout      = null,
                     User_Id?                CurrentUserId       = null,
@@ -1078,7 +1078,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             AddOrUpdateEVSE(WWCP.IEVSE              EVSE,
                             WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
 
-                            DateTime?               Timestamp           = null,
+                            DateTimeOffset?         Timestamp           = null,
                             EventTracking_Id?       EventTrackingId     = null,
                             TimeSpan?               RequestTimeout      = null,
                             User_Id?                CurrentUserId       = null,
@@ -1222,7 +1222,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        Context?                DataSource          = null,
                        WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
 
-                       DateTime?               Timestamp           = null,
+                       DateTimeOffset?         Timestamp           = null,
                        EventTracking_Id?       EventTrackingId     = null,
                        TimeSpan?               RequestTimeout      = null,
                        User_Id?                CurrentUserId       = null,
@@ -1350,7 +1350,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             DeleteEVSE(WWCP.IEVSE              EVSE,
                        WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
 
-                       DateTime?               Timestamp           = null,
+                       DateTimeOffset?         Timestamp           = null,
                        EventTracking_Id?       EventTrackingId     = null,
                        TimeSpan?               RequestTimeout      = null,
                        User_Id?                CurrentUserId       = null,
@@ -1382,7 +1382,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             WWCP.ISendStatus.UpdateEVSEStatus(IEnumerable<WWCP.EVSEStatusUpdate>  EVSEStatusUpdates,
                                               WWCP.TransmissionTypes              TransmissionType,
 
-                                              DateTime?                           Timestamp,
+                                              DateTimeOffset?                     Timestamp,
                                               EventTracking_Id?                   EventTrackingId,
                                               TimeSpan?                           RequestTimeout,
                                               User_Id?                            CurrentUserId,
@@ -1527,7 +1527,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            WWCP.ChargingSession_Id?          CPOPartnerSessionId   = null,
                            WWCP.ChargingStationOperator_Id?  OperatorId            = null,
 
-                           DateTime?                         Timestamp             = null,
+                           DateTimeOffset?                   Timestamp             = null,
                            EventTracking_Id?                 EventTrackingId       = null,
                            TimeSpan?                         RequestTimeout        = null,
                            CancellationToken                 CancellationToken     = default)
@@ -1706,7 +1706,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                          ));
 
 
-            DateTime               endtime;
+            DateTimeOffset         endtime;
             TimeSpan               runtime;
             WWCP.AuthStartResult?  authStartResult   = null;
 
@@ -1852,7 +1852,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           WWCP.ChargingSession_Id?          CPOPartnerSessionId   = null,
                           WWCP.ChargingStationOperator_Id?  OperatorId            = null,
 
-                          DateTime?                         Timestamp             = null,
+                          DateTimeOffset?                   Timestamp             = null,
                           EventTracking_Id?                 EventTrackingId       = null,
                           TimeSpan?                         RequestTimeout        = null,
                           CancellationToken                 CancellationToken     = default)
@@ -1898,7 +1898,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #endregion
 
 
-            DateTime              endtime;
+            DateTimeOffset        endtime;
             TimeSpan              runtime;
             WWCP.AuthStopResult?  authStopResult   = null;
 
@@ -1971,7 +1971,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             WWCP.ISendChargeDetailRecords.SendChargeDetailRecord(WWCP.ChargeDetailRecord  ChargeDetailRecord,
                                                                  WWCP.TransmissionTypes   TransmissionType,
 
-                                                                 DateTime?                Timestamp,
+                                                                 DateTimeOffset?          Timestamp,
                                                                  EventTracking_Id?        EventTrackingId,
                                                                  TimeSpan?                RequestTimeout,
                                                                  CancellationToken        CancellationToken)
@@ -2003,7 +2003,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             WWCP.ISendChargeDetailRecords.SendChargeDetailRecords(IEnumerable<WWCP.ChargeDetailRecord>  ChargeDetailRecords,
                                                                   WWCP.TransmissionTypes                TransmissionType,
 
-                                                                  DateTime?                             Timestamp,
+                                                                  DateTimeOffset?                       Timestamp,
                                                                   EventTracking_Id?                     EventTrackingId,
                                                                   TimeSpan?                             RequestTimeout,
                                                                   CancellationToken                     CancellationToken)
@@ -2070,7 +2070,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region if disabled => 'AdminDown'...
 
-            DateTime              endtime;
+            DateTimeOffset        endtime;
             TimeSpan              runtime;
             WWCP.SendCDRsResult?  sendCDRsResult   = null;
 

@@ -33,7 +33,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a get locations request will be send.
     /// </summary>
-    public delegate Task OnGetLocationsRequestDelegate(DateTime                              LogTimestamp,
+    public delegate Task OnGetLocationsRequestDelegate(DateTimeOffset                        LogTimestamp,
                                                        PTP2CPOClient                         Sender,
                                                        Request_Id                            RequestId,
                                                        Correlation_Id                        CorrelationId,
@@ -45,7 +45,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get locations request had been received.
     /// </summary>
-    public delegate Task OnGetLocationsResponseDelegate(DateTime                              LogTimestamp,
+    public delegate Task OnGetLocationsResponseDelegate(DateTimeOffset                        LogTimestamp,
                                                         PTP2CPOClient                         Sender,
                                                         Request_Id                            RequestId,
                                                         Correlation_Id                        CorrelationId,
@@ -64,7 +64,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a get location by its identification request will be send.
     /// </summary>
-    public delegate Task OnGetLocationRequestDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetLocationRequestDelegate(DateTimeOffset           LogTimestamp,
                                                       PTP2CPOClient            Sender,
                                                       Request_Id               RequestId,
                                                       Correlation_Id           CorrelationId,
@@ -78,7 +78,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get location by its identification request had been received.
     /// </summary>
-    public delegate Task OnGetLocationResponseDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetLocationResponseDelegate(DateTimeOffset           LogTimestamp,
                                                        PTP2CPOClient            Sender,
                                                        Request_Id               RequestId,
                                                        Correlation_Id           CorrelationId,
@@ -99,7 +99,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a get EVSE by its identification request will be send.
     /// </summary>
-    public delegate Task OnGetEVSERequestDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetEVSERequestDelegate(DateTimeOffset           LogTimestamp,
                                                   PTP2CPOClient            Sender,
                                                   Request_Id               RequestId,
                                                   Correlation_Id           CorrelationId,
@@ -114,7 +114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get EVSE by its identification request had been received.
     /// </summary>
-    public delegate Task OnGetEVSEResponseDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetEVSEResponseDelegate(DateTimeOffset           LogTimestamp,
                                                    PTP2CPOClient            Sender,
                                                    Request_Id               RequestId,
                                                    Correlation_Id           CorrelationId,
@@ -136,7 +136,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a get connector by its identification request will be send.
     /// </summary>
-    public delegate Task OnGetConnectorRequestDelegate(DateTime                  LogTimestamp,
+    public delegate Task OnGetConnectorRequestDelegate(DateTimeOffset            LogTimestamp,
                                                        PTP2CPOClient             Sender,
                                                        Request_Id                RequestId,
                                                        Correlation_Id            CorrelationId,
@@ -152,7 +152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get connector by its identification request had been received.
     /// </summary>
-    public delegate Task OnGetConnectorResponseDelegate(DateTime                  LogTimestamp,
+    public delegate Task OnGetConnectorResponseDelegate(DateTimeOffset            LogTimestamp,
                                                         PTP2CPOClient             Sender,
                                                         Request_Id                RequestId,
                                                         Correlation_Id            CorrelationId,
@@ -176,7 +176,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a get tariffs request will be send.
     /// </summary>
-    public delegate Task OnGetTariffsRequestDelegate(DateTime                              LogTimestamp,
+    public delegate Task OnGetTariffsRequestDelegate(DateTimeOffset                        LogTimestamp,
                                                      PTP2CPOClient                         Sender,
                                                      Request_Id                            RequestId,
                                                      Correlation_Id                        CorrelationId,
@@ -188,7 +188,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get tariffs request had been received.
     /// </summary>
-    public delegate Task OnGetTariffsResponseDelegate(DateTime                              LogTimestamp,
+    public delegate Task OnGetTariffsResponseDelegate(DateTimeOffset                        LogTimestamp,
                                                       PTP2CPOClient                         Sender,
                                                       Request_Id                            RequestId,
                                                       Correlation_Id                        CorrelationId,
@@ -207,7 +207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a get tariff by its identification request will be send.
     /// </summary>
-    public delegate Task OnGetTariffRequestDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetTariffRequestDelegate(DateTimeOffset           LogTimestamp,
                                                     PTP2CPOClient            Sender,
                                                     Request_Id               RequestId,
                                                     Correlation_Id           CorrelationId,
@@ -221,7 +221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get tariff by its identification request had been received.
     /// </summary>
-    public delegate Task OnGetTariffResponseDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetTariffResponseDelegate(DateTimeOffset           LogTimestamp,
                                                      PTP2CPOClient            Sender,
                                                      Request_Id               RequestId,
                                                      Correlation_Id           CorrelationId,
@@ -243,7 +243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a get sessions request will be send.
     /// </summary>
-    public delegate Task OnGetSessionsRequestDelegate(DateTime                              LogTimestamp,
+    public delegate Task OnGetSessionsRequestDelegate(DateTimeOffset                        LogTimestamp,
                                                       PTP2CPOClient                         Sender,
                                                       Request_Id                            RequestId,
                                                       Correlation_Id                        CorrelationId,
@@ -255,7 +255,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get sessions request had been received.
     /// </summary>
-    public delegate Task OnGetSessionsResponseDelegate(DateTime                              LogTimestamp,
+    public delegate Task OnGetSessionsResponseDelegate(DateTimeOffset                        LogTimestamp,
                                                        PTP2CPOClient                         Sender,
                                                        Request_Id                            RequestId,
                                                        Correlation_Id                        CorrelationId,
@@ -274,7 +274,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a get session by its identification request will be send.
     /// </summary>
-    public delegate Task OnGetSessionRequestDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetSessionRequestDelegate(DateTimeOffset           LogTimestamp,
                                                      PTP2CPOClient            Sender,
                                                      Request_Id               RequestId,
                                                      Correlation_Id           CorrelationId,
@@ -288,7 +288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get session by its identification request had been received.
     /// </summary>
-    public delegate Task OnGetSessionResponseDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetSessionResponseDelegate(DateTimeOffset           LogTimestamp,
                                                       PTP2CPOClient            Sender,
                                                       Request_Id               RequestId,
                                                       Correlation_Id           CorrelationId,
@@ -310,7 +310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a get CDRs request will be send.
     /// </summary>
-    public delegate Task OnGetCDRsRequestDelegate(DateTime                              LogTimestamp,
+    public delegate Task OnGetCDRsRequestDelegate(DateTimeOffset                        LogTimestamp,
                                                   PTP2CPOClient                         Sender,
                                                   Request_Id                            RequestId,
                                                   Correlation_Id                        CorrelationId,
@@ -322,7 +322,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get CDRs request had been received.
     /// </summary>
-    public delegate Task OnGetCDRsResponseDelegate(DateTime                              LogTimestamp,
+    public delegate Task OnGetCDRsResponseDelegate(DateTimeOffset                        LogTimestamp,
                                                    PTP2CPOClient                         Sender,
                                                    Request_Id                            RequestId,
                                                    Correlation_Id                        CorrelationId,
@@ -341,7 +341,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a get CDR by its identification request will be send.
     /// </summary>
-    public delegate Task OnGetCDRRequestDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetCDRRequestDelegate(DateTimeOffset           LogTimestamp,
                                                  PTP2CPOClient            Sender,
                                                  Request_Id               RequestId,
                                                  Correlation_Id           CorrelationId,
@@ -355,7 +355,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get CDR by its identification request had been received.
     /// </summary>
-    public delegate Task OnGetCDRResponseDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetCDRResponseDelegate(DateTimeOffset           LogTimestamp,
                                                   PTP2CPOClient            Sender,
                                                   Request_Id               RequestId,
                                                   Correlation_Id           CorrelationId,
@@ -377,7 +377,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a get token request will be send.
     /// </summary>
-    public delegate Task OnGetTokenRequestDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetTokenRequestDelegate(DateTimeOffset           LogTimestamp,
                                                    PTP2CPOClient            Sender,
                                                    Request_Id               RequestId,
                                                    Correlation_Id           CorrelationId,
@@ -393,7 +393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get token request had been received.
     /// </summary>
-    public delegate Task OnGetTokenResponseDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetTokenResponseDelegate(DateTimeOffset           LogTimestamp,
                                                     PTP2CPOClient            Sender,
                                                     Request_Id               RequestId,
                                                     Correlation_Id           CorrelationId,
@@ -416,7 +416,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a put token request will be send.
     /// </summary>
-    public delegate Task OnPutTokenRequestDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnPutTokenRequestDelegate(DateTimeOffset           LogTimestamp,
                                                    PTP2CPOClient            Sender,
                                                    Request_Id               RequestId,
                                                    Correlation_Id           CorrelationId,
@@ -430,7 +430,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a put token request had been received.
     /// </summary>
-    public delegate Task OnPutTokenResponseDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnPutTokenResponseDelegate(DateTimeOffset           LogTimestamp,
                                                     PTP2CPOClient            Sender,
                                                     Request_Id               RequestId,
                                                     Correlation_Id           CorrelationId,
@@ -451,7 +451,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a patch token request will be send.
     /// </summary>
-    public delegate Task OnPatchTokenRequestDelegate(DateTime                  LogTimestamp,
+    public delegate Task OnPatchTokenRequestDelegate(DateTimeOffset            LogTimestamp,
                                                      PTP2CPOClient             Sender,
                                                      Request_Id                RequestId,
                                                      Correlation_Id            CorrelationId,
@@ -468,7 +468,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a patch token request had been received.
     /// </summary>
-    public delegate Task OnPatchTokenResponseDelegate(DateTime                  LogTimestamp,
+    public delegate Task OnPatchTokenResponseDelegate(DateTimeOffset            LogTimestamp,
                                                       PTP2CPOClient             Sender,
                                                       Request_Id                RequestId,
                                                       Correlation_Id            CorrelationId,
@@ -493,13 +493,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a reserve now command request will be send.
     /// </summary>
-    public delegate Task OnReserveNowRequestDelegate(DateTime                                            LogTimestamp,
+    public delegate Task OnReserveNowRequestDelegate(DateTimeOffset                                      LogTimestamp,
                                                      PTP2CPOClient                                       Sender,
                                                      Request_Id                                          RequestId,
                                                      Correlation_Id                                      CorrelationId,
 
                                                      Token                                               Token,
-                                                     DateTime                                            ExpirationTimestamp,
+                                                     DateTimeOffset                                      ExpirationTimestamp,
                                                      Reservation_Id                                      ReservationId,
                                                      Location_Id                                         LocationId,
                                                      EVSE_UId?                                           EVSEUId,
@@ -512,13 +512,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a reserve now command request had been received.
     /// </summary>
-    public delegate Task OnReserveNowResponseDelegate(DateTime                                            LogTimestamp,
+    public delegate Task OnReserveNowResponseDelegate(DateTimeOffset                                      LogTimestamp,
                                                       PTP2CPOClient                                       Sender,
                                                       Request_Id                                          RequestId,
                                                       Correlation_Id                                      CorrelationId,
 
                                                       Token                                               Token,
-                                                      DateTime                                            ExpirationTimestamp,
+                                                      DateTimeOffset                                      ExpirationTimestamp,
                                                       Reservation_Id                                      ReservationId,
                                                       Location_Id                                         LocationId,
                                                       EVSE_UId?                                           EVSEUId,
@@ -538,7 +538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a cancel reservation command request will be send.
     /// </summary>
-    public delegate Task OnCancelReservationRequestDelegate(DateTime                                                   LogTimestamp,
+    public delegate Task OnCancelReservationRequestDelegate(DateTimeOffset                                             LogTimestamp,
                                                             PTP2CPOClient                                              Sender,
                                                             Request_Id                                                 RequestId,
                                                             Correlation_Id                                             CorrelationId,
@@ -552,7 +552,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a cancel reservation command request had been received.
     /// </summary>
-    public delegate Task OnCancelReservationResponseDelegate(DateTime                                                   LogTimestamp,
+    public delegate Task OnCancelReservationResponseDelegate(DateTimeOffset                                             LogTimestamp,
                                                              PTP2CPOClient                                              Sender,
                                                              Request_Id                                                 RequestId,
                                                              Correlation_Id                                             CorrelationId,
@@ -573,7 +573,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a start session command request will be send.
     /// </summary>
-    public delegate Task OnStartSessionRequestDelegate(DateTime                                              LogTimestamp,
+    public delegate Task OnStartSessionRequestDelegate(DateTimeOffset                                        LogTimestamp,
                                                        PTP2CPOClient                                         Sender,
                                                        Request_Id                                            RequestId,
                                                        Correlation_Id                                        CorrelationId,
@@ -591,7 +591,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a start session command request had been received.
     /// </summary>
-    public delegate Task OnStartSessionResponseDelegate(DateTime                                              LogTimestamp,
+    public delegate Task OnStartSessionResponseDelegate(DateTimeOffset                                        LogTimestamp,
                                                         PTP2CPOClient                                         Sender,
                                                         Request_Id                                            RequestId,
                                                         Correlation_Id                                        CorrelationId,
@@ -616,7 +616,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a stop session command request will be send.
     /// </summary>
-    public delegate Task OnStopSessionRequestDelegate(DateTime                                             LogTimestamp,
+    public delegate Task OnStopSessionRequestDelegate(DateTimeOffset                                       LogTimestamp,
                                                       PTP2CPOClient                                        Sender,
                                                       Request_Id                                           RequestId,
                                                       Correlation_Id                                       CorrelationId,
@@ -630,7 +630,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a stop session command request had been received.
     /// </summary>
-    public delegate Task OnStopSessionResponseDelegate(DateTime                                             LogTimestamp,
+    public delegate Task OnStopSessionResponseDelegate(DateTimeOffset                                       LogTimestamp,
                                                        PTP2CPOClient                                        Sender,
                                                        Request_Id                                           RequestId,
                                                        Correlation_Id                                       CorrelationId,
@@ -651,7 +651,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever an unlock connector command request will be send.
     /// </summary>
-    public delegate Task OnUnlockConnectorRequestDelegate(DateTime                                                 LogTimestamp,
+    public delegate Task OnUnlockConnectorRequestDelegate(DateTimeOffset                                           LogTimestamp,
                                                           PTP2CPOClient                                            Sender,
                                                           Request_Id                                               RequestId,
                                                           Correlation_Id                                           CorrelationId,
@@ -667,7 +667,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to an unlock connector command request had been received.
     /// </summary>
-    public delegate Task OnUnlockConnectorResponseDelegate(DateTime                                                 LogTimestamp,
+    public delegate Task OnUnlockConnectorResponseDelegate(DateTimeOffset                                           LogTimestamp,
                                                            PTP2CPOClient                                            Sender,
                                                            Request_Id                                               RequestId,
                                                            Correlation_Id                                           CorrelationId,
@@ -690,7 +690,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever an unlock connector command request will be send.
     /// </summary>
-    public delegate Task OnSetChargingProfileRequestDelegate(DateTime                                                    LogTimestamp,
+    public delegate Task OnSetChargingProfileRequestDelegate(DateTimeOffset                                              LogTimestamp,
                                                              PTP2CPOClient                                               Sender,
                                                              Request_Id                                                  RequestId,
                                                              Correlation_Id                                              CorrelationId,
@@ -706,7 +706,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
     /// <summary>
     /// A delegate called whenever a response to an unlock connector command request had been received.
     /// </summary>
-    public delegate Task OnSetChargingProfileResponseDelegate(DateTime                                                    LogTimestamp,
+    public delegate Task OnSetChargingProfileResponseDelegate(DateTimeOffset                                              LogTimestamp,
                                                               PTP2CPOClient                                               Sender,
                                                               Request_Id                                                  RequestId,
                                                               Correlation_Id                                              CorrelationId,

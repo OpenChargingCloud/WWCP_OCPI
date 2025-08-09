@@ -157,13 +157,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The timestamp when this EVSE was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public DateTime                         Created                    { get; }
+        public DateTimeOffset                   Created                    { get; }
 
         /// <summary>
         /// Timestamp when this EVSE was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                         LastUpdated                { get; }
+        public DateTimeOffset                   LastUpdated                { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this EVSE.
@@ -227,8 +227,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                       JObject?                                                      CustomData                                   = null,
                       UserDefinedDictionary?                                        InternalData                                 = null,
 
-                      DateTime?                                                     Created                                      = null,
-                      DateTime?                                                     LastUpdated                                  = null,
+                      DateTimeOffset?                                               Created                                      = null,
+                      DateTimeOffset?                                               LastUpdated                                  = null,
 
                       EMSP_Id?                                                      EMSPId                                       = null,
                       CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
@@ -333,8 +333,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     JObject?                                                      CustomData                                   = null,
                     UserDefinedDictionary?                                        InternalData                                 = null,
 
-                    DateTime?                                                     Created                                      = null,
-                    DateTime?                                                     LastUpdated                                  = null,
+                    DateTimeOffset?                                               Created                                      = null,
+                    DateTimeOffset?                                               LastUpdated                                  = null,
 
                     EMSP_Id?                                                      EMSPId                                       = null,
                     CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
@@ -1622,13 +1622,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             /// The timestamp when this EVSE was created.
             /// </summary>
             [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-            public DateTime                         Created                    { get; set; }
+            public DateTimeOffset                   Created                    { get; set; }
 
             /// <summary>
             /// Timestamp when this EVSE was last updated (or created).
             /// </summary>
             [Mandatory]
-            public DateTime                         LastUpdated                { get; set; }
+            public DateTimeOffset                   LastUpdated                { get; set; }
 
             #endregion
 
@@ -1676,8 +1676,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                              JObject?                          CustomData            = null,
                              UserDefinedDictionary?            InternalData          = null,
 
-                             DateTime?                         Created               = null,
-                             DateTime?                         LastUpdated           = null)
+                             DateTimeOffset?                   Created               = null,
+                             DateTimeOffset?                   LastUpdated           = null)
 
             {
 

@@ -76,13 +76,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The time when the session became active.
         /// </summary>
         [Mandatory]
-        public   DateTime                            Start                        { get; }
+        public   DateTimeOffset                      Start                        { get; }
 
         /// <summary>
         /// The time when the session is completed.
         /// </summary>
         [Optional]
-        public   DateTime?                           End                          { get; }
+        public   DateTimeOffset?                     End                          { get; }
 
 #pragma warning disable IDE1006 // Naming Styles
         /// <summary>
@@ -167,13 +167,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The timestamp when this session was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public   DateTime                            Created                      { get; }
+        public   DateTimeOffset                      Created                      { get; }
 
         /// <summary>
         /// The timestamp when this session was last updated (or created).
         /// </summary>
         [Mandatory]
-        public   DateTime                            LastUpdated                  { get; }
+        public   DateTimeOffset                      LastUpdated                  { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this session used as HTTP ETag.
@@ -218,7 +218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public Session(CountryCode                                       CountryCode,
                        Party_Id                                          PartyId,
                        Session_Id                                        Id,
-                       DateTime                                          Start,
+                       DateTimeOffset                                    Start,
                        WattHour                                          kWh,
                        CDRToken                                          CDRToken,
                        AuthMethod                                        AuthMethod,
@@ -228,14 +228,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                        Currency                                          Currency,
                        SessionStatusType                                 Status,
 
-                       DateTime?                                         End                              = null,
+                       DateTimeOffset?                                   End                              = null,
                        AuthorizationReference?                           AuthorizationReference           = null,
                        EnergyMeter_Id?                                   EnergyMeterId                    = null,
                        IEnumerable<ChargingPeriod>?                      ChargingPeriods                  = null,
                        Price?                                            TotalCosts                       = null,
 
-                       DateTime?                                         Created                          = null,
-                       DateTime?                                         LastUpdated                      = null,
+                       DateTimeOffset?                                   Created                          = null,
+                       DateTimeOffset?                                   LastUpdated                      = null,
                        String?                                           ETag                             = null,
 
                        CustomJObjectSerializerDelegate<Session>?         CustomSessionSerializer          = null,
@@ -856,7 +856,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="AdditionalChargingPeriods">Optional additional charging periods.</param>
         public Session Update(WattHour?                     AdditionalConsumption       = null,
                               SessionStatusType?            NewStatus                   = null,
-                              DateTime?                     SessionEnd                  = null,
+                              DateTimeOffset?               SessionEnd                  = null,
                               Price?                        NewTotalCosts               = null,
                               IEnumerable<ChargingPeriod>?  AdditionalChargingPeriods   = null)
 
@@ -908,7 +908,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="AdditionalConsumption">An optional amount of additional energy consumption.</param>
         /// <param name="NewTotalCosts">An optional new total costs of the session.</param>
         /// <param name="AdditionalChargingPeriods">Optional additional charging periods.</param>
-        public Session Complete(DateTime                      SessionEndTimestamp,
+        public Session Complete(DateTimeOffset                SessionEndTimestamp,
                                 WattHour?                     AdditionalConsumption       = null,
                                 Price?                        NewTotalCosts               = null,
                                 IEnumerable<ChargingPeriod>?  AdditionalChargingPeriods   = null)

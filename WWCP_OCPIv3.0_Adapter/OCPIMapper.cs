@@ -996,7 +996,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static EVSE? ToOCPI(this WWCP.IEVSE                 EVSE,
                                    WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
                                    WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                   DateTime?                       LastUpdate,
+                                   DateTimeOffset?                 LastUpdate,
                                    ref List<Warning>               Warnings)
         {
 
@@ -1019,7 +1019,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static EVSE? ToOCPI(this WWCP.IEVSE                 EVSE,
                                    WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
                                    WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                   DateTime?                       LastUpdate,
+                                   DateTimeOffset?                 LastUpdate,
                                    out IEnumerable<Warning>        Warnings)
         {
 

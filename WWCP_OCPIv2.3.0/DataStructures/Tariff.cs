@@ -138,7 +138,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// before it becomes active.
         /// </summary>
         [Optional]
-        public   DateTime?                   Start                { get; }
+        public   DateTimeOffset?             Start                { get; }
 
         /// <summary>
         /// The optional timestamp after which this tariff is no longer valid (UTC).
@@ -146,7 +146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// in the near future.
         /// </summary>
         [Optional]
-        public   DateTime?                   End                  { get; }
+        public   DateTimeOffset?             End                  { get; }
 
         /// <summary>
         /// Optional details on the energy supplied with this tariff.
@@ -158,27 +158,27 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The timestamp when this tariff was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public   DateTime                    Created              { get; }
+        public   DateTimeOffset              Created              { get; }
 
         /// <summary>
         /// The optional timestamp when this tariff becomes relevant.
         /// </summary>
         [Optional, VendorExtension(VE.GraphDefined, VE.TimeTraveling)]
-        public   DateTime?                   NotBefore
+        public   DateTimeOffset?             NotBefore
             => Start;
 
         /// <summary>
         /// The optional timestamp when this tariff is no longer relevant.
         /// </summary>
         [Optional, VendorExtension(VE.GraphDefined, VE.TimeTraveling)]
-        public   DateTime?                   NotAfter
+        public   DateTimeOffset?             NotAfter
             => End;
 
         /// <summary>
         /// The timestamp when this tariff was last updated (or created).
         /// </summary>
         [Mandatory]
-        public   DateTime                    LastUpdated          { get; }
+        public   DateTimeOffset              LastUpdated          { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this tariff used as HTTP ETag.
@@ -233,12 +233,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                       URL?                                                   TariffAltURL                          = null,
                       PriceLimit?                                            MinPrice                              = null,
                       PriceLimit?                                            MaxPrice                              = null,
-                      DateTime?                                              Start                                 = null,
-                      DateTime?                                              End                                   = null,
+                      DateTimeOffset?                                        Start                                 = null,
+                      DateTimeOffset?                                        End                                   = null,
                       EnergyMix?                                             EnergyMix                             = null,
 
-                      DateTime?                                              Created                               = null,
-                      DateTime?                                              LastUpdated                           = null,
+                      DateTimeOffset?                                        Created                               = null,
+                      DateTimeOffset?                                        LastUpdated                           = null,
                       String?                                                ETag                                  = null,
 
                       CommonAPI?                                             CommonAPI                             = null,

@@ -159,7 +159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetTerminalsRequest(DateTime     Timestamp,
+        protected internal Task GetTerminalsRequest(DateTimeOffset     Timestamp,
                                                     HTTPAPI      API,
                                                     OCPIRequest  Request)
 
@@ -183,7 +183,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTerminalsResponse(DateTime      Timestamp,
+        protected internal Task GetTerminalsResponse(DateTimeOffset      Timestamp,
                                                      HTTPAPI       API,
                                                      OCPIRequest   Request,
                                                      OCPIResponse  Response)
@@ -209,7 +209,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetTerminalRequest(DateTime     Timestamp,
+        protected internal Task GetTerminalRequest(DateTimeOffset     Timestamp,
                                                    HTTPAPI      API,
                                                    OCPIRequest  Request)
 
@@ -233,7 +233,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTerminalResponse(DateTime      Timestamp,
+        protected internal Task GetTerminalResponse(DateTimeOffset      Timestamp,
                                                     HTTPAPI       API,
                                                     OCPIRequest   Request,
                                                     OCPIResponse  Response)
@@ -259,7 +259,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PutTerminalRequest(DateTime     Timestamp,
+        protected internal Task PutTerminalRequest(DateTimeOffset     Timestamp,
                                                    HTTPAPI      API,
                                                    OCPIRequest  Request)
 
@@ -283,7 +283,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PutTerminalResponse(DateTime      Timestamp,
+        protected internal Task PutTerminalResponse(DateTimeOffset      Timestamp,
                                                     HTTPAPI       API,
                                                     OCPIRequest   Request,
                                                     OCPIResponse  Response)
@@ -309,7 +309,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PatchTerminalRequest(DateTime     Timestamp,
+        protected internal Task PatchTerminalRequest(DateTimeOffset     Timestamp,
                                                    HTTPAPI      API,
                                                    OCPIRequest  Request)
 
@@ -333,7 +333,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PatchTerminalResponse(DateTime      Timestamp,
+        protected internal Task PatchTerminalResponse(DateTimeOffset      Timestamp,
                                                     HTTPAPI       API,
                                                     OCPIRequest   Request,
                                                     OCPIResponse  Response)
@@ -359,7 +359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PostTerminalsActivateRequest(DateTime     Timestamp,
+        protected internal Task PostTerminalsActivateRequest(DateTimeOffset     Timestamp,
                                                              HTTPAPI      API,
                                                              OCPIRequest  Request)
 
@@ -383,7 +383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PostTerminalsActivateResponse(DateTime      Timestamp,
+        protected internal Task PostTerminalsActivateResponse(DateTimeOffset      Timestamp,
                                                               HTTPAPI       API,
                                                               OCPIRequest   Request,
                                                               OCPIResponse  Response)
@@ -409,7 +409,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PostTerminalsDeactivateRequest(DateTime     Timestamp,
+        protected internal Task PostTerminalsDeactivateRequest(DateTimeOffset     Timestamp,
                                                                HTTPAPI      API,
                                                                OCPIRequest  Request)
 
@@ -433,7 +433,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PostTerminalsDeactivateResponse(DateTime      Timestamp,
+        protected internal Task PostTerminalsDeactivateResponse(DateTimeOffset      Timestamp,
                                                                 HTTPAPI       API,
                                                                 OCPIRequest   Request,
                                                                 OCPIResponse  Response)

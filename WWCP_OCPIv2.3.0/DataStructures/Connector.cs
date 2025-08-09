@@ -146,13 +146,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The timestamp when this EVSE was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public DateTime                          Created                  { get; }
+        public DateTimeOffset                    Created                  { get; }
 
         /// <summary>
         /// The timestamp when this connector was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                          LastUpdated              { get; }
+        public DateTimeOffset                    LastUpdated              { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this connector used as HTTP ETag.
@@ -195,8 +195,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                          URL?                                         TermsAndConditionsURL       = null,
                          IEnumerable<ConnectorCapability>?            Capabilities                = null,
 
-                         DateTime?                                    Created                     = null,
-                         DateTime?                                    LastUpdated                 = null,
+                         DateTimeOffset?                              Created                     = null,
+                         DateTimeOffset?                              LastUpdated                 = null,
                          String?                                      ETag                        = null,
 
                          EVSE?                                        ParentEVSE                  = null,

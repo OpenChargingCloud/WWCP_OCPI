@@ -278,44 +278,44 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
         #region Data
 
-        public          URL?                                           cpoVersionsAPIURL;
-        public          URL?                                           emsp1VersionsAPIURL;
-        public          URL?                                           emsp2VersionsAPIURL;
+        public          URL?                                                 cpoVersionsAPIURL;
+        public          URL?                                                 emsp1VersionsAPIURL;
+        public          URL?                                                 emsp2VersionsAPIURL;
 
-        protected       HTTPAPI?                                       cpoHTTPAPI;
-        protected       CommonAPI?                                     cpoCommonAPI;
-        protected       OCPIWebAPI?                                    cpoWebAPI;
-        protected       CPOAPI?                                        cpoCPOAPI;
-        protected       OCPICSOAdapter?                                cpoAdapter;
-        protected       ConcurrentDictionary<DateTime, OCPIRequest>    cpoAPIRequestLogs;
-        protected       ConcurrentDictionary<DateTime, OCPIResponse>   cpoAPIResponseLogs;
+        protected       HTTPAPI?                                             cpoHTTPAPI;
+        protected       CommonAPI?                                           cpoCommonAPI;
+        protected       OCPIWebAPI?                                          cpoWebAPI;
+        protected       CPOAPI?                                              cpoCPOAPI;
+        protected       OCPICSOAdapter?                                      cpoAdapter;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIRequest>    cpoAPIRequestLogs;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIResponse>   cpoAPIResponseLogs;
 
-        protected       HTTPAPI?                                       emsp1HTTPAPI;
-        protected       CommonAPI?                                     emsp1CommonAPI;
-        protected       OCPIWebAPI?                                    emsp1WebAPI;
-        protected       EMSPAPI?                                       emsp1EMSPAPI;
-        protected       OCPIEMPAdapter?                                emsp1Adapter;
-        protected       ConcurrentDictionary<DateTime, OCPIRequest>    emsp1APIRequestLogs;
-        protected       ConcurrentDictionary<DateTime, OCPIResponse>   emsp1APIResponseLogs;
+        protected       HTTPAPI?                                             emsp1HTTPAPI;
+        protected       CommonAPI?                                           emsp1CommonAPI;
+        protected       OCPIWebAPI?                                          emsp1WebAPI;
+        protected       EMSPAPI?                                             emsp1EMSPAPI;
+        protected       OCPIEMPAdapter?                                      emsp1Adapter;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIRequest>    emsp1APIRequestLogs;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIResponse>   emsp1APIResponseLogs;
 
-        protected       HTTPAPI?                                       emsp2HTTPAPI;
-        protected       CommonAPI?                                     emsp2CommonAPI;
-        protected       OCPIWebAPI?                                    emsp2WebAPI;
-        protected       EMSPAPI?                                       emsp2EMSPAPI;
-        protected       OCPIEMPAdapter?                                emsp2Adapter;
-        protected       ConcurrentDictionary<DateTime, OCPIRequest>    emsp2APIRequestLogs;
-        protected       ConcurrentDictionary<DateTime, OCPIResponse>   emsp2APIResponseLogs;
+        protected       HTTPAPI?                                             emsp2HTTPAPI;
+        protected       CommonAPI?                                           emsp2CommonAPI;
+        protected       OCPIWebAPI?                                          emsp2WebAPI;
+        protected       EMSPAPI?                                             emsp2EMSPAPI;
+        protected       OCPIEMPAdapter?                                      emsp2Adapter;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIRequest>    emsp2APIRequestLogs;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIResponse>   emsp2APIResponseLogs;
 
-        protected const String                                         cpo_accessing_emsp1__token    = "cpo_accessing_emsp1++token";
-        protected const String                                         cpo_accessing_emsp2__token    = "cpo_accessing_emsp2++token";
+        protected const String                                               cpo_accessing_emsp1__token    = "cpo_accessing_emsp1++token";
+        protected const String                                               cpo_accessing_emsp2__token    = "cpo_accessing_emsp2++token";
 
-        protected const String                                         emsp1_accessing_cpo__token    = "emsp1_accessing_cpo++token";
-        protected const String                                         emsp2_accessing_cpo__token    = "emsp2_accessing_cpo++token";
+        protected const String                                               emsp1_accessing_cpo__token    = "emsp1_accessing_cpo++token";
+        protected const String                                               emsp2_accessing_cpo__token    = "emsp2_accessing_cpo++token";
 
-        protected const String                                         UnknownToken                  = "UnknownUnknownUnknownToken";
+        protected const String                                               UnknownToken                  = "UnknownUnknownUnknownToken";
 
-        protected const String                                         BlockedCPOToken               = "blocked-cpo";
-        protected const String                                         BlockedEMSPToken              = "blocked-emsp";
+        protected const String                                               BlockedCPOToken               = "blocked-cpo";
+        protected const String                                               BlockedEMSPToken              = "blocked-emsp";
 
         #endregion
 
@@ -886,8 +886,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Defined API loggers
 
             // CPO
-            cpoAPIRequestLogs     = new ConcurrentDictionary<DateTime, OCPIRequest>();
-            cpoAPIResponseLogs    = new ConcurrentDictionary<DateTime, OCPIResponse>();
+            cpoAPIRequestLogs     = new ConcurrentDictionary<DateTimeOffset, OCPIRequest>();
+            cpoAPIResponseLogs    = new ConcurrentDictionary<DateTimeOffset, OCPIResponse>();
 
             cpoCPOAPI.CPOAPILogger?.RegisterLogTarget(LogTargets.Debug,
                                                       (loggingPath, context, logEventName, request) => {
@@ -908,8 +908,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
 
             // EMSP #1
-            emsp1APIRequestLogs   = new ConcurrentDictionary<DateTime, OCPIRequest>();
-            emsp1APIResponseLogs  = new ConcurrentDictionary<DateTime, OCPIResponse>();
+            emsp1APIRequestLogs   = new ConcurrentDictionary<DateTimeOffset, OCPIRequest>();
+            emsp1APIResponseLogs  = new ConcurrentDictionary<DateTimeOffset, OCPIResponse>();
 
             emsp1EMSPAPI.EMSPAPILogger?.RegisterLogTarget(LogTargets.Debug,
                                                           (loggingPath, context, logEventName, request) => {
@@ -930,8 +930,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
 
             // EMSP #2
-            emsp2APIRequestLogs   = new ConcurrentDictionary<DateTime, OCPIRequest>();
-            emsp2APIResponseLogs  = new ConcurrentDictionary<DateTime, OCPIResponse>();
+            emsp2APIRequestLogs   = new ConcurrentDictionary<DateTimeOffset, OCPIRequest>();
+            emsp2APIResponseLogs  = new ConcurrentDictionary<DateTimeOffset, OCPIResponse>();
 
             emsp2EMSPAPI.EMSPAPILogger?.RegisterLogTarget(LogTargets.Debug,
                                                           (loggingPath, context, logEventName, request) => {

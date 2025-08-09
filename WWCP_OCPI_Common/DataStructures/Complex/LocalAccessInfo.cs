@@ -55,13 +55,13 @@ namespace cloud.charging.open.protocols.OCPI
         /// This local access information should not be used before this timestamp.
         /// </summary>
         [Optional]
-        public DateTime?         NotBefore                     { get; }
+        public DateTimeOffset?   NotBefore                     { get; }
 
         /// <summary>
         /// This local access information should not be used after this timestamp.
         /// </summary>
         [Optional]
-        public DateTime?         NotAfter                      { get; }
+        public DateTimeOffset?   NotAfter                      { get; }
 
         /// <summary>
         /// Whether the access token is base64 encoded or not.
@@ -91,8 +91,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         public LocalAccessInfo(AccessToken       AccessToken,
                                AccessStatus      Status,
-                               DateTime?         NotBefore                    = null,
-                               DateTime?         NotAfter                     = null,
+                               DateTimeOffset?   NotBefore                    = null,
+                               DateTimeOffset?   NotAfter                     = null,
                                Boolean?          AccessTokenIsBase64Encoded   = true,
                                Boolean?          AllowDowngrades              = false)
         {

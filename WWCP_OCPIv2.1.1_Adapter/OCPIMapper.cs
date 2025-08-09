@@ -734,7 +734,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
                                    WWCP.IncludeChargingConnectorIdDelegate?  IncludeChargingConnectorIds,
                                    //Func<EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
-                                   DateTime?                                 LastUpdate,
+                                   DateTimeOffset?                           LastUpdate,
                                    ref List<Warning>                         Warnings)
         {
 
@@ -761,7 +761,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
                                    WWCP.IncludeChargingConnectorIdDelegate?  IncludeChargingConnectorIds,
                                    //Func<EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
-                                   DateTime?                                 LastUpdate,
+                                   DateTimeOffset?                           LastUpdate,
                                    out IEnumerable<Warning>                  Warnings)
         {
 

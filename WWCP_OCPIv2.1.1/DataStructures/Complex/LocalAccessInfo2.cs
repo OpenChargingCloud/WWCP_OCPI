@@ -55,13 +55,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// This local access information should not be used before this timestamp.
         /// </summary>
         [Optional]
-        public DateTime?         NotBefore                     { get; }
+        public DateTimeOffset?   NotBefore                     { get; }
 
         /// <summary>
         /// This local access information should not be used after this timestamp.
         /// </summary>
         [Optional]
-        public DateTime?         NotAfter                      { get; }
+        public DateTimeOffset?   NotAfter                      { get; }
 
         /// <summary>
         /// The country code.
@@ -135,8 +135,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                Role              Role,
                                BusinessDetails?  BusinessDetails              = null,
 
-                               DateTime?         NotBefore                    = null,
-                               DateTime?         NotAfter                     = null,
+                               DateTimeOffset?   NotBefore                    = null,
+                               DateTimeOffset?   NotAfter                     = null,
 
                                URL?              VersionsURL                  = null,
                                Boolean?          AccessTokenIsBase64Encoded   = false,

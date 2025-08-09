@@ -90,13 +90,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The timestamp when this financial advice confirmation was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined)]
-        public DateTime                        Created                   { get; }
+        public DateTimeOffset                  Created                   { get; }
 
         /// <summary>
         /// Timestamp when this financial advice confirmation was last updated (or created).
         /// </summary>
         [Optional]
-        public DateTime                        LastUpdated               { get; }
+        public DateTimeOffset                  LastUpdated               { get; }
 
         #endregion
 
@@ -121,8 +121,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                            IEnumerable<String>             EFTData,
                                            Capture_StatusCode              CaptureStatusCode,
                                            String?                         CaptureStatusMessage   = null,
-                                           DateTime?                       Created                = null,
-                                           DateTime?                       LastUpdated            = null)
+                                           DateTimeOffset?                 Created                = null,
+                                           DateTimeOffset?                 LastUpdated            = null)
         {
 
             this.Id                      = Id;

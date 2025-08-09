@@ -137,7 +137,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             public String                         LogEventName                    { get; }
 
             /// <summary>
-            /// A delegate called whenever the event is subscriped to.
+            /// A delegate called whenever the event is subscribed to.
             /// </summary>
             public Action<OCPIRequestLogHandler>  SubscribeToEventDelegate        { get; }
 
@@ -309,7 +309,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             public String                          LogEventName                    { get; }
 
             /// <summary>
-            /// A delegate called whenever the event is subscriped to.
+            /// A delegate called whenever the event is subscribed to.
             /// </summary>
             public Action<OCPIResponseLogHandler>  SubscribeToEventDelegate        { get; }
 

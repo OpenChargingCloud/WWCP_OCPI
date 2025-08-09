@@ -49,7 +49,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// the last period ends when the session ends.
         /// </summary>
         [Mandatory]
-        public DateTime                   StartTimestamp     { get; }
+        public DateTimeOffset             StartTimestamp     { get; }
 
         /// <summary>
         /// List of relevant values for this charging period.
@@ -75,7 +75,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="StartTimestamp">Start timestamp of the charging period.</param>
         /// <param name="Dimensions">List of relevant values for this charging period.</param>
         /// <param name="TariffId">Unique identifier of the tariff that is relevant for this charging period.</param>
-        private ChargingPeriod(DateTime                   StartTimestamp,
+        private ChargingPeriod(DateTimeOffset             StartTimestamp,
                                IEnumerable<CDRDimension>  Dimensions,
                                Tariff_Id?                 TariffId   = null)
         {
@@ -101,7 +101,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="StartTimestamp">Start timestamp of the charging period.</param>
         /// <param name="Dimensions">List of relevant values for this charging period.</param>
         /// <param name="TariffId">Unique identifier of the tariff that is relevant for this charging period.</param>
-        public static ChargingPeriod Create(DateTime                   StartTimestamp,
+        public static ChargingPeriod Create(DateTimeOffset             StartTimestamp,
                                             IEnumerable<CDRDimension>  Dimensions,
                                             Tariff_Id?                 TariffId   = null)
 
@@ -210,7 +210,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatory("start_date_time",
                                          "start timestamp",
-                                         out DateTime StartTimestamp,
+                                         out DateTimeOffset StartTimestamp,
                                          out ErrorResponse))
                 {
                     return false;

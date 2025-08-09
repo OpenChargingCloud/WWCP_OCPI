@@ -34,20 +34,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         Imputed
     }
 
-    public readonly struct MeteringValue(DateTime             Timestamp,
+    public readonly struct MeteringValue(DateTimeOffset       Timestamp,
                                          WattHour             WattHours,
                                          MeteringValueSource  Source = MeteringValueSource.Measured) : IEquatable<MeteringValue>
     {
 
-        public DateTime             Timestamp    { get; }  = Timestamp;
+        public DateTimeOffset       Timestamp    { get; }  = Timestamp;
         public WattHour             WattHours    { get; }  = WattHours;
         public MeteringValueSource  Source       { get; }  = Source;
 
 
-        public static MeteringValue Measured(DateTime Timestamp, WattHour WattHours)
+        public static MeteringValue Measured(DateTimeOffset Timestamp, WattHour WattHours)
             => new (Timestamp, WattHours, MeteringValueSource.Measured);
 
-        public static MeteringValue Imputed (DateTime Timestamp, WattHour WattHours)
+        public static MeteringValue Imputed (DateTimeOffset Timestamp, WattHour WattHours)
             => new (Timestamp, WattHours, MeteringValueSource.Imputed);
 
 
@@ -173,7 +173,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// the last period ends when the session ends.
         /// </summary>
         [Mandatory]
-        public  DateTime                                     StartTimestamp        { get; }
+        public  DateTimeOffset                               StartTimestamp        { get; }
 
         /// <summary>
         /// List of relevant values for this charging period.
@@ -192,9 +192,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Thus there is no 'next' charging period having a start
         /// timestamp.
         /// </summary>
-        private  DateTime?                                   endTimestamp;
+        private  DateTimeOffset?                             endTimestamp;
 
-        public DateTime? SetEndTimestamp(DateTime? Timestamp)
+        public DateTimeOffset? SetEndTimestamp(DateTimeOffset? Timestamp)
         {
             endTimestamp = Timestamp;
             return endTimestamp;
@@ -206,7 +206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// the last period ends when the session ends.
         /// </summary>
         [Optional]
-        public  DateTime?                                    StopTimestamp
+        public  DateTimeOffset?                              StopTimestamp
             => Next is not null
                    ? Next.StartTimestamp
                    : endTimestamp;
@@ -357,13 +357,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="StartTimestamp">Start timestamp of the charging period.</param>
         /// <param name="Dimensions">List of relevant values for this charging period.</param>
-        public ChargingPeriod(DateTime                    StartTimestamp,
+        public ChargingPeriod(DateTimeOffset              StartTimestamp,
                               IEnumerable<CDRDimension>?  Dimensions   = null)
         {
 
             this.StartTimestamp  = StartTimestamp;
             this.Dimensions      = Dimensions is not null
-                                       ? new HashSet<CDRDimension>(Dimensions)
+                                       ? [.. Dimensions]
                                        : [];
 
         }
@@ -375,7 +375,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="StartTimestamp">Start timestamp of the charging period.</param>
         /// <param name="Dimensions">List of relevant values for this charging period.</param>
-        public ChargingPeriod(DateTime                    StartTimestamp,
+        public ChargingPeriod(DateTimeOffset              StartTimestamp,
                               ChargingPeriod              Previous,
                               ChargingPeriod              Next,
                               IEnumerable<CDRDimension>?  Dimensions   = null)
@@ -401,8 +401,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="StartTimestamp">Start timestamp of the charging period.</param>
         /// <param name="Dimensions">List of relevant values for this charging period.</param>
-        public ChargingPeriod(DateTime                    StartTimestamp,
-                              DateTime                    EndTimestamp,
+        public ChargingPeriod(DateTimeOffset              StartTimestamp,
+                              DateTimeOffset              EndTimestamp,
                               ChargingPeriod              Previous,
                               IEnumerable<CDRDimension>?  Dimensions   = null)
         {

@@ -59,14 +59,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// (before the start of a session) the start of the reservation.
         /// </summary>
         [Mandatory]
-        public   DateTime                                 Start                       { get; }
+        public   DateTimeOffset                           Start                       { get; }
 
         /// <summary>
         /// The timestamp when the session was completed/finished, charging might have finished before the session ends,
         /// for example: EV is full, but parking cost also has to be paid.
         /// </summary>
         [Mandatory]
-        public   DateTime                                 End                         { get; }
+        public   DateTimeOffset                           End                         { get; }
 
         /// <summary>
         /// The optional unique identification of the charging session.
@@ -239,13 +239,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The timestamp when this charge detail record was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public   DateTime                                 Created                     { get; }
+        public   DateTimeOffset                           Created                     { get; }
 
         /// <summary>
         /// The timestamp when this charge detail record was last updated (or created).
         /// </summary>
         [Mandatory]
-        public   DateTime                                 LastUpdated                 { get; }
+        public   DateTimeOffset                           LastUpdated                 { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this charge detail record.
@@ -317,8 +317,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    CDR_Id                                                        Id,
                    UInt64                                                        VersionId,
 
-                   DateTime                                                      Start,
-                   DateTime                                                      End,
+                   DateTimeOffset                                                Start,
+                   DateTimeOffset                                                End,
                    CDRToken                                                      CDRToken,
                    AuthMethod                                                    AuthMethod,
                    CDRLocation                                                   CDRLocation,
@@ -345,8 +345,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    CreditReference_Id?                                           CreditReferenceId                            = null,
                    Boolean?                                                      HomeChargingCompensation                     = null,
 
-                   DateTime?                                                     Created                                      = null,
-                   DateTime?                                                     LastUpdated                                  = null,
+                   DateTimeOffset?                                               Created                                      = null,
+                   DateTimeOffset?                                               LastUpdated                                  = null,
 
                    CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                          = null,
                    CustomJObjectSerializerDelegate<CDRToken>?                    CustomCDRTokenSerializer                     = null,
@@ -491,8 +491,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    CDR_Id                                                        Id,
                    UInt64                                                        VersionId,
 
-                   DateTime                                                      Start,
-                   DateTime                                                      End,
+                   DateTimeOffset                                                Start,
+                   DateTimeOffset                                                End,
                    CDRToken                                                      CDRToken,
                    AuthMethod                                                    AuthMethod,
                    CDRLocation                                                   CDRLocation,
@@ -519,8 +519,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    CreditReference_Id?                                           CreditReferenceId                            = null,
                    Boolean?                                                      HomeChargingCompensation                     = null,
 
-                   DateTime?                                                     Created                                      = null,
-                   DateTime?                                                     LastUpdated                                  = null,
+                   DateTimeOffset?                                               Created                                      = null,
+                   DateTimeOffset?                                               LastUpdated                                  = null,
 
                    CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                          = null,
                    CustomJObjectSerializerDelegate<CDRToken>?                    CustomCDRTokenSerializer                     = null,
@@ -2051,14 +2051,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// (before the start of a session) the start of the reservation.
             /// </summary>
             [Mandatory]
-            public   DateTime?                                Start                       { get; set; }
+            public   DateTimeOffset?                          Start                       { get; set; }
 
             /// <summary>
             /// The timestamp when the session was completed/finished, charging might have finished before the session ends,
             /// for example: EV is full, but parking cost also has to be paid.
             /// </summary>
             [Mandatory]
-            public   DateTime?                                End                         { get; set; }
+            public   DateTimeOffset?                          End                         { get; set; }
 
             /// <summary>
             /// The optional unique identification of the charging session.
@@ -2231,13 +2231,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The timestamp when this charge detail record was created.
             /// </summary>
             [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-            public   DateTime?                                Created                     { get; set; }
+            public   DateTimeOffset?                          Created                     { get; set; }
 
             /// <summary>
             /// The timestamp when this charge detail record was last updated (or created).
             /// </summary>
             [Mandatory]
-            public   DateTime?                                LastUpdated                 { get; set; }
+            public   DateTimeOffset?                          LastUpdated                 { get; set; }
 
             #endregion
 
@@ -2284,8 +2284,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                              CDR_Id?                                   Id                         = null,
                              UInt64?                                   VersionId                  = null,
 
-                             DateTime?                                 Start                      = null,
-                             DateTime?                                 End                        = null,
+                             DateTimeOffset?                           Start                      = null,
+                             DateTimeOffset?                           End                        = null,
                              CDRToken?                                 CDRToken                   = null,
                              AuthMethod?                               AuthMethod                 = null,
                              CDRLocation?                              CDRLocation                = null,
@@ -2312,8 +2312,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                              CreditReference_Id?                       CreditReferenceId          = null,
                              Boolean?                                  HomeChargingCompensation   = null,
 
-                             DateTime?                                 Created                    = null,
-                             DateTime?                                 LastUpdated                = null)
+                             DateTimeOffset?                           Created                    = null,
+                             DateTimeOffset?                           LastUpdated                = null)
 
                 : base(CommonAPI,
                        PartyId,

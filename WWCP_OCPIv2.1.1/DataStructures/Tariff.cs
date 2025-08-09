@@ -112,25 +112,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The timestamp when this tariff was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public   DateTime                    Created              { get; }
+        public   DateTimeOffset              Created              { get; }
 
         /// <summary>
         /// The optional timestamp when this tariff becomes relevant.
         /// </summary>
         [Optional, VendorExtension(VE.GraphDefined, VE.TimeTraveling)]
-        public   DateTime?                   NotBefore            { get; }
+        public   DateTimeOffset?             NotBefore            { get; }
 
         /// <summary>
         /// The optional timestamp when this tariff is no longer relevant.
         /// </summary>
         [Optional, VendorExtension(VE.GraphDefined, VE.TimeTraveling)]
-        public   DateTime?                   NotAfter             { get; }
+        public   DateTimeOffset?             NotAfter             { get; }
 
         /// <summary>
         /// The timestamp when this tariff was last updated (or created).
         /// </summary>
         [Mandatory]
-        public   DateTime                    LastUpdated          { get; }
+        public   DateTimeOffset              LastUpdated          { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this charging tariff.
@@ -177,10 +177,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                       URL?                                                   TariffAltURL                          = null,
                       EnergyMix?                                             EnergyMix                             = null,
 
-                      DateTime?                                              Created                               = null,
-                      DateTime?                                              NotBefore                             = null,
-                      DateTime?                                              NotAfter                              = null,
-                      DateTime?                                              LastUpdated                           = null,
+                      DateTimeOffset?                                        Created                               = null,
+                      DateTimeOffset?                                        NotBefore                             = null,
+                      DateTimeOffset?                                        NotAfter                              = null,
+                      DateTimeOffset?                                        LastUpdated                           = null,
 
                       CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                = null,
                       CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           = null,
@@ -256,10 +256,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                       URL?                                                   TariffAltURL                          = null,
                       EnergyMix?                                             EnergyMix                             = null,
 
-                      DateTime?                                              Created                               = null,
-                      DateTime?                                              NotBefore                             = null,
-                      DateTime?                                              NotAfter                              = null,
-                      DateTime?                                              LastUpdated                           = null,
+                      DateTimeOffset?                                        Created                               = null,
+                      DateTimeOffset?                                        NotBefore                             = null,
+                      DateTimeOffset?                                        NotAfter                              = null,
+                      DateTimeOffset?                                        LastUpdated                           = null,
 
                       CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                = null,
                       CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           = null,

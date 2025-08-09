@@ -74,8 +74,8 @@ namespace cloud.charging.open.protocols.OCPI
                                 Asn1Set?                       Attributes         = null,
                                 IEnumerable<ParsedAttribute>?  ParsedAttributes   = null,
                                 String?                        KeyId              = null,
-                                DateTime?                      NotBefore          = null,
-                                DateTime?                      NotAfter           = null,
+                                DateTimeOffset?                NotBefore          = null,
+                                DateTimeOffset?                NotAfter           = null,
                                 IEnumerable<String>?           PartyIds           = null,
                                 IEnumerable<String>?           SubCPOIds          = null,
                                 IEnumerable<String>?           SubEMSPIds         = null)
@@ -110,8 +110,8 @@ namespace cloud.charging.open.protocols.OCPI
 
 
         public String?                       KeyId               { get; set; } = KeyId;
-        public DateTime?                     NotBefore           { get; set; } = NotBefore;
-        public DateTime?                     NotAfter            { get; set; } = NotAfter;
+        public DateTimeOffset?               NotBefore           { get; set; } = NotBefore;
+        public DateTimeOffset?               NotAfter            { get; set; } = NotAfter;
 
         public IEnumerable<String>           PartyIds            { get; set; } = PartyIds         ?? [];
         public IEnumerable<String>           SubCPOIds           { get; set; } = SubCPOIds        ?? [];
@@ -777,9 +777,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The Common API.</param>
         /// <param name="Request">A HTTP request.</param>
-        protected internal Task GetVersionsRequest(DateTime     Timestamp,
-                                                   HTTPAPI      API,
-                                                   HTTPRequest  Request)
+        protected internal Task GetVersionsRequest(DateTimeOffset  Timestamp,
+                                                   HTTPAPI         API,
+                                                   HTTPRequest     Request)
 
             => OnGetVersionsRequest.WhenAll(Timestamp,
                                             API ?? this,
@@ -801,10 +801,10 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="API">The Common API.</param>
         /// <param name="Request">A HTTP request.</param>
         /// <param name="Response">A HTTP response.</param>
-        protected internal Task GetVersionsResponse(DateTime      Timestamp,
-                                                    HTTPAPI       API,
-                                                    HTTPRequest   Request,
-                                                    HTTPResponse  Response)
+        protected internal Task GetVersionsResponse(DateTimeOffset  Timestamp,
+                                                    HTTPAPI         API,
+                                                    HTTPRequest     Request,
+                                                    HTTPResponse    Response)
 
             => OnGetVersionsResponse.WhenAll(Timestamp,
                                              API ?? this,
@@ -1515,8 +1515,8 @@ namespace cloud.charging.open.protocols.OCPI
         public String GenerateCSR(AsymmetricCipherKeyPair  KeyPair,
                                   String?                  KeyGroupId           = null,
                                   String?                  KeySerialNumber      = null,
-                                  DateTime?                NotBefore            = null,
-                                  DateTime?                NotAfter             = null,
+                                  DateTimeOffset?          NotBefore            = null,
+                                  DateTimeOffset?          NotAfter             = null,
 
                                   IEnumerable<String>?     PartyIds             = null,
                                   IEnumerable<String>?     SubCPOIds            = null,
@@ -1635,7 +1635,7 @@ namespace cloud.charging.open.protocols.OCPI
                 csrAttributes.Add(
                     new Org.BouncyCastle.Asn1.Cms.Attribute(
                         new DerObjectIdentifier(NotBeforeAttribute),
-                        new DerSet(new DerUtcTime(NotBefore.Value, 2049)) // 2049 for X.509 standards
+                        new DerSet(new DerUtcTime(NotBefore.Value.DateTime, 2049)) // 2049 for X.509 standards
                     )
                 );
 
@@ -1643,7 +1643,7 @@ namespace cloud.charging.open.protocols.OCPI
                 csrAttributes.Add(
                     new Org.BouncyCastle.Asn1.Cms.Attribute(
                         new DerObjectIdentifier(NotAfterAttribute),
-                        new DerSet(new DerUtcTime(NotAfter.Value, 2049)) // 2049 for X.509 standards
+                        new DerSet(new DerUtcTime(NotAfter.Value.DateTime, 2049)) // 2049 for X.509 standards
                     )
                 );
 
@@ -1959,8 +1959,8 @@ namespace cloud.charging.open.protocols.OCPI
             x509v3.SetSerialNumber(BigIntegers.CreateRandomInRange(BigInteger.One, BigInteger.ValueOf(Int64.MaxValue), new SecureRandom()));
             x509v3.SetSubjectDN   (new X509Name($"CN={SubjectName}, O=GraphDefined GmbH, OU=GraphDefined PKI Services"));
             x509v3.SetPublicKey   (SubjectKeyPair.Public);
-            x509v3.SetNotBefore   (now);
-            x509v3.SetNotAfter    (now + (LifeTime ?? TimeSpan.FromDays(365)));
+            x509v3.SetNotBefore   (now.DateTime);
+            x509v3.SetNotAfter   ((now + (LifeTime ?? TimeSpan.FromDays(365))).DateTime);
 
             if (Issuer is null)
                 x509v3.SetIssuerDN(new X509Name($"CN={SubjectName}")); // self-signed
@@ -2037,8 +2037,8 @@ namespace cloud.charging.open.protocols.OCPI
             x509v3.SetSerialNumber(BigIntegers.CreateRandomInRange(BigInteger.One, BigInteger.ValueOf(Int64.MaxValue), new SecureRandom()));
             x509v3.SetSubjectDN   (new X509Name($"CN={CSR.ParsedSubject["CN"]}, O=GraphDefined GmbH, OU=GraphDefined PKI Services"));
             x509v3.SetPublicKey   (CSR.PublicKey);
-            x509v3.SetNotBefore   (now);
-            x509v3.SetNotAfter    (now + (LifeTime ?? TimeSpan.FromDays(365)));
+            x509v3.SetNotBefore   (now.DateTime);
+            x509v3.SetNotAfter   ((now + (LifeTime ?? TimeSpan.FromDays(365))).DateTime);
 
             x509v3.SetIssuerDN    (IssuerCertificate.SubjectDN);
 

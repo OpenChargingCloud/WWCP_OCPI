@@ -205,13 +205,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The timestamp when this terminal was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public   DateTime                         Created              { get; }
+        public   DateTimeOffset                   Created              { get; }
 
         /// <summary>
         /// Timestamp when this terminal was last updated (or created).
         /// </summary>
         [Mandatory]
-        public   DateTime                         LastUpdated          { get; }
+        public   DateTimeOffset                   LastUpdated          { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this terminal used as HTTP ETag.
@@ -279,8 +279,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         IEnumerable<Location_Id>?                      LocationIds                   = null,
                         IEnumerable<EVSE_UId>?                         EVSEUIds                      = null,
 
-                        DateTime?                                      Created                       = null,
-                        DateTime?                                      LastUpdated                   = null,
+                        DateTimeOffset?                                Created                       = null,
+                        DateTimeOffset?                                LastUpdated                   = null,
                         String?                                        ETag                          = null,
 
                         CommonAPI?                                     CommonAPI                     = null,
@@ -1592,13 +1592,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// The timestamp when this terminal was created.
             /// </summary>
             [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-            public   DateTime                         Created              { get; set; }
+            public   DateTimeOffset                   Created              { get; set; }
 
             /// <summary>
             /// Timestamp when this terminal was last updated (or created).
             /// </summary>
             [Mandatory]
-            public   DateTime                         LastUpdated          { get; set; }
+            public   DateTimeOffset                   LastUpdated          { get; set; }
 
             #endregion
 
@@ -1657,8 +1657,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                              IEnumerable<Location_Id>?                      LocationIds                   = null,
                              IEnumerable<EVSE_UId>?                         EVSEUIds                      = null,
 
-                             DateTime?                                      Created                       = null,
-                             DateTime?                                      LastUpdated                   = null,
+                             DateTimeOffset?                                Created                       = null,
+                             DateTimeOffset?                                LastUpdated                   = null,
 
                              CommonAPI?                                     CommonAPI                     = null)
 

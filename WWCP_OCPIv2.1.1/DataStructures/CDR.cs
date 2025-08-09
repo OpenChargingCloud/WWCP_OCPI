@@ -94,7 +94,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!AlternativeTariffs.Any())
                     throw new Exception("No tariffs given!");
 
-                var timeMarkers     = new HashSet<DateTime>() { CDR.Start };
+                var timeMarkers     = new HashSet<DateTimeOffset>() { CDR.Start };
                 var meteringValues  = MeteringValues.ToArray();
                 var tariff          = AlternativeTariffs.First();
 
@@ -451,7 +451,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// (before the start of a session) the start of the reservation.
         /// </summary>
         [Mandatory]
-        public   DateTime                                 Start                       { get; }
+        public   DateTimeOffset                           Start                       { get; }
 
         /// <summary>
         /// The timestamp when the session was completed/finished.
@@ -459,7 +459,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// EV is full, but parking cost also has to be paid.
         /// </summary>
         [Mandatory]
-        public   DateTime                                 Stop                         { get; }
+        public   DateTimeOffset                           Stop                         { get; }
 
         /// <summary>
         /// The reference to a token, identified by the auth_id field of the token.
@@ -577,13 +577,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The timestamp when this Charge Detail Record was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public   DateTime                                 Created                     { get; }
+        public   DateTimeOffset                           Created                     { get; }
 
         /// <summary>
         /// The timestamp when this charge detail record was last updated (or created).
         /// </summary>
         [Mandatory]
-        public   DateTime                                 LastUpdated                 { get; }
+        public   DateTimeOffset                           LastUpdated                 { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this charge detail record.
@@ -650,8 +650,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public CDR(CountryCode                                                   CountryCode,
                    Party_Id                                                      PartyId,
                    CDR_Id                                                        Id,
-                   DateTime                                                      Start,
-                   DateTime                                                      Stop,
+                   DateTimeOffset                                                Start,
+                   DateTimeOffset                                                Stop,
                    Auth_Id                                                       AuthId,
                    AuthMethods                                                   AuthMethod,
                    Location                                                      Location,
@@ -670,8 +670,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    TimeSpan?                                                     TotalParkingTime                             = null,
                    String?                                                       Remark                                       = null,
 
-                   DateTime?                                                     Created                                      = null,
-                   DateTime?                                                     LastUpdated                                  = null,
+                   DateTimeOffset?                                               Created                                      = null,
+                   DateTimeOffset?                                               LastUpdated                                  = null,
 
                    CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                          = null,
                    CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,

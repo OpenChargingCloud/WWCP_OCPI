@@ -73,13 +73,13 @@ namespace cloud.charging.open.protocols.OCPI
         /// This remote access information should not be used before this timestamp.
         /// </summary>
         [Optional]
-        public DateTime?                NotBefore                     { get; }
+        public DateTimeOffset?          NotBefore                     { get; }
 
         /// <summary>
         /// This remote access information should not be used after this timestamp.
         /// </summary>
         [Optional]
-        public DateTime?                NotAfter                      { get; }
+        public DateTimeOffset?          NotAfter                      { get; }
 
         /// <summary>
         /// Whether the access token is base64 encoded or not.
@@ -115,8 +115,8 @@ namespace cloud.charging.open.protocols.OCPI
                                 IEnumerable<Version_Id>?  VersionIds                   = null,
                                 Version_Id?               SelectedVersionId            = null,
                                 RemoteAccessStatus?       Status                       = RemoteAccessStatus.ONLINE,
-                                DateTime?                 NotBefore                    = null,
-                                DateTime?                 NotAfter                     = null,
+                                DateTimeOffset?           NotBefore                    = null,
+                                DateTimeOffset?           NotAfter                     = null,
                                 Boolean?                  AccessTokenIsBase64Encoded   = true,
                                 Boolean?                  AllowDowngrades              = false)
         {

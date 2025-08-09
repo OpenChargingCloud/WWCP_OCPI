@@ -113,10 +113,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="OCPIAPI">The sending OCPI/HTTP API.</param>
         /// <param name="Request">The incoming request.</param>
         /// <param name="Response">The outgoing response.</param>
-        public async Task InvokeAsync(DateTime      ServerTimestamp,
-                                      HTTPAPI       OCPIAPI,
-                                      OCPIRequest   Request,
-                                      OCPIResponse  Response)
+        public async Task InvokeAsync(DateTimeOffset  ServerTimestamp,
+                                      HTTPAPI         OCPIAPI,
+                                      OCPIRequest     Request,
+                                      OCPIResponse    Response)
         {
 
             OCPIResponseLogHandler[] invocationList;
@@ -143,11 +143,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Request">The incoming request.</param>
         /// <param name="Response">The outgoing response.</param>
         /// <param name="Timeout">A timeout for this operation.</param>
-        public Task WhenAny(DateTime      ServerTimestamp,
-                            HTTPAPI       OCPIAPI,
-                            OCPIRequest   Request,
-                            OCPIResponse  Response,
-                            TimeSpan?     Timeout = null)
+        public Task WhenAny(DateTimeOffset  ServerTimestamp,
+                            HTTPAPI         OCPIAPI,
+                            OCPIRequest     Request,
+                            OCPIResponse    Response,
+                            TimeSpan?       Timeout = null)
         {
 
             List<Task> invocationList;
@@ -183,7 +183,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="VerifyResult">A delegate to verify and filter results.</param>
         /// <param name="DefaultResult">A default result in case of errors or a timeout.</param>
         /// <param name="Timeout">A timeout for this operation.</param>
-        public Task<T> WhenFirst<T>(DateTime           ServerTimestamp,
+        public Task<T> WhenFirst<T>(DateTimeOffset     ServerTimestamp,
                                     HTTPAPI            OCPIAPI,
                                     OCPIRequest        Request,
                                     OCPIResponse       Response,
@@ -194,11 +194,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Data
 
-            List<Task>  invocationList;
-            Task?       WorkDone;
-            Task<T>     Result;
-            DateTime    StartTime     = Timestamp.Now;
-            Task?       TimeoutTask   = null;
+            List<Task>      invocationList;
+            Task?           WorkDone;
+            Task<T>         Result;
+            DateTimeOffset  StartTime     = Timestamp.Now;
+            Task?           TimeoutTask   = null;
 
             #endregion
 
@@ -263,10 +263,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="OCPIAPI">The sending OCPI/HTTP API.</param>
         /// <param name="Request">The incoming request.</param>
         /// <param name="Response">The outgoing response.</param>
-        public Task WhenAll(DateTime      ServerTimestamp,
-                            HTTPAPI       OCPIAPI,
-                            OCPIRequest   Request,
-                            OCPIResponse  Response)
+        public Task WhenAll(DateTimeOffset  ServerTimestamp,
+                            HTTPAPI         OCPIAPI,
+                            OCPIRequest     Request,
+                            OCPIResponse    Response)
         {
 
             Task[] invocationList;

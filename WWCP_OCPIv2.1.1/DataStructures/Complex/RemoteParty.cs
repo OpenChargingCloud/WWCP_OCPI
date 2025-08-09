@@ -162,13 +162,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The timestamp when this remote party was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public DateTime                              Created                       { get; }
+        public DateTimeOffset                        Created                       { get; }
 
         /// <summary>
         /// Timestamp when this remote party was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                              LastUpdated                   { get; }
+        public DateTimeOffset                        LastUpdated                   { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this remote party.
@@ -279,8 +279,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Boolean?                                                   AllowDowngrades              = false,
                            AccessStatus                                               AccessStatus                 = AccessStatus.ALLOWED,
                            PartyStatus                                                Status                       = PartyStatus. ENABLED,
-                           DateTime?                                                  LocalAccessNotBefore         = null,
-                           DateTime?                                                  LocalAccessNotAfter          = null,
+                           DateTimeOffset?                                            LocalAccessNotBefore         = null,
+                           DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
                            Boolean?                                                   PreferIPv4                   = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
@@ -294,8 +294,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            UInt32?                                                    InternalBufferSize           = null,
                            Boolean?                                                   UseHTTPPipelining            = null,
 
-                           DateTime?                                                  Created                      = null,
-                           DateTime?                                                  LastUpdated                  = null)
+                           DateTimeOffset?                                            Created                      = null,
+                           DateTimeOffset?                                            LastUpdated                  = null)
 
             : this(CountryCode,
                    PartyId,
@@ -350,8 +350,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.ONLINE,
                            PartyStatus                                                Status                       = PartyStatus.       ENABLED,
-                           DateTime?                                                  RemoteAccessNotBefore        = null,
-                           DateTime?                                                  RemoteAccessNotAfter         = null,
+                           DateTimeOffset?                                            RemoteAccessNotBefore        = null,
+                           DateTimeOffset?                                            RemoteAccessNotAfter         = null,
 
                            Boolean?                                                   PreferIPv4                   = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
@@ -365,8 +365,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            UInt32?                                                    InternalBufferSize           = null,
                            Boolean?                                                   UseHTTPPipelining            = null,
 
-                           DateTime?                                                  Created                      = null,
-                           DateTime?                                                  LastUpdated                  = null)
+                           DateTimeOffset?                                            Created                      = null,
+                           DateTimeOffset?                                            LastUpdated                  = null)
 
             : this(CountryCode,
                    PartyId,
@@ -422,16 +422,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                            Version_Id?                                                SelectedVersionId            = null,
 
-                           DateTime?                                                  LocalAccessNotBefore         = null,
-                           DateTime?                                                  LocalAccessNotAfter          = null,
+                           DateTimeOffset?                                            LocalAccessNotBefore         = null,
+                           DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
                            Boolean?                                                   AccessTokenBase64Encoding    = null,
                            Boolean?                                                   AllowDowngrades              = false,
                            AccessStatus                                               AccessStatus                 = AccessStatus.      ALLOWED,
                            RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.ONLINE,
                            PartyStatus                                                Status                       = PartyStatus.       ENABLED,
-                           DateTime?                                                  RemoteAccessNotBefore        = null,
-                           DateTime?                                                  RemoteAccessNotAfter         = null,
+                           DateTimeOffset?                                            RemoteAccessNotBefore        = null,
+                           DateTimeOffset?                                            RemoteAccessNotAfter         = null,
 
                            Boolean?                                                   PreferIPv4                   = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
@@ -445,8 +445,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            UInt32?                                                    InternalBufferSize           = null,
                            Boolean?                                                   UseHTTPPipelining            = null,
 
-                           DateTime?                                                  Created                      = null,
-                           DateTime?                                                  LastUpdated                  = null)
+                           DateTimeOffset?                                            Created                      = null,
+                           DateTimeOffset?                                            LastUpdated                  = null)
 
             : this(CountryCode,
                    PartyId,
@@ -520,8 +520,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            UInt32?                                                    InternalBufferSize           = null,
                            Boolean?                                                   UseHTTPPipelining            = null,
 
-                           DateTime?                                                  Created                      = null,
-                           DateTime?                                                  LastUpdated                  = null)
+                           DateTimeOffset?                                            Created                      = null,
+                           DateTimeOffset?                                            LastUpdated                  = null)
 
         {
 

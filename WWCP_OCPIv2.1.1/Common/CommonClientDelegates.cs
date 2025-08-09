@@ -30,8 +30,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// A delegate called whenever a get versions request will be send.
     /// </summary>
-    public delegate Task OnGetVersionsRequestDelegate(DateTime                                    LogTimestamp,
-                                                      DateTime                                    RequestTimestamp,
+    public delegate Task OnGetVersionsRequestDelegate(DateTimeOffset                              LogTimestamp,
+                                                      DateTimeOffset                              RequestTimestamp,
                                                       CommonClient                                Sender,
                                                       String                                      SenderId,
                                                       EventTracking_Id                            EventTrackingId,
@@ -44,8 +44,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get versions request had been received.
     /// </summary>
-    public delegate Task OnGetVersionsResponseDelegate(DateTime                                    LogTimestamp,
-                                                       DateTime                                    RequestTimestamp,
+    public delegate Task OnGetVersionsResponseDelegate(DateTimeOffset                              LogTimestamp,
+                                                       DateTimeOffset                              RequestTimestamp,
                                                        CommonClient                                Sender,
                                                        String                                      SenderId,
                                                        EventTracking_Id                            EventTrackingId,
@@ -64,8 +64,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// A delegate called whenever a get version details request will be send.
     /// </summary>
-    public delegate Task OnGetVersionDetailsRequestDelegate(DateTime                                    LogTimestamp,
-                                                            DateTime                                    RequestTimestamp,
+    public delegate Task OnGetVersionDetailsRequestDelegate(DateTimeOffset                              LogTimestamp,
+                                                            DateTimeOffset                              RequestTimestamp,
                                                             CommonClient                                Sender,
                                                             String                                      SenderId,
                                                             EventTracking_Id                            EventTrackingId,
@@ -80,8 +80,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get version details request had been received.
     /// </summary>
-    public delegate Task OnGetVersionDetailsResponseDelegate(DateTime                                    LogTimestamp,
-                                                             DateTime                                    RequestTimestamp,
+    public delegate Task OnGetVersionDetailsResponseDelegate(DateTimeOffset                              LogTimestamp,
+                                                             DateTimeOffset                              RequestTimestamp,
                                                              CommonClient                                Sender,
                                                              String                                      SenderId,
                                                              EventTracking_Id                            EventTrackingId,
@@ -103,8 +103,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// A delegate called whenever a get credentials request will be send.
     /// </summary>
-    public delegate Task OnGetCredentialsRequestDelegate(DateTime                                    LogTimestamp,
-                                                         DateTime                                    RequestTimestamp,
+    public delegate Task OnGetCredentialsRequestDelegate(DateTimeOffset                              LogTimestamp,
+                                                         DateTimeOffset                              RequestTimestamp,
                                                          CommonClient                                Sender,
                                                          String                                      SenderId,
                                                          EventTracking_Id                            EventTrackingId,
@@ -119,8 +119,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get credentials request had been received.
     /// </summary>
-    public delegate Task OnGetCredentialsResponseDelegate(DateTime                                    LogTimestamp,
-                                                          DateTime                                    RequestTimestamp,
+    public delegate Task OnGetCredentialsResponseDelegate(DateTimeOffset                              LogTimestamp,
+                                                          DateTimeOffset                              RequestTimestamp,
                                                           CommonClient                                Sender,
                                                           String                                      SenderId,
                                                           EventTracking_Id                            EventTrackingId,
@@ -141,8 +141,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// A delegate called whenever a put credentials request will be send.
     /// </summary>
-    public delegate Task OnPostCredentialsRequestDelegate(DateTime                                    LogTimestamp,
-                                                          DateTime                                    RequestTimestamp,
+    public delegate Task OnPostCredentialsRequestDelegate(DateTimeOffset                              LogTimestamp,
+                                                          DateTimeOffset                              RequestTimestamp,
                                                           CommonClient                                Sender,
                                                           String                                      SenderId,
                                                           EventTracking_Id                            EventTrackingId,
@@ -158,8 +158,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// A delegate called whenever a response to a put credentials request had been received.
     /// </summary>
-    public delegate Task OnPostCredentialsResponseDelegate(DateTime                                    LogTimestamp,
-                                                           DateTime                                    RequestTimestamp,
+    public delegate Task OnPostCredentialsResponseDelegate(DateTimeOffset                              LogTimestamp,
+                                                           DateTimeOffset                              RequestTimestamp,
                                                            CommonClient                                Sender,
                                                            String                                      SenderId,
                                                            EventTracking_Id                            EventTrackingId,
@@ -181,8 +181,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// A delegate called whenever a put credentials request will be send.
     /// </summary>
-    public delegate Task OnPutCredentialsRequestDelegate(DateTime                                    LogTimestamp,
-                                                         DateTime                                    RequestTimestamp,
+    public delegate Task OnPutCredentialsRequestDelegate(DateTimeOffset                              LogTimestamp,
+                                                         DateTimeOffset                              RequestTimestamp,
                                                          CommonClient                                Sender,
                                                          String                                      SenderId,
                                                          EventTracking_Id                            EventTrackingId,
@@ -198,8 +198,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// A delegate called whenever a response to a put credentials request had been received.
     /// </summary>
-    public delegate Task OnPutCredentialsResponseDelegate(DateTime                                    LogTimestamp,
-                                                          DateTime                                    RequestTimestamp,
+    public delegate Task OnPutCredentialsResponseDelegate(DateTimeOffset                              LogTimestamp,
+                                                          DateTimeOffset                              RequestTimestamp,
                                                           CommonClient                                Sender,
                                                           String                                      SenderId,
                                                           EventTracking_Id                            EventTrackingId,
@@ -221,8 +221,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// A delegate called whenever a put credentials request will be send.
     /// </summary>
-    public delegate Task OnDeleteCredentialsRequestDelegate(DateTime                                    LogTimestamp,
-                                                            DateTime                                    RequestTimestamp,
+    public delegate Task OnDeleteCredentialsRequestDelegate(DateTimeOffset                              LogTimestamp,
+                                                            DateTimeOffset                              RequestTimestamp,
                                                             CommonClient                                Sender,
                                                             String                                      SenderId,
                                                             EventTracking_Id                            EventTrackingId,
@@ -237,8 +237,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// A delegate called whenever a response to a put credentials request had been received.
     /// </summary>
-    public delegate Task OnDeleteCredentialsResponseDelegate(DateTime                                    LogTimestamp,
-                                                             DateTime                                    RequestTimestamp,
+    public delegate Task OnDeleteCredentialsResponseDelegate(DateTimeOffset                              LogTimestamp,
+                                                             DateTimeOffset                              RequestTimestamp,
                                                              CommonClient                                Sender,
                                                              String                                      SenderId,
                                                              EventTracking_Id                            EventTrackingId,
@@ -259,8 +259,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// A delegate called whenever a registration request will be send.
     /// </summary>
-    public delegate Task OnRegisterRequestDelegate (DateTime                                    LogTimestamp,
-                                                    DateTime                                    RequestTimestamp,
+    public delegate Task OnRegisterRequestDelegate (DateTimeOffset                              LogTimestamp,
+                                                    DateTimeOffset                              RequestTimestamp,
                                                     CommonClient                                Sender,
                                                     String                                      SenderId,
                                                     EventTracking_Id                            EventTrackingId,
@@ -275,8 +275,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// A delegate called whenever a response to a registration request had been received.
     /// </summary>
-    public delegate Task OnRegisterResponseDelegate(DateTime                                    LogTimestamp,
-                                                    DateTime                                    RequestTimestamp,
+    public delegate Task OnRegisterResponseDelegate(DateTimeOffset                              LogTimestamp,
+                                                    DateTimeOffset                              RequestTimestamp,
                                                     CommonClient                                Sender,
                                                     String                                      SenderId,
                                                     EventTracking_Id                            EventTrackingId,

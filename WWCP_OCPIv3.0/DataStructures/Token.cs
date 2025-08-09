@@ -92,13 +92,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// A point in time from which the Token is valid, inclusive.
         /// </summary>
         [Mandatory]
-        public   DateTime         ValidFrom         { get; }
+        public   DateTimeOffset   ValidFrom         { get; }
 
         /// <summary>
         /// A point in time when the validity of the token ends.
         /// </summary>
         [Optional]
-        public   DateTime?        ValidUntil        { get; }
+        public   DateTimeOffset?  ValidUntil        { get; }
 
         /// <summary>
         /// Indicates what type of white-listing is allowed.
@@ -133,13 +133,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The timestamp when this token was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public   DateTime         Created           { get; }
+        public   DateTimeOffset   Created           { get; }
 
         /// <summary>
         /// Timestamp when this token was last updated (or created).
         /// </summary>
         [Mandatory]
-        public   DateTime         LastUpdated       { get; }
+        public   DateTimeOffset   LastUpdated       { get; }
 
         /// <summary>
         /// The base64 encoded SHA256 hash of the JSON representation of this token.
@@ -184,18 +184,18 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                      TokenType                                         Type,
                      Contract_Id                                       ContractId,
                      String                                            Issuer,
-                     DateTime                                          ValidFrom,
+                     DateTimeOffset                                    ValidFrom,
                      WhitelistType                                     Whitelist,
 
                      String?                                           VisualNumber                     = null,
                      Group_Id?                                         GroupId                          = null,
-                     DateTime?                                         ValidUntil                       = null,
+                     DateTimeOffset?                                   ValidUntil                       = null,
                      Languages?                                        UILanguage                       = null,
                      ProfileType?                                      DefaultProfile                   = null,
                      EnergyContract?                                   EnergyContract                   = null,
 
-                     DateTime?                                         Created                          = null,
-                     DateTime?                                         LastUpdated                      = null,
+                     DateTimeOffset?                                   Created                          = null,
+                     DateTimeOffset?                                   LastUpdated                      = null,
                      CustomJObjectSerializerDelegate<Token>?           CustomTokenSerializer            = null,
                      CustomJObjectSerializerDelegate<EnergyContract>?  CustomEnergyContractSerializer   = null)
 
@@ -262,18 +262,18 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        TokenType                                         Type,
                        Contract_Id                                       ContractId,
                        String                                            Issuer,
-                       DateTime                                          ValidFrom,
+                       DateTimeOffset                                    ValidFrom,
                        WhitelistType                                     Whitelist,
 
                        String?                                           VisualNumber                     = null,
                        Group_Id?                                         GroupId                          = null,
-                       DateTime?                                         ValidUntil                       = null,
+                       DateTimeOffset?                                   ValidUntil                       = null,
                        Languages?                                        UILanguage                       = null,
                        ProfileType?                                      DefaultProfile                   = null,
                        EnergyContract?                                   EnergyContract                   = null,
 
-                       DateTime?                                         Created                          = null,
-                       DateTime?                                         LastUpdated                      = null,
+                       DateTimeOffset?                                   Created                          = null,
+                       DateTimeOffset?                                   LastUpdated                      = null,
                        CustomJObjectSerializerDelegate<Token>?           CustomTokenSerializer            = null,
                        CustomJObjectSerializerDelegate<EnergyContract>?  CustomEnergyContractSerializer   = null)
 

@@ -105,7 +105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The timestamp when this connector was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime          LastUpdated              { get; }
+        public DateTimeOffset    LastUpdated              { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this connector.
@@ -147,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Tariff_Id         TariffId,
                            URL?              TermsAndConditionsURL   = null,
 
-                           DateTime?         LastUpdated             = null)
+                           DateTimeOffset?   LastUpdated             = null)
 
         {
 
@@ -216,7 +216,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Dictionary<EMSP_Id, Tariff_Id>?  EMSPTariffIds           = null,
                            URL?                             TermsAndConditionsURL   = null,
 
-                           DateTime?                        LastUpdated             = null)
+                           DateTimeOffset?                  LastUpdated             = null)
 
         {
 
@@ -282,7 +282,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          Tariff_Id         TariffId,
                          URL?              TermsAndConditionsURL   = null,
 
-                         DateTime?         LastUpdated             = null)
+                         DateTimeOffset?   LastUpdated             = null)
 
             : this(null,
 
@@ -325,7 +325,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          Dictionary<EMSP_Id, Tariff_Id>?  EMSPTariffIds           = null,
                          URL?                             TermsAndConditionsURL   = null,
 
-                         DateTime?                        LastUpdated             = null)
+                         DateTimeOffset?                  LastUpdated             = null)
 
             : this(null,
 

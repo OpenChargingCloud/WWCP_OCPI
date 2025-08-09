@@ -172,7 +172,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetLocationsRequest(DateTime     Timestamp,
+        protected internal Task GetLocationsRequest(DateTimeOffset     Timestamp,
                                                     HTTPAPI      API,
                                                     OCPIRequest  Request)
 
@@ -196,7 +196,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetLocationsResponse(DateTime      Timestamp,
+        protected internal Task GetLocationsResponse(DateTimeOffset      Timestamp,
                                                      HTTPAPI       API,
                                                      OCPIRequest   Request,
                                                      OCPIResponse  Response)
@@ -222,7 +222,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task DeleteLocationsRequest(DateTime     Timestamp,
+        protected internal Task DeleteLocationsRequest(DateTimeOffset     Timestamp,
                                                        HTTPAPI      API,
                                                        OCPIRequest  Request)
 
@@ -246,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteLocationsResponse(DateTime      Timestamp,
+        protected internal Task DeleteLocationsResponse(DateTimeOffset      Timestamp,
                                                         HTTPAPI       API,
                                                         OCPIRequest   Request,
                                                         OCPIResponse  Response)
@@ -273,7 +273,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetLocationRequest(DateTime     Timestamp,
+        protected internal Task GetLocationRequest(DateTimeOffset     Timestamp,
                                                    HTTPAPI      API,
                                                    OCPIRequest  Request)
 
@@ -297,7 +297,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetLocationResponse(DateTime      Timestamp,
+        protected internal Task GetLocationResponse(DateTimeOffset      Timestamp,
                                                     HTTPAPI       API,
                                                     OCPIRequest   Request,
                                                     OCPIResponse  Response)
@@ -323,7 +323,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PutLocationRequest(DateTime     Timestamp,
+        protected internal Task PutLocationRequest(DateTimeOffset     Timestamp,
                                                    HTTPAPI      API,
                                                    OCPIRequest  Request)
 
@@ -347,7 +347,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PutLocationResponse(DateTime      Timestamp,
+        protected internal Task PutLocationResponse(DateTimeOffset      Timestamp,
                                                     HTTPAPI       API,
                                                     OCPIRequest   Request,
                                                     OCPIResponse  Response)
@@ -373,7 +373,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PatchLocationRequest(DateTime     Timestamp,
+        protected internal Task PatchLocationRequest(DateTimeOffset     Timestamp,
                                                      HTTPAPI      API,
                                                      OCPIRequest  Request)
 
@@ -397,7 +397,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PatchLocationResponse(DateTime      Timestamp,
+        protected internal Task PatchLocationResponse(DateTimeOffset      Timestamp,
                                                       HTTPAPI       API,
                                                       OCPIRequest   Request,
                                                       OCPIResponse  Response)
@@ -423,7 +423,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task DeleteLocationRequest(DateTime     Timestamp,
+        protected internal Task DeleteLocationRequest(DateTimeOffset     Timestamp,
                                                       HTTPAPI      API,
                                                       OCPIRequest  Request)
 
@@ -447,7 +447,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteLocationResponse(DateTime      Timestamp,
+        protected internal Task DeleteLocationResponse(DateTimeOffset      Timestamp,
                                                        HTTPAPI       API,
                                                        OCPIRequest   Request,
                                                        OCPIResponse  Response)
@@ -476,7 +476,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetEVSERequest(DateTime     Timestamp,
+        protected internal Task GetEVSERequest(DateTimeOffset     Timestamp,
                                                HTTPAPI      API,
                                                OCPIRequest  Request)
 
@@ -500,7 +500,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetEVSEResponse(DateTime      Timestamp,
+        protected internal Task GetEVSEResponse(DateTimeOffset      Timestamp,
                                                 HTTPAPI       API,
                                                 OCPIRequest   Request,
                                                 OCPIResponse  Response)
@@ -526,7 +526,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PutEVSERequest(DateTime     Timestamp,
+        protected internal Task PutEVSERequest(DateTimeOffset     Timestamp,
                                                HTTPAPI      API,
                                                OCPIRequest  Request)
 
@@ -550,7 +550,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PutEVSEResponse(DateTime      Timestamp,
+        protected internal Task PutEVSEResponse(DateTimeOffset      Timestamp,
                                                 HTTPAPI       API,
                                                 OCPIRequest   Request,
                                                 OCPIResponse  Response)
@@ -576,7 +576,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PatchEVSERequest(DateTime     Timestamp,
+        protected internal Task PatchEVSERequest(DateTimeOffset     Timestamp,
                                                  HTTPAPI      API,
                                                  OCPIRequest  Request)
 
@@ -600,7 +600,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PatchEVSEResponse(DateTime      Timestamp,
+        protected internal Task PatchEVSEResponse(DateTimeOffset      Timestamp,
                                                   HTTPAPI       API,
                                                   OCPIRequest   Request,
                                                   OCPIResponse  Response)
@@ -626,7 +626,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task DeleteEVSERequest(DateTime     Timestamp,
+        protected internal Task DeleteEVSERequest(DateTimeOffset     Timestamp,
                                                   HTTPAPI      API,
                                                   OCPIRequest  Request)
 
@@ -650,7 +650,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteEVSEResponse(DateTime      Timestamp,
+        protected internal Task DeleteEVSEResponse(DateTimeOffset      Timestamp,
                                                    HTTPAPI       API,
                                                    OCPIRequest   Request,
                                                    OCPIResponse  Response)
@@ -677,7 +677,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PostEVSEStatusRequest(DateTime     Timestamp,
+        protected internal Task PostEVSEStatusRequest(DateTimeOffset     Timestamp,
                                                       HTTPAPI      API,
                                                       OCPIRequest  Request)
 
@@ -701,7 +701,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PostEVSEStatusResponse(DateTime      Timestamp,
+        protected internal Task PostEVSEStatusResponse(DateTimeOffset      Timestamp,
                                                        HTTPAPI       API,
                                                        OCPIRequest   Request,
                                                        OCPIResponse  Response)
@@ -730,7 +730,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetConnectorRequest(DateTime     Timestamp,
+        protected internal Task GetConnectorRequest(DateTimeOffset     Timestamp,
                                                     HTTPAPI      API,
                                                     OCPIRequest  Request)
 
@@ -754,7 +754,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetConnectorResponse(DateTime      Timestamp,
+        protected internal Task GetConnectorResponse(DateTimeOffset      Timestamp,
                                                      HTTPAPI       API,
                                                      OCPIRequest   Request,
                                                      OCPIResponse  Response)
@@ -780,7 +780,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PutConnectorRequest(DateTime     Timestamp,
+        protected internal Task PutConnectorRequest(DateTimeOffset     Timestamp,
                                                     HTTPAPI      API,
                                                     OCPIRequest  Request)
 
@@ -804,7 +804,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PutConnectorResponse(DateTime      Timestamp,
+        protected internal Task PutConnectorResponse(DateTimeOffset      Timestamp,
                                                      HTTPAPI       API,
                                                      OCPIRequest   Request,
                                                      OCPIResponse  Response)
@@ -830,7 +830,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PatchConnectorRequest(DateTime     Timestamp,
+        protected internal Task PatchConnectorRequest(DateTimeOffset     Timestamp,
                                                       HTTPAPI      API,
                                                       OCPIRequest  Request)
 
@@ -854,7 +854,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PatchConnectorResponse(DateTime      Timestamp,
+        protected internal Task PatchConnectorResponse(DateTimeOffset      Timestamp,
                                                        HTTPAPI       API,
                                                        OCPIRequest   Request,
                                                        OCPIResponse  Response)
@@ -880,7 +880,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task DeleteConnectorRequest(DateTime     Timestamp,
+        protected internal Task DeleteConnectorRequest(DateTimeOffset     Timestamp,
                                                        HTTPAPI      API,
                                                        OCPIRequest  Request)
 
@@ -904,7 +904,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteConnectorResponse(DateTime      Timestamp,
+        protected internal Task DeleteConnectorResponse(DateTimeOffset      Timestamp,
                                                         HTTPAPI       API,
                                                         OCPIRequest   Request,
                                                         OCPIResponse  Response)
@@ -933,7 +933,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetTariffsRequest(DateTime     Timestamp,
+        protected internal Task GetTariffsRequest(DateTimeOffset     Timestamp,
                                                   HTTPAPI      API,
                                                   OCPIRequest  Request)
 
@@ -957,7 +957,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTariffsResponse(DateTime      Timestamp,
+        protected internal Task GetTariffsResponse(DateTimeOffset      Timestamp,
                                                    HTTPAPI       API,
                                                    OCPIRequest   Request,
                                                    OCPIResponse  Response)
@@ -983,7 +983,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task DeleteTariffsRequest(DateTime     Timestamp,
+        protected internal Task DeleteTariffsRequest(DateTimeOffset     Timestamp,
                                                      HTTPAPI      API,
                                                      OCPIRequest  Request)
 
@@ -1007,7 +1007,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteTariffsResponse(DateTime      Timestamp,
+        protected internal Task DeleteTariffsResponse(DateTimeOffset      Timestamp,
                                                       HTTPAPI       API,
                                                       OCPIRequest   Request,
                                                       OCPIResponse  Response)
@@ -1034,7 +1034,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetTariffRequest(DateTime     Timestamp,
+        protected internal Task GetTariffRequest(DateTimeOffset     Timestamp,
                                                  HTTPAPI      API,
                                                  OCPIRequest  Request)
 
@@ -1058,7 +1058,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTariffResponse(DateTime      Timestamp,
+        protected internal Task GetTariffResponse(DateTimeOffset      Timestamp,
                                                   HTTPAPI       API,
                                                   OCPIRequest   Request,
                                                   OCPIResponse  Response)
@@ -1084,7 +1084,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PutTariffRequest(DateTime     Timestamp,
+        protected internal Task PutTariffRequest(DateTimeOffset     Timestamp,
                                                  HTTPAPI      API,
                                                  OCPIRequest  Request)
 
@@ -1108,7 +1108,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PutTariffResponse(DateTime      Timestamp,
+        protected internal Task PutTariffResponse(DateTimeOffset      Timestamp,
                                                   HTTPAPI       API,
                                                   OCPIRequest   Request,
                                                   OCPIResponse  Response)
@@ -1134,7 +1134,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PatchTariffRequest(DateTime     Timestamp,
+        protected internal Task PatchTariffRequest(DateTimeOffset     Timestamp,
                                                    HTTPAPI      API,
                                                    OCPIRequest  Request)
 
@@ -1158,7 +1158,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PatchTariffResponse(DateTime      Timestamp,
+        protected internal Task PatchTariffResponse(DateTimeOffset      Timestamp,
                                                     HTTPAPI       API,
                                                     OCPIRequest   Request,
                                                     OCPIResponse  Response)
@@ -1184,7 +1184,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task DeleteTariffRequest(DateTime     Timestamp,
+        protected internal Task DeleteTariffRequest(DateTimeOffset     Timestamp,
                                                     HTTPAPI      API,
                                                     OCPIRequest  Request)
 
@@ -1208,7 +1208,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteTariffResponse(DateTime      Timestamp,
+        protected internal Task DeleteTariffResponse(DateTimeOffset      Timestamp,
                                                      HTTPAPI       API,
                                                      OCPIRequest   Request,
                                                      OCPIResponse  Response)
@@ -1237,7 +1237,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetSessionsRequest(DateTime     Timestamp,
+        protected internal Task GetSessionsRequest(DateTimeOffset     Timestamp,
                                                    HTTPAPI      API,
                                                    OCPIRequest  Request)
 
@@ -1261,7 +1261,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetSessionsResponse(DateTime      Timestamp,
+        protected internal Task GetSessionsResponse(DateTimeOffset      Timestamp,
                                                     HTTPAPI       API,
                                                     OCPIRequest   Request,
                                                     OCPIResponse  Response)
@@ -1287,7 +1287,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task DeleteSessionsRequest(DateTime     Timestamp,
+        protected internal Task DeleteSessionsRequest(DateTimeOffset     Timestamp,
                                                       HTTPAPI      API,
                                                       OCPIRequest  Request)
 
@@ -1311,7 +1311,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteSessionsResponse(DateTime      Timestamp,
+        protected internal Task DeleteSessionsResponse(DateTimeOffset      Timestamp,
                                                        HTTPAPI       API,
                                                        OCPIRequest   Request,
                                                        OCPIResponse  Response)
@@ -1338,7 +1338,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetSessionRequest(DateTime     Timestamp,
+        protected internal Task GetSessionRequest(DateTimeOffset     Timestamp,
                                                   HTTPAPI      API,
                                                   OCPIRequest  Request)
 
@@ -1362,7 +1362,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetSessionResponse(DateTime      Timestamp,
+        protected internal Task GetSessionResponse(DateTimeOffset      Timestamp,
                                                    HTTPAPI       API,
                                                    OCPIRequest   Request,
                                                    OCPIResponse  Response)
@@ -1388,7 +1388,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PutSessionRequest(DateTime     Timestamp,
+        protected internal Task PutSessionRequest(DateTimeOffset     Timestamp,
                                                   HTTPAPI      API,
                                                   OCPIRequest  Request)
 
@@ -1412,7 +1412,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PutSessionResponse(DateTime      Timestamp,
+        protected internal Task PutSessionResponse(DateTimeOffset      Timestamp,
                                                    HTTPAPI       API,
                                                    OCPIRequest   Request,
                                                    OCPIResponse  Response)
@@ -1438,7 +1438,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PatchSessionRequest(DateTime     Timestamp,
+        protected internal Task PatchSessionRequest(DateTimeOffset     Timestamp,
                                                     HTTPAPI      API,
                                                     OCPIRequest  Request)
 
@@ -1462,7 +1462,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PatchSessionResponse(DateTime      Timestamp,
+        protected internal Task PatchSessionResponse(DateTimeOffset      Timestamp,
                                                      HTTPAPI       API,
                                                      OCPIRequest   Request,
                                                      OCPIResponse  Response)
@@ -1488,7 +1488,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task DeleteSessionRequest(DateTime     Timestamp,
+        protected internal Task DeleteSessionRequest(DateTimeOffset     Timestamp,
                                                      HTTPAPI      API,
                                                      OCPIRequest  Request)
 
@@ -1512,7 +1512,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteSessionResponse(DateTime      Timestamp,
+        protected internal Task DeleteSessionResponse(DateTimeOffset      Timestamp,
                                                       HTTPAPI       API,
                                                       OCPIRequest   Request,
                                                       OCPIResponse  Response)
@@ -1541,7 +1541,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetCDRsRequest(DateTime     Timestamp,
+        protected internal Task GetCDRsRequest(DateTimeOffset     Timestamp,
                                                HTTPAPI      API,
                                                OCPIRequest  Request)
 
@@ -1565,7 +1565,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetCDRsResponse(DateTime      Timestamp,
+        protected internal Task GetCDRsResponse(DateTimeOffset      Timestamp,
                                                 HTTPAPI       API,
                                                 OCPIRequest   Request,
                                                 OCPIResponse  Response)
@@ -1591,7 +1591,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task DeleteCDRsRequest(DateTime     Timestamp,
+        protected internal Task DeleteCDRsRequest(DateTimeOffset     Timestamp,
                                                   HTTPAPI      API,
                                                   OCPIRequest  Request)
 
@@ -1615,7 +1615,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteCDRsResponse(DateTime      Timestamp,
+        protected internal Task DeleteCDRsResponse(DateTimeOffset      Timestamp,
                                                    HTTPAPI       API,
                                                    OCPIRequest   Request,
                                                    OCPIResponse  Response)
@@ -1642,7 +1642,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetCDRRequest(DateTime     Timestamp,
+        protected internal Task GetCDRRequest(DateTimeOffset     Timestamp,
                                               HTTPAPI      API,
                                               OCPIRequest  Request)
 
@@ -1666,7 +1666,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetCDRResponse(DateTime      Timestamp,
+        protected internal Task GetCDRResponse(DateTimeOffset      Timestamp,
                                                HTTPAPI       API,
                                                OCPIRequest   Request,
                                                OCPIResponse  Response)
@@ -1692,7 +1692,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PostCDRRequest(DateTime     Timestamp,
+        protected internal Task PostCDRRequest(DateTimeOffset     Timestamp,
                                                HTTPAPI      API,
                                                OCPIRequest  Request)
 
@@ -1716,7 +1716,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PostCDRResponse(DateTime      Timestamp,
+        protected internal Task PostCDRResponse(DateTimeOffset      Timestamp,
                                                 HTTPAPI       API,
                                                 OCPIRequest   Request,
                                                 OCPIResponse  Response)
@@ -1742,7 +1742,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task DeleteCDRRequest(DateTime     Timestamp,
+        protected internal Task DeleteCDRRequest(DateTimeOffset     Timestamp,
                                                  HTTPAPI      API,
                                                  OCPIRequest  Request)
 
@@ -1766,7 +1766,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteCDRResponse(DateTime      Timestamp,
+        protected internal Task DeleteCDRResponse(DateTimeOffset      Timestamp,
                                                   HTTPAPI       API,
                                                   OCPIRequest   Request,
                                                   OCPIResponse  Response)
@@ -1795,7 +1795,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PostTokenRequest(DateTime     Timestamp,
+        protected internal Task PostTokenRequest(DateTimeOffset     Timestamp,
                                                  HTTPAPI      API,
                                                  OCPIRequest  Request)
 
@@ -1819,7 +1819,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PostTokenResponse(DateTime      Timestamp,
+        protected internal Task PostTokenResponse(DateTimeOffset      Timestamp,
                                                   HTTPAPI       API,
                                                   OCPIRequest   Request,
                                                   OCPIResponse  Response)
@@ -1849,7 +1849,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the callback request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task ReserveNowCallbackRequest(DateTime     Timestamp,
+        protected internal Task ReserveNowCallbackRequest(DateTimeOffset     Timestamp,
                                                           HTTPAPI      API,
                                                           OCPIRequest  Request)
 
@@ -1873,7 +1873,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task ReserveNowCallbackResponse(DateTime      Timestamp,
+        protected internal Task ReserveNowCallbackResponse(DateTimeOffset      Timestamp,
                                                            HTTPAPI       API,
                                                            OCPIRequest   Request,
                                                            OCPIResponse  Response)
@@ -1899,7 +1899,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the callback request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task CancelReservationCallbackRequest(DateTime     Timestamp,
+        protected internal Task CancelReservationCallbackRequest(DateTimeOffset     Timestamp,
                                                                  HTTPAPI      API,
                                                                  OCPIRequest  Request)
 
@@ -1923,7 +1923,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task CancelReservationCallbackResponse(DateTime      Timestamp,
+        protected internal Task CancelReservationCallbackResponse(DateTimeOffset      Timestamp,
                                                                   HTTPAPI       API,
                                                                   OCPIRequest   Request,
                                                                   OCPIResponse  Response)
@@ -1949,7 +1949,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the callback request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task StartSessionCallbackRequest(DateTime     Timestamp,
+        protected internal Task StartSessionCallbackRequest(DateTimeOffset     Timestamp,
                                                             HTTPAPI      API,
                                                             OCPIRequest  Request)
 
@@ -1973,7 +1973,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task StartSessionCallbackResponse(DateTime      Timestamp,
+        protected internal Task StartSessionCallbackResponse(DateTimeOffset      Timestamp,
                                                              HTTPAPI       API,
                                                              OCPIRequest   Request,
                                                              OCPIResponse  Response)
@@ -1999,7 +1999,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the callback request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task StopSessionCallbackRequest(DateTime     Timestamp,
+        protected internal Task StopSessionCallbackRequest(DateTimeOffset     Timestamp,
                                                            HTTPAPI      API,
                                                            OCPIRequest  Request)
 
@@ -2023,7 +2023,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task StopSessionCallbackResponse(DateTime      Timestamp,
+        protected internal Task StopSessionCallbackResponse(DateTimeOffset      Timestamp,
                                                             HTTPAPI       API,
                                                             OCPIRequest   Request,
                                                             OCPIResponse  Response)
@@ -2049,7 +2049,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="Timestamp">The timestamp of the callback request.</param>
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task UnlockConnectorCallbackRequest(DateTime     Timestamp,
+        protected internal Task UnlockConnectorCallbackRequest(DateTimeOffset     Timestamp,
                                                                HTTPAPI      API,
                                                                OCPIRequest  Request)
 
@@ -2073,7 +2073,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="API">The SCSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task UnlockConnectorCallbackResponse(DateTime      Timestamp,
+        protected internal Task UnlockConnectorCallbackResponse(DateTimeOffset      Timestamp,
                                                                 HTTPAPI       API,
                                                                 OCPIRequest   Request,
                                                                 OCPIResponse  Response)

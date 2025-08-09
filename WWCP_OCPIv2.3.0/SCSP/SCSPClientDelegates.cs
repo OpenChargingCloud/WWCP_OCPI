@@ -31,7 +31,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
     /// <summary>
     /// A delegate called whenever a get locations request will be send.
     /// </summary>
-    public delegate Task OnGetLocationsRequestDelegate(DateTime                              LogTimestamp,
+    public delegate Task OnGetLocationsRequestDelegate(DateTimeOffset                        LogTimestamp,
                                                        SCSPClient                            Sender,
                                                        Request_Id                            RequestId,
                                                        Correlation_Id                        CorrelationId,
@@ -43,7 +43,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get locations request had been received.
     /// </summary>
-    public delegate Task OnGetLocationsResponseDelegate(DateTime                              LogTimestamp,
+    public delegate Task OnGetLocationsResponseDelegate(DateTimeOffset                        LogTimestamp,
                                                         SCSPClient                            Sender,
                                                         Request_Id                            RequestId,
                                                         Correlation_Id                        CorrelationId,
@@ -62,7 +62,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
     /// <summary>
     /// A delegate called whenever a get location by its identification request will be send.
     /// </summary>
-    public delegate Task OnGetLocationRequestDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetLocationRequestDelegate(DateTimeOffset           LogTimestamp,
                                                       SCSPClient               Sender,
                                                       Request_Id               RequestId,
                                                       Correlation_Id           CorrelationId,
@@ -76,7 +76,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get location by its identification request had been received.
     /// </summary>
-    public delegate Task OnGetLocationResponseDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetLocationResponseDelegate(DateTimeOffset           LogTimestamp,
                                                        SCSPClient               Sender,
                                                        Request_Id               RequestId,
                                                        Correlation_Id           CorrelationId,
@@ -97,7 +97,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
     /// <summary>
     /// A delegate called whenever a get EVSE by its identification request will be send.
     /// </summary>
-    public delegate Task OnGetEVSERequestDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetEVSERequestDelegate(DateTimeOffset           LogTimestamp,
                                                   SCSPClient               Sender,
                                                   Request_Id               RequestId,
                                                   Correlation_Id           CorrelationId,
@@ -112,7 +112,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get EVSE by its identification request had been received.
     /// </summary>
-    public delegate Task OnGetEVSEResponseDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetEVSEResponseDelegate(DateTimeOffset           LogTimestamp,
                                                    SCSPClient               Sender,
                                                    Request_Id               RequestId,
                                                    Correlation_Id           CorrelationId,
@@ -134,7 +134,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
     /// <summary>
     /// A delegate called whenever a get connector by its identification request will be send.
     /// </summary>
-    public delegate Task OnGetConnectorRequestDelegate(DateTime                  LogTimestamp,
+    public delegate Task OnGetConnectorRequestDelegate(DateTimeOffset            LogTimestamp,
                                                        SCSPClient                Sender,
                                                        Request_Id                RequestId,
                                                        Correlation_Id            CorrelationId,
@@ -150,7 +150,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get connector by its identification request had been received.
     /// </summary>
-    public delegate Task OnGetConnectorResponseDelegate(DateTime                  LogTimestamp,
+    public delegate Task OnGetConnectorResponseDelegate(DateTimeOffset            LogTimestamp,
                                                         SCSPClient                Sender,
                                                         Request_Id                RequestId,
                                                         Correlation_Id            CorrelationId,
@@ -174,7 +174,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
     /// <summary>
     /// A delegate called whenever a get sessions request will be send.
     /// </summary>
-    public delegate Task OnGetSessionsRequestDelegate(DateTime                              LogTimestamp,
+    public delegate Task OnGetSessionsRequestDelegate(DateTimeOffset                        LogTimestamp,
                                                       SCSPClient                            Sender,
                                                       Request_Id                            RequestId,
                                                       Correlation_Id                        CorrelationId,
@@ -186,7 +186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get sessions request had been received.
     /// </summary>
-    public delegate Task OnGetSessionsResponseDelegate(DateTime                              LogTimestamp,
+    public delegate Task OnGetSessionsResponseDelegate(DateTimeOffset                        LogTimestamp,
                                                        SCSPClient                            Sender,
                                                        Request_Id                            RequestId,
                                                        Correlation_Id                        CorrelationId,
@@ -205,7 +205,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
     /// <summary>
     /// A delegate called whenever a get session by its identification request will be send.
     /// </summary>
-    public delegate Task OnGetSessionRequestDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetSessionRequestDelegate(DateTimeOffset           LogTimestamp,
                                                      SCSPClient               Sender,
                                                      Request_Id               RequestId,
                                                      Correlation_Id           CorrelationId,
@@ -219,7 +219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
     /// <summary>
     /// A delegate called whenever a response to a get session by its identification request had been received.
     /// </summary>
-    public delegate Task OnGetSessionResponseDelegate(DateTime                 LogTimestamp,
+    public delegate Task OnGetSessionResponseDelegate(DateTimeOffset           LogTimestamp,
                                                       SCSPClient               Sender,
                                                       Request_Id               RequestId,
                                                       Correlation_Id           CorrelationId,
@@ -241,7 +241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
     /// <summary>
     /// A delegate called whenever an unlock connector command request will be send.
     /// </summary>
-    public delegate Task OnSetChargingProfileRequestDelegate(DateTime                                                    LogTimestamp,
+    public delegate Task OnSetChargingProfileRequestDelegate(DateTimeOffset                                              LogTimestamp,
                                                              SCSPClient                                                  Sender,
                                                              Request_Id                                                  RequestId,
                                                              Correlation_Id                                              CorrelationId,
@@ -257,7 +257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
     /// <summary>
     /// A delegate called whenever a response to an unlock connector command request had been received.
     /// </summary>
-    public delegate Task OnSetChargingProfileResponseDelegate(DateTime                                                    LogTimestamp,
+    public delegate Task OnSetChargingProfileResponseDelegate(DateTimeOffset                                              LogTimestamp,
                                                               SCSPClient                                                  Sender,
                                                               Request_Id                                                  RequestId,
                                                               Correlation_Id                                              CorrelationId,

@@ -66,13 +66,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The timestamp when this invoice reconciliation record was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public   DateTime             Created        { get; }
+        public   DateTimeOffset       Created        { get; }
 
         /// <summary>
         /// The timestamp when this invoice reconciliation record was last updated (or created).
         /// </summary>
         [Mandatory]
-        public   DateTime             LastUpdated    { get; }
+        public   DateTimeOffset       LastUpdated    { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this invoice reconciliation record.
@@ -104,8 +104,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                            IEnumerable<CDR_Id>                                            CDRIds,
 
-                                           DateTime?                                                      Created                                       = null,
-                                           DateTime?                                                      LastUpdated                                   = null,
+                                           DateTimeOffset?                                                Created                                       = null,
+                                           DateTimeOffset?                                                LastUpdated                                   = null,
 
                                            CustomJObjectSerializerDelegate<InvoiceReconciliationRecord>?  CustomInvoiceReconciliationRecordSerializer   = null)
 
@@ -148,8 +148,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                            IEnumerable<CDR_Id>                                            CDRIds,
 
-                                           DateTime?                                                      Created                                       = null,
-                                           DateTime?                                                      LastUpdated                                   = null,
+                                           DateTimeOffset?                                                Created                                       = null,
+                                           DateTimeOffset?                                                LastUpdated                                   = null,
 
                                            CustomJObjectSerializerDelegate<InvoiceReconciliationRecord>?  CustomInvoiceReconciliationRecordSerializer   = null)
 
@@ -925,13 +925,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The timestamp when this invoice reconciliation record was created.
             /// </summary>
             [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-            public   DateTime?        Created        { get; set; }
+            public   DateTimeOffset?  Created        { get; set; }
 
             /// <summary>
             /// The timestamp when this invoice reconciliation record was last updated (or created).
             /// </summary>
             [Mandatory]
-            public   DateTime?        LastUpdated    { get; set; }
+            public   DateTimeOffset?  LastUpdated    { get; set; }
 
             #endregion
 
@@ -956,8 +956,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                              IEnumerable<CDR_Id>?  CDRIds        = null,
 
-                             DateTime?             Created       = null,
-                             DateTime?             LastUpdated   = null)
+                             DateTimeOffset?       Created       = null,
+                             DateTimeOffset?       LastUpdated   = null)
 
                 : base(CommonAPI,
                        PartyId,
