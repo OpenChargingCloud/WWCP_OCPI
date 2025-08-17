@@ -5181,6 +5181,60 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                                                ConfigureAwait(false);
 
+                    //var httpResponse = await new HTTPSClient(
+                    //                             remoteURL.Value,
+                    //                             VirtualHostname,
+                    //                             Description,
+                    //                             PreferIPv4,
+                    //                             RemoteCertificateValidator,
+                    //                             LocalCertificateSelector,
+                    //                             ClientCert,
+                    //                             TLSProtocols,
+                    //                             ContentType,
+                    //                             Accept,
+                    //                             Authentication,
+                    //                             HTTPUserAgent,
+                    //                             Connection,
+                    //                             RequestTimeout,
+                    //                             TransmissionRetryDelay,
+                    //                             MaxNumberOfRetries,
+                    //                             InternalBufferSize,
+                    //                             UseHTTPPipelining,
+                    //                             DisableLogging,
+                    //                             HTTPLogger,
+                    //                             DNSClient
+                    //                         ).Execute(client => client.CreateRequest(
+                    //                                                 HTTPMethod.POST,
+                    //                                                 remoteURL.Value.Path + TokenId.ToString() + "authorize",
+                    //                                                 RequestBuilder: requestBuilder => {
+
+                    //                                                     requestBuilder.Authorization  = TokenAuth;
+                    //                                                     requestBuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
+                    //                                                     requestBuilder.Connection     = ConnectionType.Close;
+                    //                                                     requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                    //                                                     requestBuilder.Set("X-Request-ID",      requestId);
+                    //                                                     requestBuilder.Set("X-Correlation-ID",  correlationId);
+
+                    //                                                     if (TokenType.HasValue)
+                    //                                                         requestBuilder.QueryString.Add("type", TokenType.Value.ToString());
+
+                    //                                                     if (LocationReference.HasValue)
+                    //                                                     {
+                    //                                                         requestBuilder.ContentType = HTTPContentType.Application.JSON_UTF8;
+                    //                                                         requestBuilder.Content     = LocationReference.Value.ToJSON().ToUTF8Bytes(JSONFormat);
+                    //                                                     }
+
+                    //                                                 }
+                    //                                             ),
+
+                    //                                   RequestLogDelegate:   OnPostTokenHTTPRequest,
+                    //                                   ResponseLogDelegate:  OnPostTokenHTTPResponse,
+                    //                                   CancellationToken:    CancellationToken,
+                    //                                   EventTrackingId:      eventTrackingId,
+                    //                                   RequestTimeout:       requestTimeout).
+
+                    //                           ConfigureAwait(false);
+
                     #endregion
 
                     // {

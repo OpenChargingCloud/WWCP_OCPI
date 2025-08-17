@@ -83,7 +83,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                            ),
                            Currency.EUR,
 
-                           new ChargingPeriod[] {
+                           [
                                ChargingPeriod.Create(
                                    DateTime.Parse("2020-04-12T18:21:49Z").ToUniversalTime(),
                                    new[] {
@@ -104,7 +104,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                    },
                                    Tariff_Id.Parse("DE*GEF*T0002")
                                )
-                           },
+                           ],
 
                            // Total costs
                            new Price(

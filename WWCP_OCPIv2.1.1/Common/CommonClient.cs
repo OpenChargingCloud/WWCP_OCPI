@@ -115,6 +115,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         protected readonly  ConcurrentDictionary<Version_Id, VersionDetail>  versionDetails          = new ();
 
+        protected HTTPTestClient newHTTPClient;
+
         #endregion
 
         #region Properties
