@@ -384,7 +384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                           String?                      LoggingPath       = null,
                           String?                      LoggingContext    = null,
                           OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                          DNSClient?                   DNSClient         = null)
+                          IDNSClient?                  DNSClient         = null)
 
             : base(CommonAPI,
                    RemoteParty,

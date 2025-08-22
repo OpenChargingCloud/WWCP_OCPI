@@ -18,7 +18,7 @@
 #region Usings
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         public OCPIResponseLogEvent()
         {
-            subscribers = new List<OCPIResponseLogHandler>();
+            subscribers = [];
         }
 
         #endregion
@@ -113,21 +113,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="OCPIAPI">The sending OCPI/HTTP API.</param>
         /// <param name="Request">The incoming request.</param>
         /// <param name="Response">The outgoing response.</param>
-        public async Task InvokeAsync(DateTimeOffset  ServerTimestamp,
-                                      HTTPAPI         OCPIAPI,
-                                      OCPIRequest     Request,
-                                      OCPIResponse    Response)
+        public async Task InvokeAsync(DateTimeOffset     ServerTimestamp,
+                                      HTTPAPIX           OCPIAPI,
+                                      OCPIRequest        Request,
+                                      OCPIResponse       Response,
+                                      CancellationToken  CancellationToken)
         {
 
             OCPIResponseLogHandler[] invocationList;
 
             lock (subscribers)
             {
-                invocationList = subscribers.ToArray();
+                invocationList = [.. subscribers];
             }
 
             foreach (var callback in invocationList)
-                await callback(ServerTimestamp, OCPIAPI, Request, Response).ConfigureAwait(false);
+                await callback(ServerTimestamp, OCPIAPI, Request, Response, CancellationToken).ConfigureAwait(false);
 
         }
 
@@ -143,11 +144,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Request">The incoming request.</param>
         /// <param name="Response">The outgoing response.</param>
         /// <param name="Timeout">A timeout for this operation.</param>
-        public Task WhenAny(DateTimeOffset  ServerTimestamp,
-                            HTTPAPI         OCPIAPI,
-                            OCPIRequest     Request,
-                            OCPIResponse    Response,
-                            TimeSpan?       Timeout = null)
+        public Task WhenAny(DateTimeOffset     ServerTimestamp,
+                            HTTPAPIX           OCPIAPI,
+                            OCPIRequest        Request,
+                            OCPIResponse       Response,
+                            CancellationToken  CancellationToken,
+                            TimeSpan?          Timeout = null)
         {
 
             List<Task> invocationList;
@@ -155,9 +157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (subscribers)
             {
 
-                invocationList = subscribers.
-                                     Select(callback => callback(ServerTimestamp, OCPIAPI, Request, Response)).
-                                     ToList();
+                invocationList = [.. subscribers.Select(callback => callback(ServerTimestamp, OCPIAPI, Request, Response, CancellationToken))];
 
                 if (Timeout.HasValue)
                     invocationList.Add(Task.Delay(Timeout.Value));
@@ -184,11 +184,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="DefaultResult">A default result in case of errors or a timeout.</param>
         /// <param name="Timeout">A timeout for this operation.</param>
         public Task<T> WhenFirst<T>(DateTimeOffset     ServerTimestamp,
-                                    HTTPAPI            OCPIAPI,
+                                    HTTPAPIX           OCPIAPI,
                                     OCPIRequest        Request,
                                     OCPIResponse       Response,
                                     Func<T, Boolean>   VerifyResult,
                                     Func<TimeSpan, T>  DefaultResult,
+                                    CancellationToken  CancellationToken,
                                     TimeSpan?          Timeout   = null)
         {
 
@@ -205,9 +206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (subscribers)
             {
 
-                invocationList = subscribers.
-                                     Select(callback => callback(ServerTimestamp, OCPIAPI, Request, Response)).
-                                     ToList();
+                invocationList = [.. subscribers.Select(callback => callback(ServerTimestamp, OCPIAPI, Request, Response, CancellationToken))];
 
                 if (Timeout.HasValue)
                     invocationList.Add(TimeoutTask = Task.Run(() => Thread.Sleep(Timeout.Value)));
@@ -263,19 +262,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="OCPIAPI">The sending OCPI/HTTP API.</param>
         /// <param name="Request">The incoming request.</param>
         /// <param name="Response">The outgoing response.</param>
-        public Task WhenAll(DateTimeOffset  ServerTimestamp,
-                            HTTPAPI         OCPIAPI,
-                            OCPIRequest     Request,
-                            OCPIResponse    Response)
+        public Task WhenAll(DateTimeOffset     ServerTimestamp,
+                            HTTPAPIX           OCPIAPI,
+                            OCPIRequest        Request,
+                            OCPIResponse       Response,
+                            CancellationToken  CancellationToken)
         {
 
             Task[] invocationList;
 
             lock (subscribers)
             {
-                invocationList = subscribers.
-                                     Select (callback => callback(ServerTimestamp, OCPIAPI, Request, Response)).
-                                     ToArray();
+                invocationList = [.. subscribers.Select (callback => callback(ServerTimestamp, OCPIAPI, Request, Response, CancellationToken))];
             }
 
             return Task.WhenAll(invocationList);

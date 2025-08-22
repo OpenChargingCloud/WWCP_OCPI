@@ -53,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
                 cpoVersionsAPIURL.HasValue)
             {
 
-                var baseURL   = cpoVersionsAPIURL.Value.ToString().Replace(cpoVersionsAPIURL.Value.Path.ToString(), cpoWebAPI.URLPathPrefix.ToString());
+                var baseURL   = cpoVersionsAPIURL.Value.ToString().Replace(cpoVersionsAPIURL.Value.Path.ToString(), cpoWebAPI.HTTPBaseAPI.RootPath.ToString());
                 var response  = await TestHelpers.GetJSONArrayRequest(URL.Parse(baseURL) + "remoteParties");
 
                 #region Documentation
@@ -136,7 +136,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
                 emsp1VersionsAPIURL.HasValue)
             {
 
-                var baseURL   = emsp1VersionsAPIURL.Value.ToString().Replace(emsp1VersionsAPIURL.Value.Path.ToString(), emsp1WebAPI.URLPathPrefix.ToString());
+                var baseURL   = emsp1VersionsAPIURL.Value.ToString().Replace(emsp1VersionsAPIURL.Value.Path.ToString(), emsp1WebAPI.HTTPBaseAPI.RootPath.ToString());
                 var response  = await TestHelpers.GetJSONArrayRequest(URL.Parse(baseURL) + "remoteParties");
 
                 ClassicAssert.IsNotNull(response);
@@ -153,7 +153,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
                 emsp2VersionsAPIURL.HasValue)
             {
 
-                var baseURL   = emsp2VersionsAPIURL.Value.ToString().Replace(emsp2VersionsAPIURL.Value.Path.ToString(), emsp2WebAPI.URLPathPrefix.ToString());
+                var baseURL   = emsp2VersionsAPIURL.Value.ToString().Replace(emsp2VersionsAPIURL.Value.Path.ToString(), emsp2WebAPI.HTTPBaseAPI.RootPath.ToString());
                 var response  = await TestHelpers.GetJSONArrayRequest(URL.Parse(baseURL) + "remoteParties");
 
                 ClassicAssert.IsNotNull(response);
@@ -191,7 +191,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
                 cpoVersionsAPIURL.HasValue)
             {
 
-                var baseURL   = cpoVersionsAPIURL.Value.ToString().Replace(cpoVersionsAPIURL.Value.Path.ToString(), cpoWebAPI.URLPathPrefix.ToString());
+                var baseURL   = cpoVersionsAPIURL.Value.ToString().Replace(cpoVersionsAPIURL.Value.Path.ToString(), cpoWebAPI.HTTPBaseAPI.RootPath.ToString());
                 var response  = await TestHelpers.GetJSONArrayRequest(URL.Parse(baseURL) + "clients");
 
                 ClassicAssert.IsNotNull(response);
@@ -208,7 +208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
                 emsp1VersionsAPIURL.HasValue)
             {
 
-                var baseURL   = emsp1VersionsAPIURL.Value.ToString().Replace(emsp1VersionsAPIURL.Value.Path.ToString(), emsp1WebAPI.URLPathPrefix.ToString());
+                var baseURL   = emsp1VersionsAPIURL.Value.ToString().Replace(emsp1VersionsAPIURL.Value.Path.ToString(), emsp1WebAPI.HTTPBaseAPI.RootPath.ToString());
                 var response  = await TestHelpers.GetJSONArrayRequest(URL.Parse(baseURL) + "clients");
 
                 ClassicAssert.IsNotNull(response);
@@ -225,7 +225,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
                 emsp2VersionsAPIURL.HasValue)
             {
 
-                var baseURL   = emsp2VersionsAPIURL.Value.ToString().Replace(emsp2VersionsAPIURL.Value.Path.ToString(), emsp2WebAPI.URLPathPrefix.ToString());
+                var baseURL   = emsp2VersionsAPIURL.Value.ToString().Replace(emsp2VersionsAPIURL.Value.Path.ToString(), emsp2WebAPI.HTTPBaseAPI.RootPath.ToString());
                 var response  = await TestHelpers.GetJSONArrayRequest(URL.Parse(baseURL) + "clients");
 
                 ClassicAssert.IsNotNull(response);

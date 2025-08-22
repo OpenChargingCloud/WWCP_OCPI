@@ -731,7 +731,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
         //                  String?                                                    LoggingContext               = null,
         //                  OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
         //                  HTTPClientLogger?                                          HTTPLogger                   = null,
-        //                  DNSClient?                                                 DNSClient                    = null)
+        //                  IDNSClient?                                                DNSClient                    = null)
 
         //    : base(VersionsURL,
         //           AccessToken,
@@ -800,7 +800,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
                              String?                      LoggingPath       = null,
                              String?                      LoggingContext    = null,
                              OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                             DNSClient?                   DNSClient         = null)
+                             IDNSClient?                  DNSClient         = null)
 
             : base(PTPAPI.CommonAPI,
                    RemoteParty,

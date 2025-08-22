@@ -1412,7 +1412,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         private Int32? cachedHashCode;
 
-        private readonly Object hashSync = new ();
+        private readonly Object hashSync = new();
 
         /// <summary>
         /// Get the hash code of this object.

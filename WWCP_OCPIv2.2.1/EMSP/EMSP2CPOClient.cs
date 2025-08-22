@@ -730,7 +730,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         //                  String?                                                    LoggingContext               = null,
         //                  OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
         //                  HTTPClientLogger?                                          HTTPLogger                   = null,
-        //                  DNSClient?                                                 DNSClient                    = null)
+        //                  IDNSClient?                                                DNSClient                    = null)
 
         //    : base(VersionsURL,
         //           AccessToken,
@@ -799,7 +799,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                               String?                      LoggingPath       = null,
                               String?                      LoggingContext    = null,
                               OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                              DNSClient?                   DNSClient         = null)
+                              IDNSClient?                  DNSClient         = null)
 
             : base(EMSPAPI.CommonAPI,
                    RemoteParty,

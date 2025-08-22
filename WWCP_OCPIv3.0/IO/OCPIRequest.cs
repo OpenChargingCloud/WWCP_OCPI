@@ -45,7 +45,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
     public static class OCPIRequestExtensions
     {
 
-        #region AddOCPIMethod(CommonAPI, Hostname, HTTPMethod, URLTemplate,  HTTPContentType = null, URLAuthentication = false, HTTPMethodAuthentication = false, ContentTypeAuthentication = false, HTTPDelegate = null)
+        #region AddOCPIMethod(CommonAPI, HTTPMethod, URLTemplate,  HTTPContentType = null, URLAuthentication = false, HTTPMethodAuthentication = false, ContentTypeAuthentication = false, HTTPDelegate = null)
 
         /// <summary>
         /// Add a method callback for the given URL template.
@@ -63,7 +63,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="DefaultErrorHandler">The default error handler.</param>
         /// <param name="OCPIRequestHandler">The method to call.</param>
         public static void AddOCPIMethod(this CommonAPI           CommonAPI,
-                                         HTTPHostname             Hostname,
                                          HTTPMethod               HTTPMethod,
                                          HTTPPath                 URLTemplate,
                                          HTTPContentType?         HTTPContentType             = null,
@@ -78,75 +77,79 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         {
 
-            CommonAPI.HTTPServer.
-                      AddMethodCallback(CommonAPI,
-                                        Hostname,
-                                        HTTPMethod,
-                                        URLTemplate,
-                                        HTTPContentType,
-                                        false,
-                                        URLAuthentication,
-                                        HTTPMethodAuthentication,
-                                        ContentTypeAuthentication,
-                                        (timestamp, httpAPI, httpRequest)               => OCPIRequestLogger?. Invoke(timestamp, null, OCPIRequest.Parse(httpRequest, CommonAPI)),
-                                        (timestamp, httpAPI, httpRequest, httpResponse) => OCPIResponseLogger?.Invoke(timestamp, null, httpRequest. SubprotocolRequest  as OCPIRequest,
-                                                                                                                                      (httpResponse.SubprotocolResponse as OCPIResponse) 
-                                                                                                                                           ?? new OCPIResponse(httpRequest.SubprotocolRequest as OCPIRequest,
-                                                                                                                                                               2000,
-                                                                                                                                                               "OCPIResponse is null!",
-                                                                                                                                                               httpResponse.HTTPBodyAsUTF8String,
-                                                                                                                                                               httpResponse.Timestamp,
-                                                                                                                                                               httpResponse)),
-                                        DefaultErrorHandler,
-                                        async httpRequest => {
+            CommonAPI.AddHandler(
 
-                                            try
-                                            {
+                URLTemplate,
+                async httpRequest => {
 
-                                                // When no OCPIRequestLogger was used!
-                                                httpRequest.SubprotocolRequest ??= OCPIRequest.Parse(httpRequest, CommonAPI);
+                    try
+                    {
 
-                                                var OCPIResponseBuilder = await OCPIRequestHandler(httpRequest.SubprotocolRequest as OCPIRequest);
-                                                var httpResponseBuilder = OCPIResponseBuilder.ToHTTPResponseBuilder();
+                        // When no OCPIRequestLogger was used!
+                        httpRequest.SubprotocolRequest ??= OCPIRequest.Parse(httpRequest, CommonAPI);
 
-                                                httpResponseBuilder.SubprotocolResponse = new OCPIResponse(OCPIResponseBuilder.Request,
-                                                                                                           OCPIResponseBuilder.StatusCode ?? 3000,
-                                                                                                           OCPIResponseBuilder.StatusMessage,
-                                                                                                           OCPIResponseBuilder.AdditionalInformation,
-                                                                                                           OCPIResponseBuilder.Timestamp  ?? Timestamp.Now,
-                                                                                                           httpResponseBuilder.AsImmutable);
+                        var OCPIResponseBuilder = await OCPIRequestHandler(httpRequest.SubprotocolRequest as OCPIRequest);
+                        var httpResponseBuilder = OCPIResponseBuilder.ToHTTPResponseBuilder();
 
-                                                return httpResponseBuilder;
+                        httpResponseBuilder.SubprotocolResponse = new OCPIResponse(OCPIResponseBuilder.Request,
+                                                                                   OCPIResponseBuilder.StatusCode ?? 3000,
+                                                                                   OCPIResponseBuilder.StatusMessage,
+                                                                                   OCPIResponseBuilder.AdditionalInformation,
+                                                                                   OCPIResponseBuilder.Timestamp  ?? Timestamp.Now,
+                                                                                   httpResponseBuilder.AsImmutable);
 
-                                            }
-                                            catch (Exception e)
-                                            {
+                        return httpResponseBuilder;
 
-                                                return new HTTPResponse.Builder() {
-                                                           HTTPStatusCode  = HTTPStatusCode.InternalServerError,
-                                                           ContentType     = HTTPContentType.Application.JSON_UTF8,
-                                                           Content         = new OCPIResponse<JObject>(
-                                                                                 JSONObject.Create(
-                                                                                     new JProperty("description",  e.Message),
-                                                                                     new JProperty("stacktrace",   new JArray(e.StackTrace?.Split(new[] { Environment.NewLine }, StringSplitOptions.None).ToArray() ?? Array.Empty<String>())),
-                                                                                     new JProperty("source",       e.TargetSite?.Module.Name),
-                                                                                     new JProperty("type",         e.TargetSite?.ReflectedType?.Name)
-                                                                                 ),
-                                                                                 2000,
-                                                                                 e.Message,
-                                                                                 null,
-                                                                                 Timestamp.Now,
-                                                                                 null,
-                                                                                 (httpRequest.SubprotocolRequest as OCPIRequest)?.RequestId,
-                                                                                 (httpRequest.SubprotocolRequest as OCPIRequest)?.CorrelationId
-                                                                             ).ToJSON(json => json).ToUTF8Bytes(),
-                                                           Connection      = ConnectionType.Close
-                                                       };
+                    }
+                    catch (Exception e)
+                    {
 
-                                            }
+                        return new HTTPResponse.Builder() {
+                                   HTTPStatusCode  = HTTPStatusCode.InternalServerError,
+                                   ContentType     = HTTPContentType.Application.JSON_UTF8,
+                                   Content         = new OCPIResponse<JObject>(
+                                                         JSONObject.Create(
+                                                             new JProperty("description",  e.Message),
+                                                             new JProperty("stacktrace",   new JArray(e.StackTrace?.Split(new[] { Environment.NewLine }, StringSplitOptions.None).ToArray() ?? Array.Empty<String>())),
+                                                             new JProperty("source",       e.TargetSite?.Module.Name),
+                                                             new JProperty("type",         e.TargetSite?.ReflectedType?.Name)
+                                                         ),
+                                                         2000,
+                                                         e.Message,
+                                                         null,
+                                                         Timestamp.Now,
+                                                         null,
+                                                         (httpRequest.SubprotocolRequest as OCPIRequest)?.RequestId,
+                                                         (httpRequest.SubprotocolRequest as OCPIRequest)?.CorrelationId
+                                                     ).ToJSON(json => json).ToUTF8Bytes(),
+                                   Connection      = ConnectionType.Close
+                               };
 
-                                        },
-                                        AllowReplacement);
+                    }
+
+                },
+                HTTPMethod,
+                HTTPContentType,
+
+                URLAuthentication,
+                HTTPMethodAuthentication,
+                ContentTypeAuthentication,
+
+                (timestamp, httpAPI, httpRequest, ct)               => OCPIRequestLogger?. Invoke(timestamp, null, OCPIRequest.Parse(httpRequest, CommonAPI), ct),
+                (timestamp, httpAPI, httpRequest, httpResponse, ct) => OCPIResponseLogger?.Invoke(timestamp, null, httpRequest. SubprotocolRequest  as OCPIRequest,
+                                                                                                              (httpResponse.SubprotocolResponse as OCPIResponse) 
+                                                                                                                   ?? new OCPIResponse(httpRequest.SubprotocolRequest as OCPIRequest,
+                                                                                                                                       2000,
+                                                                                                                                       "OCPIResponse is null!",
+                                                                                                                                       httpResponse.HTTPBodyAsUTF8String,
+                                                                                                                                       httpResponse.Timestamp,
+                                                                                                                                       httpResponse), ct),
+                DefaultErrorHandler,
+                null,
+
+                AllowReplacement
+
+            );
 
         }
 

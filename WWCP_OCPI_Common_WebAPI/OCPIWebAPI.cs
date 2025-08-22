@@ -21,6 +21,7 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 using org.GraphDefined.Vanaheimr.Hermod.Mail;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
@@ -49,10 +50,10 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         /// <param name="HTTPServer">A HTTP server.</param>
         /// <param name="RoamingNetwork">The roaming network.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
-        public static Boolean ParseRoamingNetwork(this HTTPRequest                             HTTPRequest,
-                                                  HTTPServer<RoamingNetworks, RoamingNetwork>  HTTPServer,
-                                                  out RoamingNetwork?                          RoamingNetwork,
-                                                  out HTTPResponse?                            HTTPResponse)
+        public static Boolean ParseRoamingNetwork(this HTTPRequest     HTTPRequest,
+                                                  HTTPTestServerX      HTTPServer,
+                                                  out RoamingNetwork?  RoamingNetwork,
+                                                  out HTTPResponse?    HTTPResponse)
         {
 
             RoamingNetwork_Id RoamingNetworkId;
@@ -64,7 +65,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                                   Server          = HTTPServer.DefaultServerName,
+                                   Server          = HTTPServer.HTTPServerName,
                                    Date            = Timestamp.Now,
                                };
 
@@ -77,7 +78,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                                   Server          = HTTPServer.DefaultServerName,
+                                   Server          = HTTPServer.HTTPServerName,
                                    Date            = Timestamp.Now,
                                    ContentType     = HTTPContentType.Application.JSON_UTF8,
                                    Content         = @"{ ""description"": ""Invalid RoamingNetworkId!"" }".ToUTF8Bytes()
@@ -87,15 +88,15 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
             }
 
-            RoamingNetwork  = HTTPServer.
-                                  GetAllTenants(HTTPRequest.Host).
-                                  FirstOrDefault(roamingnetwork => roamingnetwork.Id == RoamingNetworkId);
+            //RoamingNetwork  = HTTPServer.
+            //                      GetAllTenants(HTTPRequest.Host).
+            //                      FirstOrDefault(roamingnetwork => roamingnetwork.Id == RoamingNetworkId);
 
-            if (RoamingNetwork == null) {
+            if (RoamingNetwork is null) {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                                    HTTPStatusCode  = HTTPStatusCode.NotFound,
-                                   Server          = HTTPServer.DefaultServerName,
+                                   Server          = HTTPServer.HTTPServerName,
                                    Date            = Timestamp.Now,
                                    ContentType     = HTTPContentType.Application.JSON_UTF8,
                                    Content         = @"{ ""description"": ""Unknown RoamingNetworkId!"" }".ToUTF8Bytes()
@@ -117,7 +118,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
     /// <summary>
     /// A HTTP API providing advanced OCPI data structures.
     /// </summary>
-    public class OCPIWebAPI : HTTPAPI
+    public class OCPIWebAPI : HTTPExtAPIX
     {
 
         #region Data
@@ -260,7 +261,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         /// <param name="HTTPLogins">An enumeration of logins for an optional HTTP Basic Authentication.</param>
         public OCPIWebAPI(CommonBaseAPI                               CommonBaseAPI,
 
-                          HTTPServer                                  HTTPServer,
+                          HTTPTestServerX?                            HTTPServer                = null,
                           HTTPHostname?                               HTTPHostname              = null,
                           String?                                     ExternalDNSName           = "",
                           String?                                     HTTPServiceName           = DefaultHTTPServiceName,
@@ -286,10 +287,11 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                           TimeSpan?                                   WardenInitialDelay        = null,
                           TimeSpan?                                   WardenCheckEvery          = null,
 
-                          //Boolean                                     SkipURLTemplates          = true,
+                          Boolean                                     SkipURLTemplates          = true,
 
                           Boolean?                                    IsDevelopment             = false,
                           IEnumerable<String>?                        DevelopmentServers        = null,
+                          Boolean?                                    DisableNotifications      = false,
                           Boolean?                                    DisableLogging            = false,
                           String?                                     LoggingPath               = null,
                           String?                                     LogfileName               = null,
@@ -298,15 +300,70 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                           //TimeSpan?                                   RequestTimeout            = null
                          )
 
-            : base(HTTPServer,
-                   HTTPHostname,
+            //: base(HTTPServer,
+            //       HTTPHostname,
+            //       ExternalDNSName,
+            //       HTTPServiceName,
+            //       BasePath,
+
+            //       WebAPIURLPathPrefix ?? DefaultURLPathPrefix, //URLPathPrefix,
+            //       HTMLTemplate,
+            //       APIVersionHashes,
+
+            //       DisableMaintenanceTasks,
+            //       MaintenanceInitialDelay,
+            //       MaintenanceEvery,
+
+            //       DisableWardenTasks,
+            //       WardenInitialDelay,
+            //       WardenCheckEvery,
+
+            //       IsDevelopment,
+            //       DevelopmentServers,
+            //       DisableLogging,
+            //       LoggingPath,
+            //       LogfileName,
+            //       LogfileCreator,
+
+            //       AutoStart: false)
+
+            : base(HTTPServer ?? CommonBaseAPI.HTTPServer,
+                   null,
+                   WebAPIURLPathPrefix ?? DefaultURLPathPrefix, //URLPathPrefix,
+                   null,
+                   I18NString.Create($"{nameof(OCPIWebAPI)}"),
+
                    ExternalDNSName,
-                   HTTPServiceName,
+                   //HTTPServiceName,
                    BasePath,
 
-                   WebAPIURLPathPrefix ?? DefaultURLPathPrefix, //URLPathPrefix,
-                   HTMLTemplate,
+                   null,
+                   null,
                    APIVersionHashes,
+                   HTMLTemplate,
+
+                   null,
+                   null,
+                   null,
+                   null,
+
+                   null,
+                   null,
+                   true,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
 
                    DisableMaintenanceTasks,
                    MaintenanceInitialDelay,
@@ -316,14 +373,21 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                    WardenInitialDelay,
                    WardenCheckEvery,
 
+                   null,
+                   null,
+
                    IsDevelopment,
                    DevelopmentServers,
-                   DisableLogging,
-                   LoggingPath,
-                   LogfileName,
-                   LogfileCreator,
+                   SkipURLTemplates,
+                   DefaultHTTPExtAPIX_DatabaseFileName,
+                   DisableNotifications,
 
-                   AutoStart: false)
+                   DisableLogging ?? false,
+                   LoggingPath,
+                   "ocpi",
+                   LogfileName,
+                   LogfileCreator)
+
 
         {
 
@@ -334,18 +398,18 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
             this.HTTPLogins            = HTTPLogins ?? [];
 
             // Link HTTP events...
-            HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
-            HTTPServer.ResponseLog    += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
-            HTTPServer.ErrorLog       += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
+            //HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
+            //HTTPServer.ResponseLog    += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
+            //HTTPServer.ErrorLog       += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
 
             var LogfilePrefix          = "HTTPSSEs" + Path.DirectorySeparatorChar;
 
-            this.DebugLog              = this.AddJSONEventSource(EventIdentification:      DebugLogId,
-                                                                 URLTemplate:              this.URLPathPrefix + DebugLogId.ToString(),
-                                                                 MaxNumberOfCachedEvents:  10000,
-                                                                 RetryInterval :           TimeSpan.FromSeconds(5),
-                                                                 EnableLogging:            true,
-                                                                 LogfilePrefix:            LogfilePrefix);
+          //  this.DebugLog              = this.AddJSONEventSource(EventIdentification:      DebugLogId,
+          //                                                       URLTemplate:              HTTPPath.Root + DebugLogId.ToString(), //this.URLPathPrefix + DebugLogId.ToString(),
+          //                                                       MaxNumberOfCachedEvents:  10000,
+          //                                                       RetryInterval :           TimeSpan.FromSeconds(5),
+          //                                                       EnableLogging:            true,
+          //                                                       LogfilePrefix:            LogfilePrefix);
 
             RegisterURITemplates();
 
@@ -446,7 +510,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
             this.MapResourceAssemblyFolder(
                 HTTPHostname.Any,
-                URLPathPrefix,
+                RootPath,// URLPathPrefix,
                 HTTPRoot,
                 DefaultFilename: "index.html"
             );
@@ -461,10 +525,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region Text
 
-                HTTPServer.AddMethodCallback(
-
-                    this,
-                    HTTPHostname.Any,
+                AddHandler(
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value,
                     HTTPContentType.Text.HTML_UTF8,
@@ -491,10 +552,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 // Just for convenience...
                 if (OverlayURLPathPrefix.Value != HTTPPath.Root)
-                    HTTPServer.AddMethodCallback(
-
-                        this,
-                        HTTPHostname.Any,
+                    AddHandler(
                         HTTPMethod.GET,
                         OverlayURLPathPrefix.Value + "/",
                         HTTPContentType.Text.HTML_UTF8,
@@ -522,10 +580,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region JSON
 
-                HTTPServer.AddMethodCallback(
-
-                    this,
-                    HTTPHostname.Any,
+                AddHandler(
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value,
                     HTTPContentType.Application.JSON_UTF8,
@@ -557,10 +612,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 // Just for convenience...
                 if (OverlayURLPathPrefix.Value != HTTPPath.Root)
-                    HTTPServer.AddMethodCallback(
-
-                        this,
-                        HTTPHostname.Any,
+                    AddHandler(
                         HTTPMethod.GET,
                         OverlayURLPathPrefix.Value + "/",
                         HTTPContentType.Text.HTML_UTF8,
@@ -593,10 +645,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region HTML
 
-                HTTPServer.AddMethodCallback(
-
-                    this,
-                    HTTPHostname.Any,
+                AddHandler(
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value,
                     HTTPContentType.Text.HTML_UTF8,
@@ -626,10 +675,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 // Just for convenience...
                 if (OverlayURLPathPrefix.Value != HTTPPath.Root)
-                    HTTPServer.AddMethodCallback(
-
-                        this,
-                        HTTPHostname.Any,
+                    AddHandler(
                         HTTPMethod.GET,
                         OverlayURLPathPrefix.Value + "/",
                         HTTPContentType.Text.HTML_UTF8,
@@ -662,10 +708,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region GET ~/versions
 
-                HTTPServer.AddMethodCallback(
-
-                    this,
-                    HTTPHostname.Any,
+                AddHandler(
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value + "versions",
                     HTTPContentType.Text.HTML_UTF8,
@@ -695,10 +738,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region GET ~/support
 
-                HTTPServer.AddMethodCallback(
-
-                    this,
-                    HTTPHostname.Any,
+                AddHandler(
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value + "/support",
                     HTTPContentType.Text.HTML_UTF8,
@@ -707,7 +747,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                         Task.FromResult(
                             new HTTPResponse.Builder(request) {
                                 HTTPStatusCode             = HTTPStatusCode.OK,
-                                Server                     = HTTPServer.DefaultServerName,
+                                Server                     = HTTPServer.HTTPServerName,
                                 Date                       = Timestamp.Now,
                                 AccessControlAllowOrigin   = "*",
                                 AccessControlAllowMethods  = [ "GET" ],
@@ -725,10 +765,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region GET ~/favicon.png
 
-                HTTPServer.AddMethodCallback(
-
-                    this,
-                    HTTPHostname.Any,
+                AddHandler(
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value + "/favicon.png",
                     //HTTPContentType.Image.PNG,
@@ -737,7 +774,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                         Task.FromResult(
                             new HTTPResponse.Builder(request) {
                                 HTTPStatusCode             = HTTPStatusCode.OK,
-                                Server                     = HTTPServer.DefaultServerName,
+                                Server                     = HTTPServer.HTTPServerName,
                                 Date                       = Timestamp.Now,
                                 AccessControlAllowOrigin   = "*",
                                 AccessControlAllowMethods  = [ "GET" ],

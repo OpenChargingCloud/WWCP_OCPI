@@ -874,7 +874,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                          String?                                                    LoggingContext               = null,
                          OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
                          HTTPClientLogger?                                          HTTPLogger                   = null,
-                         DNSClient?                                                 DNSClient                    = null)
+                         IDNSClient?                                                DNSClient                    = null)
 
             : base(VersionsURL,
                    AccessToken,
@@ -944,7 +944,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                          String?                      LoggingPath       = null,
                          String?                      LoggingContext    = null,
                          OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                         DNSClient?                   DNSClient         = null)
+                         IDNSClient?                  DNSClient         = null)
 
             : base(CPOAPI.CommonAPI,
                    RemoteParty,

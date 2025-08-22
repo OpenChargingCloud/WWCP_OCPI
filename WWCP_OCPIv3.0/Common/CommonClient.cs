@@ -423,7 +423,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                             String?                                                    LoggingContext               = null,
                             OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
                             HTTPClientLogger?                                          HTTPLogger                   = null,
-                            DNSClient?                                                 DNSClient                    = null)
+                            IDNSClient?                                                DNSClient                    = null)
 
             : base(VersionsURL,
                    VirtualHostname,
@@ -501,7 +501,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                             String?                      LoggingPath       = null,
                             String?                      LoggingContext    = null,
                             OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                            DNSClient?                   DNSClient         = null)
+                            IDNSClient?                  DNSClient         = null)
 
             : base(RemoteParty.RemoteAccessInfos.First().VersionsURL,
                    VirtualHostname,
@@ -600,7 +600,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                             String?                                                    LoggingPath                  = null,
                             String?                                                    LoggingContext               = null,
                             LogfileCreatorDelegate?                                    LogfileCreator               = null,
-                            DNSClient?                                                 DNSClient                    = null)
+                            IDNSClient?                                                DNSClient                    = null)
 
             : base(RemoteVersionsURL,
                    VirtualHostname,

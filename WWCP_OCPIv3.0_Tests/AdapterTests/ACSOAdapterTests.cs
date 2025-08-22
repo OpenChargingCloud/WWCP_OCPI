@@ -22,6 +22,7 @@ using NUnit.Framework;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv3_0.HTTP;
@@ -42,11 +43,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
         #region Data
 
         protected  RoamingNetwork?            roamingNetwork;
-        protected  HTTPAPI?                   httpAPI;
+        protected  HTTPTestServerX?           httpServer;
         protected  CommonAPI?                 commonAPI;
         protected  CPOAPI?                    cpoAPI;
         protected  OCPICSOAdapter?            csoAdapter;
         protected  IChargingStationOperator?  graphDefinedCSO;
+
+        protected  URL                        remoteLocationsURL = URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/locations");
 
         #endregion
 
@@ -127,51 +130,51 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
             Assert.That(roamingNetwork, Is.Not.Null);
 
-
-            httpAPI          = new HTTPAPI(
-                                   HTTPServerPort:                      IPPort.Parse(3473),
-                                   AutoStart:                           true
+            httpServer       = new HTTPTestServerX(
+                                   TCPPort:                   IPPort.Parse(3473)
                                );
 
-            Assert.That(httpAPI, Is.Not.Null);
+            Assert.That(httpServer,  Is.Not.Null);
 
+            var ocpiBaseAPI  = new CommonBaseAPI(
 
-            var ocpiBaseAPI = new CommonBaseAPI(
+                                   OurBaseURL:                URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/"),
+                                   OurVersionsURL:            URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/versions"),
+                                   HTTPServer:                httpServer,
+                                   AdditionalURLPathPrefix:   null,
+                                   //KeepRemovedEVSEs:          null,
+                                   LocationsAsOpenData:       true,
+                                   AllowDowngrades:           null,
+                                   //Disable_RootServices:      false,
 
-                                  OurBaseURL:                URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/"),
-                                  OurVersionsURL:            URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/versions"),
-                                  HTTPServer:                httpAPI.HTTPServer,
-                                  AdditionalURLPathPrefix:   null,
-                                  //KeepRemovedEVSEs:          null,
-                                  LocationsAsOpenData:       true,
-                                  AllowDowngrades:           null,
-                                  //Disable_RootServices:      false,
+                  //                 HTTPHostname:              null,
+                                   ExternalDNSName:           null,
+                                   HTTPServiceName:           null,
+                                   BasePath:                  null,
 
-                                  HTTPHostname:              null,
-                                  ExternalDNSName:           null,
-                                  HTTPServiceName:           null,
-                                  BasePath:                  null,
+                                   //URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                                   RootPath:                  HTTPPath.Parse("/ocpi"),
+                                   APIVersionHashes:          null,
 
-                                  URLPathPrefix:             HTTPPath.Parse("/ocpi/v3.0"),
-                                  APIVersionHashes:          null,
+                                   DisableMaintenanceTasks:   null,
+                                   MaintenanceInitialDelay:   null,
+                                   MaintenanceEvery:          null,
 
-                                  DisableMaintenanceTasks:   null,
-                                  MaintenanceInitialDelay:   null,
-                                  MaintenanceEvery:          null,
+                                   DisableWardenTasks:        null,
+                                   WardenInitialDelay:        null,
+                                   WardenCheckEvery:          null,
 
-                                  DisableWardenTasks:        null,
-                                  WardenInitialDelay:        null,
-                                  WardenCheckEvery:          null,
+                                   IsDevelopment:             null,
+                                   DevelopmentServers:        null,
+                                   DisableLogging:            null,
+                                   LoggingContext:            null,
+                                   LoggingPath:               null,
+                                   LogfileName:               null,
+                                   LogfileCreator:            null
 
-                                  IsDevelopment:             null,
-                                  DevelopmentServers:        null,
-                                  DisableLogging:            null,
-                                  LoggingContext:            null,
-                                  LoggingPath:               null,
-                                  LogfileName:               null,
-                                  LogfileCreator:            null
+                               );
 
-                              );
+            Assert.That(ocpiBaseAPI,  Is.Not.Null);
 
 
             commonAPI        = new CommonAPI(
@@ -189,6 +192,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                                             )
                                                                         ],
                                    DefaultPartyId:                      Party_Idv3.Parse("DEGEF"),
+
                                    BaseAPI:                             ocpiBaseAPI,
 
                                    AdditionalURLPathPrefix:             null,
@@ -218,8 +222,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                    DisableLogging:                      null,
                                    LoggingPath:                         null,
                                    LogfileName:                         null,
-                                   LogfileCreator:                      null,
-                                   AutoStart:                           false
+                                   LogfileCreator:                      null
 
                                );
 
@@ -252,8 +255,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                    DisableLogging:                      null,
                                    LoggingPath:                         null,
                                    LogfileName:                         null,
-                                   LogfileCreator:                      null,
-                                   AutoStart:                           false
+                                   LogfileCreator:                      null
 
                                );
 
@@ -311,9 +313,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
         #region ShutdownEachTest()
 
         [TearDown]
-        public void ShutdownEachTest()
+        public async Task ShutdownEachTest()
         {
-            httpAPI?.Shutdown();
+            if (httpServer is not null)
+                await httpServer.Stop();
         }
 
         #endregion

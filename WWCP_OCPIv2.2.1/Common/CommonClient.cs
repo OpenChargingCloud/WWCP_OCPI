@@ -416,7 +416,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             String?                                                    LoggingContext               = null,
                             OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
                             HTTPClientLogger?                                          HTTPLogger                   = null,
-                            DNSClient?                                                 DNSClient                    = null)
+                            IDNSClient?                                                DNSClient                    = null)
 
             : base(VersionsURL,
                    VirtualHostname,
@@ -492,7 +492,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             String?                      LoggingPath       = null,
                             String?                      LoggingContext    = null,
                             OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                            DNSClient?                   DNSClient         = null)
+                            IDNSClient?                  DNSClient         = null)
 
             : base(RemoteParty.RemoteAccessInfos.First().VersionsURL,
                    VirtualHostname,
@@ -591,7 +591,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             String?                                                    LoggingPath                  = null,
                             String?                                                    LoggingContext               = null,
                             OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
-                            DNSClient?                                                 DNSClient                    = null)
+                            IDNSClient?                                                DNSClient                    = null)
 
             : this(CommonAPI,
                    new RemoteParty(

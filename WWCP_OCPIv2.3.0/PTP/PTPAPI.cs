@@ -27,6 +27,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
@@ -37,7 +38,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
     /// The HTTP API for Payment Terminal Providers.
     /// CPOs will connect to this API.
     /// </summary>
-    public class PTPAPI : HTTPAPI
+    public class PTPAPI : HTTPAPIX
     {
 
         #region Data
@@ -151,7 +152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <summary>
         /// An event sent whenever a GET terminals request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetTerminalsRequest = new ();
+        public OCPIRequestLogEvent OnGetTerminalsRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET terminals request was received.
@@ -160,12 +161,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetTerminalsRequest(DateTimeOffset     Timestamp,
-                                                    HTTPAPI      API,
-                                                    OCPIRequest  Request)
+                                                    HTTPAPIX           API,
+                                                    OCPIRequest        Request,
+                                                    CancellationToken  CancellationToken)
 
-            => OnGetTerminalsRequest.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request);
+            => OnGetTerminalsRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -174,7 +179,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <summary>
         /// An event sent whenever a GET terminals response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetTerminalsResponse = new ();
+        public OCPIResponseLogEvent OnGetTerminalsResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET terminals response was sent.
@@ -183,15 +188,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTerminalsResponse(DateTimeOffset      Timestamp,
-                                                     HTTPAPI       API,
-                                                     OCPIRequest   Request,
-                                                     OCPIResponse  Response)
+        protected internal Task GetTerminalsResponse(DateTimeOffset     Timestamp,
+                                                     HTTPAPIX           API,
+                                                     OCPIRequest        Request,
+                                                     OCPIResponse       Response,
+                                                     CancellationToken  CancellationToken)
 
-            => OnGetTerminalsResponse.WhenAll(Timestamp,
-                                              API ?? this,
-                                              Request,
-                                              Response);
+            => OnGetTerminalsResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -201,7 +210,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <summary>
         /// An event sent whenever a GET terminal request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetTerminalRequest = new ();
+        public OCPIRequestLogEvent OnGetTerminalRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET terminal request was received.
@@ -210,12 +219,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetTerminalRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPI      API,
-                                                   OCPIRequest  Request)
+                                                   HTTPAPIX           API,
+                                                   OCPIRequest        Request,
+                                                   CancellationToken  CancellationToken)
 
-            => OnGetTerminalRequest.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request);
+            => OnGetTerminalRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -224,7 +237,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <summary>
         /// An event sent whenever a GET terminal response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetTerminalResponse = new ();
+        public OCPIResponseLogEvent OnGetTerminalResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET terminal response was sent.
@@ -233,15 +246,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTerminalResponse(DateTimeOffset      Timestamp,
-                                                    HTTPAPI       API,
-                                                    OCPIRequest   Request,
-                                                    OCPIResponse  Response)
+        protected internal Task GetTerminalResponse(DateTimeOffset     Timestamp,
+                                                    HTTPAPIX           API,
+                                                    OCPIRequest        Request,
+                                                    OCPIResponse       Response,
+                                                    CancellationToken  CancellationToken)
 
-            => OnGetTerminalResponse.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request,
-                                             Response);
+            => OnGetTerminalResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -251,7 +268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <summary>
         /// An event sent whenever a PUT terminal request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPutTerminalRequest = new ();
+        public OCPIRequestLogEvent OnPutTerminalRequest = new();
 
         /// <summary>
         /// An event sent whenever a PUT terminal request was received.
@@ -260,12 +277,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PutTerminalRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPI      API,
-                                                   OCPIRequest  Request)
+                                                   HTTPAPIX           API,
+                                                   OCPIRequest        Request,
+                                                   CancellationToken  CancellationToken)
 
-            => OnPutTerminalRequest.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request);
+            => OnPutTerminalRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -274,7 +295,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <summary>
         /// An event sent whenever a PUT terminal response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPutTerminalResponse = new ();
+        public OCPIResponseLogEvent OnPutTerminalResponse = new();
 
         /// <summary>
         /// An event sent whenever a PUT terminal response was sent.
@@ -283,15 +304,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PutTerminalResponse(DateTimeOffset      Timestamp,
-                                                    HTTPAPI       API,
-                                                    OCPIRequest   Request,
-                                                    OCPIResponse  Response)
+        protected internal Task PutTerminalResponse(DateTimeOffset     Timestamp,
+                                                    HTTPAPIX           API,
+                                                    OCPIRequest        Request,
+                                                    OCPIResponse       Response,
+                                                    CancellationToken  CancellationToken)
 
-            => OnPutTerminalResponse.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request,
-                                             Response);
+            => OnPutTerminalResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -301,7 +326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <summary>
         /// An event sent whenever a PATCH terminal request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPatchTerminalRequest = new ();
+        public OCPIRequestLogEvent OnPatchTerminalRequest = new();
 
         /// <summary>
         /// An event sent whenever a PATCH terminal request was received.
@@ -310,12 +335,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PatchTerminalRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPI      API,
-                                                   OCPIRequest  Request)
+                                                     HTTPAPIX           API,
+                                                     OCPIRequest        Request,
+                                                     CancellationToken  CancellationToken)
 
-            => OnPatchTerminalRequest.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request);
+            => OnPatchTerminalRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -324,7 +353,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <summary>
         /// An event sent whenever a PATCH terminal response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPatchTerminalResponse = new ();
+        public OCPIResponseLogEvent OnPatchTerminalResponse = new();
 
         /// <summary>
         /// An event sent whenever a PATCH terminal response was sent.
@@ -333,15 +362,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PatchTerminalResponse(DateTimeOffset      Timestamp,
-                                                    HTTPAPI       API,
-                                                    OCPIRequest   Request,
-                                                    OCPIResponse  Response)
+        protected internal Task PatchTerminalResponse(DateTimeOffset     Timestamp,
+                                                      HTTPAPIX           API,
+                                                      OCPIRequest        Request,
+                                                      OCPIResponse       Response,
+                                                      CancellationToken  CancellationToken)
 
-            => OnPatchTerminalResponse.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request,
-                                             Response);
+            => OnPatchTerminalResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -351,7 +384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <summary>
         /// An event sent whenever a PATCH terminal request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPostTerminalsActivateRequest = new ();
+        public OCPIRequestLogEvent OnPostTerminalsActivateRequest = new();
 
         /// <summary>
         /// An event sent whenever a PATCH terminal request was received.
@@ -360,12 +393,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PostTerminalsActivateRequest(DateTimeOffset     Timestamp,
-                                                             HTTPAPI      API,
-                                                             OCPIRequest  Request)
+                                                             HTTPAPIX           API,
+                                                             OCPIRequest        Request,
+                                                             CancellationToken  CancellationToken)
 
-            => OnPostTerminalsActivateRequest.WhenAll(Timestamp,
-                                                      API ?? this,
-                                                      Request);
+            => OnPostTerminalsActivateRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -374,7 +411,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <summary>
         /// An event sent whenever a PATCH terminal response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPostTerminalsActivateResponse = new ();
+        public OCPIResponseLogEvent OnPostTerminalsActivateResponse = new();
 
         /// <summary>
         /// An event sent whenever a PATCH terminal response was sent.
@@ -383,15 +420,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PostTerminalsActivateResponse(DateTimeOffset      Timestamp,
-                                                              HTTPAPI       API,
-                                                              OCPIRequest   Request,
-                                                              OCPIResponse  Response)
+        protected internal Task PostTerminalsActivateResponse(DateTimeOffset     Timestamp,
+                                                              HTTPAPIX           API,
+                                                              OCPIRequest        Request,
+                                                              OCPIResponse       Response,
+                                                              CancellationToken  CancellationToken)
 
-            => OnPostTerminalsActivateResponse.WhenAll(Timestamp,
-                                                       API ?? this,
-                                                       Request,
-                                                       Response);
+            => OnPostTerminalsActivateResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -401,7 +442,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <summary>
         /// An event sent whenever a PATCH terminal request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPostTerminalsDeactivateRequest = new ();
+        public OCPIRequestLogEvent OnPostTerminalsDeactivateRequest = new();
 
         /// <summary>
         /// An event sent whenever a PATCH terminal request was received.
@@ -410,12 +451,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PostTerminalsDeactivateRequest(DateTimeOffset     Timestamp,
-                                                               HTTPAPI      API,
-                                                               OCPIRequest  Request)
+                                                               HTTPAPIX           API,
+                                                               OCPIRequest        Request,
+                                                               CancellationToken  CancellationToken)
 
-            => OnPostTerminalsDeactivateRequest.WhenAll(Timestamp,
-                                                        API ?? this,
-                                                        Request);
+            => OnPostTerminalsDeactivateRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -424,7 +469,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <summary>
         /// An event sent whenever a PATCH terminal response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPostTerminalsDeactivateResponse = new ();
+        public OCPIResponseLogEvent OnPostTerminalsDeactivateResponse = new();
 
         /// <summary>
         /// An event sent whenever a PATCH terminal response was sent.
@@ -433,20 +478,23 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="API">The PTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PostTerminalsDeactivateResponse(DateTimeOffset      Timestamp,
-                                                                HTTPAPI       API,
-                                                                OCPIRequest   Request,
-                                                                OCPIResponse  Response)
+        protected internal Task PostTerminalsDeactivateResponse(DateTimeOffset     Timestamp,
+                                                                HTTPAPIX           API,
+                                                                OCPIRequest        Request,
+                                                                OCPIResponse       Response,
+                                                                CancellationToken  CancellationToken)
 
-            => OnPostTerminalsDeactivateResponse.WhenAll(Timestamp,
-                                                         API ?? this,
-                                                         Request,
-                                                         Response);
+            => OnPostTerminalsDeactivateResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
         #endregion
-
 
         #endregion
 
@@ -489,17 +537,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                       String?                      LoggingContext            = null,
                       String?                      LoggingPath               = null,
                       String?                      LogfileName               = null,
-                      OCPILogfileCreatorDelegate?  LogfileCreator            = null,
-                      Boolean                      AutoStart                 = false)
+                      OCPILogfileCreatorDelegate?  LogfileCreator            = null)
 
             : base(CommonAPI.HTTPServer,
-                   HTTPHostname,
+                   null, //HTTPHostname,
+                   URLPathPrefix   ?? DefaultURLPathPrefix,
+                   null,
+                   null,
+
                    ExternalDNSName,
-                   HTTPServiceName ?? DefaultHTTPServiceName,
+                   //HTTPServiceName ?? DefaultHTTPServiceName,
                    BasePath,
 
-                   URLPathPrefix   ?? DefaultURLPathPrefix,
-                   null, //HTMLTemplate,
+                   null,
+                   null,
                    APIVersionHashes,
 
                    DisableMaintenanceTasks,
@@ -514,11 +565,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
+                   "context",
                    LogfileName     ?? DefaultLogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                       : null,
-                   AutoStart)
+                       : null)
 
         {
 
@@ -543,7 +594,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         #region PTP2CPO  Clients
 
-        private readonly ConcurrentDictionary<CPO_Id, PTP2CPOClient> ptp2cpoClients = new ();
+        private readonly ConcurrentDictionary<CPO_Id, PTP2CPOClient> ptp2cpoClients = new();
 
         /// <summary>
         /// Return an enumeration of all PTP2CPO clients.
@@ -590,7 +641,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
                                     CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    DNSClient
+                                    HTTPServer.DNSClient
                                 );
 
                 ptp2cpoClients.TryAdd(cpoId, cpoClient);
@@ -639,7 +690,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
                                     CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    DNSClient
+                                    HTTPServer.DNSClient
                                 );
 
                 ptp2cpoClients.TryAdd(cpoId, cpoClient);
@@ -689,7 +740,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
                                     CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    DNSClient
+                                    HTTPServer.DNSClient
                                 );
 
                 ptp2cpoClients.TryAdd(cpoId, cpoClient);
@@ -712,13 +763,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         private void RegisterURLTemplates()
         {
 
+            var URLPathPrefix = HTTPPath.Root;
+
             #region ~/payments/terminals
 
             #region OPTIONS  ~/payments/terminals
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "payments/terminals",
                 OCPIRequestHandler: request =>
@@ -743,7 +795,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             // https://example.com/ocpi/2.3.0/ptp/payments/terminals/?date_from=2025-03-01T12:00:00&date_to=2025-03-11T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.GET,
                 URLPathPrefix + "payments/terminals",
                 HTTPContentType.Application.JSON_UTF8,
@@ -857,7 +908,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                         //   - Link: <https://www.server.com/ocpi/ptp/2.3.0/payments/terminals/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
                                                                                      ? $"https://{ExternalDNSName}"
-                                                                                     : $"http://127.0.0.1:{HTTPServer.IPPorts.First()}")}" +
+                                                                                     : $"http://127.0.0.1:{HTTPServer.TCPPort}")}" +
                                                         $"{URLPathPrefix}/payments/terminals{queryParameters}>; rel=\"next\"");
 
                     }
@@ -896,7 +947,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "payments/terminals/{terminalId}",
                 OCPIRequestHandler: request =>
@@ -919,7 +969,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.GET,
                 URLPathPrefix + "payments/terminals/{terminalId}",
                 HTTPContentType.Application.JSON_UTF8,
@@ -991,7 +1040,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.PUT,
                 URLPathPrefix + "payments/terminals/{terminalId}",
                 HTTPContentType.Application.JSON_UTF8,
@@ -1116,7 +1164,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.PATCH,
                 URLPathPrefix + "payments/terminals/{terminalId}",
                 HTTPContentType.Application.JSON_UTF8,
@@ -1227,7 +1274,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "payments/terminals/activate",
                 OCPIRequestHandler: request =>
@@ -1251,7 +1297,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.POST,
                 URLPathPrefix + "payments/terminals/activate",
                 HTTPContentType.Application.JSON_UTF8,
@@ -1379,7 +1424,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "payments/terminals/{terminalId}/deactivate",
                 OCPIRequestHandler: request =>
@@ -1403,7 +1447,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.POST,
                 URLPathPrefix + "payments/terminals/{terminalId}/deactivate",
                 HTTPContentType.Application.JSON_UTF8,
@@ -1482,7 +1525,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "payments/financial-advice-confirmations",
                 OCPIRequestHandler: request =>
@@ -1514,7 +1556,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "payments/financial-advice-confirmations/{financial_advice_confirmation_id}",
                 OCPIRequestHandler: request =>

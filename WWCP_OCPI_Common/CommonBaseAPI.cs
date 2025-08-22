@@ -19,7 +19,6 @@
 
 using System.Text;
 using System.Collections.Concurrent;
-using System.Security.Authentication;
 using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
@@ -45,10 +44,8 @@ using BCx509 = Org.BouncyCastle.X509;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
-using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.Sockets;
-using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 using org.GraphDefined.Vanaheimr.Illias.Logging;
 
 #endregion
@@ -599,8 +596,8 @@ namespace cloud.charging.open.protocols.OCPI
     /// <summary>
     /// The CommonAPI Base.
     /// </summary>
-    public class CommonBaseAPI : HTTPAPI,
-                                 IServerStartStop
+    public class CommonBaseAPI : HTTPAPIX
+                                 //IServerStartStop
     {
 
         #region Data
@@ -764,12 +761,12 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region Events
 
-        #region (protected internal) GetVersionsRequest       (Request)
+        #region (protected internal) GetVersionsRequest (Request)
 
         /// <summary>
         /// An event sent whenever a GET versions request was received.
         /// </summary>
-        public HTTPRequestLogEvent OnGetVersionsRequest = new ();
+        public HTTPRequestLogEventX OnGetVersionsRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET versions request was received.
@@ -777,22 +774,26 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The Common API.</param>
         /// <param name="Request">A HTTP request.</param>
-        protected internal Task GetVersionsRequest(DateTimeOffset  Timestamp,
-                                                   HTTPAPI         API,
-                                                   HTTPRequest     Request)
+        protected internal Task GetVersionsRequest(DateTimeOffset     Timestamp,
+                                                   HTTPAPIX           API,
+                                                   HTTPRequest        Request,
+                                                   CancellationToken  CancellationToken)
 
-            => OnGetVersionsRequest.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request);
+            => OnGetVersionsRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
-        #region (protected internal) GetVersionsResponse      (Response)
+        #region (protected internal) GetVersionsResponse(Response)
 
         /// <summary>
         /// An event sent whenever a GET versions response was sent.
         /// </summary>
-        public HTTPResponseLogEvent OnGetVersionsResponse = new ();
+        public HTTPResponseLogEventX OnGetVersionsResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET versions response was sent.
@@ -801,15 +802,19 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="API">The Common API.</param>
         /// <param name="Request">A HTTP request.</param>
         /// <param name="Response">A HTTP response.</param>
-        protected internal Task GetVersionsResponse(DateTimeOffset  Timestamp,
-                                                    HTTPAPI         API,
-                                                    HTTPRequest     Request,
-                                                    HTTPResponse    Response)
+        protected internal Task GetVersionsResponse(DateTimeOffset     Timestamp,
+                                                    HTTPAPIX           API,
+                                                    HTTPRequest        Request,
+                                                    HTTPResponse       Response,
+                                                    CancellationToken  CancellationToken)
 
-            => OnGetVersionsResponse.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request,
-                                             Response);
+            => OnGetVersionsResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -822,8 +827,6 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
         #region Constructor(s)
-
-        #region CommonBaseAPI(HTTPServerName, ...)
 
         /// <summary>
         /// Create a new CommonBaseAPI.
@@ -846,16 +849,6 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="HTTPServiceName">The name of the HTTP service.</param>
         /// <param name="APIVersionHashes">The API version hashes (git commit hash values).</param>
         /// 
-        /// <param name="ServerCertificateSelector">An optional delegate to select a TLS server certificate.</param>
-        /// <param name="ClientCertificateValidator">An optional delegate to verify the TLS client certificate used for authentication.</param>
-        /// <param name="LocalCertificateSelector">An optional delegate to select the TLS client certificate used for authentication.</param>
-        /// <param name="AllowedTLSProtocols">The TLS protocol(s) allowed for this connection.</param>
-        /// 
-        /// <param name="ServerThreadIsBackground">Whether the TCP server thread is a background thread or not.</param>
-        /// <param name="ConnectionIdBuilder">An optional delegate to build a connection identification based on IP socket information.</param>
-        /// <param name="ConnectionTimeout">The TCP client timeout for all incoming client connections in seconds (default: 30 sec).</param>
-        /// <param name="MaxClientConnections">The maximum number of concurrent TCP client connections (default: 4096).</param>
-        /// 
         /// <param name="DisableMaintenanceTasks">Disable all maintenance tasks.</param>
         /// <param name="MaintenanceInitialDelay">The initial delay of the maintenance tasks.</param>
         /// <param name="MaintenanceEvery">The maintenance interval.</param>
@@ -870,39 +863,29 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="LoggingPath">The path for all logfiles.</param>
         /// <param name="LogfileName">The name of the logfile.</param>
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
-        /// <param name="DNSClient">The DNS client of the API.</param>
-        /// <param name="AutoStart">Whether to start the API automatically.</param>
-        public CommonBaseAPI(URL                                                        OurBaseURL,
+        public CommonBaseAPI(HTTPTestServerX                                            HTTPServer,
+                             URL                                                        OurBaseURL,
                              URL                                                        OurVersionsURL,
+
+                             IEnumerable<HTTPHostname>?                                 Hostnames                     = null,
+                             HTTPPath?                                                  RootPath                      = null,
+                             IEnumerable<HTTPContentType>?                              HTTPContentTypes              = null,
+                             I18NString?                                                Description                   = null,
+
+                             String?                                                    ExternalDNSName               = null,
+                             HTTPPath?                                                  BasePath                      = null,
+
+                             String?                                                    HTTPServiceName               = DefaultHTTPServiceName,
+                             String?                                                    APIVersionHash                = null,
+                             JObject?                                                   APIVersionHashes              = null,
 
                              HTTPPath?                                                  AdditionalURLPathPrefix       = null,
                              Boolean                                                    LocationsAsOpenData           = true,
                              Boolean                                                    TariffsAsOpenData             = false,
                              Boolean?                                                   AllowDowngrades               = null,
 
-                             HTTPHostname?                                              HTTPHostname                  = null,
-                             String?                                                    ExternalDNSName               = null,
-                             IPPort?                                                    HTTPServerPort                = null,
-                             HTTPPath?                                                  BasePath                      = null,
-                             String?                                                    HTTPServerName                = DefaultHTTPServerName,
-
-                             HTTPPath?                                                  URLPathPrefix                 = null,
-                             String?                                                    HTTPServiceName               = DefaultHTTPServiceName,
-                             JObject?                                                   APIVersionHashes              = null,
-
-                             ServerCertificateSelectorDelegate?                         ServerCertificateSelector     = null,
-                             RemoteTLSClientCertificateValidationHandler<IHTTPServer>?  ClientCertificateValidator    = null,
-                             LocalCertificateSelectionHandler?                          LocalCertificateSelector      = null,
-                             SslProtocols?                                              AllowedTLSProtocols           = null,
-                             Boolean?                                                   ClientCertificateRequired     = null,
-                             Boolean?                                                   CheckCertificateRevocation    = null,
-
-                             ServerThreadNameCreatorDelegate?                           ServerThreadNameCreator       = null,
-                             ServerThreadPriorityDelegate?                              ServerThreadPrioritySetter    = null,
-                             Boolean?                                                   ServerThreadIsBackground      = null,
-                             ConnectionIdBuilder?                                       ConnectionIdBuilder           = null,
-                             TimeSpan?                                                  ConnectionTimeout             = null,
-                             UInt32?                                                    MaxClientConnections          = null,
+                             //HTTPHostname?                                              HTTPHostname                  = null,
+                             //String?                                                    HTTPServerName                = DefaultHTTPServerName,
 
                              Boolean?                                                   DisableMaintenanceTasks       = null,
                              TimeSpan?                                                  MaintenanceInitialDelay       = null,
@@ -918,37 +901,25 @@ namespace cloud.charging.open.protocols.OCPI
                              String?                                                    LoggingContext                = null,
                              String?                                                    LoggingPath                   = null,
                              String?                                                    LogfileName                   = null,
-                             OCPILogfileCreatorDelegate?                                LogfileCreator                = null,
+                             OCPILogfileCreatorDelegate?                                LogfileCreator                = null)
                              //String?                                                    DatabaseFilePath              = null,
                              //String?                                                    RemotePartyDBFileName         = null,
                              //String?                                                    AssetsDBFileName              = null,
-                             DNSClient?                                                 DNSClient                     = null,
-                             Boolean                                                    AutoStart                     = false)
+                             //DNSClient?                                                 DNSClient                     = null,
+                             //Boolean                                                    AutoStart                     = false
 
-            : base(HTTPHostname,
+            : base(HTTPServer,
+                   Hostnames,
+                   RootPath,
+                   HTTPContentTypes,
+                   Description,
+
                    ExternalDNSName,
-                   HTTPServerPort  ?? DefaultHTTPServerPort,
                    BasePath,
-                   HTTPServerName  ?? DefaultHTTPServerName,
 
-                   URLPathPrefix   ?? DefaultURLPathPrefix,
-                   HTTPServiceName ?? DefaultHTTPServiceName,
-                   null, //HTMLTemplate,
+                   HTTPServiceName,
+                   APIVersionHash,
                    APIVersionHashes,
-
-                   ServerCertificateSelector,
-                   ClientCertificateValidator,
-                   LocalCertificateSelector,
-                   AllowedTLSProtocols,
-                   ClientCertificateRequired,
-                   CheckCertificateRevocation,
-
-                   ServerThreadNameCreator,
-                   ServerThreadPrioritySetter,
-                   ServerThreadIsBackground,
-                   ConnectionIdBuilder,
-                   ConnectionTimeout,
-                   MaxClientConnections,
 
                    DisableMaintenanceTasks,
                    MaintenanceInitialDelay,
@@ -962,12 +933,11 @@ namespace cloud.charging.open.protocols.OCPI
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
+                   "ocpi-context",
                    LogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                       : null,
-                   DNSClient,
-                   AutoStart)
+                       : null)
 
         {
 
@@ -1001,149 +971,6 @@ namespace cloud.charging.open.protocols.OCPI
             RegisterURLTemplates();
 
         }
-
-        #endregion
-
-        #region CommonBaseAPI(HTTPServer, ...)
-
-        /// <summary>
-        /// Create a new CommonBaseAPI using the given HTTP server.
-        /// </summary>
-        /// <param name="OurVersionsURL">The URL of our VERSIONS endpoint.</param>
-        /// <param name="HTTPServer">A HTTP server.</param>
-        /// 
-        /// <param name="AdditionalURLPathPrefix"></param>
-        /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
-        /// <param name="TariffsAsOpenData">Allow anonymous access to tariffs as Open Data.</param>
-        /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        /// 
-        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
-        /// <param name="ExternalDNSName">The official URL/DNS name of this service, e.g. for sending e-mails.</param>
-        /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
-        /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
-        /// 
-        /// <param name="URLPathPrefix">An optional URL path prefix, used when defining URL templates.</param>
-        /// <param name="APIVersionHashes">The API version hashes (git commit hash values).</param>
-        /// 
-        /// <param name="DisableMaintenanceTasks">Disable all maintenance tasks.</param>
-        /// <param name="MaintenanceInitialDelay">The initial delay of the maintenance tasks.</param>
-        /// <param name="MaintenanceEvery">The maintenance interval.</param>
-        /// 
-        /// <param name="DisableWardenTasks">Disable all warden tasks.</param>
-        /// <param name="WardenInitialDelay">The initial delay of the warden tasks.</param>
-        /// <param name="WardenCheckEvery">The warden interval.</param>
-        /// 
-        /// <param name="IsDevelopment">This HTTP API runs in development mode.</param>
-        /// <param name="DevelopmentServers">An enumeration of server names which will imply to run this service in development mode.</param>
-        /// <param name="DisableLogging">Disable the log file.</param>
-        /// <param name="LoggingPath">The path for all logfiles.</param>
-        /// <param name="LogfileName">The name of the logfile.</param>
-        /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
-        /// <param name="AutoStart">Whether to start the API automatically.</param>
-        public CommonBaseAPI(URL                          OurBaseURL,
-                             URL                          OurVersionsURL,
-                             HTTPServer                   HTTPServer,
-
-                             HTTPPath?                    AdditionalURLPathPrefix    = null,
-                             Boolean                      LocationsAsOpenData        = true,
-                             Boolean                      TariffsAsOpenData          = false,
-                             Boolean?                     AllowDowngrades            = null,
-
-                             HTTPHostname?                HTTPHostname               = null,
-                             String?                      ExternalDNSName            = "",
-                             String?                      HTTPServiceName            = DefaultHTTPServiceName,
-                             HTTPPath?                    BasePath                   = null,
-
-                             HTTPPath?                    URLPathPrefix              = null,
-                             JObject?                     APIVersionHashes           = null,
-
-                             Boolean?                     DisableMaintenanceTasks    = false,
-                             TimeSpan?                    MaintenanceInitialDelay    = null,
-                             TimeSpan?                    MaintenanceEvery           = null,
-
-                             Boolean?                     DisableWardenTasks         = false,
-                             TimeSpan?                    WardenInitialDelay         = null,
-                             TimeSpan?                    WardenCheckEvery           = null,
-
-                             Boolean?                     IsDevelopment              = false,
-                             IEnumerable<String>?         DevelopmentServers         = null,
-                             Boolean?                     DisableLogging             = false,
-                             String?                      LoggingContext             = null,
-                             String?                      LoggingPath                = null,
-                             String?                      LogfileName                = null,
-                             OCPILogfileCreatorDelegate?  LogfileCreator             = null,
-                             //String?                      DatabaseFilePath           = null,
-                             //String?                      RemotePartyDBFileName      = null,
-                             //String?                      AssetsDBFileName           = null,
-                             Boolean                      AutoStart                  = false)
-
-            : base(HTTPServer,
-                   HTTPHostname,
-                   ExternalDNSName,
-                   HTTPServiceName ?? DefaultHTTPServiceName,
-                   BasePath,
-
-                   URLPathPrefix,//   ?? DefaultURLPathPrefix,
-                   null, //HTMLTemplate,
-                   APIVersionHashes,
-
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
-
-                   IsDevelopment,
-                   DevelopmentServers,
-                   DisableLogging,
-                   LoggingPath,
-                   LogfileName,
-                   LogfileCreator is not null
-                       ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                       : null,
-                   AutoStart)
-
-        {
-
-            this.OurBaseURL                = OurBaseURL;
-            this.OurVersionsURL            = OurVersionsURL;
-
-            this.AdditionalURLPathPrefix   = AdditionalURLPathPrefix;
-            this.LocationsAsOpenData       = LocationsAsOpenData;
-            this.TariffsAsOpenData         = TariffsAsOpenData;
-            this.AllowDowngrades           = AllowDowngrades;
-
-            this.LoggingContext            = LoggingContext;
-
-            //this.logfileName               = Path.Combine(this.LoggingPath,
-            //                                              this.LogfileName);
-
-            //this.DatabaseFilePath          = DatabaseFilePath                   ?? Path.Combine(AppContext.BaseDirectory,
-            //                                                                                    DefaultHTTPAPI_LoggingPath);
-
-            //if (this.DatabaseFilePath[^1] != Path.DirectorySeparatorChar)
-            //    this.DatabaseFilePath     += Path.DirectorySeparatorChar;
-
-            //this.RemotePartyDBFileName     = Path.Combine(this.DatabaseFilePath,
-            //                                              RemotePartyDBFileName ?? DefaultRemotePartyDBFileName);
-
-            //this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
-            //                                              AssetsDBFileName      ?? DefaultAssetsDBFileName);
-
-            // Link HTTP events...
-            HTTPServer.RequestLog         += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
-            HTTPServer.ResponseLog        += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
-            HTTPServer.ErrorLog           += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
-
-            this.ClientConfigurations      = new ClientConfigurator();
-
-            RegisterURLTemplates();
-
-        }
-
-        #endregion
 
         #endregion
 
@@ -1222,12 +1049,11 @@ namespace cloud.charging.open.protocols.OCPI
         private void RegisterURLTemplates()
         {
 
+            var URLPathPrefix = HTTPPath.Root;
+
             #region OPTIONS     ~/
 
-            HTTPServer.AddMethodCallback(
-
-                this,
-                HTTPHostname.Any,
+            AddHandler(
                 HTTPMethod.OPTIONS,
                 URLPathPrefix,
                 HTTPDelegate: request =>
@@ -1250,10 +1076,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             #region GET         ~/
 
-            HTTPServer.AddMethodCallback(
-
-                this,
-                HTTPHostname.Any,
+            AddHandler(
                 HTTPMethod.GET,
                 URLPathPrefix,
                 HTTPContentType.Text.PLAIN,
@@ -1282,10 +1105,7 @@ namespace cloud.charging.open.protocols.OCPI
             // ----------------------------------------------------
             // curl -v -X OPTIONS http://127.0.0.1:2502/versions
             // ----------------------------------------------------
-            HTTPServer.AddMethodCallback(
-
-                this,
-                HTTPHostname.Any,
+            AddHandler(
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "versions",
                 HTTPDelegate: request =>
@@ -1310,10 +1130,7 @@ namespace cloud.charging.open.protocols.OCPI
             // ----------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions
             // ----------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(
-
-                this,
-                HTTPHostname.Any,
+            AddHandler(
                 HTTPMethod.GET,
                 URLPathPrefix + "versions",
                 HTTPContentType.Application.JSON_UTF8,
@@ -2551,150 +2368,150 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region Start(...)
 
-        /// <summary>
-        /// Start this CommonAPI.
-        /// </summary>
-        /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
-        /// <param name="CurrentUserId">An optional user identification initiating this command/request.</param>
-        public async Task<Boolean> Start(EventTracking_Id?  EventTrackingId   = null,
-                                         User_Id?           CurrentUserId     = null)
-        {
+        ///// <summary>
+        ///// Start this CommonAPI.
+        ///// </summary>
+        ///// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+        ///// <param name="CurrentUserId">An optional user identification initiating this command/request.</param>
+        //public async Task<Boolean> Start(EventTracking_Id?  EventTrackingId   = null,
+        //                                 User_Id?           CurrentUserId     = null)
+        //{
 
-            if (HTTPServer.IsStarted)
-                return true;
+        //    if (HTTPServer.IsStarted)
+        //        return true;
 
-            EventTrackingId ??= EventTracking_Id.New;
+        //    EventTrackingId ??= EventTracking_Id.New;
 
-            var result = await base.Start();
+        //    var result = await base.Start();
 
-            //await LogAsset(
-            //          "started",
-            //          EventTrackingId,
-            //          CurrentUserId
-            //      );
+        //    //await LogAsset(
+        //    //          "started",
+        //    //          EventTrackingId,
+        //    //          CurrentUserId
+        //    //      );
 
-            #region Send 'Open Data API restarted'-e-mail...
+        //    #region Send 'Open Data API restarted'-e-mail...
 
-            //var Message0 = new HTMLEMailBuilder() {
-            //    From        = _APIEMailAddress,
-            //    To          = _APIAdminEMail,
-            //    Subject     = "Open Data API '" + _ServiceName + "' restarted! at " + Timestamp.Now.ToString(),
-            //    PlainText   = "Open Data API '" + _ServiceName + "' restarted! at " + Timestamp.Now.ToString(),
-            //    HTMLText    = "Open Data API <b>'" + _ServiceName + "'</b> restarted! at " + Timestamp.Now.ToString(),
-            //    Passphrase  = _APIPassphrase
-            //};
-            //
-            //var SMTPTask = _APISMTPClient.Send(Message0);
-            //SMTPTask.Wait();
+        //    //var Message0 = new HTMLEMailBuilder() {
+        //    //    From        = _APIEMailAddress,
+        //    //    To          = _APIAdminEMail,
+        //    //    Subject     = "Open Data API '" + _ServiceName + "' restarted! at " + Timestamp.Now.ToString(),
+        //    //    PlainText   = "Open Data API '" + _ServiceName + "' restarted! at " + Timestamp.Now.ToString(),
+        //    //    HTMLText    = "Open Data API <b>'" + _ServiceName + "'</b> restarted! at " + Timestamp.Now.ToString(),
+        //    //    Passphrase  = _APIPassphrase
+        //    //};
+        //    //
+        //    //var SMTPTask = _APISMTPClient.Send(Message0);
+        //    //SMTPTask.Wait();
 
-            //var r = SMTPTask.Result;
+        //    //var r = SMTPTask.Result;
 
-            #endregion
+        //    #endregion
 
-            //SendStarted(this, Timestamp.Now);
+        //    //SendStarted(this, Timestamp.Now);
 
-            return result;
+        //    return result;
 
-        }
+        //}
 
         #endregion
 
         #region Start    (Delay, EventTrackingId = null, InBackground = true)
 
-        public override Task<Boolean> Start(TimeSpan           Delay,
-                                            EventTracking_Id?  EventTrackingId   = null,
-                                            Boolean            InBackground      = true)
+        //public override Task<Boolean> Start(TimeSpan           Delay,
+        //                                    EventTracking_Id?  EventTrackingId   = null,
+        //                                    Boolean            InBackground      = true)
 
-            => Start(Delay,
-                     EventTrackingId,
-                     InBackground,
-                     null);
+        //    => Start(Delay,
+        //             EventTrackingId,
+        //             InBackground,
+        //             null);
 
 
-        /// <summary>
-        /// Start the server after a little delay.
-        /// </summary>
-        /// <param name="Delay">The delay.</param>
-        /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
-        /// <param name="InBackground">Whether to wait on the main thread or in a background thread.</param>
-        public async virtual Task<Boolean> Start(TimeSpan           Delay,
-                                                 EventTracking_Id?  EventTrackingId   = null,
-                                                 Boolean            InBackground      = true,
-                                                 User_Id?           CurrentUserId     = null)
-        {
+        ///// <summary>
+        ///// Start the server after a little delay.
+        ///// </summary>
+        ///// <param name="Delay">The delay.</param>
+        ///// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+        ///// <param name="InBackground">Whether to wait on the main thread or in a background thread.</param>
+        //public async virtual Task<Boolean> Start(TimeSpan           Delay,
+        //                                         EventTracking_Id?  EventTrackingId   = null,
+        //                                         Boolean            InBackground      = true,
+        //                                         User_Id?           CurrentUserId     = null)
+        //{
 
-            EventTrackingId ??= EventTracking_Id.New;
+        //    EventTrackingId ??= EventTracking_Id.New;
 
-            var result = await HTTPServer.Start(
-                                   Delay,
-                                   EventTrackingId,
-                                   InBackground
-                               );
+        //    var result = await HTTPServer.Start(
+        //                           Delay,
+        //                           EventTrackingId,
+        //                           InBackground
+        //                       );
 
-            //SendStarted(this, CurrentTimestamp);
+        //    //SendStarted(this, CurrentTimestamp);
 
-            //await LogAsset(
-            //          "started",
-            //          EventTrackingId,
-            //          CurrentUserId
-            //      );
+        //    //await LogAsset(
+        //    //          "started",
+        //    //          EventTrackingId,
+        //    //          CurrentUserId
+        //    //      );
 
-            return result;
+        //    return result;
 
-        }
+        //}
 
         #endregion
 
         #region Shutdown(EventTrackingId = null, Message = null, Wait = true, ...)
 
-        public override Task<Boolean> Shutdown(EventTracking_Id?  EventTrackingId   = null,
-                                               String?            Message           = null,
-                                               Boolean            Wait              = true)
+        //public override Task<Boolean> Shutdown(EventTracking_Id?  EventTrackingId   = null,
+        //                                       String?            Message           = null,
+        //                                       Boolean            Wait              = true)
 
-            => Shutdown(
-                   EventTrackingId,
-                   Message,
-                   Wait,
-                   null
-               );
+        //    => Shutdown(
+        //           EventTrackingId,
+        //           Message,
+        //           Wait,
+        //           null
+        //       );
 
 
-        /// <summary>
-        /// Shutdown this CommonAPI.
-        /// </summary>
-        /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
-        /// <param name="Message">An optional shutdown message.</param>
-        /// <param name="Wait">Whether to wait for the shutdown to complete.</param>
-        /// <param name="CurrentUserId">An optional user identification initiating this command/request.</param>
-        public async Task<Boolean> Shutdown(EventTracking_Id?  EventTrackingId   = null,
-                                            String?            Message           = null,
-                                            Boolean            Wait              = true,
-                                            User_Id?           CurrentUserId     = null)
-        {
+        ///// <summary>
+        ///// Shutdown this CommonAPI.
+        ///// </summary>
+        ///// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+        ///// <param name="Message">An optional shutdown message.</param>
+        ///// <param name="Wait">Whether to wait for the shutdown to complete.</param>
+        ///// <param name="CurrentUserId">An optional user identification initiating this command/request.</param>
+        //public async Task<Boolean> Shutdown(EventTracking_Id?  EventTrackingId   = null,
+        //                                    String?            Message           = null,
+        //                                    Boolean            Wait              = true,
+        //                                    User_Id?           CurrentUserId     = null)
+        //{
 
-            if (!HTTPServer.IsStarted)
-                return true;
+        //    if (!HTTPServer.IsStarted)
+        //        return true;
 
-            EventTrackingId ??= EventTracking_Id.New;
+        //    EventTrackingId ??= EventTracking_Id.New;
 
-            var result = await base.Shutdown(
-                                   EventTrackingId,
-                                   Message,
-                                   Wait
-                               );
+        //    var result = await base.Shutdown(
+        //                           EventTrackingId,
+        //                           Message,
+        //                           Wait
+        //                       );
 
-            //await LogAsset(
-            //          "shutdown",
-            //          Message,
-            //          EventTrackingId,
-            //          CurrentUserId
-            //      );
+        //    //await LogAsset(
+        //    //          "shutdown",
+        //    //          Message,
+        //    //          EventTrackingId,
+        //    //          CurrentUserId
+        //    //      );
 
-            //SendShutdown(this, Timestamp.Now);
+        //    //SendShutdown(this, Timestamp.Now);
 
-            return result;
+        //    return result;
 
-        }
+        //}
 
         #endregion
 

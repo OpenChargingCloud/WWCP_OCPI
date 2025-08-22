@@ -22,6 +22,7 @@ using NUnit.Framework;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_3_0.HTTP;
@@ -39,15 +40,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
         #region Data
 
-        protected  HTTPAPI?        cpoHTTPAPI;
-        protected  CommonBaseAPI?  cpoBaseAPI;
-        protected  CommonAPI?      cpoCommonAPI;
-        protected  CPOAPI?         cpoAPI;
+        protected  HTTPTestServerX?  cpoHTTPServer;
+        protected  CommonBaseAPI?    cpoBaseAPI;
+        protected  CommonAPI?        cpoCommonAPI;
+        protected  CPOAPI?           cpoAPI;
 
-        protected  HTTPAPI?        ptpHTTPAPI;
-        protected  CommonBaseAPI?  ptpBaseAPI;
-        protected  CommonAPI?      ptpCommonAPI;
-        protected  PTPAPI?         ptpAPI;
+        protected  HTTPTestServerX?  ptpHTTPServer;
+        protected  CommonBaseAPI?    ptpBaseAPI;
+        protected  CommonAPI?        ptpCommonAPI;
+        protected  PTPAPI?           ptpAPI;
 
         #endregion
 
@@ -69,29 +70,29 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
             #region Create CPO APIs
 
-            cpoHTTPAPI           = new HTTPAPI(
-                                       HTTPServerPort:                      IPPort.Parse(3701),
-                                       AutoStart:                           true
+            cpoHTTPServer        = new HTTPTestServerX(
+                                       TCPPort:                   IPPort.Parse(3701)
                                    );
 
-            Assert.That(cpoHTTPAPI,  Is.Not.Null);
+            Assert.That(cpoHTTPServer,  Is.Not.Null);
 
             cpoBaseAPI           = new CommonBaseAPI(
 
-                                       OurBaseURL:                URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi"),
-                                       OurVersionsURL:            URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/versions"),
+                                       OurBaseURL:                URL.Parse($"http://localhost:{cpoHTTPServer.TCPPort}/ocpi"),
+                                       OurVersionsURL:            URL.Parse($"http://localhost:{cpoHTTPServer.TCPPort}/ocpi/versions"),
 
-                                       HTTPServer:                cpoHTTPAPI.HTTPServer,
+                                       HTTPServer:                cpoHTTPServer,
                                        AdditionalURLPathPrefix:   null,
                                        LocationsAsOpenData:       true,
                                        AllowDowngrades:           null,
 
-                                       HTTPHostname:              null,
+                                       //HTTPHostname:              null,
                                        ExternalDNSName:           null,
                                        HTTPServiceName:           null,//"XXX",
                                        BasePath:                  null,
 
-                                       URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                                       //URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                                       RootPath:                  HTTPPath.Parse("/ocpi"),
                                        APIVersionHashes:          null,
 
                                        DisableMaintenanceTasks:   null,
@@ -158,8 +159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
                                        DisableLogging:                      null,
                                        LoggingPath:                         null,
                                        LogfileName:                         null,
-                                       LogfileCreator:                      null,
-                                       AutoStart:                           false
+                                       LogfileCreator:                      null
 
                                    );
 
@@ -191,8 +191,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
                                        DisableLogging:                      null,
                                        LoggingPath:                         null,
                                        LogfileName:                         null,
-                                       LogfileCreator:                      null,
-                                       AutoStart:                           false
+                                       LogfileCreator:                      null
 
                                    );
 
@@ -202,29 +201,29 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
             #region Create PTP APIs
 
-            ptpHTTPAPI           = new HTTPAPI(
-                                       HTTPServerPort:                      IPPort.Parse(3801),
-                                       AutoStart:                           true
+            ptpHTTPServer        = new HTTPTestServerX(
+                                       TCPPort:                   IPPort.Parse(3801)
                                    );
 
-            Assert.That(ptpHTTPAPI,  Is.Not.Null);
+            Assert.That(ptpHTTPServer,  Is.Not.Null);
 
             ptpBaseAPI           = new CommonBaseAPI(
 
-                                       OurBaseURL:                URL.Parse($"http://localhost:{ptpHTTPAPI.HTTPServer.IPPorts.First()}/ocpi"),
-                                       OurVersionsURL:            URL.Parse($"http://localhost:{ptpHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/versions"),
+                                       OurBaseURL:                URL.Parse($"http://localhost:{ptpHTTPServer.TCPPort}/ocpi"),
+                                       OurVersionsURL:            URL.Parse($"http://localhost:{ptpHTTPServer.TCPPort}/ocpi/versions"),
 
-                                       HTTPServer:                ptpHTTPAPI.HTTPServer,
+                                       HTTPServer:                ptpHTTPServer,
                                        AdditionalURLPathPrefix:   null,
                                        LocationsAsOpenData:       true,
                                        AllowDowngrades:           null,
 
-                                       HTTPHostname:              null,
+                                       //HTTPHostname:              null,
                                        ExternalDNSName:           null,
                                        HTTPServiceName:           null,//"YYY",
                                        BasePath:                  null,
 
-                                       URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                                       //URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                                       RootPath:                  HTTPPath.Parse("/ocpi"),
                                        APIVersionHashes:          null,
 
                                        DisableMaintenanceTasks:   null,
@@ -291,8 +290,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
                                        DisableLogging:                      null,
                                        LoggingPath:                         null,
                                        LogfileName:                         null,
-                                       LogfileCreator:                      null,
-                                       AutoStart:                           false
+                                       LogfileCreator:                      null
 
                                    );
 
@@ -324,8 +322,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
                                        DisableLogging:                      null,
                                        LoggingPath:                         null,
                                        LogfileName:                         null,
-                                       LogfileCreator:                      null,
-                                       AutoStart:                           false
+                                       LogfileCreator:                      null
 
                                    );
 
@@ -437,11 +434,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
         public async virtual Task ShutdownOnce()
         {
 
-            if (cpoHTTPAPI is not null)
-                await cpoHTTPAPI.Shutdown();
+            if (cpoHTTPServer is not null)
+                await cpoHTTPServer.Stop();
 
-            if (ptpHTTPAPI is not null)
-                await ptpHTTPAPI.Shutdown();
+            if (ptpHTTPServer is not null)
+                await ptpHTTPServer.Stop();
 
         }
 

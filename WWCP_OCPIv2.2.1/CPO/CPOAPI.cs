@@ -27,6 +27,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
@@ -228,7 +229,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
     /// The HTTP API for charge point operators.
     /// EMSPs will connect to this API.
     /// </summary>
-    public class CPOAPI : HTTPAPI
+    public class CPOAPI : HTTPAPIX
     {
 
         #region Data
@@ -336,7 +337,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET locations request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetLocationsRequest = new ();
+        public OCPIRequestLogEvent OnGetLocationsRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET locations request was received.
@@ -345,12 +346,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetLocationsRequest(DateTimeOffset     Timestamp,
-                                                    HTTPAPI      API,
-                                                    OCPIRequest  Request)
+                                                    HTTPAPIX           API,
+                                                    OCPIRequest        Request,
+                                                    CancellationToken  CancellationToken)
 
-            => OnGetLocationsRequest.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request);
+            => OnGetLocationsRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -359,7 +364,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET locations response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetLocationsResponse = new ();
+        public OCPIResponseLogEvent OnGetLocationsResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET locations response was sent.
@@ -368,15 +373,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetLocationsResponse(DateTimeOffset      Timestamp,
-                                                     HTTPAPI       API,
-                                                     OCPIRequest   Request,
-                                                     OCPIResponse  Response)
+        protected internal Task GetLocationsResponse(DateTimeOffset     Timestamp,
+                                                     HTTPAPIX           API,
+                                                     OCPIRequest        Request,
+                                                     OCPIResponse       Response,
+                                                     CancellationToken  CancellationToken)
 
-            => OnGetLocationsResponse.WhenAll(Timestamp,
-                                              API ?? this,
-                                              Request,
-                                              Response);
+            => OnGetLocationsResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -386,7 +395,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET location request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetLocationRequest = new ();
+        public OCPIRequestLogEvent OnGetLocationRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET location request was received.
@@ -395,12 +404,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetLocationRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPI      API,
-                                                   OCPIRequest  Request)
+                                                   HTTPAPIX           API,
+                                                   OCPIRequest        Request,
+                                                   CancellationToken  CancellationToken)
 
-            => OnGetLocationRequest.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request);
+            => OnGetLocationRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -409,7 +422,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET location response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetLocationResponse = new ();
+        public OCPIResponseLogEvent OnGetLocationResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET location response was sent.
@@ -418,15 +431,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetLocationResponse(DateTimeOffset      Timestamp,
-                                                    HTTPAPI       API,
-                                                    OCPIRequest   Request,
-                                                    OCPIResponse  Response)
+        protected internal Task GetLocationResponse(DateTimeOffset     Timestamp,
+                                                    HTTPAPIX           API,
+                                                    OCPIRequest        Request,
+                                                    OCPIResponse       Response,
+                                                    CancellationToken  CancellationToken)
 
-            => OnGetLocationResponse.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request,
-                                             Response);
+            => OnGetLocationResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -439,7 +456,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET EVSE request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetEVSERequest = new ();
+        public OCPIRequestLogEvent OnGetEVSERequest = new();
 
         /// <summary>
         /// An event sent whenever a GET EVSE request was received.
@@ -448,12 +465,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetEVSERequest(DateTimeOffset     Timestamp,
-                                               HTTPAPI      API,
-                                               OCPIRequest  Request)
+                                               HTTPAPIX           API,
+                                               OCPIRequest        Request,
+                                               CancellationToken  CancellationToken)
 
-            => OnGetEVSERequest.WhenAll(Timestamp,
-                                        API ?? this,
-                                        Request);
+            => OnGetEVSERequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -462,7 +483,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET EVSE response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetEVSEResponse = new ();
+        public OCPIResponseLogEvent OnGetEVSEResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET EVSE response was sent.
@@ -471,15 +492,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetEVSEResponse(DateTimeOffset      Timestamp,
-                                                HTTPAPI       API,
-                                                OCPIRequest   Request,
-                                                OCPIResponse  Response)
+        protected internal Task GetEVSEResponse(DateTimeOffset     Timestamp,
+                                                HTTPAPIX           API,
+                                                OCPIRequest        Request,
+                                                OCPIResponse       Response,
+                                                CancellationToken  CancellationToken)
 
-            => OnGetEVSEResponse.WhenAll(Timestamp,
-                                         API ?? this,
-                                         Request,
-                                         Response);
+            => OnGetEVSEResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -492,7 +517,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET connector request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetConnectorRequest = new ();
+        public OCPIRequestLogEvent OnGetConnectorRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET connector request was received.
@@ -501,12 +526,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetConnectorRequest(DateTimeOffset     Timestamp,
-                                                    HTTPAPI      API,
-                                                    OCPIRequest  Request)
+                                                    HTTPAPIX           API,
+                                                    OCPIRequest        Request,
+                                                    CancellationToken  CancellationToken)
 
-            => OnGetConnectorRequest.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request);
+            => OnGetConnectorRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -515,7 +544,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET connector response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetConnectorResponse = new ();
+        public OCPIResponseLogEvent OnGetConnectorResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET connector response was sent.
@@ -524,15 +553,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetConnectorResponse(DateTimeOffset      Timestamp,
-                                                     HTTPAPI       API,
-                                                     OCPIRequest   Request,
-                                                     OCPIResponse  Response)
+        protected internal Task GetConnectorResponse(DateTimeOffset     Timestamp,
+                                                     HTTPAPIX           API,
+                                                     OCPIRequest        Request,
+                                                     OCPIResponse       Response,
+                                                     CancellationToken  CancellationToken)
 
-            => OnGetConnectorResponse.WhenAll(Timestamp,
-                                              API ?? this,
-                                              Request,
-                                              Response);
+            => OnGetConnectorResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -545,7 +578,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET tariffs request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetTariffsRequest = new ();
+        public OCPIRequestLogEvent OnGetTariffsRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET tariffs request was received.
@@ -554,12 +587,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetTariffsRequest(DateTimeOffset     Timestamp,
-                                                  HTTPAPI      API,
-                                                  OCPIRequest  Request)
+                                                  HTTPAPIX           API,
+                                                  OCPIRequest        Request,
+                                                  CancellationToken  CancellationToken)
 
-            => OnGetTariffsRequest.WhenAll(Timestamp,
-                                           API ?? this,
-                                           Request);
+            => OnGetTariffsRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -568,7 +605,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET tariffs response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetTariffsResponse = new ();
+        public OCPIResponseLogEvent OnGetTariffsResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET tariffs response was sent.
@@ -577,15 +614,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTariffsResponse(DateTimeOffset      Timestamp,
-                                                   HTTPAPI       API,
-                                                   OCPIRequest   Request,
-                                                   OCPIResponse  Response)
+        protected internal Task GetTariffsResponse(DateTimeOffset     Timestamp,
+                                                   HTTPAPIX           API,
+                                                   OCPIRequest        Request,
+                                                   OCPIResponse       Response,
+                                                   CancellationToken  CancellationToken)
 
-            => OnGetTariffsResponse.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request,
-                                            Response);
+            => OnGetTariffsResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -595,7 +636,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET tariff request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetTariffRequest = new ();
+        public OCPIRequestLogEvent OnGetTariffRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET tariff request was received.
@@ -604,12 +645,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetTariffRequest(DateTimeOffset     Timestamp,
-                                                 HTTPAPI      API,
-                                                 OCPIRequest  Request)
+                                                 HTTPAPIX           API,
+                                                 OCPIRequest        Request,
+                                                 CancellationToken  CancellationToken)
 
-            => OnGetTariffRequest.WhenAll(Timestamp,
-                                          API ?? this,
-                                          Request);
+            => OnGetTariffRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -618,7 +663,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET tariff response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetTariffResponse = new ();
+        public OCPIResponseLogEvent OnGetTariffResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET tariff response was sent.
@@ -627,15 +672,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTariffResponse(DateTimeOffset      Timestamp,
-                                                  HTTPAPI       API,
-                                                  OCPIRequest   Request,
-                                                  OCPIResponse  Response)
+        protected internal Task GetTariffResponse(DateTimeOffset     Timestamp,
+                                                  HTTPAPIX           API,
+                                                  OCPIRequest        Request,
+                                                  OCPIResponse       Response,
+                                                  CancellationToken  CancellationToken)
 
-            => OnGetTariffResponse.WhenAll(Timestamp,
-                                           API ?? this,
-                                           Request,
-                                           Response);
+            => OnGetTariffResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -648,7 +697,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET sessions request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetSessionsRequest = new ();
+        public OCPIRequestLogEvent OnGetSessionsRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET sessions request was received.
@@ -657,12 +706,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetSessionsRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPI      API,
-                                                   OCPIRequest  Request)
+                                                   HTTPAPIX           API,
+                                                   OCPIRequest        Request,
+                                                   CancellationToken  CancellationToken)
 
-            => OnGetSessionsRequest.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request);
+            => OnGetSessionsRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -671,7 +724,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET sessions response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetSessionsResponse = new ();
+        public OCPIResponseLogEvent OnGetSessionsResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET sessions response was sent.
@@ -680,15 +733,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetSessionsResponse(DateTimeOffset      Timestamp,
-                                                    HTTPAPI       API,
-                                                    OCPIRequest   Request,
-                                                    OCPIResponse  Response)
+        protected internal Task GetSessionsResponse(DateTimeOffset     Timestamp,
+                                                    HTTPAPIX           API,
+                                                    OCPIRequest        Request,
+                                                    OCPIResponse       Response,
+                                                    CancellationToken  CancellationToken)
 
-            => OnGetSessionsResponse.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request,
-                                             Response);
+            => OnGetSessionsResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -698,7 +755,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET session request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetSessionRequest = new ();
+        public OCPIRequestLogEvent OnGetSessionRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET session request was received.
@@ -707,12 +764,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetSessionRequest(DateTimeOffset     Timestamp,
-                                                  HTTPAPI      API,
-                                                  OCPIRequest  Request)
+                                                  HTTPAPIX           API,
+                                                  OCPIRequest        Request,
+                                                  CancellationToken  CancellationToken)
 
-            => OnGetSessionRequest.WhenAll(Timestamp,
-                                           API ?? this,
-                                           Request);
+            => OnGetSessionRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -721,7 +782,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET session response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetSessionResponse = new ();
+        public OCPIResponseLogEvent OnGetSessionResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET session response was sent.
@@ -730,15 +791,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetSessionResponse(DateTimeOffset      Timestamp,
-                                                   HTTPAPI       API,
-                                                   OCPIRequest   Request,
-                                                   OCPIResponse  Response)
+        protected internal Task GetSessionResponse(DateTimeOffset     Timestamp,
+                                                   HTTPAPIX           API,
+                                                   OCPIRequest        Request,
+                                                   OCPIResponse       Response,
+                                                   CancellationToken  CancellationToken)
 
-            => OnGetSessionResponse.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request,
-                                            Response);
+            => OnGetSessionResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -751,7 +816,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET CDRs request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetCDRsRequest = new ();
+        public OCPIRequestLogEvent OnGetCDRsRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET CDRs request was received.
@@ -760,12 +825,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetCDRsRequest(DateTimeOffset     Timestamp,
-                                               HTTPAPI      API,
-                                               OCPIRequest  Request)
+                                               HTTPAPIX           API,
+                                               OCPIRequest        Request,
+                                               CancellationToken  CancellationToken)
 
-            => OnGetCDRsRequest.WhenAll(Timestamp,
-                                        API ?? this,
-                                        Request);
+            => OnGetCDRsRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -774,7 +843,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET CDRs response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetCDRsResponse = new ();
+        public OCPIResponseLogEvent OnGetCDRsResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET CDRs response was sent.
@@ -783,15 +852,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetCDRsResponse(DateTimeOffset      Timestamp,
-                                                HTTPAPI       API,
-                                                OCPIRequest   Request,
-                                                OCPIResponse  Response)
+        protected internal Task GetCDRsResponse(DateTimeOffset     Timestamp,
+                                                HTTPAPIX           API,
+                                                OCPIRequest        Request,
+                                                OCPIResponse       Response,
+                                                CancellationToken  CancellationToken)
 
-            => OnGetCDRsResponse.WhenAll(Timestamp,
-                                         API ?? this,
-                                         Request,
-                                         Response);
+            => OnGetCDRsResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -801,7 +874,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET CDR request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetCDRRequest = new ();
+        public OCPIRequestLogEvent OnGetCDRRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET CDR request was received.
@@ -810,12 +883,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetCDRRequest(DateTimeOffset     Timestamp,
-                                              HTTPAPI      API,
-                                              OCPIRequest  Request)
+                                              HTTPAPIX           API,
+                                              OCPIRequest        Request,
+                                              CancellationToken  CancellationToken)
 
-            => OnGetCDRRequest.WhenAll(Timestamp,
-                                       API ?? this,
-                                       Request);
+            => OnGetCDRRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -824,7 +901,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET CDR response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetCDRResponse = new ();
+        public OCPIResponseLogEvent OnGetCDRResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET CDR response was sent.
@@ -833,15 +910,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetCDRResponse(DateTimeOffset      Timestamp,
-                                               HTTPAPI       API,
-                                               OCPIRequest   Request,
-                                               OCPIResponse  Response)
+        protected internal Task GetCDRResponse(DateTimeOffset     Timestamp,
+                                               HTTPAPIX           API,
+                                               OCPIRequest        Request,
+                                               OCPIResponse       Response,
+                                               CancellationToken  CancellationToken)
 
-            => OnGetCDRResponse.WhenAll(Timestamp,
-                                        API ?? this,
-                                        Request,
-                                        Response);
+            => OnGetCDRResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -854,7 +935,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET Tokens request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetTokensRequest = new ();
+        public OCPIRequestLogEvent OnGetTokensRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET Tokens request was received.
@@ -863,12 +944,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetTokensRequest(DateTimeOffset     Timestamp,
-                                                 HTTPAPI      API,
-                                                 OCPIRequest  Request)
+                                                 HTTPAPIX           API,
+                                                 OCPIRequest        Request,
+                                                 CancellationToken  CancellationToken)
 
-            => OnGetTokensRequest.WhenAll(Timestamp,
-                                          API ?? this,
-                                          Request);
+            => OnGetTokensRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -877,7 +962,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET Tokens response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetTokensResponse = new ();
+        public OCPIResponseLogEvent OnGetTokensResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET Tokens response was sent.
@@ -886,15 +971,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTokensResponse(DateTimeOffset      Timestamp,
-                                                  HTTPAPI       API,
-                                                  OCPIRequest   Request,
-                                                  OCPIResponse  Response)
+        protected internal Task GetTokensResponse(DateTimeOffset     Timestamp,
+                                                  HTTPAPIX           API,
+                                                  OCPIRequest        Request,
+                                                  OCPIResponse       Response,
+                                                  CancellationToken  CancellationToken)
 
-            => OnGetTokensResponse.WhenAll(Timestamp,
-                                           API ?? this,
-                                           Request,
-                                           Response);
+            => OnGetTokensResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -904,7 +993,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a DELETE Tokens request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnDeleteTokensRequest = new ();
+        public OCPIRequestLogEvent OnDeleteTokensRequest = new();
 
         /// <summary>
         /// An event sent whenever a DELETE Tokens request was received.
@@ -913,12 +1002,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task DeleteTokensRequest(DateTimeOffset     Timestamp,
-                                                    HTTPAPI      API,
-                                                    OCPIRequest  Request)
+                                                    HTTPAPIX           API,
+                                                    OCPIRequest        Request,
+                                                    CancellationToken  CancellationToken)
 
-            => OnDeleteTokensRequest.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request);
+            => OnDeleteTokensRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -927,7 +1020,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a DELETE Tokens response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnDeleteTokensResponse = new ();
+        public OCPIResponseLogEvent OnDeleteTokensResponse = new();
 
         /// <summary>
         /// An event sent whenever a DELETE Tokens response was sent.
@@ -936,15 +1029,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteTokensResponse(DateTimeOffset      Timestamp,
-                                                     HTTPAPI       API,
-                                                     OCPIRequest   Request,
-                                                     OCPIResponse  Response)
+        protected internal Task DeleteTokensResponse(DateTimeOffset     Timestamp,
+                                                     HTTPAPIX           API,
+                                                     OCPIRequest        Request,
+                                                     OCPIResponse       Response,
+                                                     CancellationToken  CancellationToken)
 
-            => OnDeleteTokensResponse.WhenAll(Timestamp,
-                                              API ?? this,
-                                              Request,
-                                              Response);
+            => OnDeleteTokensResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -956,7 +1053,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET Token request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetTokenRequest = new ();
+        public OCPIRequestLogEvent OnGetTokenRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET Token request was received.
@@ -965,12 +1062,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetTokenRequest(DateTimeOffset     Timestamp,
-                                                HTTPAPI      API,
-                                                OCPIRequest  Request)
+                                                HTTPAPIX           API,
+                                                OCPIRequest        Request,
+                                                CancellationToken  CancellationToken)
 
-            => OnGetTokenRequest.WhenAll(Timestamp,
-                                         API ?? this,
-                                         Request);
+            => OnGetTokenRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -979,7 +1080,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET Token response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetTokenResponse = new ();
+        public OCPIResponseLogEvent OnGetTokenResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET Token response was sent.
@@ -988,15 +1089,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTokenResponse(DateTimeOffset      Timestamp,
-                                                 HTTPAPI       API,
-                                                 OCPIRequest   Request,
-                                                 OCPIResponse  Response)
+        protected internal Task GetTokenResponse(DateTimeOffset     Timestamp,
+                                                 HTTPAPIX           API,
+                                                 OCPIRequest        Request,
+                                                 OCPIResponse       Response,
+                                                 CancellationToken  CancellationToken)
 
-            => OnGetTokenResponse.WhenAll(Timestamp,
-                                          API ?? this,
-                                          Request,
-                                          Response);
+            => OnGetTokenResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1006,7 +1111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a POST token request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPostTokenRequest = new ();
+        public OCPIRequestLogEvent OnPostTokenRequest = new();
 
         /// <summary>
         /// An event sent whenever a POST token request was received.
@@ -1015,12 +1120,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PostTokenRequest(DateTimeOffset     Timestamp,
-                                                 HTTPAPI      API,
-                                                 OCPIRequest  Request)
+                                                 HTTPAPIX           API,
+                                                 OCPIRequest        Request,
+                                                 CancellationToken  CancellationToken)
 
-            => OnPostTokenRequest.WhenAll(Timestamp,
-                                          API ?? this,
-                                          Request);
+            => OnPostTokenRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1029,7 +1138,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a POST token response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPostTokenResponse = new ();
+        public OCPIResponseLogEvent OnPostTokenResponse = new();
 
         /// <summary>
         /// An event sent whenever a POST token response was sent.
@@ -1038,15 +1147,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PostTokenResponse(DateTimeOffset      Timestamp,
-                                                  HTTPAPI       API,
-                                                  OCPIRequest   Request,
-                                                  OCPIResponse  Response)
+        protected internal Task PostTokenResponse(DateTimeOffset     Timestamp,
+                                                  HTTPAPIX           API,
+                                                  OCPIRequest        Request,
+                                                  OCPIResponse       Response,
+                                                  CancellationToken  CancellationToken)
 
-            => OnPostTokenResponse.WhenAll(Timestamp,
-                                           API ?? this,
-                                           Request,
-                                           Response);
+            => OnPostTokenResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1056,7 +1169,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a put token request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPutTokenRequest = new OCPIRequestLogEvent();
+        public OCPIRequestLogEvent OnPutTokenRequest = new();
 
         /// <summary>
         /// An event sent whenever a put token request was received.
@@ -1065,12 +1178,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PutTokenRequest(DateTimeOffset     Timestamp,
-                                                HTTPAPI      API,
-                                                OCPIRequest  Request)
+                                                HTTPAPIX           API,
+                                                OCPIRequest        Request,
+                                                CancellationToken  CancellationToken)
 
-            => OnPutTokenRequest.WhenAll(Timestamp,
-                                         API ?? this,
-                                         Request);
+            => OnPutTokenRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1079,7 +1196,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a put token response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPutTokenResponse = new OCPIResponseLogEvent();
+        public OCPIResponseLogEvent OnPutTokenResponse = new();
 
         /// <summary>
         /// An event sent whenever a put token response was sent.
@@ -1088,15 +1205,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PutTokenResponse(DateTimeOffset      Timestamp,
-                                                 HTTPAPI       API,
-                                                 OCPIRequest   Request,
-                                                 OCPIResponse  Response)
+        protected internal Task PutTokenResponse(DateTimeOffset     Timestamp,
+                                                 HTTPAPIX           API,
+                                                 OCPIRequest        Request,
+                                                 OCPIResponse       Response,
+                                                 CancellationToken  CancellationToken)
 
-            => OnPutTokenResponse.WhenAll(Timestamp,
-                                          API ?? this,
-                                          Request,
-                                          Response);
+            => OnPutTokenResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1106,7 +1227,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a patch token request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPatchTokenRequest = new OCPIRequestLogEvent();
+        public OCPIRequestLogEvent OnPatchTokenRequest = new();
 
         /// <summary>
         /// An event sent whenever a patch token request was received.
@@ -1115,12 +1236,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PatchTokenRequest(DateTimeOffset     Timestamp,
-                                                  HTTPAPI      API,
-                                                  OCPIRequest  Request)
+                                                  HTTPAPIX           API,
+                                                  OCPIRequest        Request,
+                                                  CancellationToken  CancellationToken)
 
-            => OnPatchTokenRequest.WhenAll(Timestamp,
-                                           API ?? this,
-                                           Request);
+            => OnPatchTokenRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1129,7 +1254,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a patch token response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPatchTokenResponse = new OCPIResponseLogEvent();
+        public OCPIResponseLogEvent OnPatchTokenResponse = new();
 
         /// <summary>
         /// An event sent whenever a patch token response was sent.
@@ -1138,15 +1263,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PatchTokenResponse(DateTimeOffset      Timestamp,
-                                                   HTTPAPI       API,
-                                                   OCPIRequest   Request,
-                                                   OCPIResponse  Response)
+        protected internal Task PatchTokenResponse(DateTimeOffset     Timestamp,
+                                                   HTTPAPIX           API,
+                                                   OCPIRequest        Request,
+                                                   OCPIResponse       Response,
+                                                   CancellationToken  CancellationToken)
 
-            => OnPatchTokenResponse.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request,
-                                            Response);
+            => OnPatchTokenResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1156,7 +1285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a delete token request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnDeleteTokenRequest = new OCPIRequestLogEvent();
+        public OCPIRequestLogEvent OnDeleteTokenRequest = new();
 
         /// <summary>
         /// An event sent whenever a delete token request was received.
@@ -1165,12 +1294,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task DeleteTokenRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPI      API,
-                                                   OCPIRequest  Request)
+                                                   HTTPAPIX           API,
+                                                   OCPIRequest        Request,
+                                                   CancellationToken  CancellationToken)
 
-            => OnDeleteTokenRequest.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request);
+            => OnDeleteTokenRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1179,7 +1312,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a delete token response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnDeleteTokenResponse = new OCPIResponseLogEvent();
+        public OCPIResponseLogEvent OnDeleteTokenResponse = new();
 
         /// <summary>
         /// An event sent whenever a delete token response was sent.
@@ -1188,15 +1321,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteTokenResponse(DateTimeOffset      Timestamp,
-                                                    HTTPAPI       API,
-                                                    OCPIRequest   Request,
-                                                    OCPIResponse  Response)
+        protected internal Task DeleteTokenResponse(DateTimeOffset     Timestamp,
+                                                    HTTPAPIX           API,
+                                                    OCPIRequest        Request,
+                                                    OCPIResponse       Response,
+                                                    CancellationToken  CancellationToken)
 
-            => OnDeleteTokenResponse.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request,
-                                             Response);
+            => OnDeleteTokenResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1210,7 +1347,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a reserve now command was received.
         /// </summary>
-        public OCPIRequestLogEvent OnReserveNowRequest = new ();
+        public OCPIRequestLogEvent OnReserveNowRequest = new();
 
         /// <summary>
         /// An event sent whenever a reserve now command was received.
@@ -1219,12 +1356,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task ReserveNowRequest(DateTimeOffset     Timestamp,
-                                                  HTTPAPI      API,
-                                                  OCPIRequest  Request)
+                                                  HTTPAPIX           API,
+                                                  OCPIRequest        Request,
+                                                  CancellationToken  CancellationToken)
 
-            => OnReserveNowRequest.WhenAll(Timestamp,
-                                           API ?? this,
-                                           Request);
+            => OnReserveNowRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1242,7 +1383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a reserve now command response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnReserveNowResponse = new ();
+        public OCPIResponseLogEvent OnReserveNowResponse = new();
 
         /// <summary>
         /// An event sent whenever a reserve now command response was sent.
@@ -1251,15 +1392,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task ReserveNowResponse(DateTimeOffset      Timestamp,
-                                                   HTTPAPI       API,
-                                                   OCPIRequest   Request,
-                                                   OCPIResponse  Response)
+        protected internal Task ReserveNowResponse(DateTimeOffset     Timestamp,
+                                                   HTTPAPIX           API,
+                                                   OCPIRequest        Request,
+                                                   OCPIResponse       Response,
+                                                   CancellationToken  CancellationToken)
 
-            => OnReserveNowResponse.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request,
-                                            Response);
+            => OnReserveNowResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1269,7 +1414,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a cancel reservation command was received.
         /// </summary>
-        public OCPIRequestLogEvent OnCancelReservationRequest = new ();
+        public OCPIRequestLogEvent OnCancelReservationRequest = new();
 
         /// <summary>
         /// An event sent whenever a cancel reservation command was received.
@@ -1278,12 +1423,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task CancelReservationRequest(DateTimeOffset     Timestamp,
-                                                         HTTPAPI      API,
-                                                         OCPIRequest  Request)
+                                                         HTTPAPIX           API,
+                                                         OCPIRequest        Request,
+                                                         CancellationToken  CancellationToken)
 
-            => OnCancelReservationRequest.WhenAll(Timestamp,
-                                                  API ?? this,
-                                                  Request);
+            => OnCancelReservationRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1301,7 +1450,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a cancel reservation command response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnCancelReservationResponse = new ();
+        public OCPIResponseLogEvent OnCancelReservationResponse = new();
 
         /// <summary>
         /// An event sent whenever a cancel reservation command response was sent.
@@ -1310,15 +1459,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task CancelReservationResponse(DateTimeOffset      Timestamp,
-                                                          HTTPAPI       API,
-                                                          OCPIRequest   Request,
-                                                          OCPIResponse  Response)
+        protected internal Task CancelReservationResponse(DateTimeOffset     Timestamp,
+                                                          HTTPAPIX           API,
+                                                          OCPIRequest        Request,
+                                                          OCPIResponse       Response,
+                                                          CancellationToken  CancellationToken)
 
-            => OnCancelReservationResponse.WhenAll(Timestamp,
-                                                   API ?? this,
-                                                   Request,
-                                                   Response);
+            => OnCancelReservationResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1328,7 +1481,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a start session command was received.
         /// </summary>
-        public OCPIRequestLogEvent OnStartSessionRequest = new ();
+        public OCPIRequestLogEvent OnStartSessionRequest = new();
 
         /// <summary>
         /// An event sent whenever a start session command was received.
@@ -1337,12 +1490,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task StartSessionRequest(DateTimeOffset     Timestamp,
-                                                    HTTPAPI      API,
-                                                    OCPIRequest  Request)
+                                                    HTTPAPIX           API,
+                                                    OCPIRequest        Request,
+                                                    CancellationToken  CancellationToken)
 
-            => OnStartSessionRequest.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request);
+            => OnStartSessionRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1360,7 +1517,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a start session command response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnStartSessionResponse = new ();
+        public OCPIResponseLogEvent OnStartSessionResponse = new();
 
         /// <summary>
         /// An event sent whenever a start session command response was sent.
@@ -1369,15 +1526,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task StartSessionResponse(DateTimeOffset      Timestamp,
-                                                     HTTPAPI       API,
-                                                     OCPIRequest   Request,
-                                                     OCPIResponse  Response)
+        protected internal Task StartSessionResponse(DateTimeOffset     Timestamp,
+                                                     HTTPAPIX           API,
+                                                     OCPIRequest        Request,
+                                                     OCPIResponse       Response,
+                                                     CancellationToken  CancellationToken)
 
-            => OnStartSessionResponse.WhenAll(Timestamp,
-                                              API ?? this,
-                                              Request,
-                                              Response);
+            => OnStartSessionResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1387,7 +1548,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a stop session command was received.
         /// </summary>
-        public OCPIRequestLogEvent OnStopSessionRequest = new ();
+        public OCPIRequestLogEvent OnStopSessionRequest = new();
 
         /// <summary>
         /// An event sent whenever a stop session command was received.
@@ -1396,12 +1557,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task StopSessionRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPI      API,
-                                                   OCPIRequest  Request)
+                                                   HTTPAPIX           API,
+                                                   OCPIRequest        Request,
+                                                   CancellationToken  CancellationToken)
 
-            => OnStopSessionRequest.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request);
+            => OnStopSessionRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1419,7 +1584,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a stop session command response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnStopSessionResponse = new ();
+        public OCPIResponseLogEvent OnStopSessionResponse = new();
 
         /// <summary>
         /// An event sent whenever a stop session command response was sent.
@@ -1428,15 +1593,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task StopSessionResponse(DateTimeOffset      Timestamp,
-                                                    HTTPAPI       API,
-                                                    OCPIRequest   Request,
-                                                    OCPIResponse  Response)
+        protected internal Task StopSessionResponse(DateTimeOffset     Timestamp,
+                                                    HTTPAPIX           API,
+                                                    OCPIRequest        Request,
+                                                    OCPIResponse       Response,
+                                                    CancellationToken  CancellationToken)
 
-            => OnStopSessionResponse.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request,
-                                             Response);
+            => OnStopSessionResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1446,7 +1615,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a unlock connector command was received.
         /// </summary>
-        public OCPIRequestLogEvent OnUnlockConnectorRequest = new ();
+        public OCPIRequestLogEvent OnUnlockConnectorRequest = new();
 
         /// <summary>
         /// An event sent whenever a unlock connector command was received.
@@ -1455,12 +1624,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task UnlockConnectorRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPI      API,
-                                                       OCPIRequest  Request)
+                                                       HTTPAPIX           API,
+                                                       OCPIRequest        Request,
+                                                       CancellationToken  CancellationToken)
 
-            => OnUnlockConnectorRequest.WhenAll(Timestamp,
-                                                API ?? this,
-                                                Request);
+            => OnUnlockConnectorRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1478,7 +1651,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a unlock connector command response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnUnlockConnectorResponse = new ();
+        public OCPIResponseLogEvent OnUnlockConnectorResponse = new();
 
         /// <summary>
         /// An event sent whenever a unlock connector command response was sent.
@@ -1487,15 +1660,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task UnlockConnectorResponse(DateTimeOffset      Timestamp,
-                                                        HTTPAPI       API,
-                                                        OCPIRequest   Request,
-                                                        OCPIResponse  Response)
+        protected internal Task UnlockConnectorResponse(DateTimeOffset     Timestamp,
+                                                        HTTPAPIX           API,
+                                                        OCPIRequest        Request,
+                                                        OCPIResponse       Response,
+                                                        CancellationToken  CancellationToken)
 
-            => OnUnlockConnectorResponse.WhenAll(Timestamp,
-                                                 API ?? this,
-                                                 Request,
-                                                 Response);
+            => OnUnlockConnectorResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1544,13 +1721,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                       Boolean                      AutoStart                 = false)
 
             : base(CommonAPI.HTTPServer,
-                   HTTPHostname,
+                   null, //HTTPHostname,
+                   URLPathPrefix   ?? DefaultURLPathPrefix,
+                   null,
+                   null,
+
                    ExternalDNSName,
-                   HTTPServiceName ?? DefaultHTTPServiceName,
+                   //HTTPServiceName ?? DefaultHTTPServiceName,
                    BasePath,
 
-                   URLPathPrefix   ?? DefaultURLPathPrefix,
-                   null, //HTMLTemplate,
+                   null,
+                   null,
                    APIVersionHashes,
 
                    DisableMaintenanceTasks,
@@ -1565,11 +1746,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
+                   "context",
                    LogfileName     ?? DefaultLogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                       : null,
-                   AutoStart)
+                       : null)
 
         {
 
@@ -1641,7 +1822,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
                                     CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    DNSClient
+                                    HTTPServer.DNSClient
                                 );
 
                 cpo2emspClients.TryAdd(emspId, cpoClient);
@@ -1690,7 +1871,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
                                     CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    DNSClient
+                                    HTTPServer.DNSClient
                                 );
 
                 cpo2emspClients.TryAdd(emspId, cpoClient);
@@ -1740,7 +1921,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
                                     CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    DNSClient
+                                    HTTPServer.DNSClient
                                 );
 
                 cpo2emspClients.TryAdd(emspId, cpoClient);
@@ -1763,13 +1944,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         private void RegisterURLTemplates()
         {
 
+            var URLPathPrefix = HTTPPath.Root;
+
             #region ~/locations
 
             #region OPTIONS  ~/locations
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "locations",
                 OCPIRequestHandler: request =>
@@ -1794,7 +1976,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             // https://example.com/ocpi/2.2/cpo/locations/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.GET,
                 URLPathPrefix + "locations",
                 HTTPContentType.Application.JSON_UTF8,
@@ -1909,7 +2090,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
                                                                  ? $"https://{ExternalDNSName}"
-                                                                 : $"http://127.0.0.1:{HTTPServer.IPPorts.First()}")}{URLPathPrefix}/locations{queryParameters}>; rel=\"next\"");
+                                                                 : $"http://127.0.0.1:{HTTPServer.TCPPort}")}{URLPathPrefix}/locations{queryParameters}>; rel=\"next\"");
 
                     }
 
@@ -1981,7 +2162,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "locations/{locationId}",
                 OCPIRequestHandler: request =>
@@ -2004,7 +2184,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{locationId}",
                 HTTPContentType.Application.JSON_UTF8,
@@ -2093,7 +2272,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "locations/{locationId}/{evseId}",
                 OCPIRequestHandler: request =>
@@ -2116,7 +2294,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{locationId}/{evseId}",
                 HTTPContentType.Application.JSON_UTF8,
@@ -2195,7 +2372,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
                 OCPIRequestHandler: request =>
@@ -2218,7 +2394,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
                 HTTPContentType.Application.JSON_UTF8,
@@ -2292,7 +2467,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "tariffs",
                 OCPIRequestHandler: request =>
@@ -2317,7 +2491,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             // https://example.com/ocpi/2.2/cpo/tariffs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.GET,
                 URLPathPrefix + "tariffs",
                 HTTPContentType.Application.JSON_UTF8,
@@ -2395,7 +2568,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
                                                                  ? $"https://{ExternalDNSName}"
-                                                                 : $"http://127.0.0.1:{HTTPServer.IPPorts.First()}")}{URLPathPrefix}/tariffs{queryParameters}>; rel=\"next\"");
+                                                                 : $"http://127.0.0.1:{HTTPServer.TCPPort}")}{URLPathPrefix}/tariffs{queryParameters}>; rel=\"next\"");
 
                     }
 
@@ -2438,7 +2611,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "tariffs/{tariffId}",
                 OCPIRequestHandler: request =>
@@ -2461,7 +2633,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.GET,
                 URLPathPrefix + "tariffs/{tariffId}",
                 HTTPContentType.Application.JSON_UTF8,
@@ -2531,7 +2702,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "sessions",
                 OCPIRequestHandler: request =>
@@ -2556,7 +2726,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             // https://example.com/ocpi/2.2/cpo/sessions/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.GET,
                 URLPathPrefix + "sessions",
                 HTTPContentType.Application.JSON_UTF8,
@@ -2634,7 +2803,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
                                                                  ? $"https://{ExternalDNSName}"
-                                                                 : $"http://127.0.0.1:{HTTPServer.IPPorts.First()}")}{URLPathPrefix}/sessions{queryParameters}>; rel=\"next\"");
+                                                                 : $"http://127.0.0.1:{HTTPServer.TCPPort}")}{URLPathPrefix}/sessions{queryParameters}>; rel=\"next\"");
 
                     }
 
@@ -2671,7 +2840,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "sessions/{sessionId}",
                 OCPIRequestHandler: request =>
@@ -2694,7 +2862,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.GET,
                 URLPathPrefix + "sessions/{sessionId}",
                 HTTPContentType.Application.JSON_UTF8,
@@ -2812,7 +2979,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "CDRs",
                 OCPIRequestHandler: request =>
@@ -2837,7 +3003,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             // https://example.com/ocpi/2.2/cpo/cdrs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.GET,
                 URLPathPrefix + "cdrs",
                 HTTPContentType.Application.JSON_UTF8,
@@ -2915,7 +3080,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
                                                                  ? $"https://{ExternalDNSName}"
-                                                                 : $"http://127.0.0.1:{HTTPServer.IPPorts.First()}")}{URLPathPrefix}/cdrs{queryParameters}>; rel=\"next\"");
+                                                                 : $"http://127.0.0.1:{HTTPServer.TCPPort}")}{URLPathPrefix}/cdrs{queryParameters}>; rel=\"next\"");
 
                     }
 
@@ -2965,7 +3130,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "cdrs/{CDRId}",
                 OCPIRequestHandler: request =>
@@ -2988,7 +3152,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.GET,
                 URLPathPrefix + "cdrs/{CDRId}",
                 HTTPContentType.Application.JSON_UTF8,
@@ -3075,7 +3238,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "tokens/{country_code}/{party_id}",
                 OCPIRequestHandler: request =>
@@ -3099,7 +3261,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.GET,
                 URLPathPrefix + "tokens/{country_code}/{party_id}",
                 HTTPContentType.Application.JSON_UTF8,
@@ -3185,7 +3346,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
                                                                  ? $"https://{ExternalDNSName}"
-                                                                 : $"http://127.0.0.1:{HTTPServer.IPPorts.First()}")}{URLPathPrefix}/tokens/{partyId.Value.CountryCode}/{partyId.Value.Party}{queryParameters}>; rel=\"next\"");
+                                                                 : $"http://127.0.0.1:{HTTPServer.TCPPort}")}{URLPathPrefix}/tokens/{partyId.Value.CountryCode}/{partyId.Value.Party}{queryParameters}>; rel=\"next\"");
 
                     }
 
@@ -3215,7 +3376,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.DELETE,
                 URLPathPrefix + "tokens/{country_code}/{party_id}",
                 HTTPContentType.Application.JSON_UTF8,
@@ -3278,7 +3438,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
                 OCPIRequestHandler: request =>
@@ -3302,7 +3461,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.GET,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
                 HTTPContentType.Application.JSON_UTF8,
@@ -3375,7 +3533,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.PUT,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
                 HTTPContentType.Application.JSON_UTF8,
@@ -3498,7 +3655,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.PATCH,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
                 HTTPContentType.Application.JSON_UTF8,
@@ -3599,7 +3755,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.DELETE,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
                 HTTPContentType.Application.JSON_UTF8,
@@ -3692,7 +3847,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "commands/RESERVE_NOW",
                 HTTPContentType.Application.JSON_UTF8,
@@ -3716,7 +3870,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/RESERVE_NOW",
                 HTTPContentType.Application.JSON_UTF8,
@@ -3807,7 +3960,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "commands/CANCEL_RESERVATION",
                 HTTPContentType.Application.JSON_UTF8,
@@ -3831,7 +3983,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/CANCEL_RESERVATION",
                 HTTPContentType.Application.JSON_UTF8,
@@ -3922,7 +4073,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "commands/START_SESSION",
                 HTTPContentType.Application.JSON_UTF8,
@@ -3946,7 +4096,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/START_SESSION",
                 HTTPContentType.Application.JSON_UTF8,
@@ -4037,7 +4186,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "commands/STOP_SESSION",
                 HTTPContentType.Application.JSON_UTF8,
@@ -4061,7 +4209,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/STOP_SESSION",
                 HTTPContentType.Application.JSON_UTF8,
@@ -4152,7 +4299,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "commands/UNLOCK_CONNECTOR",
                 HTTPContentType.Application.JSON_UTF8,
@@ -4176,7 +4322,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             CommonAPI.AddOCPIMethod(
 
-                HTTPHostname.Any,
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/UNLOCK_CONNECTOR",
                 HTTPContentType.Application.JSON_UTF8,

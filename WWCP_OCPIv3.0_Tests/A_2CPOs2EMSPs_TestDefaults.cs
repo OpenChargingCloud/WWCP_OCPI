@@ -29,6 +29,7 @@ using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv3_0.HTTP;
 using System.Net.Http.Headers;
 using cloud.charging.open.protocols.WWCP.Virtual;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
@@ -109,22 +110,22 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
         protected  CommonBaseAPI?   emsp1BaseAPI;
         protected  CommonBaseAPI?   emsp2BaseAPI;
 
-        protected  HTTPAPI?         cpo1HTTPAPI;
+        protected  HTTPTestServerX? cpo1HTTPServer;
         protected  CommonAPI?       cpo1CommonAPI;
         protected  CPOAPI?          cpo1CPOAPI;
         protected  OCPICSOAdapter?  cpo1Adapter;
 
-        protected  HTTPAPI?         cpo2HTTPAPI;
+        protected  HTTPTestServerX? cpo2HTTPServer;
         protected  CommonAPI?       cpo2CommonAPI;
         protected  CPOAPI?          cpo2CPOAPI;
         protected  OCPICSOAdapter?  cpo2Adapter;
 
-        protected  HTTPAPI?         emsp1HTTPAPI;
+        protected  HTTPTestServerX? emsp1HTTPServer;
         protected  CommonAPI?       emsp1CommonAPI;
         protected  EMSPAPI?         emsp1EMSPAPI;
         protected  OCPIEMPAdapter?  emsp1Adapter;
 
-        protected  HTTPAPI?         emsp2HTTPAPI;
+        protected  HTTPTestServerX? emsp2HTTPServer;
         protected  CommonAPI?       emsp2CommonAPI;
         protected  EMSPAPI?         emsp2EMSPAPI;
         protected  OCPIEMPAdapter?  emsp2Adapter;
@@ -148,32 +149,28 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
         public async Task SetupOCPINetwork()
         {
 
-            #region Create cpo1/cpo2/emsp1/emsp2 HTTP API
+            #region Create cpo1/cpo2/emsp1/emsp2 HTTP Servers
 
-            cpo1HTTPAPI          = new HTTPAPI(
-                                       HTTPServerPort:                      IPPort.Parse(cpo1TCPPort),
-                                       AutoStart:                           true
+            cpo1HTTPServer       = new HTTPTestServerX(
+                                       TCPPort:  IPPort.Parse(cpo1TCPPort)
                                    );
 
-            cpo2HTTPAPI          = new HTTPAPI(
-                                       HTTPServerPort:                      IPPort.Parse(cpo2TCPPort),
-                                       AutoStart:                           true
+            cpo2HTTPServer       = new HTTPTestServerX(
+                                       TCPPort:  IPPort.Parse(cpo2TCPPort)
                                    );
 
-            emsp1HTTPAPI         = new HTTPAPI(
-                                       HTTPServerPort:                      IPPort.Parse(emsp1TCPPort),
-                                       AutoStart:                           true
+            emsp1HTTPServer      = new HTTPTestServerX(
+                                       TCPPort:  IPPort.Parse(emsp1TCPPort)
                                    );
 
-            emsp2HTTPAPI         = new HTTPAPI(
-                                       HTTPServerPort:                      IPPort.Parse(emsp2TCPPort),
-                                       AutoStart:                           true
+            emsp2HTTPServer      = new HTTPTestServerX(
+                                       TCPPort:  IPPort.Parse(emsp2TCPPort)
                                    );
 
-            Assert.That(cpo1HTTPAPI,   Is.Not.Null);
-            Assert.That(cpo2HTTPAPI,   Is.Not.Null);
-            Assert.That(emsp1HTTPAPI,  Is.Not.Null);
-            Assert.That(emsp2HTTPAPI,  Is.Not.Null);
+            Assert.That(cpo1HTTPServer,   Is.Not.Null);
+            Assert.That(cpo2HTTPServer,   Is.Not.Null);
+            Assert.That(emsp1HTTPServer,  Is.Not.Null);
+            Assert.That(emsp2HTTPServer,  Is.Not.Null);
 
             #endregion
 
@@ -186,19 +183,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3201/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3201/ocpi/versions"),
 
-                               HTTPServer:                cpo1HTTPAPI.HTTPServer,
+                               HTTPServer:                cpo1HTTPServer,
                                AdditionalURLPathPrefix:   null,
                                //KeepRemovedEVSEs:          null,
                                LocationsAsOpenData:       true,
                                AllowDowngrades:           null,
                                //Disable_RootServices:      false,
 
-                               HTTPHostname:              null,
+                               //HTTPHostname:              null,
                                ExternalDNSName:           null,
                                HTTPServiceName:           null,
                                BasePath:                  null,
 
-                               URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                               //URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                               RootPath:                  HTTPPath.Parse("/ocpi"),
                                APIVersionHashes:          null,
 
                                DisableMaintenanceTasks:   null,
@@ -228,19 +226,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3202/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3202/ocpi/versions"),
 
-                               HTTPServer:                cpo2HTTPAPI.HTTPServer,
+                               HTTPServer:                cpo2HTTPServer,
                                AdditionalURLPathPrefix:   null,
                                //KeepRemovedEVSEs:          null,
                                LocationsAsOpenData:       true,
                                AllowDowngrades:           null,
                                //Disable_RootServices:      false,
 
-                               HTTPHostname:              null,
+                               //HTTPHostname:              null,
                                ExternalDNSName:           null,
                                HTTPServiceName:           null,
                                BasePath:                  null,
 
-                               URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                               //URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                               RootPath:                  HTTPPath.Parse("/ocpi"),
                                APIVersionHashes:          null,
 
                                DisableMaintenanceTasks:   null,
@@ -270,19 +269,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3401/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3401/ocpi/versions"),
 
-                               HTTPServer:                emsp1HTTPAPI.HTTPServer,
+                               HTTPServer:                emsp1HTTPServer,
                                AdditionalURLPathPrefix:   null,
                                //KeepRemovedEVSEs:          null,
                                LocationsAsOpenData:       true,
                                AllowDowngrades:           null,
                                //Disable_RootServices:      false,
 
-                               HTTPHostname:              null,
+                               //HTTPHostname:              null,
                                ExternalDNSName:           null,
                                HTTPServiceName:           null,
                                BasePath:                  null,
 
-                               URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                               //URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                               RootPath:                  HTTPPath.Parse("/ocpi"),
                                APIVersionHashes:          null,
 
                                DisableMaintenanceTasks:   null,
@@ -312,19 +312,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3402/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3402/ocpi/versions"),
 
-                               HTTPServer:                emsp2HTTPAPI.HTTPServer,
+                               HTTPServer:                emsp2HTTPServer,
                                AdditionalURLPathPrefix:   null,
                                //KeepRemovedEVSEs:          null,
                                LocationsAsOpenData:       true,
                                AllowDowngrades:           null,
                                //Disable_RootServices:      false,
 
-                               HTTPHostname:              null,
+                               //HTTPHostname:              null,
                                ExternalDNSName:           null,
                                HTTPServiceName:           null,
                                BasePath:                  null,
 
-                               URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                               //URLPathPrefix:             HTTPPath.Parse("/ocpi"),
+                               RootPath:                  HTTPPath.Parse("/ocpi"),
                                APIVersionHashes:          null,
 
                                DisableMaintenanceTasks:   null,
@@ -434,8 +435,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                        DisableLogging:                      null,
                                        LoggingPath:                         null,
                                        LogfileName:                         null,
-                                       LogfileCreator:                      null,
-                                       AutoStart:                           false
+                                       LogfileCreator:                      null
 
                                    );
 
@@ -450,8 +450,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
             cpo2CommonAPI        = new CommonAPI(
 
-                                       OurBaseURL:                          URL.Parse($"http://127.0.0.1:{cpo2TCPPort}/ocpi/v3.0"),
-                                       OurVersionsURL:                      cpo1VersionsAPIURL.Value,
+                                       //OurBaseURL:                          URL.Parse($"http://127.0.0.1:{cpo2TCPPort}/ocpi/v3.0"),
+                                       //OurVersionsURL:                      cpo1VersionsAPIURL.Value,
                                        OurCredentialRoles:                  [
                                                                                 new CredentialsRole(
                                                                                      Party_Idv3.Parse("DEGE2"),
@@ -524,8 +524,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                        DisableLogging:                      null,
                                        LoggingPath:                         null,
                                        LogfileName:                         null,
-                                       LogfileCreator:                      null,
-                                       AutoStart:                           false
+                                       LogfileCreator:                      null
 
                                    );
 
@@ -540,8 +539,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
             emsp1CommonAPI       = new CommonAPI(
 
-                                       OurBaseURL:                          URL.Parse($"http://127.0.0.1:{emsp1TCPPort}/ocpi/v3.0"),
-                                       OurVersionsURL:                      emsp1VersionsAPIURL.Value,
+                                       //OurBaseURL:                          URL.Parse($"http://127.0.0.1:{emsp1TCPPort}/ocpi/v3.0"),
+                                       //OurVersionsURL:                      emsp1VersionsAPIURL.Value,
                                        OurCredentialRoles:                  [
                                                                                 new CredentialsRole(
                                                                                      Party_Idv3.Parse("DEGDF"),
@@ -614,8 +613,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                        DisableLogging:                      null,
                                        LoggingPath:                         null,
                                        LogfileName:                         null,
-                                       LogfileCreator:                      null,
-                                       AutoStart:                           false
+                                       LogfileCreator:                      null
 
                                    );
 
@@ -630,8 +628,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
             emsp2CommonAPI       = new CommonAPI(
 
-                                       OurBaseURL:                          URL.Parse($"http://127.0.0.1:{emsp2TCPPort}/ocpi/v3.0"),
-                                       OurVersionsURL:                      emsp2VersionsAPIURL.Value,
+                                       //OurBaseURL:                          URL.Parse($"http://127.0.0.1:{emsp2TCPPort}/ocpi/v3.0"),
+                                       //OurVersionsURL:                      emsp2VersionsAPIURL.Value,
                                        OurCredentialRoles:                  [
                                                                                 new CredentialsRole(
                                                                                      Party_Idv3.Parse("DEGD2"),
@@ -644,7 +642,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                                             ],
                                        DefaultPartyId:                      Party_Idv3.Parse("DEGD2"),
                                        BaseAPI:                             emsp2BaseAPI,
-                                       HTTPServer:                          emsp2HTTPAPI.HTTPServer,
+                                       HTTPServer:                          emsp2HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
                                        KeepRemovedEVSEs:                    null,
@@ -704,8 +702,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                        DisableLogging:                      null,
                                        LoggingPath:                         null,
                                        LogfileName:                         null,
-                                       LogfileCreator:                      null,
-                                       AutoStart:                           false
+                                       LogfileCreator:                      null
 
                                    );
 
@@ -734,7 +731,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                 AccessStatus:                AccessStatus.ALLOWED,
 
                                                 RemoteAccessToken:           AccessToken.Parse("emsp1-to-cpo1:token"),
-                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v3.0/versions"),
+                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/v3.0/versions"),
                                                 RemoteVersionIds:            null,
                                                 AccessTokenBase64Encoding:   true,
                                                 RemoteStatus:                RemoteAccessStatus.ONLINE,
@@ -757,7 +754,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                 AccessToken:                 AccessToken.Parse("cpo1-to-emsp2:token"),
                                                 AccessStatus:                AccessStatus.ALLOWED,
                                                 RemoteAccessToken:           AccessToken.Parse("emsp2-to-cpo1:token"),
-                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v3.0/versions"),
+                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/v3.0/versions"),
                                                 RemoteVersionIds:            null,
                                                 AccessTokenBase64Encoding:   true,
                                                 RemoteStatus:                RemoteAccessStatus.ONLINE,
@@ -975,10 +972,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
         public virtual async Task ShutdownOnce()
         {
 
-            cpo1HTTPAPI? .Shutdown();
-            cpo2HTTPAPI?. Shutdown();
-            emsp1HTTPAPI?.Shutdown();
-            emsp2HTTPAPI?.Shutdown();
+            if (cpo1HTTPServer  is not null)
+                await cpo1HTTPServer.Stop();
+
+            if (cpo2HTTPServer  is not null)
+                await cpo2HTTPServer.Stop();
+
+            if (emsp1HTTPServer is not null)
+                await emsp1HTTPServer.Stop();
+
+            if (emsp2HTTPServer is not null)
+                await emsp2HTTPServer.Stop();
 
         }
 

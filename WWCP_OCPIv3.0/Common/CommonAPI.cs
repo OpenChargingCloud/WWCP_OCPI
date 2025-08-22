@@ -34,6 +34,7 @@ using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP;
 using cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
@@ -1317,7 +1318,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
     /// <remarks>
     /// In OCPI 3.0 all data replication will be initiated by the data consumer, never the data producer.
     /// </remarks>
-    public class CommonAPI : HTTPAPI // : CommonAPIBase
+    public class CommonAPI : HTTPAPIX // : CommonAPIBase
     {
 
         #region Data
@@ -1419,302 +1420,350 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region Events
 
-        #region (protected internal) GetVersionsRequest       (Request)
+        #region (protected internal) GetVersionsRequest        (Request)
 
         /// <summary>
         /// An event sent whenever a GET versions request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetVersionsRequest = new ();
+        public OCPIRequestLogEvent OnGetVersionsRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET versions request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CommonAPI.</param>
+        /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetVersionsRequest(DateTimeOffset  Timestamp,
-                                                   HTTPAPI         API,
-                                                   OCPIRequest     Request)
+        protected internal Task GetVersionsRequest(DateTimeOffset     Timestamp,
+                                                   HTTPAPIX           API,
+                                                   OCPIRequest        Request,
+                                                   CancellationToken  CancellationToken)
 
-            => OnGetVersionsRequest.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request);
+            => OnGetVersionsRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
-        #region (protected internal) GetVersionsResponse      (Response)
+        #region (protected internal) GetVersionsResponse       (Response)
 
         /// <summary>
         /// An event sent whenever a GET versions response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetVersionsResponse = new ();
+        public OCPIResponseLogEvent OnGetVersionsResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET versions response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CommonAPI.</param>
+        /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetVersionsResponse(DateTimeOffset  Timestamp,
-                                                    HTTPAPI         API,
-                                                    OCPIRequest     Request,
-                                                    OCPIResponse    Response)
+        protected internal Task GetVersionsResponse(DateTimeOffset     Timestamp,
+                                                    HTTPAPIX           API,
+                                                    OCPIRequest        Request,
+                                                    OCPIResponse       Response,
+                                                    CancellationToken  CancellationToken)
 
-            => OnGetVersionsResponse.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request,
-                                             Response);
+            => OnGetVersionsResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
 
-        #region (protected internal) GetVersionRequest        (Request)
+        #region (protected internal) GetVersionRequest         (Request)
 
         /// <summary>
         /// An event sent whenever a GET version request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetVersionRequest = new ();
+        public OCPIRequestLogEvent OnGetVersionRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET version request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CommonAPI.</param>
+        /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetVersionRequest(DateTimeOffset  Timestamp,
-                                                  HTTPAPI         API,
-                                                  OCPIRequest     Request)
+        protected internal Task GetVersionRequest(DateTimeOffset     Timestamp,
+                                                  HTTPAPIX           API,
+                                                  OCPIRequest        Request,
+                                                  CancellationToken  CancellationToken)
 
-            => OnGetVersionRequest.WhenAll(Timestamp,
-                                           API ?? this,
-                                           Request);
+            => OnGetVersionRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
-        #region (protected internal) GetVersionResponse       (Response)
+        #region (protected internal) GetVersionResponse        (Response)
 
         /// <summary>
         /// An event sent whenever a GET version response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetVersionResponse = new ();
+        public OCPIResponseLogEvent OnGetVersionResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET version response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CommonAPI.</param>
+        /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetVersionResponse(DateTimeOffset  Timestamp,
-                                                   HTTPAPI         API,
-                                                   OCPIRequest     Request,
-                                                   OCPIResponse    Response)
+        protected internal Task GetVersionResponse(DateTimeOffset     Timestamp,
+                                                   HTTPAPIX           API,
+                                                   OCPIRequest        Request,
+                                                   OCPIResponse       Response,
+                                                   CancellationToken  CancellationToken)
 
-            => OnGetVersionResponse.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request,
-                                            Response);
+            => OnGetVersionResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
 
-        #region (protected internal) GetCredentialsRequest    (Request)
+        #region (protected internal) GetCredentialsRequest     (Request)
 
         /// <summary>
         /// An event sent whenever a GET credentials request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetCredentialsRequest = new ();
+        public OCPIRequestLogEvent OnGetCredentialsRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET credentials request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CommonAPI.</param>
+        /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetCredentialsRequest(DateTimeOffset     Timestamp,
-                                                      HTTPAPI      API,
-                                                      OCPIRequest  Request)
+                                                      HTTPAPIX           API,
+                                                      OCPIRequest        Request,
+                                                      CancellationToken  CancellationToken)
 
-            => OnGetCredentialsRequest.WhenAll(Timestamp,
-                                               API ?? this,
-                                               Request);
+            => OnGetCredentialsRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
-        #region (protected internal) GetCredentialsResponse   (Response)
+        #region (protected internal) GetCredentialsResponse    (Response)
 
         /// <summary>
         /// An event sent whenever a GET credentials response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetCredentialsResponse = new ();
+        public OCPIResponseLogEvent OnGetCredentialsResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET credentials response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CommonAPI.</param>
+        /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetCredentialsResponse(DateTimeOffset      Timestamp,
-                                                       HTTPAPI       API,
-                                                       OCPIRequest   Request,
-                                                       OCPIResponse  Response)
+        protected internal Task GetCredentialsResponse(DateTimeOffset     Timestamp,
+                                                       HTTPAPIX           API,
+                                                       OCPIRequest        Request,
+                                                       OCPIResponse       Response,
+                                                       CancellationToken  CancellationToken)
 
-            => OnGetCredentialsResponse.WhenAll(Timestamp,
-                                                API ?? this,
-                                                Request,
-                                                Response);
+            => OnGetCredentialsResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
 
-        #region (protected internal) PostCredentialsRequest   (Request)
+        #region (protected internal) PostCredentialsRequest    (Request)
 
         /// <summary>
         /// An event sent whenever a POST credentials request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPostCredentialsRequest = new ();
+        public OCPIRequestLogEvent OnPostCredentialsRequest = new();
 
         /// <summary>
         /// An event sent whenever a POST credentials request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CommonAPI.</param>
+        /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PostCredentialsRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPI      API,
-                                                       OCPIRequest  Request)
+                                                       HTTPAPIX           API,
+                                                       OCPIRequest        Request,
+                                                       CancellationToken  CancellationToken)
 
-            => OnPostCredentialsRequest.WhenAll(Timestamp,
-                                                API ?? this,
-                                                Request);
+            => OnPostCredentialsRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
-        #region (protected internal) PostCredentialsResponse  (Response)
+        #region (protected internal) PostCredentialsResponse   (Response)
 
         /// <summary>
         /// An event sent whenever a POST credentials response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPostCredentialsResponse = new ();
+        public OCPIResponseLogEvent OnPostCredentialsResponse = new();
 
         /// <summary>
         /// An event sent whenever a POST credentials response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CommonAPI.</param>
+        /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PostCredentialsResponse(DateTimeOffset      Timestamp,
-                                                        HTTPAPI       API,
-                                                        OCPIRequest   Request,
-                                                        OCPIResponse  Response)
+        protected internal Task PostCredentialsResponse(DateTimeOffset     Timestamp,
+                                                        HTTPAPIX           API,
+                                                        OCPIRequest        Request,
+                                                        OCPIResponse       Response,
+                                                        CancellationToken  CancellationToken)
 
-            => OnPostCredentialsResponse.WhenAll(Timestamp,
-                                                 API ?? this,
-                                                 Request,
-                                                 Response);
+            => OnPostCredentialsResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
 
-        #region (protected internal) PutCredentialsRequest    (Request)
+        #region (protected internal) PutCredentialsRequest     (Request)
 
         /// <summary>
         /// An event sent whenever a PUT credentials request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPutCredentialsRequest = new ();
+        public OCPIRequestLogEvent OnPutCredentialsRequest = new();
 
         /// <summary>
         /// An event sent whenever a PUT credentials request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CommonAPI.</param>
+        /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PutCredentialsRequest(DateTimeOffset     Timestamp,
-                                                      HTTPAPI      API,
-                                                      OCPIRequest  Request)
+                                                      HTTPAPIX           API,
+                                                      OCPIRequest        Request,
+                                                      CancellationToken  CancellationToken)
 
-            => OnPutCredentialsRequest.WhenAll(Timestamp,
-                                               API ?? this,
-                                               Request) ?? Task.CompletedTask;
+            => OnPutCredentialsRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
-        #region (protected internal) PutCredentialsResponse   (Response)
+        #region (protected internal) PutCredentialsResponse    (Response)
 
         /// <summary>
         /// An event sent whenever a PUT credentials response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPutCredentialsResponse = new ();
+        public OCPIResponseLogEvent OnPutCredentialsResponse = new();
 
         /// <summary>
         /// An event sent whenever a PUT credentials response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CommonAPI.</param>
+        /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PutCredentialsResponse(DateTimeOffset      Timestamp,
-                                                       HTTPAPI       API,
-                                                       OCPIRequest   Request,
-                                                       OCPIResponse  Response)
+        protected internal Task PutCredentialsResponse(DateTimeOffset     Timestamp,
+                                                       HTTPAPIX           API,
+                                                       OCPIRequest        Request,
+                                                       OCPIResponse       Response,
+                                                       CancellationToken  CancellationToken)
 
-            => OnPutCredentialsResponse.WhenAll(Timestamp,
-                                                API ?? this,
-                                                Request,
-                                                Response) ?? Task.CompletedTask;
+            => OnPutCredentialsResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
 
-        #region (protected internal) DeleteCredentialsRequest (Request)
+        #region (protected internal) DeleteCredentialsRequest  (Request)
 
         /// <summary>
         /// An event sent whenever a DELETE credentials request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnDeleteCredentialsRequest = new ();
+        public OCPIRequestLogEvent OnDeleteCredentialsRequest = new();
 
         /// <summary>
         /// An event sent whenever a DELETE credentials request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CommonAPI.</param>
+        /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task DeleteCredentialsRequest(DateTimeOffset     Timestamp,
-                                                         HTTPAPI      API,
-                                                         OCPIRequest  Request)
+                                                         HTTPAPIX           API,
+                                                         OCPIRequest        Request,
+                                                         CancellationToken  CancellationToken)
 
-            => OnDeleteCredentialsRequest.WhenAll(Timestamp,
-                                                  API ?? this,
-                                                  Request);
+            => OnDeleteCredentialsRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
 
         #endregion
 
-        #region (protected internal) DeleteCredentialsResponse(Response)
+        #region (protected internal) DeleteCredentialsResponse (Response)
 
         /// <summary>
         /// An event sent whenever a DELETE credentials response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnDeleteCredentialsResponse = new ();
+        public OCPIResponseLogEvent OnDeleteCredentialsResponse = new();
 
         /// <summary>
         /// An event sent whenever a DELETE credentials response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CommonAPI.</param>
+        /// <param name="API">The Common API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteCredentialsResponse(DateTimeOffset      Timestamp,
-                                                          HTTPAPI       API,
-                                                          OCPIRequest   Request,
-                                                          OCPIResponse  Response)
+        protected internal Task DeleteCredentialsResponse(DateTimeOffset     Timestamp,
+                                                          HTTPAPIX           API,
+                                                          OCPIRequest        Request,
+                                                          OCPIResponse       Response,
+                                                          CancellationToken  CancellationToken)
 
-            => OnDeleteCredentialsResponse.WhenAll(Timestamp,
-                                                   API ?? this,
-                                                   Request,
-                                                   Response);
+            => OnDeleteCredentialsResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
 
         #endregion
 
@@ -1781,232 +1830,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region Constructor(s)
 
-        #region CommonAPI(HTTPServerName, ...)
-
-        /// <summary>
-        /// Create a new common HTTP API.
-        /// </summary>
-        /// <param name="OurVersionsURL">The URL of our VERSIONS endpoint.</param>
-        /// <param name="OurCredentialRoles">All our credential roles.</param>
-        /// <param name="APIVersionHashes">The API version hashes (git commit hash values).</param>
-        /// 
-        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
-        /// <param name="HTTPServerPort">An optional HTTP TCP port.</param>
-        /// <param name="HTTPServerName">An optional HTTP server name.</param>
-        /// <param name="ExternalDNSName">The official URL/DNS name of this service, e.g. for sending e-mails.</param>
-        /// <param name="URLPathPrefix">An optional HTTP URL path prefix.</param>
-        /// <param name="HTTPServiceName">An optional HTTP service name.</param>
-        /// <param name="DNSClient">An optional DNS client.</param>
-        /// 
-        /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
-        /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
-        /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        public CommonAPI(//URL                                                        OurBaseURL,
-                         //URL                                                        OurVersionsURL,
-                         IEnumerable<CredentialsRole>                               OurCredentialRoles,
-                         Party_Idv3                                                 DefaultPartyId,
-
-                         CommonBaseAPI                                              BaseAPI,
-
-                         HTTPPath?                                                  AdditionalURLPathPrefix      = null,
-                         Func<EVSE, Boolean>?                                       KeepRemovedEVSEs             = null,
-                         Boolean                                                    LocationsAsOpenData          = true,
-                         Boolean?                                                   AllowDowngrades              = null,
-                         Boolean                                                    Disable_RootServices         = true,
-                         Boolean                                                    Disable_OCPIv2_1_1           = true,
-
-                         HTTPHostname?                                              HTTPHostname                 = null,
-                         String?                                                    ExternalDNSName              = null,
-                         IPPort?                                                    HTTPServerPort               = null,
-                         HTTPPath?                                                  BasePath                     = null,
-                         String?                                                    HTTPServerName               = DefaultHTTPServerName,
-
-                         HTTPPath?                                                  URLPathPrefix                = null,
-                         String?                                                    HTTPServiceName              = DefaultHTTPServiceName,
-                         JObject?                                                   APIVersionHashes             = null,
-
-                         ServerCertificateSelectorDelegate?                         ServerCertificateSelector    = null,
-                         RemoteTLSClientCertificateValidationHandler<IHTTPServer>?  ClientCertificateValidator   = null,
-                         LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                         SslProtocols?                                              AllowedTLSProtocols          = null,
-                         Boolean?                                                   ClientCertificateRequired    = null,
-                         Boolean?                                                   CheckCertificateRevocation   = null,
-
-                         ServerThreadNameCreatorDelegate?                           ServerThreadNameCreator      = null,
-                         ServerThreadPriorityDelegate?                              ServerThreadPrioritySetter   = null,
-                         Boolean?                                                   ServerThreadIsBackground     = null,
-                         ConnectionIdBuilder?                                       ConnectionIdBuilder          = null,
-                         TimeSpan?                                                  ConnectionTimeout            = null,
-                         UInt32?                                                    MaxClientConnections         = null,
-
-                         Boolean?                                                   DisableMaintenanceTasks      = null,
-                         TimeSpan?                                                  MaintenanceInitialDelay      = null,
-                         TimeSpan?                                                  MaintenanceEvery             = null,
-
-                         Boolean?                                                   DisableWardenTasks           = null,
-                         TimeSpan?                                                  WardenInitialDelay           = null,
-                         TimeSpan?                                                  WardenCheckEvery             = null,
-
-                         Boolean?                                                   IsDevelopment                = null,
-                         IEnumerable<String>?                                       DevelopmentServers           = null,
-                         Boolean?                                                   DisableLogging               = null,
-                         String?                                                    LoggingContext               = null,
-                         String?                                                    LoggingPath                  = null,
-                         String?                                                    LogfileName                  = null,
-                         OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
-                         String?                                                    DatabaseFilePath             = null,
-                         String?                                                    RemotePartyDBFileName        = null,
-                         String?                                                    AssetsDBFileName             = null,
-                         DNSClient?                                                 DNSClient                    = null,
-                         Boolean                                                    AutoStart                    = false)
-
-            : base(HTTPHostname,
-                   ExternalDNSName,
-                   HTTPServerPort ?? DefaultHTTPServerPort,
-                   BasePath,
-                   HTTPServerName ?? DefaultHTTPServerName,
-
-                   URLPathPrefix ?? DefaultURLPathPrefix,
-                   HTTPServiceName ?? DefaultHTTPServiceName,
-                   null, //HTMLTemplate,
-                   APIVersionHashes,
-
-                   ServerCertificateSelector,
-                   ClientCertificateValidator,
-                   LocalCertificateSelector,
-                   AllowedTLSProtocols,
-                   ClientCertificateRequired,
-                   CheckCertificateRevocation,
-
-                   ServerThreadNameCreator,
-                   ServerThreadPrioritySetter,
-                   ServerThreadIsBackground,
-                   ConnectionIdBuilder,
-                   ConnectionTimeout,
-                   MaxClientConnections,
-
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
-
-                   IsDevelopment,
-                   DevelopmentServers,
-                   DisableLogging,
-                   LoggingPath,
-                   LogfileName,
-                   LogfileCreator is not null
-                       ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                       : null,
-                   DNSClient,
-                   AutoStart)
-
-            //: base(//Version.Id,
-            //       URL.Parse(""),//OurBaseURL,
-            //       URL.Parse(""),//OurVersionsURL,
-
-            //       AdditionalURLPathPrefix,
-            //       LocationsAsOpenData,
-            //       AllowDowngrades,
-            //       Disable_RootServices,
-
-            //       HTTPHostname,
-            //       ExternalDNSName,
-            //       HTTPServerPort,
-            //       BasePath,
-            //       HTTPServerName,
-
-            //       URLPathPrefix,
-            //       HTTPServiceName,
-            //       APIVersionHashes,
-
-            //       ServerCertificateSelector,
-            //       ClientCertificateValidator,
-            //       LocalCertificateSelector,
-            //       AllowedTLSProtocols,
-            //       ClientCertificateRequired,
-            //       CheckCertificateRevocation,
-
-            //       ServerThreadNameCreator,
-            //       ServerThreadPrioritySetter,
-            //       ServerThreadIsBackground,
-            //       ConnectionIdBuilder,
-            //       ConnectionTimeout,
-            //       MaxClientConnections,
-
-            //       DisableMaintenanceTasks,
-            //       MaintenanceInitialDelay,
-            //       MaintenanceEvery,
-
-            //       DisableWardenTasks,
-            //       WardenInitialDelay,
-            //       WardenCheckEvery,
-
-            //       IsDevelopment,
-            //       DevelopmentServers,
-            //       DisableLogging,
-            //       LoggingContext,
-            //       LoggingPath,
-            //       LogfileName,
-            //       LogfileCreator is not null
-            //           ? (loggingPath, remotePartyId, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-            //           : null,
-            //       DatabaseFilePath,
-            //       RemotePartyDBFileName,
-            //       AssetsDBFileName,
-            //       DNSClient,
-            //       AutoStart)
-
-        {
-
-            this.BaseAPI             = BaseAPI;
-
-            if (!OurCredentialRoles.SafeAny())
-                throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
-
-            //this.OurCredentialRoles  = OurCredentialRoles.Distinct();
-            this.DefaultPartyId      = DefaultPartyId;
-
-            this.KeepRemovedEVSEs    = KeepRemovedEVSEs ?? (evse => true);
-
-            this.CommonAPILogger     = this.DisableLogging == false
-                                           ? null
-                                           : new CommonAPILogger(
-                                                 this,
-                                                 LoggingContext,
-                                                 LoggingPath,
-                                                 LogfileCreator
-                                             );
-
-            BaseAPI.AddVersionInformation(
-                new VersionInformation(
-                    Version.Id,
-                    URL.Concat(
-                        BaseAPI.OurVersionsURL.Protocol.AsString(),
-                        ExternalDNSName ?? ("localhost:" + base.HTTPServer.IPPorts.First()),
-                        URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
-                    )
-                )
-            ).GetAwaiter().GetResult();
-
-
-            if (!this.DisableLogging)
-            {
-                ReadRemotePartyDatabaseFile();
-                ReadAssetsDatabaseFile();
-            }
-
-            RegisterURLTemplates();
-
-        }
-
-        #endregion
-
-        #region CommonAPI(HTTPServer, ...)
-
         /// <summary>
         /// Create a new common HTTP API.
         /// </summary>
@@ -2022,19 +1845,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
         /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        public CommonAPI(URL                           OurBaseURL,
-                         URL                           OurVersionsURL,
+        public CommonAPI(//URL                           OurBaseURL,
+                         //URL                           OurVersionsURL,
                          IEnumerable<CredentialsRole>  OurCredentialRoles,
                          Party_Idv3                    DefaultPartyId,
 
                          CommonBaseAPI                 BaseAPI,
-                         HTTPServer?                   HTTPServer                = null,
+                         HTTPTestServerX?              HTTPServer                = null,
 
                          HTTPHostname?                 HTTPHostname              = null,
                          String?                       ExternalDNSName           = null,
                          HTTPPath?                     URLPathPrefix             = null,
                          HTTPPath?                     BasePath                  = null,
-                         String?                       HTTPServiceName           = DefaultHTTPServerName,
+                         String?                       HTTPServiceName           = DefaultHTTPServiceName,
 
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
                          Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
@@ -2066,13 +1889,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                          Boolean                       AutoStart                 = false)
 
             : base(HTTPServer ?? BaseAPI.HTTPServer,
-                   HTTPHostname,
+                   null, //HTTPHostname,
+                   URLPathPrefix,
+                   null,
+                   null,
+
                    ExternalDNSName,
-                   HTTPServiceName ?? DefaultHTTPServiceName,
                    BasePath,
 
-                   URLPathPrefix,//   ?? DefaultURLPathPrefix,
-                   null, //HTMLTemplate,
+                   HTTPServiceName ?? DefaultHTTPServiceName,
+                   null,
                    APIVersionHashes,
 
                    DisableMaintenanceTasks,
@@ -2087,51 +1913,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
+                   "context",
                    LogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                       : null,
-                   AutoStart)
-
-            //: base(//Version.Id,
-            //       OurBaseURL,
-            //       OurVersionsURL,
-            //       HTTPServer,
-
-            //       AdditionalURLPathPrefix,
-            //       LocationsAsOpenData,
-            //       AllowDowngrades,
-            //       Disable_RootServices,
-
-            //       HTTPHostname,
-            //       ExternalDNSName,
-            //       HTTPServiceName,
-            //       BasePath,
-
-            //       URLPathPrefix,
-            //       APIVersionHashes,
-
-            //       DisableMaintenanceTasks,
-            //       MaintenanceInitialDelay,
-            //       MaintenanceEvery,
-
-            //       DisableWardenTasks,
-            //       WardenInitialDelay,
-            //       WardenCheckEvery,
-
-            //       IsDevelopment,
-            //       DevelopmentServers,
-            //       DisableLogging,
-            //       LoggingContext,
-            //       LoggingPath,
-            //       LogfileName ?? DefaultLogfileName,
-            //       LogfileCreator is not null
-            //           ? (loggingPath, remotePartyId, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-            //           : null,
-            //       DatabaseFilePath,
-            //       RemotePartyDBFileName,
-            //       AssetsDBFileName,
-            //       AutoStart)
+                       : null)
 
         {
 
@@ -2148,9 +1934,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //this.Disable_OCPIv2_1_1    = Disable_OCPIv2_1_1;
 
             // Link HTTP events...
-            base.HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
-            base.HTTPServer.ResponseLog    += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
-            base.HTTPServer.ErrorLog       += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
+            //base.HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
+            //base.HTTPServer.ResponseLog    += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
+            //base.HTTPServer.ErrorLog       += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
 
             this.CommonAPILogger       = this.DisableLogging == false
                                              ? new CommonAPILogger(
@@ -2165,8 +1951,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                 new VersionInformation(
                     Version.Id,
                     URL.Concat(
-                        OurVersionsURL.Protocol.AsString(),
-                        ExternalDNSName ?? ("localhost:" + base.HTTPServer.IPPorts.First()),
+                        BaseAPI.OurVersionsURL.Protocol.AsString(),
+                        ExternalDNSName ?? ("localhost:" + base.HTTPServer.TCPPort),
                         URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
                 )
@@ -2183,8 +1969,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                 RegisterURLTemplates();
 
         }
-
-        #endregion
 
         #endregion
 
@@ -2209,6 +1993,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         private void RegisterURLTemplates()
         {
 
+            var URLPathPrefix = HTTPPath.Root;
+
             #region OPTIONS     ~/versions/{versionId}
 
             // --------------------------------------------------------
@@ -2216,7 +2002,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             // --------------------------------------------------------
             this.AddOCPIMethod(
 
-                Hostname,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "versions/{versionId}",
                 OCPIRequestHandler: request =>
@@ -2243,7 +2028,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             // ---------------------------------------------------------------------------
             this.AddOCPIMethod(
 
-                Hostname,
                 HTTPMethod.GET,
                 URLPathPrefix + "versions/{versionId}",
                 HTTPContentType.Application.JSON_UTF8,
@@ -2561,7 +2345,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             // ----------------------------------------------------------
             this.AddOCPIMethod(
 
-                Hostname,
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "{versionId}/credentials",
                 OCPIRequestHandler: request => {
@@ -2629,7 +2412,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             // ---------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
             // ---------------------------------------------------------------------------------
-            this.AddOCPIMethod(Hostname,
+            this.AddOCPIMethod(
                                HTTPMethod.GET,
                                URLPathPrefix + "{versionId}/credentials",
                                HTTPContentType.Application.JSON_UTF8,
@@ -2685,7 +2468,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             // -----------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
             // -----------------------------------------------------------------------------
-            this.AddOCPIMethod(Hostname,
+            this.AddOCPIMethod(
                                HTTPMethod.POST,
                                URLPathPrefix + "{versionId}/credentials",
                                HTTPContentType.Application.JSON_UTF8,
@@ -2732,7 +2515,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             // ---------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
             // ---------------------------------------------------------------------------------
-            this.AddOCPIMethod(Hostname,
+            this.AddOCPIMethod(
                                HTTPMethod.PUT,
                                URLPathPrefix + "{versionId}/credentials",
                                HTTPContentType.Application.JSON_UTF8,
@@ -2808,7 +2591,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             // ---------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
             // ---------------------------------------------------------------------------------
-            this.AddOCPIMethod(Hostname,
+            this.AddOCPIMethod(
                                HTTPMethod.DELETE,
                                URLPathPrefix + "{versionId}/credentials",
                                HTTPContentType.Application.JSON_UTF8,
@@ -2985,10 +2768,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             #endregion
 
 
-            var commonClient              = new CommonClient(this,
-                                                             receivedCredentials.URL,
-                                                             receivedCredentials.Token,  // CREDENTIALS_TOKEN_B
-                                                             DNSClient: HTTPServer.DNSClient);
+            var commonClient              = new CommonClient(
+                                                this,
+                                                receivedCredentials.URL,
+                                                receivedCredentials.Token,  // CREDENTIALS_TOKEN_B
+                                                DNSClient: HTTPServer.DNSClient
+                                            );
 
             var otherVersions             = await commonClient.GetVersions();
 
@@ -3007,7 +2792,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
             #endregion
 
-            var justMySupportedVersion    = otherVersions.Data?.Where(version => version.Id == Version.Id).ToArray() ?? Array.Empty<VersionInformation>();
+            var justMySupportedVersion    = otherVersions.Data?.Where(version => version.Id == Version.Id).ToArray() ?? [];
 
             #region ...or send error!
 

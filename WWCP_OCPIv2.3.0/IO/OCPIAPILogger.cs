@@ -25,6 +25,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
@@ -176,8 +177,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                 this.LogEventName                  = LogEventName;
                 this.SubscribeToEventDelegate      = SubscribeToEventDelegate;
                 this.UnsubscribeFromEventDelegate  = UnsubscribeFromEventDelegate;
-                this.subscriptionDelegates         = new Dictionary<LogTargets, OCPIRequestLogHandler>();
-                this.subscriptionStatus            = new HashSet<LogTargets>();
+                this.subscriptionDelegates         = [];
+                this.subscriptionStatus            = [];
 
             }
 
@@ -199,8 +200,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                 if (subscriptionDelegates.ContainsKey(LogTarget))
                     throw new ArgumentException("Duplicate log target!", nameof(LogTarget));
 
-                subscriptionDelegates.Add(LogTarget,
-                                          (timestamp, httpAPI, request) => RequestDelegate(LoggingPath, Context, LogEventName, request));
+                subscriptionDelegates.Add(
+                    LogTarget,
+                    (timestamp, httpAPI, request, ct)
+                        => RequestDelegate(LoggingPath, Context, LogEventName, request)
+                );
 
                 return this;
 
@@ -348,8 +352,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                 this.LogEventName                  = LogEventName;
                 this.SubscribeToEventDelegate      = SubscribeToEventDelegate;
                 this.UnsubscribeFromEventDelegate  = UnsubscribeFromEventDelegate;
-                this.subscriptionDelegates         = new Dictionary<LogTargets, OCPIResponseLogHandler>();
-                this.subscriptionStatus            = new HashSet<LogTargets>();
+                this.subscriptionDelegates         = [];
+                this.subscriptionStatus            = [];
 
             }
 
@@ -371,8 +375,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                 if (subscriptionDelegates.ContainsKey(LogTarget))
                     throw new ArgumentException("Duplicate log target!", nameof(LogTarget));
 
-                subscriptionDelegates.Add(LogTarget,
-                                          (timestamp, httpAPI, request, response) => HTTPResponseDelegate(LoggingPath, Context, LogEventName, request, response));
+                subscriptionDelegates.Add(
+                    LogTarget,
+                    (timestamp, httpAPI, request, response, ct)
+                        => HTTPResponseDelegate(LoggingPath, Context, LogEventName, request, response)
+                );
 
                 return this;
 
@@ -774,7 +781,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <summary>
         /// The HTTP server of this logger.
         /// </summary>
-        public IHTTPServer                 HTTPServer        { get; }
+        public HTTPTestServerX             HTTPServer        { get; }
 
         public String                      LoggingPath       { get; }
 
@@ -799,7 +806,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="HTTPServer">A HTTP server.</param>
         /// <param name="Context">A context of this API.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public OCPIAPILogger(IHTTPServer                  HTTPServer,
+        public OCPIAPILogger(HTTPTestServerX              HTTPServer,
                              String                       Context,
                              String?                      LoggingPath      = null,
                              OCPILogfileCreatorDelegate?  LogfileCreator   = null)
