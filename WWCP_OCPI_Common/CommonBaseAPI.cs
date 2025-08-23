@@ -875,6 +875,7 @@ namespace cloud.charging.open.protocols.OCPI
                              String?                                                    ExternalDNSName               = null,
                              HTTPPath?                                                  BasePath                      = null,
 
+                             String?                                                    HTTPServerName                = DefaultHTTPServerName,
                              String?                                                    HTTPServiceName               = DefaultHTTPServiceName,
                              String?                                                    APIVersionHash                = null,
                              JObject?                                                   APIVersionHashes              = null,
@@ -885,7 +886,6 @@ namespace cloud.charging.open.protocols.OCPI
                              Boolean?                                                   AllowDowngrades               = null,
 
                              //HTTPHostname?                                              HTTPHostname                  = null,
-                             //String?                                                    HTTPServerName                = DefaultHTTPServerName,
 
                              Boolean?                                                   DisableMaintenanceTasks       = null,
                              TimeSpan?                                                  MaintenanceInitialDelay       = null,
@@ -917,6 +917,7 @@ namespace cloud.charging.open.protocols.OCPI
                    ExternalDNSName,
                    BasePath,
 
+                   HTTPServerName,
                    HTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,

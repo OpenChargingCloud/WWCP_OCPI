@@ -331,10 +331,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                                           null, // HTTPHostname
                                                           null, // ExternalDNSName
-                                                          null, // HTTPServiceName
-                                                          null, // BasePath
 
+                                                          null, // BasePath
                                                           CommonAPI.RootPath + Version.String + "cpo",
+
+                                                          null, // HTTPServerName
+                                                          null, // HTTPServiceName
+                                                          null, // APIVersionHash
                                                           null, // APIVersionHashes
 
                                                           null, // DisableMaintenanceTasks

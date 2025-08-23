@@ -239,7 +239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               String?                                         ClientsLoggingPath                  = DefaultHTTPAPI_LoggingPath,
                               String?                                         ClientsLoggingContext               = DefaultLoggingContext,
                               OCPILogfileCreatorDelegate?                     ClientsLogfileCreator               = null,
-                              DNSClient?                                      DNSClient                           = null)
+                              IDNSClient?                                     DNSClient                           = null)
 
             : base(Id,
                    RoamingNetwork,
@@ -330,10 +330,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                           null, // HTTPHostname
                                                           null, // ExternalDNSName
-                                                          null, // HTTPServiceName
-                                                          null, // BasePath
 
+                                                          null, // BasePath
                                                           CommonAPI.RootPath + Version.String + "cpo",
+
+                                                          null, // HTTPServerName
+                                                          null, // HTTPServiceName
+                                                          null, // APIVersionHash
                                                           null, // APIVersionHashes
 
                                                           null, // DisableMaintenanceTasks

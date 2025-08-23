@@ -384,37 +384,40 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
         /// 
         /// <param name="HTTPRealm">The HTTP realm, if HTTP Basic Authentication is used.</param>
         /// <param name="HTTPLogins">An enumeration of logins for an optional HTTP Basic Authentication.</param>
-        public OCPIWebAPI(OCPI.WebAPI.OCPIWebAPI                      BaseWebAPI,
-                          CommonAPI                                   CommonAPI,
+        public OCPIWebAPI(OCPI.WebAPI.OCPIWebAPI   BaseWebAPI,
+                          CommonAPI                CommonAPI,
 
-                          String?                                     HTTPServiceName           = DefaultHTTPServiceName,
+                          //HTTPPath?                HTTPBaseAPI.OverlayURLPathPrefix      = null,
+                          HTTPPath?                APIURLPathPrefix      = null,
+                          HTTPPath?                WebAPIURLPathPrefix   = null,
+                          HTTPPath?                BasePath              = null,
+                          String?                  VersionPath           = null,
 
-                          //HTTPPath?                                   HTTPBaseAPI.OverlayURLPathPrefix      = null,
-                          HTTPPath?                                   APIURLPathPrefix          = null,
-                          HTTPPath?                                   WebAPIURLPathPrefix       = null,
-                          HTTPPath?                                   BasePath                  = null,
-                          String?                                     VersionPath               = null,
+                          //HTTPPath?                URLPathPrefix         = null,
+                          String?                  HTMLTemplate          = null,
 
-                          //HTTPPath?                                   URLPathPrefix             = null,
-                          String?                                     HTMLTemplate              = null,
-                          JObject?                                    APIVersionHashes          = null,
+                          String?                  HTTPServerName        = DefaultHTTPServerName,
+                          String?                  HTTPServiceName       = DefaultHTTPServiceName,
+                          String?                  APIVersionHash        = null,
+                          JObject?                 APIVersionHashes      = null,
 
-                          Boolean?                                    DisableLogging            = false,
-                          String?                                     LoggingPath               = null,
-                          String?                                     LogfileName               = null,
-                          LogfileCreatorDelegate?                     LogfileCreator            = null
+                          Boolean?                 DisableLogging        = false,
+                          String?                  LoggingPath           = null,
+                          String?                  LogfileName           = null,
+                          LogfileCreatorDelegate?  LogfileCreator        = null
 
-                          //TimeSpan?                                   RequestTimeout            = null
+                          //TimeSpan?                RequestTimeout        = null
                          )
 
             : base(BaseWebAPI,
-                   HTTPServiceName,
+                   HTTPServerName  ?? DefaultHTTPServerName,
+                   HTTPServiceName ?? DefaultHTTPServiceName,
+                   APIVersionHash,
+                   APIVersionHashes,
+
                    //null, //URLPathPrefix
                    //BasePath,
                    //HTMLTemplate,
-
-                   null,
-                   APIVersionHashes,
 
                    BaseWebAPI.IsDevelopment,
                    BaseWebAPI.DevelopmentServers,

@@ -1855,9 +1855,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
                          HTTPHostname?                 HTTPHostname              = null,
                          String?                       ExternalDNSName           = null,
+
                          HTTPPath?                     URLPathPrefix             = null,
                          HTTPPath?                     BasePath                  = null,
-                         String?                       HTTPServiceName           = DefaultHTTPServiceName,
 
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
                          Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
@@ -1866,6 +1866,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                          Boolean                       Disable_RootServices      = false,
                          Boolean                       Disable_OCPIv2_1_1        = true,
 
+                         String?                       HTTPServerName            = DefaultHTTPServerName,
+                         String?                       HTTPServiceName           = DefaultHTTPServiceName,
+                         String?                       APIVersionHash            = null,
                          JObject?                      APIVersionHashes          = null,
 
                          Boolean?                      DisableMaintenanceTasks   = false,
@@ -1897,8 +1900,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                    ExternalDNSName,
                    BasePath,
 
+                   HTTPServerName  ?? DefaultHTTPServerName,
                    HTTPServiceName ?? DefaultHTTPServiceName,
-                   null,
+                   APIVersionHash,
                    APIVersionHashes,
 
                    DisableMaintenanceTasks,

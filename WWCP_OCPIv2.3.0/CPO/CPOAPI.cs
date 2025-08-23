@@ -1630,10 +1630,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                       HTTPHostname?                HTTPHostname              = null,
                       String?                      ExternalDNSName           = "",
-                      String?                      HTTPServiceName           = DefaultHTTPServiceName,
-                      HTTPPath?                    BasePath                  = null,
 
+                      HTTPPath?                    BasePath                  = null,
                       HTTPPath?                    URLPathPrefix             = null,
+
+                      String?                      HTTPServerName            = DefaultHTTPServerName,
+                      String?                      HTTPServiceName           = DefaultHTTPServiceName,
+                      String?                      APIVersionHash            = null,
                       JObject?                     APIVersionHashes          = null,
 
                       Boolean?                     DisableMaintenanceTasks   = false,
@@ -1659,11 +1662,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                    null,
 
                    ExternalDNSName,
-                   //HTTPServiceName ?? DefaultHTTPServiceName,
                    BasePath,
 
-                   null,
-                   null,
+                   HTTPServerName  ?? DefaultHTTPServerName,
+                   HTTPServiceName ?? DefaultHTTPServiceName,
+                   APIVersionHash,
                    APIVersionHashes,
 
                    DisableMaintenanceTasks,

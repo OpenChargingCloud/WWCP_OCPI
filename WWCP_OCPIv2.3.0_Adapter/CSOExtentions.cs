@@ -115,7 +115,7 @@ namespace cloud.charging.open.protocols.WWCP
                                       String?                                                ClientsLoggingPath                   = null,
                                       String?                                                ClientsLoggingContext                = null,
                                       OCPILogfileCreatorDelegate?                            ClientsLogfileCreator                = null,
-                                      DNSClient?                                             DNSClient                            = null)
+                                      IDNSClient?                                            DNSClient                            = null)
 
         {
 

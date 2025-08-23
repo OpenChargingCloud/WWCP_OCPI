@@ -264,7 +264,6 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                           HTTPTestServerX?                            HTTPServer                = null,
                           HTTPHostname?                               HTTPHostname              = null,
                           String?                                     ExternalDNSName           = "",
-                          String?                                     HTTPServiceName           = DefaultHTTPServiceName,
                           //HTTPPath?                                   BasePath                  = null,
 
                           HTTPPath?                                   OverlayURLPathPrefix      = null,
@@ -277,6 +276,10 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                           //HTTPPath?                                   URLPathPrefix             = null,
                           String?                                     HTMLTemplate              = null,
+
+                          String?                                     HTTPServerName            = DefaultHTTPServerName,
+                          String?                                     HTTPServiceName           = DefaultHTTPServiceName,
+                          String?                                     APIVersionHash            = null,
                           JObject?                                    APIVersionHashes          = null,
 
                           Boolean?                                    DisableMaintenanceTasks   = false,
@@ -334,12 +337,13 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                    I18NString.Create($"{nameof(OCPIWebAPI)}"),
 
                    ExternalDNSName,
-                   //HTTPServiceName,
                    BasePath,
 
-                   null,
-                   null,
+                   HTTPServerName  ?? DefaultHTTPServerName,
+                   HTTPServiceName ?? DefaultHTTPServiceName,
+                   APIVersionHash,
                    APIVersionHashes,
+
                    HTMLTemplate,
 
                    null,
@@ -387,7 +391,6 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                    "ocpi",
                    LogfileName,
                    LogfileCreator)
-
 
         {
 
