@@ -1662,7 +1662,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                     out           ErrorResponse))
                                              {
 
-                                                 if (ErrorResponse != null)
+                                                 if (ErrorResponse is not null)
                                                      return new HTTPResponse.Builder(Request) {
                                                                 HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                                 Server                     = HTTPBaseAPI.HTTPServer.HTTPServerName,
@@ -1688,7 +1688,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                                              var emspClient = EMSPAPI.GetCPOClient(RemoteParty);
 
-                                             if (emspClient == null)
+                                             if (emspClient is null)
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
                                                             Server                     = HTTPBaseAPI.HTTPServer.HTTPServerName,
@@ -2030,7 +2030,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                                              var emspClient = EMSPAPI.GetCPOClient(RemoteParty);
 
-                                             if (emspClient == null)
+                                             if (emspClient is null)
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
                                                             Server                     = HTTPBaseAPI.HTTPServer.HTTPServerName,
@@ -2424,7 +2424,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                                              var emspClient = EMSPAPI.GetCPOClient(RemoteParty);
 
-                                             if (emspClient == null)
+                                             if (emspClient is null)
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
                                                             Server                     = HTTPBaseAPI.HTTPServer.HTTPServerName,
@@ -2764,7 +2764,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                                              var emspClient = EMSPAPI.GetCPOClient(RemoteParty);
 
-                                             if (emspClient == null)
+                                             if (emspClient is null)
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
                                                             Server                     = HTTPBaseAPI.HTTPServer.HTTPServerName,

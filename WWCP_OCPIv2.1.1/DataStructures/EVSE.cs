@@ -860,7 +860,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                        "Patching the 'connectors' array of an EVSE is not allowed!");
                 //{
 
-                //    if (property.Value == null)
+                //    if (property.Value is null)
                 //        return PatchResult<JObject>.Failed(JSON,
                 //                                           "Patching the 'connectors' array of a location to 'null' is not allowed!");
 

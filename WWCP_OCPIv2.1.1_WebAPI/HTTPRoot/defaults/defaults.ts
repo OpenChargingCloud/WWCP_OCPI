@@ -265,7 +265,7 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
     const dateFilters              = controlsDiv. querySelector ("#dateFilters")          as HTMLDivElement;
     const dateFrom                 = dateFilters?.querySelector ("#dateFromText")         as HTMLInputElement;
     const dateTo                   = dateFilters?.querySelector ("#dateToText")           as HTMLInputElement;
-    //const datepicker               = dateFilters != null ? new DatePicker() : null;
+    //const datepicker               = dateFilters !== null ? new DatePicker() : null;
 
     const listViewButton           = controlsDiv. querySelector ("#listView")             as HTMLButtonElement;
     const tableViewButton          = controlsDiv. querySelector ("#tableView")            as HTMLButtonElement;
@@ -393,7 +393,7 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
 
                                                             const prefix = linkPrefix(searchResult);
 
-                                                            if (prefix != null && prefix.length > 0)
+                                                            if (prefix !== null && prefix.length > 0)
                                                                 searchResultAnchor.href = prefix + nameOfItems + "/" + idOfItem(searchResult);
 
                                                         }
@@ -595,7 +595,7 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
 
     }
 
-    //if (dateFrom != null) {
+    //if (dateFrom !== null) {
     //    dateFrom.onclick = () => {
     //        datepicker.show(dateFrom,
     //            currentDateFrom,
@@ -607,7 +607,7 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
     //    }
     //}
 
-    //if (dateTo != null) {
+    //if (dateTo !== null) {
     //    dateTo.onclick = () => {
     //        datepicker.show(dateTo,
     //            currentDateTo,
@@ -931,7 +931,7 @@ function HTTP(Method:       string,
     ajax.setRequestHeader("Accept",       "application/json; charset=UTF-8");
     ajax.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
 
-    //if (APIKey != null)
+    //if (APIKey !== null)
     //    ajax.setRequestHeader("APIKey", APIKey);
 
     ajax.onreadystatechange = function () {
@@ -960,7 +960,7 @@ function HTTP(Method:       string,
 
     }
 
-    if (Data != null)
+    if (Data !== null)
         ajax.send(JSON.stringify(Data));
     else
         ajax.send();
@@ -985,7 +985,7 @@ function HTTPGet(RessourceURI: string,
     ajax.setRequestHeader("X-Portal", "true");
     //ajax.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
 
-    //if (APIKey != null)
+    //if (APIKey !== null)
     //    ajax.setRequestHeader("APIKey", APIKey);
 
     ajax.onreadystatechange = function () {

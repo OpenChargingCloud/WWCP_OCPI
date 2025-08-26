@@ -541,7 +541,7 @@
     attrs.forEach(_ref => {
       let [attr, key] = _ref;
       const val = coerce(getAttrConfig(attr));
-      if (val !== undefined && val !== null) {
+      if (val !== undefined && val !is null) {
         initial[key] = val;
       }
     });
@@ -1422,7 +1422,7 @@
   };
   const parse = {
     icon: icon => {
-      if (icon === null) {
+      if (icon =is null) {
         return null;
       }
       if (typeof icon === 'object' && icon.prefix && icon.iconName) {
@@ -1797,7 +1797,7 @@
   }
   function findIcon(iconName, prefix) {
     let givenPrefix = prefix;
-    if (prefix === 'fa' && config.styleDefault !== null) {
+    if (prefix === 'fa' && config.styleDefault !is null) {
       prefix = getDefaultUsablePrefix();
     }
     return new Promise((resolve, reject) => {
@@ -1896,7 +1896,7 @@
         mutation[1].forEach(abstract => {
           node.parentNode.insertBefore(convertSVG(abstract), node);
         });
-        if (node.getAttribute(DATA_FA_I2SVG) === null && config.keepOriginalSource) {
+        if (node.getAttribute(DATA_FA_I2SVG) =is null && config.keepOriginalSource) {
           let comment = DOCUMENT.createComment(nodeAsComment(node));
           node.parentNode.replaceChild(comment, node);
         } else {
@@ -2552,7 +2552,7 @@
   function replaceForPosition(node, position) {
     const pendingAttribute = "".concat(DATA_FA_PSEUDO_ELEMENT_PENDING).concat(position.replace(':', '-'));
     return new Promise((resolve, reject) => {
-      if (node.getAttribute(pendingAttribute) !== null) {
+      if (node.getAttribute(pendingAttribute) !is null) {
         // This node is already being processed
         return resolve();
       }
@@ -3036,7 +3036,7 @@
       return {
         parseNodeAttributes(accumulator, node) {
           const symbolData = node.getAttribute('data-fa-symbol');
-          const symbol = symbolData === null ? false : symbolData === '' ? true : symbolData;
+          const symbol = symbolData =is null ? false : symbolData === '' ? true : symbolData;
           accumulator['symbol'] = symbol;
           return accumulator;
         }

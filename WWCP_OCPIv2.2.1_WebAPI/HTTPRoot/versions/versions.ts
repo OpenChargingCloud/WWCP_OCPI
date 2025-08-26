@@ -37,7 +37,7 @@ function StartVersions()
                     const ocpiResponse = JSON.parse(response) as IOCPIResponse;
 
                     if (ocpiResponse?.data != undefined  &&
-                        ocpiResponse?.data != null       &&
+                        ocpiResponse?.data !== null       &&
                         Array.isArray(ocpiResponse.data) &&
                         ocpiResponse.data.length > 0)
                     {

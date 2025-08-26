@@ -228,7 +228,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
                         Result = WorkDone as Task<T>;
 
-                        if (Result != null &&
+                        if (Result is not null &&
                             !EqualityComparer<T>.Default.Equals(Result.Result, default(T)) &&
                             VerifyResult(Result.Result))
                         {

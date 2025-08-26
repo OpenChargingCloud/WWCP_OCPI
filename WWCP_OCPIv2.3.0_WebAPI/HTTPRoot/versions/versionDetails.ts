@@ -64,7 +64,7 @@ function StartVersionDetails(versionId: string) {
                     const ocpiResponse = JSON.parse(response) as IOCPIResponse;
 
                     if (ocpiResponse?.data != undefined &&
-                        ocpiResponse?.data != null)
+                        ocpiResponse?.data !== null)
                     {
 
                         const versionDetail = ocpiResponse.data as IVersionDetail;

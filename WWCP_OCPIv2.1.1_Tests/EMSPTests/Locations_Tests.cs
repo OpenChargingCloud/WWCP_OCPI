@@ -990,7 +990,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 #endregion
 
-                #region Define Location1 (tariffIds == null)
+                #region Define Location1 (tariffIds is null)
 
                 await cpoCommonAPI.AddLocation(
 
@@ -2093,7 +2093,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 #endregion
 
-                #region Define Location1 (tariffIds == null)
+                #region Define Location1 (tariffIds is null)
 
                 await cpoCommonAPI.AddLocation(
 

@@ -224,7 +224,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                           RequestId,
                                                                           CorrelationId);
 
-                if (CustomSetChargingProfileParserCommand != null)
+                if (CustomSetChargingProfileParserCommand is not null)
                     SetChargingProfileCommand = CustomSetChargingProfileParserCommand(JSON,
                                                                                       SetChargingProfileCommand);
 

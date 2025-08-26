@@ -963,7 +963,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                        "Patching the 'connectors' array of a Terminal is not allowed!");
                 //{
 
-                //    if (property.Value == null)
+                //    if (property.Value is null)
                 //        return PatchResult<JObject>.Failed(JSON,
                 //                                           "Patching the 'connectors' array of a location to 'null' is not allowed!");
 

@@ -52,7 +52,7 @@ function StartRemoteParty(versionId: string) {
 
                 const remoteParty = ParseJSON_LD<IRemoteParty>(response);
 
-                if (remoteParty != null)
+                if (remoteParty !== null)
                 {
 
                     countryCode.value  = remoteParty.countryCode;

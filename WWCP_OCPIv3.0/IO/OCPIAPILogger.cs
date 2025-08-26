@@ -548,7 +548,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
                 Console.ForegroundColor = ConsoleColor.Gray;
 
-                if (Response != null)
+                if (Response is not null)
                     Console.WriteLine(String.Concat(" in ", Math.Round((Response.Timestamp - Request.HTTPRequest.Timestamp).TotalMilliseconds), "ms"));
 
                 Console.ForegroundColor = PreviousColor;

@@ -60,10 +60,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             #region Initial checks
 
-            if (HTTPRequest == null)
+            if (HTTPRequest is null)
                 throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
 
-            if (OCPIWebAPI  == null)
+            if (OCPIWebAPI  is null)
                 throw new ArgumentNullException(nameof(OCPIWebAPI),   "The given OCPI WebAPI must not be null!");
 
             #endregion
@@ -131,10 +131,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             #region Initial checks
 
-            if (HTTPRequest == null)
+            if (HTTPRequest is null)
                 throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
 
-            if (OCPIWebAPI  == null)
+            if (OCPIWebAPI  is null)
                 throw new ArgumentNullException(nameof(OCPIWebAPI),   "The given OCPI WebAPI must not be null!");
 
             #endregion
@@ -1662,7 +1662,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                     out           ErrorResponse))
                                              {
 
-                                                 if (ErrorResponse != null)
+                                                 if (ErrorResponse is not null)
                                                      return new HTTPResponse.Builder(Request) {
                                                                 HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                                 Server                     = HTTPBaseAPI.HTTPServer.HTTPServerName,
@@ -1688,7 +1688,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              var emspClient = EMSPAPI.GetCPOClient(RemoteParty);
 
-                                             if (emspClient == null)
+                                             if (emspClient is null)
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
                                                             Server                     = HTTPBaseAPI.HTTPServer.HTTPServerName,
@@ -2028,7 +2028,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              var emspClient = EMSPAPI.GetCPOClient(RemoteParty);
 
-                                             if (emspClient == null)
+                                             if (emspClient is null)
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
                                                             Server                     = HTTPBaseAPI.HTTPServer.HTTPServerName,
@@ -2420,7 +2420,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              var emspClient = EMSPAPI.GetCPOClient(RemoteParty);
 
-                                             if (emspClient == null)
+                                             if (emspClient is null)
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
                                                             Server                     = HTTPBaseAPI.HTTPServer.HTTPServerName,
@@ -2758,7 +2758,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              var emspClient = EMSPAPI.GetCPOClient(RemoteParty);
 
-                                             if (emspClient == null)
+                                             if (emspClient is null)
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
                                                             Server                     = HTTPBaseAPI.HTTPServer.HTTPServerName,

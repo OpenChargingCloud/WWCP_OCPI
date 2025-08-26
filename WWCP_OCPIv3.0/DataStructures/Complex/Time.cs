@@ -171,7 +171,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             var Fragments = Text?.Trim()?.Split(':');
 
-            if (Fragments == null)
+            if (Fragments is null)
                 return false;
 
             else if (Fragments.Length == 1)

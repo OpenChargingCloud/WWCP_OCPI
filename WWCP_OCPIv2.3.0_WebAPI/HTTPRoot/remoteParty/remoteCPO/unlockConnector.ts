@@ -60,7 +60,7 @@ function StartUnlockConnector(versionId: string) {
 
                          const remoteParty = ParseJSON_LD<IRemoteParty>(response);
 
-                         if (remoteParty != null)
+                         if (remoteParty !== null)
                          {
 
                              responseDiv.innerHTML = remoteParty.toString();
@@ -124,7 +124,7 @@ function StartUnlockConnector(versionId: string) {
 
                     const remoteParty = ParseJSON_LD<IRemoteParty>(response);
 
-                    if (remoteParty != null)
+                    if (remoteParty !== null)
                     {
 
                         //countryCode.value  = remoteParty.countryCode;

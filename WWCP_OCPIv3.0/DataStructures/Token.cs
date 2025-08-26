@@ -912,7 +912,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (TokenPatch == null)
+            if (TokenPatch is null)
                 return PatchResult<Token>.Failed(EventTrackingId, this,
                                                  "The given token patch must not be null!");
 
