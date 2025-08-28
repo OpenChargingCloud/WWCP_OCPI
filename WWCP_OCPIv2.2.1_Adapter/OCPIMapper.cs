@@ -1097,12 +1097,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            //                                   _                      => 0
                            //                               }),
 
-                           MaxVoltage:              (EVSE.RMSVoltage.HasValue && EVSE.RMSVoltage.Value.Value != 0
+                           MaxVoltage:              (EVSE.MaxVoltage.HasValue && EVSE.MaxVoltage.Value.Value != 0
                                                         ? powerType.Value switch {
-                                                              PowerTypes.AC_1_PHASE  => EVSE.RMSVoltage.Value,
+                                                              PowerTypes.AC_1_PHASE  => EVSE.MaxVoltage.Value,
                                                                                       // 400 V between two conductors => 230 V between conductor and neutral (OCPI design flaw!)
-                                                              PowerTypes.AC_3_PHASE  => Volt.ParseV(EVSE.RMSVoltage.Value.Value / ((Decimal) Math.Sqrt(3))),
-                                                              _                      => EVSE.RMSVoltage.Value
+                                                              PowerTypes.AC_3_PHASE  => Volt.ParseV(EVSE.MaxVoltage.Value.Value / ((Decimal) Math.Sqrt(3))),
+                                                              _                      => EVSE.MaxVoltage.Value
                                                           }
                                                         : powerType.Value switch {
                                                               PowerTypes.AC_1_PHASE  => Volt.ParseV(230),
