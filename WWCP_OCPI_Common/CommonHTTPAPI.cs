@@ -43,10 +43,11 @@ using Org.BouncyCastle.Utilities;
 using BCx509 = Org.BouncyCastle.X509;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod;
+using org.GraphDefined.Vanaheimr.Illias.Logging;
+using org.GraphDefined.Vanaheimr.Hermod.Mail;
+using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
-using org.GraphDefined.Vanaheimr.Illias.Logging;
 
 #endregion
 
@@ -881,6 +882,10 @@ namespace cloud.charging.open.protocols.OCPI
                              String?                                                    APIVersionHash                = null,
                              JObject?                                                   APIVersionHashes              = null,
 
+                             EMailAddress?                                              APIRobotEMailAddress          = null,
+                             String?                                                    APIRobotGPGPassphrase         = null,
+                             ISMTPClient?                                               SMTPClient                    = null,
+
                              HTTPPath?                                                  AdditionalURLPathPrefix       = null,
                              Boolean                                                    LocationsAsOpenData           = true,
                              Boolean                                                    TariffsAsOpenData             = false,
@@ -930,9 +935,14 @@ namespace cloud.charging.open.protocols.OCPI
                    null,
 
                    null,
-                   null,
-                   null,
-                   null,
+                   APIRobotEMailAddress  ?? new EMailAddress(
+                                                "OCPI Common HTTP API",
+                                                SimpleEMailAddress.Parse("robot@example.org")
+                                                //OpenPGP.ReadSecretKeyRing(File.OpenRead(Path.Combine(AppContext.BaseDirectory, "robot@example.org_secring.gpg"))),
+                                                //OpenPGP.ReadPublicKeyRing(File.OpenRead(Path.Combine(AppContext.BaseDirectory, "robot@example.org_pubring.gpg")))
+                                            ),
+                   APIRobotGPGPassphrase ?? "ipco",
+                   SMTPClient            ?? new NullMailer(),
 
                    null,
                    null,
