@@ -374,7 +374,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #endregion
 
-            var ocpiBaseAPI = new CommonBaseAPI(
+            var ocpiBaseAPI = new CommonHTTPAPI(
 
                                   OurBaseURL:                URL.Parse("http://127.0.0.1:3201/ocpi"),
                                   OurVersionsURL:            URL.Parse("http://127.0.0.1:3201/ocpi/versions"),
@@ -422,7 +422,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             ClassicAssert.IsNotNull(ocpiBaseAPI);
 
-            var commonWebAPI = new OCPI.WebAPI.OCPIWebAPI(
+            var commonWebAPI = new OCPI.WebAPI.CommonWebAPI(
                                    ocpiBaseAPI
                                   // HTTPServer: cpoHTTPAPI.HTTPServer
                                );
@@ -604,7 +604,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Create cpo/emsp1/emsp2 OCPI WebAPI
 
             cpoWebAPI            = new OCPIWebAPI(
-                                       BaseWebAPI:                          new OCPI.WebAPI.OCPIWebAPI(
+                                       CommonWebAPI:                        new OCPI.WebAPI.CommonWebAPI(
                                                                                 ocpiBaseAPI,
                                                                                 //HTTPServer:             cpoHTTPAPI.HTTPServer,
                                                                                 OverlayURLPathPrefix:   HTTPPath.Parse("/ocpi/v2.1"),
@@ -620,7 +620,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    );
 
             emsp1WebAPI          = new OCPIWebAPI(
-                                       BaseWebAPI:                          new OCPI.WebAPI.OCPIWebAPI(
+                                       CommonWebAPI:                        new OCPI.WebAPI.CommonWebAPI(
                                                                                 ocpiBaseAPI,
                                                                                 //HTTPServer:             emsp1HTTPAPI.HTTPServer,
                                                                                 OverlayURLPathPrefix:   HTTPPath.Parse("/ocpi/v2.1"),
@@ -636,7 +636,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    );
 
             emsp2WebAPI          = new OCPIWebAPI(
-                                       BaseWebAPI:                          new OCPI.WebAPI.OCPIWebAPI(
+                                       CommonWebAPI:                        new OCPI.WebAPI.CommonWebAPI(
                                                                                 ocpiBaseAPI,
                                                                                 //HTTPServer:             emsp2HTTPAPI.HTTPServer,
                                                                                 OverlayURLPathPrefix:   HTTPPath.Parse("/ocpi/v2.1"),

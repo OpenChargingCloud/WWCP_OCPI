@@ -118,7 +118,8 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
     /// <summary>
     /// A HTTP API providing advanced OCPI data structures.
     /// </summary>
-    public class OCPIWebAPI : HTTPExtAPIX
+    public class CommonWebAPI : //HTTPExtAPIX
+                                AHTTPExtAPIXExtension<CommonHTTPAPI>
     {
 
         #region Data
@@ -126,7 +127,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         /// <summary>
         /// The default HTTP URI prefix.
         /// </summary>
-        public new static readonly  HTTPPath            DefaultURLPathPrefix      = HTTPPath.Parse("webapi");
+        public     static readonly  HTTPPath            DefaultURLPathPrefix      = HTTPPath.Parse("webapi");
 
         /// <summary>
         /// The default HTTP service name.
@@ -141,7 +142,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         /// <summary>
         /// The HTTP root for embedded resources.
         /// </summary>
-        public new const            String              HTTPRoot                  = "cloud.charging.open.protocols.OCPI.WebAPI.HTTPRoot.";
+        public     const            String              HTTPRoot                  = "cloud.charging.open.protocols.OCPI.WebAPI.HTTPRoot.";
 
 
         //ToDo: http://www.iana.org/form/media-types
@@ -191,7 +192,8 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         public HTTPEventSource<JObject>                     DebugLog                { get; }
 
 
-        public CommonBaseAPI                                CommonBaseAPI           { get; }
+        public CommonHTTPAPI                                CommonHTTPAPI
+            => HTTPBaseAPI;
 
 
         /// <summary>
@@ -239,7 +241,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
         #region Constructor(s)
 
-        static OCPIWebAPI()
+        static CommonWebAPI()
         {
             // Using static variables within normal constructors seems to
             // have a problem setting them up to their expected values!
@@ -248,7 +250,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         /// <summary>
         /// Attach the OCPI WebAPI to the given HTTP server.
         /// </summary>
-        /// <param name="CommonBaseAPI">A OCPI Common API.</param>
+        /// <param name="CommonHTTPAPI">A OCPI Common API.</param>
         /// 
         /// <param name="HTTPServer">A HTTP Server.</param>
         /// 
@@ -259,151 +261,58 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         /// 
         /// <param name="HTTPRealm">The HTTP realm, if HTTP Basic Authentication is used.</param>
         /// <param name="HTTPLogins">An enumeration of logins for an optional HTTP Basic Authentication.</param>
-        public OCPIWebAPI(CommonBaseAPI                               CommonBaseAPI,
+        public CommonWebAPI(CommonHTTPAPI                               CommonHTTPAPI,
 
-                          HTTPTestServerX?                            HTTPServer                = null,
-                          HTTPHostname?                               HTTPHostname              = null,
-                          String?                                     ExternalDNSName           = "",
-                          //HTTPPath?                                   BasePath                  = null,
+                            //HTTPTestServerX?                            HTTPServer                = null,
+                            //HTTPHostname?                               HTTPHostname              = null,
+                            //String?                                     ExternalDNSName           = "",
+                            //HTTPPath?                                   BasePath                  = null,
 
-                          HTTPPath?                                   OverlayURLPathPrefix      = null,
-                          HTTPPath?                                   APIURLPathPrefix          = null,
-                          HTTPPath?                                   WebAPIURLPathPrefix       = null,
-                          HTTPPath?                                   BasePath                  = null,
+                            HTTPPath?                                   OverlayURLPathPrefix      = null,
+                            HTTPPath?                                   APIURLPathPrefix          = null,
+                            HTTPPath?                                   WebAPIURLPathPrefix       = null,
+                            HTTPPath?                                   BasePath                  = null,
 
-                          String                                      HTTPRealm                 = DefaultHTTPRealm,
-                          IEnumerable<KeyValuePair<String, String>>?  HTTPLogins                = null,
+                            String                                      HTTPRealm                 = DefaultHTTPRealm,
+                            IEnumerable<KeyValuePair<String, String>>?  HTTPLogins                = null,
 
-                          //HTTPPath?                                   URLPathPrefix             = null,
-                          String?                                     HTMLTemplate              = null,
+                            //HTTPPath?                                   URLPathPrefix             = null,
+                            String?                                     HTMLTemplate              = null,
 
-                          String?                                     HTTPServerName            = DefaultHTTPServerName,
-                          String?                                     HTTPServiceName           = DefaultHTTPServiceName,
-                          String?                                     APIVersionHash            = null,
-                          JObject?                                    APIVersionHashes          = null,
+                            String?                                     HTTPServerName            = DefaultHTTPServerName,
+                            String?                                     HTTPServiceName           = DefaultHTTPServiceName,
+                            String?                                     APIVersionHash            = null,
+                            JObject?                                    APIVersionHashes          = null,
 
-                          Boolean?                                    DisableMaintenanceTasks   = false,
-                          TimeSpan?                                   MaintenanceInitialDelay   = null,
-                          TimeSpan?                                   MaintenanceEvery          = null,
+                            Boolean?                                    IsDevelopment             = false,
+                            IEnumerable<String>?                        DevelopmentServers        = null,
+                            Boolean?                                    DisableNotifications      = false,
+                            Boolean?                                    DisableLogging            = false,
+                            String?                                     LoggingPath               = null,
+                            String?                                     LogfileName               = null,
+                            LogfileCreatorDelegate?                     LogfileCreator            = null)
 
-                          Boolean?                                    DisableWardenTasks        = false,
-                          TimeSpan?                                   WardenInitialDelay        = null,
-                          TimeSpan?                                   WardenCheckEvery          = null,
-
-                          Boolean                                     SkipURLTemplates          = true,
-
-                          Boolean?                                    IsDevelopment             = false,
-                          IEnumerable<String>?                        DevelopmentServers        = null,
-                          Boolean?                                    DisableNotifications      = false,
-                          Boolean?                                    DisableLogging            = false,
-                          String?                                     LoggingPath               = null,
-                          String?                                     LogfileName               = null,
-                          LogfileCreatorDelegate?                     LogfileCreator            = null
-
-                          //TimeSpan?                                   RequestTimeout            = null
-                         )
-
-            //: base(HTTPServer,
-            //       HTTPHostname,
-            //       ExternalDNSName,
-            //       HTTPServiceName,
-            //       BasePath,
-
-            //       WebAPIURLPathPrefix ?? DefaultURLPathPrefix, //URLPathPrefix,
-            //       HTMLTemplate,
-            //       APIVersionHashes,
-
-            //       DisableMaintenanceTasks,
-            //       MaintenanceInitialDelay,
-            //       MaintenanceEvery,
-
-            //       DisableWardenTasks,
-            //       WardenInitialDelay,
-            //       WardenCheckEvery,
-
-            //       IsDevelopment,
-            //       DevelopmentServers,
-            //       DisableLogging,
-            //       LoggingPath,
-            //       LogfileName,
-            //       LogfileCreator,
-
-            //       AutoStart: false)
-
-            : base(HTTPServer ?? CommonBaseAPI.HTTPServer,
-                   null,
-                   WebAPIURLPathPrefix ?? DefaultURLPathPrefix, //URLPathPrefix,
-                   null,
-                   I18NString.Create($"{nameof(OCPIWebAPI)}"),
-
-                   ExternalDNSName,
-                   BasePath,
+            : base(CommonHTTPAPI,
 
                    HTTPServerName  ?? DefaultHTTPServerName,
                    HTTPServiceName ?? DefaultHTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,
 
-                   HTMLTemplate,
-
-                   null,
-                   null,
-                   null,
-                   null,
-
-                   null,
-                   null,
-                   true,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
-
-                   null,
-                   null,
-
                    IsDevelopment,
                    DevelopmentServers,
-                   SkipURLTemplates,
-                   DefaultHTTPExtAPIX_DatabaseFileName,
-                   DisableNotifications,
-
-                   DisableLogging ?? false,
+                   DisableLogging,
                    LoggingPath,
-                   "ocpi",
                    LogfileName,
                    LogfileCreator)
 
         {
 
-            this.CommonBaseAPI         = CommonBaseAPI;
+            //this.CommonHTTPAPI         = CommonHTTPAPI;
             this.APIURLPathPrefix      = APIURLPathPrefix;
             this.OverlayURLPathPrefix  = OverlayURLPathPrefix;
             this.HTTPRealm             = HTTPRealm.IsNotNullOrEmpty() ? HTTPRealm : DefaultHTTPRealm;
             this.HTTPLogins            = HTTPLogins ?? [];
-
-            // Link HTTP events...
-            //HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
-            //HTTPServer.ResponseLog    += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
-            //HTTPServer.ErrorLog       += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
 
             var LogfilePrefix          = "HTTPSSEs" + Path.DirectorySeparatorChar;
 
@@ -415,8 +324,6 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
           //                                                       LogfilePrefix:            LogfilePrefix);
 
             RegisterURITemplates();
-
-            //this.RequestTimeout        = RequestTimeout;
 
         }
 
@@ -433,7 +340,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
             => GetResourceStream(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
                    new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
                );
 
@@ -445,7 +352,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
             => GetResourceMemoryStream(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
                    new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
                );
 
@@ -457,7 +364,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
             => GetResourceString(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
                    new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
                );
 
@@ -469,7 +376,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
             => GetResourceBytes(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
                    new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
                );
 
@@ -481,7 +388,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
             => MixWithHTMLTemplate(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
                    new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
                );
 
@@ -494,7 +401,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
             => MixWithHTMLTemplate(
                    ResourceName,
                    HTMLConverter,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
                    new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
                );
 
@@ -511,12 +418,12 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
             #region / (HTTPRoot)
 
-            this.MapResourceAssemblyFolder(
-                HTTPHostname.Any,
-                RootPath,// URLPathPrefix,
-                HTTPRoot,
-                DefaultFilename: "index.html"
-            );
+            //this.MapResourceAssemblyFolder(
+            //    HTTPHostname.Any,
+            //    WebAPIURLPathPrefix, //RootPath,// URLPathPrefix,
+            //    HTTPRoot,
+            //    DefaultFilename: "index.html"
+            //);
 
             #endregion
 
@@ -528,7 +435,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region Text
 
-                AddHandler(
+                CommonHTTPAPI.AddHandler(
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value,
                     HTTPContentType.Text.HTML_UTF8,
@@ -555,7 +462,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 // Just for convenience...
                 if (OverlayURLPathPrefix.Value != HTTPPath.Root)
-                    AddHandler(
+                    CommonHTTPAPI.AddHandler(
                         HTTPMethod.GET,
                         OverlayURLPathPrefix.Value + "/",
                         HTTPContentType.Text.HTML_UTF8,
@@ -583,7 +490,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region JSON
 
-                AddHandler(
+                CommonHTTPAPI.AddHandler(
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value,
                     HTTPContentType.Application.JSON_UTF8,
@@ -615,7 +522,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 // Just for convenience...
                 if (OverlayURLPathPrefix.Value != HTTPPath.Root)
-                    AddHandler(
+                    CommonHTTPAPI.AddHandler(
                         HTTPMethod.GET,
                         OverlayURLPathPrefix.Value + "/",
                         HTTPContentType.Text.HTML_UTF8,
@@ -648,7 +555,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region HTML
 
-                AddHandler(
+                CommonHTTPAPI.AddHandler(
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value,
                     HTTPContentType.Text.HTML_UTF8,
@@ -678,7 +585,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 // Just for convenience...
                 if (OverlayURLPathPrefix.Value != HTTPPath.Root)
-                    AddHandler(
+                    CommonHTTPAPI.AddHandler(
                         HTTPMethod.GET,
                         OverlayURLPathPrefix.Value + "/",
                         HTTPContentType.Text.HTML_UTF8,
@@ -711,7 +618,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region GET ~/versions
 
-                AddHandler(
+                CommonHTTPAPI.AddHandler(
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value + "versions",
                     HTTPContentType.Text.HTML_UTF8,
@@ -741,7 +648,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region GET ~/support
 
-                AddHandler(
+                CommonHTTPAPI.AddHandler(
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value + "/support",
                     HTTPContentType.Text.HTML_UTF8,
@@ -750,7 +657,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                         Task.FromResult(
                             new HTTPResponse.Builder(request) {
                                 HTTPStatusCode             = HTTPStatusCode.OK,
-                                Server                     = HTTPServer.HTTPServerName,
+                                Server                     = HTTPServerName,
                                 Date                       = Timestamp.Now,
                                 AccessControlAllowOrigin   = "*",
                                 AccessControlAllowMethods  = [ "GET" ],
@@ -768,7 +675,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region GET ~/favicon.png
 
-                AddHandler(
+                CommonHTTPAPI.AddHandler(
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value + "/favicon.png",
                     //HTTPContentType.Image.PNG,
@@ -777,7 +684,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                         Task.FromResult(
                             new HTTPResponse.Builder(request) {
                                 HTTPStatusCode             = HTTPStatusCode.OK,
-                                Server                     = HTTPServer.HTTPServerName,
+                                Server                     = HTTPServerName,
                                 Date                       = Timestamp.Now,
                                 AccessControlAllowOrigin   = "*",
                                 AccessControlAllowMethods  = [ "GET" ],

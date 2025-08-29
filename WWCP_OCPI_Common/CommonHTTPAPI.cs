@@ -596,8 +596,7 @@ namespace cloud.charging.open.protocols.OCPI
     /// <summary>
     /// The CommonAPI Base.
     /// </summary>
-    public class CommonBaseAPI : HTTPAPIX
-                                 //IServerStartStop
+    public class CommonHTTPAPI : HTTPExtAPIX
     {
 
         #region Data
@@ -612,15 +611,15 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public new const           String         DefaultHTTPServiceName          = "GraphDefined OCPI Common HTTP API";
 
-        /// <summary>
-        /// The default HTTP server TCP port.  
-        /// </summary>
-        public new static readonly IPPort         DefaultHTTPServerPort           = IPPort.Parse(8080);
+        ///// <summary>
+        ///// The default HTTP server TCP port.  
+        ///// </summary>
+        //public new static readonly IPPort         DefaultHTTPServerPort           = IPPort.Parse(8080);
 
-        /// <summary>
-        /// The default HTTP URL path prefix.  
-        /// </summary>
-        public new static readonly HTTPPath       DefaultURLPathPrefix            = HTTPPath.Parse("io/OCPI/");
+        ///// <summary>
+        ///// The default HTTP URL path prefix.  
+        ///// </summary>
+        //public new static readonly HTTPPath       DefaultURLPathPrefix            = HTTPPath.Parse("io/OCPI/");
 
         /// <summary>
         /// The default database file name for all remote party configuration.
@@ -633,6 +632,8 @@ namespace cloud.charging.open.protocols.OCPI
         public const               String         DefaultAssetsDBFileName         = "Assets.db";
 
         private readonly           LogFileWriter  logFileWriter                   = new (10000);
+
+        #region Commands
 
         public const String addRemoteParty                     = "addRemoteParty";
         public const String addRemotePartyIfNotExists          = "addRemotePartyIfNotExists";
@@ -713,6 +714,8 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -747,10 +750,10 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public Boolean?                 AllowDowngrades            { get; }
 
-        /// <summary>
-        /// The logging context.
-        /// </summary>
-        public String?                  LoggingContext             { get; }
+        ///// <summary>
+        ///// The logging context.
+        ///// </summary>
+        //public String?                  LoggingContext             { get; }
 
         /// <summary>
         /// A template for OCPI client configurations.
@@ -839,9 +842,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="TariffsAsOpenData">Allow anonymous access to tariffs as Open Data.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         /// 
-        /// <param name="HTTPHostname">The HTTP hostname for all URLs within this API.</param>
         /// <param name="ExternalDNSName">The official URL/DNS name of this service, e.g. for sending e-mails.</param>
-        /// <param name="HTTPServerPort">A TCP port to listen on.</param>
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// <param name="HTTPServerName">The default HTTP server name, used whenever no HTTP Host-header has been given.</param>
         /// 
@@ -863,7 +864,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="LoggingPath">The path for all logfiles.</param>
         /// <param name="LogfileName">The name of the logfile.</param>
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
-        public CommonBaseAPI(HTTPTestServerX                                            HTTPServer,
+        public CommonHTTPAPI(HTTPTestServerX                                            HTTPServer,
                              URL                                                        OurBaseURL,
                              URL                                                        OurVersionsURL,
 
@@ -897,6 +898,10 @@ namespace cloud.charging.open.protocols.OCPI
 
                              Boolean?                                                   IsDevelopment                 = null,
                              IEnumerable<String>?                                       DevelopmentServers            = null,
+                             Boolean                                                    SkipURLTemplates              = false,
+                             String?                                                    DatabaseFileName              = DefaultAssetsDBFileName,
+                             Boolean?                                                   DisableNotifications          = false,
+
                              Boolean?                                                   DisableLogging                = null,
                              String?                                                    LoggingContext                = null,
                              String?                                                    LoggingPath                   = null,
@@ -922,6 +927,31 @@ namespace cloud.charging.open.protocols.OCPI
                    APIVersionHash,
                    APIVersionHashes,
 
+                   null,
+
+                   null,
+                   null,
+                   null,
+                   null,
+
+                   null,
+                   null,
+                   true,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+
                    DisableMaintenanceTasks,
                    MaintenanceInitialDelay,
                    MaintenanceEvery,
@@ -930,11 +960,18 @@ namespace cloud.charging.open.protocols.OCPI
                    WardenInitialDelay,
                    WardenCheckEvery,
 
+                   null,
+                   null,
+
                    IsDevelopment,
                    DevelopmentServers,
-                   DisableLogging,
+                   SkipURLTemplates,
+                   DatabaseFileName ?? DefaultAssetsDBFileName,
+                   DisableNotifications,
+
+                   DisableLogging ?? false,
                    LoggingPath,
-                   "ocpi-context",
+                   LoggingContext,
                    LogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
@@ -949,8 +986,6 @@ namespace cloud.charging.open.protocols.OCPI
             this.LocationsAsOpenData       = LocationsAsOpenData;
             this.TariffsAsOpenData         = TariffsAsOpenData;
             this.AllowDowngrades           = AllowDowngrades;
-
-            this.LoggingContext            = LoggingContext;
 
             //this.logfileName               = Path.Combine(this.LoggingPath,
             //                                              this.LogfileName);

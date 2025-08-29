@@ -26,6 +26,7 @@ using NUnit.Framework;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 using cloud.charging.open.protocols.OCPI;
 
@@ -44,7 +45,6 @@ using cloud.charging.open.protocols.OCPIv2_3_0.WebAPI;
 using cloud.charging.open.protocols.OCPIv3_0;
 using cloud.charging.open.protocols.OCPIv3_0.HTTP;
 using cloud.charging.open.protocols.OCPIv3_0.WebAPI;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
@@ -295,7 +295,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         protected       HTTPTestServerX?                                              cpo1HTTPServer;
         public          URL?                                                          cpo1VersionsAPIURL;
-        protected       CommonBaseAPI?                                                cpo1BaseAPI;
+        protected       CommonHTTPAPI?                                                cpo1BaseAPI;
 
         protected       OCPIv2_1_1.HTTP.CommonAPI?                                    cpo1CommonAPI_v2_1_1;
         protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                 cpo1WebAPI_v2_1_1;
@@ -334,7 +334,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         protected       HTTPTestServerX?                                              cpo2HTTPServer;
         public          URL?                                                          cpo2VersionsAPIURL;
-        protected       CommonBaseAPI?                                                cpo2BaseAPI;
+        protected       CommonHTTPAPI?                                                cpo2BaseAPI;
 
         protected       OCPIv2_1_1.HTTP.CommonAPI?                                    cpo2CommonAPI_v2_1_1;
         protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                 cpo2WebAPI_v2_1_1;
@@ -373,7 +373,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         protected       HTTPTestServerX?                                              emsp1HTTPServer;
         public          URL?                                                          emsp1VersionsAPIURL;
-        protected       CommonBaseAPI?                                                emsp1BaseAPI;
+        protected       CommonHTTPAPI?                                                emsp1BaseAPI;
 
         protected       OCPIv2_1_1.HTTP.CommonAPI?                                    emsp1CommonAPI_v2_1_1;
         protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                 emsp1WebAPI_v2_1_1;
@@ -412,7 +412,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         protected       HTTPTestServerX?                                              emsp2HTTPServer;
         public          URL?                                                          emsp2VersionsAPIURL;
-        protected       CommonBaseAPI?                                                emsp2BaseAPI;
+        protected       CommonHTTPAPI?                                                emsp2BaseAPI;
 
         protected       OCPIv2_1_1.HTTP.CommonAPI?                                    emsp2CommonAPI_v2_1_1;
         protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                 emsp2WebAPI_v2_1_1;
@@ -501,7 +501,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region CPO #1
 
-            cpo1BaseAPI  = new CommonBaseAPI(
+            cpo1BaseAPI  = new CommonHTTPAPI(
 
                                OurBaseURL:                  URL.Parse($"http://127.0.0.1:{cpo1HTTPServer.TCPPort}/ocpi"),
                                OurVersionsURL:              URL.Parse($"http://127.0.0.1:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
@@ -542,7 +542,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region CPO #2
 
-            cpo2BaseAPI  = new CommonBaseAPI(
+            cpo2BaseAPI  = new CommonHTTPAPI(
 
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3202/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3202/ocpi/versions"),
@@ -584,7 +584,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region EMSP #1
 
-            emsp1BaseAPI = new CommonBaseAPI(
+            emsp1BaseAPI = new CommonHTTPAPI(
 
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3401/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3401/ocpi/versions"),
@@ -626,7 +626,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region EMSP #2
 
-            emsp2BaseAPI = new CommonBaseAPI(
+            emsp2BaseAPI = new CommonHTTPAPI(
 
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3402/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3402/ocpi/versions"),
@@ -1322,9 +1322,9 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             #region Create cpo1/cpo2/emsp1/emsp2 OCPI WebAPIs
 
             cpo1WebAPI_v2_1_1    = new OCPIv2_1_1.WebAPI.OCPIWebAPI(
-                                       BaseWebAPI:                          new WebAPI.OCPIWebAPI(
+                                       CommonWebAPI:                        new WebAPI.CommonWebAPI(
                                                                                 cpo1BaseAPI,
-                                                                                HTTPServer:             cpo1HTTPServer,
+                                                                                //HTTPServer:             cpo1HTTPServer,
                                                                                 OverlayURLPathPrefix:   HTTPPath.Parse("/ocpi/v2.1"),
                                                                                 HTTPRealm:              "GraphDefined OCPI CPO #1 WebAPI",
                                                                                 HTTPLogins:             [

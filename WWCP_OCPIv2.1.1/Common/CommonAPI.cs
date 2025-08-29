@@ -1387,7 +1387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region Properties
 
 
-        public CommonBaseAPI            BaseAPI                     { get; }
+        public CommonHTTPAPI            BaseAPI                     { get; }
 
         /// <summary>
         /// The (max supported) OCPI version.
@@ -1895,7 +1895,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          Party_Id                     OurPartyId,
                          Role                         OurRole,
 
-                         CommonBaseAPI                BaseAPI,
+                         CommonHTTPAPI                BaseAPI,
                          HTTPTestServerX?             HTTPServer                = null,
 
                          HTTPPath?                    AdditionalURLPathPrefix   = null,
@@ -2061,7 +2061,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addRemoteParty
 
-                    case CommonBaseAPI.addRemoteParty:
+                    case CommonHTTPAPI.addRemoteParty:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2085,7 +2085,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addRemotePartyIfNotExists
 
-                    case CommonBaseAPI.addRemotePartyIfNotExists:
+                    case CommonHTTPAPI.addRemotePartyIfNotExists:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2109,7 +2109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addOrUpdateRemoteParty
 
-                    case CommonBaseAPI.addOrUpdateRemoteParty:
+                    case CommonHTTPAPI.addOrUpdateRemoteParty:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2138,7 +2138,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region updateRemoteParty
 
-                    case CommonBaseAPI.updateRemoteParty:
+                    case CommonHTTPAPI.updateRemoteParty:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2163,7 +2163,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region updateRemoteParty
 
-                    case CommonBaseAPI.removeRemoteParty:
+                    case CommonHTTPAPI.removeRemoteParty:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2187,7 +2187,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region removeAllRemoteParties
 
-                    case CommonBaseAPI.removeAllRemoteParties:
+                    case CommonHTTPAPI.removeAllRemoteParties:
                         remoteParties.Clear();
                         break;
 
@@ -2238,7 +2238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addLocation
 
-                    case CommonBaseAPI.addLocation:
+                    case CommonHTTPAPI.addLocation:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2261,7 +2261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addLocationIfNotExists
 
-                    case CommonBaseAPI.addLocationIfNotExists:
+                    case CommonHTTPAPI.addLocationIfNotExists:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2284,7 +2284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addOrUpdateLocation
 
-                    case CommonBaseAPI.addOrUpdateLocation:
+                    case CommonHTTPAPI.addOrUpdateLocation:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2312,7 +2312,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region updateLocation
 
-                    case CommonBaseAPI.updateLocation:
+                    case CommonHTTPAPI.updateLocation:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2336,7 +2336,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region updateLocation
 
-                    case CommonBaseAPI.removeLocation:
+                    case CommonHTTPAPI.removeLocation:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2359,7 +2359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region removeAllLocations
 
-                    case CommonBaseAPI.removeAllLocations:
+                    case CommonHTTPAPI.removeAllLocations:
                         locations.Clear();
                         break;
 
@@ -2370,7 +2370,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addOrUpdateEVSE
 
-                    case CommonBaseAPI.addOrUpdateEVSE:
+                    case CommonHTTPAPI.addOrUpdateEVSE:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2427,7 +2427,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addTariff
 
-                    case CommonBaseAPI.addTariff:
+                    case CommonHTTPAPI.addTariff:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2450,7 +2450,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addTariffIfNotExists
 
-                    case CommonBaseAPI.addTariffIfNotExists:
+                    case CommonHTTPAPI.addTariffIfNotExists:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2473,7 +2473,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addOrUpdateTariff
 
-                    case CommonBaseAPI.addOrUpdateTariff:
+                    case CommonHTTPAPI.addOrUpdateTariff:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2501,7 +2501,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region updateTariff
 
-                    case CommonBaseAPI.updateTariff:
+                    case CommonHTTPAPI.updateTariff:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2525,7 +2525,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region updateTariff
 
-                    case CommonBaseAPI.removeTariff:
+                    case CommonHTTPAPI.removeTariff:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2548,7 +2548,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region removeAllTariffs
 
-                    case CommonBaseAPI.removeAllTariffs:
+                    case CommonHTTPAPI.removeAllTariffs:
                         tariffs.Clear();
                         break;
 
@@ -2557,7 +2557,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addSession
 
-                    case CommonBaseAPI.addSession:
+                    case CommonHTTPAPI.addSession:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2580,7 +2580,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addSessionIfNotExists
 
-                    case CommonBaseAPI.addSessionIfNotExists:
+                    case CommonHTTPAPI.addSessionIfNotExists:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2603,7 +2603,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addOrUpdateSession
 
-                    case CommonBaseAPI.addOrUpdateSession:
+                    case CommonHTTPAPI.addOrUpdateSession:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2631,7 +2631,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region updateSession
 
-                    case CommonBaseAPI.updateSession:
+                    case CommonHTTPAPI.updateSession:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2655,7 +2655,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region updateSession
 
-                    case CommonBaseAPI.removeSession:
+                    case CommonHTTPAPI.removeSession:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2678,7 +2678,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region removeAllSessions
 
-                    case CommonBaseAPI.removeAllSessions:
+                    case CommonHTTPAPI.removeAllSessions:
                         chargingSessions.Clear();
                         break;
 
@@ -2687,7 +2687,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addToken
 
-                    case CommonBaseAPI.addTokenStatus:
+                    case CommonHTTPAPI.addTokenStatus:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2710,7 +2710,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addTokenIfNotExists
 
-                    case CommonBaseAPI.addTokenStatusIfNotExists:
+                    case CommonHTTPAPI.addTokenStatusIfNotExists:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2733,7 +2733,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addOrUpdateToken
 
-                    case CommonBaseAPI.addOrUpdateTokenStatus:
+                    case CommonHTTPAPI.addOrUpdateTokenStatus:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2761,7 +2761,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region updateToken
 
-                    case CommonBaseAPI.updateTokenStatus:
+                    case CommonHTTPAPI.updateTokenStatus:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2785,7 +2785,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region updateToken
 
-                    case CommonBaseAPI.removeToken:
+                    case CommonHTTPAPI.removeToken:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2808,7 +2808,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region removeAllTokens
 
-                    case CommonBaseAPI.removeAllTokenStatus:
+                    case CommonHTTPAPI.removeAllTokenStatus:
                         tokenStatus.Clear();
                         break;
 
@@ -2817,7 +2817,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addChargeDetailRecord
 
-                    case CommonBaseAPI.addChargeDetailRecord:
+                    case CommonHTTPAPI.addChargeDetailRecord:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2840,7 +2840,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addChargeDetailRecordIfNotExists
 
-                    case CommonBaseAPI.addChargeDetailRecordIfNotExists:
+                    case CommonHTTPAPI.addChargeDetailRecordIfNotExists:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2863,7 +2863,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region addOrUpdateChargeDetailRecord
 
-                    case CommonBaseAPI.addOrUpdateChargeDetailRecord:
+                    case CommonHTTPAPI.addOrUpdateChargeDetailRecord:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2891,7 +2891,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region updateChargeDetailRecord
 
-                    case CommonBaseAPI.updateChargeDetailRecord:
+                    case CommonHTTPAPI.updateChargeDetailRecord:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2915,7 +2915,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region updateCDR
 
-                    case CommonBaseAPI.removeChargeDetailRecord:
+                    case CommonHTTPAPI.removeChargeDetailRecord:
                         try
                         {
                             if (command.JSONObject is not null &&
@@ -2938,7 +2938,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #region removeAllCDRs
 
-                    case CommonBaseAPI.removeAllChargeDetailRecords:
+                    case CommonHTTPAPI.removeAllChargeDetailRecords:
                         chargeDetailRecords.Clear();
                         break;
 
@@ -4090,7 +4090,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     remoteParties.TryRemove(remoteParty.Id, out _);
 
                     await LogAsset(
-                              CommonBaseAPI.removeRemoteParty,
+                              CommonHTTPAPI.removeRemoteParty,
                               remoteParty.ToJSON(true),
                               EventTrackingId ?? EventTracking_Id.New,
                               CurrentUserId
@@ -4122,7 +4122,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     {
 
                         await LogRemoteParty(
-                                  CommonBaseAPI.updateRemoteParty,
+                                  CommonHTTPAPI.updateRemoteParty,
                                   newRemoteParty.ToJSON(true),
                                   EventTrackingId ?? EventTracking_Id.New,
                                   CurrentUserId
@@ -4284,7 +4284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      newRemoteParty)) {
 
                 await LogRemoteParty(
-                          CommonBaseAPI.addRemoteParty,
+                          CommonHTTPAPI.addRemoteParty,
                           newRemoteParty.ToJSON(true),
                           EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
@@ -4364,7 +4364,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogRemoteParty(
-                          CommonBaseAPI.addRemoteParty,
+                          CommonHTTPAPI.addRemoteParty,
                           newRemoteParty.ToJSON(true),
                           EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
@@ -4451,7 +4451,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogRemoteParty(
-                          CommonBaseAPI.addRemoteParty,
+                          CommonHTTPAPI.addRemoteParty,
                           newRemoteParty.ToJSON(true),
                           EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
@@ -4528,7 +4528,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogRemoteParty(
-                          CommonBaseAPI.addRemoteParty,
+                          CommonHTTPAPI.addRemoteParty,
                           newRemoteParty.ToJSON(true),
                           EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
@@ -4631,7 +4631,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogRemoteParty(
-                          CommonBaseAPI.addRemotePartyIfNotExists,
+                          CommonHTTPAPI.addRemotePartyIfNotExists,
                           newRemoteParty.ToJSON(true),
                           EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
@@ -4714,7 +4714,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogRemoteParty(
-                          CommonBaseAPI.addRemotePartyIfNotExists,
+                          CommonHTTPAPI.addRemotePartyIfNotExists,
                           newRemoteParty.ToJSON(true),
                           EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
@@ -4803,7 +4803,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogRemoteParty(
-                          CommonBaseAPI.addRemotePartyIfNotExists,
+                          CommonHTTPAPI.addRemotePartyIfNotExists,
                           newRemoteParty.ToJSON(true),
                           EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
@@ -4882,7 +4882,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogRemoteParty(
-                          CommonBaseAPI.addRemotePartyIfNotExists,
+                          CommonHTTPAPI.addRemotePartyIfNotExists,
                           newRemoteParty.ToJSON(true),
                           EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
@@ -4994,7 +4994,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                       });
 
             await LogRemoteParty(
-                      CommonBaseAPI.addOrUpdateRemoteParty,
+                      CommonHTTPAPI.addOrUpdateRemoteParty,
                       newRemoteParty.ToJSON(true),
                       EventTrackingId ?? EventTracking_Id.New,
                       CurrentUserId
@@ -5082,7 +5082,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                       });
 
             await LogRemoteParty(
-                      CommonBaseAPI.addOrUpdateRemoteParty,
+                      CommonHTTPAPI.addOrUpdateRemoteParty,
                       newRemoteParty.ToJSON(true),
                       EventTrackingId ?? EventTracking_Id.New,
                       CurrentUserId
@@ -5176,7 +5176,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                       });
 
             await LogRemoteParty(
-                      CommonBaseAPI.addOrUpdateRemoteParty,
+                      CommonHTTPAPI.addOrUpdateRemoteParty,
                       newRemoteParty.ToJSON(true),
                       EventTrackingId ?? EventTracking_Id.New,
                       CurrentUserId
@@ -5260,7 +5260,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                       });
 
             await LogRemoteParty(
-                      CommonBaseAPI.addOrUpdateRemoteParty,
+                      CommonHTTPAPI.addOrUpdateRemoteParty,
                       newRemoteParty.ToJSON(true),
                       EventTrackingId ?? EventTracking_Id.New,
                       CurrentUserId
@@ -5356,7 +5356,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogRemoteParty(
-                          CommonBaseAPI.updateRemoteParty,
+                          CommonHTTPAPI.updateRemoteParty,
                           newRemoteParty.ToJSON(true),
                           EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
@@ -5436,7 +5436,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogRemoteParty(
-                          CommonBaseAPI.updateRemoteParty,
+                          CommonHTTPAPI.updateRemoteParty,
                           newRemoteParty.ToJSON(true),
                           EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
@@ -5522,7 +5522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogRemoteParty(
-                          CommonBaseAPI.updateRemoteParty,
+                          CommonHTTPAPI.updateRemoteParty,
                           newRemoteParty.ToJSON(true),
                           EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
@@ -5598,7 +5598,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogRemoteParty(
-                          CommonBaseAPI.updateRemoteParty,
+                          CommonHTTPAPI.updateRemoteParty,
                           newRemoteParty.ToJSON(true),
                           EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
@@ -5652,11 +5652,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         /// <param name="RemotePartyId">The unique identification of the remote party.</param>
         /// <param name="RemoteParty">The remote party.</param>
-        public Boolean TryGetRemoteParty(RemoteParty_Id    RemotePartyId,
-                                         out RemoteParty?  RemoteParty)
+        public Boolean TryGetRemoteParty(RemoteParty_Id                        RemotePartyId,
+                                         [NotNullWhen(true)] out RemoteParty?  RemoteParty)
 
-            => remoteParties.TryGetValue(RemotePartyId,
-                                         out RemoteParty);
+            => remoteParties.TryGetValue(
+                   RemotePartyId,
+                   out RemoteParty
+               );
 
         #endregion
 
@@ -5770,7 +5772,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogRemoteParty(
-                          CommonBaseAPI.removeRemoteParty,
+                          CommonHTTPAPI.removeRemoteParty,
                           remoteParty.ToJSON(true),
                           EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
@@ -5797,7 +5799,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogRemoteParty(
-                          CommonBaseAPI.removeRemoteParty,
+                          CommonHTTPAPI.removeRemoteParty,
                           remoteParty.ToJSON(true),
                           EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
@@ -5830,7 +5832,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 remoteParties.TryRemove(remoteParty.Id, out _);
 
                 await LogRemoteParty(
-                          CommonBaseAPI.removeRemoteParty,
+                          CommonHTTPAPI.removeRemoteParty,
                           remoteParty.ToJSON(true),
                           EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
@@ -5861,7 +5863,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 remoteParties.TryRemove(remoteParty.Id, out _);
 
                 await LogRemoteParty(
-                          CommonBaseAPI.removeRemoteParty,
+                          CommonHTTPAPI.removeRemoteParty,
                           remoteParty.ToJSON(true),
                           EventTrackingId ?? EventTracking_Id.New,
                           CurrentUserId
@@ -5884,7 +5886,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             remoteParties.Clear();
 
             await LogRemoteParty(
-                      CommonBaseAPI.removeAllRemoteParties,
+                      CommonHTTPAPI.removeAllRemoteParties,
                       EventTrackingId ?? EventTracking_Id.New,
                       CurrentUserId
                   );
@@ -5945,7 +5947,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Location.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addLocation,
+                          CommonHTTPAPI.addLocation,
                           Location.ToJSON(
                               true,
                               true,
@@ -6047,7 +6049,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Location.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addLocationIfNotExists,
+                          CommonHTTPAPI.addLocationIfNotExists,
                           Location.ToJSON(
                               true,
                               true,
@@ -6169,7 +6171,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     Location.CommonAPI = this;
 
                     await LogAsset(
-                              CommonBaseAPI.addOrUpdateLocation,
+                              CommonHTTPAPI.addOrUpdateLocation,
                               Location.ToJSON(
                                   true,
                                   true,
@@ -6301,7 +6303,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Location.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addOrUpdateLocation,
+                          CommonHTTPAPI.addOrUpdateLocation,
                           Location.ToJSON(
                               true,
                               true,
@@ -6429,7 +6431,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Location.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.updateLocation,
+                          CommonHTTPAPI.updateLocation,
                           Location.ToJSON(
                               true,
                               true,
@@ -6781,7 +6783,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogAsset(
-                          CommonBaseAPI.removeLocation,
+                          CommonHTTPAPI.removeLocation,
                           location.ToJSON(true,
                                           true,
                                           null,
@@ -6870,7 +6872,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             locations.Clear();
 
             await LogAsset(
-                      CommonBaseAPI.removeAllLocations,
+                      CommonHTTPAPI.removeAllLocations,
                       EventTrackingId,
                       CurrentUserId
                   );
@@ -7915,7 +7917,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Tariff.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addTariff,
+                          CommonHTTPAPI.addTariff,
                           Tariff.ToJSON(true,
                                         true,
                                         CustomTariffSerializer,
@@ -7980,7 +7982,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Tariff.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addTariffIfNotExists,
+                          CommonHTTPAPI.addTariffIfNotExists,
                           Tariff.ToJSON(true,
                                         true,
                                         CustomTariffSerializer,
@@ -8056,7 +8058,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Tariff.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addOrUpdateTariff,
+                          CommonHTTPAPI.addOrUpdateTariff,
                           Tariff.ToJSON(true,
                                         true,
                                         CustomTariffSerializer,
@@ -8106,7 +8108,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Tariff.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addOrUpdateTariff,
+                          CommonHTTPAPI.addOrUpdateTariff,
                           Tariff.ToJSON(true,
                                         true,
                                         CustomTariffSerializer,
@@ -8194,7 +8196,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Tariff.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.updateTariff,
+                          CommonHTTPAPI.updateTariff,
                           Tariff.ToJSON(true,
                                         true,
                                         CustomTariffSerializer,
@@ -8271,7 +8273,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     tariffs.TryUpdate(Tariff.Id, Tariff, patchResult.PatchedData);
 
                     await LogAsset(
-                              CommonBaseAPI.updateTariff,
+                              CommonHTTPAPI.updateTariff,
                               Tariff.ToJSON(true,
                                             true,
                                             CustomTariffSerializer,
@@ -8363,7 +8365,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogAsset(
-                          CommonBaseAPI.removeTariff,
+                          CommonHTTPAPI.removeTariff,
                           new JArray(removedTariffs.Select(removedTariff => removedTariff.ToJSON(true,
                                                                                                  true,
                                                                                                  CustomTariffSerializer,
@@ -8428,7 +8430,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             tariffs.Clear();
 
             await LogAsset(
-                      CommonBaseAPI.removeAllTariffs,
+                      CommonHTTPAPI.removeAllTariffs,
                       EventTrackingId,
                       CurrentUserId
                   );
@@ -8568,7 +8570,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             EventTrackingId ??= EventTracking_Id.New;
 
             await LogAssetComment(
-                      $"{CommonBaseAPI.removeAllTariffs}: {CountryCode} {PartyId}",
+                      $"{CommonHTTPAPI.removeAllTariffs}: {CountryCode} {PartyId}",
                       EventTrackingId,
                       CurrentUserId
                   );
@@ -8749,7 +8751,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Token.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addTokenStatus,
+                          CommonHTTPAPI.addTokenStatus,
                           newTokenStatus.ToJSON(CustomTokenStatusSerializer,
                                                 true,
                                                 CustomTokenSerializer,
@@ -8809,7 +8811,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Token.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addTokenStatus,
+                          CommonHTTPAPI.addTokenStatus,
                           newTokenStatus.ToJSON(CustomTokenStatusSerializer,
                                                 true,
                                                 CustomTokenSerializer,
@@ -8879,7 +8881,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Token.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addOrUpdateTokenStatus,
+                          CommonHTTPAPI.addOrUpdateTokenStatus,
                           updatedTokenStatus.ToJSON(CustomTokenStatusSerializer,
                                                     true,
                                                     CustomTokenSerializer,
@@ -8925,7 +8927,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Token.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addOrUpdateTokenStatus,
+                          CommonHTTPAPI.addOrUpdateTokenStatus,
                           newTokenStatus.ToJSON(CustomTokenStatusSerializer,
                                                 true,
                                                 CustomTokenSerializer,
@@ -9012,7 +9014,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Token.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.updateTokenStatus,
+                          CommonHTTPAPI.updateTokenStatus,
                           updatedTokenStatus.ToJSON(CustomTokenStatusSerializer,
                                                     true,
                                                     CustomTokenSerializer,
@@ -9085,7 +9087,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     tokenStatus[Token.Id] = patchedTokenStatus;
 
                     await LogAsset(
-                              CommonBaseAPI.updateTokenStatus,
+                              CommonHTTPAPI.updateTokenStatus,
                               patchedTokenStatus.ToJSON(CustomTokenStatusSerializer,
                                                         true,
                                                         CustomTokenSerializer,
@@ -9220,7 +9222,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogAsset(
-                          CommonBaseAPI.removeToken,
+                          CommonHTTPAPI.removeToken,
                           existingTokenStatus.Token.ToJSON(true,
                                                            CustomTokenSerializer),
                           EventTrackingId,
@@ -9276,7 +9278,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             tokenStatus.Clear();
 
             await LogAsset(
-                      CommonBaseAPI.removeAllTokenStatus,
+                      CommonHTTPAPI.removeAllTokenStatus,
                       EventTrackingId,
                       CurrentUserId
                   );
@@ -9479,7 +9481,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Session.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addSession,
+                          CommonHTTPAPI.addSession,
                           Session.ToJSON(true,
                                          true,
                                          null,
@@ -9553,7 +9555,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Session.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addSessionIfNotExists,
+                          CommonHTTPAPI.addSessionIfNotExists,
                           Session.ToJSON(true,
                                          true,
                                          null,
@@ -9637,7 +9639,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Session.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addOrUpdateSession,
+                          CommonHTTPAPI.addOrUpdateSession,
                           Session.ToJSON(true,
                                          true,
                                          null,
@@ -9698,7 +9700,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Session.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addOrUpdateSession,
+                          CommonHTTPAPI.addOrUpdateSession,
                           Session.ToJSON(true,
                                          true,
                                          null,
@@ -9797,7 +9799,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Session.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.updateSession,
+                          CommonHTTPAPI.updateSession,
                           Session.ToJSON(true,
                                          true,
                                          null,
@@ -9885,7 +9887,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     chargingSessions[Session.Id] = patchResult.PatchedData;
 
                     await LogAsset(
-                              CommonBaseAPI.updateSession,
+                              CommonHTTPAPI.updateSession,
                               Session.ToJSON(true,
                                              true,
                                              null,
@@ -10028,7 +10030,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogAsset(
-                          CommonBaseAPI.removeTariff,
+                          CommonHTTPAPI.removeTariff,
                           session.ToJSON(true,
                                          true,
                                          null,
@@ -10104,7 +10106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             chargingSessions.Clear();
 
             await LogAsset(
-                      CommonBaseAPI.removeAllSessions,
+                      CommonHTTPAPI.removeAllSessions,
                       EventTrackingId,
                       CurrentUserId
                   );
@@ -10307,7 +10309,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 CDR.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addChargeDetailRecord,
+                          CommonHTTPAPI.addChargeDetailRecord,
                           CDR.ToJSON(true,
                                      true,
                                      true,
@@ -10389,7 +10391,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 CDR.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addChargeDetailRecord,
+                          CommonHTTPAPI.addChargeDetailRecord,
                           CDR.ToJSON(true,
                                      true,
                                      true,
@@ -10481,7 +10483,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 CDR.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.addOrUpdateChargeDetailRecord,
+                          CommonHTTPAPI.addOrUpdateChargeDetailRecord,
                           CDR.ToJSON(true,
                                      true,
                                      true,
@@ -10624,7 +10626,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 CDR.CommonAPI = this;
 
                 await LogAsset(
-                          CommonBaseAPI.updateChargeDetailRecord,
+                          CommonHTTPAPI.updateChargeDetailRecord,
                           CDR.ToJSON(true,
                                      true,
                                      true,
@@ -10721,7 +10723,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     chargeDetailRecords[CDR.Id] = patchResult.PatchedData;
 
                     await LogAsset(
-                              CommonBaseAPI.updateChargeDetailRecord,
+                              CommonHTTPAPI.updateChargeDetailRecord,
                               CDR.ToJSON(true,
                                          true,
                                          true,
@@ -10881,7 +10883,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 await LogAsset(
-                          CommonBaseAPI.removeChargeDetailRecord,
+                          CommonHTTPAPI.removeChargeDetailRecord,
                           cdr.ToJSON(true,
                                      true,
                                      true,
@@ -10965,7 +10967,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             chargeDetailRecords.Clear();
 
             await LogAsset(
-                      CommonBaseAPI.removeAllChargeDetailRecords,
+                      CommonHTTPAPI.removeAllChargeDetailRecords,
                       EventTrackingId,
                       CurrentUserId
                   );

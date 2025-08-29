@@ -17,19 +17,19 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.Mail;
-using org.GraphDefined.Vanaheimr.Hermod.SMTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPI;
+using cloud.charging.open.protocols.OCPI.WebAPI;
 using cloud.charging.open.protocols.OCPIv2_3_0.HTTP;
-using System;
-using org.GraphDefined.Vanaheimr.Hermod.Logging;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
@@ -54,21 +54,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
         /// <param name="RemotePartyId">The parsed unique remote party identification.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when remote party identification was found; false else.</returns>
-        public static Boolean ParseRemotePartyId(this HTTPRequest           HTTPRequest,
-                                                 OCPIWebAPI                 OCPIWebAPI,
-                                                 out RemoteParty_Id?        RemotePartyId,
-                                                 out HTTPResponse.Builder?  HTTPResponse)
+        public static Boolean ParseRemotePartyId(this HTTPRequest                                HTTPRequest,
+                                                 OCPIWebAPI                                      OCPIWebAPI,
+                                                 [NotNullWhen(true)]  out RemoteParty_Id?        RemotePartyId,
+                                                 [NotNullWhen(false)] out HTTPResponse.Builder?  HTTPResponse)
         {
-
-            #region Initial checks
-
-            if (HTTPRequest is null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-            if (OCPIWebAPI  is null)
-                throw new ArgumentNullException(nameof(OCPIWebAPI),   "The given OCPI WebAPI must not be null!");
-
-            #endregion
 
             RemotePartyId  = null;
             HTTPResponse   = null;
@@ -78,7 +68,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = OCPIWebAPI.HTTPBaseAPI.HTTPServer.HTTPServerName,
+                    Server          = OCPIWebAPI.HTTPServerName,
                     Date            = Timestamp.Now,
                     Connection      = ConnectionType.Close
                 };
@@ -94,7 +84,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = OCPIWebAPI.HTTPBaseAPI.HTTPServer.HTTPServerName,
+                    Server          = OCPIWebAPI.HTTPServerName,
                     Date            = Timestamp.Now,
                     ContentType     = HTTPContentType.Application.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid remote party identification!"" }".ToUTF8Bytes(),
@@ -124,22 +114,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
         /// <param name="RemoteParty">The resolved remote party.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when remote party identification was found; false else.</returns>
-        public static Boolean ParseRemoteParty(this HTTPRequest           HTTPRequest,
-                                               OCPIWebAPI                 OCPIWebAPI,
-                                               out RemoteParty_Id?        RemotePartyId,
-                                               out RemoteParty?           RemoteParty,
-                                               out HTTPResponse.Builder?  HTTPResponse)
+        public static Boolean ParseRemoteParty(this HTTPRequest                                HTTPRequest,
+                                               OCPIWebAPI                                      OCPIWebAPI,
+                                               [NotNullWhen(true)]  out RemoteParty_Id?        RemotePartyId,
+                                               [NotNullWhen(true)]  out RemoteParty?           RemoteParty,
+                                               [NotNullWhen(false)] out HTTPResponse.Builder?  HTTPResponse)
         {
-
-            #region Initial checks
-
-            if (HTTPRequest is null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-            if (OCPIWebAPI  is null)
-                throw new ArgumentNullException(nameof(OCPIWebAPI),   "The given OCPI WebAPI must not be null!");
-
-            #endregion
 
             RemotePartyId  = null;
             RemoteParty    = null;
@@ -149,7 +129,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = OCPIWebAPI.HTTPBaseAPI.HTTPServer.HTTPServerName,
+                    Server          = OCPIWebAPI.HTTPServerName,
                     Date            = Timestamp.Now,
                     Connection      = ConnectionType.Close
                 };
@@ -164,7 +144,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = OCPIWebAPI.HTTPBaseAPI.HTTPServer.HTTPServerName,
+                    Server          = OCPIWebAPI.HTTPServerName,
                     Date            = Timestamp.Now,
                     ContentType     = HTTPContentType.Application.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid remote party identification!"" }".ToUTF8Bytes(),
@@ -179,7 +159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
-                    Server          = OCPIWebAPI.HTTPBaseAPI.HTTPServer.HTTPServerName,
+                    Server          = OCPIWebAPI.HTTPServerName,
                     Date            = Timestamp.Now,
                     ContentType     = HTTPContentType.Application.JSON_UTF8,
                     Content         = @"{ ""description"": ""Unknown remote party identification!"" }".ToUTF8Bytes(),
@@ -202,8 +182,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
     /// <summary>
     /// A HTTP API providing advanced OCPI data structures.
     /// </summary>
-    public class OCPIWebAPI : AHTTPAPIXExtension<OCPI.WebAPI.OCPIWebAPI>,
-                              IHTTPAPIXExtension<OCPI.WebAPI.OCPIWebAPI>
+    public class OCPIWebAPI : AHTTPAPIXExtension<CommonAPI>
+                              //AHTTPAPIXExtension<OCPI.WebAPI.CommonWebAPI>,
+                              //IHTTPAPIXExtension<OCPI.WebAPI.CommonWebAPI>
     {
 
         #region Data
@@ -277,6 +258,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 
         #region Properties
 
+        public CommonWebAPI             CommonWebAPI    { get; }
+
+        public CommonAPI                CommonAPI
+            => HTTPBaseAPI;
+
         /// <summary>
         /// The HTTP URI prefix.
         /// </summary>
@@ -305,9 +291,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
         /// Send debug information via HTTP Server Sent Events.
         /// </summary>
      //   public HTTPEventSource<JObject>                     DebugLog                { get; }
-
-
-        public CommonAPI                                    CommonAPI               { get; }
 
 
         public CPOAPI?                                      CPOAPI                  { get; set; }
@@ -386,7 +369,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
         /// 
         /// <param name="HTTPRealm">The HTTP realm, if HTTP Basic Authentication is used.</param>
         /// <param name="HTTPLogins">An enumeration of logins for an optional HTTP Basic Authentication.</param>
-        public OCPIWebAPI(OCPI.WebAPI.OCPIWebAPI   BaseWebAPI,
+        public OCPIWebAPI(CommonWebAPI             CommonWebAPI,
                           CommonAPI                CommonAPI,
 
                           //HTTPPath?                HTTPBaseAPI.OverlayURLPathPrefix      = null,
@@ -398,31 +381,45 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
                           //HTTPPath?                URLPathPrefix         = null,
                           String?                  HTMLTemplate          = null,
 
-                          String?                  HTTPServerName        = DefaultHTTPServerName,
-                          String?                  HTTPServiceName       = DefaultHTTPServiceName,
-                          String?                  APIVersionHash        = null,
-                          JObject?                 APIVersionHashes      = null,
+                          String?                  HTTPServerName         = DefaultHTTPServerName,
+                          String?                  HTTPServiceName        = DefaultHTTPServiceName,
+                          String?                  APIVersionHash         = null,
+                          JObject?                 APIVersionHashes       = null,
 
-                          Boolean?                 DisableLogging        = false,
-                          String?                  LoggingPath           = null,
-                          String?                  LogfileName           = null,
-                          LogfileCreatorDelegate?  LogfileCreator        = null
+                          Boolean?                 IsDevelopment          = false,
+                          IEnumerable<String>?     DevelopmentServers     = null,
+                          Boolean?                 DisableNotifications   = false,
+                          Boolean?                 DisableLogging         = false,
+                          String?                  LoggingPath            = null,
+                          String?                  LogfileName            = null,
+                          LogfileCreatorDelegate?  LogfileCreator         = null)
 
-                          //TimeSpan?                                   RequestTimeout            = null
-                         )
+            //: base(BaseWebAPI,
+            //       HTTPServerName  ?? DefaultHTTPServerName,
+            //       HTTPServiceName ?? DefaultHTTPServiceName,
+            //       APIVersionHash,
+            //       APIVersionHashes,
 
-            : base(BaseWebAPI,
+            //       //null, //URLPathPrefix
+            //       //BasePath,
+            //       //HTMLTemplate,
+
+            //       BaseWebAPI.IsDevelopment,
+            //       BaseWebAPI.DevelopmentServers,
+            //       DisableLogging,
+            //       LoggingPath,
+            //       LogfileName,
+            //       LogfileCreator)
+
+            : base(CommonAPI,
+
                    HTTPServerName  ?? DefaultHTTPServerName,
                    HTTPServiceName ?? DefaultHTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,
 
-                   //null, //URLPathPrefix
-                   //BasePath,
-                   //HTMLTemplate,
-
-                   BaseWebAPI.IsDevelopment,
-                   BaseWebAPI.DevelopmentServers,
+                   IsDevelopment,
+                   DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
                    LogfileName,
@@ -430,7 +427,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 
         {
 
-            this.CommonAPI             = CommonAPI;
+            this.CommonWebAPI          = CommonWebAPI;
 
             this.APIURLPathPrefix      = APIURLPathPrefix;
             this.VersionPath           = VersionPath ?? Version.String[..4];
@@ -567,13 +564,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
             #endregion
 
 
-            if (HTTPBaseAPI.OverlayURLPathPrefix.HasValue)
+            if (CommonWebAPI.OverlayURLPathPrefix.HasValue)
             {
 
                 // Export static files js/css/...
                 HTTPBaseAPI.MapResourceAssemblyFolder(
                     HTTPHostname.Any,
-                    HTTPBaseAPI.OverlayURLPathPrefix.Value + VersionPath + "webapi",
+                    CommonWebAPI.OverlayURLPathPrefix.Value + VersionPath + "webapi",
                     HTTPRoot,
                     DefaultFilename: "index.html"
                 );
@@ -583,7 +580,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 
                 HTTPBaseAPI.AddHandler(
                     HTTPMethod.GET,
-                    HTTPBaseAPI.OverlayURLPathPrefix.Value + $"versions/{Version.Id}",
+                    CommonWebAPI.OverlayURLPathPrefix.Value + $"versions/{Version.Id}",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request =>
 
@@ -614,7 +611,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
                 // ~/cpo/locations
                 HTTPBaseAPI.AddHandler(
                     HTTPMethod.GET,
-                    HTTPBaseAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/locations",
+                    CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/locations",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request => {
 
@@ -668,7 +665,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
                 // ~/cpo/locationStatistics
                 HTTPBaseAPI.AddHandler(
                     HTTPMethod.GET,
-                    HTTPBaseAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/locationStatistics",
+                    CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/locationStatistics",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request => {
 
@@ -696,7 +693,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 
                 HTTPBaseAPI.AddHandler(
                     HTTPMethod.GET,
-                    HTTPBaseAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/sessions",
+                    CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/sessions",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request => {
 
@@ -751,7 +748,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 
                 HTTPBaseAPI.AddHandler(
                     HTTPMethod.GET,
-                    HTTPBaseAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/tariffs",
+                    CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/tariffs",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request => {
 
@@ -806,7 +803,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 
                 HTTPBaseAPI.AddHandler(
                     HTTPMethod.GET,
-                    HTTPBaseAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/cdrs",
+                    CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/cdrs",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request => {
 
@@ -861,7 +858,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 
                 HTTPBaseAPI.AddHandler(
                     HTTPMethod.GET,
-                    HTTPBaseAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/commands",
+                    CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/commands",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request =>
 
@@ -890,7 +887,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 
                 HTTPBaseAPI.AddHandler(
                     HTTPMethod.GET,
-                    HTTPBaseAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/tokens",
+                    CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/tokens",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request => {
 
@@ -987,7 +984,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
             // ---------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:3001/remoteParties
             // ---------------------------------------------------------------------------
-            //if (HTTPBaseAPI.OverlayURLPathPrefix.HasValue)
+            //if (CommonWebAPI.OverlayURLPathPrefix.HasValue)
                 HTTPBaseAPI.AddHandler(
                                          HTTPMethod.GET,
                                          APIURLPathPrefix + "remoteParties",
@@ -1071,10 +1068,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
             // ---------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:3001/remoteParties
             // ---------------------------------------------------------------------------
-            if (HTTPBaseAPI.OverlayURLPathPrefix.HasValue)
+            if (CommonWebAPI.OverlayURLPathPrefix.HasValue)
                 HTTPBaseAPI.AddHandler(
                     HTTPMethod.GET,
-                    HTTPBaseAPI.OverlayURLPathPrefix.Value + "remoteParties",
+                    CommonWebAPI.OverlayURLPathPrefix.Value + "remoteParties",
                     HTTPContentType.Text.HTML_UTF8,
                     HTTPDelegate: request => {
 
@@ -1239,10 +1236,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
             // --------------------------------------------------------------------------------
             // curl -v -H "Accept: text/html" http://127.0.0.1:3001/remoteXXXParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------
-            if (HTTPBaseAPI.OverlayURLPathPrefix.HasValue)
+            if (CommonWebAPI.OverlayURLPathPrefix.HasValue)
                 HTTPBaseAPI.AddHandler(
                                              HTTPMethod.GET,
-                                             HTTPBaseAPI.OverlayURLPathPrefix.Value + "remoteXXXParties/{remotePartyId}",
+                                             CommonWebAPI.OverlayURLPathPrefix.Value + "remoteXXXParties/{remotePartyId}",
                                              HTTPContentType.Text.HTML_UTF8,
                                              HTTPDelegate: Request => {
 

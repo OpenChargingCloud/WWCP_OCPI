@@ -193,7 +193,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
-            var ocpiBaseAPI = new CommonBaseAPI(
+            var ocpiBaseAPI = new CommonHTTPAPI(
 
                                   OurBaseURL:                URL.Parse("http://127.0.0.1:3201/ocpi"),
                                   OurVersionsURL:            URL.Parse("http://127.0.0.1:3201/ocpi/versions"),

@@ -136,7 +136,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             Assert.That(httpServer,  Is.Not.Null);
 
-            var ocpiBaseAPI  = new CommonBaseAPI(
+            var ocpiBaseAPI  = new CommonHTTPAPI(
 
                                    OurBaseURL:                URL.Parse("http://127.0.0.1:3473/ocpi/v2.1"),
                                    OurVersionsURL:            URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/versions"),

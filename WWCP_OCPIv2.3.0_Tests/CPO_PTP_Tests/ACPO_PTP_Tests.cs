@@ -41,12 +41,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
         #region Data
 
         protected  HTTPTestServerX?  cpoHTTPServer;
-        protected  CommonBaseAPI?    cpoBaseAPI;
+        protected  CommonHTTPAPI?    cpoBaseAPI;
         protected  CommonAPI?        cpoCommonAPI;
         protected  CPOAPI?           cpoAPI;
 
         protected  HTTPTestServerX?  ptpHTTPServer;
-        protected  CommonBaseAPI?    ptpBaseAPI;
+        protected  CommonHTTPAPI?    ptpBaseAPI;
         protected  CommonAPI?        ptpCommonAPI;
         protected  PTPAPI?           ptpAPI;
 
@@ -76,7 +76,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
             Assert.That(cpoHTTPServer,  Is.Not.Null);
 
-            cpoBaseAPI           = new CommonBaseAPI(
+            cpoBaseAPI           = new CommonHTTPAPI(
 
                                        OurBaseURL:                URL.Parse($"http://localhost:{cpoHTTPServer.TCPPort}/ocpi"),
                                        OurVersionsURL:            URL.Parse($"http://localhost:{cpoHTTPServer.TCPPort}/ocpi/versions"),
@@ -207,7 +207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
             Assert.That(ptpHTTPServer,  Is.Not.Null);
 
-            ptpBaseAPI           = new CommonBaseAPI(
+            ptpBaseAPI           = new CommonHTTPAPI(
 
                                        OurBaseURL:                URL.Parse($"http://localhost:{ptpHTTPServer.TCPPort}/ocpi"),
                                        OurVersionsURL:            URL.Parse($"http://localhost:{ptpHTTPServer.TCPPort}/ocpi/versions"),

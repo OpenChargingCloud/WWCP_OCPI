@@ -105,10 +105,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
         public     URL?             emsp1VersionsAPIURL;
         public     URL?             emsp2VersionsAPIURL;
 
-        protected  CommonBaseAPI?   cpo1BaseAPI;
-        protected  CommonBaseAPI?   cpo2BaseAPI;
-        protected  CommonBaseAPI?   emsp1BaseAPI;
-        protected  CommonBaseAPI?   emsp2BaseAPI;
+        protected  CommonHTTPAPI?   cpo1BaseAPI;
+        protected  CommonHTTPAPI?   cpo2BaseAPI;
+        protected  CommonHTTPAPI?   emsp1BaseAPI;
+        protected  CommonHTTPAPI?   emsp2BaseAPI;
 
         protected  HTTPTestServerX? cpo1HTTPServer;
         protected  CommonAPI?       cpo1CommonAPI;
@@ -178,7 +178,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
             #region CPO #1
 
-            cpo1BaseAPI = new CommonBaseAPI(
+            cpo1BaseAPI = new CommonHTTPAPI(
 
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3201/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3201/ocpi/versions"),
@@ -221,7 +221,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
             #region CPO #2
 
-            cpo2BaseAPI  = new CommonBaseAPI(
+            cpo2BaseAPI  = new CommonHTTPAPI(
 
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3202/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3202/ocpi/versions"),
@@ -264,7 +264,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
             #region EMSP #1
 
-            emsp1BaseAPI = new CommonBaseAPI(
+            emsp1BaseAPI = new CommonHTTPAPI(
 
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3401/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3401/ocpi/versions"),
@@ -307,7 +307,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
             #region EMSP #2
 
-            emsp2BaseAPI = new CommonBaseAPI(
+            emsp2BaseAPI = new CommonHTTPAPI(
 
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3402/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3402/ocpi/versions"),
