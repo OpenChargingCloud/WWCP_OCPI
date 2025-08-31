@@ -294,6 +294,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #region CPO #1
 
         protected       HTTPTestServerX?                                              cpo1HTTPServer;
+        protected       HTTPExtAPIX?                                                  cpo1HTTPAPI;
         public          URL?                                                          cpo1VersionsAPIURL;
         protected       CommonHTTPAPI?                                                cpo1BaseAPI;
 
@@ -333,6 +334,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #region CPO #2
 
         protected       HTTPTestServerX?                                              cpo2HTTPServer;
+        protected       HTTPExtAPIX?                                                  cpo2HTTPAPI;
         public          URL?                                                          cpo2VersionsAPIURL;
         protected       CommonHTTPAPI?                                                cpo2BaseAPI;
 
@@ -372,6 +374,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #region EMSP #1
 
         protected       HTTPTestServerX?                                              emsp1HTTPServer;
+        protected       HTTPExtAPIX?                                                  emsp1HTTPAPI;
         public          URL?                                                          emsp1VersionsAPIURL;
         protected       CommonHTTPAPI?                                                emsp1BaseAPI;
 
@@ -411,6 +414,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #region EMSP #2
 
         protected       HTTPTestServerX?                                              emsp2HTTPServer;
+        protected       HTTPExtAPIX?                                                  emsp2HTTPAPI;
         public          URL?                                                          emsp2VersionsAPIURL;
         protected       CommonHTTPAPI?                                                emsp2BaseAPI;
 
@@ -497,15 +501,40 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #endregion
 
+            #region Create cpo1/cpo2/emsp1/emsp2 HTTP APIs
+
+            cpo1HTTPAPI          = new HTTPExtAPIX(
+                                       HTTPServer:  cpo1HTTPServer
+                                   );
+
+            cpo2HTTPAPI          = new HTTPExtAPIX(
+                                       HTTPServer:  cpo2HTTPServer
+                                   );
+
+            emsp1HTTPAPI         = new HTTPExtAPIX(
+                                       HTTPServer:  emsp1HTTPServer
+                                   );
+
+            emsp2HTTPAPI         = new HTTPExtAPIX(
+                                       HTTPServer:  emsp2HTTPServer
+                                   );
+
+            Assert.That(cpo1HTTPAPI,   Is.Not.Null);
+            Assert.That(cpo2HTTPAPI,   Is.Not.Null);
+            Assert.That(emsp1HTTPAPI,  Is.Not.Null);
+            Assert.That(emsp2HTTPAPI,  Is.Not.Null);
+
+            #endregion
+
             #region Create cpo1/cpo2/emsp1/emsp2 OCPI Base APIs
 
             #region CPO #1
 
             cpo1BaseAPI  = new CommonHTTPAPI(
 
+                               HTTPAPI:                     cpo1HTTPAPI,
                                OurBaseURL:                  URL.Parse($"http://127.0.0.1:{cpo1HTTPServer.TCPPort}/ocpi"),
                                OurVersionsURL:              URL.Parse($"http://127.0.0.1:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
-                               HTTPServer:                  cpo1HTTPServer,
 
                                AdditionalURLPathPrefix:     null,
                                LocationsAsOpenData:         true,
@@ -544,10 +573,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             cpo2BaseAPI  = new CommonHTTPAPI(
 
+                               HTTPAPI:                   cpo2HTTPAPI,
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3202/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3202/ocpi/versions"),
 
-                               HTTPServer:                cpo2HTTPServer,
                                AdditionalURLPathPrefix:   null,
                                //KeepRemovedEVSEs:          null,
                                LocationsAsOpenData:       true,
@@ -586,10 +615,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             emsp1BaseAPI = new CommonHTTPAPI(
 
+                               HTTPAPI:                   emsp1HTTPAPI,
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3401/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3401/ocpi/versions"),
 
-                               HTTPServer:                emsp1HTTPServer,
                                AdditionalURLPathPrefix:   null,
                                //KeepRemovedEVSEs:          null,
                                LocationsAsOpenData:       true,
@@ -628,10 +657,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             emsp2BaseAPI = new CommonHTTPAPI(
 
+                               HTTPAPI:                   emsp2HTTPAPI,
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3402/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3402/ocpi/versions"),
 
-                               HTTPServer:                emsp2HTTPServer,
                                AdditionalURLPathPrefix:   null,
                                //KeepRemovedEVSEs:          null,
                                LocationsAsOpenData:       true,

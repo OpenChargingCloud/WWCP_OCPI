@@ -597,7 +597,7 @@ namespace cloud.charging.open.protocols.OCPI
     /// <summary>
     /// The CommonAPI Base.
     /// </summary>
-    public class CommonHTTPAPI : HTTPExtAPIX
+    public class CommonHTTPAPI : AHTTPExtAPIXExtension<HTTPExtAPIX>
     {
 
         #region Data
@@ -865,7 +865,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="LoggingPath">The path for all logfiles.</param>
         /// <param name="LogfileName">The name of the logfile.</param>
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
-        public CommonHTTPAPI(HTTPTestServerX                                            HTTPServer,
+        public CommonHTTPAPI(//HTTPTestServerX                                            HTTPServer,
+                             HTTPExtAPIX                                                HTTPAPI,
                              URL                                                        OurBaseURL,
                              URL                                                        OurVersionsURL,
 
@@ -875,7 +876,7 @@ namespace cloud.charging.open.protocols.OCPI
                              I18NString?                                                Description                   = null,
 
                              String?                                                    ExternalDNSName               = null,
-                             HTTPPath?                                                  BasePath                      = null,
+                             HTTPPath?                                                  BasePath                      = null,  // For URL prefixes in HTML!
 
                              String?                                                    HTTPServerName                = DefaultHTTPServerName,
                              String?                                                    HTTPServiceName               = DefaultHTTPServiceName,
@@ -918,74 +919,93 @@ namespace cloud.charging.open.protocols.OCPI
                              //DNSClient?                                                 DNSClient                     = null,
                              //Boolean                                                    AutoStart                     = false
 
-            : base(HTTPServer,
-                   Hostnames,
+            : base(HTTPAPI,
                    RootPath,
-                   HTTPContentTypes,
-                   Description,
-
-                   ExternalDNSName,
                    BasePath,
+                   //HTMLTemplate      
 
                    HTTPServerName,
                    HTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,
 
-                   null,
-
-                   null,
-                   APIRobotEMailAddress  ?? new EMailAddress(
-                                                "OCPI Common HTTP API",
-                                                SimpleEMailAddress.Parse("robot@example.org")
-                                                //OpenPGP.ReadSecretKeyRing(File.OpenRead(Path.Combine(AppContext.BaseDirectory, "robot@example.org_secring.gpg"))),
-                                                //OpenPGP.ReadPublicKeyRing(File.OpenRead(Path.Combine(AppContext.BaseDirectory, "robot@example.org_pubring.gpg")))
-                                            ),
-                   APIRobotGPGPassphrase ?? "ipco",
-                   SMTPClient            ?? new NullMailer(),
-
-                   null,
-                   null,
-                   true,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-                   null,
-
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
-
-                   null,
-                   null,
-
                    IsDevelopment,
                    DevelopmentServers,
-                   SkipURLTemplates,
-                   DatabaseFileName ?? DefaultAssetsDBFileName,
-                   DisableNotifications,
-
-                   DisableLogging ?? false,
+                   DisableLogging,
                    LoggingPath,
-                   LoggingContext,
                    LogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
                        : null)
+
+            //: base(HTTPServer,
+            //       Hostnames,
+            //       RootPath,
+            //       HTTPContentTypes,
+            //       Description,
+
+            //       ExternalDNSName,
+            //       BasePath,
+
+            //       HTTPServerName,
+            //       HTTPServiceName,
+            //       APIVersionHash,
+            //       APIVersionHashes,
+
+            //       null,
+
+            //       null,
+            //       APIRobotEMailAddress  ?? new EMailAddress(
+            //                                    "OCPI Common HTTP API",
+            //                                    SimpleEMailAddress.Parse("robot@example.org")
+            //                                    //OpenPGP.ReadSecretKeyRing(File.OpenRead(Path.Combine(AppContext.BaseDirectory, "robot@example.org_secring.gpg"))),
+            //                                    //OpenPGP.ReadPublicKeyRing(File.OpenRead(Path.Combine(AppContext.BaseDirectory, "robot@example.org_pubring.gpg")))
+            //                                ),
+            //       APIRobotGPGPassphrase ?? "ipco",
+            //       SMTPClient            ?? new NullMailer(),
+
+            //       null,
+            //       null,
+            //       true,
+            //       null,
+            //       null,
+            //       null,
+            //       null,
+            //       null,
+            //       null,
+            //       null,
+            //       null,
+            //       null,
+            //       null,
+            //       null,
+            //       null,
+            //       null,
+            //       null,
+
+            //       DisableMaintenanceTasks,
+            //       MaintenanceInitialDelay,
+            //       MaintenanceEvery,
+
+            //       DisableWardenTasks,
+            //       WardenInitialDelay,
+            //       WardenCheckEvery,
+
+            //       null,
+            //       null,
+
+            //       IsDevelopment,
+            //       DevelopmentServers,
+            //       SkipURLTemplates,
+            //       DatabaseFileName ?? DefaultAssetsDBFileName,
+            //       DisableNotifications,
+
+            //       DisableLogging ?? false,
+            //       LoggingPath,
+            //       LoggingContext,
+            //       LogfileName,
+            //       LogfileCreator is not null
+            //           ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
+            //           : null)
 
         {
 
@@ -1095,11 +1115,9 @@ namespace cloud.charging.open.protocols.OCPI
         private void RegisterURLTemplates()
         {
 
-            var URLPathPrefix = HTTPPath.Root;
-
             #region OPTIONS     ~/
 
-            AddHandler(
+            HTTPBaseAPI.AddHandler(
                 HTTPMethod.OPTIONS,
                 URLPathPrefix,
                 HTTPDelegate: request =>
@@ -1113,7 +1131,7 @@ namespace cloud.charging.open.protocols.OCPI
                             AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                             Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                             AccessControlAllowHeaders  = [ "Authorization" ],
-                            Connection                 = ConnectionType.Close
+                            Connection                 = ConnectionType.KeepAlive
                         }.AsImmutable)
 
             );
@@ -1122,7 +1140,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             #region GET         ~/
 
-            AddHandler(
+            HTTPBaseAPI.AddHandler(
                 HTTPMethod.GET,
                 URLPathPrefix,
                 HTTPContentType.Text.PLAIN,
@@ -1138,8 +1156,38 @@ namespace cloud.charging.open.protocols.OCPI
                             AccessControlAllowHeaders  = [ "Authorization" ],
                             ContentType                = HTTPContentType.Text.PLAIN,
                             Content                    = "This is an Open Charge Point Interface v2.x HTTP service!\r\nPlease check ~/versions!".ToUTF8Bytes(),
-                            Connection                 = ConnectionType.Close
+                            Connection                 = ConnectionType.KeepAlive,
+                            Vary                       = "Accept"
                         }.AsImmutable)
+
+            );
+
+            HTTPBaseAPI.AddHandler(
+                HTTPMethod.GET,
+                URLPathPrefix,
+                HTTPContentType.Application.JSON_UTF8,
+                HTTPDelegate: request =>
+
+                    Task.FromResult(
+                        new HTTPResponse.Builder(request) {
+                            HTTPStatusCode             = HTTPStatusCode.OK,
+                            Server                     = HTTPServiceName,
+                            Date                       = Timestamp.Now,
+                            AccessControlAllowOrigin   = "*",
+                            AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                            AccessControlAllowHeaders  = [ "Authorization" ],
+                            ContentType                = HTTPContentType.Application.JSON_UTF8,
+                            Content                    = JSONObject.Create(
+                                                             new JProperty(
+                                                                 "message",
+                                                                 "This is an Open Charge Point Interface v2.x HTTP service! Please check ~/ versions!"
+                                                             )
+                                                         ).ToUTF8Bytes(),
+                            Connection                 = ConnectionType.KeepAlive,
+                            Vary                       = "Accept"
+                        }.AsImmutable),
+
+                AllowReplacement: URLReplacement.Allow
 
             );
 
@@ -1151,7 +1199,7 @@ namespace cloud.charging.open.protocols.OCPI
             // ----------------------------------------------------
             // curl -v -X OPTIONS http://127.0.0.1:2502/versions
             // ----------------------------------------------------
-            AddHandler(
+            HTTPBaseAPI.AddHandler(
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "versions",
                 HTTPDelegate: request =>
@@ -1176,7 +1224,7 @@ namespace cloud.charging.open.protocols.OCPI
             // ----------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions
             // ----------------------------------------------------------------------
-            AddHandler(
+            HTTPBaseAPI.AddHandler(
                 HTTPMethod.GET,
                 URLPathPrefix + "versions",
                 HTTPContentType.Application.JSON_UTF8,
@@ -1229,7 +1277,7 @@ namespace cloud.charging.open.protocols.OCPI
                                                                      new JProperty("status_code",     2000),
                                                                      new JProperty("status_message", "Invalid or blocked access token!")
                                                                  ).ToUTF8Bytes(),
-                                    Connection                 = ConnectionType.Close,
+                                    Connection                 = ConnectionType.KeepAlive,
                                     Vary                       = "Accept"
                                 };
 
@@ -1264,7 +1312,7 @@ namespace cloud.charging.open.protocols.OCPI
                                                                                                        Select (versionInformation => versionInformation.ToJSON(CustomVersionInformationSerializer))
                                                                                                ))
                                                          ).ToUTF8Bytes(),
-                            Connection                 = ConnectionType.Close,
+                            Connection                 = ConnectionType.KeepAlive,
                             Vary                       = "Accept"
                         };
 
@@ -1274,6 +1322,34 @@ namespace cloud.charging.open.protocols.OCPI
                     return Task.FromResult(httpResponseBuilder.AsImmutable);
 
                 }
+
+            );
+
+            #endregion
+
+
+            #region GET ~/support
+
+            HTTPBaseAPI.AddHandler(
+                HTTPMethod.GET,
+                URLPathPrefix + "/support",
+                HTTPContentType.Text.PLAIN,
+                HTTPDelegate: request =>
+
+                    Task.FromResult(
+                        new HTTPResponse.Builder(request) {
+                            HTTPStatusCode             = HTTPStatusCode.OK,
+                            Server                     = HTTPServerName,
+                            Date                       = Timestamp.Now,
+                            AccessControlAllowOrigin   = "*",
+                            AccessControlAllowMethods  = [ "GET" ],
+                            AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
+                            ContentType                = HTTPContentType.Text.PLAIN,
+                            Content                    = "https://github.com/OpenChargingCloud/WWCP_OCPI".ToUTF8Bytes(),
+                            Connection                 = ConnectionType.KeepAlive,
+                            Vary                       = "Accept"
+                        }.AsImmutable
+                    )
 
             );
 

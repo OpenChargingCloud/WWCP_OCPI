@@ -40,6 +40,7 @@
     <EmbeddedResource Include="HTTPRoot\defaults\defaults.ts" />
     <EmbeddedResource Include="HTTPRoot\defaults\OCPI.ts" />
     <EmbeddedResource Include="HTTPRoot\defaults\_defaults.scss" />
+    <EmbeddedResource Include="HTTPRoot\favicon.ico" />
     <EmbeddedResource Include="HTTPRoot\favicon.png" />
     <EmbeddedResource Include="HTTPRoot\images\favicon_big.png" />
     <EmbeddedResource Include="HTTPRoot\index.scss" />

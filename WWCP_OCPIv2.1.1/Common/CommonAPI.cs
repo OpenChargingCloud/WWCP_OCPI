@@ -1337,7 +1337,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// The Common API.
     /// </summary>
-    public class CommonAPI : HTTPAPIX
+    public class CommonAPI : AHTTPExtAPIXExtension<HTTPExtAPIX>
     {
 
         #region Data
@@ -1896,7 +1896,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          Role                         OurRole,
 
                          CommonHTTPAPI                BaseAPI,
-                         HTTPTestServerX?             HTTPServer                = null,
+                         //HTTPTestServerX?             HTTPServer                = null,
 
                          HTTPPath?                    AdditionalURLPathPrefix   = null,
                          Func<EVSE, Boolean>?         KeepRemovedEVSEs          = null,
@@ -1933,37 +1933,56 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          String?                      RemotePartyDBFileName     = null,
                          String?                      AssetsDBFileName          = null)
 
-            : base(HTTPServer ?? BaseAPI.HTTPServer,
-                   null, //HTTPHostname,
+            : base(BaseAPI.HTTPBaseAPI,
                    URLPathPrefix,
-                   null,
-                   null,
-
-                   ExternalDNSName,
                    BasePath,
+                   //HTMLTemplate      
 
-                   HTTPServerName  ?? DefaultHTTPServerName,
-                   HTTPServiceName ?? DefaultHTTPServiceName,
+                   HTTPServerName,
+                   HTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,
-
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
 
                    IsDevelopment,
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
-                   "context",
                    LogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
                        : null)
+
+            //: base(BaseAPI.HTTPBaseAPI.HTTPServer,
+            //       null, //HTTPHostname,
+            //       URLPathPrefix,
+            //       null,
+            //       null,
+
+            //       ExternalDNSName,
+            //       BasePath,
+
+            //       HTTPServerName  ?? DefaultHTTPServerName,
+            //       HTTPServiceName ?? DefaultHTTPServiceName,
+            //       APIVersionHash,
+            //       APIVersionHashes,
+
+            //       DisableMaintenanceTasks,
+            //       MaintenanceInitialDelay,
+            //       MaintenanceEvery,
+
+            //       DisableWardenTasks,
+            //       WardenInitialDelay,
+            //       WardenCheckEvery,
+
+            //       IsDevelopment,
+            //       DevelopmentServers,
+            //       DisableLogging,
+            //       LoggingPath,
+            //       "context",
+            //       LogfileName,
+            //       LogfileCreator is not null
+            //           ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
+            //           : null)
 
         {
 
@@ -2010,7 +2029,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     Version.Id,
                     URL.Concat(
                         BaseAPI.OurVersionsURL.Protocol.AsString(),
-                        ExternalDNSName ?? ("localhost:" + base.HTTPServer.TCPPort),
+                        ExternalDNSName ?? ("localhost:" + BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort),
                         URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
                 )
@@ -2979,7 +2998,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         private void RegisterURLTemplates()
         {
 
-            var URLPathPrefix = HTTPPath.Root;
+          //  var URLPathPrefix = HTTPPath.Root;
 
             #region OPTIONS     ~/versions/2.1.1
 
@@ -3687,7 +3706,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                 this,
                                                 receivedCredentials.URL,
                                                 receivedCredentials.Token,  // CREDENTIALS_TOKEN_B
-                                                DNSClient: HTTPServer.DNSClient
+                                                DNSClient: BaseAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                             );
 
             var otherVersions             = await commonClient.GetVersions();

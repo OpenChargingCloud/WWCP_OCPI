@@ -41,11 +41,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
         #region Data
 
         protected  HTTPTestServerX?  cpoHTTPServer;
+        protected  HTTPExtAPIX       cpoHTTPAPI;
         protected  CommonHTTPAPI?    cpoBaseAPI;
         protected  CommonAPI?        cpoCommonAPI;
         protected  CPOAPI?           cpoAPI;
 
         protected  HTTPTestServerX?  ptpHTTPServer;
+        protected  HTTPExtAPIX       ptpHTTPAPI;
         protected  CommonHTTPAPI?    ptpBaseAPI;
         protected  CommonAPI?        ptpCommonAPI;
         protected  PTPAPI?           ptpAPI;
@@ -76,12 +78,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
             Assert.That(cpoHTTPServer,  Is.Not.Null);
 
+
+            cpoHTTPAPI           = new HTTPExtAPIX(
+                                       HTTPServer:                cpoHTTPServer
+                                   );
+
+            Assert.That(cpoHTTPAPI,     Is.Not.Null);
+
+
             cpoBaseAPI           = new CommonHTTPAPI(
 
+                                       HTTPAPI:                   cpoHTTPAPI,
                                        OurBaseURL:                URL.Parse($"http://localhost:{cpoHTTPServer.TCPPort}/ocpi"),
                                        OurVersionsURL:            URL.Parse($"http://localhost:{cpoHTTPServer.TCPPort}/ocpi/versions"),
 
-                                       HTTPServer:                cpoHTTPServer,
                                        AdditionalURLPathPrefix:   null,
                                        LocationsAsOpenData:       true,
                                        AllowDowngrades:           null,
@@ -207,12 +217,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
             Assert.That(ptpHTTPServer,  Is.Not.Null);
 
+
+            ptpHTTPAPI           = new HTTPExtAPIX(
+                                       HTTPServer:                ptpHTTPServer
+                                   );
+
+            Assert.That(ptpHTTPAPI,     Is.Not.Null);
+
+
             ptpBaseAPI           = new CommonHTTPAPI(
 
+                                       HTTPAPI:                   ptpHTTPAPI,
                                        OurBaseURL:                URL.Parse($"http://localhost:{ptpHTTPServer.TCPPort}/ocpi"),
                                        OurVersionsURL:            URL.Parse($"http://localhost:{ptpHTTPServer.TCPPort}/ocpi/versions"),
 
-                                       HTTPServer:                ptpHTTPServer,
                                        AdditionalURLPathPrefix:   null,
                                        LocationsAsOpenData:       true,
                                        AllowDowngrades:           null,

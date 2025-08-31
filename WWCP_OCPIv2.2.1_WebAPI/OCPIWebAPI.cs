@@ -375,7 +375,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                           //HTTPPath?                HTTPBaseAPI.OverlayURLPathPrefix      = null,
                           HTTPPath?                APIURLPathPrefix      = null,
                           HTTPPath?                WebAPIURLPathPrefix   = null,
-                          HTTPPath?                BasePath              = null,
+                          HTTPPath?                BasePath              = null,  // For URL prefixes in HTML!
                           String?                  VersionPath           = null,
 
                           //HTTPPath?                URLPathPrefix         = null,
@@ -412,6 +412,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
             //       LogfileCreator)
 
             : base(CommonAPI,
+                   WebAPIURLPathPrefix,
+                   BasePath,
 
                    HTTPServerName  ?? DefaultHTTPServerName,
                    HTTPServiceName ?? DefaultHTTPServiceName,

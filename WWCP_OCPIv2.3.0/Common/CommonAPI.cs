@@ -4260,7 +4260,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                          Party_Id                      DefaultPartyId,
 
                          CommonHTTPAPI                 BaseAPI,
-                         HTTPTestServerX?              HTTPServer                = null,
+                         //HTTPTestServerX?              HTTPServer                = null,
 
                          HTTPHostname?                 HTTPHostname              = null,
                          String?                       ExternalDNSName           = null,
@@ -4296,7 +4296,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                          String?                       RemotePartyDBFileName     = null,
                          String?                       AssetsDBFileName          = null)
 
-            : base(HTTPServer ?? BaseAPI.HTTPServer,
+            : base(BaseAPI.HTTPBaseAPI.HTTPServer,
                    null, //HTTPHostname,
                    URLPathPrefix,
                    null,

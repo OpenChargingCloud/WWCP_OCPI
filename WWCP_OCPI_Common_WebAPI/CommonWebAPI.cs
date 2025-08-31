@@ -119,7 +119,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
     /// A HTTP API providing advanced OCPI data structures.
     /// </summary>
     public class CommonWebAPI : //HTTPExtAPIX
-                                AHTTPExtAPIXExtension<CommonHTTPAPI>
+                                AHTTPExtAPIXExtension2<CommonHTTPAPI, HTTPExtAPIX>
     {
 
         #region Data
@@ -252,8 +252,6 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         /// </summary>
         /// <param name="CommonHTTPAPI">A OCPI Common API.</param>
         /// 
-        /// <param name="HTTPServer">A HTTP Server.</param>
-        /// 
         /// <param name="OverlayURLPathPrefix">An optional prefix for the HTTP URIs.</param>
         /// <param name="APIURLPathPrefix">An optional prefix for the HTTP URIs.</param>
         /// <param name="WebAPIURLPathPrefix">An optional prefix for the HTTP URIs.</param>
@@ -263,15 +261,13 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         /// <param name="HTTPLogins">An enumeration of logins for an optional HTTP Basic Authentication.</param>
         public CommonWebAPI(CommonHTTPAPI                               CommonHTTPAPI,
 
-                            //HTTPTestServerX?                            HTTPServer                = null,
                             //HTTPHostname?                               HTTPHostname              = null,
                             //String?                                     ExternalDNSName           = "",
-                            //HTTPPath?                                   BasePath                  = null,
 
                             HTTPPath?                                   OverlayURLPathPrefix      = null,
                             HTTPPath?                                   APIURLPathPrefix          = null,
                             HTTPPath?                                   WebAPIURLPathPrefix       = null,
-                            HTTPPath?                                   BasePath                  = null,
+                            HTTPPath?                                   BasePath                  = null,  // For URL prefixes in HTML!
 
                             String                                      HTTPRealm                 = DefaultHTTPRealm,
                             IEnumerable<KeyValuePair<String, String>>?  HTTPLogins                = null,
@@ -293,6 +289,8 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                             LogfileCreatorDelegate?                     LogfileCreator            = null)
 
             : base(CommonHTTPAPI,
+                   WebAPIURLPathPrefix,
+                   BasePath,
 
                    HTTPServerName  ?? DefaultHTTPServerName,
                    HTTPServiceName ?? DefaultHTTPServiceName,
@@ -308,9 +306,8 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
         {
 
-            //this.CommonHTTPAPI         = CommonHTTPAPI;
-            this.APIURLPathPrefix      = APIURLPathPrefix;
             this.OverlayURLPathPrefix  = OverlayURLPathPrefix;
+            this.APIURLPathPrefix      = APIURLPathPrefix;
             this.HTTPRealm             = HTTPRealm.IsNotNullOrEmpty() ? HTTPRealm : DefaultHTTPRealm;
             this.HTTPLogins            = HTTPLogins ?? [];
 
@@ -341,7 +338,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
             => GetResourceStream(
                    ResourceName,
                    new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
                );
 
         #endregion
@@ -353,7 +350,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
             => GetResourceMemoryStream(
                    ResourceName,
                    new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
                );
 
         #endregion
@@ -365,7 +362,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
             => GetResourceString(
                    ResourceName,
                    new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
                );
 
         #endregion
@@ -377,7 +374,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
             => GetResourceBytes(
                    ResourceName,
                    new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
                );
 
         #endregion
@@ -389,7 +386,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
             => MixWithHTMLTemplate(
                    ResourceName,
                    new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
                );
 
         #endregion
@@ -402,7 +399,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                    ResourceName,
                    HTMLConverter,
                    new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
                );
 
         #endregion
@@ -418,12 +415,12 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
             #region / (HTTPRoot)
 
-            //this.MapResourceAssemblyFolder(
-            //    HTTPHostname.Any,
-            //    WebAPIURLPathPrefix, //RootPath,// URLPathPrefix,
-            //    HTTPRoot,
-            //    DefaultFilename: "index.html"
-            //);
+            CommonHTTPAPI.HTTPBaseAPI.MapResourceAssemblyFolder(
+                HTTPHostname.Any,
+                URLPathPrefix,
+                HTTPRoot,
+                DefaultFilename: "index.html"
+            );
 
             #endregion
 
@@ -435,127 +432,127 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region Text
 
-                CommonHTTPAPI.AddHandler(
-                    HTTPMethod.GET,
-                    OverlayURLPathPrefix.Value,
-                    HTTPContentType.Text.HTML_UTF8,
-                    HTTPDelegate: request =>
+                //CommonHTTPAPI.HTTPBaseAPI.AddHandler(
+                //    HTTPMethod.GET,
+                //    OverlayURLPathPrefix.Value,
+                //    HTTPContentType.Text.HTML_UTF8,
+                //    HTTPDelegate: request =>
 
-                        Task.FromResult(
-                            new HTTPResponse.Builder(request) {
-                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                Server                     = HTTPServiceName,
-                                Date                       = Timestamp.Now,
-                                AccessControlAllowOrigin   = "*",
-                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                AccessControlAllowHeaders  = [ "Authorization" ],
-                                ContentType                = HTTPContentType.Text.PLAIN,
-                                Content                    = ("This is an Open Charge Point Interface v2.x HTTP service!" + Environment.NewLine + "Please check ~/ versions!").ToUTF8Bytes(),
-                                Connection                 = ConnectionType.Close,
-                                Vary                       = "Accept"
-                            }.AsImmutable),
+                //        Task.FromResult(
+                //            new HTTPResponse.Builder(request) {
+                //                HTTPStatusCode             = HTTPStatusCode.OK,
+                //                Server                     = HTTPServiceName,
+                //                Date                       = Timestamp.Now,
+                //                AccessControlAllowOrigin   = "*",
+                //                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                //                AccessControlAllowHeaders  = [ "Authorization" ],
+                //                ContentType                = HTTPContentType.Text.PLAIN,
+                //                Content                    = ("This is an Open Charge Point Interface v2.x HTTP service!" + Environment.NewLine + "Please check ~/ versions!").ToUTF8Bytes(),
+                //                Connection                 = ConnectionType.KeepAlive,
+                //                Vary                       = "Accept"
+                //            }.AsImmutable),
 
-                    AllowReplacement: URLReplacement.Allow
+                //    AllowReplacement: URLReplacement.Allow
 
-                );
+                //);
 
 
-                // Just for convenience...
-                if (OverlayURLPathPrefix.Value != HTTPPath.Root)
-                    CommonHTTPAPI.AddHandler(
-                        HTTPMethod.GET,
-                        OverlayURLPathPrefix.Value + "/",
-                        HTTPContentType.Text.HTML_UTF8,
-                        HTTPDelegate: request =>
+                //// Just for convenience...
+                //if (OverlayURLPathPrefix.Value != HTTPPath.Root)
+                //    CommonHTTPAPI.HTTPBaseAPI.AddHandler(
+                //        HTTPMethod.GET,
+                //        OverlayURLPathPrefix.Value + "/",
+                //        HTTPContentType.Text.HTML_UTF8,
+                //        HTTPDelegate: request =>
 
-                            Task.FromResult(
-                                new HTTPResponse.Builder(request) {
-                                    HTTPStatusCode             = HTTPStatusCode.OK,
-                                    Server                     = HTTPServiceName,
-                                    Date                       = Timestamp.Now,
-                                    AccessControlAllowOrigin   = "*",
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ],
-                                    ContentType                = HTTPContentType.Text.PLAIN,
-                                    Content                    = ("This is an Open Charge Point Interface v2.x HTTP service!" + Environment.NewLine + "Please check ~/ versions!").ToUTF8Bytes(),
-                                    Connection                 = ConnectionType.Close,
-                                    Vary                       = "Accept"
-                                }.AsImmutable),
+                //            Task.FromResult(
+                //                new HTTPResponse.Builder(request) {
+                //                    HTTPStatusCode             = HTTPStatusCode.OK,
+                //                    Server                     = HTTPServiceName,
+                //                    Date                       = Timestamp.Now,
+                //                    AccessControlAllowOrigin   = "*",
+                //                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                //                    AccessControlAllowHeaders  = [ "Authorization" ],
+                //                    ContentType                = HTTPContentType.Text.PLAIN,
+                //                    Content                    = ("This is an Open Charge Point Interface v2.x HTTP service!" + Environment.NewLine + "Please check ~/ versions!").ToUTF8Bytes(),
+                //                    Connection                 = ConnectionType.KeepAlive,
+                //                    Vary                       = "Accept"
+                //                }.AsImmutable),
 
-                        AllowReplacement: URLReplacement.Allow
+                //        AllowReplacement: URLReplacement.Allow
 
-                    );
+                //    );
 
                 #endregion
 
                 #region JSON
 
-                CommonHTTPAPI.AddHandler(
-                    HTTPMethod.GET,
-                    OverlayURLPathPrefix.Value,
-                    HTTPContentType.Application.JSON_UTF8,
-                    HTTPDelegate: request =>
+                //CommonHTTPAPI.HTTPBaseAPI.AddHandler(
+                //    HTTPMethod.GET,
+                //    OverlayURLPathPrefix.Value,
+                //    HTTPContentType.Application.JSON_UTF8,
+                //    HTTPDelegate: request =>
 
-                        Task.FromResult(
-                            new HTTPResponse.Builder(request) {
-                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                Server                     = HTTPServiceName,
-                                Date                       = Timestamp.Now,
-                                AccessControlAllowOrigin   = "*",
-                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                AccessControlAllowHeaders  = [ "Authorization" ],
-                                ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                Content                    = JSONObject.Create(
-                                                                 new JProperty(
-                                                                     "message",
-                                                                     "This is an Open Charge Point Interface v2.x HTTP service! Please check ~/ versions!"
-                                                                 )
-                                                             ).ToUTF8Bytes(),
-                                Connection                 = ConnectionType.Close,
-                                Vary                       = "Accept"
-                            }.AsImmutable),
+                //        Task.FromResult(
+                //            new HTTPResponse.Builder(request) {
+                //                HTTPStatusCode             = HTTPStatusCode.OK,
+                //                Server                     = HTTPServiceName,
+                //                Date                       = Timestamp.Now,
+                //                AccessControlAllowOrigin   = "*",
+                //                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                //                AccessControlAllowHeaders  = [ "Authorization" ],
+                //                ContentType                = HTTPContentType.Application.JSON_UTF8,
+                //                Content                    = JSONObject.Create(
+                //                                                 new JProperty(
+                //                                                     "message",
+                //                                                     "This is an Open Charge Point Interface v2.x HTTP service! Please check ~/ versions!"
+                //                                                 )
+                //                                             ).ToUTF8Bytes(),
+                //                Connection                 = ConnectionType.KeepAlive,
+                //                Vary                       = "Accept"
+                //            }.AsImmutable),
 
-                    AllowReplacement: URLReplacement.Allow
+                //    AllowReplacement: URLReplacement.Allow
 
-                );
+                //);
 
 
-                // Just for convenience...
-                if (OverlayURLPathPrefix.Value != HTTPPath.Root)
-                    CommonHTTPAPI.AddHandler(
-                        HTTPMethod.GET,
-                        OverlayURLPathPrefix.Value + "/",
-                        HTTPContentType.Text.HTML_UTF8,
-                        HTTPDelegate: request =>
+                //// Just for convenience...
+                //if (OverlayURLPathPrefix.Value != HTTPPath.Root)
+                //    CommonHTTPAPI.HTTPBaseAPI.AddHandler(
+                //        HTTPMethod.GET,
+                //        OverlayURLPathPrefix.Value + "/",
+                //        HTTPContentType.Text.HTML_UTF8,
+                //        HTTPDelegate: request =>
 
-                            Task.FromResult(
-                                new HTTPResponse.Builder(request) {
-                                    HTTPStatusCode             = HTTPStatusCode.OK,
-                                    Server                     = HTTPServiceName,
-                                    Date                       = Timestamp.Now,
-                                    AccessControlAllowOrigin   = "*",
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ],
-                                    ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                    Content                    = JSONObject.Create(
-                                                                     new JProperty(
-                                                                         "message",
-                                                                         "This is an Open Charge Point Interface v2.x HTTP service! Please check ~/ versions!"
-                                                                     )
-                                                                 ).ToUTF8Bytes(),
-                                    Connection                 = ConnectionType.Close,
-                                    Vary                       = "Accept"
-                                }.AsImmutable),
+                //            Task.FromResult(
+                //                new HTTPResponse.Builder(request) {
+                //                    HTTPStatusCode             = HTTPStatusCode.OK,
+                //                    Server                     = HTTPServiceName,
+                //                    Date                       = Timestamp.Now,
+                //                    AccessControlAllowOrigin   = "*",
+                //                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                //                    AccessControlAllowHeaders  = [ "Authorization" ],
+                //                    ContentType                = HTTPContentType.Application.JSON_UTF8,
+                //                    Content                    = JSONObject.Create(
+                //                                                     new JProperty(
+                //                                                         "message",
+                //                                                         "This is an Open Charge Point Interface v2.x HTTP service! Please check ~/ versions!"
+                //                                                     )
+                //                                                 ).ToUTF8Bytes(),
+                //                    Connection                 = ConnectionType.KeepAlive,
+                //                    Vary                       = "Accept"
+                //                }.AsImmutable),
 
-                        AllowReplacement: URLReplacement.Allow
+                //        AllowReplacement: URLReplacement.Allow
 
-                    );
+                //    );
 
                 #endregion
 
                 #region HTML
 
-                CommonHTTPAPI.AddHandler(
+                CommonHTTPAPI.HTTPBaseAPI.AddHandler(
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value,
                     HTTPContentType.Text.HTML_UTF8,
@@ -574,7 +571,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                                                                  "index.shtml",
                                                                  html => html.Replace("{{versionPath}}", "")
                                                              ).ToUTF8Bytes(),
-                                Connection                 = ConnectionType.Close,
+                                Connection                 = ConnectionType.KeepAlive,
                                 Vary                       = "Accept"
                             }.AsImmutable),
 
@@ -583,34 +580,34 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                 );
 
 
-                // Just for convenience...
-                if (OverlayURLPathPrefix.Value != HTTPPath.Root)
-                    CommonHTTPAPI.AddHandler(
-                        HTTPMethod.GET,
-                        OverlayURLPathPrefix.Value + "/",
-                        HTTPContentType.Text.HTML_UTF8,
-                        HTTPDelegate: request =>
+                //// Just for convenience...
+                //if (OverlayURLPathPrefix.Value != HTTPPath.Root)
+                //    CommonHTTPAPI.HTTPBaseAPI.AddHandler(
+                //        HTTPMethod.GET,
+                //        OverlayURLPathPrefix.Value + "/",
+                //        HTTPContentType.Text.HTML_UTF8,
+                //        HTTPDelegate: request =>
 
-                            Task.FromResult(
-                                new HTTPResponse.Builder(request) {
-                                    HTTPStatusCode             = HTTPStatusCode.OK,
-                                    Server                     = HTTPServiceName,
-                                    Date                       = Timestamp.Now,
-                                    AccessControlAllowOrigin   = "*",
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ],
-                                    ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                    Content                    = MixWithHTMLTemplate(
-                                                                     "index.shtml",
-                                                                     html => html.Replace("{{versionPath}}", "")
-                                                                 ).ToUTF8Bytes(),
-                                    Connection                 = ConnectionType.Close,
-                                    Vary                       = "Accept"
-                                }.AsImmutable),
+                //            Task.FromResult(
+                //                new HTTPResponse.Builder(request) {
+                //                    HTTPStatusCode             = HTTPStatusCode.OK,
+                //                    Server                     = HTTPServiceName,
+                //                    Date                       = Timestamp.Now,
+                //                    AccessControlAllowOrigin   = "*",
+                //                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                //                    AccessControlAllowHeaders  = [ "Authorization" ],
+                //                    ContentType                = HTTPContentType.Text.HTML_UTF8,
+                //                    Content                    = MixWithHTMLTemplate(
+                //                                                     "index.shtml",
+                //                                                     html => html.Replace("{{versionPath}}", "")
+                //                                                 ).ToUTF8Bytes(),
+                //                    Connection                 = ConnectionType.KeepAlive,
+                //                    Vary                       = "Accept"
+                //                }.AsImmutable),
 
-                        AllowReplacement: URLReplacement.Allow
+                //        AllowReplacement: URLReplacement.Allow
 
-                    );
+                //    );
 
                 #endregion
 
@@ -618,7 +615,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region GET ~/versions
 
-                CommonHTTPAPI.AddHandler(
+                CommonHTTPAPI.HTTPBaseAPI.AddHandler(
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value + "versions",
                     HTTPContentType.Text.HTML_UTF8,
@@ -637,7 +634,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                                                                  "versions.versions.shtml",
                                                                  html => html.Replace("{{versionPath}}", "")
                                                              ).ToUTF8Bytes(),
-                                Connection                 = ConnectionType.Close,
+                                Connection                 = ConnectionType.KeepAlive,
                                 Vary                       = "Accept"
                             }.AsImmutable)
 
@@ -648,7 +645,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region GET ~/support
 
-                CommonHTTPAPI.AddHandler(
+                CommonHTTPAPI.HTTPBaseAPI.AddHandler(
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value + "/support",
                     HTTPContentType.Text.HTML_UTF8,
@@ -664,7 +661,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                                 AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                 ContentType                = HTTPContentType.Text.HTML_UTF8,
                                 Content                    = MixWithHTMLTemplate("support.support.shtml").ToUTF8Bytes(),
-                                Connection                 = ConnectionType.Close,
+                                Connection                 = ConnectionType.KeepAlive,
                                 Vary                       = "Accept"
                             }.AsImmutable
                         )
@@ -675,7 +672,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region GET ~/favicon.png
 
-                CommonHTTPAPI.AddHandler(
+                CommonHTTPAPI.HTTPBaseAPI.AddHandler(
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value + "/favicon.png",
                     //HTTPContentType.Image.PNG,
@@ -691,7 +688,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                                 AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                 ContentType                = HTTPContentType.Image.PNG,
                                 Content                    = GetResourceBytes("images.favicon_big.png"),
-                                Connection                 = ConnectionType.Close
+                                Connection                 = ConnectionType.KeepAlive
                             }.AsImmutable
                         )
 

@@ -292,10 +292,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         #region ShutdownEachTest()
 
         [TearDown]
-        public override void ShutdownEachTest()
+        public override async Task ShutdownEachTest()
         {
 
-            base.ShutdownEachTest();
+            await base.ShutdownEachTest();
 
         }
 

@@ -1544,7 +1544,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                       String?                      LogfileName               = DefaultLogfileName,
                       OCPILogfileCreatorDelegate?  LogfileCreator            = null)
 
-            : base(CommonAPI.HTTPServer,
+            : base(CommonAPI.HTTPBaseAPI.HTTPServer,
                    null, //HTTPHostname,
                    URLPathPrefix   ?? DefaultURLPathPrefix,
                    null,

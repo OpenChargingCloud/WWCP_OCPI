@@ -102,7 +102,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         protected       HTTPTestServerX?                                     emsp1HTTPServer;
         protected       HTTPTestServerX?                                     emsp2HTTPServer;
 
-        protected       HTTPAPI?                                             cpoHTTPAPI;
+        protected       HTTPExtAPIX?                                         cpoHTTPAPI;
+        protected       HTTPExtAPIX?                                         emsp1HTTPAPI;
+        protected       HTTPExtAPIX?                                         emsp2HTTPAPI;
+
+        //protected       HTTPAPI?                                             cpoHTTPAPI;
         protected       CommonAPI?                                           cpoCommonAPI;
         protected       OCPIWebAPI?                                          cpoWebAPI;
         protected       CPOAPI?                                              cpoCPOAPI;
@@ -110,7 +114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         protected       ConcurrentDictionary<DateTimeOffset, OCPIRequest>    cpoAPIRequestLogs;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIResponse>   cpoAPIResponseLogs;
 
-        protected       HTTPAPI?                                             emsp1HTTPAPI;
+        //protected       HTTPAPI?                                             emsp1HTTPAPI;
         protected       CommonAPI?                                           emsp1CommonAPI;
         protected       OCPIWebAPI?                                          emsp1WebAPI;
         protected       EMSPAPI?                                             emsp1EMSPAPI;
@@ -118,7 +122,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         protected       ConcurrentDictionary<DateTimeOffset, OCPIRequest>    emsp1APIRequestLogs;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIResponse>   emsp1APIResponseLogs;
 
-        protected       HTTPAPI?                                             emsp2HTTPAPI;
+        //protected       HTTPAPI?                                             emsp2HTTPAPI;
         protected       CommonAPI?                                           emsp2CommonAPI;
         protected       OCPIWebAPI?                                          emsp2WebAPI;
         protected       EMSPAPI?                                             emsp2EMSPAPI;
@@ -193,8 +197,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
+            #region Create cpo/emsp1/emsp2 HTTP Servers
+
+            cpoHTTPAPI            = new HTTPExtAPIX(
+                                        HTTPServer:      cpoHTTPServer
+                                    );
+
+            emsp1HTTPAPI          = new HTTPExtAPIX(
+                                        HTTPServer:      emsp1HTTPServer
+                                    );
+
+            emsp2HTTPAPI          = new HTTPExtAPIX(
+                                        HTTPServer:      emsp2HTTPServer
+                                    );
+
+            #endregion
+
             var ocpiBaseAPI = new CommonHTTPAPI(
 
+                                  HTTPAPI:                   cpoHTTPAPI,
                                   OurBaseURL:                URL.Parse("http://127.0.0.1:3201/ocpi"),
                                   OurVersionsURL:            URL.Parse("http://127.0.0.1:3201/ocpi/versions"),
                                   //OurBusinessDetails:        new OCPI.BusinessDetails(
@@ -205,7 +226,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                   //OurPartyId:                OCPI.Party_Id.   Parse("BDO"),
                                   //OurRole:                   OCPI.Role.       CPO,
 
-                                  HTTPServer:                cpoHTTPServer,
                                   AdditionalURLPathPrefix:   null,
                                   //KeepRemovedEVSEs:          null,
                                   LocationsAsOpenData:       true,
@@ -538,7 +558,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                 AccessStatus:                AccessStatus.ALLOWED,
 
                                                 RemoteAccessToken:           AccessToken.Parse("emp1-2-cso:token"),
-                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.2/versions"),
+                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPAPI.HTTPServer.TCPPort}/ocpi/v2.2/versions"),
                                                 RemoteVersionIds:            null,
                                                 AccessTokenBase64Encoding:   true,
                                                 RemoteStatus:                RemoteAccessStatus.ONLINE,
@@ -563,7 +583,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                 AccessToken:                 AccessToken.Parse("cso-2-emp2:token"),
                                                 AccessStatus:                AccessStatus.ALLOWED,
                                                 RemoteAccessToken:           AccessToken.Parse("emp2-2-cso:token"),
-                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.2/versions"),
+                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPAPI.HTTPServer.TCPPort}/ocpi/v2.2/versions"),
                                                 RemoteVersionIds:            null,
                                                 AccessTokenBase64Encoding:   true,
                                                 RemoteStatus:                RemoteAccessStatus.ONLINE,
@@ -590,7 +610,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                 AccessStatus:                AccessStatus.ALLOWED,
 
                                                 RemoteAccessToken:           AccessToken.Parse("cso-2-emp1:token"),
-                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.2/versions"),
+                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.TCPPort}/ocpi/v2.2/versions"),
                                                 RemoteVersionIds:            null,
                                                 AccessTokenBase64Encoding:   true,
                                                 RemoteStatus:                RemoteAccessStatus.ONLINE,
@@ -617,7 +637,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                 AccessStatus:                AccessStatus.ALLOWED,
 
                                                 RemoteAccessToken:           AccessToken.Parse("cso-2-emp2:token"),
-                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.2/versions"),
+                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.TCPPort}/ocpi/v2.2/versions"),
                                                 RemoteVersionIds:            null,
                                                 AccessTokenBase64Encoding:   true,
                                                 RemoteStatus:                RemoteAccessStatus.ONLINE,
@@ -638,12 +658,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         #region ShutdownEachTest()
 
         [TearDown]
-        public virtual void ShutdownEachTest()
+        public virtual async Task ShutdownEachTest()
         {
 
-            cpoHTTPAPI?.  Shutdown();
-            emsp1HTTPAPI?.Shutdown();
-            emsp2HTTPAPI?.Shutdown();
+            if (cpoHTTPServer   is not null)
+                await cpoHTTPServer.  Stop();
+
+            if (emsp1HTTPServer is not null)
+                await emsp1HTTPServer.Stop();
+
+            if (emsp2HTTPServer is not null)
+                await emsp2HTTPServer.Stop();
 
         }
 

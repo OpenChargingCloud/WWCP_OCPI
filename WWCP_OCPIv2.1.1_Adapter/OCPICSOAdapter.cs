@@ -308,7 +308,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                           null, // ExternalDNSName
 
                                                           null, // BasePath
-                                                          CommonAPI.RootPath + Version.String + "cpo",
+                                                          CommonAPI.URLPathPrefix + Version.String + "cpo",
 
                                                           null, // HTTPServerName
                                                           null, // HTTPServiceName

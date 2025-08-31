@@ -55,7 +55,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
                 cpoVersionsAPIURL.HasValue)
             {
 
-                var baseURL   = cpoVersionsAPIURL.Value.ToString().Replace(cpoVersionsAPIURL.Value.Path.ToString(), cpoWebAPI.HTTPBaseAPI.RootPath.ToString());
+                var baseURL   = cpoVersionsAPIURL.Value.ToString().Replace(cpoVersionsAPIURL.Value.Path.ToString(), cpoWebAPI.HTTPBaseAPI.URLPathPrefix.ToString());
                 var response  = await TestHelpers.GetHTMLRequest(URL.Parse(baseURL) + "clients");
 
                 ClassicAssert.IsNotNull(response);

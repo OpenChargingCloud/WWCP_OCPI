@@ -44,6 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
         protected  RoamingNetwork?            roamingNetwork;
         protected  HTTPTestServerX?           httpServer;
+        protected  HTTPExtAPIX?               httpAPI;
         protected  CommonAPI?                 commonAPI;
         protected  CPOAPI?                    cpoAPI;
         protected  OCPICSOAdapter?            csoAdapter;
@@ -130,17 +131,26 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
             Assert.That(roamingNetwork, Is.Not.Null);
 
+
             httpServer       = new HTTPTestServerX(
                                    TCPPort:                   IPPort.Parse(3473)
                                );
 
             Assert.That(httpServer,  Is.Not.Null);
 
+
+            httpAPI          = new HTTPExtAPIX(
+                                   HTTPServer:                httpServer
+                               );
+
+            Assert.That(httpServer,  Is.Not.Null);
+
+
             var ocpiBaseAPI  = new CommonHTTPAPI(
 
+                                   HTTPAPI:                   httpAPI,
                                    OurBaseURL:                URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/"),
                                    OurVersionsURL:            URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/versions"),
-                                   HTTPServer:                httpServer,
                                    AdditionalURLPathPrefix:   null,
                                    //KeepRemovedEVSEs:          null,
                                    LocationsAsOpenData:       true,

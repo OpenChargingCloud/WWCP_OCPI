@@ -79,7 +79,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            CommonAPI.AddHandler(
+            CommonAPI.HTTPBaseAPI.AddHandler(
 
                 URLTemplate,
                 async httpRequest => {
@@ -114,7 +114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                    Content         = new OCPIResponse<JObject>(
                                                          JSONObject.Create(
                                                              new JProperty("description",  e.Message),
-                                                             new JProperty("stacktrace",   new JArray(e.StackTrace?.Split(new[] { Environment.NewLine }, StringSplitOptions.None)?.ToArray() ?? Array.Empty<String>())),
+                                                             new JProperty("stacktrace",   new JArray(e.StackTrace?.Split([ Environment.NewLine ], StringSplitOptions.None)?.ToArray() ?? Array.Empty<String>())),
                                                              new JProperty("source",       e.TargetSite?.Module.Name),
                                                              new JProperty("type",         e.TargetSite?.ReflectedType?.Name)
                                                          ),

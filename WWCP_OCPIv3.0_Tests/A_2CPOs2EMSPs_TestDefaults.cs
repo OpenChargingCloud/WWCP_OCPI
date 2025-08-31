@@ -111,21 +111,25 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
         protected  CommonHTTPAPI?   emsp2BaseAPI;
 
         protected  HTTPTestServerX? cpo1HTTPServer;
+        protected  HTTPExtAPIX?     cpo1HTTPAPI;
         protected  CommonAPI?       cpo1CommonAPI;
         protected  CPOAPI?          cpo1CPOAPI;
         protected  OCPICSOAdapter?  cpo1Adapter;
 
         protected  HTTPTestServerX? cpo2HTTPServer;
+        protected  HTTPExtAPIX?     cpo2HTTPAPI;
         protected  CommonAPI?       cpo2CommonAPI;
         protected  CPOAPI?          cpo2CPOAPI;
         protected  OCPICSOAdapter?  cpo2Adapter;
 
         protected  HTTPTestServerX? emsp1HTTPServer;
+        protected  HTTPExtAPIX?     emsp1HTTPAPI;
         protected  CommonAPI?       emsp1CommonAPI;
         protected  EMSPAPI?         emsp1EMSPAPI;
         protected  OCPIEMPAdapter?  emsp1Adapter;
 
         protected  HTTPTestServerX? emsp2HTTPServer;
+        protected  HTTPExtAPIX?     emsp2HTTPAPI;
         protected  CommonAPI?       emsp2CommonAPI;
         protected  EMSPAPI?         emsp2EMSPAPI;
         protected  OCPIEMPAdapter?  emsp2Adapter;
@@ -174,16 +178,41 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
             #endregion
 
+            #region Create cpo1/cpo2/emsp1/emsp2 HTTP APIs
+
+            cpo1HTTPAPI          = new HTTPExtAPIX(
+                                       HTTPServer:  cpo1HTTPServer
+                                   );
+
+            cpo2HTTPAPI          = new HTTPExtAPIX(
+                                       HTTPServer:  cpo2HTTPServer
+                                   );
+
+            emsp1HTTPAPI         = new HTTPExtAPIX(
+                                       HTTPServer:  emsp1HTTPServer
+                                   );
+
+            emsp2HTTPAPI         = new HTTPExtAPIX(
+                                       HTTPServer:  emsp2HTTPServer
+                                   );
+
+            Assert.That(cpo1HTTPAPI,   Is.Not.Null);
+            Assert.That(cpo2HTTPAPI,   Is.Not.Null);
+            Assert.That(emsp1HTTPAPI,  Is.Not.Null);
+            Assert.That(emsp2HTTPAPI,  Is.Not.Null);
+
+            #endregion
+
             #region Create cpo1/cpo2/emsp1/emsp2 OCPI Base APIs
 
             #region CPO #1
 
             cpo1BaseAPI = new CommonHTTPAPI(
 
+                               HTTPAPI:                   cpo1HTTPAPI,
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3201/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3201/ocpi/versions"),
 
-                               HTTPServer:                cpo1HTTPServer,
                                AdditionalURLPathPrefix:   null,
                                //KeepRemovedEVSEs:          null,
                                LocationsAsOpenData:       true,
@@ -223,10 +252,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
             cpo2BaseAPI  = new CommonHTTPAPI(
 
+                               HTTPAPI:                   cpo2HTTPAPI,
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3202/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3202/ocpi/versions"),
 
-                               HTTPServer:                cpo2HTTPServer,
                                AdditionalURLPathPrefix:   null,
                                //KeepRemovedEVSEs:          null,
                                LocationsAsOpenData:       true,
@@ -266,10 +295,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
             emsp1BaseAPI = new CommonHTTPAPI(
 
+                               HTTPAPI:                   emsp1HTTPAPI,
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3401/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3401/ocpi/versions"),
 
-                               HTTPServer:                emsp1HTTPServer,
                                AdditionalURLPathPrefix:   null,
                                //KeepRemovedEVSEs:          null,
                                LocationsAsOpenData:       true,
@@ -309,10 +338,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
             emsp2BaseAPI = new CommonHTTPAPI(
 
+                               HTTPAPI:                   emsp2HTTPAPI,
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3402/ocpi"),
                                OurVersionsURL:            URL.Parse("http://127.0.0.1:3402/ocpi/versions"),
 
-                               HTTPServer:                emsp2HTTPServer,
                                AdditionalURLPathPrefix:   null,
                                //KeepRemovedEVSEs:          null,
                                LocationsAsOpenData:       true,
@@ -642,7 +671,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                                             ],
                                        DefaultPartyId:                      Party_Idv3.Parse("DEGD2"),
                                        BaseAPI:                             emsp2BaseAPI,
-                                       HTTPServer:                          emsp2HTTPServer,
+                                       //HTTPServer:                          emsp2HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
                                        KeepRemovedEVSEs:                    null,

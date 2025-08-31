@@ -1383,7 +1383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 var response3       = await TestHelpers.PutJSONRequest(URL.Parse(credentialsURL.ToString()),
                                                                        new Credentials(
                                                                            newAccessToken,
-                                                                           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                                                           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.TCPPort}/ocpi/v2.1/versions"),
                                                                            new BusinessDetails(
                                                                                "GraphDefined CSO (NEW)",
                                                                                URL.Parse("https://www.graphdefined.com/cso/new")
@@ -1522,7 +1522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 var response3       = await TestHelpers.PutJSONRequest(URL.Parse(credentialsURL.ToString()),
                                                                        new Credentials(
                                                                            newAccessToken,
-                                                                           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                                                           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.TCPPort}/ocpi/v2.1/versions"),
                                                                            new BusinessDetails(
                                                                                "GraphDefined CSO (NEW)",
                                                                                URL.Parse("https://www.graphdefined.com/cso/new")
@@ -1638,7 +1638,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 var response3       = await TestHelpers.PutJSONRequest(URL.Parse(credentialsURL.ToString()),
                                                                        new Credentials(
                                                                            newAccessToken,
-                                                                           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                                                           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.TCPPort}/ocpi/v2.1/versions"),
                                                                            new BusinessDetails(
                                                                                "GraphDefined CSO (NEW)",
                                                                                URL.Parse("https://www.graphdefined.com/cso/new")
@@ -1773,7 +1773,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 var response3       = await TestHelpers.PutJSONRequest(URL.Parse(credentialsURL.ToString()),
                                                                        new Credentials(
                                                                            newAccessToken,
-                                                                           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                                                           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.TCPPort}/ocpi/v2.1/versions"),
                                                                            new BusinessDetails(
                                                                                "GraphDefined CSO (NEW)",
                                                                                URL.Parse("https://www.graphdefined.com/cso/new")

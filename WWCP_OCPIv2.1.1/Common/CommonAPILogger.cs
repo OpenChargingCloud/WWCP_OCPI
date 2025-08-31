@@ -61,7 +61,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                String?                      LoggingPath      = null,
                                OCPILogfileCreatorDelegate?  LogfileCreator   = null)
 
-            : base(CommonAPI.HTTPServer,
+            : base(CommonAPI.HTTPBaseAPI.HTTPServer,
                    Context ?? DefaultContext,
                    LoggingPath,
                    LogfileCreator)
