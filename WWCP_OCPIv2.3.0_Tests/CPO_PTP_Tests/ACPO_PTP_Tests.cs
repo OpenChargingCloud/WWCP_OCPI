@@ -96,22 +96,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
                                        LocationsAsOpenData:       true,
                                        AllowDowngrades:           null,
 
-                                       //HTTPHostname:              null,
                                        ExternalDNSName:           null,
                                        HTTPServiceName:           null,//"XXX",
                                        BasePath:                  null,
 
-                                       //URLPathPrefix:             HTTPPath.Parse("/ocpi"),
                                        RootPath:                  HTTPPath.Parse("/ocpi"),
                                        APIVersionHashes:          null,
-
-                                       DisableMaintenanceTasks:   null,
-                                       MaintenanceInitialDelay:   null,
-                                       MaintenanceEvery:          null,
-
-                                       DisableWardenTasks:        null,
-                                       WardenInitialDelay:        null,
-                                       WardenCheckEvery:          null,
 
                                        IsDevelopment:             null,
                                        DevelopmentServers:        null,
@@ -145,24 +135,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
                                        AdditionalURLPathPrefix:             null,
                                        KeepRemovedEVSEs:                    null,
-                                       LocationsAsOpenData:                 true,
-                                       AllowDowngrades:                     null,
 
-                                       HTTPHostname:                        null,
                                        ExternalDNSName:                     null,
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
                                        URLPathPrefix:                       HTTPPath.Parse("/ocpi"),
                                        APIVersionHashes:                    null,
-
-                                       DisableMaintenanceTasks:             null,
-                                       MaintenanceInitialDelay:             null,
-                                       MaintenanceEvery:                    null,
-
-                                       DisableWardenTasks:                  null,
-                                       WardenInitialDelay:                  null,
-                                       WardenCheckEvery:                    null,
 
                                        IsDevelopment:                       null,
                                        DevelopmentServers:                  null,
@@ -180,21 +159,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
                                        CommonAPI:                           cpoCommonAPI,
                                        AllowDowngrades:                     null,
 
-                                       HTTPHostname:                        null,
                                        ExternalDNSName:                     null,
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
                                        //URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.3.0/cpo"),
                                        APIVersionHashes:                    null,
-
-                                       DisableMaintenanceTasks:             null,
-                                       MaintenanceInitialDelay:             null,
-                                       MaintenanceEvery:                    null,
-
-                                       DisableWardenTasks:                  null,
-                                       WardenInitialDelay:                  null,
-                                       WardenCheckEvery:                    null,
 
                                        IsDevelopment:                       null,
                                        DevelopmentServers:                  null,
@@ -235,22 +205,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
                                        LocationsAsOpenData:       true,
                                        AllowDowngrades:           null,
 
-                                       //HTTPHostname:              null,
                                        ExternalDNSName:           null,
                                        HTTPServiceName:           null,//"YYY",
                                        BasePath:                  null,
 
-                                       //URLPathPrefix:             HTTPPath.Parse("/ocpi"),
                                        RootPath:                  HTTPPath.Parse("/ocpi"),
                                        APIVersionHashes:          null,
-
-                                       DisableMaintenanceTasks:   null,
-                                       MaintenanceInitialDelay:   null,
-                                       MaintenanceEvery:          null,
-
-                                       DisableWardenTasks:        null,
-                                       WardenInitialDelay:        null,
-                                       WardenCheckEvery:          null,
 
                                        IsDevelopment:             null,
                                        DevelopmentServers:        null,
@@ -284,24 +244,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
                                        AdditionalURLPathPrefix:             null,
                                        KeepRemovedEVSEs:                    null,
-                                       LocationsAsOpenData:                 true,
-                                       AllowDowngrades:                     null,
 
-                                       HTTPHostname:                        null,
                                        ExternalDNSName:                     null,
                                        HTTPServiceName:                     "aaa",//null,
                                        BasePath:                            null,
 
                                        URLPathPrefix:                       HTTPPath.Parse("/ocpi"),
                                        APIVersionHashes:                    null,
-
-                                       DisableMaintenanceTasks:             null,
-                                       MaintenanceInitialDelay:             null,
-                                       MaintenanceEvery:                    null,
-
-                                       DisableWardenTasks:                  null,
-                                       WardenInitialDelay:                  null,
-                                       WardenCheckEvery:                    null,
 
                                        IsDevelopment:                       null,
                                        DevelopmentServers:                  null,
@@ -319,21 +268,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
                                        CommonAPI:                           ptpCommonAPI,
                                        AllowDowngrades:                     null,
 
-                                       HTTPHostname:                        null,
                                        ExternalDNSName:                     null,
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
                                        //URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.3.0/ptp"),
                                        APIVersionHashes:                    null,
-
-                                       DisableMaintenanceTasks:             null,
-                                       MaintenanceInitialDelay:             null,
-                                       MaintenanceEvery:                    null,
-
-                                       DisableWardenTasks:                  null,
-                                       WardenInitialDelay:                  null,
-                                       WardenCheckEvery:                    null,
 
                                        IsDevelopment:                       null,
                                        DevelopmentServers:                  null,

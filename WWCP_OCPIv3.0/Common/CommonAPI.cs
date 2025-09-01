@@ -1318,7 +1318,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
     /// <remarks>
     /// In OCPI 3.0 all data replication will be initiated by the data consumer, never the data producer.
     /// </remarks>
-    public class CommonAPI : HTTPAPIX // : CommonAPIBase
+    public class CommonAPI : AHTTPExtAPIXExtension<HTTPExtAPIX>
     {
 
         #region Data
@@ -1851,33 +1851,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                          Party_Idv3                    DefaultPartyId,
 
                          CommonHTTPAPI                 BaseAPI,
-                         //HTTPTestServerX?              HTTPServer                = null,
-
-                         HTTPHostname?                 HTTPHostname              = null,
-                         String?                       ExternalDNSName           = null,
-
-                         HTTPPath?                     URLPathPrefix             = null,
-                         HTTPPath?                     BasePath                  = null,
 
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
                          Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null,
-                         Boolean                       Disable_RootServices      = false,
-                         Boolean                       Disable_OCPIv2_1_1        = true,
 
+                         HTTPPath?                     BasePath                  = null,
+                         HTTPPath?                     URLPathPrefix             = null,
+
+                         String?                       ExternalDNSName           = null,
                          String?                       HTTPServerName            = DefaultHTTPServerName,
                          String?                       HTTPServiceName           = DefaultHTTPServiceName,
                          String?                       APIVersionHash            = null,
                          JObject?                      APIVersionHashes          = null,
-
-                         Boolean?                      DisableMaintenanceTasks   = false,
-                         TimeSpan?                     MaintenanceInitialDelay   = null,
-                         TimeSpan?                     MaintenanceEvery          = null,
-
-                         Boolean?                      DisableWardenTasks        = false,
-                         TimeSpan?                     WardenInitialDelay        = null,
-                         TimeSpan?                     WardenCheckEvery          = null,
 
                          Boolean?                      IsDevelopment             = false,
                          IEnumerable<String>?          DevelopmentServers        = null,
@@ -1891,33 +1878,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                          String?                       AssetsDBFileName          = null,
                          Boolean                       AutoStart                 = false)
 
-            : base(BaseAPI.HTTPBaseAPI.HTTPServer,
-                   null, //HTTPHostname,
+            : base(BaseAPI.HTTPBaseAPI,
                    URLPathPrefix,
-                   null,
-                   null,
-
-                   ExternalDNSName,
                    BasePath,
 
+                   ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,
                    HTTPServiceName ?? DefaultHTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,
 
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
-
                    IsDevelopment,
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
-                   "context",
                    LogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
@@ -1935,13 +1909,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
             this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
 
-            //this.Disable_OCPIv2_1_1    = Disable_OCPIv2_1_1;
-
-            // Link HTTP events...
-            //base.HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
-            //base.HTTPServer.ResponseLog    += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
-            //base.HTTPServer.ErrorLog       += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
-
             this.CommonAPILogger       = this.DisableLogging == false
                                              ? new CommonAPILogger(
                                                    this,
@@ -1956,7 +1923,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                     Version.Id,
                     URL.Concat(
                         BaseAPI.OurVersionsURL.Protocol.AsString(),
-                        ExternalDNSName ?? ("localhost:" + base.HTTPServer.TCPPort),
+                        BaseAPI.HTTPBaseAPI.ExternalDNSName ?? ("localhost:" + BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort),
                         URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
                 )
@@ -1969,8 +1936,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                 ReadAssetsDatabaseFile();
             }
 
-            if (!Disable_RootServices)
-                RegisterURLTemplates();
+            RegisterURLTemplates();
 
         }
 
@@ -1996,8 +1962,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         private void RegisterURLTemplates()
         {
-
-            var URLPathPrefix = HTTPPath.Root;
 
             #region OPTIONS     ~/versions/{versionId}
 
@@ -2776,7 +2740,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                                 this,
                                                 receivedCredentials.URL,
                                                 receivedCredentials.Token,  // CREDENTIALS_TOKEN_B
-                                                DNSClient: HTTPServer.DNSClient
+                                                DNSClient: BaseAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                             );
 
             var otherVersions             = await commonClient.GetVersions();

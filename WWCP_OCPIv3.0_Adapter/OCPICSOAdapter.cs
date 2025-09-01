@@ -329,24 +329,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                           this.CommonAPI,
                                                           null, // AllowDowngrades
 
-                                                          null, // HTTPHostname
-                                                          null, // ExternalDNSName
-
                                                           null, // BasePath
-                                                          CommonAPI.RootPath + Version.String + "cpo",
+                                                          CommonAPI.URLPathPrefix + Version.String + "cpo",
 
+                                                          null, // ExternalDNSName
                                                           null, // HTTPServerName
                                                           null, // HTTPServiceName
                                                           null, // APIVersionHash
                                                           null, // APIVersionHashes
-
-                                                          null, // DisableMaintenanceTasks
-                                                          null, // MaintenanceInitialDelay
-                                                          null, // MaintenanceEvery
-
-                                                          null, // DisableWardenTasks
-                                                          null, // WardenInitialDelay
-                                                          null, // WardenCheckEvery
 
                                                           IsDevelopment,
                                                           DevelopmentServers,
@@ -1856,7 +1846,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                                   );
 
 
-                                                                                       var cpoClient = new CPO.HTTP.CPOClient(
+                                                                                       var cpoClient = new CPO.HTTP.CPO2EMSPClient(
 
                                                                                                            CPOAPI,
                                                                                                            remoteParty,
@@ -1881,7 +1871,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                                   );
 
 
-                                                                                       var cpoClientLogger = new CPO.HTTP.CPOClient.Logger(
+                                                                                       var cpoClientLogger = new CPO.HTTP.CPO2EMSPClient.Logger(
                                                                                                                  cpoClient,
                                                                                                                  ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
                                                                                                                  ClientsLoggingContext ?? DefaultLoggingContext,

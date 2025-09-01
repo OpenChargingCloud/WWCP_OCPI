@@ -183,7 +183,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
     /// A HTTP API providing advanced OCPI data structures.
     /// </summary>
     public class OCPIWebAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
-                            //  IHTTPAPIXExtension<CommonWebAPI>
     {
 
         #region Data
@@ -228,6 +227,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
 
         public static readonly HTTPEventSource_Id  DebugLogId                 = HTTPEventSource_Id.Parse($"OCPI{Version.String}_debugLog");
+
+        /// <summary>
+        /// The default WebAPI logfile name.
+        /// </summary>
+        public  const          String              DefaultLogfileName         = $"OCPI{Version.String}_WebAPI.log";
 
         #endregion
 
@@ -384,8 +388,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                           String?                  VersionPath            = null,
 
                           //HTTPPath?                URLPathPrefix          = null,
-                          String?                  HTMLTemplate           = null,
 
+                          String?                  ExternalDNSName        = null,
                           String?                  HTTPServerName         = DefaultHTTPServerName,
                           String?                  HTTPServiceName        = DefaultHTTPServiceName,
                           String?                  APIVersionHash         = null,
@@ -403,6 +407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                    WebAPIURLPathPrefix,
                    BasePath,
 
+                   ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,
                    HTTPServiceName ?? DefaultHTTPServiceName,
                    APIVersionHash,
@@ -412,7 +417,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
-                   LogfileName,
+                   LogfileName     ?? DefaultLogfileName,
                    LogfileCreator)
 
         {
@@ -427,11 +432,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             //this.cpoClients            = new List<CPOClient>();
             //this.emspClients           = new List<EMSPClient>();
-
-            // Link HTTP events...
-            //HTTPBaseAPI.HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
-            //HTTPBaseAPI.HTTPServer.ResponseLog    += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
-            //HTTPBaseAPI.HTTPServer.ErrorLog       += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
 
             var LogfilePrefix          = "HTTPSSEs" + Path.DirectorySeparatorChar;
 
@@ -543,20 +543,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         private void RegisterURITemplates()
         {
 
-            //var URLPathPrefix = HTTPPath.Root;
-
-            #region / (HTTPRoot)
-
-            //HTTPBaseAPI.MapResourceAssemblyFolder(
-            //    HTTPHostname.Any,
-            //    URLPathPrefix + VersionPath,
-            //    HTTPRoot,
-            //    DefaultFilename: "index.html"
-            //);
-
-            #endregion
-
-
             if (CommonWebAPI.OverlayURLPathPrefix.HasValue)
             {
 
@@ -565,7 +551,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                     HTTPHostname.Any,
                     CommonWebAPI.OverlayURLPathPrefix.Value + VersionPath + "webapi",
                     HTTPRoot,
-                    DefaultFilename: "index.html"
+                    RequireAuthentication:  false,
+                    DefaultFilename:       "index.html"
                 );
 
 
@@ -930,7 +917,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             }
 
-
+            return;
             #region ~/remoteXXXParties
 
             #region OPTIONS            ~/remoteXXXParties

@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
     /// The HTTP API for e-mobility service providers.
     /// CPOs will connect to this API.
     /// </summary>
-    public class SCSPAPI : HTTPAPIX
+    public class SCSPAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
     {
 
         #region Data
@@ -2419,24 +2419,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                        Party_Id                     DefaultPartyId,
                        Boolean?                     AllowDowngrades           = null,
 
-                       HTTPHostname?                HTTPHostname              = null,
-                       String?                      ExternalDNSName           = "",
-
                        HTTPPath?                    BasePath                  = null,
                        HTTPPath?                    URLPathPrefix             = null,
 
+                       String?                      ExternalDNSName           = null,
                        String?                      HTTPServerName            = DefaultHTTPServerName,
                        String?                      HTTPServiceName           = DefaultHTTPServiceName,
                        String?                      APIVersionHash            = null,
                        JObject?                     APIVersionHashes          = null,
-
-                       Boolean?                     DisableMaintenanceTasks   = false,
-                       TimeSpan?                    MaintenanceInitialDelay   = null,
-                       TimeSpan?                    MaintenanceEvery          = null,
-
-                       Boolean?                     DisableWardenTasks        = false,
-                       TimeSpan?                    WardenInitialDelay        = null,
-                       TimeSpan?                    WardenCheckEvery          = null,
 
                        Boolean?                     IsDevelopment             = false,
                        IEnumerable<String>?         DevelopmentServers        = null,
@@ -2446,33 +2436,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                        String?                      LogfileName               = DefaultLogfileName,
                        OCPILogfileCreatorDelegate?  LogfileCreator            = null)
 
-            : base(CommonAPI.HTTPServer,
-                   null, //HTTPHostname,
+            : base(CommonAPI,
                    URLPathPrefix   ?? DefaultURLPathPrefix,
-                   null,
-                   null,
-
-                   ExternalDNSName,
                    BasePath,
 
+                   ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,
                    HTTPServiceName ?? DefaultHTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,
 
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
-
                    IsDevelopment,
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
-                   "context",
                    LogfileName     ?? DefaultLogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)

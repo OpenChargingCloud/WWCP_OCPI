@@ -3288,7 +3288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
     /// <summary>
     /// The CommonAPI.
     /// </summary>
-    public class CommonAPI : HTTPAPIX
+    public class CommonAPI : AHTTPExtAPIXExtension<HTTPExtAPIX>
     {
 
         #region Data
@@ -3802,8 +3802,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// </summary>
         /// <param name="OurCredentialRoles">All our credential roles.</param>
         /// 
-        /// <param name="HTTPServer">A HTTP server.</param>
-        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The official URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
@@ -3816,31 +3814,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          Party_Id                      DefaultPartyId,
 
                          CommonHTTPAPI                 BaseAPI,
-                         //HTTPTestServerX?              HTTPServer                = null,
-
-                         HTTPHostname?                 HTTPHostname              = null,
-                         String?                       ExternalDNSName           = null,
-                         HTTPPath?                     URLPathPrefix             = null,
-                         HTTPPath?                     BasePath                  = null,
 
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
                          Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
-                         Boolean                       LocationsAsOpenData       = true,
-                         Boolean?                      AllowDowngrades           = null,
+
+                         HTTPPath?                     BasePath                  = null,
+                         HTTPPath?                     URLPathPrefix             = null,
+
                          Boolean                       IndentifyAsOCPI_2_2       = false,
 
+                         String?                       ExternalDNSName           = null,
                          String?                       HTTPServerName            = DefaultHTTPServerName,
                          String?                       HTTPServiceName           = DefaultHTTPServiceName,
                          String?                       APIVersionHash            = null,
                          JObject?                      APIVersionHashes          = null,
-
-                         Boolean?                      DisableMaintenanceTasks   = false,
-                         TimeSpan?                     MaintenanceInitialDelay   = null,
-                         TimeSpan?                     MaintenanceEvery          = null,
-
-                         Boolean?                      DisableWardenTasks        = false,
-                         TimeSpan?                     WardenInitialDelay        = null,
-                         TimeSpan?                     WardenCheckEvery          = null,
 
                          Boolean?                      IsDevelopment             = false,
                          IEnumerable<String>?          DevelopmentServers        = null,
@@ -3851,36 +3838,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          OCPILogfileCreatorDelegate?   LogfileCreator            = null,
                          String?                       DatabaseFilePath          = null,
                          String?                       RemotePartyDBFileName     = null,
-                         String?                       AssetsDBFileName          = null,
-                         Boolean                       AutoStart                 = false)
+                         String?                       AssetsDBFileName          = null)
 
-            : base(BaseAPI.HTTPBaseAPI.HTTPServer,
-                   null, //HTTPHostname,
+            : base(BaseAPI.HTTPBaseAPI,
                    URLPathPrefix,
-                   null,
-                   null,
-
-                   ExternalDNSName,
                    BasePath,
 
-                   HTTPServerName  ?? DefaultHTTPServerName,
-                   HTTPServiceName ?? DefaultHTTPServiceName,
+                   ExternalDNSName,
+                   HTTPServerName,
+                   HTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,
-
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
 
                    IsDevelopment,
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
-                   "context",
                    LogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
@@ -3912,12 +3885,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
                                                           AssetsDBFileName      ?? DefaultAssetsDBFileName);
 
-
-            // Link HTTP events...
-            //base.HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
-            //base.HTTPServer.ResponseLog    += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
-            //base.HTTPServer.ErrorLog       += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
-
             this.Logger                = this.DisableLogging == false
                                              ? new CommonAPILogger(
                                                    this,
@@ -3932,7 +3899,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     Version.Id,
                     URL.Concat(
                         BaseAPI.OurVersionsURL.Protocol.AsString(),
-                        ExternalDNSName ?? ("localhost:" + base.HTTPServer.TCPPort),
+                        BaseAPI.HTTPBaseAPI.ExternalDNSName ?? ("localhost:" + BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort),
                         URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
                 )
@@ -3945,7 +3912,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         Version_Id.Parse("2.2"),
                         URL.Concat(
                             BaseAPI.OurVersionsURL.Protocol.AsString(),
-                            ExternalDNSName ?? ("localhost:" + base.HTTPServer.TCPPort),
+                            BaseAPI.HTTPBaseAPI.ExternalDNSName ?? ("localhost:" + BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort),
                             URLPathPrefix + AdditionalURLPathPrefix + $"/versions/2.2"
                         )
                     )
@@ -3984,8 +3951,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         private void RegisterURLTemplates()
         {
-
-            var URLPathPrefix = HTTPPath.Root;
 
             //HTTPServer.Rewrite(req => {
 
@@ -4737,7 +4702,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                 this,
                                                 receivedCredentials.URL,
                                                 receivedCredentials.Token,  // CREDENTIALS_TOKEN_B
-                                                DNSClient: HTTPServer.DNSClient
+                                                DNSClient: BaseAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                             );
 
             var otherVersions             = await commonClient.GetVersions();

@@ -24,10 +24,10 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
@@ -38,7 +38,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// The HTTP API for charge point operators.
     /// EMSPs will connect to this API.
     /// </summary>
-    public class CPOAPI : HTTPAPIX
+    public class CPOAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
     {
 
         #region Data
@@ -46,12 +46,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String    DefaultHTTPServiceName   = "GraphDefined OCPI CPO HTTP API v0.1";
-
-        /// <summary>
-        /// The default HTTP server TCP port.
-        /// </summary>
-        public new static readonly IPPort    DefaultHTTPServerPort    = IPPort.Parse(8080);
+        public new const           String    DefaultHTTPServiceName   = $"GraphDefined OCPI {Version.String} CPO HTTP API";
 
         /// <summary>
         /// The default HTTP URL path prefix.
@@ -61,27 +56,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The default CPO API logfile name.
         /// </summary>
-        public  const              String    DefaultLogfileName       = "OCPI_CPOAPI.log";
+        public  const              String    DefaultLogfileName       = $"OCPI{Version.String}_CPOAPI.log";
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// The CommonAPI.
+        /// The OCPI CommonAPI.
         /// </summary>
-        public CommonAPI      CommonAPI             { get; }
+        public CommonAPI      CommonAPI
+            => HTTPBaseAPI;
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI v2.2 does not define any behaviour for this.
         /// </summary>
-        public Boolean?       AllowDowngrades       { get; }
+        public Boolean?       AllowDowngrades    { get; }
 
         /// <summary>
         /// The CPO API logger.
         /// </summary>
-        public CPOAPILogger?  CPOAPILogger          { get; }
+        public CPOAPILogger?  CPOAPILogger       { get; }
 
         #endregion
 
@@ -1492,21 +1488,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="CommonAPI">The OCPI CommonAPI.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         /// 
-        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The official URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// 
         /// <param name="URLPathPrefix">An optional URL path prefix, used when defining URL templates.</param>
         /// <param name="APIVersionHashes">The API version hashes (git commit hash values).</param>
-        /// 
-        /// <param name="DisableMaintenanceTasks">Disable all maintenance tasks.</param>
-        /// <param name="MaintenanceInitialDelay">The initial delay of the maintenance tasks.</param>
-        /// <param name="MaintenanceEvery">The maintenance interval.</param>
-        /// 
-        /// <param name="DisableWardenTasks">Disable all warden tasks.</param>
-        /// <param name="WardenInitialDelay">The initial delay of the warden tasks.</param>
-        /// <param name="WardenCheckEvery">The warden interval.</param>
         /// 
         /// <param name="IsDevelopment">This HTTP API runs in development mode.</param>
         /// <param name="DevelopmentServers">An enumeration of server names which will imply to run this service in development mode.</param>
@@ -1517,24 +1504,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public CPOAPI(CommonAPI                    CommonAPI,
                       Boolean?                     AllowDowngrades           = null,
 
-                      HTTPHostname?                HTTPHostname              = null,
-                      String?                      ExternalDNSName           = "",
-
                       HTTPPath?                    BasePath                  = null,
                       HTTPPath?                    URLPathPrefix             = null,
 
+                      String?                      ExternalDNSName           = null,
                       String?                      HTTPServerName            = DefaultHTTPServerName,
                       String?                      HTTPServiceName           = DefaultHTTPServiceName,
                       String?                      APIVersionHash            = null,
                       JObject?                     APIVersionHashes          = null,
-
-                      Boolean?                     DisableMaintenanceTasks   = false,
-                      TimeSpan?                    MaintenanceInitialDelay   = null,
-                      TimeSpan?                    MaintenanceEvery          = null,
-
-                      Boolean?                     DisableWardenTasks        = false,
-                      TimeSpan?                    WardenInitialDelay        = null,
-                      TimeSpan?                    WardenCheckEvery          = null,
 
                       Boolean?                     IsDevelopment             = false,
                       IEnumerable<String>?         DevelopmentServers        = null,
@@ -1544,33 +1521,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                       String?                      LogfileName               = DefaultLogfileName,
                       OCPILogfileCreatorDelegate?  LogfileCreator            = null)
 
-            : base(CommonAPI.HTTPBaseAPI.HTTPServer,
-                   null, //HTTPHostname,
+            : base(CommonAPI,
                    URLPathPrefix   ?? DefaultURLPathPrefix,
-                   null,
-                   null,
-
-                   ExternalDNSName,
                    BasePath,
 
+                   ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,
                    HTTPServiceName ?? DefaultHTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,
 
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
-
                    IsDevelopment,
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
-                   "context",
                    LogfileName     ?? DefaultLogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
@@ -1578,7 +1542,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            this.CommonAPI        = CommonAPI;
             this.AllowDowngrades  = AllowDowngrades;
 
             this.CPOAPILogger     = this.DisableLogging == false
@@ -1646,7 +1609,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
                                     CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    HTTPServer.DNSClient
+                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                 );
 
                 cpo2emspClients.TryAdd(emspId, cpoClient);
@@ -1695,7 +1658,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
                                     CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    HTTPServer.DNSClient
+                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                 );
 
                 cpo2emspClients.TryAdd(emspId, cpoClient);
@@ -1745,7 +1708,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
                                     CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    HTTPServer.DNSClient
+                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                 );
 
                 cpo2emspClients.TryAdd(emspId, cpoClient);
@@ -1767,8 +1730,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         private void RegisterURLTemplates()
         {
-
-            var URLPathPrefix = HTTPPath.Root;
 
             #region ~/locations
 
@@ -1908,9 +1869,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                         // Link to the 'next' page should be provided when this is NOT the last page, e.g.:
                         //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
-                        httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
-                                                                 ? $"https://{ExternalDNSName}"
-                                                                 : $"http://127.0.0.1:{HTTPServer.TCPPort}")}{URLPathPrefix}/locations{queryParameters}>; rel=\"next\"");
+                        httpResponseBuilder.Set("Link", $"<{(CommonAPI.BaseAPI.ExternalDNSName.IsNotNullOrEmpty()
+                                                                 ? $"https://{CommonAPI.BaseAPI.ExternalDNSName}"
+                                                                 : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/locations{queryParameters}>; rel=\"next\"");
 
                     }
 
@@ -2396,7 +2357,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
                                                                  ? $"https://{ExternalDNSName}"
-                                                                 : $"http://127.0.0.1:{HTTPServer.TCPPort}")}{URLPathPrefix}/tariffs{queryParameters}>; rel=\"next\"");
+                                                                 : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/tariffs{queryParameters}>; rel=\"next\"");
 
                     }
 
@@ -2648,7 +2609,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
                                                                  ? $"https://{ExternalDNSName}"
-                                                                 : $"http://127.0.0.1:{HTTPServer.TCPPort}")}{URLPathPrefix}/sessions{queryParameters}>; rel=\"next\"");
+                                                                 : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/sessions{queryParameters}>; rel=\"next\"");
 
                     }
 
@@ -2937,7 +2898,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
                                                                  ? $"https://{ExternalDNSName}"
-                                                                 : $"http://127.0.0.1:{HTTPServer.TCPPort}")}{URLPathPrefix}/cdrs{queryParameters}>; rel=\"next\"");
+                                                                 : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/cdrs{queryParameters}>; rel=\"next\"");
 
                     }
 
@@ -3243,7 +3204,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
                                                                  ? $"https://{ExternalDNSName}"
-                                                                 : $"http://127.0.0.1:{HTTPServer.TCPPort}")}{URLPathPrefix}/tokens/{countryCode}/{partyId}{queryParameters}>; rel=\"next\"");
+                                                                 : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/tokens/{countryCode}/{partyId}{queryParameters}>; rel=\"next\"");
 
                     }
 

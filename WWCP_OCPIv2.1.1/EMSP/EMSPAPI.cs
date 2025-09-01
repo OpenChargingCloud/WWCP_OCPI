@@ -24,10 +24,10 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
@@ -38,7 +38,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// The HTTP API for e-mobility service providers.
     /// CPOs will connect to this API.
     /// </summary>
-    public class EMSPAPI : HTTPAPIX
+    public class EMSPAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
     {
 
         #region Data
@@ -46,12 +46,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String    DefaultHTTPServiceName    = "GraphDefined OCPI EMSP HTTP API v0.1";
-
-        /// <summary>
-        /// The default HTTP server TCP port.
-        /// </summary>
-        public new static readonly IPPort    DefaultHTTPServerPort     = IPPort.Parse(8080);
+        public new const           String    DefaultHTTPServiceName    = $"GraphDefined OCPI {Version.String} EMSP HTTP API";
 
         /// <summary>
         /// The default HTTP URL path prefix.
@@ -61,7 +56,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The default EMSP API logfile name.
         /// </summary>
-        public  const              String    DefaultLogfileName       = "OCPI_EMSPAPI.log";
+        public  const              String    DefaultLogfileName       = $"OCPI{Version.String}_EMSPAPI.log";
 
         protected Newtonsoft.Json.Formatting JSONFormat = Newtonsoft.Json.Formatting.Indented;
 
@@ -70,25 +65,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region Properties
 
         /// <summary>
-        /// The CommonAPI.
+        /// The OCPI CommonAPI.
         /// </summary>
-        public CommonAPI       CommonAPI             { get; }
+        public CommonAPI       CommonAPI
+            => HTTPBaseAPI;
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI v2.2 does not define any behaviour for this.
         /// </summary>
-        public Boolean?        AllowDowngrades       { get; }
+        public Boolean?        AllowDowngrades    { get; }
 
                 /// <summary>
         /// The timeout for upstream requests.
         /// </summary>
-        public TimeSpan        RequestTimeout        { get; set; }
+        public TimeSpan        RequestTimeout     { get; set; }
 
         /// <summary>
         /// The EMSP API logger.
         /// </summary>
-        public EMSPAPILogger?  EMSPAPILogger         { get; }
+        public EMSPAPILogger?  EMSPAPILogger      { get; }
 
         #endregion
 
@@ -2452,21 +2448,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="CommonAPI">The OCPI CommonAPI.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         /// 
-        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The official URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// 
         /// <param name="URLPathPrefix">An optional URL path prefix, used when defining URL templates.</param>
         /// <param name="APIVersionHashes">The API version hashes (git commit hash values).</param>
-        /// 
-        /// <param name="DisableMaintenanceTasks">Disable all maintenance tasks.</param>
-        /// <param name="MaintenanceInitialDelay">The initial delay of the maintenance tasks.</param>
-        /// <param name="MaintenanceEvery">The maintenance interval.</param>
-        /// 
-        /// <param name="DisableWardenTasks">Disable all warden tasks.</param>
-        /// <param name="WardenInitialDelay">The initial delay of the warden tasks.</param>
-        /// <param name="WardenCheckEvery">The warden interval.</param>
         /// 
         /// <param name="IsDevelopment">This HTTP API runs in development mode.</param>
         /// <param name="DevelopmentServers">An enumeration of server names which will imply to run this service in development mode.</param>
@@ -2477,24 +2464,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public EMSPAPI(CommonAPI                    CommonAPI,
                        Boolean?                     AllowDowngrades           = null,
 
-                       HTTPHostname?                HTTPHostname              = null,
-                       String?                      ExternalDNSName           = "",
-
                        HTTPPath?                    BasePath                  = null,
                        HTTPPath?                    URLPathPrefix             = null,
 
+                       String?                      ExternalDNSName           = null,
                        String?                      HTTPServerName            = DefaultHTTPServerName,
                        String?                      HTTPServiceName           = DefaultHTTPServiceName,
                        String?                      APIVersionHash            = null,
                        JObject?                     APIVersionHashes          = null,
-
-                       Boolean?                     DisableMaintenanceTasks   = false,
-                       TimeSpan?                    MaintenanceInitialDelay   = null,
-                       TimeSpan?                    MaintenanceEvery          = null,
-
-                       Boolean?                     DisableWardenTasks        = false,
-                       TimeSpan?                    WardenInitialDelay        = null,
-                       TimeSpan?                    WardenCheckEvery          = null,
 
                        Boolean?                     IsDevelopment             = false,
                        IEnumerable<String>?         DevelopmentServers        = null,
@@ -2504,33 +2481,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                        String?                      LogfileName               = DefaultLogfileName,
                        OCPILogfileCreatorDelegate?  LogfileCreator            = null)
 
-            : base(CommonAPI.HTTPBaseAPI.HTTPServer,
-                   null, //HTTPHostname,
+            : base(CommonAPI,
                    URLPathPrefix   ?? DefaultURLPathPrefix,
-                   null,
-                   null,
-
-                   ExternalDNSName,
                    BasePath,
 
+                   ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,
                    HTTPServiceName ?? DefaultHTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,
 
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
-
                    IsDevelopment,
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
-                   "context",
                    LogfileName     ?? DefaultLogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
@@ -2538,7 +2502,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            this.CommonAPI        = CommonAPI;
             this.AllowDowngrades  = AllowDowngrades;
             this.RequestTimeout   = TimeSpan.FromSeconds(30);
 
@@ -2607,7 +2570,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
                                      CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
                                      CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                     HTTPServer.DNSClient
+                                     CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                  );
 
                 emsp2cpoClients.TryAdd(cpoId, emspClient);
@@ -2656,7 +2619,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
                                      CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
                                      CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                     HTTPServer.DNSClient
+                                     CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                  );
 
                 emsp2cpoClients.TryAdd(cpoId, emspClient);
@@ -2706,7 +2669,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
                                      CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
                                      CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                     HTTPServer.DNSClient
+                                     CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                  );
 
                 emsp2cpoClients.TryAdd(cpoId, emspClient);
@@ -2728,41 +2691,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         private void RegisterURLTemplates()
         {
-
-            var URLPathPrefix = HTTPPath.Root;
-
-            #region GET    [/emsp] == /
-
-            //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-            //                                   URLPathPrefix + "/emsp", "cloud.charging.open.protocols.OCPIv2_1_1.HTTPAPI.EMSPAPI.HTTPRoot",
-            //                                   Assembly.GetCallingAssembly());
-
-            //CommonAPI.AddOCPIMethod(
-            //                             HTTPMethod.GET,
-            //                             new HTTPPath[] {
-            //                                 URLPathPrefix + "/emsp/index.html",
-            //                                 URLPathPrefix + "/emsp/"
-            //                             },
-            //                             HTTPContentType.Text.HTML_UTF8,
-            //                             OCPIRequest: async Request => {
-
-            //                                 var _MemoryStream = new MemoryStream();
-            //                                 typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_1_1.HTTPAPI.EMSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-            //                                 typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_1_1.HTTPAPI.EMSPAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
-
-            //                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
-            //                                     HTTPStatusCode  = HTTPStatusCode.OK,
-            //                                     Server          = DefaultHTTPServerName,
-            //                                     Date            = Timestamp.Now,
-            //                                     ContentType     = HTTPContentType.Text.HTML_UTF8,
-            //                                     Content         = _MemoryStream.ToArray(),
-            //                                     Connection      = ConnectionType.Close
-            //                                 };
-
-            //                             });
-
-            #endregion
-
 
             // Receiver Interface for eMSPs and NSPs
 

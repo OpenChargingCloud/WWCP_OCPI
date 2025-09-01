@@ -1896,31 +1896,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          Role                         OurRole,
 
                          CommonHTTPAPI                BaseAPI,
-                         //HTTPTestServerX?             HTTPServer                = null,
 
                          HTTPPath?                    AdditionalURLPathPrefix   = null,
                          Func<EVSE, Boolean>?         KeepRemovedEVSEs          = null,
-                         Boolean                      LocationsAsOpenData       = true,
-                         Boolean?                     AllowDowngrades           = null,
-
-                         HTTPHostname?                HTTPHostname              = null,
-                         String?                      ExternalDNSName           = "",
 
                          HTTPPath?                    BasePath                  = null,
                          HTTPPath?                    URLPathPrefix             = null,
 
+                         String?                      ExternalDNSName           = null,
                          String?                      HTTPServerName            = DefaultHTTPServerName,
                          String?                      HTTPServiceName           = DefaultHTTPServiceName,
                          String?                      APIVersionHash            = null,
                          JObject?                     APIVersionHashes          = null,
-
-                         Boolean?                     DisableMaintenanceTasks   = false,
-                         TimeSpan?                    MaintenanceInitialDelay   = null,
-                         TimeSpan?                    MaintenanceEvery          = null,
-
-                         Boolean?                     DisableWardenTasks        = false,
-                         TimeSpan?                    WardenInitialDelay        = null,
-                         TimeSpan?                    WardenCheckEvery          = null,
 
                          Boolean?                     IsDevelopment             = false,
                          IEnumerable<String>?         DevelopmentServers        = null,
@@ -1936,8 +1923,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             : base(BaseAPI.HTTPBaseAPI,
                    URLPathPrefix,
                    BasePath,
-                   //HTMLTemplate      
 
+                   ExternalDNSName,
                    HTTPServerName,
                    HTTPServiceName,
                    APIVersionHash,
@@ -1951,38 +1938,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
                        : null)
-
-            //: base(BaseAPI.HTTPBaseAPI.HTTPServer,
-            //       null, //HTTPHostname,
-            //       URLPathPrefix,
-            //       null,
-            //       null,
-
-            //       ExternalDNSName,
-            //       BasePath,
-
-            //       HTTPServerName  ?? DefaultHTTPServerName,
-            //       HTTPServiceName ?? DefaultHTTPServiceName,
-            //       APIVersionHash,
-            //       APIVersionHashes,
-
-            //       DisableMaintenanceTasks,
-            //       MaintenanceInitialDelay,
-            //       MaintenanceEvery,
-
-            //       DisableWardenTasks,
-            //       WardenInitialDelay,
-            //       WardenCheckEvery,
-
-            //       IsDevelopment,
-            //       DevelopmentServers,
-            //       DisableLogging,
-            //       LoggingPath,
-            //       "context",
-            //       LogfileName,
-            //       LogfileCreator is not null
-            //           ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-            //           : null)
 
         {
 
@@ -2009,12 +1964,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
                                                           AssetsDBFileName      ?? DefaultAssetsDBFileName);
 
-
-            // Link HTTP events...
-            //base.HTTPServer.RequestLog    += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
-            //base.HTTPServer.ResponseLog   += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
-            //base.HTTPServer.ErrorLog      += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
-
             this.CommonAPILogger           = this.DisableLogging == false
                                                  ? new CommonAPILogger(
                                                        this,
@@ -2029,7 +1978,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     Version.Id,
                     URL.Concat(
                         BaseAPI.OurVersionsURL.Protocol.AsString(),
-                        ExternalDNSName ?? ("localhost:" + BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort),
+                        BaseAPI.HTTPBaseAPI.ExternalDNSName ?? ("localhost:" + BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort),
                         URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
                 )

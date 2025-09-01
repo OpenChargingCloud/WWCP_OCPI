@@ -34,7 +34,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a get location request will be send.
     /// </summary>
     public delegate Task OnGetLocationRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                      CPOClient                 Sender,
+                                                      CPO2EMSPClient                 Sender,
                                                       Request_Id                RequestId,
                                                       Correlation_Id            CorrelationId,
 
@@ -50,7 +50,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a get location request had been received.
     /// </summary>
     public delegate Task OnGetLocationResponseDelegate(DateTimeOffset           LogTimestamp,
-                                                       CPOClient                Sender,
+                                                       CPO2EMSPClient                Sender,
                                                        Request_Id               RequestId,
                                                        Correlation_Id           CorrelationId,
 
@@ -73,7 +73,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a put location request will be send.
     /// </summary>
     public delegate Task OnPutLocationRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                      CPOClient                 Sender,
+                                                      CPO2EMSPClient                 Sender,
                                                       Request_Id                RequestId,
                                                       Correlation_Id            CorrelationId,
 
@@ -87,7 +87,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a put location request had been received.
     /// </summary>
     public delegate Task OnPutLocationResponseDelegate(DateTimeOffset           LogTimestamp,
-                                                       CPOClient                Sender,
+                                                       CPO2EMSPClient                Sender,
                                                        Request_Id               RequestId,
                                                        Correlation_Id           CorrelationId,
 
@@ -108,7 +108,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a patch location request will be send.
     /// </summary>
     public delegate Task OnPatchLocationRequestDelegate(DateTimeOffset           LogTimestamp,
-                                                        CPOClient                Sender,
+                                                        CPO2EMSPClient                Sender,
                                                         Request_Id               RequestId,
                                                         Correlation_Id           CorrelationId,
 
@@ -123,7 +123,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a patch location request had been received.
     /// </summary>
     public delegate Task OnPatchLocationResponseDelegate(DateTimeOffset           LogTimestamp,
-                                                         CPOClient                Sender,
+                                                         CPO2EMSPClient                Sender,
                                                          Request_Id               RequestId,
                                                          Correlation_Id           CorrelationId,
 
@@ -146,7 +146,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a get EVSE request will be send.
     /// </summary>
     public delegate Task OnGetEVSERequestDelegate(DateTimeOffset           LogTimestamp,
-                                                  CPOClient                Sender,
+                                                  CPO2EMSPClient                Sender,
                                                   Request_Id               RequestId,
                                                   Correlation_Id           CorrelationId,
 
@@ -161,7 +161,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a get EVSE request had been received.
     /// </summary>
     public delegate Task OnGetEVSEResponseDelegate(DateTimeOffset           LogTimestamp,
-                                                   CPOClient                Sender,
+                                                   CPO2EMSPClient                Sender,
                                                    Request_Id               RequestId,
                                                    Correlation_Id           CorrelationId,
 
@@ -183,7 +183,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a put EVSE request will be send.
     /// </summary>
     public delegate Task OnPutEVSERequestDelegate(DateTimeOffset           LogTimestamp,
-                                                  CPOClient                Sender,
+                                                  CPO2EMSPClient                Sender,
                                                   Request_Id               RequestId,
                                                   Correlation_Id           CorrelationId,
 
@@ -200,7 +200,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a put EVSE request had been received.
     /// </summary>
     public delegate Task OnPutEVSEResponseDelegate(DateTimeOffset           LogTimestamp,
-                                                   CPOClient                Sender,
+                                                   CPO2EMSPClient                Sender,
                                                    Request_Id               RequestId,
                                                    Correlation_Id           CorrelationId,
 
@@ -224,7 +224,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a patch EVSE request will be send.
     /// </summary>
     public delegate Task OnPatchEVSERequestDelegate(DateTimeOffset           LogTimestamp,
-                                                    CPOClient                Sender,
+                                                    CPO2EMSPClient                Sender,
                                                     Request_Id               RequestId,
                                                     Correlation_Id           CorrelationId,
 
@@ -242,7 +242,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a patch EVSE request had been received.
     /// </summary>
     public delegate Task OnPatchEVSEResponseDelegate(DateTimeOffset           LogTimestamp,
-                                                     CPOClient                Sender,
+                                                     CPO2EMSPClient                Sender,
                                                      Request_Id               RequestId,
                                                      Correlation_Id           CorrelationId,
 
@@ -268,7 +268,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a get connector request will be send.
     /// </summary>
     public delegate Task OnGetConnectorRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                       CPOClient                 Sender,
+                                                       CPO2EMSPClient                 Sender,
                                                        Request_Id                RequestId,
                                                        Correlation_Id            CorrelationId,
 
@@ -286,7 +286,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a get connector request had been received.
     /// </summary>
     public delegate Task OnGetConnectorResponseDelegate(DateTimeOffset            LogTimestamp,
-                                                        CPOClient                 Sender,
+                                                        CPO2EMSPClient                 Sender,
                                                         Request_Id                RequestId,
                                                         Correlation_Id            CorrelationId,
 
@@ -311,7 +311,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a put connector request will be send.
     /// </summary>
     public delegate Task OnPutConnectorRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                       CPOClient                 Sender,
+                                                       CPO2EMSPClient                 Sender,
                                                        Request_Id                RequestId,
                                                        Correlation_Id            CorrelationId,
 
@@ -325,7 +325,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a put connector request had been received.
     /// </summary>
     public delegate Task OnPutConnectorResponseDelegate(DateTimeOffset            LogTimestamp,
-                                                        CPOClient                 Sender,
+                                                        CPO2EMSPClient                 Sender,
                                                         Request_Id                RequestId,
                                                         Correlation_Id            CorrelationId,
 
@@ -346,7 +346,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a patch connector request will be send.
     /// </summary>
     public delegate Task OnPatchConnectorRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                         CPOClient                 Sender,
+                                                         CPO2EMSPClient                 Sender,
                                                          Request_Id                RequestId,
                                                          Correlation_Id            CorrelationId,
 
@@ -365,7 +365,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a patch connector request had been received.
     /// </summary>
     public delegate Task OnPatchConnectorResponseDelegate(DateTimeOffset            LogTimestamp,
-                                                          CPOClient                 Sender,
+                                                          CPO2EMSPClient                 Sender,
                                                           Request_Id                RequestId,
                                                           Correlation_Id            CorrelationId,
 
@@ -392,7 +392,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a get tariff request will be send.
     /// </summary>
     public delegate Task OnGetTariffRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                    CPOClient                 Sender,
+                                                    CPO2EMSPClient                 Sender,
                                                     Request_Id                RequestId,
                                                     Correlation_Id            CorrelationId,
 
@@ -408,7 +408,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a get tariff request had been received.
     /// </summary>
     public delegate Task OnGetTariffResponseDelegate(DateTimeOffset            LogTimestamp,
-                                                     CPOClient                 Sender,
+                                                     CPO2EMSPClient                 Sender,
                                                      Request_Id                RequestId,
                                                      Correlation_Id            CorrelationId,
 
@@ -431,7 +431,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a put tariff request will be send.
     /// </summary>
     public delegate Task OnPutTariffRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                    CPOClient                 Sender,
+                                                    CPO2EMSPClient                 Sender,
                                                     Request_Id                RequestId,
                                                     Correlation_Id            CorrelationId,
 
@@ -445,7 +445,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a put tariff request had been received.
     /// </summary>
     public delegate Task OnPutTariffResponseDelegate(DateTimeOffset            LogTimestamp,
-                                                     CPOClient                 Sender,
+                                                     CPO2EMSPClient                 Sender,
                                                      Request_Id                RequestId,
                                                      Correlation_Id            CorrelationId,
 
@@ -466,7 +466,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a patch tariff request will be send.
     /// </summary>
     public delegate Task OnPatchTariffRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                      CPOClient                 Sender,
+                                                      CPO2EMSPClient                 Sender,
                                                       Request_Id                RequestId,
                                                       Correlation_Id            CorrelationId,
 
@@ -483,7 +483,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a patch tariff request had been received.
     /// </summary>
     public delegate Task OnPatchTariffResponseDelegate(DateTimeOffset            LogTimestamp,
-                                                       CPOClient                 Sender,
+                                                       CPO2EMSPClient                 Sender,
                                                        Request_Id                RequestId,
                                                        Correlation_Id            CorrelationId,
 
@@ -507,7 +507,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a delete tariff request will be send.
     /// </summary>
     public delegate Task OnDeleteTariffRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                       CPOClient                 Sender,
+                                                       CPO2EMSPClient                 Sender,
                                                        Request_Id                RequestId,
                                                        Correlation_Id            CorrelationId,
 
@@ -523,7 +523,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a delete tariff request had been received.
     /// </summary>
     public delegate Task OnDeleteTariffResponseDelegate(DateTimeOffset            LogTimestamp,
-                                                        CPOClient                 Sender,
+                                                        CPO2EMSPClient                 Sender,
                                                         Request_Id                RequestId,
                                                         Correlation_Id            CorrelationId,
 
@@ -547,7 +547,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a get session request will be send.
     /// </summary>
     public delegate Task OnGetSessionRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                     CPOClient                 Sender,
+                                                     CPO2EMSPClient                 Sender,
                                                      Request_Id                RequestId,
                                                      Correlation_Id            CorrelationId,
 
@@ -563,7 +563,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a get session request had been received.
     /// </summary>
     public delegate Task OnGetSessionResponseDelegate(DateTimeOffset            LogTimestamp,
-                                                      CPOClient                 Sender,
+                                                      CPO2EMSPClient                 Sender,
                                                       Request_Id                RequestId,
                                                       Correlation_Id            CorrelationId,
 
@@ -586,7 +586,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a put session request will be send.
     /// </summary>
     public delegate Task OnPutSessionRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                     CPOClient                 Sender,
+                                                     CPO2EMSPClient                 Sender,
                                                      Request_Id                RequestId,
                                                      Correlation_Id            CorrelationId,
 
@@ -600,7 +600,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a put session request had been received.
     /// </summary>
     public delegate Task OnPutSessionResponseDelegate(DateTimeOffset            LogTimestamp,
-                                                      CPOClient                 Sender,
+                                                      CPO2EMSPClient                 Sender,
                                                       Request_Id                RequestId,
                                                       Correlation_Id            CorrelationId,
 
@@ -621,7 +621,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a patch session request will be send.
     /// </summary>
     public delegate Task OnPatchSessionRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                       CPOClient                 Sender,
+                                                       CPO2EMSPClient                 Sender,
                                                        Request_Id                RequestId,
                                                        Correlation_Id            CorrelationId,
 
@@ -638,7 +638,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a patch session request had been received.
     /// </summary>
     public delegate Task OnPatchSessionResponseDelegate(DateTimeOffset            LogTimestamp,
-                                                        CPOClient                 Sender,
+                                                        CPO2EMSPClient                 Sender,
                                                         Request_Id                RequestId,
                                                         Correlation_Id            CorrelationId,
 
@@ -662,7 +662,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a delete session request will be send.
     /// </summary>
     public delegate Task OnDeleteSessionRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                        CPOClient                 Sender,
+                                                        CPO2EMSPClient                 Sender,
                                                         Request_Id                RequestId,
                                                         Correlation_Id            CorrelationId,
 
@@ -678,7 +678,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a delete session request had been received.
     /// </summary>
     public delegate Task OnDeleteSessionResponseDelegate(DateTimeOffset            LogTimestamp,
-                                                         CPOClient                 Sender,
+                                                         CPO2EMSPClient                 Sender,
                                                          Request_Id                RequestId,
                                                          Correlation_Id            CorrelationId,
 
@@ -702,7 +702,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a get charge detail record request will be send.
     /// </summary>
     public delegate Task OnGetCDRRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                 CPOClient                 Sender,
+                                                 CPO2EMSPClient                 Sender,
                                                  Request_Id                RequestId,
                                                  Correlation_Id            CorrelationId,
 
@@ -718,7 +718,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a get charge detail record request had been received.
     /// </summary>
     public delegate Task OnGetCDRResponseDelegate(DateTimeOffset            LogTimestamp,
-                                                  CPOClient                 Sender,
+                                                  CPO2EMSPClient                 Sender,
                                                   Request_Id                RequestId,
                                                   Correlation_Id            CorrelationId,
 
@@ -741,7 +741,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a post charge detail record request will be send.
     /// </summary>
     public delegate Task OnPostCDRRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                  CPOClient                 Sender,
+                                                  CPO2EMSPClient                 Sender,
                                                   Request_Id                RequestId,
                                                   Correlation_Id            CorrelationId,
 
@@ -755,7 +755,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a post charge detail record request had been received.
     /// </summary>
     public delegate Task OnPostCDRResponseDelegate(DateTimeOffset            LogTimestamp,
-                                                   CPOClient                 Sender,
+                                                   CPO2EMSPClient                 Sender,
                                                    Request_Id                RequestId,
                                                    Correlation_Id            CorrelationId,
 
@@ -777,7 +777,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a get tokens request will be send.
     /// </summary>
     public delegate Task OnGetTokensRequestDelegate(DateTimeOffset                     LogTimestamp,
-                                                    CPOClient                          Sender,
+                                                    CPO2EMSPClient                          Sender,
                                                     Request_Id                         RequestId,
                                                     Correlation_Id                     CorrelationId,
 
@@ -792,7 +792,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a get tokens request had been received.
     /// </summary>
     public delegate Task OnGetTokensResponseDelegate(DateTimeOffset                     LogTimestamp,
-                                                     CPOClient                          Sender,
+                                                     CPO2EMSPClient                          Sender,
                                                      Request_Id                         RequestId,
                                                      Correlation_Id                     CorrelationId,
 
@@ -814,7 +814,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a post token request will be send.
     /// </summary>
     public delegate Task OnPostTokenRequestDelegate(DateTimeOffset                     LogTimestamp,
-                                                    CPOClient                          Sender,
+                                                    CPO2EMSPClient                          Sender,
                                                     Request_Id                         RequestId,
                                                     Correlation_Id                     CorrelationId,
 
@@ -830,7 +830,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a post token request had been received.
     /// </summary>
     public delegate Task OnPostTokenResponseDelegate(DateTimeOffset                    LogTimestamp,
-                                                     CPOClient                         Sender,
+                                                     CPO2EMSPClient                         Sender,
                                                      Request_Id                        RequestId,
                                                      Correlation_Id                    CorrelationId,
 
@@ -854,7 +854,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a set charging profile request will be send.
     /// </summary>
     public delegate Task OnSetChargingProfileRequestDelegate(DateTimeOffset                          LogTimestamp,
-                                                             CPOClient                               Sender,
+                                                             CPO2EMSPClient                               Sender,
                                                              Request_Id                              RequestId,
                                                              Correlation_Id                          CorrelationId,
 
@@ -869,7 +869,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// A delegate called whenever a response to a set charging profile request had been received.
     /// </summary>
     public delegate Task OnSetChargingProfileResponseDelegate(DateTimeOffset                          LogTimestamp,
-                                                              CPOClient                               Sender,
+                                                              CPO2EMSPClient                               Sender,
                                                               Request_Id                              RequestId,
                                                               Correlation_Id                          CorrelationId,
 

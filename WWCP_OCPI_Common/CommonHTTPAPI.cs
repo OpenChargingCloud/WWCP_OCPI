@@ -865,65 +865,54 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="LoggingPath">The path for all logfiles.</param>
         /// <param name="LogfileName">The name of the logfile.</param>
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
-        public CommonHTTPAPI(//HTTPTestServerX                                            HTTPServer,
-                             HTTPExtAPIX                                                HTTPAPI,
-                             URL                                                        OurBaseURL,
-                             URL                                                        OurVersionsURL,
+        public CommonHTTPAPI(HTTPExtAPIX                    HTTPAPI,
+                             URL                            OurBaseURL,
+                             URL                            OurVersionsURL,
 
-                             IEnumerable<HTTPHostname>?                                 Hostnames                     = null,
-                             HTTPPath?                                                  RootPath                      = null,
-                             IEnumerable<HTTPContentType>?                              HTTPContentTypes              = null,
-                             I18NString?                                                Description                   = null,
+                             IEnumerable<HTTPHostname>?     Hostnames                     = null,
+                             HTTPPath?                      RootPath                      = null,
+                             IEnumerable<HTTPContentType>?  HTTPContentTypes              = null,
+                             I18NString?                    Description                   = null,
 
-                             String?                                                    ExternalDNSName               = null,
-                             HTTPPath?                                                  BasePath                      = null,  // For URL prefixes in HTML!
+                             HTTPPath?                      BasePath                      = null,  // For URL prefixes in HTML!
 
-                             String?                                                    HTTPServerName                = DefaultHTTPServerName,
-                             String?                                                    HTTPServiceName               = DefaultHTTPServiceName,
-                             String?                                                    APIVersionHash                = null,
-                             JObject?                                                   APIVersionHashes              = null,
+                             String?                        ExternalDNSName               = null,
+                             String?                        HTTPServerName                = DefaultHTTPServerName,
+                             String?                        HTTPServiceName               = DefaultHTTPServiceName,
+                             String?                        APIVersionHash                = null,
+                             JObject?                       APIVersionHashes              = null,
 
-                             EMailAddress?                                              APIRobotEMailAddress          = null,
-                             String?                                                    APIRobotGPGPassphrase         = null,
-                             ISMTPClient?                                               SMTPClient                    = null,
+                             EMailAddress?                  APIRobotEMailAddress          = null,
+                             String?                        APIRobotGPGPassphrase         = null,
+                             ISMTPClient?                   SMTPClient                    = null,
 
-                             HTTPPath?                                                  AdditionalURLPathPrefix       = null,
-                             Boolean                                                    LocationsAsOpenData           = true,
-                             Boolean                                                    TariffsAsOpenData             = false,
-                             Boolean?                                                   AllowDowngrades               = null,
+                             HTTPPath?                      AdditionalURLPathPrefix       = null,
+                             Boolean                        LocationsAsOpenData           = true,
+                             Boolean                        TariffsAsOpenData             = false,
+                             Boolean?                       AllowDowngrades               = null,
 
-                             //HTTPHostname?                                              HTTPHostname                  = null,
+                             Boolean?                       IsDevelopment                 = null,
+                             IEnumerable<String>?           DevelopmentServers            = null,
+                             Boolean                        SkipURLTemplates              = false,
+                             String?                        DatabaseFileName              = DefaultAssetsDBFileName,
+                             Boolean?                       DisableNotifications          = false,
 
-                             Boolean?                                                   DisableMaintenanceTasks       = null,
-                             TimeSpan?                                                  MaintenanceInitialDelay       = null,
-                             TimeSpan?                                                  MaintenanceEvery              = null,
-
-                             Boolean?                                                   DisableWardenTasks            = null,
-                             TimeSpan?                                                  WardenInitialDelay            = null,
-                             TimeSpan?                                                  WardenCheckEvery              = null,
-
-                             Boolean?                                                   IsDevelopment                 = null,
-                             IEnumerable<String>?                                       DevelopmentServers            = null,
-                             Boolean                                                    SkipURLTemplates              = false,
-                             String?                                                    DatabaseFileName              = DefaultAssetsDBFileName,
-                             Boolean?                                                   DisableNotifications          = false,
-
-                             Boolean?                                                   DisableLogging                = null,
-                             String?                                                    LoggingContext                = null,
-                             String?                                                    LoggingPath                   = null,
-                             String?                                                    LogfileName                   = null,
-                             OCPILogfileCreatorDelegate?                                LogfileCreator                = null)
-                             //String?                                                    DatabaseFilePath              = null,
-                             //String?                                                    RemotePartyDBFileName         = null,
-                             //String?                                                    AssetsDBFileName              = null,
-                             //DNSClient?                                                 DNSClient                     = null,
-                             //Boolean                                                    AutoStart                     = false
+                             Boolean?                       DisableLogging                = null,
+                             String?                        LoggingContext                = null,
+                             String?                        LoggingPath                   = null,
+                             String?                        LogfileName                   = null,
+                             OCPILogfileCreatorDelegate?    LogfileCreator                = null)
+                             //String?                        DatabaseFilePath              = null,
+                             //String?                        RemotePartyDBFileName         = null,
+                             //String?                        AssetsDBFileName              = null,
+                             //DNSClient?                     DNSClient                     = null,
+                             //Boolean                        AutoStart                     = false
 
             : base(HTTPAPI,
                    RootPath,
                    BasePath,
-                   //HTMLTemplate      
 
+                   ExternalDNSName,
                    HTTPServerName,
                    HTTPServiceName,
                    APIVersionHash,
@@ -937,75 +926,6 @@ namespace cloud.charging.open.protocols.OCPI
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
                        : null)
-
-            //: base(HTTPServer,
-            //       Hostnames,
-            //       RootPath,
-            //       HTTPContentTypes,
-            //       Description,
-
-            //       ExternalDNSName,
-            //       BasePath,
-
-            //       HTTPServerName,
-            //       HTTPServiceName,
-            //       APIVersionHash,
-            //       APIVersionHashes,
-
-            //       null,
-
-            //       null,
-            //       APIRobotEMailAddress  ?? new EMailAddress(
-            //                                    "OCPI Common HTTP API",
-            //                                    SimpleEMailAddress.Parse("robot@example.org")
-            //                                    //OpenPGP.ReadSecretKeyRing(File.OpenRead(Path.Combine(AppContext.BaseDirectory, "robot@example.org_secring.gpg"))),
-            //                                    //OpenPGP.ReadPublicKeyRing(File.OpenRead(Path.Combine(AppContext.BaseDirectory, "robot@example.org_pubring.gpg")))
-            //                                ),
-            //       APIRobotGPGPassphrase ?? "ipco",
-            //       SMTPClient            ?? new NullMailer(),
-
-            //       null,
-            //       null,
-            //       true,
-            //       null,
-            //       null,
-            //       null,
-            //       null,
-            //       null,
-            //       null,
-            //       null,
-            //       null,
-            //       null,
-            //       null,
-            //       null,
-            //       null,
-            //       null,
-            //       null,
-
-            //       DisableMaintenanceTasks,
-            //       MaintenanceInitialDelay,
-            //       MaintenanceEvery,
-
-            //       DisableWardenTasks,
-            //       WardenInitialDelay,
-            //       WardenCheckEvery,
-
-            //       null,
-            //       null,
-
-            //       IsDevelopment,
-            //       DevelopmentServers,
-            //       SkipURLTemplates,
-            //       DatabaseFileName ?? DefaultAssetsDBFileName,
-            //       DisableNotifications,
-
-            //       DisableLogging ?? false,
-            //       LoggingPath,
-            //       LoggingContext,
-            //       LogfileName,
-            //       LogfileCreator is not null
-            //           ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-            //           : null)
 
         {
 

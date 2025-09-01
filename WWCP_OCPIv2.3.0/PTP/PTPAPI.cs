@@ -38,7 +38,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
     /// The HTTP API for Payment Terminal Providers.
     /// CPOs will connect to this API.
     /// </summary>
-    public class PTPAPI : HTTPAPIX
+    public class PTPAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
     {
 
         #region Data
@@ -71,9 +71,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         #region Properties
 
         /// <summary>
-        /// The CommonAPI.
+        /// The OCPI CommonAPI.
         /// </summary>
-        public CommonAPI      CommonAPI             { get; }
+        public CommonAPI      CommonAPI
+            => HTTPBaseAPI;
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
@@ -507,7 +508,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="CommonAPI">The OCPI common API.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         /// 
-        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The official URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
@@ -515,24 +515,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         public PTPAPI(CommonAPI                    CommonAPI,
                       Boolean?                     AllowDowngrades           = null,
 
-                      HTTPHostname?                HTTPHostname              = null,
-                      String?                      ExternalDNSName           = "",
-
                       HTTPPath?                    BasePath                  = null,
                       HTTPPath?                    URLPathPrefix             = null,
 
+                      String?                      ExternalDNSName           = null,
                       String?                      HTTPServerName            = DefaultHTTPServerName,
                       String?                      HTTPServiceName           = DefaultHTTPServiceName,
                       String?                      APIVersionHash            = null,
                       JObject?                     APIVersionHashes          = null,
-
-                      Boolean?                     DisableMaintenanceTasks   = false,
-                      TimeSpan?                    MaintenanceInitialDelay   = null,
-                      TimeSpan?                    MaintenanceEvery          = null,
-
-                      Boolean?                     DisableWardenTasks        = false,
-                      TimeSpan?                    WardenInitialDelay        = null,
-                      TimeSpan?                    WardenCheckEvery          = null,
 
                       Boolean?                     IsDevelopment             = false,
                       IEnumerable<String>?         DevelopmentServers        = null,
@@ -542,33 +532,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                       String?                      LogfileName               = null,
                       OCPILogfileCreatorDelegate?  LogfileCreator            = null)
 
-            : base(CommonAPI.HTTPServer,
-                   null, //HTTPHostname,
+            : base(CommonAPI,
                    URLPathPrefix   ?? DefaultURLPathPrefix,
-                   null,
-                   null,
-
-                   ExternalDNSName,
                    BasePath,
 
+                   ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,
                    HTTPServiceName ?? DefaultHTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,
 
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
-
                    IsDevelopment,
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
-                   "context",
                    LogfileName     ?? DefaultLogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
@@ -576,17 +553,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         {
 
-            this.CommonAPI           = CommonAPI;
-            this.AllowDowngrades     = AllowDowngrades;
+            this.AllowDowngrades  = AllowDowngrades;
+            //this.RequestTimeout   = TimeSpan.FromSeconds(30);
 
-            this.PTPAPILogger        = this.DisableLogging == false
-                                           ? new PTPAPILogger(
-                                                 this,
-                                                 LoggingContext,
-                                                 LoggingPath,
-                                                 LogfileCreator
-                                             )
-                                           : null;
+            this.PTPAPILogger     = this.DisableLogging == false
+                                        ? new PTPAPILogger(
+                                              this,
+                                              LoggingContext,
+                                              LoggingPath,
+                                              LogfileCreator
+                                          )
+                                        : null;
 
             RegisterURLTemplates();
 
@@ -644,7 +621,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
                                     CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    HTTPServer.DNSClient
+                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                 );
 
                 ptp2cpoClients.TryAdd(cpoId, cpoClient);
@@ -693,7 +670,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
                                     CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    HTTPServer.DNSClient
+                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                 );
 
                 ptp2cpoClients.TryAdd(cpoId, cpoClient);
@@ -743,7 +720,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
                                     CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
                                     CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    HTTPServer.DNSClient
+                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                 );
 
                 ptp2cpoClients.TryAdd(cpoId, cpoClient);
@@ -765,8 +742,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         private void RegisterURLTemplates()
         {
-
-            var URLPathPrefix = HTTPPath.Root;
 
             #region ~/payments/terminals
 
@@ -911,7 +886,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                         //   - Link: <https://www.server.com/ocpi/ptp/2.3.0/payments/terminals/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
                                                                                      ? $"https://{ExternalDNSName}"
-                                                                                     : $"http://127.0.0.1:{HTTPServer.TCPPort}")}" +
+                                                                                     : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}" +
                                                         $"{URLPathPrefix}/payments/terminals{queryParameters}>; rel=\"next\"");
 
                     }

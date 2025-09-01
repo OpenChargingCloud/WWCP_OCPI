@@ -261,9 +261,6 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         /// <param name="HTTPLogins">An enumeration of logins for an optional HTTP Basic Authentication.</param>
         public CommonWebAPI(CommonHTTPAPI                               CommonHTTPAPI,
 
-                            //HTTPHostname?                               HTTPHostname              = null,
-                            //String?                                     ExternalDNSName           = "",
-
                             HTTPPath?                                   OverlayURLPathPrefix      = null,
                             HTTPPath?                                   APIURLPathPrefix          = null,
                             HTTPPath?                                   WebAPIURLPathPrefix       = null,
@@ -273,8 +270,8 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                             IEnumerable<KeyValuePair<String, String>>?  HTTPLogins                = null,
 
                             //HTTPPath?                                   URLPathPrefix             = null,
-                            String?                                     HTMLTemplate              = null,
 
+                            String?                                     ExternalDNSName           = null,
                             String?                                     HTTPServerName            = DefaultHTTPServerName,
                             String?                                     HTTPServiceName           = DefaultHTTPServiceName,
                             String?                                     APIVersionHash            = null,
@@ -292,6 +289,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                    WebAPIURLPathPrefix,
                    BasePath,
 
+                   ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,
                    HTTPServiceName ?? DefaultHTTPServiceName,
                    APIVersionHash,
@@ -419,7 +417,8 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                 HTTPHostname.Any,
                 URLPathPrefix,
                 HTTPRoot,
-                DefaultFilename: "index.html"
+                RequireAuthentication:  false,
+                DefaultFilename:       "index.html"
             );
 
             #endregion

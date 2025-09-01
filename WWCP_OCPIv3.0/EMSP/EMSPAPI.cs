@@ -46,7 +46,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
     /// The HTTP API for e-mobility service providers.
     /// CPOs will connect to this API.
     /// </summary>
-    public class EMSPAPI : HTTPAPIX
+    public class EMSPAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
     {
 
         #region Data
@@ -84,9 +84,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         #region Properties
 
         /// <summary>
-        /// The CommonAPI.
+        /// The OCPI CommonAPI.
         /// </summary>
-        public CommonAPI       CommonAPI             { get; }
+        public CommonAPI       CommonAPI
+            => HTTPBaseAPI;
 
         /// <summary>
         /// The default country code to use.
@@ -96,7 +97,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <summary>
         /// The default party identification to use.
         /// </summary>
-        public Party_Idv3        DefaultPartyId        { get; }
+        public Party_Idv3      DefaultPartyId        { get; }
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
@@ -2494,24 +2495,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         public EMSPAPI(CommonAPI                    CommonAPI,
                        Boolean?                     AllowDowngrades           = null,
 
-                       HTTPHostname?                HTTPHostname              = null,
-                       String?                      ExternalDNSName           = "",
-
                        HTTPPath?                    BasePath                  = null,
                        HTTPPath?                    URLPathPrefix             = null,
 
+                       String?                      ExternalDNSName           = null,
                        String?                      HTTPServerName            = DefaultHTTPServerName,
                        String?                      HTTPServiceName           = DefaultHTTPServiceName,
                        String?                      APIVersionHash            = null,
                        JObject?                     APIVersionHashes          = null,
-
-                       Boolean?                     DisableMaintenanceTasks   = false,
-                       TimeSpan?                    MaintenanceInitialDelay   = null,
-                       TimeSpan?                    MaintenanceEvery          = null,
-
-                       Boolean?                     DisableWardenTasks        = false,
-                       TimeSpan?                    WardenInitialDelay        = null,
-                       TimeSpan?                    WardenCheckEvery          = null,
 
                        Boolean?                     IsDevelopment             = false,
                        IEnumerable<String>?         DevelopmentServers        = null,
@@ -2521,33 +2512,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                        String?                      LogfileName               = null,
                        OCPILogfileCreatorDelegate?  LogfileCreator            = null)
 
-            : base(CommonAPI.HTTPServer,
-                   null, //HTTPHostname,
+            : base(CommonAPI,
                    URLPathPrefix   ?? DefaultURLPathPrefix,
-                   null,
-                   null,
-
-                   ExternalDNSName,
                    BasePath,
 
+                   ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,
                    HTTPServiceName ?? DefaultHTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,
 
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
-
                    IsDevelopment,
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
-                   "context",
                    LogfileName     ?? DefaultLogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
@@ -2555,7 +2533,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         {
 
-            this.CommonAPI           = CommonAPI ?? throw new ArgumentNullException(nameof(CommonAPI), "The given CommonAPI must not be null!");
             this.DefaultCountryCode  = DefaultCountryCode;
             this.DefaultPartyId      = DefaultPartyId;
             this.AllowDowngrades     = AllowDowngrades;
@@ -2626,7 +2603,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                      CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
                                      CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
                                      CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                     HTTPServer.DNSClient
+                                     CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                  );
 
                 emsp2cpoClients.TryAdd(cpoId, emspClient);
@@ -2675,7 +2652,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                      CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
                                      CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
                                      CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                     HTTPServer.DNSClient
+                                     CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                  );
 
                 emsp2cpoClients.TryAdd(cpoId, emspClient);
@@ -2725,7 +2702,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                      CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
                                      CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
                                      CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                     HTTPServer.DNSClient
+                                     CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                  );
 
                 emsp2cpoClients.TryAdd(cpoId, emspClient);

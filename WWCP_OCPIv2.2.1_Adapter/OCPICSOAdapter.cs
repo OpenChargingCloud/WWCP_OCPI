@@ -328,24 +328,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                           this.CommonAPI,
                                                           null, // AllowDowngrades
 
-                                                          null, // HTTPHostname
-                                                          null, // ExternalDNSName
-
                                                           null, // BasePath
-                                                          CommonAPI.RootPath + Version.String + "cpo",
+                                                          CommonAPI.URLPathPrefix + Version.String + "cpo",
 
+                                                          null, // ExternalDNSName
                                                           null, // HTTPServerName
                                                           null, // HTTPServiceName
                                                           null, // APIVersionHash
                                                           null, // APIVersionHashes
-
-                                                          null, // DisableMaintenanceTasks
-                                                          null, // MaintenanceInitialDelay
-                                                          null, // MaintenanceEvery
-
-                                                          null, // DisableWardenTasks
-                                                          null, // WardenInitialDelay
-                                                          null, // WardenCheckEvery
 
                                                           IsDevelopment,
                                                           DevelopmentServers,

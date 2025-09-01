@@ -37,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
     /// The HTTP API for charge point operators.
     /// EMSPs will connect to this API.
     /// </summary>
-    public class CPOAPI : HTTPAPIX
+    public class CPOAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
     {
 
         #region Data
@@ -70,9 +70,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         #region Properties
 
         /// <summary>
-        /// The CommonAPI.
+        /// The OCPI CommonAPI.
         /// </summary>
-        public CommonAPI      CommonAPI             { get; }
+        public CommonAPI       CommonAPI
+            => HTTPBaseAPI;
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
@@ -1506,62 +1507,39 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         public CPOAPI(CommonAPI                    CommonAPI,
-                      Boolean?                     AllowDowngrades           = null,
+                      Boolean?                     AllowDowngrades      = null,
 
-                      HTTPHostname?                HTTPHostname              = null,
-                      String?                      ExternalDNSName           = "",
+                      HTTPPath?                    BasePath             = null,
+                      HTTPPath?                    URLPathPrefix        = null,
 
-                      HTTPPath?                    BasePath                  = null,
-                      HTTPPath?                    URLPathPrefix             = null,
+                      String?                      ExternalDNSName      = null,
+                      String?                      HTTPServerName       = DefaultHTTPServerName,
+                      String?                      HTTPServiceName      = DefaultHTTPServiceName,
+                      String?                      APIVersionHash       = null,
+                      JObject?                     APIVersionHashes     = null,
 
-                      String?                      HTTPServerName            = DefaultHTTPServerName,
-                      String?                      HTTPServiceName           = DefaultHTTPServiceName,
-                      String?                      APIVersionHash            = null,
-                      JObject?                     APIVersionHashes          = null,
+                      Boolean?                     IsDevelopment        = false,
+                      IEnumerable<String>?         DevelopmentServers   = null,
+                      Boolean?                     DisableLogging       = false,
+                      String?                      LoggingContext       = null,
+                      String?                      LoggingPath          = null,
+                      String?                      LogfileName          = null,
+                      OCPILogfileCreatorDelegate?  LogfileCreator       = null)
 
-                      Boolean?                     DisableMaintenanceTasks   = false,
-                      TimeSpan?                    MaintenanceInitialDelay   = null,
-                      TimeSpan?                    MaintenanceEvery          = null,
-
-                      Boolean?                     DisableWardenTasks        = false,
-                      TimeSpan?                    WardenInitialDelay        = null,
-                      TimeSpan?                    WardenCheckEvery          = null,
-
-                      Boolean?                     IsDevelopment             = false,
-                      IEnumerable<String>?         DevelopmentServers        = null,
-                      Boolean?                     DisableLogging            = false,
-                      String?                      LoggingContext            = null,
-                      String?                      LoggingPath               = null,
-                      String?                      LogfileName               = null,
-                      OCPILogfileCreatorDelegate?  LogfileCreator            = null)
-
-            : base(CommonAPI.HTTPServer,
-                   null, //HTTPHostname,
+            : base(CommonAPI,
                    URLPathPrefix   ?? DefaultURLPathPrefix,
-                   null,
-                   null,
-
-                   ExternalDNSName,
                    BasePath,
 
+                   ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,
                    HTTPServiceName ?? DefaultHTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,
 
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
-
                    IsDevelopment,
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
-                   "context",
                    LogfileName     ?? DefaultLogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
@@ -1569,7 +1547,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         {
 
-            this.CommonAPI        = CommonAPI;
             this.AllowDowngrades  = AllowDowngrades;
 
             this.CPOAPILogger     = this.DisableLogging == false
@@ -1618,35 +1595,37 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         //   + result type FAILED
 
 
-        #region CPOClients
+        #region CPO-2-EMSP Clients
 
-        private readonly ConcurrentDictionary<EMSP_Id, CPOClient> cpoClients = new ();
+        private readonly ConcurrentDictionary<EMSP_Id, CPO2EMSPClient> cpo2emspClients = new ();
 
         /// <summary>
-        /// Return an enumeration of all CPO clients.
+        /// Return an enumeration of all CPO2EMSP clients.
         /// </summary>
-        public IEnumerable<CPOClient> CPOClients
-            => cpoClients.Values;
+        public IEnumerable<CPO2EMSPClient> CPO2EMSPClients
+            => cpo2emspClients.Values;
 
 
-        #region GetCPOClient(PartyId, Description = null, AllowCachedClients = true)
+        #region GetEMSPClient(CountryCode, PartyId, Description = null, AllowCachedClients = true)
 
         /// <summary>
         /// As a CPO create a client to access e.g. a remote EMSP.
         /// </summary>
+        /// <param name="CountryCode">The country code of the remote EMSP.</param>
         /// <param name="PartyId">The party identification of the remote EMSP.</param>
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public CPOClient? GetCPOClient(Party_Idv3   PartyId,
-                                       I18NString?  Description          = null,
-                                       Boolean      AllowCachedClients   = true)
+        public CPO2EMSPClient? GetEMSPClient(CountryCode  CountryCode,
+                                             Party_Id     PartyId,
+                                             I18NString?  Description          = null,
+                                             Boolean      AllowCachedClients   = true)
         {
 
-            var emspId         = EMSP_Id.       Parse(PartyId.ToString());
+            var emspId         = EMSP_Id.       Parse(CountryCode, PartyId);
             var remotePartyId  = RemoteParty_Id.From (emspId);
 
             if (AllowCachedClients &&
-                cpoClients.TryGetValue(emspId, out var cachedCPOClient))
+                cpo2emspClients.TryGetValue(emspId, out var cachedCPOClient))
             {
                 return cachedCPOClient;
             }
@@ -1655,20 +1634,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                 remoteParty?.RemoteAccessInfos?.Any() == true)
             {
 
-                var cpoClient = new CPOClient(
+                var cpoClient = new CPO2EMSPClient(
                                     this,
                                     remoteParty,
                                     null,
-                                    Description,// ?? ClientConfigurations.Description?.Invoke(remotePartyId),
+                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(remotePartyId),
                                     null,
-                                    null,//ClientConfigurations.DisableLogging?.Invoke(remotePartyId),
-                                    null,//ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
-                                    null,//ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
-                                    null,//ClientConfigurations.LogfileCreator,
-                                    HTTPServer.DNSClient
+                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(remotePartyId),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                 );
 
-                cpoClients.TryAdd(emspId, cpoClient);
+                cpo2emspClients.TryAdd(emspId, cpoClient);
 
                 return cpoClient;
 
@@ -1680,7 +1659,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #endregion
 
-        #region GetCPOClient(RemoteParty,          Description = null, AllowCachedClients = true)
+        #region GetEMSPClient(RemoteParty,          Description = null, AllowCachedClients = true)
 
         /// <summary>
         /// As a CPO create a client to access e.g. a remote EMSP.
@@ -1688,15 +1667,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="RemoteParty">A remote party.</param>
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public CPOClient? GetCPOClient(RemoteParty  RemoteParty,
-                                       I18NString?  Description          = null,
-                                       Boolean      AllowCachedClients   = true)
+        public CPO2EMSPClient? GetEMSPClient(RemoteParty  RemoteParty,
+                                             I18NString?  Description          = null,
+                                             Boolean      AllowCachedClients   = true)
         {
 
-            var emspId = EMSP_Id.Parse(RemoteParty.Id.ToString());
+            var emspId = EMSP_Id.From(RemoteParty.Id);
 
             if (AllowCachedClients &&
-                cpoClients.TryGetValue(emspId, out var cachedCPOClient))
+                cpo2emspClients.TryGetValue(emspId, out var cachedCPOClient))
             {
                 return cachedCPOClient;
             }
@@ -1704,20 +1683,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             if (RemoteParty?.RemoteAccessInfos?.Any() == true)
             {
 
-                var cpoClient = new CPOClient(
+                var cpoClient = new CPO2EMSPClient(
                                     this,
                                     RemoteParty,
                                     null,
-                                    Description,// ?? ClientConfigurations.Description?.Invoke(RemoteParty.Id),
+                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
                                     null,
-                                    null,//ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
-                                    null,//ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
-                                    null,//ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
-                                    null,//ClientConfigurations.LogfileCreator,
-                                    HTTPServer.DNSClient
+                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                 );
 
-                cpoClients.TryAdd(emspId, cpoClient);
+                cpo2emspClients.TryAdd(emspId, cpoClient);
 
                 return cpoClient;
 
@@ -1729,7 +1708,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #endregion
 
-        #region GetCPOClient(RemotePartyId,        Description = null, AllowCachedClients = true)
+        #region GetEMSPClient(RemotePartyId,        Description = null, AllowCachedClients = true)
 
         /// <summary>
         /// As a CPO create a client to access e.g. a remote EMSP.
@@ -1737,15 +1716,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="RemotePartyId">A remote party identification.</param>
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public CPOClient? GetCPOClient(RemoteParty_Id  RemotePartyId,
-                                       I18NString?     Description          = null,
-                                       Boolean         AllowCachedClients   = true)
+        public CPO2EMSPClient? GetEMSPClient(RemoteParty_Id  RemotePartyId,
+                                             I18NString?     Description          = null,
+                                             Boolean         AllowCachedClients   = true)
         {
 
-            var emspId = EMSP_Id.Parse(RemotePartyId.ToString());
+            var emspId = EMSP_Id.From(RemotePartyId);
 
             if (AllowCachedClients &&
-                cpoClients.TryGetValue(emspId, out var cachedCPOClient))
+                cpo2emspClients.TryGetValue(emspId, out var cachedCPOClient))
             {
                 return cachedCPOClient;
             }
@@ -1754,20 +1733,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                 remoteParty?.RemoteAccessInfos?.Any() == true)
             {
 
-                var cpoClient = new CPOClient(
+                var cpoClient = new CPO2EMSPClient(
                                     this,
                                     remoteParty,
                                     null,
-                                    Description,// ?? ClientConfigurations.Description?.Invoke(RemotePartyId),
+                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
                                     null,
-                                    null,//ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
-                                    null,//ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
-                                    null,//ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
-                                    null,//ClientConfigurations.LogfileCreator,
-                                    HTTPServer.DNSClient
+                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
+                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                 );
 
-                cpoClients.TryAdd(emspId, cpoClient);
+                cpo2emspClients.TryAdd(emspId, cpoClient);
 
                 return cpoClient;
 
@@ -1965,7 +1944,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                             //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
                                             httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
                                                                                      ? $"https://{ExternalDNSName}"
-                                                                                     : $"http://127.0.0.1:{HTTPServer.TCPPort}")}{URLPathPrefix}/locations{queryParameters}>; rel=\"next\"");
+                                                                                     : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/locations{queryParameters}>; rel=\"next\"");
 
                                         }
 
@@ -2463,7 +2442,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                             //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
                                             httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
                                                                                      ? $"https://{ExternalDNSName}"
-                                                                                     : $"http://127.0.0.1:{HTTPServer.TCPPort}")}{URLPathPrefix}/tariffs{queryParameters}>; rel=\"next\"");
+                                                                                     : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/tariffs{queryParameters}>; rel=\"next\"");
 
                                         }
 

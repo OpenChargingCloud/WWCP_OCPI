@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
     /// The HTTP API for e-mobility service providers.
     /// CPOs will connect to this API.
     /// </summary>
-    public class SCSPAPI : HTTPAPIX
+    public class SCSPAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
     {
 
         #region Data
@@ -81,9 +81,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         #region Properties
 
         /// <summary>
-        /// The CommonAPI.
+        /// The OCPI CommonAPI.
         /// </summary>
-        public CommonAPI       CommonAPI             { get; }
+        public CommonAPI       CommonAPI
+            => HTTPBaseAPI;
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
@@ -2434,33 +2435,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                        String?                      LogfileName               = DefaultLogfileName,
                        OCPILogfileCreatorDelegate?  LogfileCreator            = null)
 
-            : base(CommonAPI.HTTPServer,
-                   null, //HTTPHostname,
+            : base(CommonAPI,
                    URLPathPrefix   ?? DefaultURLPathPrefix,
-                   null,
-                   null,
-
-                   ExternalDNSName,
                    BasePath,
 
+                   ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,
                    HTTPServiceName ?? DefaultHTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,
 
-                   DisableMaintenanceTasks,
-                   MaintenanceInitialDelay,
-                   MaintenanceEvery,
-
-                   DisableWardenTasks,
-                   WardenInitialDelay,
-                   WardenCheckEvery,
-
                    IsDevelopment,
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
-                   "context",
                    LogfileName     ?? DefaultLogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
@@ -2468,7 +2456,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         {
 
-            this.CommonAPI        = CommonAPI ?? throw new ArgumentNullException(nameof(CommonAPI), "The given CommonAPI must not be null!");
             this.AllowDowngrades  = AllowDowngrades;
             this.RequestTimeout   = TimeSpan.FromSeconds(60);
 
@@ -2492,8 +2479,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         private void RegisterURLTemplates()
         {
-
-            var URLPathPrefix = HTTPPath.Root;
 
             #region GET    [/emsp] == /
 

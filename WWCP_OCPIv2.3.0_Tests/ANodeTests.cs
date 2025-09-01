@@ -230,24 +230,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                   //KeepRemovedEVSEs:          null,
                                   LocationsAsOpenData:       true,
                                   AllowDowngrades:           null,
-                                  //Disable_RootServices:      false,
 
-                                  //HTTPHostname:              null,
                                   ExternalDNSName:           null,
                                   HTTPServiceName:           null,
                                   BasePath:                  null,
 
-                                  //URLPathPrefix:             HTTPPath.Parse("/ocpi"),
                                   RootPath:                  HTTPPath.Parse("/ocpi"),
                                   APIVersionHashes:          null,
-
-                                  DisableMaintenanceTasks:   null,
-                                  MaintenanceInitialDelay:   null,
-                                  MaintenanceEvery:          null,
-
-                                  DisableWardenTasks:        null,
-                                  WardenInitialDelay:        null,
-                                  WardenCheckEvery:          null,
 
                                   IsDevelopment:             null,
                                   DevelopmentServers:        null,
@@ -285,28 +274,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                        DefaultPartyId:                      Party_Id.   Parse("GEF"),
 
                                        BaseAPI:                             ocpiBaseAPI,
-                                       //HTTPServer:                          cpoHTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
                                        KeepRemovedEVSEs:                    null,
-                                       LocationsAsOpenData:                 true,
-                                       AllowDowngrades:                     null,
 
-                                       HTTPHostname:                        null,
                                        ExternalDNSName:                     null,
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
                                        URLPathPrefix:                       HTTPPath.Parse("/ocpi"),
                                        APIVersionHashes:                    null,
-
-                                       DisableMaintenanceTasks:             null,
-                                       MaintenanceInitialDelay:             null,
-                                       MaintenanceEvery:                    null,
-
-                                       DisableWardenTasks:                  null,
-                                       WardenInitialDelay:                  null,
-                                       WardenCheckEvery:                    null,
 
                                        IsDevelopment:                       null,
                                        DevelopmentServers:                  null,
@@ -343,24 +320,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                                        AdditionalURLPathPrefix:             null,
                                        KeepRemovedEVSEs:                    null,
-                                       LocationsAsOpenData:                 true,
-                                       AllowDowngrades:                     null,
 
-                                       HTTPHostname:                        null,
                                        ExternalDNSName:                     null,
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
                                        URLPathPrefix:                       HTTPPath.Parse("/ocpi"),
                                        APIVersionHashes:                    null,
-
-                                       DisableMaintenanceTasks:             null,
-                                       MaintenanceInitialDelay:             null,
-                                       MaintenanceEvery:                    null,
-
-                                       DisableWardenTasks:                  null,
-                                       WardenInitialDelay:                  null,
-                                       WardenCheckEvery:                    null,
 
                                        IsDevelopment:                       null,
                                        DevelopmentServers:                  null,
@@ -393,28 +359,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                        DefaultPartyId:                      Party_Id.   Parse("GD2"),
 
                                        BaseAPI:                             ocpiBaseAPI,
-                                       //HTTPServer:                          emsp2HTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
                                        KeepRemovedEVSEs:                    null,
-                                       LocationsAsOpenData:                 true,
-                                       AllowDowngrades:                     null,
 
-                                       HTTPHostname:                        null,
                                        ExternalDNSName:                     null,
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
                                        URLPathPrefix:                       HTTPPath.Parse("/ocpi"),
                                        APIVersionHashes:                    null,
-
-                                       DisableMaintenanceTasks:             null,
-                                       MaintenanceInitialDelay:             null,
-                                       MaintenanceEvery:                    null,
-
-                                       DisableWardenTasks:                  null,
-                                       WardenInitialDelay:                  null,
-                                       WardenCheckEvery:                    null,
 
                                        IsDevelopment:                       null,
                                        DevelopmentServers:                  null,
@@ -442,21 +396,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                        CommonAPI:                           cpoCommonAPI,
                                        AllowDowngrades:                     null,
 
-                                       HTTPHostname:                        null,
                                        ExternalDNSName:                     null,
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
                                        URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.3/v2.3/cpo"),
                                        APIVersionHashes:                    null,
-
-                                       DisableMaintenanceTasks:             null,
-                                       MaintenanceInitialDelay:             null,
-                                       MaintenanceEvery:                    null,
-
-                                       DisableWardenTasks:                  null,
-                                       WardenInitialDelay:                  null,
-                                       WardenCheckEvery:                    null,
 
                                        IsDevelopment:                       null,
                                        DevelopmentServers:                  null,
@@ -472,21 +417,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                        CommonAPI:                           emsp1CommonAPI,
                                        AllowDowngrades:                     null,
 
-                                       HTTPHostname:                        null,
                                        ExternalDNSName:                     null,
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
                                        URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.3/v2.3/emsp"),
                                        APIVersionHashes:                    null,
-
-                                       DisableMaintenanceTasks:             null,
-                                       MaintenanceInitialDelay:             null,
-                                       MaintenanceEvery:                    null,
-
-                                       DisableWardenTasks:                  null,
-                                       WardenInitialDelay:                  null,
-                                       WardenCheckEvery:                    null,
 
                                        IsDevelopment:                       null,
                                        DevelopmentServers:                  null,
@@ -502,21 +438,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                        CommonAPI:                           emsp2CommonAPI,
                                        AllowDowngrades:                     null,
 
-                                       HTTPHostname:                        null,
                                        ExternalDNSName:                     null,
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
                                        URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.3/v2.3/emsp"),
                                        APIVersionHashes:                    null,
-
-                                       DisableMaintenanceTasks:             null,
-                                       MaintenanceInitialDelay:             null,
-                                       MaintenanceEvery:                    null,
-
-                                       DisableWardenTasks:                  null,
-                                       WardenInitialDelay:                  null,
-                                       WardenCheckEvery:                    null,
 
                                        IsDevelopment:                       null,
                                        DevelopmentServers:                  null,

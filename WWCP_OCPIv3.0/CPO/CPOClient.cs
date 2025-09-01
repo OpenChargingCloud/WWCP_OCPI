@@ -38,7 +38,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
     /// <summary>
     /// The CPO client is used by a CPO to talk to EMSPs (and SCSPs).
     /// </summary>
-    public partial class CPOClient : CommonClient
+    public partial class CPO2EMSPClient : CommonClient
     {
 
         #region (class) APICounters
@@ -208,12 +208,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         /// <summary>
         /// The default HTTP user agent.
         /// </summary>
-        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(CPOClient)}";
+        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(CPO2EMSPClient)}";
 
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public new const String  DefaultLoggingContext   = nameof(CPOClient);
+        public new const String  DefaultLoggingContext   = nameof(CPO2EMSPClient);
 
         #endregion
 
@@ -849,7 +849,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPOClient(URL                                                        VersionsURL,
+        public CPO2EMSPClient(URL                                                        VersionsURL,
                          String?                                                    AccessToken                  = null,
 
                          HTTPHostname?                                              VirtualHostname              = null,
@@ -934,17 +934,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPOClient(CPOAPI                       CPOAPI,
-                         RemoteParty                  RemoteParty,
-                         HTTPHostname?                VirtualHostname   = null,
-                         I18NString?                  Description       = null,
-                         HTTPClientLogger?            HTTPLogger        = null,
+        public CPO2EMSPClient(CPOAPI                       CPOAPI,
+                              RemoteParty                  RemoteParty,
+                              HTTPHostname?                VirtualHostname   = null,
+                              I18NString?                  Description       = null,
+                              HTTPClientLogger?            HTTPLogger        = null,
 
-                         Boolean?                     DisableLogging    = false,
-                         String?                      LoggingPath       = null,
-                         String?                      LoggingContext    = null,
-                         OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                         IDNSClient?                  DNSClient         = null)
+                              Boolean?                     DisableLogging    = false,
+                              String?                      LoggingPath       = null,
+                              String?                      LoggingContext    = null,
+                              OCPILogfileCreatorDelegate?  LogfileCreator    = null,
+                              IDNSClient?                  DNSClient         = null)
 
             : base(CPOAPI.CommonAPI,
                    RemoteParty,
@@ -979,7 +979,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
 
         public override JObject ToJSON()
-            => base.ToJSON(nameof(CPOClient));
+            => base.ToJSON(nameof(CPO2EMSPClient));
 
 
         #region GetLocation    (CountryCode, PartyId, LocationId, ...)
@@ -1045,7 +1045,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetLocationRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetLocationRequest));
             }
 
             #endregion
@@ -1165,7 +1165,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetLocationResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetLocationResponse));
             }
 
             #endregion
@@ -1238,7 +1238,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutLocationRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutLocationRequest));
             }
 
             #endregion
@@ -1383,7 +1383,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutLocationResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutLocationResponse));
             }
 
             #endregion
@@ -1465,7 +1465,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchLocationRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchLocationRequest));
             }
 
             #endregion
@@ -1586,7 +1586,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchLocationResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchLocationResponse));
             }
 
             #endregion
@@ -1661,7 +1661,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetEVSERequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetEVSERequest));
             }
 
             #endregion
@@ -1781,7 +1781,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchLocationResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchLocationResponse));
             }
 
             #endregion
@@ -1911,7 +1911,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutEVSERequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutEVSERequest));
             }
 
             #endregion
@@ -2046,7 +2046,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutEVSEResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutEVSEResponse));
             }
 
             #endregion
@@ -2131,7 +2131,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchEVSERequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchEVSERequest));
             }
 
             #endregion
@@ -2256,7 +2256,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchEVSEResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchEVSEResponse));
             }
 
             #endregion
@@ -2335,7 +2335,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetConnectorRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetConnectorRequest));
             }
 
             #endregion
@@ -2459,7 +2459,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetConnectorResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetConnectorResponse));
             }
 
             #endregion
@@ -2545,7 +2545,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutConnectorRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutConnectorRequest));
             }
 
             #endregion
@@ -2671,7 +2671,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutConnectorResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutConnectorResponse));
             }
 
             #endregion
@@ -2751,7 +2751,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchConnectorRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchConnectorRequest));
             }
 
             #endregion
@@ -2878,7 +2878,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchConnectorResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchConnectorResponse));
             }
 
             #endregion
@@ -2953,7 +2953,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetTariffRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetTariffRequest));
             }
 
             #endregion
@@ -3073,7 +3073,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetTariffResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetTariffResponse));
             }
 
             #endregion
@@ -3145,7 +3145,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutTariffRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutTariffRequest));
             }
 
             #endregion
@@ -3265,7 +3265,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutTariffResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutTariffResponse));
             }
 
             #endregion
@@ -3348,7 +3348,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchTariffRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchTariffRequest));
             }
 
             #endregion
@@ -3471,7 +3471,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchTariffResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchTariffResponse));
             }
 
             #endregion
@@ -3545,7 +3545,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnDeleteTariffRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnDeleteTariffRequest));
             }
 
             #endregion
@@ -3665,7 +3665,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnDeleteTariffResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnDeleteTariffResponse));
             }
 
             #endregion
@@ -3740,7 +3740,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetSessionRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetSessionRequest));
             }
 
             #endregion
@@ -3860,7 +3860,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetSessionResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetSessionResponse));
             }
 
             #endregion
@@ -3932,7 +3932,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutSessionRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutSessionRequest));
             }
 
             #endregion
@@ -4050,7 +4050,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPutSessionResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutSessionResponse));
             }
 
             #endregion
@@ -4133,7 +4133,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchSessionRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchSessionRequest));
             }
 
             #endregion
@@ -4256,7 +4256,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPatchSessionResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchSessionResponse));
             }
 
             #endregion
@@ -4330,7 +4330,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnDeleteSessionRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnDeleteSessionRequest));
             }
 
             #endregion
@@ -4450,7 +4450,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnDeleteSessionResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnDeleteSessionResponse));
             }
 
             #endregion
@@ -4521,7 +4521,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostCDRRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPostCDRRequest));
             }
 
             #endregion
@@ -4641,7 +4641,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostCDRResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPostCDRResponse));
             }
 
             #endregion
@@ -4715,7 +4715,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetCDRRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetCDRRequest));
             }
 
             #endregion
@@ -4835,7 +4835,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetCDRResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetCDRResponse));
             }
 
             #endregion
@@ -4913,7 +4913,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetTokensRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetTokensRequest));
             }
 
             #endregion
@@ -5042,7 +5042,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetTokensResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetTokensResponse));
             }
 
             #endregion
@@ -5116,7 +5116,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostTokenRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPostTokenRequest));
             }
 
             #endregion
@@ -5271,7 +5271,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostTokenResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPostTokenResponse));
             }
 
             #endregion
@@ -5348,7 +5348,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnSetChargingProfileRequest));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnSetChargingProfileRequest));
             }
 
             #endregion
@@ -5471,7 +5471,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnSetChargingProfileResponse));
+                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnSetChargingProfileResponse));
             }
 
             #endregion

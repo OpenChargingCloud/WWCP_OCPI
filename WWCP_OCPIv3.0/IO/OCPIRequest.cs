@@ -77,7 +77,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         {
 
-            CommonAPI.AddHandler(
+            CommonAPI.BaseAPI.HTTPBaseAPI.AddHandler(
 
                 URLTemplate,
                 async httpRequest => {
