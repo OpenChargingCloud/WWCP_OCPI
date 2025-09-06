@@ -28,7 +28,6 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
-using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
@@ -42,8 +41,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
     public static class TestHelpers
     {
 
-        public static async Task<HTTPResponse<JObject>> JSONRequest(URL     RemoteURL,
-                                                                    String  Token)
+        public static async Task<HTTPResponse<JObject?>> JSONRequest(URL     RemoteURL,
+                                                                     String  Token)
         {
 
             var httpResponse  = await new HTTPClient(RemoteURL).
@@ -57,15 +56,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                      })).
                                               ConfigureAwait(false);
 
-            return new HTTPResponse<JObject>(httpResponse,
-                                             JObject.Parse(httpResponse.HTTPBodyAsUTF8String));
+            return new HTTPResponse<JObject?>(
+                       httpResponse,
+                       httpResponse.HTTPBodyAsJSONObject
+                   );
 
         }
 
-        public static async Task<HTTPResponse<JObject>> JSONRequest(HTTPMethod  Method,
-                                                                    URL         RemoteURL,
-                                                                    String      Token,
-                                                                    JObject     JSON)
+        public static async Task<HTTPResponse<JObject?>> JSONRequest(HTTPMethod  Method,
+                                                                     URL         RemoteURL,
+                                                                     String      Token,
+                                                                     JObject     JSON)
         {
 
             var httpResponse  = await new HTTPClient(RemoteURL).
@@ -81,8 +82,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                      })).
                                               ConfigureAwait(false);
 
-            return new HTTPResponse<JObject>(httpResponse,
-                                             JObject.Parse(httpResponse.HTTPBodyAsUTF8String));
+            return new HTTPResponse<JObject?>(
+                       httpResponse,
+                       httpResponse.HTTPBodyAsJSONObject
+                   );
 
         }
 
