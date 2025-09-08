@@ -1,7 +1,7 @@
 ﻿
-<link href="{{BasePath}}/v2.1/webapi/css/versions/versionDetails.min.css" type="text/css" rel="stylesheet" />
+<link href="{{basePath}}/webapi/css/versions/versionDetails.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="{{BasePath}}/v2.1/webapi/versions/versionDetails.js"></script>
+<script type="text/javascript" src="{{basePath}}/webapi/versions/versionDetails.js"></script>
 
 <div id="versionDetailInfos" class="entity">
 

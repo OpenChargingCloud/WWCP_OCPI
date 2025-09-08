@@ -118,13 +118,6 @@ namespace cloud.charging.open.protocols.WWCP
 
         {
 
-            #region Initial checks
-
-            if (Name.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Name), "The given roaming provider name must not be null or empty!");
-
-            #endregion
-
             var newRoamingProvider = new OCPIv2_1_1.OCPICSOAdapter(
 
                                          Id,
@@ -189,8 +182,10 @@ namespace cloud.charging.open.protocols.WWCP
             OCPIConfigurator?.Invoke(newRoamingProvider);
 
             return RoamingNetwork.
-                       CreateCSORoamingProvider(newRoamingProvider,
-                                                Configurator) as OCPIv2_1_1.OCPICSOAdapter;
+                       CreateCSORoamingProvider(
+                           newRoamingProvider,
+                           Configurator
+                       ) as OCPIv2_1_1.OCPICSOAdapter;
 
         }
 
@@ -277,13 +272,6 @@ namespace cloud.charging.open.protocols.WWCP
 
         {
 
-            #region Initial checks
-
-            if (Name.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Name), "The given roaming provider name must not be null or empty!");
-
-            #endregion
-
             var newRoamingProvider = new OCPIv2_1_1.OCPICSOAdapter(
 
                                          Id,
@@ -344,8 +332,10 @@ namespace cloud.charging.open.protocols.WWCP
             OCPIConfigurator?.Invoke(newRoamingProvider);
 
             return RoamingNetwork.
-                       CreateCSORoamingProvider(newRoamingProvider,
-                                                Configurator) as OCPIv2_1_1.OCPICSOAdapter;
+                       CreateCSORoamingProvider(
+                           newRoamingProvider,
+                           Configurator
+                       ) as OCPIv2_1_1.OCPICSOAdapter;
 
         }
 

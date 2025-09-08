@@ -1,7 +1,7 @@
 ﻿
-<link href="{{BasePath}}/v2.1/webapi/css/tariffs/tariffs.min.css" type="text/css" rel="stylesheet" />
+<link href="{{basePath}}/webapi/css/tariffs/tariffs.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="{{BasePath}}/v2.1/webapi/tariffs/tariffs.js"></script>
+<script type="text/javascript" src="{{basePath}}/webapi/tariffs/tariffs.js"></script>
 
 <div id="tariffInfos" class="entity">
 

@@ -3296,62 +3296,47 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String    DefaultHTTPServerName           = $"GraphDefined OCPI {Version.String} Common HTTP API";
+        public new const        String  DefaultHTTPServerName           = $"GraphDefined OCPI {Version.String} Common HTTP API";
 
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String    DefaultHTTPServiceName          = $"GraphDefined OCPI {Version.String} Common HTTP API";
-
-        /// <summary>
-        /// The default HTTP server TCP port.
-        /// </summary>
-        public new static readonly IPPort    DefaultHTTPServerPort     = IPPort.Parse(8080);
-
-        /// <summary>
-        /// The default HTTP URL path prefix.
-        /// </summary>
-        public new static readonly HTTPPath  DefaultURLPathPrefix      = HTTPPath.Parse("io/OCPI/");
+        public new const        String  DefaultHTTPServiceName          = $"GraphDefined OCPI {Version.String} Common HTTP API";
 
         /// <summary>
         /// The default log file name.
         /// </summary>
-        public static readonly     String    DefaultLogfileName        = $"OCPI{Version.Id}-CommonAPI.log";
+        public static readonly  String  DefaultLogfileName              = $"CommonAPI_OCPI{Version.String}.log";
 
         /// <summary>
         /// The default database file name for all remote party configuration.
         /// </summary>
-        public const               String      DefaultRemotePartyDBFileName    = "RemoteParties.db";
+        public const            String  DefaultRemotePartyDBFileName    = $"RemoteParties_{Version.String}.db";
 
         /// <summary>
         /// The default database file name for all OCPI assets.
         /// </summary>
-        public const               String      DefaultAssetsDBFileName         = "Assets.db";
+        public const            String  DefaultAssetsDBFileName         = $"Assets_{Version.String}.db";
+
 
         /// <summary>
         /// The command values store.
         /// </summary>
-        public readonly ConcurrentDictionary<Command_Id, CommandValues> CommandValueStore = new ConcurrentDictionary<Command_Id, CommandValues>();
+        public readonly ConcurrentDictionary<Command_Id, CommandValues>  CommandValueStore  = [];
 
         #endregion
 
         #region Properties
 
+        /// <summary>
+        /// The Common HTTP API.
+        /// </summary>
         public CommonHTTPAPI            BaseAPI                     { get; }
 
         /// <summary>
         /// The (max supported) OCPI version.
         /// </summary>
         public Version_Id               OCPIVersion                 { get; } = Version.Id;
-
-        /// <summary>
-        /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
-        /// OCPI v2.2 does not define any behaviour for this.
-        /// </summary>
-        public Boolean?                 AllowDowngrades            { get; }
-
-
-        public Boolean                  IndentifyAsOCPI_2_2        { get; }
 
 
         /// <summary>
@@ -3370,15 +3355,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         public Party_Id                      DefaultPartyId             { get; }
 
 
+
+        /// <summary>
+        /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
+        /// OCPI v2.2 does not define any behaviour for this.
+        /// </summary>
+        public Boolean?                 AllowDowngrades            { get; }
+
         /// <summary>
         /// Whether to keep or delete EVSEs marked as "REMOVED".
         /// </summary>
-        public Func<EVSE, Boolean>           KeepRemovedEVSEs           { get; }
+        public Func<EVSE, Boolean>      KeepRemovedEVSEs           { get; }
 
         /// <summary>
-        /// The CommonAPI logger.
+        /// The Common API logger.
         /// </summary>
-        public CommonAPILogger?              Logger                     { get; }
+        public CommonAPILogger?         CommonAPILogger            { get; }
 
 
 
@@ -3821,8 +3813,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          HTTPPath?                     BasePath                  = null,
                          HTTPPath?                     URLPathPrefix             = null,
 
-                         Boolean                       IndentifyAsOCPI_2_2       = false,
-
                          String?                       ExternalDNSName           = null,
                          String?                       HTTPServerName            = DefaultHTTPServerName,
                          String?                       HTTPServiceName           = DefaultHTTPServiceName,
@@ -3861,17 +3851,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         {
 
-            this.BaseAPI               = BaseAPI;
+            this.BaseAPI                   = BaseAPI;
 
             //if (!OurCredentialRoles.SafeAny())
             //    throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
 
-            //this.OurCredentialRoles    = OurCredentialRoles?.Distinct() ?? [];
-            this.DefaultCountryCode    = DefaultCountryCode;
-            this.DefaultPartyId        = DefaultPartyId;
-            this.IndentifyAsOCPI_2_2   = IndentifyAsOCPI_2_2;
+            //this.OurCredentialRoles        = OurCredentialRoles?.Distinct() ?? [];
+            this.DefaultCountryCode        = DefaultCountryCode;
+            this.DefaultPartyId            = DefaultPartyId;
 
-            this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
+            this.KeepRemovedEVSEs          = KeepRemovedEVSEs ?? (evse => true);
 
             this.DatabaseFilePath          = DatabaseFilePath                   ?? Path.Combine(AppContext.BaseDirectory,
                                                                                                 DefaultHTTPAPI_LoggingPath);
@@ -3885,39 +3874,39 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
                                                           AssetsDBFileName      ?? DefaultAssetsDBFileName);
 
-            this.Logger                = this.DisableLogging == false
-                                             ? new CommonAPILogger(
-                                                   this,
-                                                   LoggingContext,
-                                                   LoggingPath,
-                                                   LogfileCreator
-                                               )
-                                             : null;
+            this.CommonAPILogger           = this.DisableLogging == false
+                                                 ? new CommonAPILogger(
+                                                       this,
+                                                       LoggingContext,
+                                                       LoggingPath,
+                                                       LogfileCreator
+                                                   )
+                                                 : null;
 
             this.BaseAPI.AddVersionInformation(
                 new VersionInformation(
                     Version.Id,
                     URL.Concat(
                         BaseAPI.OurVersionsURL.Protocol.AsString(),
-                        BaseAPI.HTTPBaseAPI.ExternalDNSName ?? ("localhost:" + BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort),
+                        BaseAPI.ExternalDNSName ?? ("localhost:" + BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort),
                         URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
                 )
             ).GetAwaiter().GetResult();
 
-            if (this.IndentifyAsOCPI_2_2)
-            {
-                this.BaseAPI.AddVersionInformation(
-                    new VersionInformation(
-                        Version_Id.Parse("2.2"),
-                        URL.Concat(
-                            BaseAPI.OurVersionsURL.Protocol.AsString(),
-                            BaseAPI.HTTPBaseAPI.ExternalDNSName ?? ("localhost:" + BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort),
-                            URLPathPrefix + AdditionalURLPathPrefix + $"/versions/2.2"
-                        )
-                    )
-                ).GetAwaiter().GetResult();
-            }
+            //if (this.IndentifyAsOCPI_2_2)
+            //{
+            //    this.BaseAPI.AddVersionInformation(
+            //        new VersionInformation(
+            //            Version_Id.Parse("2.2"),
+            //            URL.Concat(
+            //                BaseAPI.OurVersionsURL.Protocol.AsString(),
+            //                BaseAPI.ExternalDNSName ?? ("localhost:" + BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort),
+            //                URLPathPrefix + AdditionalURLPathPrefix + $"/versions/2.2"
+            //            )
+            //        )
+            //    ).GetAwaiter().GetResult();
+            //}
 
             if (!this.DisableLogging)
             {
@@ -3952,23 +3941,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         private void RegisterURLTemplates()
         {
 
-            //HTTPServer.Rewrite(req => {
-
-            //    if (this.IndentifyAsOCPI_2_2)
-            //    {
-
-            //        if (req.Path.EndsWith("2.2"))
-            //            return HTTPRequest.ChangePath(req, HTTPPath.Parse($"{req.Path}.1"), new Tuple<String, Object>("X-OCPIVersion", Version_Id.Parse("2.2")));
-
-            //        if (req.Path.Contains("/2.2/"))
-            //            return HTTPRequest.ChangePath(req, HTTPPath.Parse(req.Path.ToString().Replace("/2.2/", "/2.2.1/")), new Tuple<String, Object>("X-OCPIVersion", Version_Id.Parse("2.2")));
-
-            //    }
-
-            //    return null;
-
-            //});
-
             #region OPTIONS     ~/versions/2.2.1
 
             // ---------------------------------------------------------
@@ -3984,9 +3956,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         new OCPIResponse.Builder(request) {
                             HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
                                 HTTPStatusCode             = HTTPStatusCode.OK,
+                                Server                     = HTTPServiceName,
+                                Date                       = Timestamp.Now,
+                                AccessControlAllowOrigin   = "*",
                                 AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                 Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                 AccessControlAllowHeaders  = [ "Authorization" ],
+                                Connection                 = ConnectionType.KeepAlive,
                                 Vary                       = "Accept"
                             }
                         })
@@ -4021,8 +3997,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                    Server                     = HTTPServiceName,
+                                    Date                       = Timestamp.Now,
+                                    AccessControlAllowOrigin   = "*",
                                     AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                    Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ],
+                                    Connection                 = ConnectionType.KeepAlive,
+                                    Vary                       = "Accept"
                                 }
                             });
 
@@ -4249,9 +4231,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                             CustomVersionEndpointSerializer),
                             HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                 HTTPStatusCode             = HTTPStatusCode.OK,
+                                Server                     = HTTPServiceName,
+                                Date                       = Timestamp.Now,
+                                AccessControlAllowOrigin   = "*",
                                 AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                 Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                 AccessControlAllowHeaders  = [ "Authorization" ],
+                                Connection                 = ConnectionType.KeepAlive,
                                 Vary                       = "Accept"
                             }
                         }
@@ -4321,9 +4307,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                    StatusMessage        = "Hello world!",
                                    HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                       AccessControlAllowHeaders  = [ "Authorization" ],
+                                       Server                     = HTTPServiceName,
+                                       Date                       = Timestamp.Now,
+                                       AccessControlAllowOrigin   = "*",
                                        AccessControlAllowMethods  = accessControlAllowMethods,
-                                       Allow                      = allow
+                                       Allow                      = allow,
+                                       AccessControlAllowHeaders  = [ "Authorization" ],
+                                       Connection                 = ConnectionType.KeepAlive,
+                                       Vary                       = "Accept"
                                    }
                                });
 
@@ -4355,34 +4346,49 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                         return Task.FromResult(
                             new OCPIResponse.Builder(request) {
-                               StatusCode           = 2000,
-                               StatusMessage        = "Invalid or blocked access token!",
-                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
-                           });
+                                StatusCode           = 2000,
+                                StatusMessage        = "Invalid or blocked access token!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                    Server                     = HTTPServiceName,
+                                    Date                       = Timestamp.Now,
+                                    AccessControlAllowOrigin   = "*",
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                    Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ],
+                                    Connection                 = ConnectionType.KeepAlive,
+                                    Vary                       = "Accept"
+                                }
+                            }
+                        );
 
                     }
 
                     #endregion
 
+
                     return Task.FromResult(
-                        new OCPIResponse.Builder(request) {
-                            StatusCode           = 1000,
-                            StatusMessage        = "Hello world!",
-                            Data                 = new Credentials(
-                                                       request.LocalAccessInfo?.AccessToken ?? AccessToken.Parse("<any>"),
-                                                       BaseAPI.OurVersionsURL,
-                                                       parties.Values.Select(CredentialsRole.From)
-                                                   ).ToJSON(),
-                            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                                AccessControlAllowHeaders  = [ "Authorization" ]
-                            }
-                        });
+                               new OCPIResponse.Builder(request) {
+                                   StatusCode           = 1000,
+                                   StatusMessage        = "Hello world!",
+                                   Data                 = new Credentials(
+                                                              request.LocalAccessInfo?.AccessToken ?? AccessToken.Parse("<any>"),
+                                                              BaseAPI.OurVersionsURL,
+                                                              parties.Values.Select(CredentialsRole.From)
+                                                          ).ToJSON(),
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                       Server                     = HTTPServiceName,
+                                       Date                       = Timestamp.Now,
+                                       AccessControlAllowOrigin   = "*",
+                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                                       Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.POST, HTTPMethod.PUT, HTTPMethod.DELETE ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ],
+                                       Connection                 = ConnectionType.KeepAlive,
+                                       Vary                       = "Accept"
+                                   }
+                               }
+                           );
 
                 });
 

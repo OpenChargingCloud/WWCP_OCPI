@@ -1,5 +1,5 @@
 ﻿
-<link href="{{BasePath}}/webapi/css/index.min.css" type="text/css" rel="stylesheet" />
+<link href="{{basePath}}/webapi/css/index.min.css" type="text/css" rel="stylesheet" />
 
 <div id="versionInfos" class="entity">
 
@@ -12,10 +12,10 @@
         <div id="versions">
             <ul>
                 <li><a href="{{versionPath}}versions">Versions</a></li>
-                <li><a href="{{BasePath}}/webapi/remoteParties">Remote Parties</a></li>
-                <li><a href="{{BasePath}}/webapi/clients">Clients</a></li>
-                <li><a href="{{BasePath}}/webapi/cpoclients">CPO Clients</a></li>
-                <li><a href="{{BasePath}}/webapi/emspclients">EMSP Clients</a></li>
+                <li><a href="{{basePath}}/webapi/remoteParties">Remote Parties</a></li>
+                <li><a href="{{basePath}}/webapi/clients">Clients</a></li>
+                <li><a href="{{basePath}}/webapi/cpoclients">CPO Clients</a></li>
+                <li><a href="{{basePath}}/webapi/emspclients">EMSP Clients</a></li>
             </ul>
         </div>
 

@@ -26,7 +26,6 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
-using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPI.WebAPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
@@ -70,7 +69,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = OCPIWebAPI.CommonAPI.HTTPServerName,
                     Date            = Timestamp.Now,
-                    Connection      = ConnectionType.Close
+                    Connection      = ConnectionType.KeepAlive
                 };
 
                 return false;
@@ -88,7 +87,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                     Date            = Timestamp.Now,
                     ContentType     = HTTPContentType.Application.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid remote party identification!"" }".ToUTF8Bytes(),
-                    Connection      = ConnectionType.Close
+                    Connection      = ConnectionType.KeepAlive
                 };
 
                 return false;
@@ -131,7 +130,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = OCPIWebAPI.CommonAPI.HTTPServerName,
                     Date            = Timestamp.Now,
-                    Connection      = ConnectionType.Close
+                    Connection      = ConnectionType.KeepAlive
                 };
 
                 return false;
@@ -148,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                     Date            = Timestamp.Now,
                     ContentType     = HTTPContentType.Application.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid remote party identification!"" }".ToUTF8Bytes(),
-                    Connection      = ConnectionType.Close
+                    Connection      = ConnectionType.KeepAlive
                 };
 
                 return false;
@@ -163,7 +162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                     Date            = Timestamp.Now,
                     ContentType     = HTTPContentType.Application.JSON_UTF8,
                     Content         = @"{ ""description"": ""Unknown remote party identification!"" }".ToUTF8Bytes(),
-                    Connection      = ConnectionType.Close
+                    Connection      = ConnectionType.KeepAlive
                 };
 
                 return false;
@@ -272,37 +271,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             => HTTPBaseAPI;
 
         /// <summary>
-        /// The extended HTTP API.
-        /// </summary>
-        //public OCPI.WebAPI.OCPIWebAPI  HTTPBaseAPI      { get; }
-
-
-
-        //public HTTPPath                URLPathPrefix    { get; }
-
-        /// <summary>
-        /// The HTTP URI prefix.
-        /// </summary>
-        //public HTTPPath?                                    HTTPBaseAPI.OverlayURLPathPrefix    { get; }
-
-        /// <summary>
         /// The HTTP URI prefix.
         /// </summary>
         public HTTPPath?                                    APIURLPathPrefix        { get; }
-
-
-        public String                                       VersionPath             { get; }
-
-        /// <summary>
-        /// The HTTP realm, if HTTP Basic Authentication is used.
-        /// </summary>
-      //  public String                                       HTTPRealm               { get; }
-
-        /// <summary>
-        /// An enumeration of logins for an optional HTTP Basic Authentication.
-        /// </summary>
-        //public IEnumerable<KeyValuePair<String, String>>    HTTPLogins              { get; }
-
 
         /// <summary>
         /// Send debug information via HTTP Server Sent Events.
@@ -385,7 +356,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                           HTTPPath?                APIURLPathPrefix       = null,
                           HTTPPath?                WebAPIURLPathPrefix    = null,
                           HTTPPath?                BasePath               = null,  // For URL prefixes in HTML!
-                          String?                  VersionPath            = null,
+                  //        String?                  VersionPath            = null,
 
                           //HTTPPath?                URLPathPrefix          = null,
 
@@ -425,7 +396,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             this.CommonWebAPI          = CommonWebAPI;
 
             this.APIURLPathPrefix      = APIURLPathPrefix;
-            this.VersionPath           = VersionPath ?? Version.String[..4];
+      //      this.VersionPath           = VersionPath ?? Version.String[..4];
 
             //this.HTTPRealm             = HTTPRealm.IsNotNullOrEmpty() ? HTTPRealm : DefaultHTTPRealm;
             //this.HTTPLogins            = HTTPLogins ?? [];
@@ -461,9 +432,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             => GetResourceStream(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.            HTTPRoot, typeof(OCPIWebAPI).            Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(OCPI.WebAPI.CommonWebAPI.HTTPRoot, typeof(OCPI.WebAPI.CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.               HTTPRoot, typeof(HTTPAPI).               Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.  HTTPRoot, typeof(OCPIWebAPI).  Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
                );
 
         #endregion
@@ -474,9 +445,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             => GetResourceMemoryStream(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.            HTTPRoot, typeof(OCPIWebAPI).            Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(OCPI.WebAPI.CommonWebAPI.HTTPRoot, typeof(OCPI.WebAPI.CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.               HTTPRoot, typeof(HTTPAPI).               Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.  HTTPRoot, typeof(OCPIWebAPI).  Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
                );
 
         #endregion
@@ -487,9 +458,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             => GetResourceString(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.            HTTPRoot, typeof(OCPIWebAPI).            Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(OCPI.WebAPI.CommonWebAPI.HTTPRoot, typeof(OCPI.WebAPI.CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.               HTTPRoot, typeof(HTTPAPI).               Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.  HTTPRoot, typeof(OCPIWebAPI).  Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
                );
 
         #endregion
@@ -500,9 +471,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             => GetResourceBytes(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.            HTTPRoot, typeof(OCPIWebAPI).            Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(OCPI.WebAPI.CommonWebAPI.HTTPRoot, typeof(OCPI.WebAPI.CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.               HTTPRoot, typeof(HTTPAPI).               Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.  HTTPRoot, typeof(OCPIWebAPI).  Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
                );
 
         #endregion
@@ -513,9 +484,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             => MixWithHTMLTemplate(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.            HTTPRoot, typeof(OCPIWebAPI).            Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(OCPI.WebAPI.CommonWebAPI.HTTPRoot, typeof(OCPI.WebAPI.CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.               HTTPRoot, typeof(HTTPAPI).               Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.  HTTPRoot, typeof(OCPIWebAPI).  Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
                );
 
         #endregion
@@ -527,9 +498,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             => MixWithHTMLTemplate(
                    ResourceName,
                    HTMLConverter,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.            HTTPRoot, typeof(OCPIWebAPI).            Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(OCPI.WebAPI.CommonWebAPI.HTTPRoot, typeof(OCPI.WebAPI.CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.               HTTPRoot, typeof(HTTPAPI).               Assembly)
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.  HTTPRoot, typeof(OCPIWebAPI).  Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
                );
 
         #endregion
@@ -549,12 +520,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                 // Export static files js/css/...
                 CommonAPI.HTTPBaseAPI.MapResourceAssemblyFolder(
                     HTTPHostname.Any,
-                    CommonWebAPI.OverlayURLPathPrefix.Value + VersionPath + "webapi",
+                    CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "webapi",
                     HTTPRoot,
                     RequireAuthentication:  false,
                     DefaultFilename:       "index.html"
                 );
 
+
+                var VersionPath = Version.String;
+                var RootPath    = (CommonWebAPI.OverlayURLPathPrefix.Value + Version.String).ToString();
 
                 #region GET ~/versions/2.1.1
 
@@ -575,9 +549,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                 ContentType                = HTTPContentType.Text.HTML_UTF8,
                                 Content                    = MixWithHTMLTemplate(
                                                                  "versions.versionDetails.shtml",
-                                                                 html => html.Replace("{{versionPath}}", VersionPath + "/")
+                                                                 html => html.Replace("{{rootPath}}",    CommonAPI.URLPathPrefix.ToString(), StringComparison.OrdinalIgnoreCase).
+                                                                              Replace("{{versionPath}}", VersionPath + "/",                  StringComparison.OrdinalIgnoreCase)
                                                              ).ToUTF8Bytes(),
-                                Connection                 = ConnectionType.Close,
+                                Connection                 = ConnectionType.KeepAlive,
                                 Vary                       = "Accept"
                             }.AsImmutable)
 
@@ -588,7 +563,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                 #region GET ~/v2.1.1/cpo/locations
 
-                // ~/cpo/locations
                 CommonAPI.HTTPBaseAPI.AddHandler(
                     HTTPMethod.GET,
                     CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/locations",
@@ -609,14 +583,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       AccessControlAllowOrigin    = "*",
                                       AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                                       AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
-                                      AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count"],
                                       ContentDisposition          = download
                                                                         ? @"attachment; filename = ""locations.json"""
                                                                         : null,
                                       ContentType                 = HTTPContentType.Application.JSON_UTF8,
                                       Content                     = new JArray(CommonAPI.GetLocations().Select(location => location.ToJSON())).ToUTF8Bytes(),
                                       Vary                        = "Accept",
-                                      Connection                  = ConnectionType.Close
+                                      Connection                  = ConnectionType.KeepAlive
                                   }.AsImmutable
 
                                 : new HTTPResponse.Builder(request) {
@@ -626,12 +599,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       AccessControlAllowOrigin    = "*",
                                       AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                                       AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
+                                      AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count"],
                                       ContentType                 = HTTPContentType.Text.HTML_UTF8,
                                       Content                     = MixWithHTMLTemplate(
                                                                         "locations.locations.shtml",
-                                                                        html => html.Replace("{{versionPath}}", VersionPath + "/")
+                                                                        html => html.Replace("{{versionPath}}", VersionPath + "/", StringComparison.OrdinalIgnoreCase).
+                                                                                     Replace("{{rootPath}}",    RootPath    + "/", StringComparison.OrdinalIgnoreCase)
                                                                     ).ToUTF8Bytes(),
-                                      Connection                  = ConnectionType.Close,
+                                      Connection                  = ConnectionType.KeepAlive,
                                       Vary                        = "Accept"
                                   }.AsImmutable
 
@@ -641,30 +616,36 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                 );
 
+                #endregion
 
-                // ~/cpo/locationStatistics
+                #region GET ~/v2.1.1/cpo/locationStatistics
+
                 CommonAPI.HTTPBaseAPI.AddHandler(
-                                             HTTPMethod.GET,
-                                             CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/locationStatistics",
-                                             HTTPContentType.Text.HTML_UTF8,
-                                             HTTPDelegate: request => {
+                    HTTPMethod.GET,
+                    CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/locationStatistics",
+                    HTTPContentType.Text.HTML_UTF8,
+                    HTTPDelegate: request => {
 
-                                                 return Task.FromResult(
-                                                     new HTTPResponse.Builder(request) {
-                                                         HTTPStatusCode             = HTTPStatusCode.OK,
-                                                         Server                     = HTTPBaseAPI.HTTPServiceName,
-                                                         Date                       = Timestamp.Now,
-                                                         AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                         AccessControlAllowHeaders  = [ "Authorization" ],
-                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                         Content                    = MixWithHTMLTemplate("locations.locationStatistics.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", VersionPath + "/")).ToUTF8Bytes(),
-                                                         Connection                 = ConnectionType.Close,
-                                                         Vary                       = "Accept"
-                                                     }.AsImmutable);
+                        return Task.FromResult(
+                            new HTTPResponse.Builder(request) {
+                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                Server                     = HTTPBaseAPI.HTTPServiceName,
+                                Date                       = Timestamp.Now,
+                                AccessControlAllowOrigin   = "*",
+                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders  = [ "Authorization" ],
+                                ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                Content                    = MixWithHTMLTemplate(
+                                                                 "locations.locationStatistics.shtml",
+                                                                 html => html.Replace("{{versionPath}}", VersionPath + "/", StringComparison.OrdinalIgnoreCase).
+                                                                              Replace("{{rootPath}}",    RootPath    + "/", StringComparison.OrdinalIgnoreCase)
+                                                             ).ToUTF8Bytes(),
+                                Connection                 = ConnectionType.KeepAlive,
+                                Vary                       = "Accept"
+                            }.AsImmutable);
 
-                                             });
+                    }
+                );
 
                 #endregion
 
@@ -696,7 +677,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       ContentType                = HTTPContentType.Application.JSON_UTF8,
                                       Content                    = new JArray(CommonAPI.GetSessions().Select(session => session.ToJSON())).ToUTF8Bytes(),
                                       Vary                       = "Accept",
-                                      Connection                 = ConnectionType.Close
+                                      Connection                 = ConnectionType.KeepAlive
                                   }.AsImmutable
 
                                 : new HTTPResponse.Builder(request) {
@@ -711,7 +692,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                        "sessions.sessions.shtml",
                                                                        html => html.Replace("{{versionPath}}", VersionPath + "/")
                                                                    ).ToUTF8Bytes(),
-                                      Connection                 = ConnectionType.Close,
+                                      Connection                 = ConnectionType.KeepAlive,
                                       Vary                       = "Accept"
                                   }.AsImmutable
 
@@ -739,35 +720,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                             download
 
                                 ? new HTTPResponse.Builder(request) {
-                                      HTTPStatusCode             = HTTPStatusCode.OK,
-                                      Server                     = HTTPServerName,
-                                      Date                       = Timestamp.Now,
-                                      AccessControlAllowOrigin   = "*",
-                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                      AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                      ContentDisposition         = download
-                                                                       ? @"attachment; filename = ""tariffs.json"""
-                                                                       : null,
-                                      ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                      Content                    = new JArray(CommonAPI.GetTariffs().Select(tariff => tariff.ToJSON())).ToUTF8Bytes(),
-                                      Vary                       = "Accept",
-                                      Connection                 = ConnectionType.Close
+                                      HTTPStatusCode              = HTTPStatusCode.OK,
+                                      Server                      = HTTPServerName,
+                                      Date                        = Timestamp.Now,
+                                      AccessControlAllowOrigin    = "*",
+                                      AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
+                                      ContentDisposition          = download
+                                                                        ? @"attachment; filename = ""tariffs.json"""
+                                                                        : null,
+                                      ContentType                 = HTTPContentType.Application.JSON_UTF8,
+                                      Content                     = new JArray(CommonAPI.GetTariffs().Select(tariff => tariff.ToJSON())).ToUTF8Bytes(),
+                                      Vary                        = "Accept",
+                                      Connection                  = ConnectionType.KeepAlive
                                   }.AsImmutable
 
                                 : new HTTPResponse.Builder(request) {
-                                      HTTPStatusCode             = HTTPStatusCode.OK,
-                                      Server                     = HTTPBaseAPI.HTTPServiceName,
-                                      Date                       = Timestamp.Now,
-                                      AccessControlAllowOrigin   = "*",
-                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                      AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                      ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                      Content                    = MixWithHTMLTemplate(
-                                                                       "tariffs.tariffs.shtml",
-                                                                       html => html.Replace("{{versionPath}}", VersionPath + "/")
-                                                                   ).ToUTF8Bytes(),
-                                      Connection                 = ConnectionType.Close,
-                                      Vary                       = "Accept"
+                                      HTTPStatusCode              = HTTPStatusCode.OK,
+                                      Server                      = HTTPBaseAPI.HTTPServiceName,
+                                      Date                        = Timestamp.Now,
+                                      AccessControlAllowOrigin    = "*",
+                                      AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
+                                      AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count"],
+                                      ContentType                 = HTTPContentType.Text.HTML_UTF8,
+                                      Content                     = MixWithHTMLTemplate(
+                                                                        "tariffs.tariffs.shtml",
+                                                                        html => html.Replace("{{versionPath}}", VersionPath + "/", StringComparison.OrdinalIgnoreCase).
+                                                                                     Replace("{{rootPath}}",    RootPath    + "/", StringComparison.OrdinalIgnoreCase)
+                                                                    ).ToUTF8Bytes(),
+                                      Connection                  = ConnectionType.KeepAlive,
+                                      Vary                        = "Accept"
                                   }.AsImmutable
 
                         );
@@ -806,7 +789,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       ContentType                = HTTPContentType.Application.JSON_UTF8,
                                       Content                    = new JArray(CommonAPI.GetCDRs().Select(cdr => cdr.ToJSON())).ToUTF8Bytes(),
                                       Vary                       = "Accept",
-                                      Connection                 = ConnectionType.Close
+                                      Connection                 = ConnectionType.KeepAlive
                                   }.AsImmutable
 
                                 : new HTTPResponse.Builder(request) {
@@ -821,7 +804,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                        "cdrs.cdrs.shtml",
                                                                        html => html.Replace("{{versionPath}}", VersionPath + "/")
                                                                    ).ToUTF8Bytes(),
-                                      Connection                 = ConnectionType.Close,
+                                      Connection                 = ConnectionType.KeepAlive,
                                       Vary                       = "Accept"
                                   }.AsImmutable
 
@@ -854,7 +837,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                  "commands.commands.shtml",
                                                                  html => html.Replace("{{versionPath}}", VersionPath + "/")
                                                              ).ToUTF8Bytes(),
-                                Connection                 = ConnectionType.Close,
+                                Connection                 = ConnectionType.KeepAlive,
                                 Vary                       = "Accept"
                             }.AsImmutable)
 
@@ -890,7 +873,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       ContentType                = HTTPContentType.Application.JSON_UTF8,
                                       Content                    = new JArray(CommonAPI.GetTokens().Select(token => token.ToJSON())).ToUTF8Bytes(),
                                       Vary                       = "Accept",
-                                      Connection                 = ConnectionType.Close
+                                      Connection                 = ConnectionType.KeepAlive
                                   }.AsImmutable
 
                                 : new HTTPResponse.Builder(request) {
@@ -905,7 +888,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                        "tokens.tokens.shtml",
                                                                        html => html.Replace("{{versionPath}}", VersionPath + "/")
                                                                    ).ToUTF8Bytes(),
-                                      Connection                 = ConnectionType.Close,
+                                      Connection                 = ConnectionType.KeepAlive,
                                       Vary                       = "Accept"
                                   }.AsImmutable
 
@@ -947,7 +930,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                              HTTP_UnlockConnector
                                                          },
                             AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
-                            Connection                 = ConnectionType.Close
+                            Connection                 = ConnectionType.KeepAlive
                         }.AsImmutable);
 
                 },
@@ -1030,7 +1013,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                       1000,
                                                                                       ""
                                                                                   ).ToUTF8Bytes(),
-                                                     Connection                 = ConnectionType.Close,
+                                                     Connection                 = ConnectionType.KeepAlive,
                                                      Vary                       = "Accept"
                                                  }.
                                                  Set("X-Total-Count",     allRemoteParties.     Length).
@@ -1079,7 +1062,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                 ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                                 Content                    = MixWithHTMLTemplate("remoteParties.remoteParties.shtml",
                                                                                                                  html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
-                                                                Connection                 = ConnectionType.Close,
+                                                                Connection                 = ConnectionType.KeepAlive,
                                                                 Vary                       = "Accept"
                                                             }.AsImmutable);
                                                         }, AllowReplacement: URLReplacement.Allow);
@@ -1111,7 +1094,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                       HTTPMethod.POST
                                                                                   },
                                                      AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
-                                                     Connection                 = ConnectionType.Close
+                                                     Connection                 = ConnectionType.KeepAlive
                                                  }.AsImmutable);
 
                                          }, AllowReplacement: URLReplacement.Allow);
@@ -1185,7 +1168,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                                   CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
-                                                                  Connection                 = ConnectionType.Close,
+                                                                  Connection                 = ConnectionType.KeepAlive,
                                                                   Vary                       = "Accept"
                                                             }.AsImmutable
 
@@ -1196,7 +1179,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                                  Connection                 = ConnectionType.Close
+                                                                  Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable);
 
                                          },
@@ -1258,7 +1241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteXXXParties.remoteParty.shtml",
                                                                                                           html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
-                                                         Connection                 = ConnectionType.Close,
+                                                         Connection                 = ConnectionType.KeepAlive,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
 
@@ -1272,7 +1255,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                  //               AccessControlAllowOrigin   = "*",
                                                  //               AccessControlAllowMethods  = new[] { "GET" },
                                                  //               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                 //               Connection                 = ConnectionType.Close,
+                                                 //               Connection                 = ConnectionType.KeepAlive,
                                                  //               Vary                       = "Accept"
                                                  //           }.AsImmutable);
 
@@ -1305,7 +1288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                       HTTPMethod.POST
                                                                                   },
                                                      AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
-                                                     Connection                 = ConnectionType.Close
+                                                     Connection                 = ConnectionType.KeepAlive
                                                  }.AsImmutable);
 
                                          }, AllowReplacement: URLReplacement.Allow);
@@ -1379,7 +1362,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                                   CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
-                                                                  Connection                 = ConnectionType.Close,
+                                                                  Connection                 = ConnectionType.KeepAlive,
                                                                   Vary                       = "Accept"
                                                             }.AsImmutable
 
@@ -1390,7 +1373,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                                  Connection                 = ConnectionType.Close
+                                                                  Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable);
 
                                          },
@@ -1450,7 +1433,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.reserveNow.shtml").ToUTF8Bytes(),
-                                                         Connection                 = ConnectionType.Close,
+                                                         Connection                 = ConnectionType.KeepAlive,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
 
@@ -1464,7 +1447,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              //               AccessControlAllowOrigin   = "*",
                                              //               AccessControlAllowMethods  = new[] { "GET" },
                                              //               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                             //               Connection                 = ConnectionType.Close,
+                                             //               Connection                 = ConnectionType.KeepAlive,
                                              //               Vary                       = "Accept"
                                              //           }.AsImmutable);
 
@@ -1538,7 +1521,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                         }.AsImmutable;
 
                                              }
@@ -1565,7 +1548,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                         }.AsImmutable;
 
                                              }
@@ -1593,7 +1576,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                         }.AsImmutable;
 
                                              }
@@ -1621,7 +1604,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                         }.AsImmutable;
 
                                              }
@@ -1650,7 +1633,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                                ErrorResponse).
                                                                                                         ToJSON().
                                                                                                         ToUTF8Bytes(),
-                                                                Connection                 = ConnectionType.Close
+                                                                Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable;
 
                                              }
@@ -1676,7 +1659,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            "Could not find a appropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                       }.AsImmutable;
 
                                              #endregion
@@ -1713,7 +1696,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                                   CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
-                                                                  Connection                 = ConnectionType.Close,
+                                                                  Connection                 = ConnectionType.KeepAlive,
                                                                   Vary                       = "Accept"
                                                             }.AsImmutable
 
@@ -1724,7 +1707,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                                  Connection                 = ConnectionType.Close
+                                                                  Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable;
 
                                          },
@@ -1755,7 +1738,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                              HTTPMethod.POST
                                                          ],
                             AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
-                            Connection                 = ConnectionType.Close
+                            Connection                 = ConnectionType.KeepAlive
                         }.AsImmutable);
 
                 },
@@ -1831,7 +1814,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                                   CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
-                                                                  Connection                 = ConnectionType.Close,
+                                                                  Connection                 = ConnectionType.KeepAlive,
                                                                   Vary                       = "Accept"
                                                             }.AsImmutable
 
@@ -1842,7 +1825,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                                  Connection                 = ConnectionType.Close
+                                                                  Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable);
 
                                          },
@@ -1902,7 +1885,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.cancelReservation.shtml").ToUTF8Bytes(),
-                                                         Connection                 = ConnectionType.Close,
+                                                         Connection                 = ConnectionType.KeepAlive,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
 
@@ -1916,7 +1899,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              //               AccessControlAllowOrigin   = "*",
                                              //               AccessControlAllowMethods  = new[] { "GET" },
                                              //               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                             //               Connection                 = ConnectionType.Close,
+                                             //               Connection                 = ConnectionType.KeepAlive,
                                              //               Vary                       = "Accept"
                                              //           }.AsImmutable);
 
@@ -1990,7 +1973,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                         }.AsImmutable;
 
                                              }
@@ -2016,7 +1999,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            "Could not find a appropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                       }.AsImmutable;
 
                                              #endregion
@@ -2049,7 +2032,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                                   CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
-                                                                  Connection                 = ConnectionType.Close,
+                                                                  Connection                 = ConnectionType.KeepAlive,
                                                                   Vary                       = "Accept"
                                                             }.AsImmutable
 
@@ -2060,7 +2043,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                                  Connection                 = ConnectionType.Close
+                                                                  Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable;
 
                                          },
@@ -2091,7 +2074,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                              HTTPMethod.POST
                                                          },
                             AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
-                            Connection                 = ConnectionType.Close
+                            Connection                 = ConnectionType.KeepAlive
                         }.AsImmutable);
 
                 },
@@ -2167,7 +2150,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                                   CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
-                                                                  Connection                 = ConnectionType.Close,
+                                                                  Connection                 = ConnectionType.KeepAlive,
                                                                   Vary                       = "Accept"
                                                             }.AsImmutable
 
@@ -2178,7 +2161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                                  Connection                 = ConnectionType.Close
+                                                                  Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable);
 
                                          },
@@ -2238,7 +2221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.startSession.shtml").ToUTF8Bytes(),
-                                                         Connection                 = ConnectionType.Close,
+                                                         Connection                 = ConnectionType.KeepAlive,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
 
@@ -2252,7 +2235,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              //               AccessControlAllowOrigin   = "*",
                                              //               AccessControlAllowMethods  = new[] { "GET" },
                                              //               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                             //               Connection                 = ConnectionType.Close,
+                                             //               Connection                 = ConnectionType.KeepAlive,
                                              //               Vary                       = "Accept"
                                              //           }.AsImmutable);
 
@@ -2326,7 +2309,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                         }.AsImmutable;
 
                                              }
@@ -2354,7 +2337,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                         }.AsImmutable;
 
                                              }
@@ -2382,7 +2365,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                         }.AsImmutable;
 
                                              }
@@ -2408,7 +2391,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            "Could not find a appropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                       }.AsImmutable;
 
                                              #endregion
@@ -2443,7 +2426,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                                   CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
-                                                                  Connection                 = ConnectionType.Close,
+                                                                  Connection                 = ConnectionType.KeepAlive,
                                                                   Vary                       = "Accept"
                                                             }.AsImmutable
 
@@ -2454,7 +2437,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                                  Connection                 = ConnectionType.Close
+                                                                  Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable;
 
                                          },
@@ -2485,7 +2468,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                              HTTPMethod.POST
                                                          },
                             AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
-                            Connection                 = ConnectionType.Close
+                            Connection                 = ConnectionType.KeepAlive
                         }.AsImmutable);
 
                 },
@@ -2561,7 +2544,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                                   CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
-                                                                  Connection                 = ConnectionType.Close,
+                                                                  Connection                 = ConnectionType.KeepAlive,
                                                                   Vary                       = "Accept"
                                                             }.AsImmutable
 
@@ -2572,7 +2555,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                                  Connection                 = ConnectionType.Close
+                                                                  Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable);
 
                                          },
@@ -2632,7 +2615,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.stopSession.shtml").ToUTF8Bytes(),
-                                                         Connection                 = ConnectionType.Close,
+                                                         Connection                 = ConnectionType.KeepAlive,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
 
@@ -2646,7 +2629,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              //               AccessControlAllowOrigin   = "*",
                                              //               AccessControlAllowMethods  = new[] { "GET" },
                                              //               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                             //               Connection                 = ConnectionType.Close,
+                                             //               Connection                 = ConnectionType.KeepAlive,
                                              //               Vary                       = "Accept"
                                              //           }.AsImmutable);
 
@@ -2720,7 +2703,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                         }.AsImmutable;
 
                                              }
@@ -2746,7 +2729,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            "Could not find a appropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                       }.AsImmutable;
 
                                              #endregion
@@ -2774,7 +2757,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                stopSessionResult.ToJSON(commandResponse => commandResponse.ToJSON()).
                                                                                                                  ToUTF8Bytes(),
-                                                                  Connection                 = ConnectionType.Close,
+                                                                  Connection                 = ConnectionType.KeepAlive,
                                                                   Vary                       = "Accept"
                                                             }.AsImmutable
 
@@ -2785,7 +2768,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                                  Connection                 = ConnectionType.Close
+                                                                  Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable;
 
                                          },
@@ -2816,7 +2799,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                              HTTPMethod.POST
                                                          },
                             AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
-                            Connection                 = ConnectionType.Close
+                            Connection                 = ConnectionType.KeepAlive
                         }.AsImmutable);
 
                 },
@@ -2892,7 +2875,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                                   CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
-                                                                  Connection                 = ConnectionType.Close,
+                                                                  Connection                 = ConnectionType.KeepAlive,
                                                                   Vary                       = "Accept"
                                                             }.AsImmutable
 
@@ -2903,7 +2886,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                                  Connection                 = ConnectionType.Close
+                                                                  Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable);
 
                                          },
@@ -2963,7 +2946,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.unlockConnector.shtml").ToUTF8Bytes(),
-                                                         Connection                 = ConnectionType.Close,
+                                                         Connection                 = ConnectionType.KeepAlive,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
 
@@ -2977,7 +2960,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              //               AccessControlAllowOrigin   = "*",
                                              //               AccessControlAllowMethods  = new[] { "GET" },
                                              //               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                             //               Connection                 = ConnectionType.Close,
+                                             //               Connection                 = ConnectionType.KeepAlive,
                                              //               Vary                       = "Accept"
                                              //           }.AsImmutable);
 
@@ -3051,7 +3034,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                         }.AsImmutable;
 
                                              }
@@ -3079,7 +3062,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                         }.AsImmutable;
 
                                              }
@@ -3107,7 +3090,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                         }.AsImmutable;
 
                                              }
@@ -3133,7 +3116,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                            "Could not find a appropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
-                                                            Connection                 = ConnectionType.Close
+                                                            Connection                 = ConnectionType.KeepAlive
                                                       }.AsImmutable;
 
                                              #endregion
@@ -3163,7 +3146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                unlockConnectorResult.ToJSON(commandResponse => commandResponse.ToJSON()).
                                                                                                                      ToUTF8Bytes(),
-                                                                  Connection                 = ConnectionType.Close,
+                                                                  Connection                 = ConnectionType.KeepAlive,
                                                                   Vary                       = "Accept"
                                                             }.AsImmutable
 
@@ -3174,7 +3157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = [ "GET", "SET" ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                                  Connection                 = ConnectionType.Close
+                                                                  Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable;
 
                                          },

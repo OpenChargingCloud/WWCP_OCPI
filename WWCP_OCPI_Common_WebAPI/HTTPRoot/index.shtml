@@ -1,26 +1,22 @@
 ﻿
 <link href="{{BasePath}}/webapi/css/index.min.css" type="text/css" rel="stylesheet" />
+<link href="{{BasePath}}/webapi/css/versions/versions.min.css" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="{{BasePath}}/webapi/versions/versions.js"></script>
 
 <div id="versionInfos" class="entity">
 
-    <div id="versionInfos2">
+    <div id="description">
+        This is an Open Charge Point Interface WebAPI!<br />
+        <br />
+        The following OCPI <a href="{{BasePath}}/versions">versions</a> are available:
+    </div>
 
-        <div id="description">
-            This is an Open Charge Point Interface HTTP service!
-        </div>
-
-        <div id="versions">
-            <ul>
-                <li><a href="{{versionPath}}versions">Versions</a></li>
-                <li><a href="versions">Versions</a></li>
-                <li><a href="{{BasePath}}/versions">Versions</a></li>
-                <li><a href="{{BasePath}}/webapi/remoteParties">Remote Parties</a></li>
-                <li><a href="{{BasePath}}/webapi/clients">Clients</a></li>
-                <li><a href="{{BasePath}}/webapi/cpoclients">CPO Clients</a></li>
-                <li><a href="{{BasePath}}/webapi/emspclients">EMSP Clients</a></li>
-            </ul>
-        </div>
-
+    <div id="versions">
     </div>
 
 </div>
+
+<script type="text/javascript">
+    StartVersionsOnIndexPage();
+</script>

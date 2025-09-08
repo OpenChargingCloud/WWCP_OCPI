@@ -5,20 +5,12 @@
 
 <div id="versionInfos" class="entity">
 
-    <!--<div id="versionInfos2">
+    <div id="description">
+        The following OCPI versions are available:
+    </div>
 
-        <div id="description">
-            Versions
-        </div>-->
-        <div id="description">
-            The following OCPI versions are available:
-        </div>
-
-        <div id="versions">
-
-        </div>
-
-    <!--</div>-->
+    <div id="versions">
+    </div>
 
 </div>
 

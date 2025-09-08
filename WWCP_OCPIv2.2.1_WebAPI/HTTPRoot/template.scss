@@ -24,19 +24,27 @@ body {
 
             #logo {
 
-                display:                block;
-                align-self:             center;
+                display:                flex;
+                flex-direction:         column;
                 text-decoration:        none;
                 white-space:            nowrap;
                 user-select:            none;
                 text-align:             center;
                 color:                  #EEEEEE;
                 margin:                 16px 10px;
-                font-size:              125%;
+
+                .main {
+                    font-size:              125%;
+                }
 
                 .small {
-                    font-size:              50%;
+                    font-size:              60%;
                     margin-top:             -1px;
+                }
+
+                .version {
+                    font-size:              40%;
+                    margin-top:             6px;
                 }
 
             }

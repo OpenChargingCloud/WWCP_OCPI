@@ -1,5 +1,5 @@
 ﻿
-<link href="{{BasePath}}/webapi/css/index.min.css" type="text/css" rel="stylesheet" />
+<link href="{{basePath}}/webapi/css/index.min.css" type="text/css" rel="stylesheet" />
 
 <div id="versionInfos" class="entity">
 

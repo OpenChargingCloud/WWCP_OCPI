@@ -851,14 +851,6 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="HTTPServiceName">The name of the HTTP service.</param>
         /// <param name="APIVersionHashes">The API version hashes (git commit hash values).</param>
         /// 
-        /// <param name="DisableMaintenanceTasks">Disable all maintenance tasks.</param>
-        /// <param name="MaintenanceInitialDelay">The initial delay of the maintenance tasks.</param>
-        /// <param name="MaintenanceEvery">The maintenance interval.</param>
-        /// 
-        /// <param name="DisableWardenTasks">Disable all warden tasks.</param>
-        /// <param name="WardenInitialDelay">The initial delay of the warden tasks.</param>
-        /// <param name="WardenCheckEvery">The warden interval.</param>
-        /// 
         /// <param name="IsDevelopment">This HTTP API runs in development mode.</param>
         /// <param name="DevelopmentServers">An enumeration of server names which will imply to run this service in development mode.</param>
         /// <param name="DisableLogging">Disable any logging.</param>
@@ -1186,7 +1178,7 @@ namespace cloud.charging.open.protocols.OCPI
                             var httpResponseBuilder2 =
                                 new HTTPResponse.Builder(request) {
                                     HTTPStatusCode             = HTTPStatusCode.OK,
-                                    Server                     = DefaultHTTPServerName,
+                                    Server                     = HTTPServiceName,
                                     Date                       = Timestamp.Now,
                                     AccessControlAllowOrigin   = "*",
                                     AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
