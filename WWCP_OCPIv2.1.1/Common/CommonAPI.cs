@@ -1925,8 +1925,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    BasePath,
 
                    ExternalDNSName,
-                   HTTPServerName,
-                   HTTPServiceName,
+                   HTTPServerName  ?? DefaultHTTPServerName,
+                   HTTPServiceName ?? DefaultHTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,
 
@@ -2964,9 +2964,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         new OCPIResponse.Builder(request) {
                             HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
                                 HTTPStatusCode             = HTTPStatusCode.OK,
+                                Server                     = HTTPServiceName,
+                                Date                       = Timestamp.Now,
+                                AccessControlAllowOrigin   = "*",
                                 AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                 Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                 AccessControlAllowHeaders  = [ "Authorization" ],
+                                Connection                 = ConnectionType.KeepAlive,
                                 Vary                       = "Accept"
                             }
                         })
@@ -3001,8 +3005,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                    Server                     = HTTPServiceName,
+                                    Date                       = Timestamp.Now,
+                                    AccessControlAllowOrigin   = "*",
                                     AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                    Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ],
+                                    Connection                 = ConnectionType.KeepAlive,
+                                    Vary                       = "Accept"
                                 }
                             });
 
@@ -3183,9 +3193,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                             CustomVersionEndpointSerializer),
                             HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                 HTTPStatusCode             = HTTPStatusCode.OK,
+                                Server                     = HTTPServiceName,
+                                Date                       = Timestamp.Now,
+                                AccessControlAllowOrigin   = "*",
                                 AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                 Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                 AccessControlAllowHeaders  = [ "Authorization" ],
+                                Connection                 = ConnectionType.KeepAlive,
                                 Vary                       = "Accept"
                             }
                         }

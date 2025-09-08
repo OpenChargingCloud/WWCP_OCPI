@@ -1100,7 +1100,7 @@ namespace cloud.charging.open.protocols.OCPI
                             Content                    = JSONObject.Create(
                                                              new JProperty(
                                                                  "message",
-                                                                 "This is an Open Charge Point Interface v2.x HTTP service! Please check ~/ versions!"
+                                                                 "This is an Open Charge Point Interface v2.x HTTP service! Please check ~/versions!"
                                                              )
                                                          ).ToUTF8Bytes(),
                             Connection                 = ConnectionType.KeepAlive,
