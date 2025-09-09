@@ -4690,15 +4690,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             #endregion
 
 
-            #region OPTIONS     ~/2.3.0/credentials
+            #region OPTIONS     ~/v2.3.0/credentials
 
             // ----------------------------------------------------------
-            // curl -v -X OPTIONS http://127.0.0.1:2502/2.3.0/credentials
+            // curl -v -X OPTIONS http://127.0.0.1:2502/v2.3.0/credentials
             // ----------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + $"{Version.Id}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 OCPIRequestHandler: request => {
 
                     #region Defaults
@@ -4764,15 +4764,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             #endregion
 
-            #region GET         ~/2.3.0/credentials
+            #region GET         ~/v2.3.0/credentials
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.3.0/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/v2.3.0/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + $"{Version.Id}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetCredentialsRequest,
                 OCPIResponseLogger:  GetCredentialsResponse,
@@ -4834,17 +4834,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             #endregion
 
-            #region POST        ~/2.3.0/credentials
+            #region POST        ~/v2.3.0/credentials
 
             // REGISTER new OCPI party!
 
             // -----------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.3.0/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/v2.3.0/credentials
             // -----------------------------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + $"{Version.Id}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PostCredentialsRequest,
                 OCPIResponseLogger:  PostCredentialsResponse,
@@ -4882,17 +4882,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             #endregion
 
-            #region PUT         ~/2.3.0/credentials
+            #region PUT         ~/v2.3.0/credentials
 
             // UPDATE the registration of an existing OCPI party!
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.3.0/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/v2.3.0/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.PUT,
-                URLPathPrefix + $"{Version.Id}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PutCredentialsRequest,
                 OCPIResponseLogger:  PutCredentialsResponse,
@@ -4959,17 +4959,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             #endregion
 
-            #region DELETE      ~/2.3.0/credentials
+            #region DELETE      ~/v2.3.0/credentials
 
             // UNREGISTER an existing OCPI party!
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.3.0/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/v2.3.0/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + $"{Version.Id}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   DeleteCredentialsRequest,
                 OCPIResponseLogger:  DeleteCredentialsResponse,

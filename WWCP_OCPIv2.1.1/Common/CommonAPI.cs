@@ -3007,11 +3007,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     var endpoints  = new List<VersionEndpoint>() {
 
-                                        new (Module_Id.Credentials,
-                                             URL.Parse(
-                                                 BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                 (request.Host + (prefix + "credentials")).Replace("//", "/")
-                                             ))
+                                        new (
+                                            Module_Id.Credentials,
+                                            URL.Parse(
+                                                BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                                (request.Host + (prefix + "credentials")).Replace("//", "/")
+                                            )
+                                        )
 
                                     };
 
@@ -3086,7 +3088,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                 new VersionEndpoint(
                                     Module_Id.Locations,
                                     URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                        (request.Host + (prefix + "cpo/locations")).Replace("//", "/"))
+                                        (request.Host + (prefix + "cpo/locations")).Replace("//", "/")
+                                    )
                                 )
                             );
 
@@ -3095,7 +3098,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                 new VersionEndpoint(
                                     Module_Id.Tariffs,
                                     URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                        (request.Host + (prefix + "cpo/tariffs")).Replace("//", "/"))
+                                        (request.Host + (prefix + "cpo/tariffs")).Replace("//", "/")
+                                    )
                                 )
                             );
 
@@ -3192,15 +3196,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
 
-            #region OPTIONS     ~/2.1.1/credentials
+            #region OPTIONS     ~/v2.1.1/credentials
 
             // ------------------------------------------------------------
-            // curl -v -X OPTIONS http://127.0.0.1:2502/2.1.1/credentials
+            // curl -v -X OPTIONS http://127.0.0.1:2502/v2.1.1/credentials
             // ------------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + $"{Version.Id}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 OCPIRequestHandler: request => {
 
                     #region Defaults
@@ -3266,18 +3270,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region GET         ~/2.1.1/credentials
+            #region GET         ~/v2.1.1/credentials
 
             // Retrieves the credentials object to access the server's platform.
             // The response contains the credentials object to access the server's platform.
             // This credentials object also contains extra information about the server such as its business details.
 
             // -------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/v2.1.1/credentials
             // -------------------------------------------------------------------------------
             this.AddOCPIMethod(
                 HTTPMethod.GET,
-                URLPathPrefix + $"{Version.Id}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetCredentialsRequest,
                 OCPIResponseLogger:  GetCredentialsResponse,
@@ -3336,16 +3340,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region POST        ~/2.1.1/credentials
+            #region POST        ~/v2.1.1/credentials
 
             // REGISTER new OCPI party!
 
             // -------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/v2.1.1/credentials
             // -------------------------------------------------------------------------------
             this.AddOCPIMethod(
                                HTTPMethod.POST,
-                               URLPathPrefix + $"{Version.Id}/credentials",
+                               URLPathPrefix + $"{Version.String}/credentials",
                                HTTPContentType.Application.JSON_UTF8,
                                OCPIRequestLogger:   PostCredentialsRequest,
                                OCPIResponseLogger:  PostCredentialsResponse,
@@ -3383,7 +3387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region PUT         ~/2.1.1/credentials
+            #region PUT         ~/v2.1.1/credentials
 
             // UPDATE the registration of an existing OCPI party!
 
@@ -3399,11 +3403,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // This must return a HTTP status code 405: method not allowed if the client was not registered yet.
 
             // -------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/v2.1.1/credentials
             // -------------------------------------------------------------------------------
             this.AddOCPIMethod(
                                HTTPMethod.PUT,
-                               URLPathPrefix + $"{Version.Id}/credentials",
+                               URLPathPrefix + $"{Version.String}/credentials",
                                HTTPContentType.Application.JSON_UTF8,
                                OCPIRequestLogger:   PutCredentialsRequest,
                                OCPIResponseLogger:  PutCredentialsResponse,
@@ -3470,7 +3474,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region DELETE      ~/2.1.1/credentials
+            #region DELETE      ~/v2.1.1/credentials
 
             // UNREGISTER an existing OCPI party!
 
@@ -3481,11 +3485,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // This must return a HTTP status code 405: method not allowed if the client was not registered.
 
             // -------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/v2.1.1/credentials
             // -------------------------------------------------------------------------------
             this.AddOCPIMethod(
                                HTTPMethod.DELETE,
-                               URLPathPrefix + $"{Version.Id}/credentials",
+                               URLPathPrefix + $"{Version.String}/credentials",
                                HTTPContentType.Application.JSON_UTF8,
                                OCPIRequestLogger:   DeleteCredentialsRequest,
                                OCPIResponseLogger:  DeleteCredentialsResponse,

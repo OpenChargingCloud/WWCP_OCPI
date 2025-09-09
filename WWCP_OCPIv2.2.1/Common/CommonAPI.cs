@@ -4013,7 +4013,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     #endregion
 
 
-                    var prefix = URLPathPrefix + BaseAPI.AdditionalURLPathPrefix + $"{request.HTTPRequest.GetHeaderField<Version_Id?>("X-OCPIVersion") ?? Version.Id}";
+                    var prefix = URLPathPrefix + BaseAPI.AdditionalURLPathPrefix + Version.String;
 
                     #region Common credential endpoints...
 
@@ -4023,14 +4023,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                              Module_Id.Credentials,
                                              InterfaceRoles.SENDER,
                                              URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                 (request.Host + (prefix + "credentials")))
+                                                 (request.Host + (prefix + "credentials")).Replace("//", "/")
+                                             )
                                          ),
 
                                          new (
                                              Module_Id.Credentials,
                                              InterfaceRoles.RECEIVER,
                                              URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                 (request.Host + (prefix + "credentials")))
+                                                 (request.Host + (prefix + "credentials")).Replace("//", "/")
+                                             )
                                          )
 
                                     };
@@ -4048,7 +4050,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 Module_Id.Locations,
                                 InterfaceRoles.RECEIVER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() + 
-                                    (request.Host + (prefix + "emsp/locations")).Replace("//", "/"))
+                                    (request.Host + (prefix + "emsp/locations")).Replace("//", "/")
+                                )
                             )
                         );
 
@@ -4057,7 +4060,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 Module_Id.Tariffs,
                                 InterfaceRoles.RECEIVER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "emsp/tariffs")).  Replace("//", "/"))
+                                    (request.Host + (prefix + "emsp/tariffs")).  Replace("//", "/")
+                                )
                             )
                         );
 
@@ -4066,7 +4070,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 Module_Id.Sessions,
                                 InterfaceRoles.RECEIVER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "emsp/sessions")). Replace("//", "/"))
+                                    (request.Host + (prefix + "emsp/sessions")). Replace("//", "/")
+                                )
                             )
                         );
 
@@ -4076,7 +4081,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 Module_Id.ChargingProfiles,
                                 InterfaceRoles.SENDER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/"))
+                                    (request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/")
+                                )
                             )
                         );
 
@@ -4085,7 +4091,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 Module_Id.CDRs,
                                 InterfaceRoles.RECEIVER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "emsp/cdrs")).     Replace("//", "/"))
+                                    (request.Host + (prefix + "emsp/cdrs")).     Replace("//", "/")
+                                )
                             )
                         );
 
@@ -4095,7 +4102,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 Module_Id.Commands,
                                 InterfaceRoles.SENDER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "emsp/commands")). Replace("//", "/"))
+                                    (request.Host + (prefix + "emsp/commands")). Replace("//", "/")
+                                )
                             )
                         );
 
@@ -4104,7 +4112,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 Module_Id.Tokens,
                                 InterfaceRoles.SENDER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "emsp/tokens")).   Replace("//", "/"))
+                                    (request.Host + (prefix + "emsp/tokens")).   Replace("//", "/")
+                                )
                             )
                         );
 
@@ -4126,7 +4135,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     Module_Id.Locations,
                                     InterfaceRoles.SENDER,
                                     URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                        (request.Host + (prefix + "cpo/locations")))
+                                        (request.Host + (prefix + "cpo/locations"))
+                                    )
                                 )
                             );
 
@@ -4136,7 +4146,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     Module_Id.Tariffs,
                                     InterfaceRoles.SENDER,
                                     URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                        (request.Host + (prefix + "cpo/tariffs")))
+                                        (request.Host + (prefix + "cpo/tariffs"))
+                                    )
                                 )
                             );
 
@@ -4154,7 +4165,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 Module_Id.Locations,
                                 InterfaceRoles.SENDER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "cpo/locations")).       Replace("//", "/"))
+                                    (request.Host + (prefix + "cpo/locations")).       Replace("//", "/")
+                                )
                             )
                         );
 
@@ -4163,7 +4175,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 Module_Id.Tariffs,
                                 InterfaceRoles.SENDER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "cpo/tariffs")).         Replace("//", "/"))
+                                    (request.Host + (prefix + "cpo/tariffs")).         Replace("//", "/")
+                                )
                             )
                         );
 
@@ -4172,7 +4185,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 Module_Id.Sessions,
                                 InterfaceRoles.SENDER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "cpo/sessions")).        Replace("//", "/"))
+                                    (request.Host + (prefix + "cpo/sessions")).        Replace("//", "/")
+                                )
                             )
                         );
 
@@ -4181,7 +4195,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 Module_Id.ChargingProfiles,
                                 InterfaceRoles.SENDER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/"))
+                                    (request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/")
+                                )
                             )
                         );
 
@@ -4190,7 +4205,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 Module_Id.CDRs,
                                 InterfaceRoles.SENDER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "cpo/cdrs")).            Replace("//", "/"))
+                                    (request.Host + (prefix + "cpo/cdrs")).            Replace("//", "/")
+                                )
                             )
                         );
 
@@ -4200,7 +4216,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 Module_Id.Commands,
                                 InterfaceRoles.RECEIVER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "cpo/commands")).        Replace("//", "/"))
+                                    (request.Host + (prefix + "cpo/commands")).        Replace("//", "/")
+                                )
                             )
                         );
 
@@ -4209,7 +4226,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 Module_Id.Tokens,
                                 InterfaceRoles.RECEIVER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "cpo/tokens")).          Replace("//", "/"))
+                                    (request.Host + (prefix + "cpo/tokens")).          Replace("//", "/")
+                                )
                             )
                         );
 
@@ -4250,15 +4268,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             #endregion
 
 
-            #region OPTIONS     ~/2.2.1/credentials
+            #region OPTIONS     ~/v2.2.1/credentials
 
             // ----------------------------------------------------------
-            // curl -v -X OPTIONS http://127.0.0.1:2502/2.2.1/credentials
+            // curl -v -X OPTIONS http://127.0.0.1:2502/v2.2.1/credentials
             // ----------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + $"{Version.Id}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 OCPIRequestHandler: request => {
 
                     #region Defaults
@@ -4324,15 +4342,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #endregion
 
-            #region GET         ~/2.2.1/credentials
+            #region GET         ~/v2.2.1/credentials
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2.1/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/v2.2.1/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + $"{Version.Id}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetCredentialsRequest,
                 OCPIResponseLogger:  GetCredentialsResponse,
@@ -4394,17 +4412,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #endregion
 
-            #region POST        ~/2.2.1/credentials
+            #region POST        ~/v2.2.1/credentials
 
             // REGISTER new OCPI party!
 
             // -----------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2.1/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/v2.2.1/credentials
             // -----------------------------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + $"{Version.Id}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PostCredentialsRequest,
                 OCPIResponseLogger:  PostCredentialsResponse,
@@ -4442,17 +4460,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #endregion
 
-            #region PUT         ~/2.2.1/credentials
+            #region PUT         ~/v2.2.1/credentials
 
             // UPDATE the registration of an existing OCPI party!
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2.1/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/v2.2.1/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.PUT,
-                URLPathPrefix + $"{Version.Id}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PutCredentialsRequest,
                 OCPIResponseLogger:  PutCredentialsResponse,
@@ -4519,17 +4537,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #endregion
 
-            #region DELETE      ~/2.2.1/credentials
+            #region DELETE      ~/v2.2.1/credentials
 
             // UNREGISTER an existing OCPI party!
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2.1/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/v2.2.1/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + $"{Version.Id}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   DeleteCredentialsRequest,
                 OCPIResponseLogger:  DeleteCredentialsResponse,

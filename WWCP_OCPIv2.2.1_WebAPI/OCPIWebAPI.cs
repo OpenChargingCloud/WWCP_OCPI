@@ -530,8 +530,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                 );
 
 
-                var VersionPath = Version.String;
-                var RootPath    = (CommonWebAPI.OverlayURLPathPrefix.Value + Version.String).ToString();
+                // CommonAPI.URLPathPrefix.ToString()
+                String htmlConverter(String html) => html.Replace("{{commonPath}}",   CommonWebAPI.OverlayURLPathPrefix.Value                  .ToString(), StringComparison.OrdinalIgnoreCase).
+                                                          Replace("{{rootPath}}",    CommonAPI.URLPathPrefix.ToString(), StringComparison.OrdinalIgnoreCase).
+                                                          Replace("{{versionPath}}", Version.String + "/",                                                  StringComparison.OrdinalIgnoreCase).
+                                                          Replace("{{ocpiVersion}}", Version.String,                                                        StringComparison.OrdinalIgnoreCase);
 
                 #region GET ~/versions/2.2.1
 
@@ -552,8 +555,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                 ContentType                = HTTPContentType.Text.HTML_UTF8,
                                 Content                    = MixWithHTMLTemplate(
                                                                  "versions.versionDetails.shtml",
-                                                                 html => html.Replace("{{rootPath}}",    CommonAPI.URLPathPrefix.ToString(), StringComparison.OrdinalIgnoreCase).
-                                                                              Replace("{{versionPath}}", VersionPath + "/",                  StringComparison.OrdinalIgnoreCase)
+                                                                 htmlConverter
                                                              ).ToUTF8Bytes(),
                                 Connection                 = ConnectionType.KeepAlive,
                                 Vary                       = "Accept"
@@ -566,7 +568,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                 #region GET ~/v2.2.1/cpo/locations
 
-                // ~/cpo/locations
                 CommonAPI.HTTPBaseAPI.AddHandler(
                     HTTPMethod.GET,
                     CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/locations",
@@ -607,7 +608,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                       ContentType                 = HTTPContentType.Text.HTML_UTF8,
                                       Content                     = MixWithHTMLTemplate(
                                                                         "locations.locations.shtml",
-                                                                        html => html.Replace("{{versionPath}}", VersionPath + "/")
+                                                                        htmlConverter
                                                                     ).ToUTF8Bytes(),
                                       Connection                  = ConnectionType.KeepAlive,
                                       Vary                        = "Accept"
@@ -619,8 +620,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                 );
 
+                #endregion
 
-                // ~/cpo/locationStatistics
+                #region GET ~/v2.2.1/cpo/locationStatistics
+
                 CommonAPI.HTTPBaseAPI.AddHandler(
                     HTTPMethod.GET,
                     CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "/cpo/locationStatistics",
@@ -636,8 +639,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                 AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                 AccessControlAllowHeaders  = [ "Authorization" ],
                                 ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                Content                    = MixWithHTMLTemplate("locations.locationStatistics.shtml",
-                                                                                 html => html.Replace("{{versionPath}}", VersionPath + "/")).ToUTF8Bytes(),
+                                Content                    = MixWithHTMLTemplate(
+                                                                 "locations.locationStatistics.shtml",
+                                                                 htmlConverter
+                                                             ).ToUTF8Bytes(),
                                 Connection                 = ConnectionType.KeepAlive,
                                 Vary                       = "Accept"
                             }.AsImmutable);
@@ -688,7 +693,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                       ContentType                = HTTPContentType.Text.HTML_UTF8,
                                       Content                    = MixWithHTMLTemplate(
                                                                        "sessions.sessions.shtml",
-                                                                       html => html.Replace("{{versionPath}}", VersionPath + "/")
+                                                                       htmlConverter
                                                                    ).ToUTF8Bytes(),
                                       Connection                 = ConnectionType.KeepAlive,
                                       Vary                       = "Accept"
@@ -743,7 +748,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                       ContentType                = HTTPContentType.Text.HTML_UTF8,
                                       Content                    = MixWithHTMLTemplate(
                                                                        "tariffs.tariffs.shtml",
-                                                                       html => html.Replace("{{versionPath}}", VersionPath + "/")
+                                                                       htmlConverter
                                                                    ).ToUTF8Bytes(),
                                       Connection                 = ConnectionType.KeepAlive,
                                       Vary                       = "Accept"
@@ -798,7 +803,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                       ContentType                = HTTPContentType.Text.HTML_UTF8,
                                       Content                    = MixWithHTMLTemplate(
                                                                        "cdrs.cdrs.shtml",
-                                                                       html => html.Replace("{{versionPath}}", VersionPath + "/")
+                                                                       htmlConverter
                                                                    ).ToUTF8Bytes(),
                                       Connection                 = ConnectionType.KeepAlive,
                                       Vary                       = "Accept"
@@ -831,7 +836,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                 ContentType                = HTTPContentType.Text.HTML_UTF8,
                                 Content                    = MixWithHTMLTemplate(
                                                                  "commands.commands.shtml",
-                                                                 html => html.Replace("{{versionPath}}", VersionPath + "/")
+                                                                 htmlConverter
                                                              ).ToUTF8Bytes(),
                                 Connection                 = ConnectionType.KeepAlive,
                                 Vary                       = "Accept"
@@ -882,7 +887,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                       ContentType                = HTTPContentType.Text.HTML_UTF8,
                                       Content                    = MixWithHTMLTemplate(
                                                                        "tokens.tokens.shtml",
-                                                                       html => html.Replace("{{versionPath}}", VersionPath + "/")
+                                                                       htmlConverter
                                                                    ).ToUTF8Bytes(),
                                       Connection                 = ConnectionType.KeepAlive,
                                       Vary                       = "Accept"
