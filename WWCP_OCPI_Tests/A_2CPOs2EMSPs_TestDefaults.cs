@@ -526,6 +526,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #endregion
 
+
             #region Create cpo1/cpo2/emsp1/emsp2 OCPI Base APIs
 
             #region CPO #1
