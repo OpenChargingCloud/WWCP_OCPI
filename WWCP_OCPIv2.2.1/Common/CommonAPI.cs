@@ -203,26 +203,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             Location             = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -239,9 +220,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>("party_id", Party_Id.TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -258,9 +240,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId = partyId;
 
-            if (!LocationId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("locationId", Location_Id.TryParse, out var locationId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -277,8 +260,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
+            LocationId = locationId;
 
-            if (!CommonAPI.TryGetLocation(Party_Idv3.From(CountryCode.Value, PartyId.Value), LocationId.Value, out Location))
+            if (!CommonAPI.TryGetLocation(Party_Idv3.From(CountryCode.Value, PartyId.Value), locationId, out Location))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -330,26 +314,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             Location             = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -366,9 +331,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>("party_id", Party_Id.TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -385,9 +351,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId = partyId;
 
-            if (!LocationId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("locationId", Location_Id.TryParse, out var locationId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -404,8 +371,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
+            LocationId = locationId;
 
-            CommonAPI.TryGetLocation(Party_Idv3.From(CountryCode.Value, PartyId.Value), LocationId.Value, out Location);
+
+            CommonAPI.TryGetLocation(Party_Idv3.From(CountryCode.Value, PartyId.Value), locationId, out Location);
 
             return true;
 
@@ -573,26 +542,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             EVSE                 = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 4)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification, location identification and/or EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -609,9 +559,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -628,9 +579,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId     = partyId;
 
-            if (!LocationId.HasValue) {
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("locationId",   Location_Id.     TryParse, out var locationId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -646,9 +599,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[3]);
+            LocationId  = locationId;
 
-            if (!EVSEUId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>   ("locationId",   EVSE_UId.        TryParse, out var evseUId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -665,13 +619,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
+            EVSEUId     = evseUId;
+
 
             if (!CommonAPI.TryGetLocation(
                 Party_Idv3.From(
-                    CountryCode.Value,
-                    PartyId.    Value
+                    countryCode,
+                    partyId
                 ),
-                LocationId. Value,
+                locationId,
                 out Location))
             {
 
@@ -689,7 +645,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE))
+            if (!Location.TryGetEVSE(evseUId, out EVSE))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -739,34 +695,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                         [NotNullWhen(false)]  out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
-            CountryCode          = default;
-            PartyId              = default;
-            LocationId           = default;
-            Location             = default;
-            EVSEUId              = default;
-            EVSE                 = default;
-            OCPIResponseBuilder  = default;
+            CountryCode          = null;
+            PartyId              = null;
+            LocationId           = null;
+            Location             = null;
+            EVSEUId              = null;
+            EVSE                 = null;
+            OCPIResponseBuilder  = null;
 
-            if (Request.ParsedURLParameters.Length < 4)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification, location identification and/or EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -783,9 +720,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>("party_id", Party_Id.TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -802,9 +740,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId     = partyId;
 
-            if (!LocationId.HasValue) {
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("locationId", Location_Id.TryParse, out var locationId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -820,9 +760,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[3]);
+            LocationId  = locationId;
 
-            if (!EVSEUId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>("evseUId", EVSE_UId.TryParse, out var evseUId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -839,13 +780,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
+            EVSEUId     = evseUId;
+
 
             CommonAPI.TryGetLocation(
                 Party_Idv3.From(
-                    CountryCode.Value,
-                    PartyId.    Value
+                    countryCode,
+                    partyId
                 ),
-                LocationId.Value,
+                locationId,
                 out Location
             );
 
@@ -941,6 +884,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             }
 
 
+
+
+
             foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
             {
                 if (CommonAPI.TryGetLocation(
@@ -1032,26 +978,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             Connector            = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 5)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification, location identification, EVSE identification and/or connector identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1068,9 +995,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1087,9 +1015,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId     = partyId;
 
-            if (!LocationId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("locationId",   Location_Id.     TryParse, out var locationId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1106,9 +1035,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[3]);
+            LocationId  = locationId;
 
-            if (!EVSEUId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>   ("locationId",   EVSE_UId.        TryParse, out var evseUId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1125,9 +1055,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            ConnectorId = Connector_Id.TryParse(Request.ParsedURLParameters[4]);
+            EVSEUId     = evseUId;
 
-            if (!ConnectorId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Connector_Id>   ("connectorId",   Connector_Id.        TryParse, out var connectorId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1144,13 +1075,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
+            ConnectorId = connectorId;
+
 
             if (!CommonAPI.TryGetLocation(
                 Party_Idv3.From(
-                    CountryCode.Value,
-                    PartyId.Value
+                    countryCode,
+                    partyId
                 ),
-                LocationId.Value,
+                locationId,
                 out Location))
             {
 
@@ -1168,7 +1101,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE) ||
+            if (!Location.TryGetEVSE(evseUId, out EVSE) ||
                  EVSE is null)
             {
 
@@ -1186,7 +1119,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            if (!EVSE.TryGetConnector(ConnectorId.Value, out Connector))
+            if (!EVSE.TryGetConnector(connectorId, out Connector))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1250,26 +1183,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             Connector            = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 5)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification, location identification, EVSE identification and/or connector identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1286,9 +1200,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1305,9 +1220,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId     = partyId;
 
-            if (!LocationId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("locationId",   Location_Id.     TryParse, out var locationId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1324,9 +1240,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[3]);
+            LocationId  = locationId;
 
-            if (!EVSEUId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>   ("locationId",   EVSE_UId.        TryParse, out var evseUId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1343,9 +1260,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            ConnectorId = Connector_Id.TryParse(Request.ParsedURLParameters[4]);
+            EVSEUId     = evseUId;
 
-            if (!ConnectorId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Connector_Id>   ("connectorId",   Connector_Id.        TryParse, out var connectorId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1362,13 +1280,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
+            ConnectorId = connectorId;
+
 
             if (!CommonAPI.TryGetLocation(
                 Party_Idv3.From(
-                    CountryCode.Value,
-                    PartyId.Value
+                    countryCode,
+                    partyId
                 ),
-                LocationId.Value,
+                locationId,
                 out Location))
             {
 
@@ -1386,7 +1306,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE) ||
+            if (!Location.TryGetEVSE(evseUId, out EVSE) ||
                  EVSE is null)
             {
 
@@ -1404,7 +1324,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            EVSE.TryGetConnector(ConnectorId.Value, out Connector);
+            EVSE.TryGetConnector(connectorId, out Connector);
 
             return true;
 
@@ -1960,26 +1880,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             Session              = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or session identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1996,9 +1897,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2015,9 +1917,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            SessionId = Session_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId     = partyId;
 
-            if (!SessionId.HasValue) {
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Session_Id>   ("session_id",     Session_Id.        TryParse, out var sessionId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -2033,8 +1937,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
+            SessionId     = sessionId;
 
-            if (!CommonAPI.TryGetSession(Party_Idv3.From(CountryCode.Value, PartyId.Value), SessionId.Value, out Session))
+
+            if (!CommonAPI.TryGetSession(Party_Idv3.From(countryCode, partyId), sessionId, out Session))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2086,26 +1992,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             Session              = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or session identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+                        if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2122,9 +2009,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2141,9 +2029,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            SessionId = Session_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId     = partyId;
 
-            if (!SessionId.HasValue) {
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Session_Id>   ("session_id",     Session_Id.        TryParse, out var sessionId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -2159,8 +2049,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
+            SessionId     = sessionId;
 
-            CommonAPI.TryGetSession(Party_Idv3.From(CountryCode.Value, PartyId.Value), SessionId.Value, out Session);
+
+            CommonAPI.TryGetSession(
+                Party_Idv3.From(
+                    countryCode,
+                    partyId
+                ),
+                sessionId,
+                out Session
+            );
 
             return true;
 
@@ -2289,26 +2188,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             CDR                  = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or charge detail record identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2325,9 +2205,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2344,9 +2225,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            CDRId = CDR_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId     = partyId;
 
-            if (!CDRId.HasValue) {
+
+            if (!Request.HTTPRequest.TryParseURLParameter<CDR_Id>   ("cdr_Id",     CDR_Id.        TryParse, out var cdrId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -2362,9 +2245,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
+            CDRId = cdrId;
 
-            if (!CommonAPI.TryGetCDR(Party_Idv3.From(CountryCode.Value, PartyId.Value), CDRId.Value, out CDR))
-            {
+
+            if (!CommonAPI.TryGetCDR(
+                Party_Idv3.From(
+                    countryCode,
+                    partyId
+                ),
+                cdrId,
+                out CDR
+            )) {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -2414,26 +2305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             CDR                  = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or charge detail record identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2450,9 +2322,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2469,9 +2342,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            CDRId = CDR_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId     = partyId;
 
-            if (!CDRId.HasValue) {
+
+            if (!Request.HTTPRequest.TryParseURLParameter<CDR_Id>   ("cdr_Id",     CDR_Id.        TryParse, out var cdrId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -2487,8 +2362,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
+            CDRId = cdrId;
 
-            CommonAPI.TryGetCDR(Party_Idv3.From(CountryCode.Value, PartyId.Value), CDRId.Value, out CDR);
+
+            CommonAPI.TryGetCDR(
+                Party_Idv3.From(
+                    countryCode,
+                    partyId
+                ),
+                cdrId,
+                out CDR
+            );
 
             return true;
 
@@ -3893,20 +3777,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     )
                 )
             ).GetAwaiter().GetResult();
-
-            //if (this.IndentifyAsOCPI_2_2)
-            //{
-            //    this.BaseAPI.AddVersionInformation(
-            //        new VersionInformation(
-            //            Version_Id.Parse("2.2"),
-            //            URL.Concat(
-            //                BaseAPI.OurVersionsURL.Protocol.AsString(),
-            //                BaseAPI.ExternalDNSName ?? ("localhost:" + BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort),
-            //                URLPathPrefix + AdditionalURLPathPrefix + $"/versions/2.2"
-            //            )
-            //        )
-            //    ).GetAwaiter().GetResult();
-            //}
 
             if (!this.DisableLogging)
             {

@@ -3331,12 +3331,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #region ~/locations/{country_code}/{party_id}/{locationId}/{evseId}
 
-            #region OPTIONS  ~/locations/{country_code}/{party_id}/{locationId}/{evseId}      [NonStandard]
+            #region OPTIONS  ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
                 OCPIRequestHandler: request =>
 
                     Task.FromResult(
@@ -3354,11 +3354,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #endregion
 
-            #region GET      ~/locations/{country_code}/{party_id}/{locationId}/{evseId}
+            #region GET      ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}
 
             CommonAPI.AddOCPIMethod(
                                     HTTPMethod.GET,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
+                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
                                     HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   GetEVSERequest,
                                     OCPIResponseLogger:  GetEVSEResponse,
@@ -3428,11 +3428,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #endregion
 
-            #region PUT      ~/locations/{country_code}/{party_id}/{locationId}/{evseId}
+            #region PUT      ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}
 
             CommonAPI.AddOCPIMethod(
                                     HTTPMethod.PUT,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
+                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
                                     HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   PutEVSERequest,
                                     OCPIResponseLogger:  PutEVSEResponse,
@@ -3556,11 +3556,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #endregion
 
-            #region PATCH    ~/locations/{country_code}/{party_id}/{locationId}/{evseId}
+            #region PATCH    ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}
 
             CommonAPI.AddOCPIMethod(
                                     HTTPMethod.PATCH,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
+                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
                                     HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   PatchEVSERequest,
                                     OCPIResponseLogger:  PatchEVSEResponse,
@@ -3653,11 +3653,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #endregion
 
-            #region DELETE   ~/locations/{country_code}/{party_id}/{locationId}/{evseId}      [NonStandard]
+            #region DELETE   ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(
                                     HTTPMethod.DELETE,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
+                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
                                     HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteEVSERequest,
                                     OCPIResponseLogger:  DeleteEVSEResponse,

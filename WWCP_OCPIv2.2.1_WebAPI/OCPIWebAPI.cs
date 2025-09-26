@@ -26,7 +26,6 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
-using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPI.WebAPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
@@ -512,7 +511,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
         /// <summary>
         /// The following will register HTTP overlays for text/html
-        /// showing a html representation of the OCPI common API!
+        /// showing a html representation of the OCPI Common API!
         /// </summary>
         private void RegisterURITemplates()
         {
@@ -530,11 +529,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                 );
 
 
-                // CommonAPI.URLPathPrefix.ToString()
-                String htmlConverter(String html) => html.Replace("{{commonPath}}",   CommonWebAPI.OverlayURLPathPrefix.Value                  .ToString(), StringComparison.OrdinalIgnoreCase).
-                                                          Replace("{{rootPath}}",    CommonAPI.URLPathPrefix.ToString(), StringComparison.OrdinalIgnoreCase).
-                                                          Replace("{{versionPath}}", Version.String + "/",                                                  StringComparison.OrdinalIgnoreCase).
-                                                          Replace("{{ocpiVersion}}", Version.String,                                                        StringComparison.OrdinalIgnoreCase);
+                String htmlConverter(String html) =>
+                    html.Replace("{{commonPath}}",        CommonWebAPI.OverlayURLPathPrefix.Value.ToString(),  StringComparison.OrdinalIgnoreCase).
+                         Replace("{{rootPath}}",          CommonAPI.URLPathPrefix.ToString(),                  StringComparison.OrdinalIgnoreCase).
+                         Replace("{{versionPath}}",       Version.String + "/",                                StringComparison.OrdinalIgnoreCase).
+                         Replace("{{ocpiVersion}}",       Version.String,                                      StringComparison.OrdinalIgnoreCase).
+                         Replace($"\"/{Version.String}",  $"\"{CommonAPI.URLPathPrefix}/{Version.String}",     StringComparison.OrdinalIgnoreCase); //ToDo: Fix me!
+
 
                 #region GET ~/versions/2.2.1
 

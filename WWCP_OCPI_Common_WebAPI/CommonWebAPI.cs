@@ -406,7 +406,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
         /// <summary>
         /// The following will register HTTP overlays for text/html
-        /// showing a html representation of the OCPI common API!
+        /// showing a html representation of the OCPI Common API!
         /// </summary>
         private void RegisterURITemplates()
         {

@@ -527,7 +527,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
 
         /// <summary>
         /// The following will register HTTP overlays for text/html
-        /// showing a html representation of the OCPI common API!
+        /// showing a html representation of the OCPI Common API!
         /// </summary>
         private void RegisterURITemplates()
         {
@@ -545,13 +545,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
                 );
 
 
-                var ocpiVersion  = Version.String;
-               // var RootPath     = (CommonWebAPI.OverlayURLPathPrefix.Value + Version.String).ToString();
+                String htmlConverter(String html) =>
+                    html.Replace("{{commonPath}}",        CommonWebAPI.OverlayURLPathPrefix.Value.ToString(),  StringComparison.OrdinalIgnoreCase).
+                         Replace("{{rootPath}}",          CommonAPI.URLPathPrefix.ToString(),                  StringComparison.OrdinalIgnoreCase).
+                         Replace("{{versionPath}}",       Version.String + "/",                                StringComparison.OrdinalIgnoreCase).
+                         Replace("{{ocpiVersion}}",       Version.String,                                      StringComparison.OrdinalIgnoreCase).
+                         Replace($"\"/{Version.String}",  $"\"{CommonAPI.URLPathPrefix}/{Version.String}",     StringComparison.OrdinalIgnoreCase); //ToDo: Fix me!
 
-                String htmlConverter(String html) => html.Replace("{{commonPath}}",  CommonWebAPI.OverlayURLPathPrefix.Value                  .ToString(), StringComparison.OrdinalIgnoreCase).
-                                                          Replace("{{rootPath}}",    CommonAPI.URLPathPrefix.ToString(), StringComparison.OrdinalIgnoreCase).
-                                                          Replace("{{versionPath}}", ocpiVersion + "/",                  StringComparison.OrdinalIgnoreCase).
-                                                          Replace("{{ocpiVersion}}", ocpiVersion,                        StringComparison.OrdinalIgnoreCase);
 
                 #region GET ~/versions/2.3.0
 

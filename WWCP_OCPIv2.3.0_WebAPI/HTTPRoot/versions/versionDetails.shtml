@@ -12,7 +12,7 @@
             <input id="accessTokenInput" name="accessToken">
 
             <div id="accessTokenEncoding">
-                <input id="accessTokenEncodingCheck" type="checkbox" name="accessTokenEncoding">
+                <input id="accessTokenEncodingCheck" type="checkbox" name="accessTokenEncoding" checked>
                 Base64 Encoding?
             </div>
 

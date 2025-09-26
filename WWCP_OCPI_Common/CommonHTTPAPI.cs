@@ -31,7 +31,6 @@ using Org.BouncyCastle.Crypto.Operators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.X9;
-using Org.BouncyCastle.Asn1.Cms;
 using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.X509;
@@ -1027,7 +1026,7 @@ namespace cloud.charging.open.protocols.OCPI
         private void RegisterURLTemplates()
         {
 
-            #region OPTIONS     ~/
+            #region OPTIONS  ~/
 
             HTTPBaseAPI.AddHandler(
                 HTTPMethod.OPTIONS,
@@ -1050,7 +1049,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             #endregion
 
-            #region GET         ~/
+            #region GET      ~/
 
             HTTPBaseAPI.AddHandler(
                 HTTPMethod.GET,
@@ -1106,7 +1105,7 @@ namespace cloud.charging.open.protocols.OCPI
             #endregion
 
 
-            #region OPTIONS     ~/versions
+            #region OPTIONS  ~/versions
 
             // ----------------------------------------------------
             // curl -v -X OPTIONS http://127.0.0.1:2502/versions
@@ -1131,7 +1130,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             #endregion
 
-            #region GET         ~/versions
+            #region GET      ~/versions
 
             // ----------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions
@@ -1240,7 +1239,7 @@ namespace cloud.charging.open.protocols.OCPI
             #endregion
 
 
-            #region GET ~/support
+            #region GET      ~/support
 
             HTTPBaseAPI.AddHandler(
                 HTTPMethod.GET,
