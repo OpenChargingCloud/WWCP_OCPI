@@ -20,7 +20,6 @@
 using NUnit.Framework;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -76,7 +75,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // Allow:                           OPTIONS, GET
                 // Access-Control-Allow-Headers:    Authorization
                 // Content-Type:                    application/json; charset=utf-8
-                // Content-Length:                  267
+                // Content-Length:                  271
                 // Connection:                      close
                 // Vary:                            Accept
                 // X-Request-ID:                    64UC9vv67xSj258nz4YprUGth3W514
@@ -95,8 +94,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 //             "url":     "http://localhost:3301/ocpi/versions/2.2.1"
                 //         },
                 //         {
-                //             "version": "2.3",
-                //             "url":     "http://localhost:3301/ocpi/versions/2.3"
+                //             "version": "2.3.0",
+                //             "url":     "http://localhost:3301/ocpi/versions/2.3.0"
                 //         }
                 //     ]
                 // }
@@ -113,15 +112,15 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 var version2_1_1 = versions?.ElementAt(0);
                 Assert.That(version2_1_1?.Id == OCPIv2_1_1.Version.Id, Is.True);
-                Assert.That(URL.Parse("http://localhost:3301/ocpi/versions/2.1.1") == version2_1_1?.URL, Is.True);
+                Assert.That(version2_1_1?.URL.ToString(), Is.EqualTo("http://localhost:3301/ocpi/versions/2.1.1"));
 
                 var version2_2_1 = versions?.ElementAt(1);
                 Assert.That(version2_2_1?.Id == OCPIv2_2_1.Version.Id, Is.True);
-                Assert.That(URL.Parse("http://localhost:3301/ocpi/versions/2.2.1") == version2_2_1?.URL, Is.True);
+                Assert.That(version2_2_1?.URL.ToString(), Is.EqualTo("http://localhost:3301/ocpi/versions/2.2.1"));
 
-                var version2_3   = versions?.ElementAt(2);
-                Assert.That(version2_3?.  Id == OCPIv2_3_0.Version.Id, Is.True);
-                Assert.That(URL.Parse("http://localhost:3301/ocpi/versions/2.3")   == version2_3?.  URL, Is.True);
+                var version2_3_0 = versions?.ElementAt(2);
+                Assert.That(version2_3_0?.Id == OCPIv2_3_0.Version.Id, Is.True);
+                Assert.That(version2_3_0?.URL.ToString(), Is.EqualTo("http://localhost:3301/ocpi/versions/2.3.0"));
 
             }
 
@@ -171,7 +170,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // Allow:                           OPTIONS, GET
                 // Access-Control-Allow-Headers:    Authorization
                 // Content-Type:                    application/json; charset=utf-8
-                // Content-Length:                  267
+                // Content-Length:                  271
                 // Connection:                      close
                 // Vary:                            Accept
                 // X-Request-ID:                    64UC9vv67xSj258nz4YprUGth3W514
@@ -190,8 +189,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 //             "url":     "http://localhost:3301/ocpi/versions/2.2.1"
                 //         },
                 //         {
-                //             "version": "2.3",
-                //             "url":     "http://localhost:3301/ocpi/versions/2.3"
+                //             "version": "2.3.0",
+                //             "url":     "http://localhost:3301/ocpi/versions/2.3.0"
                 //         }
                 //     ]
                 // }
@@ -208,15 +207,15 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 var version2_1_1 = versions?.ElementAt(0);
                 Assert.That(version2_1_1?.Id == OCPIv2_1_1.Version.Id, Is.True);
-                Assert.That(URL.Parse("http://localhost:3301/ocpi/versions/2.1.1") == version2_1_1?.URL, Is.True);
+                Assert.That(version2_1_1?.URL.ToString(), Is.EqualTo("http://localhost:3301/ocpi/versions/2.1.1"));
 
                 var version2_2_1 = versions?.ElementAt(1);
                 Assert.That(version2_2_1?.Id == OCPIv2_2_1.Version.Id, Is.True);
-                Assert.That(URL.Parse("http://localhost:3301/ocpi/versions/2.2.1") == version2_2_1?.URL, Is.True);
+                Assert.That(version2_2_1?.URL.ToString(), Is.EqualTo("http://localhost:3301/ocpi/versions/2.2.1"));
 
-                var version2_3   = versions?.ElementAt(2);
-                Assert.That(version2_3?.  Id == OCPIv2_3_0.Version.Id, Is.True);
-                Assert.That(URL.Parse("http://localhost:3301/ocpi/versions/2.3")   == version2_3?.  URL, Is.True);
+                var version2_3_0 = versions?.ElementAt(2);
+                Assert.That(version2_3_0?.Id == OCPIv2_3_0.Version.Id, Is.True);
+                Assert.That(version2_3_0?.URL.ToString(), Is.EqualTo("http://localhost:3301/ocpi/versions/2.3.0"));
 
             }
 
@@ -224,13 +223,13 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         #endregion
 
-        #region GetVersions_v2_3_fromCPO1_Test1()
+        #region GetVersions_v2_3_0_fromCPO1_Test1()
 
         /// <summary>
-        /// CPO #1 OCPI v2.3 versions as Open Data!
+        /// CPO #1 OCPI v2.3.0 versions as Open Data!
         /// </summary>
         [Test]
-        public async Task GetVersions_v2_3_fromCPO1_Test1()
+        public async Task GetVersions_v2_3_0_fromCPO1_Test1()
         {
 
             if (cpo1BaseAPI is null)
@@ -266,7 +265,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // Allow:                           OPTIONS, GET
                 // Access-Control-Allow-Headers:    Authorization
                 // Content-Type:                    application/json; charset=utf-8
-                // Content-Length:                  267
+                // Content-Length:                  271
                 // Connection:                      close
                 // Vary:                            Accept
                 // X-Request-ID:                    64UC9vv67xSj258nz4YprUGth3W514
@@ -285,8 +284,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 //             "url":     "http://localhost:3301/ocpi/versions/2.2.1"
                 //         },
                 //         {
-                //             "version": "2.3",
-                //             "url":     "http://localhost:3301/ocpi/versions/2.3"
+                //             "version": "2.3.0",
+                //             "url":     "http://localhost:3301/ocpi/versions/2.3.0"
                 //         }
                 //     ]
                 // }
@@ -303,15 +302,15 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 var version2_1_1 = versions?.ElementAt(0);
                 Assert.That(version2_1_1?.Id == OCPIv2_1_1.Version.Id, Is.True);
-                Assert.That(URL.Parse("http://localhost:3301/ocpi/versions/2.1.1") == version2_1_1?.URL, Is.True);
+                Assert.That(version2_1_1?.URL.ToString(), Is.EqualTo("http://localhost:3301/ocpi/versions/2.1.1"));
 
                 var version2_2_1 = versions?.ElementAt(1);
                 Assert.That(version2_2_1?.Id == OCPIv2_2_1.Version.Id, Is.True);
-                Assert.That(URL.Parse("http://localhost:3301/ocpi/versions/2.2.1") == version2_2_1?.URL, Is.True);
+                Assert.That(version2_2_1?.URL.ToString(), Is.EqualTo("http://localhost:3301/ocpi/versions/2.2.1"));
 
-                var version2_3   = versions?.ElementAt(2);
-                Assert.That(version2_3?.  Id == OCPIv2_3_0.Version.Id, Is.True);
-                Assert.That(URL.Parse("http://localhost:3301/ocpi/versions/2.3")   == version2_3?.  URL, Is.True);
+                var version2_3_0 = versions?.ElementAt(2);
+                Assert.That(version2_3_0?.Id == OCPIv2_3_0.Version.Id, Is.True);
+                Assert.That(version2_3_0?.URL.ToString(), Is.EqualTo("http://localhost:3301/ocpi/versions/2.3.0"));
 
             }
 

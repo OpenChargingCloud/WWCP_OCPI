@@ -130,6 +130,19 @@ namespace cloud.charging.open.protocols.OCPI
 
             => new ($"{CountryCode}{PartyId}");
 
+
+        /// <summary>
+        /// Parse the given country code and party identification as a party identification.
+        /// </summary>
+        /// <param name="CountryCode">The country code.</param>
+        /// <param name="PartyId">The party identification.</param>
+        public static Party_Idv3? From(CountryCode?  CountryCode,
+                                       Party_Id?     PartyId)
+
+            => CountryCode.HasValue && PartyId.HasValue
+                   ? new ($"{CountryCode}{PartyId}")
+                   : null;
+
         #endregion
 
         #region (static) Parse   (Text)

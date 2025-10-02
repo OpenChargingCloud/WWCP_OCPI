@@ -205,9 +205,9 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 //             }
                 //         ]
                 //     },
-                //     "status_code": 1000,
+                //     "status_code":     1000,
                 //     "status_message": "Hello world!",
-                //     "timestamp": "2025-01-10T22:32:16.547Z"
+                //     "timestamp":      "2025-01-10T22:32:16.547Z"
                 // }
 
                 Assert.That(response,                                                       Is.Not.Null);
@@ -219,25 +219,25 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 if (response.Data is not null)
                 {
 
-                    Assert.That(response.Data.VersionId,                                        Is.EqualTo(OCPIv2_2_1.Version.Id));
+                    Assert.That(response.Data.VersionId,                                    Is.EqualTo(OCPIv2_2_1.Version.Id));
 
                     var endpoints = response.Data.Endpoints.
                                         GroupBy     (endpoint => endpoint.Identifier).
                                         ToDictionary(group    => group.Key,
                                                      group    => group.ToList());
 
-                    Assert.That(endpoints,                                                      Is.Not.Null);
-                    Assert.That(endpoints.Count,                                                Is.EqualTo(3));
+                    Assert.That(endpoints,                                                  Is.Not.Null);
+                    Assert.That(endpoints.Count,                                            Is.EqualTo(3));
 
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Credentials].First().URL,        Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.2.1/credentials")));
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Locations].  First().URL,        Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.2.1/cpo/locations")));
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Tariffs].    First().URL,        Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.2.1/cpo/tariffs")));
+                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Credentials].First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.2.1/credentials")));
+                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Locations].  First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.2.1/cpo/locations")));
+                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Tariffs].    First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.2.1/cpo/tariffs")));
 
                     Assert.That(endpoints[OCPIv2_2_1.Module_Id.Credentials].Any(endpoint => endpoint.Role == OCPIv2_2_1.InterfaceRoles.SENDER),    Is.True);
                     Assert.That(endpoints[OCPIv2_2_1.Module_Id.Credentials].Any(endpoint => endpoint.Role == OCPIv2_2_1.InterfaceRoles.RECEIVER),  Is.True); //ToDo: Does this make sense for OpenData access?
 
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Locations].  First().Role,       Is.EqualTo(OCPIv2_2_1.InterfaceRoles.SENDER));
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Tariffs].    First().Role,       Is.EqualTo(OCPIv2_2_1.InterfaceRoles.SENDER));
+                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Locations].  First().Role,   Is.EqualTo(OCPIv2_2_1.InterfaceRoles.SENDER));
+                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Tariffs].    First().Role,   Is.EqualTo(OCPIv2_2_1.InterfaceRoles.SENDER));
 
                 }
 
@@ -247,13 +247,13 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         #endregion
 
-        #region GetVersionDetails_v2_3_fromCPO1_Test1()
+        #region GetVersionDetails_v2_3_0_fromCPO1_Test1()
 
         /// <summary>
-        /// CPO #1 Open Data for its OCPI v2.3 version details!
+        /// CPO #1 Open Data for its OCPI v2.3.0 version details!
         /// </summary>
         [Test]
-        public async Task GetVersionDetails_v2_3_fromCPO1_Test1()
+        public async Task GetVersionDetails_v2_3_0_fromCPO1_Test1()
         {
 
             if (cpo1BaseAPI is null)
@@ -273,7 +273,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 var response = await graphDefinedCPO1.GetVersionDetails(OCPIv2_3_0.Version.Id);
 
-                // GET /ocpi/versions/2.3 HTTP/1.1
+                // GET /ocpi/versions/2.3.0 HTTP/1.1
                 // Accept:                          application/json; charset=utf-8; q=1
                 // Host:                            localhost:3301
                 // User-Agent:                      GraphDefined HTTP Client
@@ -290,33 +290,33 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // Server:                          GraphDefined HTTP API
                 // Access-Control-Allow-Origin:     *
                 // Content-Type:                    application/json; charset=utf-8
-                // Content-Length:                  423
+                // Content-Length:                  431
                 // X-Request-ID:                    3tCbKAb188ChzfKfK353dY7r8Ez1MQ
                 // X-Correlation-ID:                GAtGb22dSt3fAGp31S7WQU1d8YKQ4v
                 // 
                 // {
                 //     "data": {
-                //         "version": "2.3",
+                //         "version": "2.3.0",
                 //         "endpoints": [
                 //             {
                 //                 "identifier": "credentials",
                 //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3301/ocpi/v2.3/credentials"
+                //                 "url":        "http://localhost:3301/ocpi/v2.3.0/credentials"
                 //             },
                 //             {
                 //                 "identifier": "credentials",
                 //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3301/ocpi/v2.3/credentials"
+                //                 "url":        "http://localhost:3301/ocpi/v2.3.0/credentials"
                 //             },
                 //             {
                 //                 "identifier": "locations",
                 //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3301/ocpi/v2.3/cpo/locations"
+                //                 "url":        "http://localhost:3301/ocpi/v2.3.0/cpo/locations"
                 //             },
                 //             {
                 //                 "identifier": "tariffs",
                 //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3301/ocpi/v2.3/cpo/tariffs"
+                //                 "url":        "http://localhost:3301/ocpi/v2.3.0/cpo/tariffs"
                 //             }
                 //         ]
                 //     },
@@ -334,25 +334,25 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 if (response.Data is not null)
                 {
 
-                    Assert.That(response.Data.VersionId,                                        Is.EqualTo(OCPIv2_3_0.Version.Id));
+                    Assert.That(response.Data.VersionId,                                    Is.EqualTo(OCPIv2_3_0.Version.Id));
 
                     var endpoints = response.Data.Endpoints.
                                         GroupBy     (endpoint => endpoint.Identifier).
                                         ToDictionary(group    => group.Key,
                                                      group    => group.ToList());
 
-                    Assert.That(endpoints,                                                      Is.Not.Null);
-                    Assert.That(endpoints.Count,                                                Is.EqualTo(3));
+                    Assert.That(endpoints,                                                  Is.Not.Null);
+                    Assert.That(endpoints.Count,                                            Is.EqualTo(3));
 
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].First().URL,          Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/credentials")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].  First().URL,          Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/locations")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].    First().URL,          Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/tariffs"))); //ToDo: Should AdHoc tariffs be available on default?
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/credentials")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].  First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/locations")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].    First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/tariffs"))); //ToDo: Should AdHoc tariffs be available on default?
 
                     Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].Any(endpoint => endpoint.Role == OCPIv2_3_0.InterfaceRoles.SENDER),    Is.True);
                     Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].Any(endpoint => endpoint.Role == OCPIv2_3_0.InterfaceRoles.RECEIVER),  Is.True); //ToDo: Does this make sense for OpenData access?
 
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].  First().Role,         Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].    First().Role,         Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].  First().Role,   Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].    First().Role,   Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
 
                 }
 

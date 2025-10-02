@@ -489,10 +489,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
 
             if (!CommonAPI.TryGetLocation(
-                Party_Idv3.From(
-                    CommonAPI.DefaultCountryCode,
-                    CommonAPI.DefaultPartyId
-                ),
+                CommonAPI.DefaultPartyId,
                 LocationId.Value,
                 out Location))
             {
@@ -2832,9 +2829,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             if (!CommonAPI.TryGetTokenStatus(
                 Party_Idv3.From(
-                    Request.ToCountryCode ?? CommonAPI.DefaultCountryCode,
-                    Request.ToPartyId     ?? CommonAPI.DefaultPartyId
-                ),
+                    Request.ToCountryCode,
+                    Request.ToPartyId
+                ) ?? CommonAPI.DefaultPartyId,
                 TokenId.Value,
                 out TokenStatus))
             {
@@ -2921,9 +2918,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             CommonAPI.TryGetTokenStatus(
                 Party_Idv3.From(
-                    Request.ToCountryCode ?? CommonAPI.DefaultCountryCode,
-                    Request.ToPartyId     ?? CommonAPI.DefaultPartyId
-                ),
+                    Request.ToCountryCode,
+                    Request.ToPartyId
+                ) ?? CommonAPI.DefaultPartyId,
                 TokenId.Value,
                 out TokenStatus);
 
@@ -3356,10 +3353,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
 
             if (!CommonAPI.TryGetPaymentTerminal(
-                Party_Idv3.From(
-                    CommonAPI.DefaultCountryCode,
-                    CommonAPI.DefaultPartyId
-                ),
+                CommonAPI.DefaultPartyId,
                 TerminalId.Value,
                 out Terminal))
             {
@@ -3478,10 +3472,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
 
             if (!CommonAPI.TryGetPaymentTerminal(
-                Party_Idv3.From(
-                    CommonAPI.DefaultCountryCode,
-                    CommonAPI.DefaultPartyId
-                ),
+                CommonAPI.DefaultPartyId,
                 TerminalId.Value,
                 out Terminal))
             {
@@ -3601,10 +3592,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
 
             if (!CommonAPI.TryGetPaymentTerminal(
-                Party_Idv3.From(
-                    CommonAPI.DefaultCountryCode,
-                    CommonAPI.DefaultPartyId
-                ),
+                CommonAPI.DefaultPartyId,
                 TerminalId.Value,
                 out Terminal))
             {
@@ -3783,19 +3771,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
 
         /// <summary>
-        /// All our credential roles.
-        /// </summary>
-        //public IEnumerable<CredentialsRole>  OurCredentialRoles         { get; }
-
-        /// <summary>
-        /// The default country code to use.
-        /// </summary>
-        public CountryCode                   DefaultCountryCode         { get; }
-
-        /// <summary>
         /// The default party identification to use.
         /// </summary>
-        public Party_Id                      DefaultPartyId             { get; }
+        public Party_Idv3               DefaultPartyId             { get; }
 
 
 
@@ -4242,21 +4220,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// </summary>
         /// <param name="OurCredentialRoles">All our credential roles.</param>
         /// 
-        /// <param name="HTTPServer">A HTTP server.</param>
-        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The official URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         /// 
         /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
-        /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
-        /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        public CommonAPI(IEnumerable<CredentialsRole>  OurCredentialRoles,
-                         CountryCode                   DefaultCountryCode,
-                         Party_Id                      DefaultPartyId,
+        public CommonAPI(IEnumerable<PartyData>        OurPartyData,
+                         Party_Idv3                    DefaultPartyId,
 
                          CommonHTTPAPI                 BaseAPI,
 
+                         I18NString?                   Description               = null,
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
                          Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
 
@@ -4280,8 +4254,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                          String?                       RemotePartyDBFileName     = null,
                          String?                       AssetsDBFileName          = null)
 
-            : base(BaseAPI.HTTPBaseAPI,
-                   URLPathPrefix,
+            : base(Description ?? I18NString.Create($"OCPI{Version.String} Common HTTP API"),
+                   BaseAPI.HTTPBaseAPI,
+                   BaseAPI.URLPathPrefix + URLPathPrefix,
                    BasePath,
 
                    ExternalDNSName,
@@ -4301,19 +4276,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         {
 
-            this.BaseAPI               = BaseAPI;
+            if (!OurPartyData.Any())
+                throw new ArgumentNullException(nameof(OurPartyData), "The given party data must not be null or empty!");
 
-            if (!OurCredentialRoles.SafeAny())
-                throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
+            this.BaseAPI                   = BaseAPI;
+            this.DefaultPartyId            = DefaultPartyId;
 
-            //this.OurCredentialRoles    = OurCredentialRoles?.Distinct() ?? Array.Empty<CredentialsRole>();
-            this.DefaultCountryCode    = DefaultCountryCode;
-            this.DefaultPartyId        = DefaultPartyId;
+            this.KeepRemovedEVSEs          = KeepRemovedEVSEs                   ?? (evse => true);
 
-            this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
-
-            this.DatabaseFilePath          = DatabaseFilePath                   ?? Path.Combine(AppContext.BaseDirectory,
-                                                                                                DefaultHTTPAPI_LoggingPath);
+            this.DatabaseFilePath          = DatabaseFilePath                   ?? Path.Combine(
+                                                                                       AppContext.BaseDirectory,
+                                                                                       DefaultHTTPAPI_LoggingPath
+                                                                                   );
 
             if (this.DatabaseFilePath[^1] != Path.DirectorySeparatorChar)
                 this.DatabaseFilePath     += Path.DirectorySeparatorChar;
@@ -4324,14 +4298,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
                                                           AssetsDBFileName      ?? DefaultAssetsDBFileName);
 
-            this.CommonAPILogger       = this.DisableLogging == false
-                                             ? new CommonAPILogger(
-                                                   this,
-                                                   LoggingContext,
-                                                   LoggingPath,
-                                                   LogfileCreator
-                                               )
-                                             : null;
+            this.CommonAPILogger           = this.DisableLogging == false
+                                                 ? new CommonAPILogger(
+                                                       this,
+                                                       LoggingContext,
+                                                       LoggingPath,
+                                                       LogfileCreator
+                                                   )
+                                                 : null;
 
             this.BaseAPI.AddVersionInformation(
                 new VersionInformation(
@@ -4339,7 +4313,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     URL.Concat(
                         BaseAPI.OurVersionsURL.Protocol.AsString(),
                         BaseAPI.ExternalDNSName ?? ("localhost:" + BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort),
-                        URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
+                        BaseAPI.URLPathPrefix + URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
                 )
             ).GetAwaiter().GetResult();
@@ -4352,6 +4326,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             }
 
             RegisterURLTemplates();
+
+            foreach (var party in OurPartyData)
+                AddParty(party).GetAwaiter().GetResult();
 
         }
 
@@ -6042,43 +6019,46 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         {
 
-            var newRemoteParty = new RemoteParty(Id,
-                                                 CredentialsRoles,
+            if (remoteParties.ContainsKey(Id))
+                return true;
 
-                                                 AccessToken,
+            var newRemoteParty = new RemoteParty(
+                                     Id,
+                                     CredentialsRoles,
 
-                                                 RemoteAccessToken,
-                                                 RemoteVersionsURL,
-                                                 RemoteVersionIds,
-                                                 SelectedVersionId,
+                                     AccessToken,
 
-                                                 LocalAccessNotBefore,
-                                                 LocalAccessNotAfter,
+                                     RemoteAccessToken,
+                                     RemoteVersionsURL,
+                                     RemoteVersionIds,
+                                     SelectedVersionId,
 
-                                                 AccessTokenBase64Encoding,
-                                                 AllowDowngrades,
-                                                 AccessStatus,
-                                                 RemoteStatus,
-                                                 PartyStatus,
-                                                 RemoteAccessNotBefore,
-                                                 RemoteAccessNotAfter,
+                                     LocalAccessNotBefore,
+                                     LocalAccessNotAfter,
 
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCert,
-                                                 TLSProtocol,
-                                                 HTTPUserAgent,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining);
+                                     AccessTokenBase64Encoding,
+                                     AllowDowngrades,
+                                     AccessStatus,
+                                     RemoteStatus,
+                                     PartyStatus,
+                                     RemoteAccessNotBefore,
+                                     RemoteAccessNotAfter,
 
-            var result = remoteParties.GetOrAdd(newRemoteParty.Id,
-                                                value => newRemoteParty);
+                                     PreferIPv4,
+                                     RemoteCertificateValidator,
+                                     LocalCertificateSelector,
+                                     ClientCert,
+                                     TLSProtocol,
+                                     HTTPUserAgent,
+                                     RequestTimeout,
+                                     TransmissionRetryDelay,
+                                     MaxNumberOfRetries,
+                                     InternalBufferSize,
+                                     UseHTTPPipelining
+                                 );
 
-            if (result == newRemoteParty)
+            if (remoteParties.TryAdd(newRemoteParty.Id,
+                                     newRemoteParty))
             {
 
                 await LogRemoteParty(
@@ -6128,34 +6108,37 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                              User_Id?                                                   CurrentUserId                = null)
         {
 
-            var newRemoteParty = new RemoteParty(Id,
-                                                 CredentialsRoles,
+            if (remoteParties.ContainsKey(Id))
+                return true;
 
-                                                 AccessToken,
-                                                 AccessTokenBase64Encoding,
-                                                 AllowDowngrades,
-                                                 AccessStatus,
+            var newRemoteParty = new RemoteParty(
+                                     Id,
+                                     CredentialsRoles,
 
-                                                 PartyStatus,
-                                                 LocalAccessNotBefore,
-                                                 LocalAccessNotAfter,
+                                     AccessToken,
+                                     AccessTokenBase64Encoding,
+                                     AllowDowngrades,
+                                     AccessStatus,
 
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCert,
-                                                 TLSProtocol,
-                                                 HTTPUserAgent,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining);
+                                     PartyStatus,
+                                     LocalAccessNotBefore,
+                                     LocalAccessNotAfter,
 
-            var result = remoteParties.GetOrAdd(newRemoteParty.Id,
-                                                value => newRemoteParty);
+                                     PreferIPv4,
+                                     RemoteCertificateValidator,
+                                     LocalCertificateSelector,
+                                     ClientCert,
+                                     TLSProtocol,
+                                     HTTPUserAgent,
+                                     RequestTimeout,
+                                     TransmissionRetryDelay,
+                                     MaxNumberOfRetries,
+                                     InternalBufferSize,
+                                     UseHTTPPipelining
+                                 );
 
-            if (result == newRemoteParty)
+            if (remoteParties.TryAdd(newRemoteParty.Id,
+                                     newRemoteParty))
             {
 
                 await LogRemoteParty(
@@ -6208,37 +6191,40 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                              User_Id?                                                   CurrentUserId                = null)
         {
 
-            var newRemoteParty = new RemoteParty(Id,
-                                                 CredentialsRoles,
+            if (remoteParties.ContainsKey(Id))
+                return true;
 
-                                                 RemoteAccessToken,
-                                                 RemoteVersionsURL,
-                                                 RemoteVersionIds,
-                                                 SelectedVersionId,
+            var newRemoteParty = new RemoteParty(
+                                     Id,
+                                     CredentialsRoles,
 
-                                                 AccessTokenBase64Encoding,
-                                                 AllowDowngrades,
-                                                 RemoteStatus,
-                                                 PartyStatus,
-                                                 RemoteAccessNotBefore,
-                                                 RemoteAccessNotAfter,
+                                     RemoteAccessToken,
+                                     RemoteVersionsURL,
+                                     RemoteVersionIds,
+                                     SelectedVersionId,
 
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCert,
-                                                 TLSProtocol,
-                                                 HTTPUserAgent,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining);
+                                     AccessTokenBase64Encoding,
+                                     AllowDowngrades,
+                                     RemoteStatus,
+                                     PartyStatus,
+                                     RemoteAccessNotBefore,
+                                     RemoteAccessNotAfter,
 
-            var result = remoteParties.GetOrAdd(newRemoteParty.Id,
-                                                value => newRemoteParty);
+                                     PreferIPv4,
+                                     RemoteCertificateValidator,
+                                     LocalCertificateSelector,
+                                     ClientCert,
+                                     TLSProtocol,
+                                     HTTPUserAgent,
+                                     RequestTimeout,
+                                     TransmissionRetryDelay,
+                                     MaxNumberOfRetries,
+                                     InternalBufferSize,
+                                     UseHTTPPipelining
+                                 );
 
-            if (result == newRemoteParty)
+            if (remoteParties.TryAdd(newRemoteParty.Id,
+                                     newRemoteParty))
             {
 
                 await LogRemoteParty(
@@ -6286,32 +6272,35 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                                              User_Id?                                                   CurrentUserId                = null)
         {
 
-            var newRemoteParty = new RemoteParty(Id,
-                                                 CredentialsRoles,
+            if (remoteParties.ContainsKey(Id))
+                return true;
 
-                                                 LocalAccessInfos,
-                                                 RemoteAccessInfos,
+            var newRemoteParty = new RemoteParty(
+                                     Id,
+                                     CredentialsRoles,
 
-                                                 Status,
+                                     LocalAccessInfos,
+                                     RemoteAccessInfos,
 
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCert,
-                                                 TLSProtocol,
-                                                 HTTPUserAgent,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
+                                     Status,
 
-                                                 LastUpdated);
+                                     PreferIPv4,
+                                     RemoteCertificateValidator,
+                                     LocalCertificateSelector,
+                                     ClientCert,
+                                     TLSProtocol,
+                                     HTTPUserAgent,
+                                     RequestTimeout,
+                                     TransmissionRetryDelay,
+                                     MaxNumberOfRetries,
+                                     InternalBufferSize,
+                                     UseHTTPPipelining,
 
-            var result = remoteParties.GetOrAdd(newRemoteParty.Id,
-                                                value => newRemoteParty);
+                                     LastUpdated
+                                 );
 
-            if (result == newRemoteParty)
+            if (remoteParties.TryAdd(newRemoteParty.Id,
+                                     newRemoteParty))
             {
 
                 await LogRemoteParty(
@@ -7294,6 +7283,69 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         public IEnumerable<PartyData> Parties
             => parties.Values;
 
+
+        #region AddParty            (Id, Role, BusinessDetails, AllowDowngrades = null, ...)
+
+        public async Task<AddResult<PartyData>>
+
+            AddParty(PartyData          PartyData,
+                     Boolean?           AllowDowngrades     = null,
+                     Boolean            SkipNotifications   = false,
+                     EventTracking_Id?  EventTrackingId     = null,
+                     User_Id?           CurrentUserId       = null)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryAdd(PartyData.Id, PartyData))
+            {
+
+                await LogAsset(
+                          "addParty",
+                          JSONObject.Create(
+                              new JProperty("id",  PartyData.Id.ToString())
+                          ),
+                          EventTrackingId,
+                          CurrentUserId
+                      );
+
+                //if (!SkipNotifications)
+                //{
+
+                //    var OnPartyAddedLocal = OnPartyAdded;
+                //    if (OnPartyAddedLocal is not null)
+                //    {
+                //        try
+                //        {
+                //            await OnPartyAddedLocal(Party);
+                //        }
+                //        catch (Exception e)
+                //        {
+                //            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddParty), " ", nameof(OnPartyAdded), ": ",
+                //                        Environment.NewLine, e.Message,
+                //                        Environment.NewLine, e.StackTrace ?? "");
+                //        }
+                //    }
+
+                //}
+
+                return AddResult<PartyData>.Success(
+                           EventTrackingId,
+                           PartyData
+                       );
+
+            }
+
+            return AddResult<PartyData>.Failed(
+                       EventTrackingId,
+                       PartyData,
+                       "The given party identification already exists!"
+                   );
+
+        }
+
+        #endregion
 
         #region AddParty            (Id, Role, BusinessDetails, AllowDowngrades = null, ...)
 

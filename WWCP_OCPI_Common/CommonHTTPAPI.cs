@@ -860,46 +860,42 @@ namespace cloud.charging.open.protocols.OCPI
                              URL                            OurBaseURL,
                              URL                            OurVersionsURL,
 
-                             IEnumerable<HTTPHostname>?     Hostnames                     = null,
-                             HTTPPath?                      RootPath                      = null,
-                             IEnumerable<HTTPContentType>?  HTTPContentTypes              = null,
-                             I18NString?                    Description                   = null,
+                             IEnumerable<HTTPHostname>?     Hostnames                 = null,
+                             HTTPPath?                      RootPath                  = null,
+                             IEnumerable<HTTPContentType>?  HTTPContentTypes          = null,
+                             I18NString?                    Description               = null,
 
-                             HTTPPath?                      BasePath                      = null,  // For URL prefixes in HTML!
+                             HTTPPath?                      BasePath                  = null,  // For URL prefixes in HTML!
 
-                             String?                        ExternalDNSName               = null,
-                             String?                        HTTPServerName                = DefaultHTTPServerName,
-                             String?                        HTTPServiceName               = DefaultHTTPServiceName,
-                             String?                        APIVersionHash                = null,
-                             JObject?                       APIVersionHashes              = null,
+                             String?                        ExternalDNSName           = null,
+                             String?                        HTTPServerName            = DefaultHTTPServerName,
+                             String?                        HTTPServiceName           = DefaultHTTPServiceName,
+                             String?                        APIVersionHash            = null,
+                             JObject?                       APIVersionHashes          = null,
 
-                             EMailAddress?                  APIRobotEMailAddress          = null,
-                             String?                        APIRobotGPGPassphrase         = null,
-                             ISMTPClient?                   SMTPClient                    = null,
+                             EMailAddress?                  APIRobotEMailAddress      = null,
+                             String?                        APIRobotGPGPassphrase     = null,
+                             ISMTPClient?                   SMTPClient                = null,
 
-                             HTTPPath?                      AdditionalURLPathPrefix       = null,
-                             Boolean                        LocationsAsOpenData           = true,
-                             Boolean                        TariffsAsOpenData             = false,
-                             Boolean?                       AllowDowngrades               = null,
+                             HTTPPath?                      AdditionalURLPathPrefix   = null,
+                             Boolean                        LocationsAsOpenData       = true,
+                             Boolean                        TariffsAsOpenData         = false,
+                             Boolean?                       AllowDowngrades           = null,
 
-                             Boolean?                       IsDevelopment                 = null,
-                             IEnumerable<String>?           DevelopmentServers            = null,
-                             Boolean                        SkipURLTemplates              = false,
-                             String?                        DatabaseFileName              = DefaultAssetsDBFileName,
-                             Boolean?                       DisableNotifications          = false,
+                             Boolean?                       IsDevelopment             = null,
+                             IEnumerable<String>?           DevelopmentServers        = null,
+                             Boolean?                       SkipURLTemplates          = false,
+                             String?                        DatabaseFileName          = DefaultAssetsDBFileName,
+                             Boolean?                       DisableNotifications      = false,
 
-                             Boolean?                       DisableLogging                = null,
-                             String?                        LoggingContext                = null,
-                             String?                        LoggingPath                   = null,
-                             String?                        LogfileName                   = null,
-                             OCPILogfileCreatorDelegate?    LogfileCreator                = null)
-                             //String?                        DatabaseFilePath              = null,
-                             //String?                        RemotePartyDBFileName         = null,
-                             //String?                        AssetsDBFileName              = null,
-                             //DNSClient?                     DNSClient                     = null,
-                             //Boolean                        AutoStart                     = false
+                             Boolean?                       DisableLogging            = null,
+                             String?                        LoggingContext            = null,
+                             String?                        LoggingPath               = null,
+                             String?                        LogfileName               = null,
+                             OCPILogfileCreatorDelegate?    LogfileCreator            = null)
 
-            : base(HTTPAPI,
+            : base(Description ?? I18NString.Create("OCPI Common HTTP API"),
+                   HTTPAPI,
                    RootPath,
                    BasePath,
 
@@ -920,30 +916,15 @@ namespace cloud.charging.open.protocols.OCPI
 
         {
 
-            this.OurBaseURL                = OurBaseURL;
-            this.OurVersionsURL            = OurVersionsURL;
+            this.OurBaseURL               = OurBaseURL;
+            this.OurVersionsURL           = OurVersionsURL;
 
-            this.AdditionalURLPathPrefix   = AdditionalURLPathPrefix;
-            this.LocationsAsOpenData       = LocationsAsOpenData;
-            this.TariffsAsOpenData         = TariffsAsOpenData;
-            this.AllowDowngrades           = AllowDowngrades;
+            this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
+            this.LocationsAsOpenData      = LocationsAsOpenData;
+            this.TariffsAsOpenData        = TariffsAsOpenData;
+            this.AllowDowngrades          = AllowDowngrades;
 
-            //this.logfileName               = Path.Combine(this.LoggingPath,
-            //                                              this.LogfileName);
-
-            //this.DatabaseFilePath          = DatabaseFilePath      ?? Path.Combine(AppContext.BaseDirectory,
-            //                                                                       DefaultHTTPAPI_LoggingPath);
-
-            //if (this.DatabaseFilePath[^1] != Path.DirectorySeparatorChar)
-            //    this.DatabaseFilePath     += Path.DirectorySeparatorChar;
-
-            //this.RemotePartyDBFileName     = Path.Combine(this.DatabaseFilePath,
-            //                                              RemotePartyDBFileName ?? DefaultRemotePartyDBFileName);
-
-            //this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
-            //                                              AssetsDBFileName      ?? DefaultAssetsDBFileName);
-
-            this.ClientConfigurations      = new ClientConfigurator();
+            this.ClientConfigurations     = new ClientConfigurator();
 
             RegisterURLTemplates();
 
@@ -2028,7 +2009,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region Read/Write Database Files
 
-        #region WriteToDatabase                          (FileName, Text, ...)
+        #region WriteToDatabase                          (FileName, Text,   ...)
 
         public ValueTask WriteToDatabase(String             FileName,
                                          String             Text,
@@ -2074,7 +2055,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region WriteCommentToDatabase                   (FileName, Text, ...)
+        #region WriteCommentToDatabase                   (FileName, Text,   ...)
 
         public ValueTask WriteCommentToDatabase(String             FileName,
                                                 String             Text,
@@ -2395,156 +2376,6 @@ namespace cloud.charging.open.protocols.OCPI
         }
 
         #endregion
-
-        #endregion
-
-
-        #region Start(...)
-
-        ///// <summary>
-        ///// Start this CommonAPI.
-        ///// </summary>
-        ///// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
-        ///// <param name="CurrentUserId">An optional user identification initiating this command/request.</param>
-        //public async Task<Boolean> Start(EventTracking_Id?  EventTrackingId   = null,
-        //                                 User_Id?           CurrentUserId     = null)
-        //{
-
-        //    if (HTTPServer.IsStarted)
-        //        return true;
-
-        //    EventTrackingId ??= EventTracking_Id.New;
-
-        //    var result = await base.Start();
-
-        //    //await LogAsset(
-        //    //          "started",
-        //    //          EventTrackingId,
-        //    //          CurrentUserId
-        //    //      );
-
-        //    #region Send 'Open Data API restarted'-e-mail...
-
-        //    //var Message0 = new HTMLEMailBuilder() {
-        //    //    From        = _APIEMailAddress,
-        //    //    To          = _APIAdminEMail,
-        //    //    Subject     = "Open Data API '" + _ServiceName + "' restarted! at " + Timestamp.Now.ToString(),
-        //    //    PlainText   = "Open Data API '" + _ServiceName + "' restarted! at " + Timestamp.Now.ToString(),
-        //    //    HTMLText    = "Open Data API <b>'" + _ServiceName + "'</b> restarted! at " + Timestamp.Now.ToString(),
-        //    //    Passphrase  = _APIPassphrase
-        //    //};
-        //    //
-        //    //var SMTPTask = _APISMTPClient.Send(Message0);
-        //    //SMTPTask.Wait();
-
-        //    //var r = SMTPTask.Result;
-
-        //    #endregion
-
-        //    //SendStarted(this, Timestamp.Now);
-
-        //    return result;
-
-        //}
-
-        #endregion
-
-        #region Start    (Delay, EventTrackingId = null, InBackground = true)
-
-        //public override Task<Boolean> Start(TimeSpan           Delay,
-        //                                    EventTracking_Id?  EventTrackingId   = null,
-        //                                    Boolean            InBackground      = true)
-
-        //    => Start(Delay,
-        //             EventTrackingId,
-        //             InBackground,
-        //             null);
-
-
-        ///// <summary>
-        ///// Start the server after a little delay.
-        ///// </summary>
-        ///// <param name="Delay">The delay.</param>
-        ///// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
-        ///// <param name="InBackground">Whether to wait on the main thread or in a background thread.</param>
-        //public async virtual Task<Boolean> Start(TimeSpan           Delay,
-        //                                         EventTracking_Id?  EventTrackingId   = null,
-        //                                         Boolean            InBackground      = true,
-        //                                         User_Id?           CurrentUserId     = null)
-        //{
-
-        //    EventTrackingId ??= EventTracking_Id.New;
-
-        //    var result = await HTTPServer.Start(
-        //                           Delay,
-        //                           EventTrackingId,
-        //                           InBackground
-        //                       );
-
-        //    //SendStarted(this, CurrentTimestamp);
-
-        //    //await LogAsset(
-        //    //          "started",
-        //    //          EventTrackingId,
-        //    //          CurrentUserId
-        //    //      );
-
-        //    return result;
-
-        //}
-
-        #endregion
-
-        #region Shutdown(EventTrackingId = null, Message = null, Wait = true, ...)
-
-        //public override Task<Boolean> Shutdown(EventTracking_Id?  EventTrackingId   = null,
-        //                                       String?            Message           = null,
-        //                                       Boolean            Wait              = true)
-
-        //    => Shutdown(
-        //           EventTrackingId,
-        //           Message,
-        //           Wait,
-        //           null
-        //       );
-
-
-        ///// <summary>
-        ///// Shutdown this CommonAPI.
-        ///// </summary>
-        ///// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
-        ///// <param name="Message">An optional shutdown message.</param>
-        ///// <param name="Wait">Whether to wait for the shutdown to complete.</param>
-        ///// <param name="CurrentUserId">An optional user identification initiating this command/request.</param>
-        //public async Task<Boolean> Shutdown(EventTracking_Id?  EventTrackingId   = null,
-        //                                    String?            Message           = null,
-        //                                    Boolean            Wait              = true,
-        //                                    User_Id?           CurrentUserId     = null)
-        //{
-
-        //    if (!HTTPServer.IsStarted)
-        //        return true;
-
-        //    EventTrackingId ??= EventTracking_Id.New;
-
-        //    var result = await base.Shutdown(
-        //                           EventTrackingId,
-        //                           Message,
-        //                           Wait
-        //                       );
-
-        //    //await LogAsset(
-        //    //          "shutdown",
-        //    //          Message,
-        //    //          EventTrackingId,
-        //    //          CurrentUserId
-        //    //      );
-
-        //    //SendShutdown(this, Timestamp.Now);
-
-        //    return result;
-
-        //}
 
         #endregion
 

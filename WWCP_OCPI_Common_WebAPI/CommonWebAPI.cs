@@ -266,6 +266,8 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                             HTTPPath?                                   WebAPIURLPathPrefix       = null,
                             HTTPPath?                                   BasePath                  = null,  // For URL prefixes in HTML!
 
+                            I18NString?                                 Description               = null,
+
                             String                                      HTTPRealm                 = DefaultHTTPRealm,
                             IEnumerable<KeyValuePair<String, String>>?  HTTPLogins                = null,
 
@@ -288,6 +290,8 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
             : base(CommonHTTPAPI,
                    WebAPIURLPathPrefix,
                    BasePath,
+
+                   Description     ?? I18NString.Create("OCPI Common Web API"),
 
                    ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,

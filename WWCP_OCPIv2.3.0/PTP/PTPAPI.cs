@@ -513,6 +513,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         public PTPAPI(CommonAPI                    CommonAPI,
+                      I18NString?                  Description               = null,
                       Boolean?                     AllowDowngrades           = null,
 
                       HTTPPath?                    BasePath                  = null,
@@ -535,6 +536,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
             : base(CommonAPI,
                    URLPathPrefix   ?? DefaultURLPathPrefix,
                    BasePath,
+
+                   Description     ?? I18NString.Create($"OCPI{Version.String} PTP API"),
 
                    ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,

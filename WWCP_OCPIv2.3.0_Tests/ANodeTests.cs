@@ -259,19 +259,23 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                                        //OurBaseURL:                          URL.Parse("http://127.0.0.1:3301/ocpi/v2.3"),
                                        //OurVersionsURL:                      cpoVersionsAPIURL.Value,
-                                       OurCredentialRoles:                  [
-                                                                                new CredentialsRole(
-                                                                                     CountryCode.Parse("DE"),
-                                                                                     Party_Id.   Parse("GEF"),
-                                                                                     Role.       CPO,
-                                                                                     new BusinessDetails(
-                                                                                         "GraphDefined CSO Services",
-                                                                                         URL.Parse("https://www.graphdefined.com/cso")
-                                                                                     )
+                                       OurPartyData:                        [
+                                                                                new PartyData(
+                                                                                    Party_Idv3.From(
+                                                                                        CountryCode.Parse("DE"),
+                                                                                        Party_Id.   Parse("GEF")
+                                                                                    ),
+                                                                                    Role.CPO,
+                                                                                    new BusinessDetails(
+                                                                                        "GraphDefined CSO Services",
+                                                                                        URL.Parse("https://www.graphdefined.com/cso")
+                                                                                    )
                                                                                 )
                                                                             ],
-                                       DefaultCountryCode:                  CountryCode.Parse("DE"),
-                                       DefaultPartyId:                      Party_Id.   Parse("GEF"),
+                                       DefaultPartyId:                      Party_Idv3.From(
+                                                                                CountryCode.Parse("DE"),
+                                                                                Party_Id.   Parse("GEF")
+                                                                            ),
 
                                        BaseAPI:                             ocpiBaseAPI,
 
@@ -294,6 +298,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                                    );
 
+            //await cpoCommonAPI.AddParty(
+            //          Party_Idv3.From(
+            //              CountryCode.Parse("DE"),
+            //              Party_Id.   Parse("GEF")
+            //          ),
+            //          Role.CPO,
+            //          new BusinessDetails(
+            //              "GraphDefined CSO Services",
+            //              URL.Parse("https://www.graphdefined.com/cso")
+            //          )
+            //      );
+
 
             emsp1VersionsAPIURL  = URL.Parse("http://127.0.0.1:3401/ocpi/v2.3/versions");
 
@@ -301,19 +317,23 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                                        //OurBaseURL:                          URL.Parse("http://127.0.0.1:3401/ocpi/v2.3"),
                                        //OurVersionsURL:                      emsp1VersionsAPIURL.Value,
-                                       OurCredentialRoles:                  [
-                                                                                new CredentialsRole(
-                                                                                     CountryCode.Parse("DE"),
-                                                                                     Party_Id.   Parse("GDF"),
-                                                                                     Role.       EMSP,
-                                                                                     new BusinessDetails(
-                                                                                         "GraphDefined EMSP #1 Services",
-                                                                                         URL.Parse("https://www.graphdefined.com/emsp1")
-                                                                                     )
+                                       OurPartyData:                        [
+                                                                                new PartyData(
+                                                                                    Party_Idv3.From(
+                                                                                        CountryCode.Parse("DE"),
+                                                                                        Party_Id.   Parse("GDF")
+                                                                                    ),
+                                                                                    Role.EMSP,
+                                                                                    new BusinessDetails(
+                                                                                        "GraphDefined EMSP #1 Services",
+                                                                                        URL.Parse("https://www.graphdefined.com/emsp1")
+                                                                                    )
                                                                                 )
                                                                             ],
-                                       DefaultCountryCode:                  CountryCode.Parse("DE"),
-                                       DefaultPartyId:                      Party_Id.   Parse("GDF"),
+                                       DefaultPartyId:                      Party_Idv3.From(
+                                                                                CountryCode.Parse("DE"),
+                                                                                Party_Id.   Parse("GDF")
+                                                                            ),
 
                                        BaseAPI:                             ocpiBaseAPI,
                                        //HTTPServer:                          emsp1HTTPAPI.HTTPServer,
@@ -337,6 +357,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                                    );
 
+            //await emsp1CommonAPI.AddParty(
+            //          Party_Idv3.From(
+            //              CountryCode.Parse("DE"),
+            //              Party_Id.   Parse("GDF")
+            //          ),
+            //          Role.EMSP,
+            //          new BusinessDetails(
+            //              "GraphDefined EMSP #1 Services",
+            //              URL.Parse("https://www.graphdefined.com/emsp1")
+            //          )
+            //      );
+
 
             emsp2VersionsAPIURL  = URL.Parse("http://127.0.0.1:3402/ocpi/v2.3/versions");
 
@@ -344,19 +376,23 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                                        //OurBaseURL:                          URL.Parse("http://127.0.0.1:3402/ocpi/v2.3"),
                                        //OurVersionsURL:                      emsp2VersionsAPIURL.Value,
-                                       OurCredentialRoles:                  [
-                                                                                new CredentialsRole(
-                                                                                     CountryCode.Parse("DE"),
-                                                                                     Party_Id.   Parse("GD2"),
-                                                                                     Role.       EMSP,
-                                                                                     new BusinessDetails(
-                                                                                         "GraphDefined EMSP #2 Services",
-                                                                                         URL.Parse("https://www.graphdefined.com/emsp2")
-                                                                                     )
+                                       OurPartyData:                        [
+                                                                                new PartyData(
+                                                                                    Party_Idv3.From(
+                                                                                        CountryCode.Parse("DE"),
+                                                                                        Party_Id.   Parse("GD2")
+                                                                                    ),
+                                                                                    Role.EMSP,
+                                                                                    new BusinessDetails(
+                                                                                        "GraphDefined EMSP #2 Services",
+                                                                                        URL.Parse("https://www.graphdefined.com/emsp2")
+                                                                                    )
                                                                                 )
                                                                             ],
-                                       DefaultCountryCode:                  CountryCode.Parse("DE"),
-                                       DefaultPartyId:                      Party_Id.   Parse("GD2"),
+                                       DefaultPartyId:                      Party_Idv3.From(
+                                                                                CountryCode.Parse("DE"),
+                                                                                Party_Id.   Parse("GD2")
+                                                                            ),
 
                                        BaseAPI:                             ocpiBaseAPI,
 
@@ -378,6 +414,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                        LogfileCreator:                      null
 
                                    );
+
+            //await emsp2CommonAPI.AddParty(
+            //          Party_Idv3.From(
+            //              CountryCode.Parse("DE"),
+            //              Party_Id.   Parse("GD2")
+            //          ),
+            //          Role.EMSP,
+            //          new BusinessDetails(
+            //              "GraphDefined EMSP #2 Services",
+            //              URL.Parse("https://www.graphdefined.com/emsp2")
+            //          )
+            //      );
+
 
             ClassicAssert.IsNotNull(cpoVersionsAPIURL);
             ClassicAssert.IsNotNull(emsp1VersionsAPIURL);

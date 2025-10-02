@@ -51,12 +51,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The default HTTP URL path prefix.
         /// </summary>
-        public new static readonly HTTPPath  DefaultURLPathPrefix     = HTTPPath.Parse("cpo/");
+        public     static readonly HTTPPath  DefaultURLPathPrefix     = HTTPPath.Parse($"{Version.String}/cpo/");
 
         /// <summary>
         /// The default CPO API logfile name.
         /// </summary>
-        public  const              String    DefaultLogfileName       = $"OCPI{Version.String}_CPOAPI.log";
+        public     const           String    DefaultLogfileName       = $"OCPI{Version.String}_CPOAPI.log";
 
         #endregion
 
@@ -1502,6 +1502,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="LogfileName">The name of the logfile.</param>
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
         public CPOAPI(CommonAPI                    CommonAPI,
+                      I18NString?                  Description               = null,
                       Boolean?                     AllowDowngrades           = null,
 
                       HTTPPath?                    BasePath                  = null,
@@ -1522,8 +1523,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                       OCPILogfileCreatorDelegate?  LogfileCreator            = null)
 
             : base(CommonAPI,
-                   URLPathPrefix   ?? DefaultURLPathPrefix,
+                   CommonAPI.URLPathPrefix + (URLPathPrefix ?? DefaultURLPathPrefix),
                    BasePath,
+
+                   Description ?? I18NString.Create($"OCPI{Version.String} CPO API"),
 
                    ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,

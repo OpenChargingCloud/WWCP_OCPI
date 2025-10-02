@@ -46,25 +46,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String    DefaultHTTPServiceName   = "GraphDefined OCPI CPO HTTP API v0.1";
-
-        /// <summary>
-        /// The default HTTP server TCP port.
-        /// </summary>
-        public new static readonly IPPort    DefaultHTTPServerPort    = IPPort.Parse(8080);
+        public new const           String    DefaultHTTPServiceName   = $"GraphDefined OCPI {Version.String} CPO HTTP API";
 
         /// <summary>
         /// The default HTTP URL path prefix.
         /// </summary>
-        public new static readonly HTTPPath  DefaultURLPathPrefix     = HTTPPath.Parse("cpo/");
+        public     static readonly HTTPPath  DefaultURLPathPrefix     = HTTPPath.Parse($"{Version.String}/cpo/");
 
         /// <summary>
         /// The default CPO API logfile name.
         /// </summary>
-        public     static readonly String    DefaultLogfileName       = $"OCPI{Version.Id}_CPOAPI.log";
-
-
-        protected Newtonsoft.Json.Formatting JSONFormat               = Newtonsoft.Json.Formatting.Indented;
+        public     const           String    DefaultLogfileName       = $"OCPI{Version.String}_CPOAPI.log";
 
         #endregion
 
@@ -1627,6 +1619,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         public CPOAPI(CommonAPI                    CommonAPI,
+                      I18NString?                  Description          = null,
                       Boolean?                     AllowDowngrades      = null,
 
                       HTTPPath?                    BasePath             = null,
@@ -1647,8 +1640,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                       OCPILogfileCreatorDelegate?  LogfileCreator       = null)
 
             : base(CommonAPI,
-                   URLPathPrefix   ?? DefaultURLPathPrefix,
+                   CommonAPI.URLPathPrefix + (URLPathPrefix ?? DefaultURLPathPrefix),
                    BasePath,
+
+                   Description     ?? I18NString.Create($"OCPI{Version.String} CPO API"),
 
                    ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,
@@ -1667,16 +1662,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
         {
 
-            this.AllowDowngrades     = AllowDowngrades;
+            this.AllowDowngrades  = AllowDowngrades;
 
-            this.CPOAPILogger        = this.DisableLogging == false
-                                           ? new CPOAPILogger(
-                                                 this,
-                                                 LoggingContext,
-                                                 LoggingPath,
-                                                 LogfileCreator
-                                             )
-                                           : null;
+            this.CPOAPILogger     = this.DisableLogging == false
+                                        ? new CPOAPILogger(
+                                              this,
+                                              LoggingContext,
+                                              LoggingPath,
+                                              LogfileCreator
+                                          )
+                                        : null;
 
             RegisterURLTemplates();
 

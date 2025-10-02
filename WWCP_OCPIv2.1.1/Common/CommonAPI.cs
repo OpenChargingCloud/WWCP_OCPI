@@ -1877,6 +1877,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                          CommonHTTPAPI                BaseAPI,
 
+                         I18NString?                  Description               = null,
                          HTTPPath?                    AdditionalURLPathPrefix   = null,
                          Func<EVSE, Boolean>?         KeepRemovedEVSEs          = null,
 
@@ -1900,8 +1901,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          String?                      RemotePartyDBFileName     = null,
                          String?                      AssetsDBFileName          = null)
 
-            : base(BaseAPI.HTTPBaseAPI,
-                   URLPathPrefix,
+            : base(Description ?? I18NString.Create($"OCPI{Version.String} Common HTTP API"),
+                   BaseAPI.HTTPBaseAPI,
+                   BaseAPI.URLPathPrefix + URLPathPrefix,
                    BasePath,
 
                    ExternalDNSName,
@@ -1959,7 +1961,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     URL.Concat(
                         BaseAPI.OurVersionsURL.Protocol.AsString(),
                         BaseAPI.ExternalDNSName ?? ("localhost:" + BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort),
-                        URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
+                        BaseAPI.URLPathPrefix + URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
                 )
             ).GetAwaiter().GetResult();

@@ -2483,38 +2483,38 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// using the given CommonAPI.
         /// </summary>
         /// <param name="CommonAPI">The OCPI common API.</param>
-        /// <param name="DefaultCountryCode">The default country code to use.</param>
-        /// <param name="DefaultPartyId">The default party identification to use.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         /// 
-        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The official URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         public EMSPAPI(CommonAPI                    CommonAPI,
-                       Boolean?                     AllowDowngrades           = null,
+                       I18NString?                  Description          = null,
+                       Boolean?                     AllowDowngrades      = null,
 
-                       HTTPPath?                    BasePath                  = null,
-                       HTTPPath?                    URLPathPrefix             = null,
+                       HTTPPath?                    BasePath             = null,
+                       HTTPPath?                    URLPathPrefix        = null,
 
-                       String?                      ExternalDNSName           = null,
-                       String?                      HTTPServerName            = DefaultHTTPServerName,
-                       String?                      HTTPServiceName           = DefaultHTTPServiceName,
-                       String?                      APIVersionHash            = null,
-                       JObject?                     APIVersionHashes          = null,
+                       String?                      ExternalDNSName      = null,
+                       String?                      HTTPServerName       = DefaultHTTPServerName,
+                       String?                      HTTPServiceName      = DefaultHTTPServiceName,
+                       String?                      APIVersionHash       = null,
+                       JObject?                     APIVersionHashes     = null,
 
-                       Boolean?                     IsDevelopment             = false,
-                       IEnumerable<String>?         DevelopmentServers        = null,
-                       Boolean?                     DisableLogging            = false,
-                       String?                      LoggingContext            = null,
-                       String?                      LoggingPath               = null,
-                       String?                      LogfileName               = null,
-                       OCPILogfileCreatorDelegate?  LogfileCreator            = null)
+                       Boolean?                     IsDevelopment        = false,
+                       IEnumerable<String>?         DevelopmentServers   = null,
+                       Boolean?                     DisableLogging       = false,
+                       String?                      LoggingContext       = null,
+                       String?                      LoggingPath          = null,
+                       String?                      LogfileName          = null,
+                       OCPILogfileCreatorDelegate?  LogfileCreator       = null)
 
             : base(CommonAPI,
                    URLPathPrefix   ?? DefaultURLPathPrefix,
                    BasePath,
+
+                   Description     ?? I18NString.Create($"OCPI{Version.String} EMSP API"),
 
                    ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,

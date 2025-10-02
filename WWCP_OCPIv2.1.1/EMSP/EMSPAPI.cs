@@ -46,19 +46,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String    DefaultHTTPServiceName    = $"GraphDefined OCPI {Version.String} EMSP HTTP API";
+        public new const           String    DefaultHTTPServiceName   = $"GraphDefined OCPI {Version.String} EMSP HTTP API";
 
         /// <summary>
         /// The default HTTP URL path prefix.
         /// </summary>
-        public new static readonly HTTPPath  DefaultURLPathPrefix      = HTTPPath.Parse("/emsp");
+        public     static readonly HTTPPath  DefaultURLPathPrefix     = HTTPPath.Parse($"{Version.String}/cpo/");
 
         /// <summary>
         /// The default EMSP API logfile name.
         /// </summary>
-        public  const              String    DefaultLogfileName       = $"OCPI{Version.String}_EMSPAPI.log";
-
-        protected Newtonsoft.Json.Formatting JSONFormat = Newtonsoft.Json.Formatting.Indented;
+        public     const           String    DefaultLogfileName       = $"OCPI{Version.String}_EMSPAPI.log";
 
         #endregion
 
@@ -2462,6 +2460,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="LogfileName">The name of the logfile.</param>
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
         public EMSPAPI(CommonAPI                    CommonAPI,
+                       I18NString?                  Description               = null,
                        Boolean?                     AllowDowngrades           = null,
 
                        HTTPPath?                    BasePath                  = null,
@@ -2482,8 +2481,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                        OCPILogfileCreatorDelegate?  LogfileCreator            = null)
 
             : base(CommonAPI,
-                   URLPathPrefix   ?? DefaultURLPathPrefix,
+                   CommonAPI.URLPathPrefix + (URLPathPrefix ?? DefaultURLPathPrefix),
                    BasePath,
+
+                   Description ?? I18NString.Create($"OCPI{Version.String} EMSP API"),
 
                    ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,

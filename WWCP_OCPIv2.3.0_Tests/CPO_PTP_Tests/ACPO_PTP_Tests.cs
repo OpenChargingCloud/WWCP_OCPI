@@ -117,19 +117,23 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
             cpoCommonAPI         = new CommonAPI(
 
-                                       OurCredentialRoles:                  [
-                                                                                new CredentialsRole(
-                                                                                     CountryCode.Parse("DE"),
-                                                                                     Party_Id.   Parse("GEF"),
-                                                                                     Role.       CPO,
-                                                                                     new BusinessDetails(
-                                                                                         "GraphDefined CSO Services",
-                                                                                         URL.Parse("https://www.graphdefined.com/cso")
-                                                                                     )
+                                       OurPartyData:                        [
+                                                                                new PartyData(
+                                                                                    Party_Idv3.From(
+                                                                                        CountryCode.Parse("DE"),
+                                                                                        Party_Id.   Parse("GEF")
+                                                                                    ),
+                                                                                    Role.CPO,
+                                                                                    new BusinessDetails(
+                                                                                        "GraphDefined CSO Services",
+                                                                                        URL.Parse("https://www.graphdefined.com/cso")
+                                                                                    )
                                                                                 )
                                                                             ],
-                                       DefaultCountryCode:                  CountryCode.Parse("DE"),
-                                       DefaultPartyId:                      Party_Id.   Parse("GEF"),
+                                       DefaultPartyId:                      Party_Idv3.From(
+                                                                                CountryCode.Parse("DE"),
+                                                                                Party_Id.   Parse("GEF")
+                                                                            ),
 
                                        BaseAPI:                             cpoBaseAPI,
 
@@ -226,19 +230,23 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
             ptpCommonAPI         = new CommonAPI(
 
-                                       OurCredentialRoles:                  [
-                                                                                new CredentialsRole(
-                                                                                     CountryCode.Parse("DE"),
-                                                                                     Party_Id.   Parse("GDF"),
-                                                                                     Role.       PTP,
-                                                                                     new BusinessDetails(
-                                                                                         "GraphDefined PTP #1 Services",
-                                                                                         URL.Parse("https://www.graphdefined.com/ptp")
-                                                                                     )
+                                       OurPartyData:                        [
+                                                                                new PartyData(
+                                                                                    Party_Idv3.From(
+                                                                                        CountryCode.Parse("DE"),
+                                                                                        Party_Id.   Parse("GDF")
+                                                                                    ),
+                                                                                    Role.CPO,
+                                                                                    new BusinessDetails(
+                                                                                        "GraphDefined PTP #1 Services",
+                                                                                        URL.Parse("https://www.graphdefined.com/ptp")
+                                                                                    )
                                                                                 )
                                                                             ],
-                                       DefaultCountryCode:                  CountryCode.Parse("DE"),
-                                       DefaultPartyId:                      Party_Id.   Parse("GDF"),
+                                       DefaultPartyId:                      Party_Idv3.From(
+                                                                                CountryCode.Parse("DE"),
+                                                                                Party_Id.   Parse("GDF")
+                                                                            ),
 
                                        BaseAPI:                             ptpBaseAPI,
 

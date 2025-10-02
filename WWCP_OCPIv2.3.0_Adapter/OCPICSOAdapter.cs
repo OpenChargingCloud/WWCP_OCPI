@@ -328,6 +328,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                           this.CommonAPI,
                                                           null, // AllowDowngrades
 
+                                                          null,
+
                                                           null, // BasePath
                                                           CommonAPI.URLPathPrefix + Version.String + "cpo",
 

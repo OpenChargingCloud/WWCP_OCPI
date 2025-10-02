@@ -354,12 +354,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
         /// <param name="HTTPLogins">An enumeration of logins for an optional HTTP Basic Authentication.</param>
         public OCPIWebAPI(CommonWebAPI             CommonWebAPI,
                           CommonAPI                CommonAPI,
+                          I18NString?              Description            = null,
 
                           //HTTPPath?                HTTPBaseAPI.OverlayURLPathPrefix      = null,
-                          HTTPPath?                APIURLPathPrefix      = null,
-                          HTTPPath?                WebAPIURLPathPrefix   = null,
-                          HTTPPath?                BasePath              = null,  // For URL prefixes in HTML!
-                          String?                  VersionPath           = null,
+                          HTTPPath?                APIURLPathPrefix       = null,
+                          HTTPPath?                WebAPIURLPathPrefix    = null,
+                          HTTPPath?                BasePath               = null,  // For URL prefixes in HTML!
+                          String?                  VersionPath            = null,
 
                           //HTTPPath?                URLPathPrefix         = null,
 
@@ -380,6 +381,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
             : base(CommonAPI,
                    WebAPIURLPathPrefix,
                    BasePath,
+
+                   Description     ?? I18NString.Create($"OCPI{Version.String} Web API"),
 
                    ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,

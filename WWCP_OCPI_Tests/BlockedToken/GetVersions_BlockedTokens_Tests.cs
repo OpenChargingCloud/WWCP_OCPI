@@ -315,13 +315,13 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #endregion
 
 
-        #region GetVersions_v2_3_fromCPO1_Test1()
+        #region GetVersions_v2_3_0_fromCPO1_Test1()
 
         /// <summary>
-        /// Trying to fetch CPO #1 OCPI v2.3 versions via a blocked OCPI access token!
+        /// Trying to fetch CPO #1 OCPI v2.3.0 versions via a blocked OCPI access token!
         /// </summary>
         [Test]
-        public async Task GetVersions_v2_3_fromCPO1_Test1()
+        public async Task GetVersions_v2_3_0_fromCPO1_Test1()
         {
 
             if (cpo1BaseAPI is null)
@@ -385,13 +385,13 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         #endregion
 
-        #region GetVersions_v2_3_fromEMSP1_Test1()
+        #region GetVersions_v2_3_0_fromEMSP1_Test1()
 
         /// <summary>
-        /// Trying to fetch EMSP #1 OCPI v2.3 versions via a blocked OCPI access token!
+        /// Trying to fetch EMSP #1 OCPI v2.3.0 versions via a blocked OCPI access token!
         /// </summary>
         [Test]
-        public async Task GetVersions_v2_3_fromEMSP1_Test1()
+        public async Task GetVersions_v2_3_0_fromEMSP1_Test1()
         {
 
             if (emsp1BaseAPI is null)

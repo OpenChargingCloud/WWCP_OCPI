@@ -2417,6 +2417,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         public SCSPAPI(CommonAPI                    CommonAPI,
                        CountryCode                  DefaultCountryCode,
                        Party_Idv3                   DefaultPartyId,
+                       I18NString?                  Description               = null,
                        Boolean?                     AllowDowngrades           = null,
 
                        HTTPPath?                    BasePath                  = null,
@@ -2439,6 +2440,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             : base(CommonAPI,
                    URLPathPrefix   ?? DefaultURLPathPrefix,
                    BasePath,
+
+                   Description     ?? I18NString.Create($"OCPI{Version.String} SCSP API"),
 
                    ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,

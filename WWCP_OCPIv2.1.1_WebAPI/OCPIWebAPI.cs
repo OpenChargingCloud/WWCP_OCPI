@@ -352,6 +352,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         public OCPIWebAPI(CommonWebAPI             CommonWebAPI,
                           CommonAPI                CommonAPI,
 
+                          I18NString?              Description            = null,
                           //HTTPPath?                HTTPBaseAPI.OverlayURLPathPrefix      = null,
                           HTTPPath?                APIURLPathPrefix       = null,
                           HTTPPath?                WebAPIURLPathPrefix    = null,
@@ -377,6 +378,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             : base(CommonAPI,
                    WebAPIURLPathPrefix,
                    BasePath,
+
+                   Description     ?? I18NString.Create($"OCPI{Version.String} Web API"),
 
                    ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,

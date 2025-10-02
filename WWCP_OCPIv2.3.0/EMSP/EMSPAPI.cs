@@ -46,30 +46,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String    DefaultHTTPServerName     = "GraphDefined OCPI EMSP HTTP API v0.1";
-
-        /// <summary>
-        /// The default HTTP server name.
-        /// </summary>
-        public new const           String    DefaultHTTPServiceName    = "GraphDefined OCPI EMSP HTTP API v0.1";
-
-        /// <summary>
-        /// The default HTTP server TCP port.
-        /// </summary>
-        public new static readonly IPPort    DefaultHTTPServerPort     = IPPort.Parse(8080);
+        public new const           String    DefaultHTTPServiceName   = $"GraphDefined OCPI {Version.String} EMSP HTTP API";
 
         /// <summary>
         /// The default HTTP URL path prefix.
         /// </summary>
-        public new static readonly HTTPPath  DefaultURLPathPrefix      = HTTPPath.Parse("/emsp");
+        public     static readonly HTTPPath  DefaultURLPathPrefix     = HTTPPath.Parse($"{Version.String}/cpo/");
 
         /// <summary>
         /// The default EMSP API logfile name.
         /// </summary>
-        public     static readonly String    DefaultLogfileName       = $"OCPI{Version.Id}_EMSPAPI.log";
-
-
-        protected Newtonsoft.Json.Formatting JSONFormat               = Newtonsoft.Json.Formatting.Indented;
+        public     const           String    DefaultLogfileName       = $"OCPI{Version.String}_EMSPAPI.log";
 
         #endregion
 
@@ -2472,6 +2459,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         public EMSPAPI(CommonAPI                    CommonAPI,
+                       I18NString?                  Description          = null,
                        Boolean?                     AllowDowngrades      = null,
 
                        HTTPPath?                    BasePath             = null,
@@ -2492,8 +2480,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                        OCPILogfileCreatorDelegate?  LogfileCreator       = null)
 
             : base(CommonAPI,
-                   URLPathPrefix   ?? DefaultURLPathPrefix,
+                   CommonAPI.URLPathPrefix + (URLPathPrefix ?? DefaultURLPathPrefix),
                    BasePath,
+
+                   Description     ?? I18NString.Create($"OCPI{Version.String} EMSP API"),
 
                    ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,
@@ -6420,10 +6410,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                             {
 
                                                 var result = await onRFIDAuthTokenLocal(
-                                                                       request.FromCountryCode ?? CommonAPI.DefaultCountryCode,
-                                                                       request.FromPartyId     ?? CommonAPI.DefaultPartyId,
-                                                                       request.ToCountryCode   ?? CommonAPI.DefaultCountryCode,
-                                                                       request.ToPartyId       ?? CommonAPI.DefaultPartyId,
+                                                                       request.FromCountryCode ?? CommonAPI.DefaultPartyId.CountryCode,
+                                                                       request.FromPartyId     ?? CommonAPI.DefaultPartyId.Party,
+                                                                       request.ToCountryCode   ?? CommonAPI.DefaultPartyId.CountryCode,
+                                                                       request.ToPartyId       ?? CommonAPI.DefaultPartyId.Party,
                                                                        tokenId.Value,
                                                                        locationReference
                                                                    );
@@ -6445,9 +6435,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
                                             if (!CommonAPI.TryGetTokenStatus(
                                                 Party_Idv3.From(
-                                                    request.ToCountryCode ?? CommonAPI.DefaultCountryCode,
-                                                    request.ToPartyId     ?? CommonAPI.DefaultPartyId
-                                                ),
+                                                    request.ToCountryCode,
+                                                    request.ToPartyId
+                                                ) ?? CommonAPI.DefaultPartyId,
                                                 tokenId.Value,
                                                 out var _tokenStatus) ||
                                                 (_tokenStatus.Token.Type != requestedTokenType))

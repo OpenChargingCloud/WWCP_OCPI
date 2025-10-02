@@ -1852,6 +1852,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
                          CommonHTTPAPI                 BaseAPI,
 
+                         I18NString?                   Description               = null,
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
                          Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
                          Boolean                       LocationsAsOpenData       = true,
@@ -1878,7 +1879,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                          String?                       AssetsDBFileName          = null,
                          Boolean                       AutoStart                 = false)
 
-            : base(BaseAPI.HTTPBaseAPI,
+            : base(Description     ?? I18NString.Create($"OCPI{Version.String} Common HTTP API"),
+                   BaseAPI.HTTPBaseAPI,
                    URLPathPrefix,
                    BasePath,
 
