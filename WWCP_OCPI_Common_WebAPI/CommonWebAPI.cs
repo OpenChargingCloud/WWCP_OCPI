@@ -288,8 +288,8 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                             LogfileCreatorDelegate?                     LogfileCreator            = null)
 
             : base(CommonHTTPAPI,
-                   WebAPIURLPathPrefix,
-                   BasePath,
+                   CommonHTTPAPI.URLPathPrefix + WebAPIURLPathPrefix,
+                   CommonHTTPAPI.URLPathPrefix + BasePath,
 
                    Description     ?? I18NString.Create("OCPI Common Web API"),
 
@@ -308,12 +308,13 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
         {
 
-            this.OverlayURLPathPrefix  = OverlayURLPathPrefix;
-            this.APIURLPathPrefix      = APIURLPathPrefix;
+            this.OverlayURLPathPrefix  = CommonHTTPAPI.URLPathPrefix + OverlayURLPathPrefix;
+            this.APIURLPathPrefix      = CommonHTTPAPI.URLPathPrefix + APIURLPathPrefix;
+
             this.HTTPRealm             = HTTPRealm.IsNotNullOrEmpty() ? HTTPRealm : DefaultHTTPRealm;
             this.HTTPLogins            = HTTPLogins ?? [];
 
-            var LogfilePrefix          = "HTTPSSEs" + Path.DirectorySeparatorChar;
+            //var LogfilePrefix          = "HTTPSSEs" + Path.DirectorySeparatorChar;
 
           //  this.DebugLog              = this.AddJSONEventSource(EventIdentification:      DebugLogId,
           //                                                       URLTemplate:              HTTPPath.Root + DebugLogId.ToString(), //this.URLPathPrefix + DebugLogId.ToString(),
@@ -698,7 +699,6 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                 );
 
                 #endregion
-
 
             }
 

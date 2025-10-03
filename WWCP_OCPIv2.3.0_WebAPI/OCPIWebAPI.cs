@@ -374,26 +374,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
                           String?                  LogfileName            = null,
                           LogfileCreatorDelegate?  LogfileCreator         = null)
 
-            //: base(BaseWebAPI,
-            //       HTTPServerName  ?? DefaultHTTPServerName,
-            //       HTTPServiceName ?? DefaultHTTPServiceName,
-            //       APIVersionHash,
-            //       APIVersionHashes,
-
-            //       //null, //URLPathPrefix
-            //       //BasePath,
-            //       //HTMLTemplate,
-
-            //       BaseWebAPI.IsDevelopment,
-            //       BaseWebAPI.DevelopmentServers,
-            //       DisableLogging,
-            //       LoggingPath,
-            //       LogfileName,
-            //       LogfileCreator)
-
             : base(CommonAPI,
-                   WebAPIURLPathPrefix,
-                   BasePath,
+                   CommonWebAPI.OverlayURLPathPrefix + Version.String + WebAPIURLPathPrefix,
+                   CommonWebAPI.BasePath + Version.String + BasePath,
 
                    Description     ?? I18NString.Create($"OCPI{Version.String} Web API"),
 
@@ -424,7 +407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
             //HTTPBaseAPI.HTTPServer.ResponseLog    += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
             //HTTPBaseAPI.HTTPServer.ErrorLog       += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
 
-            var LogfilePrefix          = "HTTPSSEs" + Path.DirectorySeparatorChar;
+            //var LogfilePrefix          = "HTTPSSEs" + Path.DirectorySeparatorChar;
 
             //this.DebugLog              = this.AddJSONEventSource(EventIdentification:      DebugLogId,
             //                                                     URLTemplate:              this.URLPathPrefix + DebugLogId.ToString(),
@@ -541,7 +524,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
                 // Export static files js/css/...
                 CommonAPI.HTTPBaseAPI.MapResourceAssemblyFolder(
                     HTTPHostname.Any,
-                    CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "webapi",
+                    URLPathPrefix,
                     HTTPRoot,
                     RequireAuthentication:  false,
                     DefaultFilename:       "index.html"

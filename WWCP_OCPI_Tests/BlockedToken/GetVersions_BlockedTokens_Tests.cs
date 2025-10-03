@@ -111,14 +111,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task GetVersions_v2_1_1_fromEMSP1_Test1()
         {
 
-            if (emsp1BaseAPI is null)
+            if (emsp1CommonHTTPAPI is null)
             {
                 Assert.Fail("emsp1BaseAPI is null!");
                 return;
             }
 
             var graphDefinedEMSP1 = new OCPIv2_1_1.HTTP.CommonClient(
-                                        VersionsURL:  emsp1BaseAPI.OurVersionsURL,
+                                        VersionsURL:  emsp1CommonHTTPAPI.OurVersionsURL,
                                         AccessToken:  BlockedToken
                                     );
 
@@ -250,14 +250,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task GetVersions_v2_2_1_fromEMSP1_Test1()
         {
 
-            if (emsp1BaseAPI is null)
+            if (emsp1CommonHTTPAPI is null)
             {
                 Assert.Fail("emsp1BaseAPI is null!");
                 return;
             }
 
             var graphDefinedEMSP1 = new OCPIv2_2_1.HTTP.CommonClient(
-                                        VersionsURL:  emsp1BaseAPI.OurVersionsURL,
+                                        VersionsURL:  emsp1CommonHTTPAPI.OurVersionsURL,
                                         AccessToken:  BlockedToken
                                     );
 
@@ -389,14 +389,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task GetVersions_v2_3_0_fromEMSP1_Test1()
         {
 
-            if (emsp1BaseAPI is null)
+            if (emsp1CommonHTTPAPI is null)
             {
                 Assert.Fail("emsp1BaseAPI is null!");
                 return;
             }
 
             var graphDefinedEMSP1 = new OCPIv2_3_0.HTTP.CommonClient(
-                                        VersionsURL:  emsp1BaseAPI.OurVersionsURL,
+                                        VersionsURL:  emsp1CommonHTTPAPI.OurVersionsURL,
                                         AccessToken:  BlockedToken
                                     );
 

@@ -360,7 +360,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                           HTTPPath?                APIURLPathPrefix       = null,
                           HTTPPath?                WebAPIURLPathPrefix    = null,
                           HTTPPath?                BasePath               = null,  // For URL prefixes in HTML!
-                          String?                  VersionPath            = null,
+                          //String?                  VersionPath            = null,
 
                           //HTTPPath?                URLPathPrefix         = null,
 
@@ -379,8 +379,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                           LogfileCreatorDelegate?  LogfileCreator         = null)
 
             : base(CommonAPI,
-                   WebAPIURLPathPrefix,
-                   BasePath,
+                   CommonWebAPI.OverlayURLPathPrefix + Version.String + WebAPIURLPathPrefix,
+                   CommonWebAPI.BasePath + Version.String + BasePath,
 
                    Description     ?? I18NString.Create($"OCPI{Version.String} Web API"),
 
@@ -406,7 +406,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
             //this.cpoClients            = new List<CPOClient>();
             //this.emspClients           = new List<EMSPClient>();
 
-            var LogfilePrefix          = "HTTPSSEs" + Path.DirectorySeparatorChar;
+            //var LogfilePrefix          = "HTTPSSEs" + Path.DirectorySeparatorChar;
 
             //this.DebugLog              = this.AddJSONEventSource(
             //                                 EventIdentification:      DebugLogId,
@@ -525,7 +525,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                 // Export static files js/css/...
                 CommonAPI.HTTPBaseAPI.MapResourceAssemblyFolder(
                     HTTPHostname.Any,
-                    CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "webapi",
+                    URLPathPrefix,
                     HTTPRoot,
                     RequireAuthentication:  false,
                     DefaultFilename:       "index.html"

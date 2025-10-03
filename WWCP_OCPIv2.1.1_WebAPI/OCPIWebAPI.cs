@@ -376,8 +376,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                           LogfileCreatorDelegate?  LogfileCreator         = null)
 
             : base(CommonAPI,
-                   WebAPIURLPathPrefix,
-                   BasePath,
+                   CommonWebAPI.OverlayURLPathPrefix + Version.String + WebAPIURLPathPrefix,
+                   CommonWebAPI.BasePath + Version.String + BasePath,
 
                    Description     ?? I18NString.Create($"OCPI{Version.String} Web API"),
 
@@ -523,7 +523,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                 // Export static files js/css/...
                 CommonAPI.HTTPBaseAPI.MapResourceAssemblyFolder(
                     HTTPHostname.Any,
-                    CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "webapi",
+                    URLPathPrefix,
                     HTTPRoot,
                     RequireAuthentication:  false,
                     DefaultFilename:       "index.html"
