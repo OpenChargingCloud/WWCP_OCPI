@@ -3705,8 +3705,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    BasePath,
 
                    ExternalDNSName,
-                   HTTPServerName,
-                   HTTPServiceName,
+                   HTTPServerName  ?? DefaultHTTPServerName,
+                   HTTPServiceName ?? DefaultHTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,
 
@@ -3939,7 +3939,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 Module_Id.ChargingProfiles,
                                 InterfaceRoles.SENDER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/")
+                                    (request.Host + (prefix + "emsp/chargingprofiles")).Replace("//", "/")
                                 )
                             )
                         );

@@ -4260,8 +4260,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                    BasePath,
 
                    ExternalDNSName,
-                   HTTPServerName,
-                   HTTPServiceName,
+                   HTTPServerName  ?? DefaultHTTPServerName,
+                   HTTPServiceName ?? DefaultHTTPServiceName,
                    APIVersionHash,
                    APIVersionHashes,
 
@@ -4355,8 +4355,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         private void RegisterURLTemplates()
         {
 
-            var URLPathPrefix = HTTPPath.Root;
-
             #region OPTIONS     ~/versions/2.3.0
 
             // -------------------------------------------------------
@@ -4429,8 +4427,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                     #endregion
 
 
-                    //var prefix = URLPathPrefix + BaseAPI.AdditionalURLPathPrefix + Version.String;
-                    var prefix = URLPathPrefix + BaseAPI.AdditionalURLPathPrefix + $"{request.HTTPRequest.GetHeaderField<Version_Id?>("X-OCPIVersion") ?? Version.Id}";
+                    var prefix = URLPathPrefix + BaseAPI.AdditionalURLPathPrefix + Version.String;
 
                     #region Common credential endpoints...
 
@@ -4493,7 +4490,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
                                 Module_Id.ChargingProfiles,
                                 InterfaceRoles.SENDER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                    (request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/"))
+                                    (request.Host + (prefix + "emsp/chargingprofiles")).Replace("//", "/"))
                             )
                         );
 

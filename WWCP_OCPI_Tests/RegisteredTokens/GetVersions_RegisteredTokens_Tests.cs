@@ -17,14 +17,9 @@
 
 #region Usings
 
-using Newtonsoft.Json.Linq;
-
 using NUnit.Framework;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-
-using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
@@ -60,27 +55,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 var response = await graphDefinedEMSP1.GetVersions();
 
                 // GET /ocpi/versions HTTP/1.1
-                // Accept:                          application/json; charset=utf-8; q=1
-                // Host:                            localhost:3401
-                // User-Agent:                      GraphDefined OCPI v2.1.1 CommonClient
-                // Authorization:                   Token cpo1_accessing_emsp1++token
-                // Connection:                      close
-                // X-Request-ID:                    v42pQKn544dEbSE94nh4hhSCjWjWn6
-                // X-Correlation-ID:                Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
+                // Accept:                        application/json; charset=utf-8; q=1
+                // Host:                          localhost:3401
+                // User-Agent:                    GraphDefined OCPI v2.1.1 CommonClient
+                // Authorization:                 Token cpo1_accessing_emsp1++token
+                // Connection:                    close
+                // X-Request-ID:                  v42pQKn544dEbSE94nh4hhSCjWjWn6
+                // X-Correlation-ID:              Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
 
                 // HTTP/1.1 200 OK
-                // Date:                            Wed, 08 Jan 2025 03:26:44 GMT
-                // Server:                          GraphDefined OCPI HTTP API v0.1
-                // Access-Control-Allow-Origin:     *
-                // Access-Control-Allow-Methods:    OPTIONS, GET
-                // Allow:                           OPTIONS, GET
-                // Access-Control-Allow-Headers:    Authorization
-                // Content-Type:                    application/json; charset=utf-8
-                // Content-Length:                  271
-                // Connection:                      close
-                // Vary:                            Accept
-                // X-Request-ID:                    v42pQKn544dEbSE94nh4hhSCjWjWn6
-                // X-Correlation-ID:                Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
+                // Date:                          Wed, 08 Jan 2025 03:26:44 GMT
+                // Server:                        GraphDefined OCPI v2.1.1 Common HTTP API
+                // Access-Control-Allow-Origin:   *
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
+                // Content-Type:                  application/json; charset=utf-8
+                // Content-Length:                271
+                // X-Request-ID:                  v42pQKn544dEbSE94nh4hhSCjWjWn6
+                // X-Correlation-ID:              Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
                 // 
                 // {
                 //     "status_code":      1000,
@@ -155,27 +149,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 var response = await graphDefinedEMSP1.GetVersions();
 
                 // GET /ocpi/versions HTTP/1.1
-                // Accept:                          application/json; charset=utf-8; q=1
-                // Host:                            localhost:3401
-                // User-Agent:                      GraphDefined OCPI v2.1.1 CommonClient
-                // Authorization:                   Token cpo1_accessing_emsp1++token
-                // Connection:                      close
-                // X-Request-ID:                    v42pQKn544dEbSE94nh4hhSCjWjWn6
-                // X-Correlation-ID:                Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
+                // Accept:                        application/json; charset=utf-8; q=1
+                // Host:                          localhost:3401
+                // User-Agent:                    GraphDefined OCPI v2.1.1 CommonClient
+                // Authorization:                 Token cpo1_accessing_emsp1++token
+                // Connection:                    close
+                // X-Request-ID:                  v42pQKn544dEbSE94nh4hhSCjWjWn6
+                // X-Correlation-ID:              Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
 
                 // HTTP/1.1 200 OK
-                // Date:                            Wed, 08 Jan 2025 03:26:44 GMT
-                // Server:                          GraphDefined OCPI HTTP API v0.1
-                // Access-Control-Allow-Origin:     *
-                // Access-Control-Allow-Methods:    OPTIONS, GET
-                // Allow:                           OPTIONS, GET
-                // Access-Control-Allow-Headers:    Authorization
-                // Content-Type:                    application/json; charset=utf-8
-                // Content-Length:                  271
-                // Connection:                      close
-                // Vary:                            Accept
-                // X-Request-ID:                    v42pQKn544dEbSE94nh4hhSCjWjWn6
-                // X-Correlation-ID:                Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
+                // Date:                          Wed, 08 Jan 2025 03:26:44 GMT
+                // Server:                        GraphDefined OCPI v2.2.1 Common HTTP API
+                // Access-Control-Allow-Origin:   *
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
+                // Content-Type:                  application/json; charset=utf-8
+                // Content-Length:                271
+                // X-Request-ID:                  v42pQKn544dEbSE94nh4hhSCjWjWn6
+                // X-Correlation-ID:              Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
                 // 
                 // {
                 //     "status_code":      1000,
@@ -250,27 +243,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 var response = await graphDefinedEMSP1.GetVersions();
 
                 // GET /ocpi/versions HTTP/1.1
-                // Accept:                          application/json; charset=utf-8; q=1
-                // Host:                            localhost:3401
-                // User-Agent:                      GraphDefined OCPI v2.1.1 CommonClient
-                // Authorization:                   Token cpo1_accessing_emsp1++token
-                // Connection:                      close
-                // X-Request-ID:                    v42pQKn544dEbSE94nh4hhSCjWjWn6
-                // X-Correlation-ID:                Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
+                // Accept:                        application/json; charset=utf-8; q=1
+                // Host:                          localhost:3401
+                // User-Agent:                    GraphDefined OCPI v2.1.1 CommonClient
+                // Authorization:                 Token cpo1_accessing_emsp1++token
+                // Connection:                    close
+                // X-Request-ID:                  v42pQKn544dEbSE94nh4hhSCjWjWn6
+                // X-Correlation-ID:              Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
 
                 // HTTP/1.1 200 OK
-                // Date:                            Wed, 08 Jan 2025 03:26:44 GMT
-                // Server:                          GraphDefined OCPI HTTP API v0.1
-                // Access-Control-Allow-Origin:     *
-                // Access-Control-Allow-Methods:    OPTIONS, GET
-                // Allow:                           OPTIONS, GET
-                // Access-Control-Allow-Headers:    Authorization
-                // Content-Type:                    application/json; charset=utf-8
-                // Content-Length:                  271
-                // Connection:                      close
-                // Vary:                            Accept
-                // X-Request-ID:                    v42pQKn544dEbSE94nh4hhSCjWjWn6
-                // X-Correlation-ID:                Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
+                // Date:                          Wed, 08 Jan 2025 03:26:44 GMT
+                // Server:                        GraphDefined OCPI v2.3.0 Common HTTP API
+                // Access-Control-Allow-Origin:   *
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
+                // Content-Type:                  application/json; charset=utf-8
+                // Content-Length:                271
+                // X-Request-ID:                  v42pQKn544dEbSE94nh4hhSCjWjWn6
+                // X-Correlation-ID:              Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
                 // 
                 // {
                 //     "status_code":      1000,
@@ -346,27 +338,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 var response = await graphDefinedCPO1.GetVersions();
 
                 // GET /ocpi/versions HTTP/1.1
-                // Accept:                          application/json; charset=utf-8; q=1
-                // Host:                            localhost:3301
-                // User-Agent:                      GraphDefined OCPI v2.1.1 CommonClient
-                // Authorization:                   Token cpo1_accessing_emsp1++token
-                // Connection:                      close
-                // X-Request-ID:                    v42pQKn544dEbSE94nh4hhSCjWjWn6
-                // X-Correlation-ID:                Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
+                // Accept:                        application/json; charset=utf-8; q=1
+                // Host:                          localhost:3301
+                // User-Agent:                    GraphDefined OCPI v2.1.1 CommonClient
+                // Authorization:                 Token cpo1_accessing_emsp1++token
+                // Connection:                    close
+                // X-Request-ID:                  v42pQKn544dEbSE94nh4hhSCjWjWn6
+                // X-Correlation-ID:              Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
 
                 // HTTP/1.1 200 OK
-                // Date:                            Wed, 08 Jan 2025 03:26:44 GMT
-                // Server:                          GraphDefined OCPI HTTP API v0.1
-                // Access-Control-Allow-Origin:     *
-                // Access-Control-Allow-Methods:    OPTIONS, GET
-                // Allow:                           OPTIONS, GET
-                // Access-Control-Allow-Headers:    Authorization
-                // Content-Type:                    application/json; charset=utf-8
-                // Content-Length:                  271
-                // Connection:                      close
-                // Vary:                            Accept
-                // X-Request-ID:                    v42pQKn544dEbSE94nh4hhSCjWjWn6
-                // X-Correlation-ID:                Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
+                // Date:                          Wed, 08 Jan 2025 03:26:44 GMT
+                // Server:                        GraphDefined OCPI v2.1.1 Common HTTP API
+                // Access-Control-Allow-Origin:   *
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
+                // Content-Type:                  application/json; charset=utf-8
+                // Content-Length:                271
+                // X-Request-ID:                  v42pQKn544dEbSE94nh4hhSCjWjWn6
+                // X-Correlation-ID:              Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
                 // 
                 // {
                 //     "status_code":      1000,
@@ -437,27 +428,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 var response = await graphDefinedCPO1.GetVersions();
 
                 // GET /ocpi/versions HTTP/1.1
-                // Accept:                          application/json; charset=utf-8; q=1
-                // Host:                            localhost:3301
-                // User-Agent:                      GraphDefined OCPI v2.1.1 CommonClient
-                // Authorization:                   Token cpo1_accessing_emsp1++token
-                // Connection:                      close
-                // X-Request-ID:                    v42pQKn544dEbSE94nh4hhSCjWjWn6
-                // X-Correlation-ID:                Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
+                // Accept:                        application/json; charset=utf-8; q=1
+                // Host:                          localhost:3301
+                // User-Agent:                    GraphDefined OCPI v2.1.1 CommonClient
+                // Authorization:                 Token cpo1_accessing_emsp1++token
+                // Connection:                    close
+                // X-Request-ID:                  v42pQKn544dEbSE94nh4hhSCjWjWn6
+                // X-Correlation-ID:              Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
 
                 // HTTP/1.1 200 OK
-                // Date:                            Wed, 08 Jan 2025 03:26:44 GMT
-                // Server:                          GraphDefined OCPI HTTP API v0.1
-                // Access-Control-Allow-Origin:     *
-                // Access-Control-Allow-Methods:    OPTIONS, GET
-                // Allow:                           OPTIONS, GET
-                // Access-Control-Allow-Headers:    Authorization
-                // Content-Type:                    application/json; charset=utf-8
-                // Content-Length:                  271
-                // Connection:                      close
-                // Vary:                            Accept
-                // X-Request-ID:                    v42pQKn544dEbSE94nh4hhSCjWjWn6
-                // X-Correlation-ID:                Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
+                // Date:                          Wed, 08 Jan 2025 03:26:44 GMT
+                // Server:                        GraphDefined OCPI v2.2.1 Common HTTP API
+                // Access-Control-Allow-Origin:   *
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
+                // Content-Type:                  application/json; charset=utf-8
+                // Content-Length:                271
+                // X-Request-ID:                  v42pQKn544dEbSE94nh4hhSCjWjWn6
+                // X-Correlation-ID:              Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
                 // 
                 // {
                 //     "status_code":      1000,
@@ -528,27 +518,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 var response = await graphDefinedCPO1.GetVersions();
 
                 // GET /ocpi/versions HTTP/1.1
-                // Accept:                          application/json; charset=utf-8; q=1
-                // Host:                            localhost:3301
-                // User-Agent:                      GraphDefined OCPI v2.1.1 CommonClient
-                // Authorization:                   Token cpo1_accessing_emsp1++token
-                // Connection:                      close
-                // X-Request-ID:                    v42pQKn544dEbSE94nh4hhSCjWjWn6
-                // X-Correlation-ID:                Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
+                // Accept:                        application/json; charset=utf-8; q=1
+                // Host:                          localhost:3301
+                // User-Agent:                    GraphDefined OCPI v2.1.1 CommonClient
+                // Authorization:                 Token cpo1_accessing_emsp1++token
+                // Connection:                    close
+                // X-Request-ID:                  v42pQKn544dEbSE94nh4hhSCjWjWn6
+                // X-Correlation-ID:              Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
 
                 // HTTP/1.1 200 OK
-                // Date:                            Wed, 08 Jan 2025 03:26:44 GMT
-                // Server:                          GraphDefined OCPI HTTP API v0.1
-                // Access-Control-Allow-Origin:     *
-                // Access-Control-Allow-Methods:    OPTIONS, GET
-                // Allow:                           OPTIONS, GET
-                // Access-Control-Allow-Headers:    Authorization
-                // Content-Type:                    application/json; charset=utf-8
-                // Content-Length:                  271
-                // Connection:                      close
-                // Vary:                            Accept
-                // X-Request-ID:                    v42pQKn544dEbSE94nh4hhSCjWjWn6
-                // X-Correlation-ID:                Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
+                // Date:                          Wed, 08 Jan 2025 03:26:44 GMT
+                // Server:                        GraphDefined OCPI v2.3.0 Common HTTP API
+                // Access-Control-Allow-Origin:   *
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
+                // Content-Type:                  application/json; charset=utf-8
+                // Content-Length:                271
+                // X-Request-ID:                  v42pQKn544dEbSE94nh4hhSCjWjWn6
+                // X-Correlation-ID:              Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
                 // 
                 // {
                 //     "status_code":      1000,

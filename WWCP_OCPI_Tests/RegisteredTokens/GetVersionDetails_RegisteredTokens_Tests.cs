@@ -66,12 +66,12 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // HTTP/1.1 200 OK
                 // Date:                          Fri, 10 Jan 2025 06:01:52 GMT
-                // Access-Control-Allow-Methods:  OPTIONS, GET
-                // Allow:                         OPTIONS, GET
-                // Access-Control-Allow-Headers:  Authorization
-                // Vary:                          Accept
-                // Server:                        GraphDefined HTTP API
+                // Server:                        GraphDefined OCPI v2.1.1 Common HTTP API
                 // Access-Control-Allow-Origin:   *
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
                 // Content-Type:                  application/json; charset=utf-8
                 // Content-Length:                695
                 // X-Request-ID:                  S1Q64pQ9nf24C3tA64xjhvWnz983jt
@@ -180,12 +180,12 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // HTTP/1.1 200 OK
                 // Date:                          Fri, 10 Jan 2025 05:54:40 GMT
-                // Access-Control-Allow-Methods:  OPTIONS, GET
-                // Allow:                         OPTIONS, GET
-                // Access-Control-Allow-Headers:  Authorization
-                // Vary:                          Accept
-                // Server:                        GraphDefined HTTP API
+                // Server:                        GraphDefined OCPI v2.2.1 Common HTTP API
                 // Access-Control-Allow-Origin:   *
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
                 // Content-Type:                  application/json; charset=utf-8
                 // Content-Length:                1029
                 // X-Request-ID:                  xQfW89475Sx3pMvUv56Eb6x1nd5b4M
@@ -223,7 +223,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 //             {
                 //                 "identifier": "chargingprofiles",
                 //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/cpo/chargingprofiles"
+                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/emsp/chargingprofiles"
                 //             },
                 //             {
                 //                 "identifier": "cdrs",
@@ -270,7 +270,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints[OCPIv2_2_1.Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.2.1/emsp/locations")));
                     Assert.That(endpoints[OCPIv2_2_1.Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.2.1/emsp/tariffs")));
                     Assert.That(endpoints[OCPIv2_2_1.Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.2.1/emsp/sessions")));
-                    //Assert.That(endpoints[OCPIv2_2_1.Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.2.1/emsp/chargingProfiles")));
+                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.2.1/emsp/chargingProfiles")));
                     Assert.That(endpoints[OCPIv2_2_1.Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.2.1/emsp/cdrs")));
                     Assert.That(endpoints[OCPIv2_2_1.Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.2.1/emsp/commands")));
                     Assert.That(endpoints[OCPIv2_2_1.Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.2.1/emsp/tokens")));
@@ -294,13 +294,13 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         #endregion
 
-        #region CPO1_GetVersionDetails_v2_3_fromEMSP1_viaOCPIv2_3__RegisteredToken_Test1()
+        #region CPO1_GetVersionDetails_v2_3_0_fromEMSP1_viaOCPIv2_3_0__RegisteredToken_Test1()
 
         /// <summary>
         /// CPO #1 asking EMSP #1 for its OCPI version details via OCPI v2.3!
         /// </summary>
         [Test]
-        public async Task CPO1_GetVersionDetails_v2_3_fromEMSP1_viaOCPIv2_3__RegisteredToken_Test1()
+        public async Task CPO1_GetVersionDetails_v2_3_0_fromEMSP1_viaOCPIv2_3_0__RegisteredToken_Test1()
         {
 
             var graphDefinedEMSP1 = cpo1CPOAPI_v2_3_0?.GetEMSPClient(
@@ -315,10 +315,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 var response = await graphDefinedEMSP1.GetVersionDetails(OCPIv2_3_0.Version.Id);
 
-                // GET /ocpi/versions/2.3 HTTP/1.1
+                // GET /ocpi/versions/2.3.0 HTTP/1.1
                 // Accept:                        application/json; charset=utf-8; q=1
                 // Host:                          localhost:3401
-                // User-Agent:                    GraphDefined OCPI v2.2.1 Common Client
+                // User-Agent:                    GraphDefined OCPI v2.3.0 Common Client
                 // Authorization:                 Token Y3BvMV9hY2Nlc3NpbmdfZW1zcDErK3Rva2Vu
                 // Connection:                    close
                 // X-Request-ID:                  xQfW89475Sx3pMvUv56Eb6x1nd5b4M
@@ -326,12 +326,12 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // HTTP/1.1 200 OK
                 // Date:                          Fri, 10 Jan 2025 05:54:40 GMT
-                // Access-Control-Allow-Methods:  OPTIONS, GET
-                // Allow:                         OPTIONS, GET
-                // Access-Control-Allow-Headers:  Authorization
-                // Vary:                          Accept
-                // Server:                        GraphDefined HTTP API
+                // Server:                        GraphDefined OCPI v2.3.0 Common HTTP API
                 // Access-Control-Allow-Origin:   *
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
                 // Content-Type:                  application/json; charset=utf-8
                 // Content-Length:                1029
                 // X-Request-ID:                  xQfW89475Sx3pMvUv56Eb6x1nd5b4M
@@ -339,52 +339,52 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // 
                 // {
                 //     "data": {
-                //         "version": "2.3",
+                //         "version": "2.3.0",
                 //         "endpoints": [
                 //             {
                 //                 "identifier": "credentials",
                 //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/credentials"
+                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/credentials"
                 //             },
                 //             {
                 //                 "identifier": "credentials",
                 //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/credentials"
+                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/credentials"
                 //             },
                 //             {
                 //                 "identifier": "locations",
                 //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/emsp/locations"
+                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/emsp/locations"
                 //             },
                 //             {
                 //                 "identifier": "tariffs",
                 //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/emsp/tariffs"
+                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/emsp/tariffs"
                 //             },
                 //             {
                 //                 "identifier": "sessions",
                 //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/emsp/sessions"
+                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/emsp/sessions"
                 //             },
                 //             {
                 //                 "identifier": "chargingprofiles",
                 //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/cpo/chargingprofiles"
+                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/emsp/chargingprofiles"
                 //             },
                 //             {
                 //                 "identifier": "cdrs",
                 //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/emsp/cdrs"
+                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/emsp/cdrs"
                 //             },
                 //             {
                 //                 "identifier": "commands",
                 //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/emsp/commands"
+                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/emsp/commands"
                 //             },
                 //             {
                 //                 "identifier": "tokens",
                 //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/emsp/tokens"
+                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/emsp/tokens"
                 //             }
                 //         ]
                 //     },
@@ -412,14 +412,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints,                                                      Is.Not.Null);
                     Assert.That(endpoints.Count,                                                Is.EqualTo(8));
 
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/credentials")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/locations")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/tariffs")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/sessions")));
-                    //Assert.That(endpoints[OCPIv2_3_0.Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/chargingProfiles")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/cdrs")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/commands")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3/emsp/tokens")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3.0/credentials")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3.0/emsp/locations")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3.0/emsp/tariffs")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3.0/emsp/sessions")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3.0/emsp/chargingProfiles")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3.0/emsp/cdrs")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3.0/emsp/commands")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3.0/emsp/tokens")));
 
                     Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_3_0.InterfaceRoles.SENDER),    Is.True);
                     Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_3_0.InterfaceRoles.RECEIVER),  Is.True);
@@ -463,26 +463,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 var response = await graphDefinedCPO1.GetVersionDetails(OCPIv2_1_1.Version.Id);
 
                 // GET /ocpi/versions/2.1.1 HTTP/1.1
-                // Accept:                          application/json; charset=utf-8; q=1
-                // Host:                            localhost:3301
-                // User-Agent:                      GraphDefined OCPI v2.1.1 CommonClient
-                // Authorization:                   Token emsp1_accessing_cpo1++token
-                // Connection:                      close
-                // X-Request-ID:                    1tEnWAzn2CME5dSr673Q7UM2v6152n
-                // X-Correlation-ID:                t3bh9f2bUbzjGzGCQjx3SjU3d1G8xd
+                // Accept:                        application/json; charset=utf-8; q=1
+                // Host:                          localhost:3301
+                // User-Agent:                    GraphDefined OCPI v2.1.1 CommonClient
+                // Authorization:                 Token emsp1_accessing_cpo1++token
+                // Connection:                    close
+                // X-Request-ID:                  1tEnWAzn2CME5dSr673Q7UM2v6152n
+                // X-Correlation-ID:              t3bh9f2bUbzjGzGCQjx3SjU3d1G8xd
 
                 // HTTP/1.1 200 OK
-                // Date:                            Wed, 08 Jan 2025 12:35:51 GMT
-                // Access-Control-Allow-Methods:    OPTIONS, GET
-                // Allow:                           OPTIONS, GET
-                // Access-Control-Allow-Headers:    Authorization
-                // Vary:                            Accept
-                // Server:                          GraphDefined HTTP API
-                // Access-Control-Allow-Origin:     *
-                // Content-Type:                    application/json; charset=utf-8
-                // Content-Length:                  689
-                // X-Request-ID:                    1tEnWAzn2CME5dSr673Q7UM2v6152n
-                // X-Correlation-ID:                t3bh9f2bUbzjGzGCQjx3SjU3d1G8xd
+                // Date:                          Wed, 08 Jan 2025 12:35:51 GMT
+                // Server:                        GraphDefined OCPI v2.1.1 Common HTTP API
+                // Access-Control-Allow-Origin:   *
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
+                // Content-Type:                  application/json; charset=utf-8
+                // Content-Length:                689
+                // X-Request-ID:                  1tEnWAzn2CME5dSr673Q7UM2v6152n
+                // X-Correlation-ID:              t3bh9f2bUbzjGzGCQjx3SjU3d1G8xd
                 // 
                 // {
                 //     "data": {
@@ -592,12 +592,12 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // HTTP/1.1 200 OK
                 // Date:                          Fri, 10 Jan 2025 06:42:42 GMT
-                // Access-Control-Allow-Methods:  OPTIONS, GET
-                // Allow:                         OPTIONS, GET
-                // Access-Control-Allow-Headers:  Authorization
-                // Vary:                          Accept
-                // Server:                        GraphDefined HTTP API
+                // Server:                        GraphDefined OCPI v2.2.1 Common HTTP API
                 // Access-Control-Allow-Origin:   *
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
                 // Content-Type:                  application/json; charset=utf-8
                 // Content-Length:                1019
                 // X-Request-ID:                  jbr78Y997pQ55E28xWvxjS7A459hUQ
@@ -710,13 +710,13 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         #endregion
 
-        #region EMSP1_GetVersionDetails_v2_3_fromCPO1_viaOCPIv2_3__RegisteredToken_Test1()
+        #region EMSP1_GetVersionDetails_v2_3_0_fromCPO1_viaOCPIv2_3_0__RegisteredToken_Test1()
 
         /// <summary>
         /// EMSP #1 asks CPO #1 for its OCPI v2.3 version details details via OCPI v2.3!
         /// </summary>
         [Test]
-        public async Task EMSP1_GetVersionDetails_v2_3_fromCPO1_viaOCPIv2_3__RegisteredToken_Test1()
+        public async Task EMSP1_GetVersionDetails_v2_3_0_fromCPO1_viaOCPIv2_3_0__RegisteredToken_Test1()
         {
 
             var graphDefinedCPO1 = emsp1EMSPAPI_v2_3_0?.GetCPOClient(
@@ -731,7 +731,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 var response = await graphDefinedCPO1.GetVersionDetails(OCPIv2_3_0.Version.Id);
 
-                // GET /ocpi/versions/2.3 HTTP/1.1
+                // GET /ocpi/versions/2.3.0 HTTP/1.1
                 // Accept:                        application/json; charset=utf-8; q=1
                 // Host:                          localhost:3301
                 // User-Agent:                    GraphDefined OCPI v2.3 Common Client
@@ -742,12 +742,12 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // HTTP/1.1 200 OK
                 // Date:                          Fri, 10 Jan 2025 06:42:42 GMT
-                // Access-Control-Allow-Methods:  OPTIONS, GET
-                // Allow:                         OPTIONS, GET
-                // Access-Control-Allow-Headers:  Authorization
-                // Vary:                          Accept
-                // Server:                        GraphDefined HTTP API
+                // Server:                        GraphDefined OCPI v2.3.0 Common HTTP API
                 // Access-Control-Allow-Origin:   *
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
                 // Content-Type:                  application/json; charset=utf-8
                 // Content-Length:                1019
                 // X-Request-ID:                  jbr78Y997pQ55E28xWvxjS7A459hUQ
@@ -755,56 +755,56 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // 
                 // {
                 //     "data": {
-                //         "version": "2.3",
+                //         "version": "2.3.0",
                 //         "endpoints": [
                 //             {
                 //                 "identifier": "credentials",
-                //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3301/ocpi/v2.3/credentials"
+                //                 "role": "SENDER",
+                //                 "url":  "http://localhost:3301/ocpi/v2.3.0/credentials"
                 //             },
                 //             {
                 //                 "identifier": "credentials",
-                //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3301/ocpi/v2.3/credentials"
+                //                 "role": "RECEIVER",
+                //                 "url":  "http://localhost:3301/ocpi/v2.3.0/credentials"
                 //             },
                 //             {
                 //                 "identifier": "locations",
-                //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3301/ocpi/v2.3/cpo/locations"
+                //                 "role": "SENDER",
+                //                 "url":  "http://localhost:3301/ocpi/v2.3.0/cpo/locations"
                 //             },
                 //             {
                 //                 "identifier": "tariffs",
-                //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3301/ocpi/v2.3/cpo/tariffs"
+                //                 "role": "SENDER",
+                //                 "url":  "http://localhost:3301/ocpi/v2.3.0/cpo/tariffs"
                 //             },
                 //             {
                 //                 "identifier": "sessions",
-                //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3301/ocpi/v2.3/cpo/sessions"
+                //                 "role": "SENDER",
+                //                 "url":  "http://localhost:3301/ocpi/v2.3.0/cpo/sessions"
                 //             },
                 //             {
                 //                 "identifier": "chargingprofiles",
-                //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3301/ocpi/v2.3/cpo/chargingprofiles"
+                //                 "role": "SENDER",
+                //                 "url":  "http://localhost:3301/ocpi/v2.3.0/cpo/chargingprofiles"
                 //             },
                 //             {
                 //                 "identifier": "cdrs",
-                //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3301/ocpi/v2.3/cpo/cdrs"
+                //                 "role": "SENDER",
+                //                 "url":  "http://localhost:3301/ocpi/v2.3.0/cpo/cdrs"
                 //             },
                 //             {
                 //                 "identifier": "commands",
-                //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3301/ocpi/v2.3/cpo/commands"
+                //                 "role": "RECEIVER",
+                //                 "url":  "http://localhost:3301/ocpi/v2.3.0/cpo/commands"
                 //             },
                 //             {
                 //                 "identifier": "tokens",
-                //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3301/ocpi/v2.3/cpo/tokens"
+                //                 "role": "RECEIVER",
+                //                 "url":  "http://localhost:3301/ocpi/v2.3.0/cpo/tokens"
                 //             }
                 //         ]
                 //     },
-                //     "status_code":     1000,
+                //     "status_code": 1000,
                 //     "status_message": "Hello world!",
                 //     "timestamp":      "2025-01-10T06:42:42.201Z"
                 // }
@@ -828,14 +828,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints,                                                      Is.Not.Null);
                     Assert.That(endpoints.Count,                                                Is.EqualTo(8));
 
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/credentials")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/locations")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/tariffs")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/sessions")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/chargingProfiles")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/cdrs")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/commands")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3/cpo/tokens")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3.0/credentials")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3.0/cpo/locations")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3.0/cpo/tariffs")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3.0/cpo/sessions")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3.0/cpo/chargingProfiles")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3.0/cpo/cdrs")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3.0/cpo/commands")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3.0/cpo/tokens")));
 
                     Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_3_0.InterfaceRoles.SENDER),    Is.True);
                     Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_3_0.InterfaceRoles.RECEIVER),  Is.True);

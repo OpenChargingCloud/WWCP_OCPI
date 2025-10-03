@@ -42,14 +42,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task GetVersions_v2_1_1_fromCPO1_Test1()
         {
 
-            if (cpo1BaseAPI is null)
+            if (cpo1CommonHTTPAPI is null)
             {
                 Assert.Fail("cpo1BaseAPI is null!");
                 return;
             }
 
             var graphDefinedCPO1 = new OCPIv2_1_1.HTTP.CommonClient(
-                                       VersionsURL:  cpo1BaseAPI.OurVersionsURL,
+                                       VersionsURL:  cpo1CommonHTTPAPI.OurVersionsURL,
                                        AccessToken:  BlockedToken
                                    );
 
@@ -71,15 +71,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // HTTP/1.1 200 OK
                 // Date:                          Sun, 12 Jan 2025 12:02:52 GMT
-                // Server:                        GraphDefined OCPI HTTP API v0.1
+                // Server:                        GraphDefined OCPI v2.1.1 Common HTTP API
                 // Access-Control-Allow-Origin:   *
                 // Access-Control-Allow-Methods:  OPTIONS, GET
-                // Allow:                         OPTIONS, GET
                 // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
                 // Content-Type:                  application/json; charset=utf-8
                 // Content-Length:                72
-                // Connection:                    close
-                // Vary:                          Accept
                 // X-Request-ID:                  Sz6v65hz6U3r936vfGd845ftSbxtt4
                 // X-Correlation-ID:              1jS4bY9KYU22GU7dWS5x331QjC7E2S
                 // 
@@ -141,15 +140,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // HTTP/1.1 200 OK
                 // Date:                          Sun, 12 Jan 2025 12:02:52 GMT
-                // Server:                        GraphDefined OCPI HTTP API v0.1
+                // Server:                        GraphDefined OCPI v2.1.1 Common HTTP API
                 // Access-Control-Allow-Origin:   *
                 // Access-Control-Allow-Methods:  OPTIONS, GET
-                // Allow:                         OPTIONS, GET
                 // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
                 // Content-Type:                  application/json; charset=utf-8
                 // Content-Length:                72
-                // Connection:                    close
-                // Vary:                          Accept
                 // X-Request-ID:                  Sz6v65hz6U3r936vfGd845ftSbxtt4
                 // X-Correlation-ID:              1jS4bY9KYU22GU7dWS5x331QjC7E2S
                 // 
@@ -183,14 +181,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task GetVersions_v2_2_1_fromCPO1_Test1()
         {
 
-            if (cpo1BaseAPI is null)
+            if (cpo1CommonHTTPAPI is null)
             {
                 Assert.Fail("cpo1BaseAPI is null!");
                 return;
             }
 
             var graphDefinedCPO1 = new OCPIv2_2_1.HTTP.CommonClient(
-                                       VersionsURL:  cpo1BaseAPI.OurVersionsURL,
+                                       VersionsURL:  cpo1CommonHTTPAPI.OurVersionsURL,
                                        AccessToken:  BlockedToken
                                    );
 
@@ -212,15 +210,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // HTTP/1.1 200 OK
                 // Date:                          Sun, 12 Jan 2025 12:02:52 GMT
-                // Server:                        GraphDefined OCPI HTTP API v0.1
+                // Server:                        GraphDefined OCPI v2.2.1 Common HTTP API
                 // Access-Control-Allow-Origin:   *
                 // Access-Control-Allow-Methods:  OPTIONS, GET
-                // Allow:                         OPTIONS, GET
                 // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
                 // Content-Type:                  application/json; charset=utf-8
                 // Content-Length:                72
-                // Connection:                    close
-                // Vary:                          Accept
                 // X-Request-ID:                  Sz6v65hz6U3r936vfGd845ftSbxtt4
                 // X-Correlation-ID:              1jS4bY9KYU22GU7dWS5x331QjC7E2S
                 // 
@@ -282,15 +279,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // HTTP/1.1 200 OK
                 // Date:                          Sun, 12 Jan 2025 12:02:52 GMT
-                // Server:                        GraphDefined OCPI HTTP API v0.1
+                // Server:                        GraphDefined OCPI v2.2.1 Common HTTP API
                 // Access-Control-Allow-Origin:   *
                 // Access-Control-Allow-Methods:  OPTIONS, GET
-                // Allow:                         OPTIONS, GET
                 // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
                 // Content-Type:                  application/json; charset=utf-8
                 // Content-Length:                72
-                // Connection:                    close
-                // Vary:                          Accept
                 // X-Request-ID:                  Sz6v65hz6U3r936vfGd845ftSbxtt4
                 // X-Correlation-ID:              1jS4bY9KYU22GU7dWS5x331QjC7E2S
                 // 
@@ -324,14 +320,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task GetVersions_v2_3_0_fromCPO1_Test1()
         {
 
-            if (cpo1BaseAPI is null)
+            if (cpo1CommonHTTPAPI is null)
             {
                 Assert.Fail("cpo1BaseAPI is null!");
                 return;
             }
 
             var graphDefinedCPO1 = new OCPIv2_3_0.HTTP.CommonClient(
-                                       VersionsURL:  cpo1BaseAPI.OurVersionsURL,
+                                       VersionsURL:  cpo1CommonHTTPAPI.OurVersionsURL,
                                        AccessToken:  BlockedToken
                                    );
 
@@ -353,15 +349,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // HTTP/1.1 200 OK
                 // Date:                          Sun, 12 Jan 2025 12:02:52 GMT
-                // Server:                        GraphDefined OCPI HTTP API v0.1
+                // Server:                        GraphDefined OCPI v2.3.0 Common HTTP API
                 // Access-Control-Allow-Origin:   *
                 // Access-Control-Allow-Methods:  OPTIONS, GET
-                // Allow:                         OPTIONS, GET
                 // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
                 // Content-Type:                  application/json; charset=utf-8
                 // Content-Length:                72
-                // Connection:                    close
-                // Vary:                          Accept
                 // X-Request-ID:                  Sz6v65hz6U3r936vfGd845ftSbxtt4
                 // X-Correlation-ID:              1jS4bY9KYU22GU7dWS5x331QjC7E2S
                 // 
@@ -423,15 +418,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // HTTP/1.1 200 OK
                 // Date:                          Sun, 12 Jan 2025 12:02:52 GMT
-                // Server:                        GraphDefined OCPI HTTP API v0.1
+                // Server:                        GraphDefined OCPI v2.3.0 Common HTTP API
                 // Access-Control-Allow-Origin:   *
                 // Access-Control-Allow-Methods:  OPTIONS, GET
-                // Allow:                         OPTIONS, GET
                 // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
                 // Content-Type:                  application/json; charset=utf-8
                 // Content-Length:                72
-                // Connection:                    close
-                // Vary:                          Accept
                 // X-Request-ID:                  Sz6v65hz6U3r936vfGd845ftSbxtt4
                 // X-Correlation-ID:              1jS4bY9KYU22GU7dWS5x331QjC7E2S
                 // 

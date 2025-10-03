@@ -42,14 +42,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task GetVersions_v2_1_1_fromCPO1_Test1()
         {
 
-            if (cpo1BaseAPI is null)
+            if (cpo1CommonHTTPAPI is null)
             {
                 Assert.Fail("cpo1BaseAPI is null!");
                 return;
             }
 
             var graphDefinedCPO1 = new OCPIv2_1_1.HTTP.CommonClient(
-                                       cpo1BaseAPI.OurVersionsURL
+                                       cpo1CommonHTTPAPI.OurVersionsURL
                                    );
 
             Assert.That(graphDefinedCPO1, Is.Not.Null);
@@ -60,26 +60,25 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 var response = await graphDefinedCPO1.GetVersions();
 
                 // GET /ocpi/versions HTTP/1.1
-                // Accept:                          application/json; charset=utf-8; q=1
-                // Host:                            127.0.0.1:3301
-                // User-Agent:                      GraphDefined OCPI v2.1.1 CommonClient
-                // Connection:                      close
-                // X-Request-ID:                    64UC9vv67xSj258nz4YprUGth3W514
-                // X-Correlation-ID:                rCtE9d3G1U72bdW7ArtUht9d8fj8Y1
+                // Accept:                        application/json; charset=utf-8; q=1
+                // Host:                          127.0.0.1:3301
+                // User-Agent:                    GraphDefined OCPI v2.1.1 CommonClient
+                // Connection:                    close
+                // X-Request-ID:                  64UC9vv67xSj258nz4YprUGth3W514
+                // X-Correlation-ID:              rCtE9d3G1U72bdW7ArtUht9d8fj8Y1
 
                 // HTTP/1.1 200 OK
-                // Date:                            Fri, 10 Jan 2025 22:49:05 GMT
-                // Server:                          GraphDefined OCPI HTTP API v0.1
-                // Access-Control-Allow-Origin:     *
-                // Access-Control-Allow-Methods:    OPTIONS, GET
-                // Allow:                           OPTIONS, GET
-                // Access-Control-Allow-Headers:    Authorization
-                // Content-Type:                    application/json; charset=utf-8
-                // Content-Length:                  271
-                // Connection:                      close
-                // Vary:                            Accept
-                // X-Request-ID:                    64UC9vv67xSj258nz4YprUGth3W514
-                // X-Correlation-ID:                rCtE9d3G1U72bdW7ArtUht9d8fj8Y1
+                // Date:                          Fri, 10 Jan 2025 22:49:05 GMT
+                // Server:                        GraphDefined OCPI v2.1.1 Common HTTP API
+                // Access-Control-Allow-Origin:   *
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
+                // Content-Type:                  application/json; charset=utf-8
+                // Content-Length:                271
+                // X-Request-ID:                  64UC9vv67xSj258nz4YprUGth3W514
+                // X-Correlation-ID:              rCtE9d3G1U72bdW7ArtUht9d8fj8Y1
                 // 
                 // {
                 //     "status_code":     1000,
@@ -137,14 +136,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task GetVersions_v2_2_1_fromCPO1_Test1()
         {
 
-            if (cpo1BaseAPI is null)
+            if (cpo1CommonHTTPAPI is null)
             {
                 Assert.Fail("cpo1BaseAPI is null!");
                 return;
             }
 
             var graphDefinedCPO1 = new OCPIv2_2_1.HTTP.CommonClient(
-                                       cpo1BaseAPI.OurVersionsURL
+                                       cpo1CommonHTTPAPI.OurVersionsURL
                                    );
 
             Assert.That(graphDefinedCPO1, Is.Not.Null);
@@ -155,26 +154,25 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 var response = await graphDefinedCPO1.GetVersions();
 
                 // GET /ocpi/versions HTTP/1.1
-                // Accept:                          application/json; charset=utf-8; q=1
-                // Host:                            127.0.0.1:3301
-                // User-Agent:                      GraphDefined OCPI v2.2.1 CommonClient
-                // Connection:                      close
-                // X-Request-ID:                    64UC9vv67xSj258nz4YprUGth3W514
-                // X-Correlation-ID:                rCtE9d3G1U72bdW7ArtUht9d8fj8Y1
+                // Accept:                        application/json; charset=utf-8; q=1
+                // Host:                          127.0.0.1:3301
+                // User-Agent:                    GraphDefined OCPI v2.2.1 CommonClient
+                // Connection:                    close
+                // X-Request-ID:                  64UC9vv67xSj258nz4YprUGth3W514
+                // X-Correlation-ID:              rCtE9d3G1U72bdW7ArtUht9d8fj8Y1
 
                 // HTTP/1.1 200 OK
-                // Date:                            Fri, 10 Jan 2025 22:49:05 GMT
-                // Server:                          GraphDefined OCPI HTTP API v0.1
-                // Access-Control-Allow-Origin:     *
-                // Access-Control-Allow-Methods:    OPTIONS, GET
-                // Allow:                           OPTIONS, GET
-                // Access-Control-Allow-Headers:    Authorization
-                // Content-Type:                    application/json; charset=utf-8
-                // Content-Length:                  271
-                // Connection:                      close
-                // Vary:                            Accept
-                // X-Request-ID:                    64UC9vv67xSj258nz4YprUGth3W514
-                // X-Correlation-ID:                rCtE9d3G1U72bdW7ArtUht9d8fj8Y1
+                // Date:                          Fri, 10 Jan 2025 22:49:05 GMT
+                // Server:                        GraphDefined OCPI v2.2.1 Common HTTP API
+                // Access-Control-Allow-Origin:   *
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
+                // Content-Type:                  application/json; charset=utf-8
+                // Content-Length:                271
+                // X-Request-ID:                  64UC9vv67xSj258nz4YprUGth3W514
+                // X-Correlation-ID:              rCtE9d3G1U72bdW7ArtUht9d8fj8Y1
                 // 
                 // {
                 //     "status_code":     1000,
@@ -232,14 +230,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task GetVersions_v2_3_0_fromCPO1_Test1()
         {
 
-            if (cpo1BaseAPI is null)
+            if (cpo1CommonHTTPAPI is null)
             {
                 Assert.Fail("cpo1BaseAPI is null!");
                 return;
             }
 
             var graphDefinedCPO1 = new OCPIv2_3_0.HTTP.CommonClient(
-                                       cpo1BaseAPI.OurVersionsURL
+                                       cpo1CommonHTTPAPI.OurVersionsURL
                                    );
 
             Assert.That(graphDefinedCPO1, Is.Not.Null);
@@ -250,26 +248,25 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 var response = await graphDefinedCPO1.GetVersions();
 
                 // GET /ocpi/versions HTTP/1.1
-                // Accept:                          application/json; charset=utf-8; q=1
-                // Host:                            127.0.0.1:3301
-                // User-Agent:                      GraphDefined OCPI v2.3 CommonClient
-                // Connection:                      close
-                // X-Request-ID:                    64UC9vv67xSj258nz4YprUGth3W514
-                // X-Correlation-ID:                rCtE9d3G1U72bdW7ArtUht9d8fj8Y1
+                // Accept:                        application/json; charset=utf-8; q=1
+                // Host:                          127.0.0.1:3301
+                // User-Agent:                    GraphDefined OCPI v2.3 CommonClient
+                // Connection:                    close
+                // X-Request-ID:                  64UC9vv67xSj258nz4YprUGth3W514
+                // X-Correlation-ID:              rCtE9d3G1U72bdW7ArtUht9d8fj8Y1
 
                 // HTTP/1.1 200 OK
-                // Date:                            Fri, 10 Jan 2025 22:49:05 GMT
-                // Server:                          GraphDefined OCPI HTTP API v0.1
-                // Access-Control-Allow-Origin:     *
-                // Access-Control-Allow-Methods:    OPTIONS, GET
-                // Allow:                           OPTIONS, GET
-                // Access-Control-Allow-Headers:    Authorization
-                // Content-Type:                    application/json; charset=utf-8
-                // Content-Length:                  271
-                // Connection:                      close
-                // Vary:                            Accept
-                // X-Request-ID:                    64UC9vv67xSj258nz4YprUGth3W514
-                // X-Correlation-ID:                rCtE9d3G1U72bdW7ArtUht9d8fj8Y1
+                // Date:                          Fri, 10 Jan 2025 22:49:05 GMT
+                // Server:                        GraphDefined OCPI v2.3.0 Common HTTP API
+                // Access-Control-Allow-Origin:   *
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Allow:                         OPTIONS, GET
+                // Vary:                          Accept
+                // Content-Type:                  application/json; charset=utf-8
+                // Content-Length:                271
+                // X-Request-ID:                  64UC9vv67xSj258nz4YprUGth3W514
+                // X-Correlation-ID:              rCtE9d3G1U72bdW7ArtUht9d8fj8Y1
                 // 
                 // {
                 //     "status_code":     1000,

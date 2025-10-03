@@ -29,6 +29,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 using cloud.charging.open.protocols.OCPI;
+using cloud.charging.open.protocols.OCPI.WebAPI;
 
 using cloud.charging.open.protocols.OCPIv2_1_1;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
@@ -296,7 +297,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       HTTPTestServerX?                                              cpo1HTTPServer;
         protected       HTTPExtAPIX?                                                  cpo1HTTPAPI;
         public          URL?                                                          cpo1VersionsAPIURL;
-        protected       CommonHTTPAPI?                                                cpo1BaseAPI;
+        protected       CommonHTTPAPI?                                                cpo1CommonHTTPAPI;
+        protected       CommonWebAPI?                                                 cpo1CommonWebAPI;
 
         protected       OCPIv2_1_1.HTTP.CommonAPI?                                    cpo1CommonAPI_v2_1_1;
         protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                 cpo1WebAPI_v2_1_1;
@@ -336,7 +338,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       HTTPTestServerX?                                              cpo2HTTPServer;
         protected       HTTPExtAPIX?                                                  cpo2HTTPAPI;
         public          URL?                                                          cpo2VersionsAPIURL;
-        protected       CommonHTTPAPI?                                                cpo2BaseAPI;
+        protected       CommonHTTPAPI?                                                cpo2CommonHTTPAPI;
+        protected       CommonWebAPI?                                                 cpo2CommonWebAPI;
 
         protected       OCPIv2_1_1.HTTP.CommonAPI?                                    cpo2CommonAPI_v2_1_1;
         protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                 cpo2WebAPI_v2_1_1;
@@ -377,6 +380,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       HTTPExtAPIX?                                                  emsp1HTTPAPI;
         public          URL?                                                          emsp1VersionsAPIURL;
         protected       CommonHTTPAPI?                                                emsp1BaseAPI;
+        protected       CommonWebAPI?                                                 emsp1CommonWebAPI;
 
         protected       OCPIv2_1_1.HTTP.CommonAPI?                                    emsp1CommonAPI_v2_1_1;
         protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                 emsp1WebAPI_v2_1_1;
@@ -417,6 +421,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       HTTPExtAPIX?                                                  emsp2HTTPAPI;
         public          URL?                                                          emsp2VersionsAPIURL;
         protected       CommonHTTPAPI?                                                emsp2BaseAPI;
+        protected       CommonWebAPI?                                                 emsp2CommonWebAPI;
 
         protected       OCPIv2_1_1.HTTP.CommonAPI?                                    emsp2CommonAPI_v2_1_1;
         protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                 emsp2WebAPI_v2_1_1;
@@ -463,6 +468,48 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         public A_2CPOs2EMSPs_TestDefaults()
         {
+
+        }
+
+        #endregion
+
+
+        #region (private) checkFile(FileName, Checker)
+
+        /// <summary>
+        /// Most (log) files are written async in the background, thus test might run faster,
+        /// than those background processes really write the files. When we want to verify,
+        /// that something was written to a file, we might have to retry a few times and
+        /// meanwhile wait a little bit.
+        /// </summary>
+        /// <param name="FileName">The file to be checked.</param>
+        /// <param name="Checker">A delegate to check the file contents.</param>
+        private static async Task<Boolean> checkFile(String                   FileName,
+                                                     Func<String[], Boolean>  Checker)
+        {
+
+            var retries = 100;
+            while (retries > 0)
+            {
+
+                try
+                {
+
+                    var lines = await File.ReadAllLinesAsync(FileName);
+
+                    if (Checker(lines))
+                        return true;
+
+                }
+                catch
+                { }
+
+                retries--;
+                await Task.Delay(100);
+
+            }
+
+            return false;
 
         }
 
@@ -535,7 +582,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region CPO #1
 
-            cpo1BaseAPI  = new CommonHTTPAPI(
+            cpo1CommonHTTPAPI  = new CommonHTTPAPI(
 
                                HTTPAPI:                     cpo1HTTPAPI,
                                OurBaseURL:                  URL.Parse($"http://127.0.0.1:{cpo1HTTPServer.TCPPort}/ocpi"),
@@ -582,7 +629,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region CPO #2
 
-            cpo2BaseAPI  = new CommonHTTPAPI(
+            cpo2CommonHTTPAPI  = new CommonHTTPAPI(
 
                                HTTPAPI:                   cpo2HTTPAPI,
                                OurBaseURL:                URL.Parse("http://127.0.0.1:3202/ocpi"),
@@ -682,8 +729,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #endregion
 
-            Assert.That(cpo1BaseAPI,   Is.Not.Null);
-            Assert.That(cpo2BaseAPI,   Is.Not.Null);
+            Assert.That(cpo1CommonHTTPAPI,   Is.Not.Null);
+            Assert.That(cpo2CommonHTTPAPI,   Is.Not.Null);
 
             Assert.That(emsp1BaseAPI,  Is.Not.Null);
             Assert.That(emsp2BaseAPI,  Is.Not.Null);
@@ -693,9 +740,13 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             #region Create cpo1/cpo2/emsp1/emsp2 OCPI Common APIs
 
             // Clean up log and database directories...
-            foreach (var filePath in Directory.GetFiles(Path.Combine(AppContext.BaseDirectory,
-                                                                     HTTPAPI.DefaultHTTPAPI_LoggingPath),
-                                                        $"GraphDefined_OCPI*.log"))
+            foreach (var filePath in Directory.GetFiles(
+                                         Path.Combine(
+                                             AppContext.BaseDirectory,
+                                             HTTPAPI.DefaultHTTPAPI_LoggingPath
+                                         ),
+                                         $"GraphDefined_OCPI*.log"
+                                     ))
             {
                 File.Delete(filePath);
             }
@@ -713,7 +764,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         OurPartyId:                          Party_Id.   Parse("GEF"),
                                         OurRole:                             Role.       CPO,
 
-                                        BaseAPI:                             cpo1BaseAPI,
+                                        BaseAPI:                             cpo1CommonHTTPAPI,
 
                                         AdditionalURLPathPrefix:             null,
                                         KeepRemovedEVSEs:                    null,
@@ -722,7 +773,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         HTTPServiceName:                     null,
                                         BasePath:                            null,
 
-                                        URLPathPrefix:                       null,//HTTPPath.Parse("/ocpi"),
+                                        URLPathPrefix:                       null,
                                         APIVersionHashes:                    null,
 
                                         IsDevelopment:                       null,
@@ -757,7 +808,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                  Party_Id.   Parse("GEF")
                                                                              ),
 
-                                        BaseAPI:                             cpo1BaseAPI,
+                                        BaseAPI:                             cpo1CommonHTTPAPI,
 
                                         AdditionalURLPathPrefix:             null,
                                         KeepRemovedEVSEs:                    null,
@@ -766,7 +817,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         HTTPServiceName:                     null,
                                         BasePath:                            null,
 
-                                        URLPathPrefix:                       null,//HTTPPath.Parse("/ocpi"),
+                                        URLPathPrefix:                       null,
                                         APIVersionHashes:                    null,
 
                                         IsDevelopment:                       null,
@@ -801,7 +852,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                  Party_Id.   Parse("GEF")
                                                                              ),
 
-                                        BaseAPI:                             cpo1BaseAPI,
+                                        BaseAPI:                             cpo1CommonHTTPAPI,
 
                                         AdditionalURLPathPrefix:             null,
                                         KeepRemovedEVSEs:                    null,
@@ -810,7 +861,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         HTTPServiceName:                     null,
                                         BasePath:                            null,
 
-                                        URLPathPrefix:                       null,//HTTPPath.Parse("/ocpi"),
+                                        URLPathPrefix:                       null,
                                         APIVersionHashes:                    null,
 
                                         IsDevelopment:                       null,
@@ -839,7 +890,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         OurPartyId:                          Party_Id.   Parse("GE2"),
                                         OurRole:                             Role.       CPO,
 
-                                        BaseAPI:                             cpo2BaseAPI,
+                                        BaseAPI:                             cpo2CommonHTTPAPI,
 
                                         AdditionalURLPathPrefix:             null,
                                         KeepRemovedEVSEs:                    null,
@@ -884,7 +935,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                  Party_Id.   Parse("GE2")
                                                                              ),
 
-                                        BaseAPI:                             cpo2BaseAPI,
+                                        BaseAPI:                             cpo2CommonHTTPAPI,
 
                                         AdditionalURLPathPrefix:             null,
                                         KeepRemovedEVSEs:                    null,
@@ -929,7 +980,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                  Party_Id.   Parse("GE2")
                                                                              ),
 
-                                        BaseAPI:                             cpo2BaseAPI,
+                                        BaseAPI:                             cpo2CommonHTTPAPI,
 
                                         AdditionalURLPathPrefix:             null,
                                         KeepRemovedEVSEs:                    null,
@@ -1233,114 +1284,68 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region CPO #1
 
-            cpo1WebAPI_v2_1_1    = new OCPIv2_1_1.WebAPI.OCPIWebAPI(
-                                       CommonWebAPI:                        new WebAPI.CommonWebAPI(
-                                                                                cpo1BaseAPI,
-                                                                                //HTTPServer:             cpo1HTTPServer,
-                                                                                OverlayURLPathPrefix:   HTTPPath.Parse("/ocpi/v2.1.1"),
-                                                                                HTTPRealm:              "GraphDefined OCPI CPO #1 WebAPI",
-                                                                                HTTPLogins:             [
-                                                                                                            new KeyValuePair<String, String>("a", "b")
-                                                                                                        ]
-                                                                            ),
-                                       CommonAPI:                           cpo1CommonAPI_v2_1_1,
-                                       APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.1.1/api"),
-                                       WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.1.1/webapi"),
-                                       BasePath:                            HTTPPath.Parse("/ocpi/v2.1.1")
-                                   );
+            cpo1CommonWebAPI   = new CommonWebAPI(
+                                     cpo1CommonHTTPAPI,
+                                     OverlayURLPathPrefix:                HTTPPath.Parse("/ocpi"),
+                                     HTTPRealm:                           "GraphDefined OCPI CPO #1 WebAPI",
+                                     HTTPLogins:                          [
+                                                                              new KeyValuePair<String, String>("a", "b")
+                                                                          ]
+                                 );
 
-            cpo1WebAPI_v2_2_1    = new OCPIv2_2_1.WebAPI.OCPIWebAPI(
-                                       CommonWebAPI:                        new WebAPI.CommonWebAPI(
-                                                                                cpo1BaseAPI,
-                                                                                //HTTPServer:             cpo1HTTPServer,
-                                                                                OverlayURLPathPrefix:   HTTPPath.Parse("/ocpi/v2.2.1"),
-                                                                                HTTPRealm:              "GraphDefined OCPI CPO #1 WebAPI",
-                                                                                HTTPLogins:             [
-                                                                                                            new KeyValuePair<String, String>("a", "b")
-                                                                                                        ]
-                                                                            ),
-                                       CommonAPI:                           cpo1CommonAPI_v2_2_1,
-                                       APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.2.1/api"),
-                                       WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.2.1/webapi"),
-                                       BasePath:                            HTTPPath.Parse("/ocpi/v2.2.1")
-                                   );
+            //cpo1WebAPI_v2_1_1  = new OCPIv2_1_1.WebAPI.OCPIWebAPI(
+            //                         CommonWebAPI:                        cpo1CommonWebAPI,
+            //                         CommonAPI:                           cpo1CommonAPI_v2_1_1,
+            //                         APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.1.1/api"),
+            //                         WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.1.1/webapi"),
+            //                         BasePath:                            HTTPPath.Parse("/ocpi/v2.1.1")
+            //                     );
 
-            cpo1WebAPI_v2_3_0    = new OCPIv2_3_0.WebAPI.OCPIWebAPI(
-                                       CommonWebAPI:                        new WebAPI.CommonWebAPI(
-                                                                                cpo1BaseAPI,
-                                                                                //HTTPServer:             cpo1HTTPServer,
-                                                                                OverlayURLPathPrefix:   HTTPPath.Parse("/ocpi/v2.3.0"),
-                                                                                HTTPRealm:              "GraphDefined OCPI CPO #1 WebAPI",
-                                                                                HTTPLogins:             [
-                                                                                                            new KeyValuePair<String, String>("a", "b")
-                                                                                                        ]
-                                                                            ),
-                                       CommonAPI:                           cpo1CommonAPI_v2_3_0,
-                                       APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.3.0/api"),
-                                       WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.3.0/webapi"),
-                                       BasePath:                            HTTPPath.Parse("/ocpi/v2.3.0")
-                                   );
+            //cpo1WebAPI_v2_2_1  = new OCPIv2_2_1.WebAPI.OCPIWebAPI(
+            //                         CommonWebAPI:                        cpo1CommonWebAPI,
+            //                         CommonAPI:                           cpo1CommonAPI_v2_2_1,
+            //                         APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.2.1/api"),
+            //                         WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.2.1/webapi"),
+            //                         BasePath:                            HTTPPath.Parse("/ocpi/v2.2.1")
+            //                     );
+
+            //cpo1WebAPI_v2_3_0  = new OCPIv2_3_0.WebAPI.OCPIWebAPI(
+            //                         CommonWebAPI:                        cpo1CommonWebAPI,
+            //                         CommonAPI:                           cpo1CommonAPI_v2_3_0,
+            //                         APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.3.0/api"),
+            //                         WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.3.0/webapi"),
+            //                         BasePath:                            HTTPPath.Parse("/ocpi/v2.3.0")
+            //                     );
 
             #endregion
 
             #region CPO #2
 
-            cpo2WebAPI_v2_1_1    = new OCPIv2_1_1.WebAPI.OCPIWebAPI(
-                                       CommonWebAPI:                        new WebAPI.CommonWebAPI(
-                                                                                cpo2BaseAPI,
-                                                                                //HTTPServer:             cpo2HTTPServer,
-                                                                                OverlayURLPathPrefix:   HTTPPath.Parse("/ocpi/v2.1.1"),
-                                                                                HTTPRealm:              "GraphDefined OCPI CPO #2 WebAPI",
-                                                                                HTTPLogins:             [
-                                                                                                            new KeyValuePair<String, String>("a", "b")
-                                                                                                        ]
-                                                                            ),
-                                       CommonAPI:                           cpo2CommonAPI_v2_1_1,
-                                       APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.1.1/api"),
-                                       WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.1.1/webapi"),
-                                       BasePath:                            HTTPPath.Parse("/ocpi/v2.1.1")
-                                   );
+            //cpo2CommonWebAPI   = new CommonWebAPI(
+            //                         cpo2CommonHTTPAPI,
+            //                         OverlayURLPathPrefix:                HTTPPath.Parse("/ocpi"),
+            //                         HTTPRealm:                           "GraphDefined OCPI CPO #2 WebAPI",
+            //                         HTTPLogins:                          [
+            //                                                                  new KeyValuePair<String, String>("a", "b")
+            //                                                              ]
+            //                     );
 
-
-
+            //cpo2WebAPI_v2_1_1  = new OCPIv2_1_1.WebAPI.OCPIWebAPI(
+            //                         CommonWebAPI:                        cpo2CommonWebAPI,
+            //                         CommonAPI:                           cpo2CommonAPI_v2_1_1,
+            //                         APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.1.1/api"),
+            //                         WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.1.1/webapi"),
+            //                         BasePath:                            HTTPPath.Parse("/ocpi/v2.1.1")
+            //                     );
 
             #endregion
 
-
-
-
-            //emsp1WebAPI          = new OCPIWebAPI(
-            //                           HTTPServer:                          emsp1HTTPAPI.HTTPServer,
-            //                           CommonAPI:                           emsp1CommonAPI,
-            //                           OverlayURLPathPrefix:                HTTPPath.Parse("/ocpi/v2.1"),
-            //                           APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.1/api"),
-            //                           WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.1/webapi"),
-            //                           BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
-            //                           HTTPRealm:                           "GraphDefined OCPI EMSP #1 WebAPI",
-            //                           HTTPLogins:                          [
-            //                                                                    new KeyValuePair<String, String>("c", "d")
-            //                                                                ]
-            //                       );
-
-            //emsp2WebAPI          = new OCPIWebAPI(
-            //                           HTTPServer:                          emsp2HTTPAPI.HTTPServer,
-            //                           CommonAPI:                           emsp2CommonAPI,
-            //                           OverlayURLPathPrefix:                HTTPPath.Parse("/ocpi/v2.1"),
-            //                           APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.1/api"),
-            //                           WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.1/webapi"),
-            //                           BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
-            //                           HTTPRealm:                           "GraphDefined OCPI EMSP #2 WebAPI",
-            //                           HTTPLogins:                          [
-            //                                                                    new KeyValuePair<String, String>("e", "f")
-            //                                                                ]
-            //                       );
-
+            Assert.That(cpo1CommonWebAPI,   Is.Not.Null);
             //Assert.That(cpo1WebAPI_v2_1_1,  Is.Not.Null);
-            //Assert.That(cpo2WebAPI_v2_1_1,  Is.Not.Null);
+            //Assert.That(cpo1WebAPI_v2_2_1,  Is.Not.Null);
+            //Assert.That(cpo1WebAPI_v2_3_0,  Is.Not.Null);
 
-            //ClassicAssert.IsNotNull(cpoWebAPI);
-            //ClassicAssert.IsNotNull(emsp1WebAPI);
-            //ClassicAssert.IsNotNull(emsp2WebAPI);
+
 
             #endregion
 
@@ -2311,44 +2316,23 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             Assert.That(emsp2CommonAPI_v2_2_1.RemoteParties.Count(),  Is.EqualTo(2));
             Assert.That(emsp2CommonAPI_v2_3_0.RemoteParties.Count(),  Is.EqualTo(2));
 
-            var round = 1;
 
-            while (!(File.Exists(cpo1CommonAPI_v2_1_1. RemotePartyDBFileName) ||
-                     File.Exists(cpo1CommonAPI_v2_2_1. RemotePartyDBFileName) ||
-                     File.Exists(cpo1CommonAPI_v2_3_0. RemotePartyDBFileName) ||
+            // Check the RemoteParty database files...
+            Assert.That(await checkFile(cpo1CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+            Assert.That(await checkFile(cpo1CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+            Assert.That(await checkFile(cpo1CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
 
-                     File.Exists(emsp1CommonAPI_v2_1_1.RemotePartyDBFileName) ||
-                     File.Exists(emsp1CommonAPI_v2_2_1.RemotePartyDBFileName) ||
-                     File.Exists(emsp1CommonAPI_v2_3_0.RemotePartyDBFileName) ||
+            Assert.That(await checkFile(cpo2CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+            Assert.That(await checkFile(cpo2CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+            Assert.That(await checkFile(cpo2CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
 
-                     File.Exists(emsp2CommonAPI_v2_1_1.RemotePartyDBFileName) ||
-                     File.Exists(emsp2CommonAPI_v2_2_1.RemotePartyDBFileName) ||
-                     File.Exists(emsp2CommonAPI_v2_3_0.RemotePartyDBFileName)))
-            {
+            Assert.That(await checkFile(emsp1CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+            Assert.That(await checkFile(emsp1CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+            Assert.That(await checkFile(emsp1CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
 
-                await Task.Delay(100);
-                round++;
-
-                if (round > 50)
-                    break;
-
-            }
-
-            Assert.That(File.ReadAllLines(cpo1CommonAPI_v2_1_1. RemotePartyDBFileName).Length,  Is.EqualTo(2));
-            Assert.That(File.ReadAllLines(cpo1CommonAPI_v2_2_1. RemotePartyDBFileName).Length,  Is.EqualTo(2));
-            Assert.That(File.ReadAllLines(cpo1CommonAPI_v2_3_0. RemotePartyDBFileName).Length,  Is.EqualTo(2));
-
-            Assert.That(File.ReadAllLines(cpo2CommonAPI_v2_1_1. RemotePartyDBFileName).Length,  Is.EqualTo(2));
-            Assert.That(File.ReadAllLines(cpo2CommonAPI_v2_2_1. RemotePartyDBFileName).Length,  Is.EqualTo(2));
-            Assert.That(File.ReadAllLines(cpo2CommonAPI_v2_3_0. RemotePartyDBFileName).Length,  Is.EqualTo(2));
-
-            Assert.That(File.ReadAllLines(emsp1CommonAPI_v2_1_1.RemotePartyDBFileName).Length,  Is.EqualTo(2));
-            Assert.That(File.ReadAllLines(emsp1CommonAPI_v2_2_1.RemotePartyDBFileName).Length,  Is.EqualTo(2));
-            Assert.That(File.ReadAllLines(emsp1CommonAPI_v2_3_0.RemotePartyDBFileName).Length,  Is.EqualTo(2));
-
-            Assert.That(File.ReadAllLines(emsp2CommonAPI_v2_1_1.RemotePartyDBFileName).Length,  Is.EqualTo(2));
-            Assert.That(File.ReadAllLines(emsp2CommonAPI_v2_2_1.RemotePartyDBFileName).Length,  Is.EqualTo(2));
-            Assert.That(File.ReadAllLines(emsp2CommonAPI_v2_3_0.RemotePartyDBFileName).Length,  Is.EqualTo(2));
+            Assert.That(await checkFile(emsp2CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+            Assert.That(await checkFile(emsp2CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+            Assert.That(await checkFile(emsp2CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
 
             #endregion
 
