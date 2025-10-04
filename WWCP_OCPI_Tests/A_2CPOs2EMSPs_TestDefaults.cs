@@ -613,7 +613,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                IsDevelopment:               null,
                                DevelopmentServers:          null,
-                               SkipURLTemplates:            null,
+                               //SkipURLTemplates:            null,
                                DatabaseFileName:            null,
                                DisableNotifications:        null,
 

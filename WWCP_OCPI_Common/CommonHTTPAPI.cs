@@ -764,7 +764,65 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region Events
 
-        #region (protected internal) GetVersionsRequest (Request)
+        #region (protected internal) GetRootRequest      (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET / request was received.
+        /// </summary>
+        public HTTPRequestLogEventX OnGetRootRequest = new();
+
+        /// <summary>
+        /// An event sent whenever a GET / request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">A HTTP request.</param>
+        protected internal Task GetRootRequest(DateTimeOffset     Timestamp,
+                                               HTTPAPIX           API,
+                                               HTTPRequest        Request,
+                                               CancellationToken  CancellationToken)
+
+            => OnGetRootRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
+
+        #endregion
+
+        #region (protected internal) GetRootResponse     (Response)
+
+        /// <summary>
+        /// An event sent whenever a GET / response was sent.
+        /// </summary>
+        public HTTPResponseLogEventX OnGetRootResponse = new();
+
+        /// <summary>
+        /// An event sent whenever a GET / response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="Response">A HTTP response.</param>
+        protected internal Task GetRootResponse(DateTimeOffset     Timestamp,
+                                                HTTPAPIX           API,
+                                                HTTPRequest        Request,
+                                                HTTPResponse       Response,
+                                                CancellationToken  CancellationToken)
+
+            => OnGetRootResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
+
+        #endregion
+
+
+        #region (protected internal) GetVersionsRequest  (Request)
 
         /// <summary>
         /// An event sent whenever a GET versions request was received.
@@ -791,7 +849,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (protected internal) GetVersionsResponse(Response)
+        #region (protected internal) GetVersionsResponse (Response)
 
         /// <summary>
         /// An event sent whenever a GET versions response was sent.
@@ -884,7 +942,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                              Boolean?                       IsDevelopment             = null,
                              IEnumerable<String>?           DevelopmentServers        = null,
-                             Boolean?                       SkipURLTemplates          = false,
+                             //Boolean?                       SkipURLTemplates          = false,
                              String?                        DatabaseFileName          = DefaultAssetsDBFileName,
                              Boolean?                       DisableNotifications      = false,
 
@@ -1036,7 +1094,9 @@ namespace cloud.charging.open.protocols.OCPI
                 HTTPMethod.GET,
                 URLPathPrefix,
                 HTTPContentType.Text.PLAIN,
-                HTTPDelegate: request =>
+                HTTPRequestLogger:   GetRootRequest,
+                HTTPResponseLogger:  GetRootResponse,
+                HTTPDelegate:        request =>
 
                     Task.FromResult(
                         new HTTPResponse.Builder(request) {
@@ -1058,7 +1118,9 @@ namespace cloud.charging.open.protocols.OCPI
                 HTTPMethod.GET,
                 URLPathPrefix,
                 HTTPContentType.Application.JSON_UTF8,
-                HTTPDelegate: request =>
+                HTTPRequestLogger:   GetRootRequest,
+                HTTPResponseLogger:  GetRootResponse,
+                HTTPDelegate:        request =>
 
                     Task.FromResult(
                         new HTTPResponse.Builder(request) {

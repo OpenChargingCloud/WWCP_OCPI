@@ -271,8 +271,6 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                             String                                      HTTPRealm                 = DefaultHTTPRealm,
                             IEnumerable<KeyValuePair<String, String>>?  HTTPLogins                = null,
 
-                            //HTTPPath?                                   URLPathPrefix             = null,
-
                             String?                                     ExternalDNSName           = null,
                             String?                                     HTTPServerName            = DefaultHTTPServerName,
                             String?                                     HTTPServiceName           = DefaultHTTPServiceName,
