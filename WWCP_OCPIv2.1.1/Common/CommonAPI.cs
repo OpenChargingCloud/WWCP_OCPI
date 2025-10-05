@@ -33,7 +33,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
@@ -1428,7 +1428,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The Common API logger.
         /// </summary>
-        public CommonAPILogger?         CommonAPILogger            { get; }
+        public CommonAPILogger?         Logger                     { get; set; }
 
 
 
@@ -1890,16 +1890,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          String?                      APIVersionHash            = null,
                          JObject?                     APIVersionHashes          = null,
 
+                         String?                      DatabaseFilePath          = null,
+                         String?                      RemotePartyDBFileName     = null,
+                         String?                      AssetsDBFileName          = null,
+
                          Boolean?                     IsDevelopment             = false,
                          IEnumerable<String>?         DevelopmentServers        = null,
                          Boolean?                     DisableLogging            = false,
                          String?                      LoggingContext            = null,
                          String?                      LoggingPath               = null,
                          String?                      LogfileName               = null,
-                         OCPILogfileCreatorDelegate?  LogfileCreator            = null,
-                         String?                      DatabaseFilePath          = null,
-                         String?                      RemotePartyDBFileName     = null,
-                         String?                      AssetsDBFileName          = null)
+                         OCPILogfileCreatorDelegate?  LogfileCreator            = null)
 
             : base(Description ?? I18NString.Create($"OCPI{Version.String} Common HTTP API"),
                    BaseAPI.HTTPBaseAPI,
@@ -1946,7 +1947,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
                                                           AssetsDBFileName      ?? DefaultAssetsDBFileName);
 
-            this.CommonAPILogger           = this.DisableLogging == false
+            this.Logger                    = this.DisableLogging == false
                                                  ? new CommonAPILogger(
                                                        this,
                                                        LoggingContext,

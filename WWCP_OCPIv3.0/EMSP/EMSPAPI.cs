@@ -31,7 +31,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
+namespace cloud.charging.open.protocols.OCPIv3_0
 {
 
     /// <summary>
@@ -2730,7 +2730,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             #region GET    [/emsp] == /
 
             //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-            //                                   URLPathPrefix + "/emsp", "cloud.charging.open.protocols.OCPIv3_0.HTTPAPI.EMSPAPI.HTTPRoot",
+            //                                   URLPathPrefix + "/emsp", "cloud.charging.open.protocols.OCPIv3_0API.EMSPAPI.HTTPRoot",
             //                                   Assembly.GetCallingAssembly());
 
             //CommonAPI.AddOCPIMethod(
@@ -2743,8 +2743,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                             OCPIRequest: async Request => {
 
             //                                 var _MemoryStream = new MemoryStream();
-            //                                 typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv3_0.HTTPAPI.EMSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-            //                                 typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv3_0.HTTPAPI.EMSPAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv3_0API.EMSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv3_0API.EMSPAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
             //                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                     HTTPStatusCode  = HTTPStatusCode.OK,

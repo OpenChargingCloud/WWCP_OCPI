@@ -21,7 +21,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     public delegate Task OCPIResponseLoggerDelegate(String        LoggingPath,

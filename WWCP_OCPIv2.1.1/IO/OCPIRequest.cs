@@ -28,7 +28,7 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
@@ -139,7 +139,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 HTTPMethodAuthentication,
                 ContentTypeAuthentication,
 
-                (timestamp, httpAPI, httpRequest, ct)               => OCPIRequestLogger?. Invoke(timestamp, null, HTTP.OCPIRequest.Parse(httpRequest, CommonAPI), ct),
+                (timestamp, httpAPI, httpRequest, ct)               => OCPIRequestLogger?. Invoke(timestamp, null, OCPIRequest.Parse(httpRequest, CommonAPI), ct),
                 (timestamp, httpAPI, httpRequest, httpResponse, ct) => OCPIResponseLogger?.Invoke(timestamp, null, httpRequest. SubprotocolRequest  as OCPIRequest,
                                                                                                               (httpResponse.SubprotocolResponse as OCPIResponse) 
                                                                                                                    ?? new OCPIResponse(httpRequest.SubprotocolRequest as OCPIRequest,

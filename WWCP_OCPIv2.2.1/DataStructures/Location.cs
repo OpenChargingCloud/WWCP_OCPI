@@ -29,20 +29,12 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
+using cloud.charging.open.protocols.OCPIv2_2_1;
 
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
-
-    public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
-                                                                   Party_Id       CPOPartyId,
-                                                                   Location_Id?   Location      = null,
-                                                                   EVSE_UId?      EVSEUId       = null,
-                                                                   Connector_Id?  ConnectorId   = null,
-                                                                   EMSP_Id?       EMSPId        = null);
-
 
     /// <summary>
     /// The location is a group of EVSEs at more or less the same geographical location

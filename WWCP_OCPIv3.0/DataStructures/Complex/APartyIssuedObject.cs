@@ -20,7 +20,7 @@
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv3_0.HTTP;
+using cloud.charging.open.protocols.OCPIv3_0;
 
 #endregion
 

@@ -65,7 +65,7 @@ namespace cloud.charging.open.protocols.WWCP
                                       I18NString                                             Name,
                                       I18NString                                             Description,
 
-                                      OCPIv3_0.HTTP.CommonAPI                                CommonAPI,
+                                      OCPIv3_0.CommonAPI                                     CommonAPI,
 
                                       OCPI.    EVSEId_2_WWCPEVSEId_Delegate?                 CustomEVSEIdConverter                = null,
                                       OCPIv3_0.EVSE_2_WWCPEVSE_Delegate?                     CustomEVSEConverter                  = null,

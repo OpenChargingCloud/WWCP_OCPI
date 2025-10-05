@@ -29,7 +29,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     //public delegate String OCPILogfileCreatorDelegate(String LoggingPath, RemoteParty? RemoteParty, String Context, String LogfileName);

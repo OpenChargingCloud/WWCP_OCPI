@@ -594,7 +594,7 @@ namespace cloud.charging.open.protocols.OCPI
 
 
     /// <summary>
-    /// The CommonAPI Base.
+    /// The OCPI Common HTTP API.
     /// </summary>
     public class CommonHTTPAPI : AHTTPExtAPIXExtension<HTTPExtAPIX>
     {
@@ -759,6 +759,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// A template for OCPI client configurations.
         /// </summary>
         public ClientConfigurator       ClientConfigurations       { get; }
+
+        /// <summary>
+        /// The OCPI Common HTTP API logger.
+        /// </summary>
+        public CommonHTTPAPILogger?     Logger                     { get; set; }
 
         #endregion
 
@@ -985,6 +990,14 @@ namespace cloud.charging.open.protocols.OCPI
             this.ClientConfigurations     = new ClientConfigurator();
 
             RegisterURLTemplates();
+
+            if (!this.DisableLogging)
+                Logger = new CommonHTTPAPILogger(
+                             this,
+                             LoggingPath ?? AppContext.BaseDirectory,
+                             LoggingContext,
+                             LogfileCreator: LogfileCreator
+                         );
 
         }
 

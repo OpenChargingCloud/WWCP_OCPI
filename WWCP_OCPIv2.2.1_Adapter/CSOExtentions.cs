@@ -66,7 +66,7 @@ namespace cloud.charging.open.protocols.WWCP
                                         I18NString                                               Name,
                                         I18NString                                               Description,
 
-                                        OCPIv2_2_1.HTTP.CommonAPI                                CommonAPI,
+                                        OCPIv2_2_1.CommonAPI                                     CommonAPI,
 
                                         OCPIv2_2_1.GetTariffIds_Delegate?                        GetTariffIds                         = null,
 

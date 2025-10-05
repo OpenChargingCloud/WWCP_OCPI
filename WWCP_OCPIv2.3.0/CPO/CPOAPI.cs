@@ -31,7 +31,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
@@ -72,12 +72,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI v2.2 does not define any behaviour for this.
         /// </summary>
-        public Boolean?       AllowDowngrades       { get; }
+        public Boolean?       AllowDowngrades    { get; }
 
         /// <summary>
         /// The CPO API logger.
         /// </summary>
-        public CPOAPILogger?  CPOAPILogger          { get; }
+        public CPOAPILogger?  Logger             { get; set; }
 
         #endregion
 
@@ -1664,7 +1664,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HTTP
 
             this.AllowDowngrades  = AllowDowngrades;
 
-            this.CPOAPILogger     = this.DisableLogging == false
+            this.Logger           = this.DisableLogging == false
                                         ? new CPOAPILogger(
                                               this,
                                               LoggingContext,

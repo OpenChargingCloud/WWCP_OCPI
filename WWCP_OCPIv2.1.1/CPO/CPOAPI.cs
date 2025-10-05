@@ -31,7 +31,7 @@ using cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
@@ -77,7 +77,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The CPO API logger.
         /// </summary>
-        public CPOAPILogger?  CPOAPILogger       { get; }
+        public CPOAPILogger?  Logger             { get; set; }
 
         #endregion
 
@@ -1547,7 +1547,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             this.AllowDowngrades  = AllowDowngrades;
 
-            this.CPOAPILogger     = this.DisableLogging == false
+            this.Logger           = this.DisableLogging == false
                                         ? new CPOAPILogger(
                                               this,
                                               LoggingContext,

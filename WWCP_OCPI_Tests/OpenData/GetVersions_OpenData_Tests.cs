@@ -48,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 return;
             }
 
-            var graphDefinedCPO1 = new OCPIv2_1_1.HTTP.CommonClient(
+            var graphDefinedCPO1 = new OCPIv2_1_1.CommonClient(
                                        cpo1CommonHTTPAPI.OurVersionsURL
                                    );
 
@@ -142,7 +142,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 return;
             }
 
-            var graphDefinedCPO1 = new OCPIv2_2_1.HTTP.CommonClient(
+            var graphDefinedCPO1 = new OCPIv2_2_1.CommonClient(
                                        cpo1CommonHTTPAPI.OurVersionsURL
                                    );
 
@@ -236,7 +236,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 return;
             }
 
-            var graphDefinedCPO1 = new OCPIv2_3_0.HTTP.CommonClient(
+            var graphDefinedCPO1 = new OCPIv2_3_0.CommonClient(
                                        cpo1CommonHTTPAPI.OurVersionsURL
                                    );
 

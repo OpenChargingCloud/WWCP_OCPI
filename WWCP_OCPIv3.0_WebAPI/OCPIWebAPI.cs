@@ -26,8 +26,6 @@ using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv3_0.HTTP;
-using System;
 
 #endregion
 

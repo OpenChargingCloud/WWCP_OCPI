@@ -25,27 +25,18 @@ using NUnit.Framework;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
+using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPI.WebAPI;
 
 using cloud.charging.open.protocols.OCPIv2_1_1;
-using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
-using cloud.charging.open.protocols.OCPIv2_1_1.WebAPI;
-
 using cloud.charging.open.protocols.OCPIv2_2_1;
-using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
-using cloud.charging.open.protocols.OCPIv2_2_1.WebAPI;
-
 using cloud.charging.open.protocols.OCPIv2_3_0;
-using cloud.charging.open.protocols.OCPIv2_3_0.HTTP;
-using cloud.charging.open.protocols.OCPIv2_3_0.WebAPI;
-
 using cloud.charging.open.protocols.OCPIv3_0;
-using cloud.charging.open.protocols.OCPIv3_0.HTTP;
-using cloud.charging.open.protocols.OCPIv3_0.WebAPI;
 
 #endregion
 
@@ -292,175 +283,177 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         #region Data
 
+        private readonly DNSClient DNSClient;
+
         #region CPO #1
 
-        protected       HTTPTestServerX?                                              cpo1HTTPServer;
-        protected       HTTPExtAPIX?                                                  cpo1HTTPAPI;
-        public          URL?                                                          cpo1VersionsAPIURL;
-        protected       CommonHTTPAPI?                                                cpo1CommonHTTPAPI;
-        protected       CommonWebAPI?                                                 cpo1CommonWebAPI;
+        public          HTTPTestServerX?                                               cpo1HTTPServer;
+        protected       HTTPExtAPIX?                                                   cpo1HTTPAPI;
+        public          URL?                                                           cpo1VersionsAPIURL;
+        protected       CommonHTTPAPI?                                                 cpo1CommonHTTPAPI;
+        protected       CommonWebAPI?                                                  cpo1CommonWebAPI;
 
-        protected       OCPIv2_1_1.HTTP.CommonAPI?                                    cpo1CommonAPI_v2_1_1;
-        protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                 cpo1WebAPI_v2_1_1;
-        protected       OCPIv2_1_1.HTTP.CPOAPI?                                       cpo1CPOAPI_v2_1_1;
-        protected       OCPIv2_1_1.OCPICSOAdapter?                                    cpo1Adapter_v2_1_1;
-        protected       ConcurrentDictionary<DateTime, OCPIv2_1_1.HTTP.OCPIRequest>   cpo1APIRequestLogs_v2_1_1  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv2_1_1.OCPIResponse>       cpo1APIResponseLogs_v2_1_1 = [];
+        protected       OCPIv2_1_1.CommonAPI?                                          cpo1CommonAPI_v2_1_1;
+        protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                  cpo1WebAPI_v2_1_1;
+        protected       OCPIv2_1_1.CPOAPI?                                             cpo1CPOAPI_v2_1_1;
+        protected       OCPIv2_1_1.OCPICSOAdapter?                                     cpo1Adapter_v2_1_1;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIRequest>   cpo1APIRequestLogs_v2_1_1  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIResponse>  cpo1APIResponseLogs_v2_1_1 = [];
 
-        protected       OCPIv2_2_1.HTTP.CommonAPI?                                    cpo1CommonAPI_v2_2_1;
-        protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                 cpo1WebAPI_v2_2_1;
-        protected       OCPIv2_2_1.HTTP.CPOAPI?                                       cpo1CPOAPI_v2_2_1;
-        protected       OCPIv2_2_1.OCPICSOAdapter?                                    cpo1Adapter_v2_2_1;
-        protected       ConcurrentDictionary<DateTime, OCPIv2_2_1.HTTP.OCPIRequest>   cpo1APIRequestLogs_v2_2_1  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv2_2_1.OCPIResponse>       cpo1APIResponseLogs_v2_2_1 = [];
+        protected       OCPIv2_2_1.CommonAPI?                                          cpo1CommonAPI_v2_2_1;
+        protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                  cpo1WebAPI_v2_2_1;
+        protected       OCPIv2_2_1.CPOAPI?                                             cpo1CPOAPI_v2_2_1;
+        protected       OCPIv2_2_1.OCPICSOAdapter?                                     cpo1Adapter_v2_2_1;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIRequest>   cpo1APIRequestLogs_v2_2_1  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIResponse>  cpo1APIResponseLogs_v2_2_1 = [];
 
-        protected       OCPIv2_3_0.HTTP.CommonAPI?                                    cpo1CommonAPI_v2_3_0;
-        protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                 cpo1WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.HTTP.CPOAPI?                                       cpo1CPOAPI_v2_3_0;
-        protected       OCPIv2_3_0.OCPICSOAdapter?                                    cpo1Adapter_v2_3_0;
-        protected       ConcurrentDictionary<DateTime, OCPIv2_3_0.HTTP.OCPIRequest>   cpo1APIRequestLogs_v2_3_0  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv2_3_0.OCPIResponse>       cpo1APIResponseLogs_v2_3_0 = [];
+        protected       OCPIv2_3_0.CommonAPI?                                          cpo1CommonAPI_v2_3_0;
+        protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                  cpo1WebAPI_v2_3_0;
+        protected       OCPIv2_3_0.CPOAPI?                                             cpo1CPOAPI_v2_3_0;
+        protected       OCPIv2_3_0.OCPICSOAdapter?                                     cpo1Adapter_v2_3_0;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   cpo1APIRequestLogs_v2_3_0  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  cpo1APIResponseLogs_v2_3_0 = [];
 
-        protected       OCPIv3_0.HTTP.CommonAPI?                                      cpo1CommonAPI_v3_0;
-        protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                   cpo1WebAPI_v3_0;
-        protected       OCPIv3_0.HTTP.CPOAPI?                                         cpo1CPOAPI_v3_0;
-        protected       OCPIv3_0.OCPICSOAdapter?                                      cpo1Adapter_v3_0;
-        protected       ConcurrentDictionary<DateTime, OCPIv3_0.HTTP.OCPIRequest>     cpo1APIRequestLogs_v3_0  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv3_0.OCPIResponse>         cpo1APIResponseLogs_v3_0 = [];
+        protected       OCPIv3_0.CommonAPI?                                            cpo1CommonAPI_v3_0;
+        protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                    cpo1WebAPI_v3_0;
+        protected       OCPIv3_0.CPOAPI?                                               cpo1CPOAPI_v3_0;
+        protected       OCPIv3_0.OCPICSOAdapter?                                       cpo1Adapter_v3_0;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     cpo1APIRequestLogs_v3_0  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    cpo1APIResponseLogs_v3_0 = [];
 
-        protected const String                                                        cpo1_accessing_emsp1__token   = "cpo1_accessing_emsp1++token";
-        protected const String                                                        cpo1_accessing_emsp2__token   = "cpo1_accessing_emsp2++token";
+        protected const String                                                         cpo1_accessing_emsp1__token   = "cpo1_accessing_emsp1++token";
+        protected const String                                                         cpo1_accessing_emsp2__token   = "cpo1_accessing_emsp2++token";
 
         #endregion
 
         #region CPO #2
 
-        protected       HTTPTestServerX?                                              cpo2HTTPServer;
-        protected       HTTPExtAPIX?                                                  cpo2HTTPAPI;
-        public          URL?                                                          cpo2VersionsAPIURL;
-        protected       CommonHTTPAPI?                                                cpo2CommonHTTPAPI;
-        protected       CommonWebAPI?                                                 cpo2CommonWebAPI;
+        public          HTTPTestServerX?                                               cpo2HTTPServer;
+        protected       HTTPExtAPIX?                                                   cpo2HTTPAPI;
+        public          URL?                                                           cpo2VersionsAPIURL;
+        protected       CommonHTTPAPI?                                                 cpo2CommonHTTPAPI;
+        protected       CommonWebAPI?                                                  cpo2CommonWebAPI;
 
-        protected       OCPIv2_1_1.HTTP.CommonAPI?                                    cpo2CommonAPI_v2_1_1;
-        protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                 cpo2WebAPI_v2_1_1;
-        protected       OCPIv2_1_1.HTTP.CPOAPI?                                       cpo2CPOAPI_v2_1_1;
-        protected       OCPIv2_1_1.OCPICSOAdapter?                                    cpo2Adapter_v2_1_1;
-        protected       ConcurrentDictionary<DateTime, OCPIv2_1_1.HTTP.OCPIRequest>   cpo2APIRequestLogs_v2_1_1  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv2_1_1.OCPIResponse>       cpo2APIResponseLogs_v2_1_1 = [];
+        protected       OCPIv2_1_1.CommonAPI?                                          cpo2CommonAPI_v2_1_1;
+        protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                  cpo2WebAPI_v2_1_1;
+        protected       OCPIv2_1_1.CPOAPI?                                             cpo2CPOAPI_v2_1_1;
+        protected       OCPIv2_1_1.OCPICSOAdapter?                                     cpo2Adapter_v2_1_1;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIRequest>   cpo2APIRequestLogs_v2_1_1  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIResponse>  cpo2APIResponseLogs_v2_1_1 = [];
 
-        protected       OCPIv2_2_1.HTTP.CommonAPI?                                    cpo2CommonAPI_v2_2_1;
-        protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                 cpo2WebAPI_v2_2_1;
-        protected       OCPIv2_2_1.HTTP.CPOAPI?                                       cpo2CPOAPI_v2_2_1;
-        protected       OCPIv2_2_1.OCPICSOAdapter?                                    cpo2Adapter_v2_2_1;
-        protected       ConcurrentDictionary<DateTime, OCPIv2_2_1.HTTP.OCPIRequest>   cpo2APIRequestLogs_v2_2_1  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv2_2_1.OCPIResponse>       cpo2APIResponseLogs_v2_2_1 = [];
+        protected       OCPIv2_2_1.CommonAPI?                                          cpo2CommonAPI_v2_2_1;
+        protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                  cpo2WebAPI_v2_2_1;
+        protected       OCPIv2_2_1.CPOAPI?                                             cpo2CPOAPI_v2_2_1;
+        protected       OCPIv2_2_1.OCPICSOAdapter?                                     cpo2Adapter_v2_2_1;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIRequest>   cpo2APIRequestLogs_v2_2_1  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIResponse>  cpo2APIResponseLogs_v2_2_1 = [];
 
-        protected       OCPIv2_3_0.HTTP.CommonAPI?                                    cpo2CommonAPI_v2_3_0;
-        protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                 cpo2WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.HTTP.CPOAPI?                                       cpo2CPOAPI_v2_3_0;
-        protected       OCPIv2_3_0.OCPICSOAdapter?                                    cpo2Adapter_v2_3_0;
-        protected       ConcurrentDictionary<DateTime, OCPIv2_3_0.HTTP.OCPIRequest>   cpo2APIRequestLogs_v2_3_0  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv2_3_0.OCPIResponse>       cpo2APIResponseLogs_v2_3_0 = [];
+        protected       OCPIv2_3_0.CommonAPI?                                          cpo2CommonAPI_v2_3_0;
+        protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                  cpo2WebAPI_v2_3_0;
+        protected       OCPIv2_3_0.CPOAPI?                                             cpo2CPOAPI_v2_3_0;
+        protected       OCPIv2_3_0.OCPICSOAdapter?                                     cpo2Adapter_v2_3_0;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   cpo2APIRequestLogs_v2_3_0  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  cpo2APIResponseLogs_v2_3_0 = [];
 
-        protected       OCPIv3_0.HTTP.CommonAPI?                                      cpo2CommonAPI_v3_0;
-        protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                   cpo2WebAPI_v3_0;
-        protected       OCPIv3_0.HTTP.CPOAPI?                                         cpo2CPOAPI_v3_0;
-        protected       OCPIv3_0.OCPICSOAdapter?                                      cpo2Adapter_v3_0;
-        protected       ConcurrentDictionary<DateTime, OCPIv3_0.HTTP.OCPIRequest>     cpo2APIRequestLogs_v3_0  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv3_0.OCPIResponse>         cpo2APIResponseLogs_v3_0 = [];
+        protected       OCPIv3_0.CommonAPI?                                            cpo2CommonAPI_v3_0;
+        protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                    cpo2WebAPI_v3_0;
+        protected       OCPIv3_0.CPOAPI?                                               cpo2CPOAPI_v3_0;
+        protected       OCPIv3_0.OCPICSOAdapter?                                       cpo2Adapter_v3_0;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     cpo2APIRequestLogs_v3_0  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    cpo2APIResponseLogs_v3_0 = [];
 
-        protected const String                                                        cpo2_accessing_emsp1__token   = "cpo2_accessing_emsp1++token";
-        protected const String                                                        cpo2_accessing_emsp2__token   = "cpo2_accessing_emsp2++token";
+        protected const String                                                         cpo2_accessing_emsp1__token   = "cpo2_accessing_emsp1++token";
+        protected const String                                                         cpo2_accessing_emsp2__token   = "cpo2_accessing_emsp2++token";
 
         #endregion
 
         #region EMSP #1
 
-        protected       HTTPTestServerX?                                              emsp1HTTPServer;
-        protected       HTTPExtAPIX?                                                  emsp1HTTPAPI;
-        public          URL?                                                          emsp1VersionsAPIURL;
-        protected       CommonHTTPAPI?                                                emsp1CommonHTTPAPI;
-        protected       CommonWebAPI?                                                 emsp1CommonWebAPI;
+        public          HTTPTestServerX?                                               emsp1HTTPServer;
+        protected       HTTPExtAPIX?                                                   emsp1HTTPAPI;
+        public          URL?                                                           emsp1VersionsAPIURL;
+        protected       CommonHTTPAPI?                                                 emsp1CommonHTTPAPI;
+        protected       CommonWebAPI?                                                  emsp1CommonWebAPI;
 
-        protected       OCPIv2_1_1.HTTP.CommonAPI?                                    emsp1CommonAPI_v2_1_1;
-        protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                 emsp1WebAPI_v2_1_1;
-        protected       OCPIv2_1_1.HTTP.EMSPAPI?                                      emsp1EMSPAPI_v2_1_1;
-        protected       OCPIv2_1_1.OCPIEMPAdapter?                                    emsp1Adapter_v2_1_1;
-        protected       ConcurrentDictionary<DateTime, OCPIv2_1_1.HTTP.OCPIRequest>   emsp1APIRequestLogs_v2_1_1  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv2_1_1.OCPIResponse>       emsp1APIResponseLogs_v2_1_1 = [];
+        protected       OCPIv2_1_1.CommonAPI?                                          emsp1CommonAPI_v2_1_1;
+        protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                  emsp1WebAPI_v2_1_1;
+        protected       OCPIv2_1_1.EMSPAPI?                                            emsp1EMSPAPI_v2_1_1;
+        protected       OCPIv2_1_1.OCPIEMPAdapter?                                     emsp1Adapter_v2_1_1;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIRequest>   emsp1APIRequestLogs_v2_1_1  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIResponse>  emsp1APIResponseLogs_v2_1_1 = [];
 
-        protected       OCPIv2_2_1.HTTP.CommonAPI?                                    emsp1CommonAPI_v2_2_1;
-        protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                 emsp1WebAPI_v2_2_1;
-        protected       OCPIv2_2_1.HTTP.EMSPAPI?                                      emsp1EMSPAPI_v2_2_1;
-        protected       OCPIv2_2_1.OCPIEMPAdapter?                                    emsp1Adapter_v2_2_1;
-        protected       ConcurrentDictionary<DateTime, OCPIv2_2_1.HTTP.OCPIRequest>   emsp1APIRequestLogs_v2_2_1  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv2_2_1.OCPIResponse>       emsp1APIResponseLogs_v2_2_1 = [];
+        protected       OCPIv2_2_1.CommonAPI?                                          emsp1CommonAPI_v2_2_1;
+        protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                  emsp1WebAPI_v2_2_1;
+        protected       OCPIv2_2_1.EMSPAPI?                                            emsp1EMSPAPI_v2_2_1;
+        protected       OCPIv2_2_1.OCPIEMPAdapter?                                     emsp1Adapter_v2_2_1;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIRequest>   emsp1APIRequestLogs_v2_2_1  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIResponse>  emsp1APIResponseLogs_v2_2_1 = [];
 
-        protected       OCPIv2_3_0.HTTP.CommonAPI?                                    emsp1CommonAPI_v2_3_0;
-        protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                 emsp1WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.HTTP.EMSPAPI?                                      emsp1EMSPAPI_v2_3_0;
-        protected       OCPIv2_3_0.OCPIEMPAdapter?                                    emsp1Adapter_v2_3_0;
-        protected       ConcurrentDictionary<DateTime, OCPIv2_3_0.HTTP.OCPIRequest>   emsp1APIRequestLogs_v2_3_0  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv2_3_0.OCPIResponse>       emsp1APIResponseLogs_v2_3_0 = [];
+        protected       OCPIv2_3_0.CommonAPI?                                          emsp1CommonAPI_v2_3_0;
+        protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                  emsp1WebAPI_v2_3_0;
+        protected       OCPIv2_3_0.EMSPAPI?                                            emsp1EMSPAPI_v2_3_0;
+        protected       OCPIv2_3_0.OCPIEMPAdapter?                                     emsp1Adapter_v2_3_0;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   emsp1APIRequestLogs_v2_3_0  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  emsp1APIResponseLogs_v2_3_0 = [];
 
-        protected       OCPIv3_0.HTTP.CommonAPI?                                      emsp1CommonAPI_v3_0;
-        protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                   emsp1WebAPI_v3_0;
-        protected       OCPIv3_0.HTTP.EMSPAPI?                                        emsp1EMSPAPI_v3_0;
-        protected       OCPIv3_0.OCPIEMPAdapter?                                      emsp1Adapter_v3_0;
-        protected       ConcurrentDictionary<DateTime, OCPIv3_0.HTTP.OCPIRequest>     emsp1APIRequestLogs_v3_0  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv3_0.OCPIResponse>         emsp1APIResponseLogs_v3_0 = [];
+        protected       OCPIv3_0.CommonAPI?                                            emsp1CommonAPI_v3_0;
+        protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                    emsp1WebAPI_v3_0;
+        protected       OCPIv3_0.EMSPAPI?                                              emsp1EMSPAPI_v3_0;
+        protected       OCPIv3_0.OCPIEMPAdapter?                                       emsp1Adapter_v3_0;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     emsp1APIRequestLogs_v3_0  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    emsp1APIResponseLogs_v3_0 = [];
 
-        protected const String                                                        emsp1_accessing_cpo1__token   = "emsp1_accessing_cpo1++token";
-        protected const String                                                        emsp2_accessing_cpo1__token   = "emsp2_accessing_cpo2++token";
+        protected const String                                                         emsp1_accessing_cpo1__token   = "emsp1_accessing_cpo1++token";
+        protected const String                                                         emsp2_accessing_cpo1__token   = "emsp2_accessing_cpo2++token";
 
         #endregion
 
         #region EMSP #2
 
-        protected       HTTPTestServerX?                                              emsp2HTTPServer;
-        protected       HTTPExtAPIX?                                                  emsp2HTTPAPI;
-        public          URL?                                                          emsp2VersionsAPIURL;
-        protected       CommonHTTPAPI?                                                emsp2CommonHTTPAPI;
-        protected       CommonWebAPI?                                                 emsp2CommonWebAPI;
+        public          HTTPTestServerX?                                               emsp2HTTPServer;
+        protected       HTTPExtAPIX?                                                   emsp2HTTPAPI;
+        public          URL?                                                           emsp2VersionsAPIURL;
+        protected       CommonHTTPAPI?                                                 emsp2CommonHTTPAPI;
+        protected       CommonWebAPI?                                                  emsp2CommonWebAPI;
 
-        protected       OCPIv2_1_1.HTTP.CommonAPI?                                    emsp2CommonAPI_v2_1_1;
-        protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                 emsp2WebAPI_v2_1_1;
-        protected       OCPIv2_1_1.HTTP.EMSPAPI?                                      emsp2EMSPAPI_v2_1_1;
-        protected       OCPIv2_1_1.OCPIEMPAdapter?                                    emsp2Adapter_v2_1_1;
-        protected       ConcurrentDictionary<DateTime, OCPIv2_1_1.HTTP.OCPIRequest>   emsp2APIRequestLogs_v2_1_1  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv2_1_1.OCPIResponse>       emsp2APIResponseLogs_v2_1_1 = [];
+        protected       OCPIv2_1_1.CommonAPI?                                          emsp2CommonAPI_v2_1_1;
+        protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                  emsp2WebAPI_v2_1_1;
+        protected       OCPIv2_1_1.EMSPAPI?                                            emsp2EMSPAPI_v2_1_1;
+        protected       OCPIv2_1_1.OCPIEMPAdapter?                                     emsp2Adapter_v2_1_1;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIRequest>   emsp2APIRequestLogs_v2_1_1  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIResponse>  emsp2APIResponseLogs_v2_1_1 = [];
 
-        protected       OCPIv2_2_1.HTTP.CommonAPI?                                    emsp2CommonAPI_v2_2_1;
-        protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                 emsp2WebAPI_v2_2_1;
-        protected       OCPIv2_2_1.HTTP.EMSPAPI?                                      emsp2EMSPAPI_v2_2_1;
-        protected       OCPIv2_2_1.OCPIEMPAdapter?                                    emsp2Adapter_v2_2_1;
-        protected       ConcurrentDictionary<DateTime, OCPIv2_2_1.HTTP.OCPIRequest>   emsp2APIRequestLogs_v2_2_1  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv2_2_1.OCPIResponse>       emsp2APIResponseLogs_v2_2_1 = [];
+        protected       OCPIv2_2_1.CommonAPI?                                          emsp2CommonAPI_v2_2_1;
+        protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                  emsp2WebAPI_v2_2_1;
+        protected       OCPIv2_2_1.EMSPAPI?                                            emsp2EMSPAPI_v2_2_1;
+        protected       OCPIv2_2_1.OCPIEMPAdapter?                                     emsp2Adapter_v2_2_1;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIRequest>   emsp2APIRequestLogs_v2_2_1  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIResponse>  emsp2APIResponseLogs_v2_2_1 = [];
 
-        protected       OCPIv2_3_0.HTTP.CommonAPI?                                    emsp2CommonAPI_v2_3_0;
-        protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                 emsp2WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.HTTP.EMSPAPI?                                      emsp2EMSPAPI_v2_3_0;
-        protected       OCPIv2_3_0.OCPIEMPAdapter?                                    emsp2Adapter_v2_3_0;
-        protected       ConcurrentDictionary<DateTime, OCPIv2_3_0.HTTP.OCPIRequest>   emsp2APIRequestLogs_v2_3_0  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv2_3_0.OCPIResponse>       emsp2APIResponseLogs_v2_3_0 = [];
+        protected       OCPIv2_3_0.CommonAPI?                                          emsp2CommonAPI_v2_3_0;
+        protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                  emsp2WebAPI_v2_3_0;
+        protected       OCPIv2_3_0.EMSPAPI?                                            emsp2EMSPAPI_v2_3_0;
+        protected       OCPIv2_3_0.OCPIEMPAdapter?                                     emsp2Adapter_v2_3_0;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   emsp2APIRequestLogs_v2_3_0  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  emsp2APIResponseLogs_v2_3_0 = [];
 
-        protected       OCPIv3_0.HTTP.CommonAPI?                                      emsp2CommonAPI_v3_0;
-        protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                   emsp2WebAPI_v3_0;
-        protected       OCPIv3_0.HTTP.EMSPAPI?                                        emsp2EMSPAPI_v3_0;
-        protected       OCPIv3_0.OCPIEMPAdapter?                                      emsp2Adapter_v3_0;
-        protected       ConcurrentDictionary<DateTime, OCPIv3_0.HTTP.OCPIRequest>     emsp2APIRequestLogs_v3_0  = [];
-        protected       ConcurrentDictionary<DateTime, OCPIv3_0.OCPIResponse>         emsp2APIResponseLogs_v3_0 = [];
+        protected       OCPIv3_0.CommonAPI?                                            emsp2CommonAPI_v3_0;
+        protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                    emsp2WebAPI_v3_0;
+        protected       OCPIv3_0.EMSPAPI?                                              emsp2EMSPAPI_v3_0;
+        protected       OCPIv3_0.OCPIEMPAdapter?                                       emsp2Adapter_v3_0;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     emsp2APIRequestLogs_v3_0  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    emsp2APIResponseLogs_v3_0 = [];
 
-        protected const String                                                        emsp1_accessing_cpo2__token   = "emsp1_accessing_cpo1++token";
-        protected const String                                                        emsp2_accessing_cpo2__token   = "emsp2_accessing_cpo2++token";
+        protected const String                                                         emsp1_accessing_cpo2__token   = "emsp1_accessing_cpo1++token";
+        protected const String                                                         emsp2_accessing_cpo2__token   = "emsp2_accessing_cpo2++token";
 
         #endregion
 
-        protected const String  UnknownToken       = "UnknownUnknownUnknownToken";
+        protected const String  UnknownToken      = "UnknownUnknownUnknownToken";
 
-        protected const String  BlockedToken       = "blocked-token";
-        protected const String  BlockedCPOToken    = "blocked-cpo";
-        protected const String  BlockedEMSPToken   = "blocked-emsp";
+        protected const String  BlockedToken      = "blocked-token";
+        protected const String  BlockedCPOToken   = "blocked-cpo";
+        protected const String  BlockedEMSPToken  = "blocked-emsp";
 
         #endregion
 
@@ -468,6 +461,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         public A_2CPOs2EMSPs_TestDefaults()
         {
+
+            this.DNSClient = new DNSClient(SearchForIPv6DNSServers: false);
 
         }
 
@@ -526,21 +521,25 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             cpo1HTTPServer           = new HTTPTestServerX(
                                            TCPPort:    IPPort.Parse(3301),
+                                           DNSClient:  DNSClient,
                                            AutoStart:  true
                                        );
 
             cpo2HTTPServer           = new HTTPTestServerX(
                                            TCPPort:    IPPort.Parse(3302),
+                                           DNSClient:  DNSClient,
                                            AutoStart:  true
                                        );
 
             emsp1HTTPServer          = new HTTPTestServerX(
                                            TCPPort:    IPPort.Parse(3401),
+                                           DNSClient:  DNSClient,
                                            AutoStart:  true
                                        );
 
             emsp2HTTPServer          = new HTTPTestServerX(
                                            TCPPort:    IPPort.Parse(3402),
+                                           DNSClient:  DNSClient,
                                            AutoStart:  true
                                        );
 
@@ -580,50 +579,73 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region Create cpo1/cpo2/emsp1/emsp2 OCPI Common HTTP APIs
 
+            var loggingPath = Path.Combine(AppContext.BaseDirectory, "default", "OCPI");
+
+            #region logfileCreator
+
+            static String logfileCreator(String         loggingPath2,
+                                         IRemoteParty?  remoteParty,
+                                         String         context,
+                                         String         logfileName)
+
+                => String.Concat(
+                       loggingPath2, Path.DirectorySeparatorChar,
+                       context.IsNotNullOrEmpty() ? context + Path.DirectorySeparatorChar : "",
+                       logfileName, "_",
+                       Timestamp.Now.Year, "-",
+                       Timestamp.Now.Month.ToString("D2"),
+                       ".log"
+                   );
+
+            #endregion
+
+
             #region CPO #1
 
             cpo1CommonHTTPAPI  = new CommonHTTPAPI(
 
-                               HTTPAPI:                     cpo1HTTPAPI,
-                               OurBaseURL:                  URL.Parse($"http://127.0.0.1:{cpo1HTTPServer.TCPPort}/ocpi"),
-                               OurVersionsURL:              URL.Parse($"http://127.0.0.1:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                                     HTTPAPI:                     cpo1HTTPAPI,
+                                     OurBaseURL:                  URL.Parse($"http://127.0.0.1:{cpo1HTTPServer.TCPPort}/ocpi"),
+                                     OurVersionsURL:              URL.Parse($"http://127.0.0.1:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
 
-                               Hostnames:                   null,
-                               RootPath:                    HTTPPath.Parse("/ocpi"),
-                               HTTPContentTypes:            null,
-                               Description:                 null,
+                                     Hostnames:                   null,
+                                     RootPath:                    HTTPPath.Parse("/ocpi"),
+                                     HTTPContentTypes:            null,
+                                     Description:                 null,
 
-                               BasePath:                    null,
+                                     BasePath:                    null,
 
-                               ExternalDNSName:             null,
-                               HTTPServerName:              null,
-                               HTTPServiceName:             null,
+                                     ExternalDNSName:             null,
+                                     HTTPServerName:              null,
+                                     HTTPServiceName:             null,
 
-                               APIVersionHash:              null,
-                               APIVersionHashes:            null,
+                                     APIVersionHash:              null,
+                                     APIVersionHashes:            null,
 
-                               APIRobotEMailAddress:        null,
-                               APIRobotGPGPassphrase:       null,
-                               SMTPClient:                  null,
+                                     APIRobotEMailAddress:        null,
+                                     APIRobotGPGPassphrase:       null,
+                                     SMTPClient:                  null,
 
-                               AdditionalURLPathPrefix:     null,
-                               LocationsAsOpenData:         true,
-                               TariffsAsOpenData:           true,
-                               AllowDowngrades:             null,
+                                     AdditionalURLPathPrefix:     null,
+                                     LocationsAsOpenData:         true,
+                                     TariffsAsOpenData:           true,
+                                     AllowDowngrades:             null,
 
-                               IsDevelopment:               null,
-                               DevelopmentServers:          null,
-                               //SkipURLTemplates:            null,
-                               DatabaseFileName:            null,
-                               DisableNotifications:        null,
+                                     IsDevelopment:               null,
+                                     DevelopmentServers:          null,
+                                     //SkipURLTemplates:            null,
+                                     DatabaseFileName:            null,
+                                     DisableNotifications:        null,
 
-                               DisableLogging:              null,
-                               LoggingContext:              null,
-                               LoggingPath:                 null,
-                               LogfileName:                 null,
-                               LogfileCreator:              null
+                                     DisableLogging:              false,
+                                     LoggingContext:              "CommonHTTPAPI",
+                                     LoggingPath:                 Path.Combine(loggingPath, "cpo1"),
+                                     LogfileName:                 null,
+                                     LogfileCreator:              logfileCreator
 
-                           );
+                                 );
+
+            cpo1CommonHTTPAPI.Logger?.Debug("all", LogTargets.Debug);
 
             #endregion
 
@@ -631,33 +653,48 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             cpo2CommonHTTPAPI  = new CommonHTTPAPI(
 
-                               HTTPAPI:                   cpo2HTTPAPI,
-                               OurBaseURL:                URL.Parse("http://127.0.0.1:3202/ocpi"),
-                               OurVersionsURL:            URL.Parse("http://127.0.0.1:3202/ocpi/versions"),
+                                     HTTPAPI:                   cpo2HTTPAPI,
+                                     OurBaseURL:                URL.Parse("http://127.0.0.1:3202/ocpi"),
+                                     OurVersionsURL:            URL.Parse("http://127.0.0.1:3202/ocpi/versions"),
 
-                               AdditionalURLPathPrefix:   null,
-                               //KeepRemovedEVSEs:          null,
-                               LocationsAsOpenData:       true,
-                               AllowDowngrades:           null,
+                                     Hostnames:                 null,
+                                     RootPath:                  HTTPPath.Parse("/ocpi"),
+                                     HTTPContentTypes:          null,
+                                     Description:               null,
 
-                               //HTTPHostname:              null,
-                               ExternalDNSName:           null,
-                               HTTPServiceName:           null,
-                               BasePath:                  null,
+                                     BasePath:                  null,
 
-                               //URLPathPrefix:               HTTPPath.Parse("/ocpi"),
-                               RootPath:                    HTTPPath.Parse("/ocpi"),
-                               APIVersionHashes:          null,
+                                     ExternalDNSName:           null,
+                                     HTTPServerName:            null,
+                                     HTTPServiceName:           null,
 
-                               IsDevelopment:             null,
-                               DevelopmentServers:        null,
-                               DisableLogging:            null,
-                               LoggingContext:            null,
-                               LoggingPath:               null,
-                               LogfileName:               null,
-                               LogfileCreator:            null
+                                     APIVersionHash:            null,
+                                     APIVersionHashes:          null,
 
-                           );
+                                     APIRobotEMailAddress:      null,
+                                     APIRobotGPGPassphrase:     null,
+                                     SMTPClient:                null,
+
+                                     AdditionalURLPathPrefix:   null,
+                                     LocationsAsOpenData:       true,
+                                     TariffsAsOpenData:         true,
+                                     AllowDowngrades:           null,
+
+                                     IsDevelopment:             null,
+                                     DevelopmentServers:        null,
+                                     //SkipURLTemplates:          null,
+                                     DatabaseFileName:          null,
+                                     DisableNotifications:      null,
+
+                                     DisableLogging:            false,
+                                     LoggingContext:            "CommonHTTPAPI",
+                                     LoggingPath:               Path.Combine(loggingPath, "cpo2"),
+                                     LogfileName:               null,
+                                     LogfileCreator:            logfileCreator
+
+                                 );
+
+            cpo2CommonHTTPAPI.Logger?.Debug("all", LogTargets.Debug);
 
             #endregion
 
@@ -669,29 +706,44 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                      OurBaseURL:                URL.Parse("http://127.0.0.1:3401/ocpi"),
                                      OurVersionsURL:            URL.Parse("http://127.0.0.1:3401/ocpi/versions"),
 
-                                     AdditionalURLPathPrefix:   null,
-                                     //KeepRemovedEVSEs:          null,
-                                     LocationsAsOpenData:       true,
-                                     AllowDowngrades:           null,
+                                     Hostnames:                 null,
+                                     RootPath:                  HTTPPath.Parse("/ocpi"),
+                                     HTTPContentTypes:          null,
+                                     Description:               null,
 
-                                     //HTTPHostname:              null,
-                                     ExternalDNSName:           null,
-                                     HTTPServiceName:           null,
                                      BasePath:                  null,
 
-                                     //URLPathPrefix:               HTTPPath.Parse("/ocpi"),
-                                     RootPath:                    HTTPPath.Parse("/ocpi"),
+                                     ExternalDNSName:           null,
+                                     HTTPServerName:            null,
+                                     HTTPServiceName:           null,
+
+                                     APIVersionHash:            null,
                                      APIVersionHashes:          null,
+
+                                     APIRobotEMailAddress:      null,
+                                     APIRobotGPGPassphrase:     null,
+                                     SMTPClient:                null,
+
+                                     AdditionalURLPathPrefix:   null,
+                                     LocationsAsOpenData:       true,
+                                     TariffsAsOpenData:         true,
+                                     AllowDowngrades:           null,
 
                                      IsDevelopment:             null,
                                      DevelopmentServers:        null,
-                                     DisableLogging:            null,
-                                     LoggingContext:            null,
-                                     LoggingPath:               null,
+                                     //SkipURLTemplates:          null,
+                                     DatabaseFileName:          null,
+                                     DisableNotifications:      null,
+
+                                     DisableLogging:            false,
+                                     LoggingContext:            "CommonHTTPAPI",
+                                     LoggingPath:               Path.Combine(loggingPath, "emsp1"),
                                      LogfileName:               null,
-                                     LogfileCreator:            null
+                                     LogfileCreator:            logfileCreator
 
                                  );
+
+            emsp1CommonHTTPAPI.Logger?.Debug("all", LogTargets.Debug);
 
             #endregion
 
@@ -703,29 +755,44 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                      OurBaseURL:                URL.Parse("http://127.0.0.1:3402/ocpi"),
                                      OurVersionsURL:            URL.Parse("http://127.0.0.1:3402/ocpi/versions"),
 
-                                     AdditionalURLPathPrefix:   null,
-                                     //KeepRemovedEVSEs:          null,
-                                     LocationsAsOpenData:       true,
-                                     AllowDowngrades:           null,
+                                     Hostnames:                 null,
+                                     RootPath:                  HTTPPath.Parse("/ocpi"),
+                                     HTTPContentTypes:          null,
+                                     Description:               null,
 
-                                     //HTTPHostname:              null,
-                                     ExternalDNSName:           null,
-                                     HTTPServiceName:           null,
                                      BasePath:                  null,
 
-                                     //URLPathPrefix:               HTTPPath.Parse("/ocpi"),
-                                     RootPath:                    HTTPPath.Parse("/ocpi"),
+                                     ExternalDNSName:           null,
+                                     HTTPServerName:            null,
+                                     HTTPServiceName:           null,
+
+                                     APIVersionHash:            null,
                                      APIVersionHashes:          null,
+
+                                     APIRobotEMailAddress:      null,
+                                     APIRobotGPGPassphrase:     null,
+                                     SMTPClient:                null,
+
+                                     AdditionalURLPathPrefix:   null,
+                                     LocationsAsOpenData:       true,
+                                     TariffsAsOpenData:         true,
+                                     AllowDowngrades:           null,
 
                                      IsDevelopment:             null,
                                      DevelopmentServers:        null,
-                                     DisableLogging:            null,
-                                     LoggingContext:            null,
-                                     LoggingPath:               null,
+                                     //SkipURLTemplates:          null,
+                                     DatabaseFileName:          null,
+                                     DisableNotifications:      null,
+
+                                     DisableLogging:            false,
+                                     LoggingContext:            "CommonHTTPAPI",
+                                     LoggingPath:               Path.Combine(loggingPath, "emsp2"),
                                      LogfileName:               null,
-                                     LogfileCreator:            null
+                                     LogfileCreator:            logfileCreator
 
                                  );
+
+            emsp2CommonHTTPAPI.Logger?.Debug("all", LogTargets.Debug);
 
             #endregion
 
@@ -753,7 +820,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region CPO #1
 
-            cpo1CommonAPI_v2_1_1  = new OCPIv2_1_1.HTTP.CommonAPI(
+            cpo1CommonAPI_v2_1_1  = new OCPIv2_1_1.CommonAPI(
 
                                         OurBusinessDetails:                  new BusinessDetails(
                                                                                  $"GraphDefined OCPI {OCPIv2_1_1.Version.String} CPO #1 Services",
@@ -775,22 +842,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         URLPathPrefix:                       null,
                                         APIVersionHashes:                    null,
 
-                                        IsDevelopment:                       null,
-                                        DevelopmentServers:                  null,
-                                        DisableLogging:                      null,
-                                        LoggingPath:                         null,
-                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_CPO1.log",
-                                        LogfileCreator:                      null,
                                         DatabaseFilePath:                    null,
                                         RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_RemoteParties_CPO1.log",
-                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_Assets_CPO1.log"
+                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_Assets_CPO1.log",
+
+                                        IsDevelopment:                       null,
+                                        DevelopmentServers:                  null,
+                                        DisableLogging:                      false,
+                                        LoggingPath:                         Path.Combine(loggingPath, "cpo1"),
+                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_CPO1.log",
+                                        LogfileCreator:                      null
 
                                     );
 
-            cpo1CommonAPI_v2_2_1  = new OCPIv2_2_1.HTTP.CommonAPI(
+            cpo1CommonAPI_v2_1_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            cpo1CommonAPI_v2_2_1  = new OCPIv2_2_1.CommonAPI(
 
                                         OurPartyData:                        [
-                                                                                 new OCPIv2_2_1.HTTP.PartyData(
+                                                                                 new OCPIv2_2_1.PartyData(
                                                                                      Party_Idv3.From(
                                                                                          CountryCode.Parse("DE"),
                                                                                          Party_Id.   Parse("GEF")
@@ -819,22 +890,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         URLPathPrefix:                       null,
                                         APIVersionHashes:                    null,
 
-                                        IsDevelopment:                       null,
-                                        DevelopmentServers:                  null,
-                                        DisableLogging:                      null,
-                                        LoggingPath:                         null,
-                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_CPO1.log",
-                                        LogfileCreator:                      null,
                                         DatabaseFilePath:                    null,
                                         RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_RemoteParties_CPO1.log",
-                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_Assets_CPO1.log"
+                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_Assets_CPO1.log",
+
+                                        IsDevelopment:                       null,
+                                        DevelopmentServers:                  null,
+                                        DisableLogging:                      false,
+                                        LoggingPath:                         Path.Combine(loggingPath, "cpo1"),
+                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_CPO1.log",
+                                        LogfileCreator:                      null
 
                                     );
 
-            cpo1CommonAPI_v2_3_0  = new OCPIv2_3_0.HTTP.CommonAPI(
+            cpo1CommonAPI_v2_2_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            cpo1CommonAPI_v2_3_0  = new OCPIv2_3_0.CommonAPI(
 
                                         OurPartyData:                        [
-                                                                                 new OCPIv2_3_0.HTTP.PartyData(
+                                                                                 new OCPIv2_3_0.PartyData(
                                                                                      Party_Idv3.From(
                                                                                          CountryCode.Parse("DE"),
                                                                                          Party_Id.   Parse("GEF")
@@ -863,23 +938,27 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         URLPathPrefix:                       null,
                                         APIVersionHashes:                    null,
 
-                                        IsDevelopment:                       null,
-                                        DevelopmentServers:                  null,
-                                        DisableLogging:                      null,
-                                        LoggingPath:                         null,
-                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_CPO1.log",
-                                        LogfileCreator:                      null,
                                         DatabaseFilePath:                    null,
                                         RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_RemoteParties_CPO1.log",
-                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_Assets_CPO1.log"
+                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_Assets_CPO1.log",
+
+                                        IsDevelopment:                       null,
+                                        DevelopmentServers:                  null,
+                                        DisableLogging:                      false,
+                                        LoggingPath:                         Path.Combine(loggingPath, "cpo1"),
+                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_CPO1.log",
+                                        LogfileCreator:                      null
 
                                     );
+
+            cpo1CommonAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
+
 
             #endregion
 
             #region CPO #2
 
-            cpo2CommonAPI_v2_1_1  = new OCPIv2_1_1.HTTP.CommonAPI(
+            cpo2CommonAPI_v2_1_1  = new OCPIv2_1_1.CommonAPI(
 
                                         OurBusinessDetails:                  new BusinessDetails(
                                                                                  $"GraphDefined OCPI {OCPIv2_1_1.Version.String} CPO #2 Services",
@@ -901,22 +980,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         URLPathPrefix:                       null,//HTTPPath.Parse("/ocpi"),
                                         APIVersionHashes:                    null,
 
-                                        IsDevelopment:                       null,
-                                        DevelopmentServers:                  null,
-                                        DisableLogging:                      null,
-                                        LoggingPath:                         null,
-                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_CPO2.log",
-                                        LogfileCreator:                      null,
                                         DatabaseFilePath:                    null,
                                         RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_RemoteParties_CPO2.log",
-                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_Assets_CPO2.log"
+                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_Assets_CPO2.log",
+
+                                        IsDevelopment:                       null,
+                                        DevelopmentServers:                  null,
+                                        DisableLogging:                      false,
+                                        LoggingPath:                         Path.Combine(loggingPath, "cpo2"),
+                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_CPO2.log",
+                                        LogfileCreator:                      null
 
                                     );
 
-            cpo2CommonAPI_v2_2_1  = new OCPIv2_2_1.HTTP.CommonAPI(
+            cpo2CommonAPI_v2_1_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            cpo2CommonAPI_v2_2_1  = new OCPIv2_2_1.CommonAPI(
 
                                         OurPartyData:                        [
-                                                                                 new OCPIv2_2_1.HTTP.PartyData(
+                                                                                 new OCPIv2_2_1.PartyData(
                                                                                      Party_Idv3.From(
                                                                                          CountryCode.Parse("DE"),
                                                                                          Party_Id.   Parse("GE2")
@@ -946,22 +1029,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         URLPathPrefix:                       null,//HTTPPath.Parse("/ocpi"),
                                         APIVersionHashes:                    null,
 
-                                        IsDevelopment:                       null,
-                                        DevelopmentServers:                  null,
-                                        DisableLogging:                      null,
-                                        LoggingPath:                         null,
-                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_CPO2.log",
-                                        LogfileCreator:                      null,
                                         DatabaseFilePath:                    null,
                                         RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_RemoteParties_CPO2.log",
-                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_Assets_CPO2.log"
+                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_Assets_CPO2.log",
+
+                                        IsDevelopment:                       null,
+                                        DevelopmentServers:                  null,
+                                        DisableLogging:                      false,
+                                        LoggingPath:                         Path.Combine(loggingPath, "cpo2"),
+                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_CPO2.log",
+                                        LogfileCreator:                      null
 
                                     );
 
-            cpo2CommonAPI_v2_3_0  = new OCPIv2_3_0.HTTP.CommonAPI(
+            cpo2CommonAPI_v2_2_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            cpo2CommonAPI_v2_3_0  = new OCPIv2_3_0.CommonAPI(
 
                                         OurPartyData:                        [
-                                                                                 new OCPIv2_3_0.HTTP.PartyData(
+                                                                                 new OCPIv2_3_0.PartyData(
                                                                                      Party_Idv3.From(
                                                                                          CountryCode.Parse("DE"),
                                                                                          Party_Id.   Parse("GE2")
@@ -991,23 +1078,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         URLPathPrefix:                       null,//HTTPPath.Parse("/ocpi"),
                                         APIVersionHashes:                    null,
 
-                                        IsDevelopment:                       null,
-                                        DevelopmentServers:                  null,
-                                        DisableLogging:                      null,
-                                        LoggingPath:                         null,
-                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_CPO2.log",
-                                        LogfileCreator:                      null,
                                         DatabaseFilePath:                    null,
                                         RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_RemoteParties_CPO2.log",
-                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_Assets_CPO2.log"
+                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_Assets_CPO2.log",
+
+                                        IsDevelopment:                       null,
+                                        DevelopmentServers:                  null,
+                                        DisableLogging:                      false,
+                                        LoggingPath:                         Path.Combine(loggingPath, "cpo2"),
+                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_CPO2.log",
+                                        LogfileCreator:                      null
 
                                     );
+
+            cpo1CommonAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
 
             #endregion
 
             #region EMSP #1
 
-            emsp1CommonAPI_v2_1_1 = new OCPIv2_1_1.HTTP.CommonAPI(
+            emsp1CommonAPI_v2_1_1 = new OCPIv2_1_1.CommonAPI(
 
                                         OurBusinessDetails:                  new BusinessDetails(
                                                                                  $"GraphDefined OCPI {OCPIv2_1_1.Version.String} EMSP #1 Services",
@@ -1029,22 +1119,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         URLPathPrefix:                       null,//HTTPPath.Parse("/ocpi"),
                                         APIVersionHashes:                    null,
 
-                                        IsDevelopment:                       null,
-                                        DevelopmentServers:                  null,
-                                        DisableLogging:                      null,
-                                        LoggingPath:                         null,
-                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_EMSP1.log",
-                                        LogfileCreator:                      null,
                                         DatabaseFilePath:                    null,
                                         RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_RemoteParties_EMSP1.log",
-                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_Assets_EMSP1.log"
+                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_Assets_EMSP1.log",
+
+                                        IsDevelopment:                       null,
+                                        DevelopmentServers:                  null,
+                                        DisableLogging:                      false,
+                                        LoggingPath:                         Path.Combine(loggingPath, "emsp1"),
+                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_EMSP1.log",
+                                        LogfileCreator:                      null
 
                                     );
 
-            emsp1CommonAPI_v2_2_1 = new OCPIv2_2_1.HTTP.CommonAPI(
+            emsp1CommonAPI_v2_1_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            emsp1CommonAPI_v2_2_1 = new OCPIv2_2_1.CommonAPI(
 
                                         OurPartyData:                        [
-                                                                                 new OCPIv2_2_1.HTTP.PartyData(
+                                                                                 new OCPIv2_2_1.PartyData(
                                                                                      Party_Idv3.From(
                                                                                          CountryCode.Parse("DE"),
                                                                                          Party_Id.   Parse("GDF")
@@ -1074,22 +1168,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         URLPathPrefix:                       null,//HTTPPath.Parse("/ocpi"),
                                         APIVersionHashes:                    null,
 
-                                        IsDevelopment:                       null,
-                                        DevelopmentServers:                  null,
-                                        DisableLogging:                      null,
-                                        LoggingPath:                         null,
-                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_EMSP1.log",
-                                        LogfileCreator:                      null,
                                         DatabaseFilePath:                    null,
                                         RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_RemoteParties_EMSP1.log",
-                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_Assets_EMSP1.log"
+                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_Assets_EMSP1.log",
+
+                                        IsDevelopment:                       null,
+                                        DevelopmentServers:                  null,
+                                        DisableLogging:                      false,
+                                        LoggingPath:                         Path.Combine(loggingPath, "emsp1"),
+                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_EMSP1.log",
+                                        LogfileCreator:                      null
 
                                     );
 
-            emsp1CommonAPI_v2_3_0 = new OCPIv2_3_0.HTTP.CommonAPI(
+            emsp1CommonAPI_v2_2_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            emsp1CommonAPI_v2_3_0 = new OCPIv2_3_0.CommonAPI(
 
                                         OurPartyData:                        [
-                                                                                 new OCPIv2_3_0.HTTP.PartyData(
+                                                                                 new OCPIv2_3_0.PartyData(
                                                                                      Party_Idv3.From(
                                                                                          CountryCode.Parse("DE"),
                                                                                          Party_Id.   Parse("GDF")
@@ -1119,23 +1217,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         URLPathPrefix:                       null,//HTTPPath.Parse("/ocpi"),
                                         APIVersionHashes:                    null,
 
-                                        IsDevelopment:                       null,
-                                        DevelopmentServers:                  null,
-                                        DisableLogging:                      null,
-                                        LoggingPath:                         null,
-                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_EMSP1.log",
-                                        LogfileCreator:                      null,
                                         DatabaseFilePath:                    null,
                                         RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_RemoteParties_EMSP1.log",
-                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_Assets_EMSP1.log"
+                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_Assets_EMSP1.log",
+
+                                        IsDevelopment:                       null,
+                                        DevelopmentServers:                  null,
+                                        DisableLogging:                      false,
+                                        LoggingPath:                         Path.Combine(loggingPath, "emsp1"),
+                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_EMSP1.log",
+                                        LogfileCreator:                      null
 
                                     );
+
+            emsp1CommonAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
 
             #endregion
 
             #region EMSP #2
 
-            emsp2CommonAPI_v2_1_1 = new OCPIv2_1_1.HTTP.CommonAPI(
+            emsp2CommonAPI_v2_1_1 = new OCPIv2_1_1.CommonAPI(
 
                                         OurBusinessDetails:                  new BusinessDetails(
                                                                                  $"GraphDefined OCPI {OCPIv2_1_1.Version.String} EMSP #2 Services",
@@ -1157,22 +1258,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         URLPathPrefix:                       null,//HTTPPath.Parse("/ocpi"),
                                         APIVersionHashes:                    null,
 
-                                        IsDevelopment:                       null,
-                                        DevelopmentServers:                  null,
-                                        DisableLogging:                      null,
-                                        LoggingPath:                         null,
-                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_EMSP2.log",
-                                        LogfileCreator:                      null,
                                         DatabaseFilePath:                    null,
                                         RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_RemoteParties_EMSP2.log",
-                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_Assets_EMSP2.log"
+                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_Assets_EMSP2.log",
+
+                                        IsDevelopment:                       null,
+                                        DevelopmentServers:                  null,
+                                        DisableLogging:                      false,
+                                        LoggingPath:                         Path.Combine(loggingPath, "emsp2"),
+                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_EMSP2.log",
+                                        LogfileCreator:                      null
 
                                     );
 
-            emsp2CommonAPI_v2_2_1 = new OCPIv2_2_1.HTTP.CommonAPI(
+            emsp2CommonAPI_v2_1_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            emsp2CommonAPI_v2_2_1 = new OCPIv2_2_1.CommonAPI(
 
                                         OurPartyData:                        [
-                                                                                 new OCPIv2_2_1.HTTP.PartyData(
+                                                                                 new OCPIv2_2_1.PartyData(
                                                                                      Party_Idv3.From(
                                                                                          CountryCode.Parse("DE"),
                                                                                          Party_Id.   Parse("GD2")
@@ -1202,22 +1307,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         URLPathPrefix:                       null,//HTTPPath.Parse("/ocpi"),
                                         APIVersionHashes:                    null,
 
-                                        IsDevelopment:                       null,
-                                        DevelopmentServers:                  null,
-                                        DisableLogging:                      null,
-                                        LoggingPath:                         null,
-                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_EMSP2.log",
-                                        LogfileCreator:                      null,
                                         DatabaseFilePath:                    null,
                                         RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_RemoteParties_EMSP2.log",
-                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_Assets_EMSP2.log"
+                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_Assets_EMSP2.log",
+
+                                        IsDevelopment:                       null,
+                                        DevelopmentServers:                  null,
+                                        DisableLogging:                      false,
+                                        LoggingPath:                         Path.Combine(loggingPath, "emsp2"),
+                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_EMSP2.log",
+                                        LogfileCreator:                      null
 
                                     );
 
-            emsp2CommonAPI_v2_3_0 = new OCPIv2_3_0.HTTP.CommonAPI(
+            emsp2CommonAPI_v2_2_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            emsp2CommonAPI_v2_3_0 = new OCPIv2_3_0.CommonAPI(
 
                                         OurPartyData:                        [
-                                                                                 new OCPIv2_3_0.HTTP.PartyData(
+                                                                                 new OCPIv2_3_0.PartyData(
                                                                                      Party_Idv3.From(
                                                                                          CountryCode.Parse("DE"),
                                                                                          Party_Id.   Parse("GD2")
@@ -1247,17 +1356,20 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                         URLPathPrefix:                       null,//HTTPPath.Parse("/ocpi"),
                                         APIVersionHashes:                    null,
 
-                                        IsDevelopment:                       null,
-                                        DevelopmentServers:                  null,
-                                        DisableLogging:                      null,
-                                        LoggingPath:                         null,
-                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_EMSP2.log",
-                                        LogfileCreator:                      null,
                                         DatabaseFilePath:                    null,
                                         RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_RemoteParties_EMSP2.log",
-                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_Assets_EMSP2.log"
+                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_Assets_EMSP2.log",
+
+                                        IsDevelopment:                       null,
+                                        DevelopmentServers:                  null,
+                                        DisableLogging:                      false,
+                                        LoggingPath:                         Path.Combine(loggingPath, "emsp2"),
+                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_EMSP2.log",
+                                        LogfileCreator:                      null
 
                                     );
+
+            emsp2CommonAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
 
             #endregion
 
@@ -1278,6 +1390,435 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             Assert.That(emsp2CommonAPI_v2_3_0,  Is.Not.Null);
 
             #endregion
+
+            #region Create cpo1/cpo2 CPOAPIs & emsp1/emsp2 EMPAPIs
+
+            #region CPO #1
+
+            cpo1CPOAPI_v2_1_1    = new OCPIv2_1_1.CPOAPI(
+
+                                       CommonAPI:                           cpo1CommonAPI_v2_1_1,
+                                       AllowDowngrades:                     null,
+
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       null,
+                                       APIVersionHashes:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null
+
+                                   );
+
+            cpo1CPOAPI_v2_1_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                        (loggingPath, context, logEventName, request) => {
+                                                            cpo1APIRequestLogs_v2_1_1. TryAdd(Timestamp.Now, request);
+                                                            return Task.CompletedTask;
+                                                        });
+
+            cpo1CPOAPI_v2_1_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                        (loggingPath, context, logEventName, request, response) => {
+                                                            cpo1APIResponseLogs_v2_1_1.TryAdd(Timestamp.Now, response);
+                                                            return Task.CompletedTask;
+                                                        });
+
+            cpo1CPOAPI_v2_1_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            cpo1CPOAPI_v2_2_1    = new OCPIv2_2_1.CPOAPI(
+
+                                       CommonAPI:                           cpo1CommonAPI_v2_2_1,
+                                       AllowDowngrades:                     null,
+
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       null,
+                                       APIVersionHashes:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null
+
+                                   );
+
+            cpo1CPOAPI_v2_2_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                        (loggingPath, context, logEventName, request) => {
+                                                            cpo1APIRequestLogs_v2_2_1. TryAdd(Timestamp.Now, request);
+                                                            return Task.CompletedTask;
+                                                        });
+
+            cpo1CPOAPI_v2_2_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                        (loggingPath, context, logEventName, request, response) => {
+                                                            cpo1APIResponseLogs_v2_2_1.TryAdd(Timestamp.Now, response);
+                                                            return Task.CompletedTask;
+                                                        });
+
+            cpo1CPOAPI_v2_2_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            cpo1CPOAPI_v2_3_0    = new OCPIv2_3_0.CPOAPI(
+
+                                       CommonAPI:                           cpo1CommonAPI_v2_3_0,
+                                       AllowDowngrades:                     null,
+
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       null,
+                                       APIVersionHashes:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null
+
+                                   );
+
+            cpo1CPOAPI_v2_3_0.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                        (loggingPath, context, logEventName, request) => {
+                                                            cpo1APIRequestLogs_v2_3_0. TryAdd(Timestamp.Now, request);
+                                                            return Task.CompletedTask;
+                                                        });
+
+            cpo1CPOAPI_v2_3_0.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                        (loggingPath, context, logEventName, request, response) => {
+                                                            cpo1APIResponseLogs_v2_3_0.TryAdd(Timestamp.Now, response);
+                                                            return Task.CompletedTask;
+                                                        });
+
+            cpo1CPOAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
+
+            #endregion
+
+            #region CPO #2
+
+            cpo2CPOAPI_v2_1_1    = new OCPIv2_1_1.CPOAPI(
+
+                                       CommonAPI:                           cpo2CommonAPI_v2_1_1,
+                                       AllowDowngrades:                     null,
+
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       null,
+                                       APIVersionHashes:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null
+
+                                   );
+
+            cpo2CPOAPI_v2_1_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                        (loggingPath, context, logEventName, request) => {
+                                                            cpo2APIRequestLogs_v2_1_1. TryAdd(Timestamp.Now, request);
+                                                            return Task.CompletedTask;
+                                                        });
+
+            cpo2CPOAPI_v2_1_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                        (loggingPath, context, logEventName, request, response) => {
+                                                            cpo2APIResponseLogs_v2_1_1.TryAdd(Timestamp.Now, response);
+                                                            return Task.CompletedTask;
+                                                        });
+
+            cpo2CPOAPI_v2_1_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            cpo2CPOAPI_v2_2_1    = new OCPIv2_2_1.CPOAPI(
+
+                                       CommonAPI:                           cpo2CommonAPI_v2_2_1,
+                                       AllowDowngrades:                     null,
+
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       null,
+                                       APIVersionHashes:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null
+
+                                   );
+
+            cpo2CPOAPI_v2_2_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                        (loggingPath, context, logEventName, request) => {
+                                                            cpo2APIRequestLogs_v2_2_1. TryAdd(Timestamp.Now, request);
+                                                            return Task.CompletedTask;
+                                                        });
+
+            cpo2CPOAPI_v2_2_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                        (loggingPath, context, logEventName, request, response) => {
+                                                            cpo2APIResponseLogs_v2_2_1.TryAdd(Timestamp.Now, response);
+                                                            return Task.CompletedTask;
+                                                        });
+
+            cpo2CPOAPI_v2_2_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            cpo2CPOAPI_v2_3_0    = new OCPIv2_3_0.CPOAPI(
+
+                                       CommonAPI:                           cpo2CommonAPI_v2_3_0,
+                                       AllowDowngrades:                     null,
+
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       null,
+                                       APIVersionHashes:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null
+
+                                   );
+
+            cpo2CPOAPI_v2_3_0.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                        (loggingPath, context, logEventName, request) => {
+                                                            cpo2APIRequestLogs_v2_3_0. TryAdd(Timestamp.Now, request);
+                                                            return Task.CompletedTask;
+                                                        });
+
+            cpo2CPOAPI_v2_3_0.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                        (loggingPath, context, logEventName, request, response) => {
+                                                            cpo2APIResponseLogs_v2_3_0.TryAdd(Timestamp.Now, response);
+                                                            return Task.CompletedTask;
+                                                        });
+
+            cpo2CPOAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
+
+            #endregion
+
+            #region EMSP #1
+
+            emsp1EMSPAPI_v2_1_1 = new OCPIv2_1_1.EMSPAPI(
+
+                                       CommonAPI:                           emsp1CommonAPI_v2_1_1,
+                                       AllowDowngrades:                     null,
+
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       null,
+                                       APIVersionHashes:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null
+
+                                   );
+
+            emsp1EMSPAPI_v2_1_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            emsp1EMSPAPI_v2_2_1 = new OCPIv2_2_1.EMSPAPI(
+
+                                       CommonAPI:                           emsp1CommonAPI_v2_2_1,
+                                       AllowDowngrades:                     null,
+
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       null,
+                                       APIVersionHashes:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null
+
+                                   );
+
+            emsp1EMSPAPI_v2_2_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            emsp1EMSPAPI_v2_3_0 = new OCPIv2_3_0.EMSPAPI(
+
+                                       CommonAPI:                           emsp1CommonAPI_v2_3_0,
+                                       AllowDowngrades:                     null,
+
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       null,
+                                       APIVersionHashes:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null
+
+                                   );
+
+            emsp1EMSPAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
+
+            #endregion
+
+            #region EMSP #2
+
+            emsp2EMSPAPI_v2_1_1 = new OCPIv2_1_1.EMSPAPI(
+
+                                       CommonAPI:                           emsp2CommonAPI_v2_1_1,
+                                       AllowDowngrades:                     null,
+
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       null,
+                                       APIVersionHashes:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null
+
+                                   );
+
+            emsp2EMSPAPI_v2_1_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                          (loggingPath, context, logEventName, request) => {
+                                                              emsp2APIRequestLogs_v2_1_1. TryAdd(Timestamp.Now, request);
+                                                              return Task.CompletedTask;
+                                                          });
+
+            emsp2EMSPAPI_v2_1_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                          (loggingPath, context, logEventName, request, response) => {
+                                                              emsp2APIResponseLogs_v2_1_1.TryAdd(Timestamp.Now, response);
+                                                              return Task.CompletedTask;
+                                                          });
+
+            emsp2EMSPAPI_v2_1_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            emsp2EMSPAPI_v2_2_1 = new OCPIv2_2_1.EMSPAPI(
+
+                                       CommonAPI:                           emsp2CommonAPI_v2_2_1,
+                                       AllowDowngrades:                     null,
+
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       null,
+                                       APIVersionHashes:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null
+
+                                   );
+
+            emsp2EMSPAPI_v2_2_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                          (loggingPath, context, logEventName, request) => {
+                                                              emsp2APIRequestLogs_v2_2_1. TryAdd(Timestamp.Now, request);
+                                                              return Task.CompletedTask;
+                                                          });
+
+            emsp2EMSPAPI_v2_2_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                          (loggingPath, context, logEventName, request, response) => {
+                                                              emsp2APIResponseLogs_v2_2_1.TryAdd(Timestamp.Now, response);
+                                                              return Task.CompletedTask;
+                                                          });
+
+            emsp2EMSPAPI_v2_2_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            emsp2EMSPAPI_v2_3_0 = new OCPIv2_3_0.EMSPAPI(
+
+                                       CommonAPI:                           emsp2CommonAPI_v2_3_0,
+                                       AllowDowngrades:                     null,
+
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       null,
+                                       APIVersionHashes:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null
+
+                                   );
+
+            emsp2EMSPAPI_v2_3_0.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                          (loggingPath, context, logEventName, request) => {
+                                                              emsp2APIRequestLogs_v2_3_0. TryAdd(Timestamp.Now, request);
+                                                              return Task.CompletedTask;
+                                                          });
+
+            emsp2EMSPAPI_v2_3_0.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                          (loggingPath, context, logEventName, request, response) => {
+                                                              emsp2APIResponseLogs_v2_3_0.TryAdd(Timestamp.Now, response);
+                                                              return Task.CompletedTask;
+                                                          });
+
+            emsp2EMSPAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
+
+            #endregion
+
+            Assert.That(cpo1CPOAPI_v2_1_1,    Is.Not.Null);
+            Assert.That(cpo1CPOAPI_v2_2_1,    Is.Not.Null);
+            Assert.That(cpo1CPOAPI_v2_3_0,    Is.Not.Null);
+
+            Assert.That(cpo2CPOAPI_v2_1_1,    Is.Not.Null);
+            Assert.That(cpo2CPOAPI_v2_2_1,    Is.Not.Null);
+            Assert.That(cpo2CPOAPI_v2_3_0,    Is.Not.Null);
+
+            Assert.That(emsp1EMSPAPI_v2_1_1,  Is.Not.Null);
+            Assert.That(emsp1EMSPAPI_v2_2_1,  Is.Not.Null);
+            Assert.That(emsp1EMSPAPI_v2_3_0,  Is.Not.Null);
+
+            Assert.That(emsp2EMSPAPI_v2_1_1,  Is.Not.Null);
+            Assert.That(emsp2EMSPAPI_v2_2_1,  Is.Not.Null);
+            Assert.That(emsp2EMSPAPI_v2_3_0,  Is.Not.Null);
+
+            #endregion
+
 
             #region Create cpo1/cpo2/emsp1/emsp2 OCPI (Common) Web APIs
 
@@ -1579,294 +2120,18 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #endregion
 
-            #region Create cpo1/cpo2 CPOAPIs & emsp1/emsp2 EMPAPIs
 
-            #region CPO #1
+            #region Define Client Configurations
 
-            cpo1CPOAPI_v2_1_1    = new OCPIv2_1_1.HTTP.CPOAPI(
+            //cpo1CommonAPI. BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"CPO #1 Client for {remotePartyId}");
 
-                                       CommonAPI:                           cpo1CommonAPI_v2_1_1,
-                                       AllowDowngrades:                     null,
+            //cpo2CommonAPI. BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"CPO #2 Client for {remotePartyId}");
 
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
+            //emsp1CommonAPI.BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"EMSP #1 Client for {remotePartyId}");
 
-                                       URLPathPrefix:                       null,
-                                       APIVersionHashes:                    null,
-
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null
-
-                                   );
-
-            cpo1CPOAPI_v2_2_1    = new OCPIv2_2_1.HTTP.CPOAPI(
-
-                                       CommonAPI:                           cpo1CommonAPI_v2_2_1,
-                                       AllowDowngrades:                     null,
-
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
-
-                                       URLPathPrefix:                       null,
-                                       APIVersionHashes:                    null,
-
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null
-
-                                   );
-
-            cpo1CPOAPI_v2_3_0    = new OCPIv2_3_0.HTTP.CPOAPI(
-
-                                       CommonAPI:                           cpo1CommonAPI_v2_3_0,
-                                       AllowDowngrades:                     null,
-
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
-
-                                       URLPathPrefix:                       null,
-                                       APIVersionHashes:                    null,
-
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null
-
-                                   );
+            //emsp2CommonAPI.BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"EMSP #2 Client for {remotePartyId}");
 
             #endregion
-
-            #region CPO #2
-
-            cpo2CPOAPI_v2_1_1    = new OCPIv2_1_1.HTTP.CPOAPI(
-
-                                       CommonAPI:                           cpo2CommonAPI_v2_1_1,
-                                       AllowDowngrades:                     null,
-
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
-
-                                       URLPathPrefix:                       null,
-                                       APIVersionHashes:                    null,
-
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null
-
-                                   );
-
-            cpo2CPOAPI_v2_2_1    = new OCPIv2_2_1.HTTP.CPOAPI(
-
-                                       CommonAPI:                           cpo2CommonAPI_v2_2_1,
-                                       AllowDowngrades:                     null,
-
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
-
-                                       URLPathPrefix:                       null,
-                                       APIVersionHashes:                    null,
-
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null
-
-                                   );
-
-            cpo2CPOAPI_v2_3_0    = new OCPIv2_3_0.HTTP.CPOAPI(
-
-                                       CommonAPI:                           cpo2CommonAPI_v2_3_0,
-                                       AllowDowngrades:                     null,
-
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
-
-                                       URLPathPrefix:                       null,
-                                       APIVersionHashes:                    null,
-
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null
-
-                                   );
-
-            #endregion
-
-            #region EMSP #1
-
-            emsp1EMSPAPI_v2_1_1 = new OCPIv2_1_1.HTTP.EMSPAPI(
-
-                                       CommonAPI:                           emsp1CommonAPI_v2_1_1,
-                                       AllowDowngrades:                     null,
-
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
-
-                                       URLPathPrefix:                       null,
-                                       APIVersionHashes:                    null,
-
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null
-
-                                   );
-
-            emsp1EMSPAPI_v2_2_1 = new OCPIv2_2_1.HTTP.EMSPAPI(
-
-                                       CommonAPI:                           emsp1CommonAPI_v2_2_1,
-                                       AllowDowngrades:                     null,
-
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
-
-                                       URLPathPrefix:                       null,
-                                       APIVersionHashes:                    null,
-
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null
-
-                                   );
-
-            emsp1EMSPAPI_v2_3_0 = new OCPIv2_3_0.HTTP.EMSPAPI(
-
-                                       CommonAPI:                           emsp1CommonAPI_v2_3_0,
-                                       AllowDowngrades:                     null,
-
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
-
-                                       URLPathPrefix:                       null,
-                                       APIVersionHashes:                    null,
-
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null
-
-                                   );
-
-            #endregion
-
-            #region EMSP #2
-
-            emsp2EMSPAPI_v2_1_1 = new OCPIv2_1_1.HTTP.EMSPAPI(
-
-                                       CommonAPI:                           emsp2CommonAPI_v2_1_1,
-                                       AllowDowngrades:                     null,
-
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
-
-                                       URLPathPrefix:                       null,
-                                       APIVersionHashes:                    null,
-
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null
-
-                                   );
-
-            emsp2EMSPAPI_v2_2_1 = new OCPIv2_2_1.HTTP.EMSPAPI(
-
-                                       CommonAPI:                           emsp2CommonAPI_v2_2_1,
-                                       AllowDowngrades:                     null,
-
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
-
-                                       URLPathPrefix:                       null,
-                                       APIVersionHashes:                    null,
-
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null
-
-                                   );
-
-            emsp2EMSPAPI_v2_3_0 = new OCPIv2_3_0.HTTP.EMSPAPI(
-
-                                       CommonAPI:                           emsp2CommonAPI_v2_3_0,
-                                       AllowDowngrades:                     null,
-
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
-
-                                       URLPathPrefix:                       null,
-                                       APIVersionHashes:                    null,
-
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null
-
-                                   );
-
-            #endregion
-
-            Assert.That(cpo1CPOAPI_v2_1_1,    Is.Not.Null);
-            Assert.That(cpo1CPOAPI_v2_2_1,    Is.Not.Null);
-            Assert.That(cpo1CPOAPI_v2_3_0,    Is.Not.Null);
-
-            Assert.That(cpo2CPOAPI_v2_1_1,    Is.Not.Null);
-            Assert.That(cpo2CPOAPI_v2_2_1,    Is.Not.Null);
-            Assert.That(cpo2CPOAPI_v2_3_0,    Is.Not.Null);
-
-            Assert.That(emsp1EMSPAPI_v2_1_1,  Is.Not.Null);
-            Assert.That(emsp1EMSPAPI_v2_2_1,  Is.Not.Null);
-            Assert.That(emsp1EMSPAPI_v2_3_0,  Is.Not.Null);
-
-            Assert.That(emsp2EMSPAPI_v2_1_1,  Is.Not.Null);
-            Assert.That(emsp2EMSPAPI_v2_2_1,  Is.Not.Null);
-            Assert.That(emsp2EMSPAPI_v2_3_0,  Is.Not.Null);
-
-            #endregion
-
 
             #region Define and connect Remote Parties
 
@@ -2626,73 +2891,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #endregion
 
-            #region Defined API loggers
-
-            //// CPO
-            //cpoAPIRequestLogs     = new ConcurrentDictionary<DateTime, OCPIRequest>();
-            //cpoAPIResponseLogs    = new ConcurrentDictionary<DateTime, OCPIResponse>();
-
-            //cpoCPOAPI.CPOAPILogger?.RegisterLogTarget(LogTargets.Debug,
-            //                                          (loggingPath, context, logEventName, request) => {
-            //                                              cpoAPIRequestLogs. TryAdd(Timestamp.Now, request);
-            //                                              return Task.CompletedTask;
-            //                                          });
-
-            //cpoCPOAPI.CPOAPILogger?.RegisterLogTarget(LogTargets.Debug,
-            //                                          (loggingPath, context, logEventName, request, response) => {
-            //                                              cpoAPIResponseLogs.TryAdd(Timestamp.Now, response);
-            //                                              return Task.CompletedTask;
-            //                                          });
-
-            //cpoCPOAPI.CPOAPILogger?.Debug("all", LogTargets.Debug);
-
-            //cpoCommonAPI.BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"CPO Client for {remotePartyId}");
-
-
-
-            //// EMSP #1
-            //emsp1APIRequestLogs   = new ConcurrentDictionary<DateTime, OCPIRequest>();
-            //emsp1APIResponseLogs  = new ConcurrentDictionary<DateTime, OCPIResponse>();
-
-            //emsp1EMSPAPI.EMSPAPILogger?.RegisterLogTarget(LogTargets.Debug,
-            //                                              (loggingPath, context, logEventName, request) => {
-            //                                                  emsp1APIRequestLogs. TryAdd(Timestamp.Now, request);
-            //                                                  return Task.CompletedTask;
-            //                                              });
-
-            //emsp1EMSPAPI.EMSPAPILogger?.RegisterLogTarget(LogTargets.Debug,
-            //                                              (loggingPath, context, logEventName, request, response) => {
-            //                                                  emsp1APIResponseLogs.TryAdd(Timestamp.Now, response);
-            //                                                  return Task.CompletedTask;
-            //                                              });
-
-            //emsp1EMSPAPI.EMSPAPILogger?.Debug("all", LogTargets.Debug);
-
-            //emsp1CommonAPI.BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"EMSP #1 Client for {remotePartyId}");
-
-
-
-            //// EMSP #2
-            //emsp2APIRequestLogs   = new ConcurrentDictionary<DateTime, OCPIRequest>();
-            //emsp2APIResponseLogs  = new ConcurrentDictionary<DateTime, OCPIResponse>();
-
-            //emsp2EMSPAPI.EMSPAPILogger?.RegisterLogTarget(LogTargets.Debug,
-            //                                              (loggingPath, context, logEventName, request) => {
-            //                                                  emsp2APIRequestLogs. TryAdd(Timestamp.Now, request);
-            //                                                  return Task.CompletedTask;
-            //                                              });
-
-            //emsp2EMSPAPI.EMSPAPILogger?.RegisterLogTarget(LogTargets.Debug,
-            //                                              (loggingPath, context, logEventName, request, response) => {
-            //                                                  emsp2APIResponseLogs.TryAdd(Timestamp.Now, response);
-            //                                                  return Task.CompletedTask;
-            //                                              });
-
-            //emsp2EMSPAPI.EMSPAPILogger?.Debug("all", LogTargets.Debug);
-
-            //emsp2CommonAPI.BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"EMSP #2 Client for {remotePartyId}");
-
-            #endregion
 
         }
 

@@ -78,9 +78,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         IId WWCP.ISendChargeDetailRecords.SendChargeDetailRecordsId => Id;
 
-        public HTTP.CommonAPI                               CommonAPI                            { get; }
+        public CommonAPI                                    CommonAPI                            { get; }
 
-        public HTTP.CPOAPI                                  CPOAPI                               { get; }
+        public CPOAPI                                       CPOAPI                               { get; }
 
 
         public GetTariffIds_Delegate?                       GetTariffIds                         { get; }
@@ -193,7 +193,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                               I18NString                                      Description,
                               WWCP.RoamingNetwork                             RoamingNetwork,
 
-                              HTTP.CommonAPI                                  CommonAPI,
+                              CommonAPI                                       CommonAPI,
 
                               GetTariffIds_Delegate?                          GetTariffIds                        = null,
 
@@ -323,7 +323,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             this.ClientsLogfileCreator              = ClientsLogfileCreator;
 
-            this.CPOAPI                             = new HTTP.CPOAPI(
+            this.CPOAPI                             = new CPOAPI(
 
                                                           this.CommonAPI,
                                                           null, // AllowDowngrades

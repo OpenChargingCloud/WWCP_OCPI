@@ -30,7 +30,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
+namespace cloud.charging.open.protocols.OCPIv3_0
 {
 
     /// <summary>
@@ -1774,7 +1774,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             #region GET    [/cpo] == /
 
             //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-            //                                   URLPathPrefix + "/cpo", "cloud.charging.open.protocols.OCPIv3_0.HTTPAPI.CPOAPI.HTTPRoot",
+            //                                   URLPathPrefix + "/cpo", "cloud.charging.open.protocols.OCPIv3_0API.CPOAPI.HTTPRoot",
             //                                   Assembly.GetCallingAssembly());
 
             //CommonAPI.AddOCPIMethod(
@@ -1787,8 +1787,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             //                             OCPIRequest: async Request => {
 
             //                                 var _MemoryStream = new MemoryStream();
-            //                                 typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv3_0.HTTPAPI.CPOAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-            //                                 typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv3_0.HTTPAPI.CPOAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv3_0API.CPOAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv3_0API.CPOAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
             //                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                     HTTPStatusCode  = HTTPStatusCode.OK,

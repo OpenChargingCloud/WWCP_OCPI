@@ -28,7 +28,6 @@ using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPI.WebAPI;
-using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 
 #endregion
 

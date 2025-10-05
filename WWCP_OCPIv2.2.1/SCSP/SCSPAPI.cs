@@ -28,7 +28,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
@@ -2492,7 +2492,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             #region GET    [/emsp] == /
 
             //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-            //                                   URLPathPrefix + "/emsp", "cloud.charging.open.protocols.OCPIv2_2_1.HTTPAPI.SCSPAPI.HTTPRoot",
+            //                                   URLPathPrefix + "/emsp", "cloud.charging.open.protocols.OCPIv2_2_1API.SCSPAPI.HTTPRoot",
             //                                   Assembly.GetCallingAssembly());
 
             //CommonAPI.AddOCPIMethod(
@@ -2505,8 +2505,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             //                             OCPIRequest: async Request => {
 
             //                                 var _MemoryStream = new MemoryStream();
-            //                                 typeof(SCSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2_1.HTTPAPI.SCSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-            //                                 typeof(SCSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2_1.HTTPAPI.SCSPAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(SCSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2_1API.SCSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(SCSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2_1API.SCSPAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
             //                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                     HTTPStatusCode  = HTTPStatusCode.OK,

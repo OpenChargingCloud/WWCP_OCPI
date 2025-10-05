@@ -24,7 +24,7 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>

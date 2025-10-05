@@ -31,7 +31,7 @@ using cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
@@ -82,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The EMSP API logger.
         /// </summary>
-        public EMSPAPILogger?  EMSPAPILogger      { get; }
+        public EMSPAPILogger?  Logger             { get; set; }
 
         #endregion
 
@@ -2506,7 +2506,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.AllowDowngrades  = AllowDowngrades;
             this.RequestTimeout   = TimeSpan.FromSeconds(30);
 
-            this.EMSPAPILogger    = this.DisableLogging == false
+            this.Logger           = this.DisableLogging == false
                                         ? new EMSPAPILogger(
                                               this,
                                               LoggingContext,

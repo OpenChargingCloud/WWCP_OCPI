@@ -24,7 +24,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using Hermod = org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+using cloud.charging.open.protocols.OCPIv2_1_1;
 using System.Diagnostics.CodeAnalysis;
 
 #endregion

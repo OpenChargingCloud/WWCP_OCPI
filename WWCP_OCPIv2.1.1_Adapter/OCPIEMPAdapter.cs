@@ -69,9 +69,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
 
-        public HTTP.CommonAPI                               CommonAPI                            { get; }
+        public CommonAPI                                    CommonAPI                            { get; }
 
-        public HTTP.EMSPAPI                                 EMSPAPI                              { get; }
+        public EMSPAPI                                      EMSPAPI                              { get; }
 
 
         #region Logging
@@ -366,7 +366,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               I18NString                                        Description,
                               IRoamingNetwork                                   RoamingNetwork,
 
-                              HTTP.CommonAPI                                    CommonAPI,
+                              CommonAPI                                         CommonAPI,
 
                               EVSEId_2_WWCPEVSEId_Delegate?                     CustomEVSEIdConverter               = null,
                               EVSE_2_WWCPEVSE_Delegate?                         CustomEVSEConverter                 = null,
@@ -427,7 +427,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             this.CommonAPI                          = CommonAPI;
-            this.EMSPAPI                            = new HTTP.EMSPAPI(
+            this.EMSPAPI                            = new EMSPAPI(
                                                           this.CommonAPI,
                                                           URLPathPrefix: CommonAPI.URLPathPrefix + Version.String + "emsp"
                                                       );
@@ -464,7 +464,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               I18NString                                        Description,
                               IRoamingNetwork                                   RoamingNetwork,
 
-                              HTTP.EMSPAPI                                      EMSPAPI,
+                              EMSPAPI                                           EMSPAPI,
 
                               EVSEId_2_WWCPEVSEId_Delegate?                     CustomEVSEIdConverter               = null,
                               EVSE_2_WWCPEVSE_Delegate?                         CustomEVSEConverter                 = null,
@@ -494,8 +494,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               UInt16                                            MaxStatusScheduleSize               = DefaultMaxStatusScheduleSize,
 
                               String?                                           DataSource                          = null,
-                              DateTimeOffset?                                         Created                             = null,
-                              DateTimeOffset?                                         LastChange                          = null,
+                              DateTimeOffset?                                   Created                             = null,
+                              DateTimeOffset?                                   LastChange                          = null,
 
                               JObject?                                          CustomData                          = null,
                               UserDefinedDictionary?                            InternalData                        = null)

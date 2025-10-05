@@ -31,7 +31,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
@@ -72,17 +72,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI v2.2 does not define any behaviour for this.
         /// </summary>
-        public Boolean?        AllowDowngrades       { get; }
+        public Boolean?        AllowDowngrades    { get; }
 
                 /// <summary>
         /// The timeout for upstream requests.
         /// </summary>
-        public TimeSpan        RequestTimeout        { get; set; }
+        public TimeSpan        RequestTimeout     { get; set; }
 
         /// <summary>
         /// The EMSP API logger.
         /// </summary>
-        public EMSPAPILogger?  EMSPAPILogger         { get; }
+        public EMSPAPILogger?  Logger             { get; }
 
         #endregion
 
@@ -2500,7 +2500,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.AllowDowngrades  = AllowDowngrades;
             this.RequestTimeout   = TimeSpan.FromSeconds(30);
 
-            this.EMSPAPILogger    = this.DisableLogging == false
+            this.Logger           = this.DisableLogging == false
                                         ? new EMSPAPILogger(
                                               this,
                                               LoggingContext,

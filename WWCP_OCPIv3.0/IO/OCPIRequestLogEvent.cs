@@ -22,7 +22,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
+namespace cloud.charging.open.protocols.OCPIv3_0
 {
 
     /// <summary>

@@ -65,7 +65,7 @@ namespace cloud.charging.open.protocols.WWCP
                                         I18NString                                               Name,
                                         I18NString                                               Description,
 
-                                        OCPIv2_1_1.HTTP.CommonAPI                                CommonAPI,
+                                        OCPIv2_1_1.CommonAPI                                     CommonAPI,
 
                                         OCPIv2_1_1.GetTariffIds_Delegate?                        GetTariffIds                         = null,
 
@@ -214,61 +214,61 @@ namespace cloud.charging.open.protocols.WWCP
         /// <param name="Configurator">An optional delegate to configure the new roaming provider after its creation.</param>
         public static OCPIv2_1_1.OCPICSOAdapter?
 
-            CreateOCPIv2_1_1_CSOAdapter(this IRoamingNetwork                                     RoamingNetwork,
-                                        CSORoamingProvider_Id                                    Id,
-                                        I18NString                                               Name,
-                                        I18NString                                               Description,
+            CreateOCPIv2_1_1_CSOAdapter(this IRoamingNetwork                                    RoamingNetwork,
+                                        CSORoamingProvider_Id                                   Id,
+                                        I18NString                                              Name,
+                                        I18NString                                              Description,
 
-                                        OCPIv2_1_1.HTTP.CPOAPI                                   CPOAPI,
+                                        OCPIv2_1_1.CPOAPI                                       CPOAPI,
 
-                                        OCPIv2_1_1.GetTariffIds_Delegate?                        GetTariffIds                         = null,
+                                        OCPIv2_1_1.GetTariffIds_Delegate?                       GetTariffIds                        = null,
 
-                                        OCPI.      WWCPEVSEId_2_EVSEUId_Delegate?                CustomEVSEUIdConverter               = null,
-                                        OCPI.      WWCPEVSEId_2_EVSEId_Delegate?                 CustomEVSEIdConverter                = null,
-                                        OCPIv2_1_1.WWCPEVSE_2_EVSE_Delegate?                     CustomEVSEConverter                  = null,
-                                        OCPIv2_1_1.WWCPEVSEStatusUpdate_2_StatusType_Delegate?   CustomEVSEStatusUpdateConverter      = null,
-                                        OCPIv2_1_1.WWCPChargeDetailRecord_2_CDR_Delegate?        CustomChargeDetailRecordConverter    = null,
+                                        OCPI.      WWCPEVSEId_2_EVSEUId_Delegate?               CustomEVSEUIdConverter              = null,
+                                        OCPI.      WWCPEVSEId_2_EVSEId_Delegate?                CustomEVSEIdConverter               = null,
+                                        OCPIv2_1_1.WWCPEVSE_2_EVSE_Delegate?                    CustomEVSEConverter                 = null,
+                                        OCPIv2_1_1.WWCPEVSEStatusUpdate_2_StatusType_Delegate?  CustomEVSEStatusUpdateConverter     = null,
+                                        OCPIv2_1_1.WWCPChargeDetailRecord_2_CDR_Delegate?       CustomChargeDetailRecordConverter   = null,
 
-                                        IncludeEVSEIdDelegate?                                   IncludeEVSEIds                       = null,
-                                        IncludeEVSEDelegate?                                     IncludeEVSEs                         = null,
-                                        IncludeChargingStationIdDelegate?                        IncludeChargingStationIds            = null,
-                                        IncludeChargingStationDelegate?                          IncludeChargingStations              = null,
-                                        IncludeChargingPoolIdDelegate?                           IncludeChargingPoolIds               = null,
-                                        IncludeChargingPoolDelegate?                             IncludeChargingPools                 = null,
-                                        IncludeChargingStationOperatorIdDelegate?                IncludeChargingStationOperatorIds    = null,
-                                        IncludeChargingStationOperatorDelegate?                  IncludeChargingStationOperators      = null,
-                                        ChargeDetailRecordFilterDelegate?                        ChargeDetailRecordFilter             = null,
+                                        IncludeEVSEIdDelegate?                                  IncludeEVSEIds                      = null,
+                                        IncludeEVSEDelegate?                                    IncludeEVSEs                        = null,
+                                        IncludeChargingStationIdDelegate?                       IncludeChargingStationIds           = null,
+                                        IncludeChargingStationDelegate?                         IncludeChargingStations             = null,
+                                        IncludeChargingPoolIdDelegate?                          IncludeChargingPoolIds              = null,
+                                        IncludeChargingPoolDelegate?                            IncludeChargingPools                = null,
+                                        IncludeChargingStationOperatorIdDelegate?               IncludeChargingStationOperatorIds   = null,
+                                        IncludeChargingStationOperatorDelegate?                 IncludeChargingStationOperators     = null,
+                                        ChargeDetailRecordFilterDelegate?                       ChargeDetailRecordFilter            = null,
 
-                                        TimeSpan?                                                ServiceCheckEvery                    = null,
-                                        TimeSpan?                                                StatusCheckEvery                     = null,
-                                        TimeSpan?                                                CDRCheckEvery                        = null,
+                                        TimeSpan?                                               ServiceCheckEvery                   = null,
+                                        TimeSpan?                                               StatusCheckEvery                    = null,
+                                        TimeSpan?                                               CDRCheckEvery                       = null,
 
-                                        Boolean                                                  DisablePushData                      = false,
-                                        Boolean                                                  DisablePushStatus                    = false,
-                                        Boolean                                                  DisablePushAdminStatus               = false,
-                                        Boolean                                                  DisablePushEnergyStatus              = false,
-                                        Boolean                                                  DisableAuthentication                = false,
-                                        Boolean                                                  DisableSendChargeDetailRecords       = false,
+                                        Boolean                                                 DisablePushData                     = false,
+                                        Boolean                                                 DisablePushStatus                   = false,
+                                        Boolean                                                 DisablePushAdminStatus              = false,
+                                        Boolean                                                 DisablePushEnergyStatus             = false,
+                                        Boolean                                                 DisableAuthentication               = false,
+                                        Boolean                                                 DisableSendChargeDetailRecords      = false,
 
-                                        Action<OCPIv2_1_1.OCPICSOAdapter>?                       OCPIConfigurator                     = null,
-                                        Action<ICSORoamingProvider>?                             Configurator                         = null,
+                                        Action<OCPIv2_1_1.OCPICSOAdapter>?                      OCPIConfigurator                    = null,
+                                        Action<ICSORoamingProvider>?                            Configurator                        = null,
 
-                                        String                                                   EllipticCurve                        = "P-256",
-                                        ECPrivateKeyParameters?                                  PrivateKey                           = null,
-                                        PublicKeyCertificates?                                   PublicKeyCertificates                = null,
+                                        String                                                  EllipticCurve                       = "P-256",
+                                        ECPrivateKeyParameters?                                 PrivateKey                          = null,
+                                        PublicKeyCertificates?                                  PublicKeyCertificates               = null,
 
-                                        Boolean?                                                 IsDevelopment                        = null,
-                                        IEnumerable<String>?                                     DevelopmentServers                   = null,
-                                        Boolean?                                                 DisableLogging                       = null,
-                                        String?                                                  LoggingPath                          = null,
-                                        String?                                                  LoggingContext                       = null,
-                                        String?                                                  LogfileName                          = null,
-                                        LogfileCreatorDelegate?                                  LogfileCreator                       = null,
+                                        Boolean?                                                IsDevelopment                       = null,
+                                        IEnumerable<String>?                                    DevelopmentServers                  = null,
+                                        Boolean?                                                DisableLogging                      = null,
+                                        String?                                                 LoggingPath                         = null,
+                                        String?                                                 LoggingContext                      = null,
+                                        String?                                                 LogfileName                         = null,
+                                        LogfileCreatorDelegate?                                 LogfileCreator                      = null,
 
-                                        String?                                                  ClientsLoggingPath                   = null,
-                                        String?                                                  ClientsLoggingContext                = null,
-                                        OCPILogfileCreatorDelegate?                              ClientsLogfileCreator                = null,
-                                        DNSClient?                                               DNSClient                            = null)
+                                        String?                                                 ClientsLoggingPath                  = null,
+                                        String?                                                 ClientsLoggingContext               = null,
+                                        OCPILogfileCreatorDelegate?                             ClientsLogfileCreator               = null,
+                                        DNSClient?                                              DNSClient                           = null)
 
         {
 

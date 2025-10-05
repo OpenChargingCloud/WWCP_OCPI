@@ -92,7 +92,7 @@ namespace cloud.charging.open.protocols.OCPI
                                    HTTPResponseLoggerDelegate?  LogHTTPError_toNetwork      = null,
                                    HTTPResponseLoggerDelegate?  LogHTTPError_toHTTPSSE      = null,
 
-                                   LogfileCreatorDelegate?      LogfileCreator              = null)
+                                   OCPILogfileCreatorDelegate?  LogfileCreator              = null)
 
             : base(CommonHTTPAPI.HTTPBaseAPI.HTTPServer,
                    LoggingPath,
@@ -113,7 +113,8 @@ namespace cloud.charging.open.protocols.OCPI
                    LogHTTPError_toNetwork,
                    LogHTTPError_toHTTPSSE,
 
-                   LogfileCreator)
+                   (loggingPath, context, logfileName) => LogfileCreator?.Invoke(loggingPath, null, context, logfileName) ?? ""
+                  )
 
         {
 

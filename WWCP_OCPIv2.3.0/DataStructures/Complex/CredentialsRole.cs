@@ -24,7 +24,7 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_3_0.HTTP;
+using cloud.charging.open.protocols.OCPIv2_3_0;
 
 #endregion
 
