@@ -422,7 +422,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             this.EMSPAPI                            = new EMSPAPI(
                                                           this.CommonAPI,
-                                                          URLPathPrefix: CommonAPI.URLPathPrefix + Version.String + "emsp"
+                                                          URLPathPrefix: HTTPPath.Parse($"{Version.String}/emsp")//CommonAPI.URLPathPrefix + Version.String + "emsp"
                                                       );
 
         }

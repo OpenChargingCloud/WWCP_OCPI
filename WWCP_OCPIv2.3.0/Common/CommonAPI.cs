@@ -4593,7 +4593,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.ChargingProfiles,
-                                InterfaceRoles.SENDER,
+                                InterfaceRoles.RECEIVER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
                                     (request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/"))
                             )

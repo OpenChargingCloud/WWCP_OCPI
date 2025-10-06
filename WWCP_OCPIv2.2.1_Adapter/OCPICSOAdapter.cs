@@ -330,7 +330,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                           null,
 
                                                           null, // BasePath
-                                                          CommonAPI.URLPathPrefix + Version.String + "cpo",
+                                                          HTTPPath.Parse($"{Version.String}/cpo"),//CommonAPI.URLPathPrefix + Version.String + "cpo",
 
                                                           null, // ExternalDNSName
                                                           null, // HTTPServerName

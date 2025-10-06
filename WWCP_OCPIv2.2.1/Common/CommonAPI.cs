@@ -3670,35 +3670,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         /// 
         /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
-        public CommonAPI(IEnumerable<PartyData>        OurPartyData,
-                         Party_Idv3                    DefaultPartyId,
+        public CommonAPI(IEnumerable<PartyData>       OurPartyData,
+                         Party_Idv3                   DefaultPartyId,
 
-                         CommonHTTPAPI                 BaseAPI,
+                         CommonHTTPAPI                BaseAPI,
 
-                         I18NString?                   Description               = null,
-                         HTTPPath?                     AdditionalURLPathPrefix   = null,
-                         Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
+                         I18NString?                  Description               = null,
+                         HTTPPath?                    AdditionalURLPathPrefix   = null,
+                         Func<EVSE, Boolean>?         KeepRemovedEVSEs          = null,
 
-                         HTTPPath?                     BasePath                  = null,
-                         HTTPPath?                     URLPathPrefix             = null,
+                         HTTPPath?                    BasePath                  = null,
+                         HTTPPath?                    URLPathPrefix             = null,
 
-                         String?                       ExternalDNSName           = null,
-                         String?                       HTTPServerName            = DefaultHTTPServerName,
-                         String?                       HTTPServiceName           = DefaultHTTPServiceName,
-                         String?                       APIVersionHash            = null,
-                         JObject?                      APIVersionHashes          = null,
+                         String?                      ExternalDNSName           = null,
+                         String?                      HTTPServerName            = DefaultHTTPServerName,
+                         String?                      HTTPServiceName           = DefaultHTTPServiceName,
+                         String?                      APIVersionHash            = null,
+                         JObject?                     APIVersionHashes          = null,
 
-                         String?                       DatabaseFilePath          = null,
-                         String?                       RemotePartyDBFileName     = null,
-                         String?                       AssetsDBFileName          = null,
+                         String?                      DatabaseFilePath          = null,
+                         String?                      RemotePartyDBFileName     = null,
+                         String?                      AssetsDBFileName          = null,
 
-                         Boolean?                      IsDevelopment             = false,
-                         IEnumerable<String>?          DevelopmentServers        = null,
-                         Boolean?                      DisableLogging            = false,
-                         String?                       LoggingContext            = null,
-                         String?                       LoggingPath               = null,
-                         String?                       LogfileName               = null,
-                         OCPILogfileCreatorDelegate?   LogfileCreator            = null)
+                         Boolean?                     IsDevelopment             = false,
+                         IEnumerable<String>?         DevelopmentServers        = null,
+                         Boolean?                     DisableLogging            = false,
+                         String?                      LoggingContext            = null,
+                         String?                      LoggingPath               = null,
+                         String?                      LogfileName               = null,
+                         OCPILogfileCreatorDelegate?  LogfileCreator            = null)
 
             : base(Description ?? I18NString.Create($"OCPI{Version.String} Common HTTP API"),
                    BaseAPI.HTTPBaseAPI,
@@ -4052,7 +4052,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.ChargingProfiles,
-                                InterfaceRoles.SENDER,
+                                InterfaceRoles.RECEIVER,
                                 URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
                                     (request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/")
                                 )
