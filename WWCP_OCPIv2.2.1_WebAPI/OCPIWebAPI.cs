@@ -277,12 +277,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
         public CPOAPI?                                      CPOAPI                  { get; set; }
 
-        public CPOAPILogger?                                CPOAPILogger            { get; set; }
+        //public CPOAPILogger?                                CPOAPILogger            { get; set; }
 
 
         public EMSPAPI?                                     EMSPAPI                 { get; set; }
 
-        public EMSPAPILogger?                               EMSPAPILogger           { get; set; }
+        //public EMSPAPILogger?                               EMSPAPILogger           { get; set; }
 
         /// <summary>
         /// The default request timeout for new CPO/EMSP clients.

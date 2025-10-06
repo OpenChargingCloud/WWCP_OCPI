@@ -17,9 +17,10 @@
 
 #region Usings
 
-using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Authentication;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
@@ -118,7 +119,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// The default JSON-LD context of this object.
         /// </summary>
-        public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse("https://open.charging.cloud/contexts/OCPI/remoteParty");
+        public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse("https://open.charging.cloud/contexts/OCPIv2.2/remoteParty");
 
         #endregion
 
@@ -142,6 +143,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         [Mandatory]
         public IEnumerable<CredentialsRole>         Roles                         { get; }
+
+        /// <summary>
+        /// The timestamp when this remote party was created.
+        /// </summary>
+        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
+        public DateTimeOffset                       Created                       { get; }
 
         /// <summary>
         /// Timestamp when this remote party was last updated (or created).
@@ -208,7 +215,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public TransmissionRetryDelayDelegate?      TransmissionRetryDelay        { get; }
 
         /// <summary>
-        /// The maximum number of retries when communicationg with the remote HTTP service.
+        /// The maximum number of retries when communicating with the remote HTTP service.
         /// </summary>
         public UInt16?                              MaxNumberOfRetries            { get; }
 
@@ -481,16 +488,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            UInt32?                                                    InternalBufferSize           = null,
                            Boolean?                                                   UseHTTPPipelining            = null,
 
+                           DateTimeOffset?                                            Created                      = null,
                            DateTimeOffset?                                            LastUpdated                  = null)
 
         {
 
             this.Id                          = Id;
             this.Roles                       = Roles;
-            this.Status                      = Status ?? PartyStatus.ENABLED;
+            this.Status                      = Status                     ?? PartyStatus.ENABLED;
 
             this.PreferIPv4                  = PreferIPv4;
-            this.RemoteCertificateValidator  = RemoteCertificateValidator;
+            this.RemoteCertificateValidator  = RemoteCertificateValidator ?? ((sender,
+                                                                               certificate,
+                                                                               certificateChain,
+                                                                               tlsClient,
+                                                                               policyErrors) => (true, Array.Empty<String>()));
             this.LocalCertificateSelector    = LocalCertificateSelector;
             this.ClientCert                  = ClientCert;
             this.TLSProtocol                 = TLSProtocol;
@@ -501,7 +513,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.InternalBufferSize          = InternalBufferSize;
             this.UseHTTPPipelining           = UseHTTPPipelining;
 
-            this.LastUpdated                 = LastUpdated ?? Timestamp.Now;
+            this.Created                     = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated                 = LastUpdated ?? Created     ?? Timestamp.Now;
 
             this.localAccessInfos            = LocalAccessInfos. IsNeitherNullNorEmpty() ? [.. LocalAccessInfos]  : [];
             this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? [.. RemoteAccessInfos] : [];
@@ -527,6 +540,198 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
+
+        #region (static) Parse   (JSON, CustomRemotePartyParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of a remote party.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomRemotePartyParser">A delegate to parse custom remote party JSON objects.</param>
+        public static RemoteParty Parse(JObject                                    JSON,
+                                        CustomJObjectParserDelegate<RemoteParty>?  CustomRemotePartyParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out var remoteParty,
+                         out var errorResponse,
+                         CustomRemotePartyParser))
+            {
+                return remoteParty;
+            }
+
+            throw new ArgumentException("The given JSON representation of a remote party is invalid: " + errorResponse,
+                                        nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out RemoteParty, out ErrorResponse, CustomRemotePartyParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a remote party.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="RemoteParty">The parsed remote party.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomRemotePartyParser">A delegate to parse custom remote party JSON objects.</param>
+        public static Boolean TryParse(JObject                                    JSON,
+                                       [NotNullWhen(true)]  out RemoteParty?      RemoteParty,
+                                       [NotNullWhen(false)] out String?           ErrorResponse,
+                                       CustomJObjectParserDelegate<RemoteParty>?  CustomRemotePartyParser   = null)
+        {
+
+            try
+            {
+
+                RemoteParty = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse Id                   [mandatory]
+
+                if (!JSON.ParseMandatory("@id",
+                                         "remote party identification",
+                                         RemoteParty_Id.TryParse,
+                                         out RemoteParty_Id id,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Roles                [optional]
+
+                if (!JSON.ParseMandatoryJSON("roles",
+                                             "credentials roles",
+                                             CredentialsRole.TryParse,
+                                             out IEnumerable<CredentialsRole> roles,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse LocalAccessInfos     [optional]
+
+                if (JSON.ParseOptionalJSON("localAccessInfos",
+                                           "local access infos",
+                                           LocalAccessInfo.TryParse,
+                                           out IEnumerable<LocalAccessInfo> localAccessInfos,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse RemoteAccessInfos    [optional]
+
+                if (JSON.ParseOptionalJSON("remoteAccessInfos",
+                                           "remote access infos",
+                                           RemoteAccessInfo.TryParse,
+                                           out IEnumerable<RemoteAccessInfo> remoteAccessInfos,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse Status               [mandatory]
+
+                if (!JSON.ParseMandatory("partyStatus",
+                                         "party status",
+                                         PartyStatus.TryParse,
+                                         out PartyStatus status,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                // ...
+
+                #region Parse Created              [optional, NonStandard]
+
+                if (JSON.ParseOptional("created",
+                                       "created",
+                                       out DateTime? created,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse LastUpdated          [mandatory]
+
+                if (!JSON.ParseMandatory("last_updated",
+                                         "last updated",
+                                         out DateTime lastUpdated,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                RemoteParty = new RemoteParty(
+
+                                  Id:                           id,
+                                  Roles:                        roles,
+
+                                  LocalAccessInfos:             localAccessInfos,
+                                  RemoteAccessInfos:            remoteAccessInfos,
+
+                                  Status:                       status,
+
+                                  PreferIPv4:                   null,
+                                  RemoteCertificateValidator:   null,
+                                  LocalCertificateSelector:     null,
+                                  ClientCert:                   null,
+                                  TLSProtocol:                  null,
+                                  HTTPUserAgent:                null,
+                                  RequestTimeout:               null,
+                                  TransmissionRetryDelay:       null,
+                                  MaxNumberOfRetries:           null,
+                                  InternalBufferSize:           null,
+                                  UseHTTPPipelining:            null,
+
+                                  LastUpdated:                  lastUpdated
+
+                              );
+
+
+                if (CustomRemotePartyParser is not null)
+                    RemoteParty = CustomRemotePartyParser(JSON,
+                                                          RemoteParty);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                RemoteParty    = default;
+                ErrorResponse  = "The given JSON representation of a remote party is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
 
         #region ToJSON(Embedded, CustomRemotePartySerializer = null, CustomBusinessDetailsSerializer = null, IncludeCryptoHash = false)
 
@@ -658,7 +863,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="RemoteParty1">A remote party identification.</param>
         /// <param name="RemoteParty2">Another remote party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator ==(RemoteParty RemoteParty1,
+        public static Boolean operator == (RemoteParty RemoteParty1,
                                            RemoteParty RemoteParty2)
         {
 
@@ -682,7 +887,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="RemoteParty1">A remote party identification.</param>
         /// <param name="RemoteParty2">Another remote party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator !=(RemoteParty RemoteParty1,
+        public static Boolean operator != (RemoteParty RemoteParty1,
                                            RemoteParty RemoteParty2)
 
             => !(RemoteParty1 == RemoteParty2);
@@ -697,7 +902,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="RemoteParty1">A remote party identification.</param>
         /// <param name="RemoteParty2">Another remote party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <(RemoteParty RemoteParty1,
+        public static Boolean operator < (RemoteParty RemoteParty1,
                                           RemoteParty RemoteParty2)
 
             => RemoteParty1 is null
@@ -714,7 +919,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="RemoteParty1">A remote party identification.</param>
         /// <param name="RemoteParty2">Another remote party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <=(RemoteParty RemoteParty1,
+        public static Boolean operator <= (RemoteParty RemoteParty1,
                                            RemoteParty RemoteParty2)
 
             => !(RemoteParty1 > RemoteParty2);
@@ -729,7 +934,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="RemoteParty1">A remote party identification.</param>
         /// <param name="RemoteParty2">Another remote party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >(RemoteParty RemoteParty1,
+        public static Boolean operator > (RemoteParty RemoteParty1,
                                           RemoteParty RemoteParty2)
 
             => RemoteParty1 is null
@@ -746,7 +951,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="RemoteParty1">A remote party identification.</param>
         /// <param name="RemoteParty2">Another remote party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >=(RemoteParty RemoteParty1,
+        public static Boolean operator >= (RemoteParty RemoteParty1,
                                            RemoteParty RemoteParty2)
 
             => !(RemoteParty1 < RemoteParty2);

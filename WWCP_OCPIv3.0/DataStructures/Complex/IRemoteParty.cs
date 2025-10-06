@@ -115,7 +115,7 @@
 //        TransmissionRetryDelayDelegate?      TransmissionRetryDelay        { get; }
 
 //        /// <summary>
-//        /// The maximum number of retries when communicationg with the remote HTTP service.
+//        /// The maximum number of retries when communicating with the remote HTTP service.
 //        /// </summary>
 //        UInt16?                              MaxNumberOfRetries            { get; }
 

@@ -17,9 +17,10 @@
 
 #region Usings
 
-using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Authentication;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
@@ -103,7 +104,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
     /// <summary>
     /// A remote party.
-    /// In OCPI v2.1 this is a single CPO or EMSP.
+    /// In OCPI v2.1.x this is a single CPO or EMSP.
     /// </summary>
     public class RemoteParty : IRemoteParty,
                                IEquatable<RemoteParty>,
@@ -115,7 +116,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The default JSON-LD context of this object.
         /// </summary>
-        public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse("https://open.charging.cloud/contexts/OCPI/remoteParty");
+        public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse("https://open.charging.cloud/contexts/OCPIv2.1/remoteParty");
 
         #endregion
 
@@ -229,7 +230,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public TransmissionRetryDelayDelegate?       TransmissionRetryDelay        { get; }
 
         /// <summary>
-        /// The maximum number of retries when communicationg with the remote HTTP service.
+        /// The maximum number of retries when communicating with the remote HTTP service.
         /// </summary>
         public UInt16?                               MaxNumberOfRetries            { get; }
 
@@ -278,7 +279,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Boolean?                                                   AccessTokenBase64Encoding    = null,
                            Boolean?                                                   AllowDowngrades              = false,
                            AccessStatus                                               AccessStatus                 = AccessStatus.ALLOWED,
-                           PartyStatus                                                Status                       = PartyStatus. ENABLED,
+                           PartyStatus?                                               Status                       = PartyStatus. ENABLED,
                            DateTimeOffset?                                            LocalAccessNotBefore         = null,
                            DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
@@ -349,7 +350,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Boolean?                                                   AllowDowngrades              = null,
 
                            RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.ONLINE,
-                           PartyStatus                                                Status                       = PartyStatus.       ENABLED,
+                           PartyStatus?                                               Status                       = PartyStatus.       ENABLED,
                            DateTimeOffset?                                            RemoteAccessNotBefore        = null,
                            DateTimeOffset?                                            RemoteAccessNotAfter         = null,
 
@@ -429,7 +430,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Boolean?                                                   AllowDowngrades              = false,
                            AccessStatus                                               AccessStatus                 = AccessStatus.      ALLOWED,
                            RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.ONLINE,
-                           PartyStatus                                                Status                       = PartyStatus.       ENABLED,
+                           PartyStatus?                                               Status                       = PartyStatus.       ENABLED,
                            DateTimeOffset?                                            RemoteAccessNotBefore        = null,
                            DateTimeOffset?                                            RemoteAccessNotAfter         = null,
 
@@ -506,7 +507,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            IEnumerable<LocalAccessInfo>                               LocalAccessInfos,
                            IEnumerable<RemoteAccessInfo>                              RemoteAccessInfos,
-                           PartyStatus                                                Status                       = PartyStatus.ENABLED,
+                           PartyStatus?                                               Status                       = PartyStatus.ENABLED,
 
                            Boolean?                                                   PreferIPv4                   = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
@@ -531,7 +532,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.PartyId                     = PartyId;
             this.Role                        = Role;
             this.BusinessDetails             = BusinessDetails;
-            this.Status                      = Status;
+            this.Status                      = Status                     ?? PartyStatus.ENABLED;
 
             this.RemoteCertificateValidator  = RemoteCertificateValidator ?? ((sender,
                                                                                certificate,
@@ -552,8 +553,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.Created                     = Created     ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated                 = LastUpdated ?? Created     ?? Timestamp.Now;
 
-            this.localAccessInfos            = LocalAccessInfos. IsNeitherNullNorEmpty() ? new List<LocalAccessInfo> (LocalAccessInfos)  : [];
-            this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? new List<RemoteAccessInfo>(RemoteAccessInfos) : [];
+            this.localAccessInfos            = LocalAccessInfos. IsNeitherNullNorEmpty() ? [.. LocalAccessInfos]  : [];
+            this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? [.. RemoteAccessInfos] : [];
 
             this.ETag                        = CalcSHA256Hash();
 
@@ -596,7 +597,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          out var errorResponse,
                          CustomRemotePartyParser))
             {
-                return remoteParty!;
+                return remoteParty;
             }
 
             throw new ArgumentException("The given JSON representation of a remote party is invalid: " + errorResponse,
@@ -616,8 +617,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomRemotePartyParser">A delegate to parse custom remote party JSON objects.</param>
         public static Boolean TryParse(JObject                                    JSON,
-                                       out RemoteParty?                           RemoteParty,
-                                       out String?                                ErrorResponse,
+                                       [NotNullWhen(true)]  out RemoteParty?      RemoteParty,
+                                       [NotNullWhen(false)] out String?           ErrorResponse,
                                        CustomJObjectParserDelegate<RemoteParty>?  CustomRemotePartyParser   = null)
         {
 
@@ -684,7 +685,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 }
 
                 #endregion
-
 
                 #region Parse LocalAccessInfos     [optional]
 

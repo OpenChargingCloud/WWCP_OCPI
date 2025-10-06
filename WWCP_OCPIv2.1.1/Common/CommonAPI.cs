@@ -1981,178 +1981,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region LoadRemotePartyDatabaseFile (DatabaseFileName = null)
-
-        public void LoadRemotePartyDatabaseFile(String? DatabaseFileName = null)
-        {
-
-            ProcessRemotePartyCommands(
-                ReadRemotePartyDatabaseFile(DatabaseFileName)
-            );
-
-        }
-
-        #endregion
-
-        #region ProcessRemotePartyCommands  (Commands)
-
-        public void ProcessRemotePartyCommands(IEnumerable<Command> Commands)
-        {
-
-            foreach (var command in Commands)
-            {
-
-                String?      errorResponse   = null;
-                RemoteParty? remoteParty;
-
-                var errorResponses = new List<Tuple<Command, String>>();
-
-                switch (command.CommandName)
-                {
-
-                    #region addRemoteParty
-
-                    case CommonHTTPAPI.addRemoteParty:
-                        try
-                        {
-                            if (command.JSONObject is not null &&
-                                RemoteParty.TryParse(command.JSONObject,
-                                                     out remoteParty,
-                                                     out errorResponse) &&
-                                remoteParty is not null)
-                            {
-                                remoteParties.TryAdd(remoteParty.Id, remoteParty);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            errorResponse ??= e.Message;
-                        }
-                        if (errorResponse is not null)
-                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
-                        break;
-
-                    #endregion
-
-                    #region addRemotePartyIfNotExists
-
-                    case CommonHTTPAPI.addRemotePartyIfNotExists:
-                        try
-                        {
-                            if (command.JSONObject is not null &&
-                                RemoteParty.TryParse(command.JSONObject,
-                                                     out remoteParty,
-                                                     out errorResponse) &&
-                                remoteParty is not null)
-                            {
-                                remoteParties.TryAdd(remoteParty.Id, remoteParty);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            errorResponse ??= e.Message;
-                        }
-                        if (errorResponse is not null)
-                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
-                        break;
-
-                    #endregion
-
-                    #region addOrUpdateRemoteParty
-
-                    case CommonHTTPAPI.addOrUpdateRemoteParty:
-                        try
-                        {
-                            if (command.JSONObject is not null &&
-                                RemoteParty.TryParse(command.JSONObject,
-                                                     out remoteParty,
-                                                     out errorResponse) &&
-                                remoteParty is not null)
-                            {
-
-                                if (remoteParties.ContainsKey(remoteParty.Id))
-                                    remoteParties.Remove(remoteParty.Id, out _);
-
-                                remoteParties.TryAdd(remoteParty.Id, remoteParty);
-
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            errorResponse ??= e.Message;
-                        }
-                        if (errorResponse is not null)
-                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
-                        break;
-
-                    #endregion
-
-                    #region updateRemoteParty
-
-                    case CommonHTTPAPI.updateRemoteParty:
-                        try
-                        {
-                            if (command.JSONObject is not null &&
-                                RemoteParty.TryParse(command.JSONObject,
-                                                     out remoteParty,
-                                                     out errorResponse) &&
-                                remoteParty is not null)
-                            {
-                                remoteParties.Remove(remoteParty.Id, out _);
-                                remoteParties.TryAdd(remoteParty.Id, remoteParty);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            errorResponse ??= e.Message;
-                        }
-                        if (errorResponse is not null)
-                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
-                        break;
-
-                    #endregion
-
-                    #region updateRemoteParty
-
-                    case CommonHTTPAPI.removeRemoteParty:
-                        try
-                        {
-                            if (command.JSONObject is not null &&
-                                RemoteParty.TryParse(command.JSONObject,
-                                                     out remoteParty,
-                                                     out errorResponse) &&
-                                remoteParty is not null)
-                            {
-                                remoteParties.Remove(remoteParty.Id, out _);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            errorResponse ??= e.Message;
-                        }
-                        if (errorResponse is not null)
-                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
-                        break;
-
-                    #endregion
-
-                    #region removeAllRemoteParties
-
-                    case CommonHTTPAPI.removeAllRemoteParties:
-                        remoteParties.Clear();
-                        break;
-
-                    #endregion
-
-                }
-
-            }
-
-        }
-
-        #endregion
-
-
         #region LoadAssetsDatabaseFile      (DatabaseFileName = null)
 
         public void LoadAssetsDatabaseFile(String? DatabaseFileName = null)
@@ -3890,11 +3718,174 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region ReadRemotePartyDatabaseFile       (DatabaseFileName = null)
+        #region ReadRemotePartyDatabaseFile (DatabaseFileName = null)
 
-        public IEnumerable<Command> ReadRemotePartyDatabaseFile(String? DatabaseFileName = null)
+        public void ReadRemotePartyDatabaseFile(String? DatabaseFileName = null)
+        {
 
-            => BaseAPI.LoadCommandsFromDatabaseFile(DatabaseFileName ?? RemotePartyDBFileName);
+            ProcessRemotePartyCommands(
+                BaseAPI.LoadCommandsFromDatabaseFile(DatabaseFileName ?? RemotePartyDBFileName)
+            );
+
+        }
+
+        #endregion
+
+        #region ProcessRemotePartyCommands  (Commands)
+
+        public void ProcessRemotePartyCommands(IEnumerable<Command> Commands)
+        {
+
+            foreach (var command in Commands)
+            {
+
+                String?      errorResponse   = null;
+                RemoteParty? remoteParty;
+
+                var errorResponses = new List<Tuple<Command, String>>();
+
+                switch (command.CommandName)
+                {
+
+                    #region addRemoteParty
+
+                    case CommonHTTPAPI.addRemoteParty:
+                        try
+                        {
+                            if (command.JSONObject is not null &&
+                                RemoteParty.TryParse(command.JSONObject,
+                                                     out remoteParty,
+                                                     out errorResponse) &&
+                                remoteParty is not null)
+                            {
+                                remoteParties.TryAdd(remoteParty.Id, remoteParty);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region addRemotePartyIfNotExists
+
+                    case CommonHTTPAPI.addRemotePartyIfNotExists:
+                        try
+                        {
+                            if (command.JSONObject is not null &&
+                                RemoteParty.TryParse(command.JSONObject,
+                                                     out remoteParty,
+                                                     out errorResponse) &&
+                                remoteParty is not null)
+                            {
+                                remoteParties.TryAdd(remoteParty.Id, remoteParty);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region addOrUpdateRemoteParty
+
+                    case CommonHTTPAPI.addOrUpdateRemoteParty:
+                        try
+                        {
+                            if (command.JSONObject is not null &&
+                                RemoteParty.TryParse(command.JSONObject,
+                                                     out remoteParty,
+                                                     out errorResponse) &&
+                                remoteParty is not null)
+                            {
+
+                                if (remoteParties.ContainsKey(remoteParty.Id))
+                                    remoteParties.Remove(remoteParty.Id, out _);
+
+                                remoteParties.TryAdd(remoteParty.Id, remoteParty);
+
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region updateRemoteParty
+
+                    case CommonHTTPAPI.updateRemoteParty:
+                        try
+                        {
+                            if (command.JSONObject is not null &&
+                                RemoteParty.TryParse(command.JSONObject,
+                                                     out remoteParty,
+                                                     out errorResponse) &&
+                                remoteParty is not null)
+                            {
+                                remoteParties.Remove(remoteParty.Id, out _);
+                                remoteParties.TryAdd(remoteParty.Id, remoteParty);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region updateRemoteParty
+
+                    case CommonHTTPAPI.removeRemoteParty:
+                        try
+                        {
+                            if (command.JSONObject is not null &&
+                                RemoteParty.TryParse(command.JSONObject,
+                                                     out remoteParty,
+                                                     out errorResponse) &&
+                                remoteParty is not null)
+                            {
+                                remoteParties.Remove(remoteParty.Id, out _);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region removeAllRemoteParties
+
+                    case CommonHTTPAPI.removeAllRemoteParties:
+                        remoteParties.Clear();
+                        break;
+
+                    #endregion
+
+                }
+
+            }
+
+        }
 
         #endregion
 
