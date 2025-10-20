@@ -537,7 +537,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                               IEnumerable<AuthenticationToken>? AuthTokens,
                                                               IEnumerable<EMobilityAccount_Id>? eMAIds,
                                                               IEnumerable<UInt32>? PINs,
-                                                              DateTimeOffset? Timestamp,
+                                                              ICSORoamingProvider? CSORoamingProvider,
+
+                                                              DateTimeOffset? RequestTimestamp,
                                                               EventTracking_Id? EventTrackingId,
                                                               TimeSpan? RequestTimeout,
                                                               CancellationToken CancellationToken)
@@ -547,7 +549,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         Task<CancelReservationResult> IChargingReservations.CancelReservation(ChargingReservation_Id ReservationId,
                                                                               ChargingReservationCancellationReason Reason,
-                                                                              DateTimeOffset? Timestamp,
+                                                                              ICSORoamingProvider? CSORoamingProvider,
+
+                                                                              DateTimeOffset? RequestTimestamp,
                                                                               EventTracking_Id? EventTrackingId,
                                                                               TimeSpan? RequestTimeout,
                                                                               CancellationToken CancellationToken)
@@ -588,8 +592,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                              RemoteAuthentication?    RemoteAuthentication,
                                                              JObject?                 AdditionalSessionInfos,
                                                              Auth_Path?               AuthenticationPath,
+                                                             ICSORoamingProvider?     CSORoamingProvider,
 
-                                                             DateTimeOffset?          Timestamp,
+                                                             DateTimeOffset?          RequestTimestamp,
                                                              EventTracking_Id?        EventTrackingId,
                                                              TimeSpan?                RequestTimeout,
                                                              CancellationToken        CancellationToken)
@@ -602,8 +607,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                            EMobilityProvider_Id?  ProviderId,
                                                            RemoteAuthentication?  RemoteAuthentication,
                                                            Auth_Path?             AuthenticationPath,
+                                                           ICSORoamingProvider?   CSORoamingProvider,
 
-                                                           DateTimeOffset?        Timestamp,
+                                                           DateTimeOffset?        RequestTimestamp,
                                                            EventTracking_Id?      EventTrackingId,
                                                            TimeSpan?              RequestTimeout,
                                                            CancellationToken      CancellationToken)

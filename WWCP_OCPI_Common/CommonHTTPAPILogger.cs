@@ -113,8 +113,7 @@ namespace cloud.charging.open.protocols.OCPI
                    LogHTTPError_toNetwork,
                    LogHTTPError_toHTTPSSE,
 
-                   (loggingPath, context, logfileName) => LogfileCreator?.Invoke(loggingPath, null, context, logfileName) ?? ""
-                  )
+                   (loggingPath, context, logfileName) => LogfileCreator?.Invoke(loggingPath, null, context, logfileName) ?? "")
 
         {
 

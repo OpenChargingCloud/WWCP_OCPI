@@ -191,7 +191,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public OCPICSOAdapter(WWCP.CSORoamingProvider_Id                      Id,
                               I18NString                                      Name,
                               I18NString                                      Description,
-                              WWCP.RoamingNetwork                             RoamingNetwork,
+                              WWCP.IRoamingNetwork                            RoamingNetwork,
 
                               CommonAPI                                       CommonAPI,
 

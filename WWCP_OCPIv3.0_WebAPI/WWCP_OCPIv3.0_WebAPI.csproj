@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WWCP_OCPIv3.0\WWCP_OCPIv3.0.csproj" />
+    <ProjectReference Include="..\WWCP_OCPI_Common_WebAPI\WWCP_OCPI_Common_WebAPI.csproj" />
   </ItemGroup>
 
 </Project>
