@@ -762,12 +762,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                  new JProperty("partyStatus",        Status.ToString()),
 
-                                 new JProperty("roles",              new JArray(Roles.Select(role => role.ToJSON(CustomCredentialsRoleSerializer,
-                                                                                                                 CustomBusinessDetailsSerializer,
-                                                                                                                 CustomImageSerializer)))),
+                                 new JProperty("roles",              new JArray(Roles.            Select(role             => role.            ToJSON(CustomCredentialsRoleSerializer,
+                                                                                                                                                     CustomBusinessDetailsSerializer,
+                                                                                                                                                     CustomImageSerializer)))),
 
                            localAccessInfos. Count != 0
-                               ? new JProperty("accessInfos",        new JArray(localAccessInfos.Select(localAccessInfo => localAccessInfo.ToJSON(CustomLocalAccessInfoSerializer))))
+                               ? new JProperty("localAccessInfos",   new JArray(localAccessInfos. Select(localAccessInfo  => localAccessInfo. ToJSON(CustomLocalAccessInfoSerializer))))
                                : null,
 
                            remoteAccessInfos.Count != 0

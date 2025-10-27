@@ -5179,14 +5179,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region ~/sessions/{country_code}/{party_id}/{sessionId}
+            #region ~/sessions/{country_code}/{party_id}/{session_id}
 
-            #region OPTIONS  ~/sessions/{country_code}/{party_id}/{sessionId}    [NonStandard]
+            #region OPTIONS  ~/sessions/{country_code}/{party_id}/{session_id}    [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
+                URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
                 OCPIRequestHandler: request =>
 
                     Task.FromResult(
@@ -5204,12 +5204,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region GET      ~/sessions/{country_code}/{party_id}/{sessionId}
+            #region GET      ~/sessions/{country_code}/{party_id}/{session_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
+                URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetSessionRequest,
                 OCPIResponseLogger:  GetSessionResponse,
@@ -5241,7 +5241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (!request.ParseMandatorySession(CommonAPI,
                                                        out var countryCode,
                                                        out var partyId,
-                                                       out var sessionId,
+                                                       out var session_id,
                                                        out var session,
                                                        out var ocpiResponseBuilder))
                     {
@@ -5274,12 +5274,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region PUT      ~/sessions/{country_code}/{party_id}/{sessionId}
+            #region PUT      ~/sessions/{country_code}/{party_id}/{session_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PUT,
-                URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
+                URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PutSessionRequest,
                 OCPIResponseLogger:  PutSessionResponse,
@@ -5305,14 +5305,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #endregion
 
-                    #region Check existing session
+                    #region Parse session identification
 
-                    if (!request.ParseOptionalSession(CommonAPI,
-                                                      out var countryCode,
-                                                      out var partyId,
-                                                      out var sessionId,
-                                                      out var existingSession,
-                                                      out var ocpiResponseBuilder))
+                    if (!request.ParseSessionId(CommonAPI,
+                                                out var countryCode,
+                                                out var partyId,
+                                                out var session_id,
+                                                out var ocpiResponseBuilder))
                     {
                         return ocpiResponseBuilder;
                     }
@@ -5329,7 +5328,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                           out var errorResponse,
                                           countryCode,
                                           partyId,
-                                          sessionId))
+                                          session_id))
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -5395,12 +5394,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region PATCH    ~/sessions/{country_code}/{party_id}/{sessionId}
+            #region PATCH    ~/sessions/{country_code}/{party_id}/{session_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PATCH,
-                URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
+                URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PatchSessionRequest,
                 OCPIResponseLogger:  PatchSessionResponse,
@@ -5431,7 +5430,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (!request.ParseMandatorySession(CommonAPI,
                                                        out var countryCode,
                                                        out var partyId,
-                                                       out var sessionId,
+                                                       out var session_id,
                                                        out var existingSession,
                                                        out var ocpiResponseBuilder))
                     {
@@ -5492,12 +5491,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region DELETE   ~/sessions/{country_code}/{party_id}/{sessionId}    [NonStandard]
+            #region DELETE   ~/sessions/{country_code}/{party_id}/{session_id}    [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
+                URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   DeleteSessionRequest,
                 OCPIResponseLogger:  DeleteSessionResponse,
@@ -5528,7 +5527,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (!request.ParseMandatorySession(CommonAPI,
                                                        out var countryCode,
                                                        out var partyId,
-                                                       out var sessionId,
+                                                       out var session_id,
                                                        out var existingSession,
                                                        out var ocpiResponseBuilder))
                     {
@@ -5787,12 +5786,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region POST     ~/cdrs/{country_code}/{party_id}       <= Unclear if this URL is correct!
+            #region POST     ~/cdrs               ///{country_code}/{party_id}       <= Unclear if this URL is correct!
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + "cdrs/{country_code}/{party_id}",
+                URLPathPrefix + "cdrs",///{country_code}/{party_id}",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PostCDRRequest,
                 OCPIResponseLogger:  PostCDRResponse,
@@ -5820,25 +5819,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check party identification
 
-                    if (!request.ParsePartyId(CommonAPI,
-                                              out var partyId,
-                                              out var ocpiResponseBuilder))
-                    {
-                        return ocpiResponseBuilder;
-                    }
+                    //if (!request.ParsePartyId(CommonAPI,
+                    //                          out var partyId,
+                    //                          out var ocpiResponseBuilder))
+                    //{
+                    //    return ocpiResponseBuilder;
+                    //}
 
                     #endregion
 
                     #region Parse newCDR JSON
 
-                    if (!request.TryParseJObjectRequestBody(out var jsonCDR, out ocpiResponseBuilder))
+                    if (!request.TryParseJObjectRequestBody(out var jsonCDR, out var ocpiResponseBuilder))
                         return ocpiResponseBuilder;
 
                     if (!CDR.TryParse(jsonCDR,
                                       out var newCDR,
-                                      out var errorResponse,
-                                      partyId.Value.CountryCode,
-                                      partyId.Value.Party))
+                                      out var errorResponse
+                                      //partyId.Value.CountryCode,
+                                      //partyId.Value.Party
+                                      ))
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -6821,14 +6821,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             // Command result callbacks
 
-            #region ~/commands/RESERVE_NOW/{commandId}
+            #region ~/commands/RESERVE_NOW/{command_id}
 
-            #region OPTIONS  ~/commands/RESERVE_NOW/{commandId}
+            #region OPTIONS  ~/commands/RESERVE_NOW/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "commands/RESERVE_NOW/{commandId}",
+                URLPathPrefix + "commands/RESERVE_NOW/{command_id}",
                 OCPIRequestHandler: request =>
 
                     Task.FromResult(
@@ -6844,12 +6844,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region POST     ~/commands/RESERVE_NOW/{commandId}
+            #region POST     ~/commands/RESERVE_NOW/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + "commands/RESERVE_NOW/{commandId}",
+                URLPathPrefix + "commands/RESERVE_NOW/{command_id}",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   ReserveNowCallbackRequest,
                 OCPIResponseLogger:  ReserveNowCallbackResponse,
@@ -6859,10 +6859,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     if (!request.ParseCommandId(CommonAPI,
                                                 out var commandId,
-                                                out var ocpiResponseBuilder) ||
-                        !commandId.HasValue)
+                                                out var ocpiResponseBuilder))
                     {
-                        return Task.FromResult(ocpiResponseBuilder!);
+                        return Task.FromResult(ocpiResponseBuilder);
                     }
 
                     #endregion
@@ -6931,14 +6930,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region ~/commands/CANCEL_RESERVATION/{commandId}
+            #region ~/commands/CANCEL_RESERVATION/{command_id}
 
-            #region OPTIONS  ~/commands/CANCEL_RESERVATION/{commandId}
+            #region OPTIONS  ~/commands/CANCEL_RESERVATION/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "commands/CANCEL_RESERVATION/{commandId}",
+                URLPathPrefix + "commands/CANCEL_RESERVATION/{command_id}",
                 OCPIRequestHandler: request =>
 
                     Task.FromResult(
@@ -6954,12 +6953,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region POST     ~/commands/CANCEL_RESERVATION/{commandId}
+            #region POST     ~/commands/CANCEL_RESERVATION/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + "commands/CANCEL_RESERVATION/{commandId}",
+                URLPathPrefix + "commands/CANCEL_RESERVATION/{command_id}",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   CancelReservationCallbackRequest,
                 OCPIResponseLogger:  CancelReservationCallbackResponse,
@@ -6969,10 +6968,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     if (!request.ParseCommandId(CommonAPI,
                                                 out var commandId,
-                                                out var ocpiResponseBuilder) ||
-                        !commandId.HasValue)
+                                                out var ocpiResponseBuilder))
                     {
-                        return Task.FromResult(ocpiResponseBuilder!);
+                        return Task.FromResult(ocpiResponseBuilder);
                     }
 
                     #endregion
@@ -7041,14 +7039,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region ~/commands/START_SESSION/{commandId}
+            #region ~/commands/START_SESSION/{command_id}
 
-            #region OPTIONS  ~/commands/START_SESSION/{commandId}
+            #region OPTIONS  ~/commands/START_SESSION/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "commands/START_SESSION/{commandId}",
+                URLPathPrefix + "commands/START_SESSION/{command_id}",
                 OCPIRequestHandler: request =>
 
                     Task.FromResult(
@@ -7064,12 +7062,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region POST     ~/commands/START_SESSION/{commandId}
+            #region POST     ~/commands/START_SESSION/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + "commands/START_SESSION/{commandId}",
+                URLPathPrefix + "commands/START_SESSION/{command_id}",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   StartSessionCallbackRequest,
                 OCPIResponseLogger:  StartSessionCallbackResponse,
@@ -7079,10 +7077,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     if (!request.ParseCommandId(CommonAPI,
                                                 out var commandId,
-                                                out var ocpiResponseBuilder) ||
-                        !commandId.HasValue)
+                                                out var ocpiResponseBuilder))
                     {
-                        return Task.FromResult(ocpiResponseBuilder!);
+                        return Task.FromResult(ocpiResponseBuilder);
                     }
 
                     #endregion
@@ -7151,14 +7148,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region ~/commands/STOP_SESSION/{commandId}
+            #region ~/commands/STOP_SESSION/{command_id}
 
-            #region OPTIONS  ~/commands/STOP_SESSION/{commandId}
+            #region OPTIONS  ~/commands/STOP_SESSION/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "commands/STOP_SESSION/{commandId}",
+                URLPathPrefix + "commands/STOP_SESSION/{command_id}",
                 OCPIRequestHandler: request =>
 
                     Task.FromResult(
@@ -7174,12 +7171,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region POST     ~/commands/STOP_SESSION/{commandId}
+            #region POST     ~/commands/STOP_SESSION/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + "commands/STOP_SESSION/{commandId}",
+                URLPathPrefix + "commands/STOP_SESSION/{command_id}",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   StopSessionCallbackRequest,
                 OCPIResponseLogger:  StopSessionCallbackResponse,
@@ -7189,10 +7186,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     if (!request.ParseCommandId(CommonAPI,
                                                 out var commandId,
-                                                out var ocpiResponseBuilder) ||
-                        !commandId.HasValue)
+                                                out var ocpiResponseBuilder))
                     {
-                        return Task.FromResult(ocpiResponseBuilder!);
+                        return Task.FromResult(ocpiResponseBuilder);
                     }
 
                     #endregion
@@ -7261,14 +7257,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region ~/commands/UNLOCK_CONNECTOR/{commandId}
+            #region ~/commands/UNLOCK_CONNECTOR/{command_id}
 
-            #region OPTIONS  ~/commands/UNLOCK_CONNECTOR/{commandId}
+            #region OPTIONS  ~/commands/UNLOCK_CONNECTOR/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "commands/UNLOCK_CONNECTOR/{commandId}",
+                URLPathPrefix + "commands/UNLOCK_CONNECTOR/{command_id}",
                 OCPIRequestHandler: request =>
 
                     Task.FromResult(
@@ -7284,12 +7280,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region POST     ~/commands/UNLOCK_CONNECTOR/{commandId}
+            #region POST     ~/commands/UNLOCK_CONNECTOR/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + "commands/UNLOCK_CONNECTOR/{commandId}",
+                URLPathPrefix + "commands/UNLOCK_CONNECTOR/{command_id}",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   UnlockConnectorCallbackRequest,
                 OCPIResponseLogger:  UnlockConnectorCallbackResponse,
@@ -7299,10 +7295,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     if (!request.ParseCommandId(CommonAPI,
                                                 out var commandId,
-                                                out var ocpiResponseBuilder) ||
-                        !commandId.HasValue)
+                                                out var ocpiResponseBuilder))
                     {
-                        return Task.FromResult(ocpiResponseBuilder!);
+                        return Task.FromResult(ocpiResponseBuilder);
                     }
 
                     #endregion

@@ -2010,14 +2010,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                );
 
                                                                       //ToDo: Filter to NOT show all locations to everyone!
-                    var allLocations       = CommonAPI.GetLocations().//location => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == location.CountryCode &&
-                                                                      //                                                       role.PartyId     == location.PartyId)).
-                                                       ToArray();
+                    var allLocations         = CommonAPI.
+                                                   GetLocations().//location => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == location.CountryCode &&
+                                                                  //                                                       role.PartyId     == location.PartyId)).
+                                                   ToArray();
 
-                    var filteredLocations  = allLocations.Where(matchFilter).
-                                                          Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
-                                                          Where(location => !filters.To.  HasValue || location.LastUpdated <= filters.To.  Value).
-                                                          ToArray();
+                    var filteredLocations    = allLocations.
+                                                   Where(matchFilter).
+                                                   Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
+                                                   Where(location => !filters.To.  HasValue || location.LastUpdated <= filters.To.  Value).
+                                                   ToArray();
 
 
                     var httpResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
@@ -3540,7 +3542,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                               out var tokenId,
                                               out var ocpiResponseBuilder))
                     {
-                        return ocpiResponseBuilder!;
+                        return ocpiResponseBuilder;
                     }
 
                     #endregion
@@ -3591,15 +3593,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    StatusMessage        = "Hello world!",
                                    Data                 = data.Token.ToJSON(CustomTokenSerializer,
                                                                             CustomEnergyContractSerializer),
-                            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = addOrUpdateResult.WasCreated == true
-                                                                        ? HTTPStatusCode.Created
-                                                                        : HTTPStatusCode.OK,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ],
-                                       LastModified               = data.Token.LastUpdated,
-                                       ETag                       = data.Token.ETag
-                            }
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                                              HTTPStatusCode             = addOrUpdateResult.WasCreated == true
+                                                                                               ? HTTPStatusCode.Created
+                                                                                               : HTTPStatusCode.OK,
+                                                              AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
+                                                              AccessControlAllowHeaders  = [ "Authorization" ],
+                                                              LastModified               = data.Token.LastUpdated,
+                                                              ETag                       = data.Token.ETag
+                                                          }
                                };
 
                     }
@@ -3609,13 +3611,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                StatusMessage        = addOrUpdateResult.ErrorResponse,
                                Data                 = newOrUpdatedToken.ToJSON(CustomTokenSerializer,
                                                                                CustomEnergyContractSerializer),
-                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ],
-                                   LastModified               = newOrUpdatedToken.LastUpdated,
-                                   ETag                       = newOrUpdatedToken.ETag
-                               }
+                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                                          HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                          AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
+                                                          AccessControlAllowHeaders  = [ "Authorization" ],
+                                                          LastModified               = newOrUpdatedToken.LastUpdated,
+                                                          ETag                       = newOrUpdatedToken.ETag
+                                                      }
                            };
 
                 });
