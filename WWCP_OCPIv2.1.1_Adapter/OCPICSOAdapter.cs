@@ -647,6 +647,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                             OCPI.AccessToken          RemoteAccessToken,
                                             URL                       RemoteVersionsURL,
+
+                                            TimeSpan?                 TOTP_ValidityTime           = null,
+                                            UInt32?                   TOTP_Length                 = null,
+                                            String?                   TOTP_Alphabet               = null,
+
                                             IEnumerable<Version_Id>?  RemoteVersionIds            = null,
                                             Version_Id?               SelectedVersionId           = null,
 
@@ -659,26 +664,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             OCPI.RemoteAccessStatus?  RemoteStatus                = OCPI.RemoteAccessStatus.ONLINE,
                                             OCPI.PartyStatus          PartyStatus                 = OCPI.PartyStatus.       ENABLED)
 
-            => CommonAPI.AddRemoteParty(CountryCode,
-                                        PartyId,
-                                        Role,
-                                        BusinessDetails,
+            => CommonAPI.AddRemoteParty(
 
-                                        AccessToken,
+                   CountryCode,
+                   PartyId,
+                   Role,
+                   BusinessDetails,
 
-                                        RemoteAccessToken,
-                                        RemoteVersionsURL,
-                                        RemoteVersionIds,
-                                        SelectedVersionId,
+                   AccessToken,
 
-                                        LocalAccessNotBefore,
-                                        LocalAccessNotAfter,
+                   RemoteAccessToken,
+                   RemoteVersionsURL,
 
-                                        AccessTokenBase64Encoding,
-                                        AllowDowngrades,
-                                        AccessStatus,
-                                        RemoteStatus,
-                                        PartyStatus);
+                   TOTP_ValidityTime,
+                   TOTP_Length,
+                   TOTP_Alphabet,
+
+                   RemoteVersionIds,
+                   SelectedVersionId,
+
+                   LocalAccessNotBefore,
+                   LocalAccessNotAfter,
+
+                   AccessTokenBase64Encoding,
+                   AllowDowngrades,
+                   AccessStatus,
+                   RemoteStatus,
+                   PartyStatus
+
+               );
 
         #endregion
 
@@ -698,17 +712,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                             OCPI.PartyStatus      PartyStatus                 = OCPI.PartyStatus. ENABLED)
 
-            => CommonAPI.AddRemoteParty(CountryCode,
-                                        PartyId,
-                                        Role,
-                                        BusinessDetails,
-                                        AccessToken,
-                                        LocalAccessNotBefore,
-                                        LocalAccessNotAfter,
-                                        AccessTokenBase64Encoding,
-                                        AllowDowngrades,
-                                        AccessStatus,
-                                        PartyStatus);
+            => CommonAPI.AddRemoteParty(
+
+                   CountryCode,
+                   PartyId,
+                   Role,
+                   BusinessDetails,
+                   AccessToken,
+                   LocalAccessNotBefore,
+                   LocalAccessNotAfter,
+                   AccessTokenBase64Encoding,
+                   AllowDowngrades,
+                   AccessStatus,
+                   PartyStatus
+
+               );
 
         #endregion
 

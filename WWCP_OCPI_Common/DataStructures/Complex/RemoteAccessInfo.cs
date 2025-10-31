@@ -45,6 +45,10 @@ namespace cloud.charging.open.protocols.OCPI
         [Mandatory]
         public AccessToken              AccessToken                   { get; }
 
+        public TimeSpan?                TOTP_ValidityTime             { get; }
+        public UInt32?                  TOTP_Length                   { get; }
+        public String?                  TOTP_Alphabet                 { get; }
+
         /// <summary>
         /// The versions URL of the remote party.
         /// </summary>
@@ -102,7 +106,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// Create new remote access information.
         /// </summary>
         /// <param name="AccessToken">A remote access token.</param>
-        /// <param name="VersionsURL">An OCPI vesions URL.</param>
+        /// <param name="VersionsURL">An OCPI versions URL.</param>
         /// <param name="VersionIds">An optional enumeration of version identifications.</param>
         /// <param name="SelectedVersionId">A optional selected version identification.</param>
         /// <param name="Status">A remote access status.</param>
@@ -112,6 +116,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         public RemoteAccessInfo(AccessToken               AccessToken,
                                 URL                       VersionsURL,
+
+                                TimeSpan?                 TOTP_ValidityTime            = null,
+                                UInt32?                   TOTP_Length                  = null,
+                                String?                   TOTP_Alphabet                = null,
+
                                 IEnumerable<Version_Id>?  VersionIds                   = null,
                                 Version_Id?               SelectedVersionId            = null,
                                 RemoteAccessStatus?       Status                       = RemoteAccessStatus.ONLINE,
@@ -123,7 +132,12 @@ namespace cloud.charging.open.protocols.OCPI
 
             this.AccessToken                 = AccessToken;
             this.VersionsURL                 = VersionsURL;
-            this.VersionIds                  = VersionIds?.Distinct()     ?? Array.Empty<Version_Id>();
+
+            this.TOTP_ValidityTime           = TOTP_ValidityTime;
+            this.TOTP_Length                 = TOTP_Length;
+            this.TOTP_Alphabet               = TOTP_Alphabet;
+
+            this.VersionIds                  = VersionIds?.Distinct()     ?? [];
             this.SelectedVersionId           = SelectedVersionId;
             this.Status                      = Status                     ?? RemoteAccessStatus.ONLINE;
             this.NotBefore                   = NotBefore;
@@ -134,8 +148,13 @@ namespace cloud.charging.open.protocols.OCPI
             unchecked
             {
 
-                this.hashCode = this.AccessToken.               GetHashCode()       * 23 ^
-                                this.VersionsURL.               GetHashCode()       * 19 ^
+                this.hashCode = this.AccessToken.               GetHashCode()       * 37 ^
+                                this.VersionsURL.               GetHashCode()       * 31 ^
+
+                               (this.TOTP_ValidityTime?.        GetHashCode() ?? 0) * 29 ^
+                               (this.TOTP_Length?.              GetHashCode() ?? 0) * 23 ^
+                               (this.TOTP_Alphabet?.            GetHashCode() ?? 0) * 19 ^
+
                                 this.VersionIds.                CalcHashCode()      * 17 ^
                                (this.SelectedVersionId?.        GetHashCode() ?? 0) * 13 ^
                                 this.Status.                    GetHashCode()       * 11 ^
@@ -247,6 +266,47 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
+                #region Parse TOTP Validity Time            [optional]
+
+                if (JSON.ParseOptional("totpValidityTime",
+                                       "validity time of the time-based one-time password",
+                                       TimeSpanExtensions.TryParseSeconds,
+                                       out TimeSpan? totpValidityTime,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse TOTP Length                   [optional]
+
+                if (JSON.ParseOptional("totpLength",
+                                       "length of the time-based one-time password",
+                                       out Byte? totpLength,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse TOTP Alphabet                 [optional]
+
+                if (JSON.ParseOptional("totpAlphabet",
+                                       "alphabet of the time-based one-time password",
+                                       out String? totpAlphabet,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+
                 #region Parse SelectedVersionId             [optional]
 
                 if (JSON.ParseOptional("selectedVersionId",
@@ -326,15 +386,22 @@ namespace cloud.charging.open.protocols.OCPI
 
 
                 RemoteAccessInfo = new RemoteAccessInfo(
+
                                        AccessToken,
                                        VersionsURL,
-                                       null,
+
+                                       totpValidityTime,
+                                       totpLength,
+                                       totpAlphabet,
+
+                                       null, // VersionIds
                                        SelectedVersionId,
                                        Status,
                                        NotBefore,
                                        NotAfter,
                                        AccessTokenIsBase64Encoded,
                                        AllowDowngrades
+
                                    );
 
 
@@ -369,6 +436,18 @@ namespace cloud.charging.open.protocols.OCPI
 
                                  new JProperty("accessToken",                  AccessToken.      ToString()),
                                  new JProperty("versionsURL",                  VersionsURL.      ToString()),
+
+                           TOTP_ValidityTime.HasValue
+                               ? new JProperty("totpValidityTime",             (UInt16) TOTP_ValidityTime.Value.TotalSeconds)
+                               : null,
+
+                           TOTP_Length.      HasValue
+                               ? new JProperty("totpLength",                   TOTP_Length.               Value)
+                               : null,
+
+                           TOTP_Alphabet is not null
+                               ? new JProperty("totpAlphabet",                 TOTP_Alphabet)
+                               : null,
 
                            VersionIds.IsNeitherNullNorEmpty()
                                ? new JProperty("versionIds",                   new JArray(VersionIds.Select(versionId => versionId.ToString())))
@@ -409,8 +488,14 @@ namespace cloud.charging.open.protocols.OCPI
         public RemoteAccessInfo Clone()
 
             => new (
+
                    AccessToken.Clone(),
                    VersionsURL.Clone(),
+
+                   TOTP_ValidityTime,
+                   TOTP_Length,
+                   TOTP_Alphabet?.CloneString(),
+
                    VersionIds.Select(versionId => versionId.Clone()).ToArray(),
                    SelectedVersionId,
                    Status,
@@ -418,6 +503,7 @@ namespace cloud.charging.open.protocols.OCPI
                    NotAfter,
                    AccessTokenIsBase64Encoded,
                    AllowDowngrades
+
                );
 
         #endregion
@@ -582,6 +668,15 @@ namespace cloud.charging.open.protocols.OCPI
             if (c == 0 && SelectedVersionId.HasValue && RemoteAccessInfo.SelectedVersionId.HasValue)
                 c = SelectedVersionId.Value.   CompareTo(RemoteAccessInfo.SelectedVersionId.Value);
 
+            if (c == 0 && TOTP_ValidityTime.HasValue && RemoteAccessInfo.TOTP_ValidityTime.HasValue)
+                c = TOTP_ValidityTime.Value.   CompareTo(RemoteAccessInfo.TOTP_ValidityTime.Value);
+
+            if (c == 0 && TOTP_Length.      HasValue && RemoteAccessInfo.TOTP_Length.      HasValue)
+                c = TOTP_Length.      Value.   CompareTo(RemoteAccessInfo.TOTP_Length.      Value);
+
+            if (c == 0 && TOTP_Alphabet is not null && RemoteAccessInfo.TOTP_Alphabet is not null)
+                c = TOTP_Alphabet.             CompareTo(RemoteAccessInfo.TOTP_Alphabet);
+
             if (c == 0)
                 c = VersionIds.Count().        CompareTo(RemoteAccessInfo.VersionIds.Count());
 
@@ -635,6 +730,15 @@ namespace cloud.charging.open.protocols.OCPI
 
             ((!SelectedVersionId.HasValue && !RemoteAccessInfo.SelectedVersionId.HasValue) ||
               (SelectedVersionId.HasValue &&  RemoteAccessInfo.SelectedVersionId.HasValue && SelectedVersionId.Value.Equals(RemoteAccessInfo.SelectedVersionId.Value))) &&
+
+            ((!TOTP_ValidityTime.HasValue && !RemoteAccessInfo.TOTP_ValidityTime.HasValue) ||
+              (TOTP_ValidityTime.HasValue &&  RemoteAccessInfo.TOTP_ValidityTime.HasValue && TOTP_ValidityTime.Value.Equals(RemoteAccessInfo.TOTP_ValidityTime.Value))) &&
+
+            ((!TOTP_Length.      HasValue && !RemoteAccessInfo.TOTP_Length.      HasValue) ||
+              (TOTP_Length.      HasValue &&  RemoteAccessInfo.TOTP_Length.      HasValue && TOTP_Length.      Value.Equals(RemoteAccessInfo.TOTP_Length.      Value))) &&
+
+             ((TOTP_Alphabet is null      &&  RemoteAccessInfo.TOTP_Alphabet is null)      ||
+              (TOTP_Alphabet is not null  &&  RemoteAccessInfo.TOTP_Alphabet is not null  && TOTP_Alphabet.          Equals(RemoteAccessInfo.TOTP_Alphabet          ))) &&
 
                VersionIds.Count().Equals(RemoteAccessInfo.VersionIds.Count()) &&
                VersionIds.All(RemoteAccessInfo.VersionIds.Contains);

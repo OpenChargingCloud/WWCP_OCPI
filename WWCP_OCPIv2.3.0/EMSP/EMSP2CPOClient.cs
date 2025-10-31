@@ -1005,7 +1005,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                                                           GET(remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
-                                                              Authentication:        TokenAuth,
+                                                              Authentication:        TokenAuth?.Invoke(),
                                                               Connection:            ConnectionType.Close,
                                                               RequestBuilder:        requestBuilder => {
                                                                                          requestBuilder.Set("X-Request-ID",     requestId);
@@ -1184,7 +1184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                                              GET(remoteURL.Value.Path + LocationId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth,
+                                                 Authentication:        TokenAuth?.Invoke(),
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -1368,7 +1368,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                                              GET(remoteURL.Value.Path + LocationId.ToString() + EVSEUId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth,
+                                                 Authentication:        TokenAuth?.Invoke(),
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -1556,7 +1556,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                                              GET(remoteURL.Value.Path + LocationId.ToString() + EVSEUId.ToString() + ConnectorId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth,
+                                                 Authentication:        TokenAuth?.Invoke(),
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -1746,7 +1746,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                                                           GET(remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
-                                                              Authentication:        TokenAuth,
+                                                              Authentication:        TokenAuth?.Invoke(),
                                                               Connection:            ConnectionType.Close,
                                                               RequestBuilder:        requestBuilder => {
                                                                                          requestBuilder.Set("X-Request-ID",     requestId);
@@ -1925,7 +1925,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                                              GET(remoteURL.Value.Path + TariffId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth,
+                                                 Authentication:        TokenAuth?.Invoke(),
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -2113,7 +2113,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                                                           GET(remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
-                                                              Authentication:        TokenAuth,
+                                                              Authentication:        TokenAuth?.Invoke(),
                                                               Connection:            ConnectionType.Close,
                                                               RequestBuilder:        requestBuilder => {
                                                                                          requestBuilder.Set("X-Request-ID",     requestId);
@@ -2308,7 +2308,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                                              GET(remoteURL.Value.Path + SessionId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth,
+                                                 Authentication:        TokenAuth?.Invoke(),
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -2498,7 +2498,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                                                           GET(remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
-                                                              Authentication:        TokenAuth,
+                                                              Authentication:        TokenAuth?.Invoke(),
                                                               Connection:            ConnectionType.Close,
                                                               RequestBuilder:        requestBuilder => {
                                                                                          requestBuilder.Set("X-Request-ID",     requestId);
@@ -2677,7 +2677,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                                              GET(remoteURL.Value.Path + CDRId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth,
+                                                 Authentication:        TokenAuth?.Invoke(),
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -2859,7 +2859,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                                                         PartyId.    ToString() +
                                                                         TokenId.    ToString(),
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth,
+                                                 Authentication:        TokenAuth?.Invoke(),
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -3042,7 +3042,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                                  Content:               Token.ToJSON().ToUTF8Bytes(JSONFormat),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth,
+                                                 Authentication:        TokenAuth?.Invoke(),
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -3234,7 +3234,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                                    Content:               TokenPatch.ToUTF8Bytes(JSONFormat),
                                                    ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                    Accept:                ocpiAcceptTypes,
-                                                   Authentication:        TokenAuth,
+                                                   Authentication:        TokenAuth?.Invoke(),
                                                    Connection:            ConnectionType.Close,
                                                    RequestBuilder:        requestBuilder => {
                                                                               requestBuilder.Set("X-Request-ID",     requestId);
@@ -3425,7 +3425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                                                           GET(remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
-                                                              Authentication:        TokenAuth,
+                                                              Authentication:        TokenAuth?.Invoke(),
                                                               Connection:            ConnectionType.Close,
                                                               RequestBuilder:        requestBuilder => {
                                                                                          requestBuilder.Set("X-Request-ID",     requestId);
@@ -3594,7 +3594,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                                   Content:               BookingRequest.ToJSON().ToUTF8Bytes(JSONFormat),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth,
+                                                  Authentication:        TokenAuth?.Invoke(),
                                                   Connection:            ConnectionType.Close,
                                                   RequestBuilder:        requestBuilder => {
                                                                              requestBuilder.Set("X-Request-ID",     requestId);
@@ -3808,7 +3808,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                                   Content:               command.ToJSON().ToUTF8Bytes(JSONFormat),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth,
+                                                  Authentication:        TokenAuth?.Invoke(),
                                                   Connection:            ConnectionType.Close,
                                                   RequestBuilder:        requestBuilder => {
                                                                              requestBuilder.Set("X-Request-ID",     requestId);
@@ -4014,7 +4014,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                                   Content:               command.ToJSON().ToUTF8Bytes(JSONFormat),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth,
+                                                  Authentication:        TokenAuth?.Invoke(),
                                                   Connection:            ConnectionType.Close,
                                                   RequestBuilder:        requestBuilder => {
                                                                              requestBuilder.Set("X-Request-ID",     requestId);
@@ -4228,7 +4228,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                                   Content:               command.ToJSON().ToUTF8Bytes(JSONFormat),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth,
+                                                  Authentication:        TokenAuth?.Invoke(),
                                                   Connection:            ConnectionType.Close,
                                                   RequestBuilder:        requestBuilder => {
                                                                              requestBuilder.Set("X-Request-ID",     requestId);
@@ -4434,7 +4434,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                                   Content:               command.ToJSON().ToUTF8Bytes(JSONFormat),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth,
+                                                  Authentication:        TokenAuth?.Invoke(),
                                                   Connection:            ConnectionType.Close,
                                                   RequestBuilder:        requestBuilder => {
                                                                              requestBuilder.Set("X-Request-ID",     requestId);
@@ -4642,7 +4642,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                                   Content:               command.ToJSON().ToUTF8Bytes(JSONFormat),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth,
+                                                  Authentication:        TokenAuth?.Invoke(),
                                                   Connection:            ConnectionType.Close,
                                                   RequestBuilder:        requestBuilder => {
                                                                              requestBuilder.Set("X-Request-ID",     requestId);

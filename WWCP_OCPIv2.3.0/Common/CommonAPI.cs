@@ -5224,26 +5224,35 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             var CREDENTIALS_TOKEN_C       = AccessToken.NewRandom();
 
             // Remove the old access token
-            await RemoveAccessToken     (CREDENTIALS_TOKEN_A.Value);
+            await RemoveAccessToken(
+                      CREDENTIALS_TOKEN_A.Value
+                  );
 
             // Store credential of the other side!
-            await AddOrUpdateRemoteParty(oldRemoteParty.Id,
-                                         receivedCredentials.Roles,
+            await AddOrUpdateRemoteParty(
+                      oldRemoteParty.Id,
+                      receivedCredentials.Roles,
 
-                                         CREDENTIALS_TOKEN_C,
+                      CREDENTIALS_TOKEN_C,
 
-                                         receivedCredentials.Token,
-                                         receivedCredentials.URL,
-                                         otherVersions.Data?.Select(version => version.Id) ?? Array.Empty<Version_Id>(),
-                                         Version.Id,
+                      receivedCredentials.Token,
+                      receivedCredentials.URL,
 
-                                         null,
-                                         null,
-                                         null,
-                                         null,
-                                         AccessStatus.      ALLOWED,
-                                         RemoteAccessStatus.ONLINE,
-                                         PartyStatus.       ENABLED);
+                      null, // TOTP
+                      null, // TOTP
+                      null, // TOTP
+
+                      otherVersions.Data?.Select(version => version.Id) ?? [],
+                      Version.Id,
+
+                      null,
+                      null,
+                      null,
+                      null,
+                      AccessStatus.      ALLOWED,
+                      RemoteAccessStatus.ONLINE,
+                      PartyStatus.       ENABLED
+                  );
 
 
             return new OCPIResponse.Builder(Request) {
@@ -5819,6 +5828,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                                   AccessToken                                                RemoteAccessToken,
                                                   URL                                                        RemoteVersionsURL,
+
+                                                  TimeSpan?                                                  TOTP_ValidityTime            = null,
+                                                  UInt32?                                                    TOTP_Length                  = null,
+                                                  String?                                                    TOTP_Alphabet                = null,
+
                                                   IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                   Version_Id?                                                SelectedVersionId            = null,
 
@@ -5851,6 +5865,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         {
 
             var newRemoteParty = new RemoteParty(
+
                                      Id,
                                      CredentialsRoles,
 
@@ -5858,6 +5873,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
+
+                                     TOTP_ValidityTime,
+                                     TOTP_Length,
+                                     TOTP_Alphabet,
+
                                      RemoteVersionIds,
                                      SelectedVersionId,
 
@@ -5883,6 +5903,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining
+
                                  );
 
             if (remoteParties.TryAdd(newRemoteParty.Id,
@@ -5936,6 +5957,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         {
 
             var newRemoteParty = new RemoteParty(
+
                                      Id,
                                      CredentialsRoles,
 
@@ -5959,6 +5981,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining
+
                                  );
 
             if (remoteParties.TryAdd(newRemoteParty.Id,
@@ -5989,6 +6012,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                                   AccessToken                                                RemoteAccessToken,
                                                   URL                                                        RemoteVersionsURL,
+
+                                                  TimeSpan?                                                  TOTP_ValidityTime            = null,
+                                                  UInt32?                                                    TOTP_Length                  = null,
+                                                  String?                                                    TOTP_Alphabet                = null,
+
                                                   IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                   Version_Id?                                                SelectedVersionId            = null,
 
@@ -6016,11 +6044,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         {
 
             var newRemoteParty = new RemoteParty(
+
                                      Id,
                                      CredentialsRoles,
 
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
+
+                                     TOTP_ValidityTime,
+                                     TOTP_Length,
+                                     TOTP_Alphabet,
+
                                      RemoteVersionIds,
                                      SelectedVersionId,
 
@@ -6042,6 +6076,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining
+
                                  );
 
             if (remoteParties.TryAdd(newRemoteParty.Id,
@@ -6094,6 +6129,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         {
 
             var newRemoteParty = new RemoteParty(
+
                                      Id,
                                      CredentialsRoles,
 
@@ -6115,6 +6151,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      UseHTTPPipelining,
 
                                      LastUpdated
+
                                  );
 
             if (remoteParties.TryAdd(newRemoteParty.Id,
@@ -6148,6 +6185,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                                              AccessToken                                                RemoteAccessToken,
                                                              URL                                                        RemoteVersionsURL,
+
+                                                             TimeSpan?                                                  TOTP_ValidityTime            = null,
+                                                             UInt32?                                                    TOTP_Length                  = null,
+                                                             String?                                                    TOTP_Alphabet                = null,
+
                                                              IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                              Version_Id?                                                SelectedVersionId            = null,
 
@@ -6183,6 +6225,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 return true;
 
             var newRemoteParty = new RemoteParty(
+
                                      Id,
                                      CredentialsRoles,
 
@@ -6190,6 +6233,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
+
+                                     TOTP_ValidityTime,
+                                     TOTP_Length,
+                                     TOTP_Alphabet,
+
                                      RemoteVersionIds,
                                      SelectedVersionId,
 
@@ -6215,6 +6263,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining
+
                                  );
 
             if (remoteParties.TryAdd(newRemoteParty.Id,
@@ -6272,6 +6321,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 return true;
 
             var newRemoteParty = new RemoteParty(
+
                                      Id,
                                      CredentialsRoles,
 
@@ -6295,6 +6345,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining
+
                                  );
 
             if (remoteParties.TryAdd(newRemoteParty.Id,
@@ -6325,6 +6376,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                                              AccessToken                                                RemoteAccessToken,
                                                              URL                                                        RemoteVersionsURL,
+
+                                                             TimeSpan?                                                  TOTP_ValidityTime            = null,
+                                                             UInt32?                                                    TOTP_Length                  = null,
+                                                             String?                                                    TOTP_Alphabet                = null,
+
                                                              IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                              Version_Id?                                                SelectedVersionId            = null,
 
@@ -6355,11 +6411,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 return true;
 
             var newRemoteParty = new RemoteParty(
+
                                      Id,
                                      CredentialsRoles,
 
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
+
+                                     TOTP_ValidityTime,
+                                     TOTP_Length,
+                                     TOTP_Alphabet,
+
                                      RemoteVersionIds,
                                      SelectedVersionId,
 
@@ -6381,6 +6443,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining
+
                                  );
 
             if (remoteParties.TryAdd(newRemoteParty.Id,
@@ -6436,6 +6499,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 return true;
 
             var newRemoteParty = new RemoteParty(
+
                                      Id,
                                      CredentialsRoles,
 
@@ -6457,6 +6521,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      UseHTTPPipelining,
 
                                      LastUpdated
+
                                  );
 
             if (remoteParties.TryAdd(newRemoteParty.Id,
@@ -6490,6 +6555,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                                           AccessToken                                                RemoteAccessToken,
                                                           URL                                                        RemoteVersionsURL,
+
+                                                          TimeSpan?                                                  TOTP_ValidityTime            = null,
+                                                          UInt32?                                                    TOTP_Length                  = null,
+                                                          String?                                                    TOTP_Alphabet                = null,
+
                                                           IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                           Version_Id?                                                SelectedVersionId            = null,
 
@@ -6521,53 +6591,64 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         {
 
-            var newRemoteParty = new RemoteParty(Id,
-                                                 CredentialsRoles,
+            var newRemoteParty = new RemoteParty(
 
-                                                 AccessToken,
+                                     Id,
+                                     CredentialsRoles,
 
-                                                 RemoteAccessToken,
-                                                 RemoteVersionsURL,
-                                                 RemoteVersionIds,
-                                                 SelectedVersionId,
+                                     AccessToken,
 
-                                                 LocalAccessNotBefore,
-                                                 LocalAccessNotAfter,
+                                     RemoteAccessToken,
+                                     RemoteVersionsURL,
 
-                                                 AccessTokenBase64Encoding,
-                                                 AllowDowngrades,
-                                                 AccessStatus,
-                                                 RemoteStatus,
-                                                 PartyStatus,
-                                                 RemoteAccessNotBefore,
-                                                 RemoteAccessNotAfter,
+                                     TOTP_ValidityTime,
+                                     TOTP_Length,
+                                     TOTP_Alphabet,
 
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCert,
-                                                 TLSProtocol,
-                                                 HTTPUserAgent,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining);
+                                     RemoteVersionIds,
+                                     SelectedVersionId,
+
+                                     LocalAccessNotBefore,
+                                     LocalAccessNotAfter,
+
+                                     AccessTokenBase64Encoding,
+                                     AllowDowngrades,
+                                     AccessStatus,
+                                     RemoteStatus,
+                                     PartyStatus,
+                                     RemoteAccessNotBefore,
+                                     RemoteAccessNotAfter,
+
+                                     PreferIPv4,
+                                     RemoteCertificateValidator,
+                                     LocalCertificateSelector,
+                                     ClientCert,
+                                     TLSProtocol,
+                                     HTTPUserAgent,
+                                     RequestTimeout,
+                                     TransmissionRetryDelay,
+                                     MaxNumberOfRetries,
+                                     InternalBufferSize,
+                                     UseHTTPPipelining
+
+                                 );
 
             var added = false;
 
-            remoteParties.AddOrUpdate(newRemoteParty.Id,
+            remoteParties.AddOrUpdate(
+                newRemoteParty.Id,
 
-                                      // Add
-                                      id => {
-                                          added = true;
-                                          return newRemoteParty;
-                                      },
+                // Add
+                id => {
+                    added = true;
+                    return newRemoteParty;
+                },
 
-                                      // Update
-                                      (id, oldRemoteParty) => {
-                                          return newRemoteParty;
-                                      });
+                // Update
+                (id, oldRemoteParty) => {
+                    return newRemoteParty;
+                }
+            );
 
             await LogRemoteParty(
                       CommonHTTPAPI.addOrUpdateRemoteParty,
@@ -6612,44 +6693,50 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                           User_Id?                                                   CurrentUserId                = null)
         {
 
-            var newRemoteParty = new RemoteParty(Id,
-                                                 CredentialsRoles,
+            var newRemoteParty = new RemoteParty(
 
-                                                 AccessToken,
-                                                 AccessTokenBase64Encoding,
-                                                 AllowDowngrades,
-                                                 AccessStatus,
+                                     Id,
+                                     CredentialsRoles,
 
-                                                 PartyStatus,
-                                                 LocalAccessNotBefore,
-                                                 LocalAccessNotAfter,
+                                     AccessToken,
+                                     AccessTokenBase64Encoding,
+                                     AllowDowngrades,
+                                     AccessStatus,
 
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCert,
-                                                 TLSProtocol,
-                                                 HTTPUserAgent,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining);
+                                     PartyStatus,
+                                     LocalAccessNotBefore,
+                                     LocalAccessNotAfter,
+
+                                     PreferIPv4,
+                                     RemoteCertificateValidator,
+                                     LocalCertificateSelector,
+                                     ClientCert,
+                                     TLSProtocol,
+                                     HTTPUserAgent,
+                                     RequestTimeout,
+                                     TransmissionRetryDelay,
+                                     MaxNumberOfRetries,
+                                     InternalBufferSize,
+                                     UseHTTPPipelining
+
+                                 );
 
             var added = false;
 
-            remoteParties.AddOrUpdate(newRemoteParty.Id,
+            remoteParties.AddOrUpdate(
+                newRemoteParty.Id,
 
-                                      // Add
-                                      id => {
-                                          added = true;
-                                          return newRemoteParty;
-                                      },
+                // Add
+                id => {
+                    added = true;
+                    return newRemoteParty;
+                },
 
-                                      // Update
-                                      (id, oldRemoteParty) => {
-                                          return newRemoteParty;
-                                      });
+                // Update
+                (id, oldRemoteParty) => {
+                    return newRemoteParty;
+                }
+            );
 
             await LogRemoteParty(
                       CommonHTTPAPI.addOrUpdateRemoteParty,
@@ -6671,6 +6758,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                                           AccessToken                                                RemoteAccessToken,
                                                           URL                                                        RemoteVersionsURL,
+
+                                                          TimeSpan?                                                  TOTP_ValidityTime            = null,
+                                                          UInt32?                                                    TOTP_Length                  = null,
+                                                          String?                                                    TOTP_Alphabet                = null,
+
                                                           IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                           Version_Id?                                                SelectedVersionId            = null,
 
@@ -6697,47 +6789,58 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                           User_Id?                                                   CurrentUserId                = null)
         {
 
-            var newRemoteParty = new RemoteParty(Id,
-                                                 CredentialsRoles,
+            var newRemoteParty = new RemoteParty(
 
-                                                 RemoteAccessToken,
-                                                 RemoteVersionsURL,
-                                                 RemoteVersionIds,
-                                                 SelectedVersionId,
+                                     Id,
+                                     CredentialsRoles,
 
-                                                 AccessTokenBase64Encoding,
-                                                 AllowDowngrades,
-                                                 RemoteStatus,
-                                                 PartyStatus,
-                                                 RemoteAccessNotBefore,
-                                                 RemoteAccessNotAfter,
+                                     RemoteAccessToken,
+                                     RemoteVersionsURL,
 
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCert,
-                                                 TLSProtocol,
-                                                 HTTPUserAgent,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining);
+                                     TOTP_ValidityTime,
+                                     TOTP_Length,
+                                     TOTP_Alphabet,
+
+                                     RemoteVersionIds,
+                                     SelectedVersionId,
+
+                                     AccessTokenBase64Encoding,
+                                     AllowDowngrades,
+                                     RemoteStatus,
+                                     PartyStatus,
+                                     RemoteAccessNotBefore,
+                                     RemoteAccessNotAfter,
+
+                                     PreferIPv4,
+                                     RemoteCertificateValidator,
+                                     LocalCertificateSelector,
+                                     ClientCert,
+                                     TLSProtocol,
+                                     HTTPUserAgent,
+                                     RequestTimeout,
+                                     TransmissionRetryDelay,
+                                     MaxNumberOfRetries,
+                                     InternalBufferSize,
+                                     UseHTTPPipelining
+
+                                 );
 
             var added = false;
 
-            remoteParties.AddOrUpdate(newRemoteParty.Id,
+            remoteParties.AddOrUpdate(
+                newRemoteParty.Id,
 
-                                      // Add
-                                      id => {
-                                          added = true;
-                                          return newRemoteParty;
-                                      },
+                // Add
+                id => {
+                    added = true;
+                    return newRemoteParty;
+                },
 
-                                      // Update
-                                      (id, oldRemoteParty) => {
-                                          return newRemoteParty;
-                                      });
+                // Update
+                (id, oldRemoteParty) => {
+                    return newRemoteParty;
+                }
+            );
 
             await LogRemoteParty(
                       CommonHTTPAPI.addOrUpdateRemoteParty,
@@ -6780,42 +6883,48 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                           User_Id?                                                   CurrentUserId                = null)
         {
 
-            var newRemoteParty = new RemoteParty(Id,
-                                                 CredentialsRoles,
+            var newRemoteParty = new RemoteParty(
 
-                                                 LocalAccessInfos,
-                                                 RemoteAccessInfos,
+                                     Id,
+                                     CredentialsRoles,
 
-                                                 Status,
+                                     LocalAccessInfos,
+                                     RemoteAccessInfos,
 
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCert,
-                                                 TLSProtocol,
-                                                 HTTPUserAgent,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
+                                     Status,
 
-                                                 LastUpdated);
+                                     PreferIPv4,
+                                     RemoteCertificateValidator,
+                                     LocalCertificateSelector,
+                                     ClientCert,
+                                     TLSProtocol,
+                                     HTTPUserAgent,
+                                     RequestTimeout,
+                                     TransmissionRetryDelay,
+                                     MaxNumberOfRetries,
+                                     InternalBufferSize,
+                                     UseHTTPPipelining,
+
+                                     LastUpdated
+
+                                 );
 
             var added = false;
 
-            remoteParties.AddOrUpdate(newRemoteParty.Id,
+            remoteParties.AddOrUpdate(
+                newRemoteParty.Id,
 
-                                      // Add
-                                      id => {
-                                          added = true;
-                                          return newRemoteParty;
-                                      },
+                // Add
+                id => {
+                    added = true;
+                    return newRemoteParty;
+                },
 
-                                      // Update
-                                      (id, oldRemoteParty) => {
-                                          return newRemoteParty;
-                                      });
+                // Update
+                (id, oldRemoteParty) => {
+                    return newRemoteParty;
+                }
+            );
 
             await LogRemoteParty(
                       CommonHTTPAPI.addOrUpdateRemoteParty,
@@ -6839,6 +6948,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                                      AccessToken                                                RemoteAccessToken,
                                                      URL                                                        RemoteVersionsURL,
+
+                                                     TimeSpan?                                                  TOTP_ValidityTime            = null,
+                                                     UInt32?                                                    TOTP_Length                  = null,
+                                                     String?                                                    TOTP_Alphabet                = null,
+
                                                      IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                      Version_Id?                                                SelectedVersionId            = null,
 
@@ -6870,38 +6984,47 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         {
 
-            var newRemoteParty = new RemoteParty(ExistingRemoteParty.Id,
-                                                 ExistingRemoteParty.Roles,
+            var newRemoteParty = new RemoteParty(
 
-                                                 AccessToken,
+                                     ExistingRemoteParty.Id,
+                                     ExistingRemoteParty.Roles,
 
-                                                 RemoteAccessToken,
-                                                 RemoteVersionsURL,
-                                                 RemoteVersionIds,
-                                                 SelectedVersionId,
+                                     AccessToken,
 
-                                                 LocalAccessNotBefore,
-                                                 LocalAccessNotAfter,
+                                     RemoteAccessToken,
+                                     RemoteVersionsURL,
 
-                                                 AccessTokenBase64Encoding,
-                                                 AllowDowngrades,
-                                                 AccessStatus,
-                                                 RemoteStatus,
-                                                 PartyStatus,
-                                                 RemoteAccessNotBefore,
-                                                 RemoteAccessNotAfter,
+                                     TOTP_ValidityTime,
+                                     TOTP_Length,
+                                     TOTP_Alphabet,
 
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCert,
-                                                 TLSProtocol,
-                                                 HTTPUserAgent,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining);
+                                     RemoteVersionIds,
+                                     SelectedVersionId,
+
+                                     LocalAccessNotBefore,
+                                     LocalAccessNotAfter,
+
+                                     AccessTokenBase64Encoding,
+                                     AllowDowngrades,
+                                     AccessStatus,
+                                     RemoteStatus,
+                                     PartyStatus,
+                                     RemoteAccessNotBefore,
+                                     RemoteAccessNotAfter,
+
+                                     PreferIPv4,
+                                     RemoteCertificateValidator,
+                                     LocalCertificateSelector,
+                                     ClientCert,
+                                     TLSProtocol,
+                                     HTTPUserAgent,
+                                     RequestTimeout,
+                                     TransmissionRetryDelay,
+                                     MaxNumberOfRetries,
+                                     InternalBufferSize,
+                                     UseHTTPPipelining
+
+                                 );
 
             if (remoteParties.TryUpdate(newRemoteParty.Id,
                                         newRemoteParty,
@@ -6954,29 +7077,33 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                      User_Id?                                                   CurrentUserId                = null)
         {
 
-            var newRemoteParty = new RemoteParty(ExistingRemoteParty.Id,
-                                                 ExistingRemoteParty.Roles,
+            var newRemoteParty = new RemoteParty(
 
-                                                 AccessToken,
-                                                 AccessTokenBase64Encoding,
-                                                 AllowDowngrades,
-                                                 AccessStatus,
+                                     ExistingRemoteParty.Id,
+                                     ExistingRemoteParty.Roles,
 
-                                                 PartyStatus,
-                                                 LocalAccessNotBefore,
-                                                 LocalAccessNotAfter,
+                                     AccessToken,
+                                     AccessTokenBase64Encoding,
+                                     AllowDowngrades,
+                                     AccessStatus,
 
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCert,
-                                                 TLSProtocol,
-                                                 HTTPUserAgent,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining);
+                                     PartyStatus,
+                                     LocalAccessNotBefore,
+                                     LocalAccessNotAfter,
+
+                                     PreferIPv4,
+                                     RemoteCertificateValidator,
+                                     LocalCertificateSelector,
+                                     ClientCert,
+                                     TLSProtocol,
+                                     HTTPUserAgent,
+                                     RequestTimeout,
+                                     TransmissionRetryDelay,
+                                     MaxNumberOfRetries,
+                                     InternalBufferSize,
+                                     UseHTTPPipelining
+
+                                 );
 
             if (remoteParties.TryUpdate(newRemoteParty.Id,
                                         newRemoteParty,
@@ -7006,6 +7133,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                                      AccessToken                                                RemoteAccessToken,
                                                      URL                                                        RemoteVersionsURL,
+
+                                                     TimeSpan?                                                  TOTP_ValidityTime            = null,
+                                                     UInt32?                                                    TOTP_Length                  = null,
+                                                     String?                                                    TOTP_Alphabet                = null,
+
                                                      IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                      Version_Id?                                                SelectedVersionId            = null,
 
@@ -7032,32 +7164,41 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                      User_Id?                                                   CurrentUserId                = null)
         {
 
-            var newRemoteParty = new RemoteParty(ExistingRemoteParty.Id,
-                                                 ExistingRemoteParty.Roles,
+            var newRemoteParty = new RemoteParty(
 
-                                                 RemoteAccessToken,
-                                                 RemoteVersionsURL,
-                                                 RemoteVersionIds,
-                                                 SelectedVersionId,
+                                     ExistingRemoteParty.Id,
+                                     ExistingRemoteParty.Roles,
 
-                                                 AccessTokenBase64Encoding,
-                                                 AllowDowngrades,
-                                                 RemoteStatus,
-                                                 PartyStatus,
-                                                 RemoteAccessNotBefore,
-                                                 RemoteAccessNotAfter,
+                                     RemoteAccessToken,
+                                     RemoteVersionsURL,
 
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCert,
-                                                 TLSProtocol,
-                                                 HTTPUserAgent,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining);
+                                     TOTP_ValidityTime,
+                                     TOTP_Length,
+                                     TOTP_Alphabet,
+
+                                     RemoteVersionIds,
+                                     SelectedVersionId,
+
+                                     AccessTokenBase64Encoding,
+                                     AllowDowngrades,
+                                     RemoteStatus,
+                                     PartyStatus,
+                                     RemoteAccessNotBefore,
+                                     RemoteAccessNotAfter,
+
+                                     PreferIPv4,
+                                     RemoteCertificateValidator,
+                                     LocalCertificateSelector,
+                                     ClientCert,
+                                     TLSProtocol,
+                                     HTTPUserAgent,
+                                     RequestTimeout,
+                                     TransmissionRetryDelay,
+                                     MaxNumberOfRetries,
+                                     InternalBufferSize,
+                                     UseHTTPPipelining
+
+                                 );
 
             if (remoteParties.TryUpdate(newRemoteParty.Id,
                                         newRemoteParty,
@@ -7108,27 +7249,31 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                      User_Id?                                                   CurrentUserId                = null)
         {
 
-            var newRemoteParty = new RemoteParty(ExistingRemoteParty.Id,
-                                                 ExistingRemoteParty.Roles,
+            var newRemoteParty = new RemoteParty(
 
-                                                 LocalAccessInfos,
-                                                 RemoteAccessInfos,
+                                     ExistingRemoteParty.Id,
+                                     ExistingRemoteParty.Roles,
 
-                                                 Status,
+                                     LocalAccessInfos,
+                                     RemoteAccessInfos,
 
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCert,
-                                                 TLSProtocol,
-                                                 HTTPUserAgent,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
+                                     Status,
 
-                                                 LastUpdated);
+                                     PreferIPv4,
+                                     RemoteCertificateValidator,
+                                     LocalCertificateSelector,
+                                     ClientCert,
+                                     TLSProtocol,
+                                     HTTPUserAgent,
+                                     RequestTimeout,
+                                     TransmissionRetryDelay,
+                                     MaxNumberOfRetries,
+                                     InternalBufferSize,
+                                     UseHTTPPipelining,
+
+                                     LastUpdated
+
+                                 );
 
             if (remoteParties.TryUpdate(newRemoteParty.Id,
                                         newRemoteParty,

@@ -316,6 +316,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            AccessToken                                                RemoteAccessToken,
                            URL                                                        RemoteVersionsURL,
+
+                           TimeSpan?                                                  TOTP_ValidityTime            = null,
+                           UInt32?                                                    TOTP_Length                  = null,
+                           String?                                                    TOTP_Alphabet                = null,
+
                            IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                            Version_Id?                                                SelectedVersionId            = null,
                            Boolean?                                                   AccessTokenBase64Encoding    = null,
@@ -348,6 +353,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        new RemoteAccessInfo(
                            RemoteAccessToken,
                            RemoteVersionsURL,
+                           TOTP_ValidityTime,
+                           TOTP_Length,
+                           TOTP_Alphabet,
                            RemoteVersionIds,
                            SelectedVersionId,
                            RemoteStatus,
@@ -386,6 +394,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            AccessToken                                                RemoteAccessToken,
                            URL                                                        RemoteVersionsURL,
+
+                           TimeSpan?                                                  TOTP_ValidityTime            = null,
+                           UInt32?                                                    TOTP_Length                  = null,
+                           String?                                                    TOTP_Alphabet                = null,
+
                            IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                            Version_Id?                                                SelectedVersionId            = null,
 
@@ -431,6 +444,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        new RemoteAccessInfo(
                            RemoteAccessToken,
                            RemoteVersionsURL,
+                           TOTP_ValidityTime,
+                           TOTP_Length,
+                           TOTP_Alphabet,
                            RemoteVersionIds,
                            SelectedVersionId,
                            RemoteStatus,

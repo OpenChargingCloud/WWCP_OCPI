@@ -116,53 +116,59 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// The CommonAPI.
         /// </summary>
-        public CommonAPI?                CommonAPI                { get; }
+        public CommonAPI?                      CommonAPI                { get; }
 
         /// <summary>
         /// The remote party.
         /// </summary>
-        public RemoteParty?              RemoteParty              { get; }
+        public RemoteParty?                    RemoteParty              { get; }
 
         /// <summary>
         /// The current remote URL of the remote VERSIONS endpoint to connect to.
         /// The remote party might define multiple for H/A reasons.
         /// </summary>
-        public URL                       RemoteVersionsURL        { get; }
+        public URL                             RemoteVersionsURL        { get; }
 
         /// <summary>
         /// The current access token.
         /// The remote party might define different access token for each VersionsAPI endpoint for H/A and/or security reasons.
         /// The access token might be updated during the REGISTRATION process!
         /// </summary>
-        public AccessToken?              AccessToken              { get; private set; }
+        public AccessToken?                    AccessToken              { get; private set; }
+
+        /// <summary>
+        /// An optional TOTP configuration to generate time-based one-time access tokens.
+        /// Note: The AccessToken will be used as shared secret!
+        /// </summary>
+        public TOTPConfig?                     TOTPConfig               { get; private set; }
 
         /// <summary>
         /// The current HTTP Token Authentication based on the current access token.
         /// The remote party might define different access token for each VersionsAPI endpoint for H/A and/or security reasons.
         /// The access token might be updated during the REGISTRATION process!
         /// </summary>
-        public HTTPTokenAuthentication?  TokenAuth                { get; private set; }
+        public Func<HTTPTokenAuthentication>?  TokenAuth                { get; private set; }
 
         /// <summary>
         /// The selected OCPI version.
         /// The selected OCPI version might be updated during the REGISTRATION process!
         /// </summary>
-        public Version_Id?               SelectedOCPIVersionId    { get; set; }
+        public Version_Id?                     SelectedOCPIVersionId    { get; set; }
 
         /// <summary>
-        /// The JSON formating used.
+        /// The JSON formatting used.
         /// </summary>
-        public Formatting                JSONFormat               { get; set; } = Formatting.None;
+        public Formatting                      JSONFormat               { get; set; } = Formatting.None;
 
         /// <summary>
         /// CPO client event counters.
         /// </summary>
-        public CommonAPICounters         Counters                 { get; }
+        public CommonAPICounters               Counters                 { get; }
 
         /// <summary>
         /// The attached HTTP client logger.
         /// </summary>
-        public new Logger?               HTTPLogger
+        public new Logger?                     HTTPLogger
         {
             get
             {
@@ -392,7 +398,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
         public CommonClient(URL                                                        VersionsURL,
+
                             String?                                                    AccessToken                  = null,
+
+                            TimeSpan?                                                  TOTP_ValidityTime            = null,
+                            UInt32?                                                    TOTP_Length                  = null,
+                            String?                                                    TOTP_Alphabet                = null,
 
                             HTTPHostname?                                              VirtualHostname              = null,
                             I18NString?                                                Description                  = null,
@@ -450,8 +461,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                           ? OCPI.AccessToken.Parse(AccessToken)
                                           : null;
 
+            this.TOTPConfig         = AccessToken.IsNotNullOrEmpty() && TOTP_ValidityTime.HasValue
+                                          ? new TOTPConfig(
+                                                SharedSecret:  AccessToken.ToString(),
+                                                ValidityTime:  TOTP_ValidityTime,
+                                                TOTPLength:    TOTP_Length,
+                                                Alphabet:      TOTP_Alphabet
+                                            )
+                                          : null;
+
             this.TokenAuth          = AccessToken.IsNotNullOrEmpty()
-                                          ? HTTPTokenAuthentication.Parse(AccessToken)
+                                          ? () => HTTPTokenAuthentication.Parse(AccessToken)
                                           : null;
 
             this.Counters           = new CommonAPICounters();
@@ -523,7 +543,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.AccessToken        = RemoteParty.RemoteAccessInfos.First().AccessToken;
             this.RemoteVersionsURL  = RemoteParty.RemoteAccessInfos.First().VersionsURL;
 
-            this.TokenAuth          = HTTPTokenAuthentication.Parse(
+            this.TokenAuth          = () => HTTPTokenAuthentication.Parse(
                                           RemoteParty.RemoteAccessInfos.First().AccessTokenIsBase64Encoded
                                               ? RemoteParty.RemoteAccessInfos.First().AccessToken.ToString().ToBase64()
                                               : RemoteParty.RemoteAccessInfos.First().AccessToken.ToString()
@@ -544,14 +564,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region CommonClient(RemoteVersionsURL, AccessToken, MyCommonAPI, ...)
+        #region CommonClient(RemoteVersionsURL, RemoteAccessToken, ...)
 
         /// <summary>
         /// Create a new OCPI Common client.
         /// </summary>
         /// <param name="CommonAPI">The CommonAPI.</param>
         /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
-        /// <param name="AccessToken">The access token.</param>
+        /// <param name="RemoteAccessToken">The access token.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
         /// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
@@ -568,7 +588,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="DNSClient">The DNS client to use.</param>
         public CommonClient(CommonAPI                                                  CommonAPI,
                             URL                                                        RemoteVersionsURL,
-                            AccessToken                                                AccessToken,
+
+                            AccessToken                                                RemoteAccessToken,
+
+                            TimeSpan?                                                  TOTP_ValidityTime            = null,
+                            UInt32?                                                    TOTP_Length                  = null,
+                            String?                                                    TOTP_Alphabet                = null,
+
                             HTTPHostname?                                              VirtualHostname              = null,
                             I18NString?                                                Description                  = null,
                             Boolean?                                                   PreferIPv4                   = null,
@@ -599,8 +625,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        RemoteParty_Id.Unknown,
                        [],
 
-                       AccessToken,
+                       RemoteAccessToken,
                        RemoteVersionsURL,
+
+                       TOTP_ValidityTime,
+                       TOTP_Length,
+                       TOTP_Alphabet,
+
                        null, //RemoteVersionIds,
                        null, //SelectedVersionId,
                        AccessTokenBase64Encoding,
@@ -788,7 +819,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                              GET(RemoteVersionsURL.Path,
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth,
+                                                 Authentication:        TokenAuth?.Invoke(),
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -1022,7 +1053,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                      GET(versionURL.Path,
                                                          Accept:                ocpiAcceptTypes,
-                                                         Authentication:        TokenAuth,
+                                                         Authentication:        TokenAuth?.Invoke(),
                                                          Connection:            ConnectionType.Close,
                                                          RequestBuilder:        requestBuilder => {
                                                                                     requestBuilder.Set("X-Request-ID",     requestId);
@@ -1375,7 +1406,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                  GET(remoteURL.Value.Path,
                                                      Accept:                ocpiAcceptTypes,
-                                                     Authentication:        TokenAuth,
+                                                     Authentication:        TokenAuth?.Invoke(),
                                                      Connection:            ConnectionType.Close,
                                                      RequestBuilder:        requestBuilder => {
                                                                                 requestBuilder.Set("X-Request-ID",     requestId);
@@ -1585,7 +1616,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                       Content:               Credentials.ToJSON().ToUTF8Bytes(JSONFormat),
                                                       ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                       Accept:                ocpiAcceptTypes,
-                                                      Authentication:        TokenAuth,
+                                                      Authentication:        TokenAuth?.Invoke(),
                                                       Connection:            ConnectionType.Close,
                                                       RequestBuilder:        requestBuilder => {
                                                                                  requestBuilder.Set("X-Request-ID",     requestId);
@@ -1796,7 +1827,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                      Content:               Credentials.ToJSON().ToUTF8Bytes(JSONFormat),
                                                      ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                      Accept:                ocpiAcceptTypes,
-                                                     Authentication:        TokenAuth,
+                                                     Authentication:        TokenAuth?.Invoke(),
                                                      Connection:            ConnectionType.Close,
                                                      RequestBuilder:        requestBuilder => {
                                                                                 requestBuilder.Set("X-Request-ID",     requestId);
@@ -1826,7 +1857,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         if (response.Data is not null)
                         {
 
-                            TokenAuth = HTTPTokenAuthentication.Parse(response.Data.Token.ToString().ToBase64());
+                            TokenAuth = () => HTTPTokenAuthentication.Parse(response.Data.Token.ToString().ToBase64());
 
                             var oldRemoteParty = this.RemoteParty;
 
@@ -2066,7 +2097,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                  DELETE(remoteURL.Value.Path,
                                                         Accept:                ocpiAcceptTypes,
-                                                        Authentication:        TokenAuth,
+                                                        Authentication:        TokenAuth?.Invoke(),
                                                         Connection:            ConnectionType.Close,
                                                         RequestBuilder:        requestBuilder => {
                                                                                    requestBuilder.Set("X-Request-ID",     requestId);
@@ -2296,7 +2327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                       Content:               credentials.ToJSON().ToUTF8Bytes(JSONFormat),
                                                       ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                       Accept:                ocpiAcceptTypes,
-                                                      Authentication:        TokenAuth,
+                                                      Authentication:        TokenAuth?.Invoke(),
                                                       Connection:            ConnectionType.Close,
                                                       RequestBuilder:        requestBuilder => {
                                                                                  requestBuilder.Set("X-Request-ID",     requestId);
@@ -2347,7 +2378,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                             SelectedOCPIVersionId  = versionId;
                             AccessToken            = response.Data.Token;
-                            TokenAuth              = HTTPTokenAuthentication.Parse(AccessToken.ToString().ToBase64());
+                            TokenAuth              = AccessToken.HasValue
+                                                         ? () => HTTPTokenAuthentication.Parse(AccessToken.Value.ToString().ToBase64())
+                                                         : null;
 
                             var oldRemoteParty     = this.RemoteParty;
 

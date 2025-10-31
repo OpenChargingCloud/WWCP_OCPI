@@ -157,7 +157,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public Version_Id?               SelectedOCPIVersionId    { get; set; }
 
         /// <summary>
-        /// The JSON formating used.
+        /// The JSON formatting used.
         /// </summary>
         public Formatting                JSONFormat               { get; set; } = Formatting.None;
 

@@ -525,7 +525,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                     remoteURL.Value.Path,
                                                                                     RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
+                                                                                        requestBuilder.Authorization  = TokenAuth?.Invoke();
                                                                                         requestBuilder.Connection     = ConnectionType.Close;
                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
@@ -715,7 +715,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                     remoteURL.Value.Path + LocationId.ToString(),
                                                                                     RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
+                                                                                        requestBuilder.Authorization  = TokenAuth?.Invoke();
                                                                                         requestBuilder.Connection     = ConnectionType.Close;
                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
@@ -910,7 +910,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                     remoteURL.Value.Path + LocationId.ToString() + EVSEUId.ToString(),
                                                                                     RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
+                                                                                        requestBuilder.Authorization  = TokenAuth?.Invoke();
                                                                                         requestBuilder.Connection     = ConnectionType.Close;
                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
@@ -1109,7 +1109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                     remoteURL.Value.Path + LocationId.ToString() + EVSEUId.ToString() + ConnectorId.ToString(),
                                                                                     RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
+                                                                                        requestBuilder.Authorization  = TokenAuth?.Invoke();
                                                                                         requestBuilder.Connection     = ConnectionType.Close;
                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
@@ -1299,7 +1299,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                     remoteURL.Value.Path,
                                                                                     RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
+                                                                                        requestBuilder.Authorization  = TokenAuth?.Invoke();
                                                                                         requestBuilder.Connection     = ConnectionType.Close;
                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
@@ -1489,7 +1489,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                     remoteURL.Value.Path + SessionId.ToString(),
                                                                                     RequestBuilder: requestBuilder => {
-                                                                                        requestBuilder.Authorization  = TokenAuth;
+                                                                                        requestBuilder.Authorization  = TokenAuth?.Invoke();
                                                                                         requestBuilder.Connection     = ConnectionType.Close;
                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
