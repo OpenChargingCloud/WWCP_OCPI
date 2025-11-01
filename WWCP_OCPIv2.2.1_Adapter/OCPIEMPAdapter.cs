@@ -432,73 +432,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region AddRemoteParty(...)
 
-        public Task<Boolean> AddRemoteParty(OCPI.RemoteParty_Id            Id,
-                                            IEnumerable<CredentialsRole>   CredentialsRoles,
-
-                                            OCPI.AccessToken               AccessToken,
-
-                                            OCPI.AccessToken               RemoteAccessToken,
-                                            URL                            RemoteVersionsURL,
-
-                                            TimeSpan?                      TOTP_ValidityTime           = null,
-                                            UInt32?                        TOTP_Length                 = null,
-                                            String?                        TOTP_Alphabet               = null,
-
-                                            IEnumerable<Version_Id>?       RemoteVersionIds            = null,
-                                            Version_Id?                    SelectedVersionId           = null,
-
-                                            DateTimeOffset?                LocalAccessNotBefore        = null,
-                                            DateTimeOffset?                LocalAccessNotAfter         = null,
-
-                                            Boolean?                       AccessTokenBase64Encoding   = null,
-                                            Boolean?                       AllowDowngrades             = false,
-                                            OCPI.AccessStatus              AccessStatus                = OCPI.AccessStatus.      ALLOWED,
-                                            OCPI.RemoteAccessStatus?       RemoteStatus                = OCPI.RemoteAccessStatus.ONLINE,
-                                            OCPI.PartyStatus               PartyStatus                 = OCPI.PartyStatus.       ENABLED)
-
-            => CommonAPI.AddRemoteParty(
-
-                Id,
-                CredentialsRoles,
-
-                AccessToken,
-
-                RemoteAccessToken,
-                RemoteVersionsURL,
-
-                TOTP_ValidityTime,
-                TOTP_Length,
-                TOTP_Alphabet,
-
-                RemoteVersionIds,
-                SelectedVersionId,
-
-                LocalAccessNotBefore,
-                LocalAccessNotAfter,
-
-                AccessTokenBase64Encoding,
-                AllowDowngrades,
-                AccessStatus,
-                RemoteStatus,
-                PartyStatus
-
-            );
-
-        #endregion
-
-        #region AddRemoteParty(...)
-
-        public Task<Boolean> AddRemoteParty(OCPI.RemoteParty_Id           Id,
+        public Task<Boolean> AddRemoteParty(RemoteParty_Id                Id,
                                             IEnumerable<CredentialsRole>  CredentialsRoles,
 
-                                            OCPI.AccessToken              AccessToken,
+                                            AccessToken                   AccessToken,
+
+                                            AccessToken                   RemoteAccessToken,
+                                            URL                           RemoteVersionsURL,
+
+                                            TimeSpan?                     RemoteTOTP_ValidityTime     = null,
+                                            UInt32?                       RemoteTOTP_Length           = null,
+                                            String?                       RemoteTOTP_Alphabet         = null,
+
+                                            IEnumerable<Version_Id>?      RemoteVersionIds            = null,
+                                            Version_Id?                   SelectedVersionId           = null,
+
+                                            TimeSpan?                     LocalTOTP_ValidityTime      = null,
+                                            UInt32?                       LocalTOTP_Length            = null,
+                                            String?                       LocalTOTP_Alphabet          = null,
                                             DateTimeOffset?               LocalAccessNotBefore        = null,
                                             DateTimeOffset?               LocalAccessNotAfter         = null,
+
                                             Boolean?                      AccessTokenBase64Encoding   = null,
                                             Boolean?                      AllowDowngrades             = false,
-                                            OCPI.AccessStatus             AccessStatus                = OCPI.AccessStatus.ALLOWED,
-
-                                            OCPI.PartyStatus              PartyStatus                 = OCPI.PartyStatus. ENABLED)
+                                            AccessStatus                  AccessStatus                = AccessStatus.      ALLOWED,
+                                            RemoteAccessStatus?           RemoteStatus                = RemoteAccessStatus.ONLINE,
+                                            PartyStatus                   PartyStatus                 = PartyStatus.       ENABLED)
 
             => CommonAPI.AddRemoteParty(
 
@@ -506,6 +465,59 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    CredentialsRoles,
 
                    AccessToken,
+
+                   RemoteAccessToken,
+                   RemoteVersionsURL,
+
+                   RemoteTOTP_ValidityTime,
+                   RemoteTOTP_Length,
+                   RemoteTOTP_Alphabet,
+
+                   RemoteVersionIds,
+                   SelectedVersionId,
+
+                   LocalTOTP_ValidityTime,
+                   LocalTOTP_Length,
+                   LocalTOTP_Alphabet,
+                   LocalAccessNotBefore,
+                   LocalAccessNotAfter,
+
+                   AccessTokenBase64Encoding,
+                   AllowDowngrades,
+                   AccessStatus,
+                   RemoteStatus,
+                   PartyStatus
+
+               );
+
+        #endregion
+
+        #region AddRemoteParty(...)
+
+        public Task<Boolean> AddRemoteParty(RemoteParty_Id                Id,
+                                            IEnumerable<CredentialsRole>  CredentialsRoles,
+
+                                            AccessToken                   AccessToken,
+                                            TimeSpan?                     LocalTOTP_ValidityTime      = null,
+                                            UInt32?                       LocalTOTP_Length            = null,
+                                            String?                       LocalTOTP_Alphabet          = null,
+                                            DateTimeOffset?               LocalAccessNotBefore        = null,
+                                            DateTimeOffset?               LocalAccessNotAfter         = null,
+                                            Boolean?                      AccessTokenBase64Encoding   = null,
+                                            Boolean?                      AllowDowngrades             = false,
+                                            AccessStatus                  AccessStatus                = AccessStatus.ALLOWED,
+
+                                            PartyStatus                   PartyStatus                 = PartyStatus. ENABLED)
+
+            => CommonAPI.AddRemoteParty(
+
+                   Id,
+                   CredentialsRoles,
+
+                   AccessToken,
+                   LocalTOTP_ValidityTime,
+                   LocalTOTP_Length,
+                   LocalTOTP_Alphabet,
                    LocalAccessNotBefore,
                    LocalAccessNotAfter,
                    AccessTokenBase64Encoding,

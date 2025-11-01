@@ -27,10 +27,9 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 using cloud.charging.open.protocols.OCPI;
-using Org.BouncyCastle.Ocsp;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
@@ -92,25 +91,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             PartyId              = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 2)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code and/or party identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            var countryCode = CountryCode.TryParse(Request.ParsedURLParameters[0]);
-            if (!countryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -127,8 +108,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            var partyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
-            if (!partyId.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.   TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -145,9 +125,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+
             PartyId = Party_Idv3.From(
-                          countryCode.Value,
-                          partyId.    Value
+                          countryCode,
+                          partyId
                       );
 
             if (!CommonAPI.HasParty(PartyId.Value))
@@ -203,26 +184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Location             = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -239,9 +201,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -258,9 +221,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId = partyId;
 
-            if (!LocationId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("locationId",   Location_Id.     TryParse, out var locationId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -277,13 +241,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            LocationId = locationId;
+
 
             if (!CommonAPI.TryGetLocation(
                 Party_Idv3.From(
                     CountryCode.Value,
-                    PartyId.    Value
+                    PartyId.Value
                 ),
-                LocationId.Value,
+                locationId,
                 out Location))
             {
 
@@ -336,26 +302,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Location             = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -372,9 +319,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -391,9 +339,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId = partyId;
 
-            if (!LocationId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("locationId",   Location_Id.     TryParse, out var locationId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -410,13 +359,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            LocationId = locationId;
+
 
             CommonAPI.TryGetLocation(
                 Party_Idv3.From(
                     CountryCode.Value,
-                    PartyId.    Value
+                    PartyId.Value
                 ),
-                LocationId.Value,
+                locationId,
                 out Location
             );
 
@@ -451,26 +402,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Location             =  default;
             OCPIResponseBuilder  =  default;
 
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!LocationId.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id> ("location_Id", Location_Id.TryParse, out var locationId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -487,10 +419,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            LocationId = locationId;
+
 
             if (!CommonAPI.TryGetLocation(
                 CommonAPI.DefaultPartyId,
-                LocationId.Value,
+                locationId,
                 out Location))
             {
 
@@ -583,26 +517,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             EVSE                 = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 4)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification, location identification and/or EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -619,9 +534,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -638,9 +554,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId     = partyId;
 
-            if (!LocationId.HasValue) {
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("locationId",   Location_Id.     TryParse, out var locationId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -656,9 +574,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[3]);
+            LocationId  = locationId;
 
-            if (!EVSEUId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>   ("evseUId",      EVSE_UId.        TryParse, out var evseUId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -675,13 +594,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            EVSEUId     = evseUId;
+
 
             if (!CommonAPI.TryGetLocation(
                 Party_Idv3.From(
-                    CountryCode.Value,
-                    PartyId.    Value
+                    countryCode,
+                    partyId
                 ),
-                LocationId.Value,
+                locationId,
                 out Location))
             {
 
@@ -699,7 +620,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE))
+            if (!Location.TryGetEVSE(evseUId, out EVSE))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -743,40 +664,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                         [NotNullWhen(true)]   out CountryCode?           CountryCode,
                                                         [NotNullWhen(true)]   out Party_Id?              PartyId,
                                                         [NotNullWhen(true)]   out Location_Id?           LocationId,
-                                                        [NotNullWhen(true)]   out Location?              Location,
+                                                        [MaybeNullWhen(true)] out Location?              Location,
                                                         [NotNullWhen(true)]   out EVSE_UId?              EVSEUId,
                                                         [MaybeNullWhen(true)] out EVSE?                  EVSE,
                                                         [NotNullWhen(false)]  out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
-            CountryCode          = default;
-            PartyId              = default;
-            LocationId           = default;
-            Location             = default;
-            EVSEUId              = default;
-            EVSE                 = default;
-            OCPIResponseBuilder  = default;
+            CountryCode          = null;
+            PartyId              = null;
+            LocationId           = null;
+            Location             = null;
+            EVSEUId              = null;
+            EVSE                 = null;
+            OCPIResponseBuilder  = null;
 
-            if (Request.ParsedURLParameters.Length < 4)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification, location identification and/or EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -793,9 +695,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -812,9 +715,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId     = partyId;
 
-            if (!LocationId.HasValue) {
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("locationId",   Location_Id.     TryParse, out var locationId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -830,9 +735,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[3]);
+            LocationId  = locationId;
 
-            if (!EVSEUId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>   ("evseUId",      EVSE_UId.        TryParse, out var evseUId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -849,14 +755,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            EVSEUId     = evseUId;
+
 
             CommonAPI.TryGetLocation(
                 Party_Idv3.From(
-                    CountryCode.Value,
-                    PartyId.    Value
+                    countryCode,
+                    partyId
                 ),
-                LocationId.Value,
+                locationId,
                 out Location
+            );
+
+            Location?.TryGetEVSE(
+                evseUId,
+                out EVSE
             );
 
             return true;
@@ -895,26 +808,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             EVSE                 = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 2)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing location and/or EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!LocationId.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id> ("locationId", Location_Id.TryParse, out var locationId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -931,9 +825,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
+            LocationId = locationId;
 
-            if (!EVSEUId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>    ("evseId",     EVSE_UId.   TryParse, out var evseUId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -950,6 +845,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            EVSEUId = evseUId;
+
 
             foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
             {
@@ -958,11 +855,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         countryCodeWithPartyId.Item1,
                         countryCodeWithPartyId.Item2
                     ),
-                    LocationId.Value,
+                    locationId,
                     out Location))
                 {
 
-                    if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
+                    if (!Location.TryGetEVSE(evseUId, out EVSE)) {
 
                         OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                             StatusCode           = 2001,
@@ -1042,26 +939,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Connector            = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 5)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification, location identification, EVSE identification and/or connector identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode> ("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1078,9 +956,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>    ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1097,9 +976,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId     = partyId;
 
-            if (!LocationId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id> ("locationId",   Location_Id.     TryParse, out var locationId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1116,9 +996,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[3]);
+            LocationId  = locationId;
 
-            if (!EVSEUId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>    ("evseId",       EVSE_UId.        TryParse, out var evseUId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1135,9 +1016,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            ConnectorId = Connector_Id.TryParse(Request.ParsedURLParameters[4]);
+            EVSEUId     = evseUId;
 
-            if (!ConnectorId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Connector_Id>("connectorId",  Connector_Id.    TryParse, out var connectorId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1154,13 +1036,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            ConnectorId = connectorId;
+
 
             if (!CommonAPI.TryGetLocation(
                 Party_Idv3.From(
-                    CountryCode.Value,
-                    PartyId.    Value
+                    countryCode,
+                    partyId
                 ),
-                LocationId.Value,
+                locationId,
                 out Location))
             {
 
@@ -1178,8 +1062,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE) ||
-                 EVSE is null)
+            if (!Location.TryGetEVSE(evseUId, out EVSE))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1196,7 +1079,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            if (!EVSE.TryGetConnector(ConnectorId.Value, out Connector))
+            if (!EVSE.TryGetConnector(connectorId, out Connector))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1260,26 +1143,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Connector            = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 5)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification, location identification, EVSE identification and/or connector identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1296,9 +1160,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1315,9 +1180,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId     = partyId;
 
-            if (!LocationId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("locationId",   Location_Id.     TryParse, out var locationId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1334,9 +1200,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[3]);
+            LocationId  = locationId;
 
-            if (!EVSEUId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>   ("locationId",   EVSE_UId.        TryParse, out var evseUId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1353,9 +1220,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            ConnectorId = Connector_Id.TryParse(Request.ParsedURLParameters[4]);
+            EVSEUId     = evseUId;
 
-            if (!ConnectorId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Connector_Id>   ("connectorId",   Connector_Id.        TryParse, out var connectorId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1372,13 +1240,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            ConnectorId = connectorId;
+
 
             if (!CommonAPI.TryGetLocation(
                 Party_Idv3.From(
-                    CountryCode.Value,
-                    PartyId.    Value
+                    countryCode,
+                    partyId
                 ),
-                LocationId.Value,
+                locationId,
                 out Location))
             {
 
@@ -1396,7 +1266,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE) ||
+            if (!Location.TryGetEVSE(evseUId, out EVSE) ||
                  EVSE is null)
             {
 
@@ -1414,7 +1284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            EVSE.TryGetConnector(ConnectorId.Value, out Connector);
+            EVSE.TryGetConnector(connectorId, out Connector);
 
             return true;
 
@@ -1598,7 +1468,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
-        #region ParseMandatoryTariff       (this Request, CommonAPI, out CountryCode, out PartyId, out TariffId,  out Tariff,   out OCPIResponseBuilder)
+        #region ParseMandatoryTariff                (this Request, CommonAPI, out CountryCode, out PartyId, out TariffId,  out Tariff,   out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -1627,26 +1497,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Tariff               = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1663,9 +1514,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1682,9 +1534,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            TariffId = Tariff_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId = partyId;
 
-            if (!TariffId.HasValue) {
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Tariff_Id>  ("tariffId",     Tariff_Id.       TryParse, out var tariffId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -1699,6 +1553,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 return false;
 
             }
+
+            TariffId = tariffId;
 
 
             if (!CommonAPI.TryGetTariff(
@@ -1730,7 +1586,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region ParseOptionalTariff        (this Request, CommonAPI, out CountryCode, out PartyId, out TariffId,  out Tariff,   out OCPIResponseBuilder)
+        #region ParseOptionalTariff                 (this Request, CommonAPI, out CountryCode, out PartyId, out TariffId,  out Tariff,   out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -1759,26 +1615,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Tariff               = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1795,9 +1632,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1814,13 +1652,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            TariffId = Tariff_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId = partyId;
 
-            if (!TariffId.HasValue) {
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Tariff_Id>  ("tariffId",     Tariff_Id.       TryParse, out var tariffId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
-                    StatusMessage        = "Invalid tariff identification!",
+                    StatusMessage        = "Invalid location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
@@ -1832,13 +1672,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            TariffId = tariffId;
+
 
             CommonAPI.TryGetTariff(
                 Party_Idv3.From(
                     CountryCode.Value,
                     PartyId.Value
                 ),
-                TariffId.Value,
+                tariffId,
                 out Tariff
             );
 
@@ -1848,7 +1690,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region ParseTariff                (this Request, CommonAPI, out TariffId, out Tariff,                                                            out HTTPResponse)
+        #region ParseTariff                         (this Request, CommonAPI, out TariffId, out Tariff,                                                            out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -1872,26 +1714,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Tariff               =  default;
             OCPIResponseBuilder  =  default;
 
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            TariffId = Tariff_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!TariffId.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<Tariff_Id>("tariffId", Tariff_Id.TryParse, out var tariffId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1908,6 +1731,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            TariffId = tariffId;
+
 
             foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
             {
@@ -1916,7 +1741,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         countryCodeWithPartyId.Item1,
                         countryCodeWithPartyId.Item2
                     ),
-                    TariffId.Value,
+                    tariffId,
                     out Tariff))
                 {
                     return true;
@@ -1941,7 +1766,98 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
-        #region ParseMandatorySession      (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId, out Session,  out OCPIResponseBuilder)
+        #region ParseSessionId                      (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId,               out OCPIResponseBuilder)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the session identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="SessionId">The parsed unique session identification.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        public static Boolean ParseSessionId(this OCPIRequest                                  Request,
+                                             CommonAPI                                         CommonAPI,
+                                             [NotNullWhen  (true)]  out CountryCode?           CountryCode,
+                                             [NotNullWhen  (true)]  out Party_Id?              PartyId,
+                                             [NotNullWhen  (true)]  out Session_Id?            SessionId,
+                                             [NotNullWhen  (false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
+        {
+
+            CountryCode          = default;
+            PartyId              = default;
+            SessionId            = default;
+            OCPIResponseBuilder  = default;
+
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid country code!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            CountryCode = countryCode;
+
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid party identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            PartyId     = partyId;
+
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Session_Id> ("session_id",   Session_Id.      TryParse, out var sessionId))
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid session identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            SessionId   = sessionId;
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseMandatorySession               (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId, out Session,  out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
@@ -1970,26 +1886,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Session              = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or session identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2006,9 +1903,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2025,9 +1923,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            SessionId = Session_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId     = partyId;
 
-            if (!SessionId.HasValue) {
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Session_Id> ("session_id",   Session_Id.      TryParse, out var sessionId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -2043,8 +1943,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            SessionId   = sessionId;
 
-            if (!CommonAPI.TryGetSession(Party_Idv3.From(CountryCode.Value, PartyId.Value), SessionId.Value, out Session))
+
+            if (!CommonAPI.TryGetSession(Party_Idv3.From(countryCode, partyId), sessionId, out Session))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2067,7 +1969,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region ParseOptionalSession       (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId, out Session,  out OCPIResponseBuilder)
+        #region ParseOptionalSession                (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId, out Session,  out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
@@ -2096,26 +1998,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Session              = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or session identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2132,9 +2015,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2151,9 +2035,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            SessionId = Session_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId     = partyId;
 
-            if (!SessionId.HasValue) {
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Session_Id> ("session_id",   Session_Id.      TryParse, out var sessionId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -2169,8 +2055,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            SessionId     = sessionId;
 
-            CommonAPI.TryGetSession(Party_Idv3.From(CountryCode.Value, PartyId.Value), SessionId.Value, out Session);
+
+            CommonAPI.TryGetSession(
+                Party_Idv3.From(
+                    countryCode,
+                    partyId
+                ),
+                sessionId,
+                out Session
+            );
 
             return true;
 
@@ -2178,7 +2073,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region ParseSession               (this Request, CommonAPI, out SessionId, out Session,                                                          out HTTPResponse)
+        #region ParseSession                        (this Request, CommonAPI, out SessionId, out Session,                                                          out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
@@ -2202,26 +2097,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Session              =  default;
             OCPIResponseBuilder  =  default;
 
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing session identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            SessionId = Session_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!SessionId.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<Session_Id> ("session_id", Session_Id.TryParse, out var sessionId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2238,6 +2114,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            SessionId = sessionId;
+
 
             foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
             {
@@ -2246,7 +2124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         countryCodeWithPartyId.Item1,
                         countryCodeWithPartyId.Item2
                     ),
-                    SessionId.Value,
+                    sessionId,
                     out Session))
                 {
                     return true;
@@ -2271,7 +2149,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
-        #region ParseMandatoryCDR          (this Request, CommonAPI, out CountryCode, out PartyId, out CDRId,     out CDR,      out OCPIResponseBuilder)
+        #region ParseMandatoryCDR                   (this Request, CommonAPI, out CountryCode, out PartyId, out CDRId,     out CDR,      out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the charge detail record identification
@@ -2299,26 +2177,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             CDR                  = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or charge detail record identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2335,9 +2194,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2354,9 +2214,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            CDRId = CDR_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId     = partyId;
 
-            if (!CDRId.HasValue) {
+
+            if (!Request.HTTPRequest.TryParseURLParameter<CDR_Id>     ("cdr_Id",       CDR_Id.          TryParse, out var cdrId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -2372,9 +2234,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            CDRId = cdrId;
 
-            if (!CommonAPI.TryGetCDR(Party_Idv3.From(CountryCode.Value, PartyId.Value), CDRId.Value, out CDR))
-            {
+
+            if (!CommonAPI.TryGetCDR(
+                Party_Idv3.From(
+                    countryCode,
+                    partyId
+                ),
+                cdrId,
+                out CDR
+            )) {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -2396,7 +2266,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region ParseOptionalCDR           (this Request, CommonAPI, out CountryCode, out PartyId, out CDRId,     out CDR,      out OCPIResponseBuilder)
+        #region ParseOptionalCDR                    (this Request, CommonAPI, out CountryCode, out PartyId, out CDRId,     out CDR,      out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the charge detail record identification
@@ -2424,26 +2294,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             CDR                  = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or charge detail record identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2460,9 +2311,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2479,9 +2331,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            CDRId = CDR_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId     = partyId;
 
-            if (!CDRId.HasValue) {
+
+            if (!Request.HTTPRequest.TryParseURLParameter<CDR_Id>   ("cdr_Id",     CDR_Id.        TryParse, out var cdrId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -2497,8 +2351,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            CDRId = cdrId;
 
-            CommonAPI.TryGetCDR(Party_Idv3.From(CountryCode.Value, PartyId.Value), CDRId.Value, out CDR);
+
+            CommonAPI.TryGetCDR(
+                Party_Idv3.From(
+                    countryCode,
+                    partyId
+                ),
+                cdrId,
+                out CDR
+            );
 
             return true;
 
@@ -2506,7 +2369,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region ParseCDR                   (this Request, CommonAPI, out CDRId, out CDR,                                                                  out HTTPResponse)
+        #region ParseCDR                            (this Request, CommonAPI, out CDRId, out CDR,                                                                  out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the CDR identification
@@ -2599,7 +2462,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
-        #region ParseTokenId               (this Request, CommonAPI,                               out TokenId,                 out OCPIResponseBuilder)
+        #region ParseTokenId                        (this Request, CommonAPI,                               out TokenId,                 out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the token identification
@@ -2619,26 +2482,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             TokenId              = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing token identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            TokenId = Token_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!TokenId.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<Token_Id>("token_id", Token_Id.TryParse, out var tokenId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2655,13 +2499,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            TokenId = tokenId;
+
             return true;
 
         }
 
         #endregion
 
-        #region ParseTokenId               (this Request, CommonAPI, out CountryCode, out PartyId, out TokenId,                                           out HTTPResponse)
+        #region ParseTokenId                        (this Request, CommonAPI, out CountryCode, out PartyId, out TokenId,                                           out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -2687,26 +2533,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             TokenId              = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2723,9 +2550,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>("party_id", Party_Id.TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2742,9 +2570,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            TokenId = Token_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId = partyId;
 
-            if (!TokenId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Token_Id>("token_Id", Token_Id.TryParse, out var tokenId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2761,13 +2590,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            TokenId = tokenId;
+
             return true;
 
         }
 
         #endregion
 
-        #region ParseMandatoryToken        (this Request, CommonAPI,                               out TokenId,   out Token,    out OCPIResponseBuilder)
+        #region ParseMandatoryToken                 (this Request, CommonAPI,                               out TokenId,   out Token,    out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the token identification
@@ -2856,7 +2687,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region ParseOptionalToken         (this Request, CommonAPI,                               out TokenId,   out Token,    out OCPIResponseBuilder)
+        #region ParseOptionalToken                  (this Request, CommonAPI,                               out TokenId,   out Token,    out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the token identification
@@ -2930,7 +2761,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region ParseMandatoryToken        (this Request, CommonAPI, out CountryCode, out PartyId, out TokenId, out TokenStatus,                          out HTTPResponse)
+        #region ParseMandatoryToken                 (this Request, CommonAPI, out CountryCode, out PartyId, out TokenId, out TokenStatus,                          out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -3085,7 +2916,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region ParseOptionalToken         (this Request, CommonAPI, out CountryCode, out PartyId, out TokenId, out TokenStatus,                          out HTTPResponse)
+        #region ParseOptionalToken                  (this Request, CommonAPI, out CountryCode, out PartyId, out TokenId, out TokenStatus,                          out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -3230,7 +3061,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
-        #region ParseTerminalId            (this Request, CommonAPI, out TerminalId,                                            out OCPIResponseBuilder)
+        #region ParseTerminalId                     (this Request, CommonAPI, out TerminalId,                                            out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the terminal identification
@@ -3250,29 +3081,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             TerminalId           = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 1)
+            if (!Request.HTTPRequest.TryParseURLParameter<Terminal_Id>("terminalId", Terminal_Id.TryParse, out var terminalId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
-                    StatusMessage        = "Missing terminal identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            if (!Terminal_Id.TryParse(Request.ParsedURLParameters[0], out var terminalId))
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid terminal identification!",
+                    StatusMessage        = "Invalid token identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
@@ -3285,13 +3099,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             }
 
             TerminalId = terminalId;
+
             return true;
 
         }
 
         #endregion
 
-        #region ParseTerminal              (this Request, CommonAPI, out TerminalId, out Terminal,                                                        out HTTPResponse)
+        #region ParsePaymentTerminal                (this Request, CommonAPI, out TerminalId, out Terminal,                                                        out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the terminal identification
@@ -3315,12 +3130,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Terminal             =  default;
             OCPIResponseBuilder  =  default;
 
-            if (Request.ParsedURLParameters.Length < 1)
+            if (!Request.HTTPRequest.TryParseURLParameter<Terminal_Id>("terminalId", Terminal_Id.TryParse, out var terminalId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
-                    StatusMessage        = "Missing terminal identification!",
+                    StatusMessage        = "Invalid token identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
@@ -3332,29 +3147,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            TerminalId = Terminal_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!TerminalId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid terminal identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
+            TerminalId = terminalId;
 
 
             if (!CommonAPI.TryGetPaymentTerminal(
                 CommonAPI.DefaultPartyId,
-                TerminalId.Value,
+                terminalId,
                 out Terminal))
             {
 
@@ -3410,7 +3208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region ParseMandatoryTerminal     (this Request, CommonAPI, out TerminalId, out Terminal,                                                        out HTTPResponse)
+        #region ParseMandatoryPaymentTerminal       (this Request, CommonAPI, out TerminalId, out Terminal,                                                        out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the terminal identification
@@ -3434,12 +3232,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Terminal             =  default;
             OCPIResponseBuilder  =  default;
 
-            if (Request.ParsedURLParameters.Length < 1)
+            if (!Request.HTTPRequest.TryParseURLParameter<Terminal_Id>("terminalId", Terminal_Id.TryParse, out var terminalId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
-                    StatusMessage        = "Missing terminal identification!",
+                    StatusMessage        = "Invalid token identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
@@ -3451,24 +3249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            TerminalId = Terminal_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!TerminalId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid terminal identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
+            TerminalId = terminalId;
 
 
             if (!CommonAPI.TryGetPaymentTerminal(
@@ -3529,7 +3310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region ParseTerminal              (this Request, CommonAPI, out TerminalId, out Terminal,                                                        out HTTPResponse)
+        #region ParsePaymentTerminal                (this Request, CommonAPI, out TerminalId, out Terminal,                                                        out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the terminal identification
@@ -3554,12 +3335,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Terminal             =  default;
             OCPIResponseBuilder  =  default;
 
-            if (Request.ParsedURLParameters.Length < 1)
+            if (!Request.HTTPRequest.TryParseURLParameter<Terminal_Id>("terminalId", Terminal_Id.TryParse, out var terminalId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
-                    StatusMessage        = "Missing terminal identification!",
+                    StatusMessage        = "Invalid token identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
@@ -3571,24 +3352,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            TerminalId = Terminal_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!TerminalId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid terminal identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
+            TerminalId = terminalId;
 
 
             if (!CommonAPI.TryGetPaymentTerminal(
@@ -3651,7 +3415,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
-        #region ParseCommandId             (this Request, CommonAPI, out CommandId,                                                                     out HTTPResponse)
+        #region ParseCommandId                      (this Request, CommonAPI,                               out CommandId,                                         out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the command identification
@@ -3671,26 +3435,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             CommandId            = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing command identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CommandId = Command_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CommandId.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<Command_Id>("command_id", Command_Id.TryParse, out var commandId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -3706,6 +3451,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 return false;
 
             }
+
+            CommandId = commandId;
 
             return true;
 
@@ -5230,28 +4977,52 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             // Store credential of the other side!
             await AddOrUpdateRemoteParty(
-                      oldRemoteParty.Id,
-                      receivedCredentials.Roles,
 
-                      CREDENTIALS_TOKEN_C,
+                      oldRemoteParty.Id,          // Id
+                      receivedCredentials.Roles,  // CredentialsRoles
 
-                      receivedCredentials.Token,
-                      receivedCredentials.URL,
+                      CREDENTIALS_TOKEN_C,        // AccessToken
 
-                      null, // TOTP
-                      null, // TOTP
-                      null, // TOTP
+                      receivedCredentials.Token,  // RemoteAccessToken
+                      receivedCredentials.URL,    // RemoteVersionsURL
+
+                      null,                       // RemoteTOTP_ValidityTime
+                      null,                       // RemoteTOTP_Length
+                      null,                       // RemoteTOTP_Alphabet
 
                       otherVersions.Data?.Select(version => version.Id) ?? [],
-                      Version.Id,
+                      Version.Id,                 // SelectedVersionId
 
-                      null,
-                      null,
-                      null,
-                      null,
-                      AccessStatus.      ALLOWED,
-                      RemoteAccessStatus.ONLINE,
-                      PartyStatus.       ENABLED
+                      null,                       // LocalTOTP_ValidityTime
+                      null,                       // LocalTOTP_Length
+                      null,                       // LocalTOTP_Alphabet
+                      null,                       // LocalAccessNotBefore
+                      null,                       // LocalAccessNotAfter
+
+                      null,                       // AccessTokenBase64Encoding
+                      null,                       // AllowDowngrades
+                      AccessStatus.      ALLOWED, // AccessStatus
+                      RemoteAccessStatus.ONLINE,  // RemoteStatus
+                      PartyStatus.       ENABLED, // PartyStatus
+
+                      null,                       // RemoteAccessNotBefore
+                      null                        // RemoteAccessNotAfter
+
+                      // PreferIPv4
+                      // RemoteCertificateValidator
+                      // LocalCertificateSelector
+                      // ClientCert
+                      // TLSProtocol
+                      // HTTPUserAgent
+                      // RequestTimeout
+                      // TransmissionRetryDelay
+                      // MaxNumberOfRetries
+                      // InternalBufferSize
+                      // UseHTTPPipelining
+
+                      // EventTrackingId
+                      // CurrentUserId
+
                   );
 
 
@@ -5829,13 +5600,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                   AccessToken                                                RemoteAccessToken,
                                                   URL                                                        RemoteVersionsURL,
 
-                                                  TimeSpan?                                                  TOTP_ValidityTime            = null,
-                                                  UInt32?                                                    TOTP_Length                  = null,
-                                                  String?                                                    TOTP_Alphabet                = null,
+                                                  TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                                                  UInt32?                                                    RemoteTOTP_Length            = null,
+                                                  String?                                                    RemoteTOTP_Alphabet          = null,
 
                                                   IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                   Version_Id?                                                SelectedVersionId            = null,
 
+                                                  TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                                                  UInt32?                                                    LocalTOTP_Length             = null,
+                                                  String?                                                    LocalTOTP_Alphabet           = null,
                                                   DateTimeOffset?                                            LocalAccessNotBefore         = null,
                                                   DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
@@ -5874,13 +5648,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
 
-                                     TOTP_ValidityTime,
-                                     TOTP_Length,
-                                     TOTP_Alphabet,
+                                     RemoteTOTP_ValidityTime,
+                                     RemoteTOTP_Length,
+                                     RemoteTOTP_Alphabet,
 
                                      RemoteVersionIds,
                                      SelectedVersionId,
 
+                                     LocalTOTP_ValidityTime,
+                                     LocalTOTP_Length,
+                                     LocalTOTP_Alphabet,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
 
@@ -5932,6 +5709,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                   IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                                                   AccessToken                                                AccessToken,
+                                                  TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                                                  UInt32?                                                    LocalTOTP_Length             = null,
+                                                  String?                                                    LocalTOTP_Alphabet           = null,
                                                   DateTimeOffset?                                            LocalAccessNotBefore         = null,
                                                   DateTimeOffset?                                            LocalAccessNotAfter          = null,
                                                   Boolean?                                                   AccessTokenBase64Encoding    = null,
@@ -5967,6 +5747,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      AccessStatus,
 
                                      PartyStatus,
+                                     LocalTOTP_ValidityTime,
+                                     LocalTOTP_Length,
+                                     LocalTOTP_Alphabet,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
 
@@ -6013,9 +5796,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                   AccessToken                                                RemoteAccessToken,
                                                   URL                                                        RemoteVersionsURL,
 
-                                                  TimeSpan?                                                  TOTP_ValidityTime            = null,
-                                                  UInt32?                                                    TOTP_Length                  = null,
-                                                  String?                                                    TOTP_Alphabet                = null,
+                                                  TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                                                  UInt32?                                                    RemoteTOTP_Length            = null,
+                                                  String?                                                    RemoteTOTP_Alphabet          = null,
 
                                                   IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                   Version_Id?                                                SelectedVersionId            = null,
@@ -6051,9 +5834,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
 
-                                     TOTP_ValidityTime,
-                                     TOTP_Length,
-                                     TOTP_Alphabet,
+                                     RemoteTOTP_ValidityTime,
+                                     RemoteTOTP_Length,
+                                     RemoteTOTP_Alphabet,
 
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -6186,13 +5969,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                              AccessToken                                                RemoteAccessToken,
                                                              URL                                                        RemoteVersionsURL,
 
-                                                             TimeSpan?                                                  TOTP_ValidityTime            = null,
-                                                             UInt32?                                                    TOTP_Length                  = null,
-                                                             String?                                                    TOTP_Alphabet                = null,
+                                                             TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                                                             UInt32?                                                    RemoteTOTP_Length            = null,
+                                                             String?                                                    RemoteTOTP_Alphabet          = null,
 
                                                              IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                              Version_Id?                                                SelectedVersionId            = null,
 
+                                                             TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                                                             UInt32?                                                    LocalTOTP_Length             = null,
+                                                             String?                                                    LocalTOTP_Alphabet           = null,
                                                              DateTimeOffset?                                            LocalAccessNotBefore         = null,
                                                              DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
@@ -6234,13 +6020,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
 
-                                     TOTP_ValidityTime,
-                                     TOTP_Length,
-                                     TOTP_Alphabet,
+                                     RemoteTOTP_ValidityTime,
+                                     RemoteTOTP_Length,
+                                     RemoteTOTP_Alphabet,
 
                                      RemoteVersionIds,
                                      SelectedVersionId,
 
+                                     LocalTOTP_ValidityTime,
+                                     LocalTOTP_Length,
+                                     LocalTOTP_Alphabet,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
 
@@ -6293,6 +6082,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                              IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                                                              AccessToken                                                AccessToken,
+                                                             TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                                                             UInt32?                                                    LocalTOTP_Length             = null,
+                                                             String?                                                    LocalTOTP_Alphabet           = null,
                                                              DateTimeOffset?                                            LocalAccessNotBefore         = null,
                                                              DateTimeOffset?                                            LocalAccessNotAfter          = null,
                                                              Boolean?                                                   AccessTokenBase64Encoding    = null,
@@ -6331,6 +6123,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      AccessStatus,
 
                                      PartyStatus,
+                                     LocalTOTP_ValidityTime,
+                                     LocalTOTP_Length,
+                                     LocalTOTP_Alphabet,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
 
@@ -6377,9 +6172,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                              AccessToken                                                RemoteAccessToken,
                                                              URL                                                        RemoteVersionsURL,
 
-                                                             TimeSpan?                                                  TOTP_ValidityTime            = null,
-                                                             UInt32?                                                    TOTP_Length                  = null,
-                                                             String?                                                    TOTP_Alphabet                = null,
+                                                             TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                                                             UInt32?                                                    RemoteTOTP_Length            = null,
+                                                             String?                                                    RemoteTOTP_Alphabet          = null,
 
                                                              IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                              Version_Id?                                                SelectedVersionId            = null,
@@ -6418,9 +6213,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
 
-                                     TOTP_ValidityTime,
-                                     TOTP_Length,
-                                     TOTP_Alphabet,
+                                     RemoteTOTP_ValidityTime,
+                                     RemoteTOTP_Length,
+                                     RemoteTOTP_Alphabet,
 
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -6556,13 +6351,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                           AccessToken                                                RemoteAccessToken,
                                                           URL                                                        RemoteVersionsURL,
 
-                                                          TimeSpan?                                                  TOTP_ValidityTime            = null,
-                                                          UInt32?                                                    TOTP_Length                  = null,
-                                                          String?                                                    TOTP_Alphabet                = null,
+                                                          TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                                                          UInt32?                                                    RemoteTOTP_Length            = null,
+                                                          String?                                                    RemoteTOTP_Alphabet          = null,
 
                                                           IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                           Version_Id?                                                SelectedVersionId            = null,
 
+                                                          TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                                                          UInt32?                                                    LocalTOTP_Length             = null,
+                                                          String?                                                    LocalTOTP_Alphabet           = null,
                                                           DateTimeOffset?                                            LocalAccessNotBefore         = null,
                                                           DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
@@ -6601,13 +6399,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
 
-                                     TOTP_ValidityTime,
-                                     TOTP_Length,
-                                     TOTP_Alphabet,
+                                     RemoteTOTP_ValidityTime,
+                                     RemoteTOTP_Length,
+                                     RemoteTOTP_Alphabet,
 
                                      RemoteVersionIds,
                                      SelectedVersionId,
 
+                                     LocalTOTP_ValidityTime,
+                                     LocalTOTP_Length,
+                                     LocalTOTP_Alphabet,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
 
@@ -6669,6 +6470,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                           IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                                                           AccessToken                                                AccessToken,
+                                                          TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                                                          UInt32?                                                    LocalTOTP_Length             = null,
+                                                          String?                                                    LocalTOTP_Alphabet           = null,
                                                           DateTimeOffset?                                            LocalAccessNotBefore         = null,
                                                           DateTimeOffset?                                            LocalAccessNotAfter          = null,
                                                           Boolean?                                                   AccessTokenBase64Encoding    = null,
@@ -6704,6 +6508,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      AccessStatus,
 
                                      PartyStatus,
+                                     LocalTOTP_ValidityTime,
+                                     LocalTOTP_Length,
+                                     LocalTOTP_Alphabet,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
 
@@ -6759,9 +6566,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                           AccessToken                                                RemoteAccessToken,
                                                           URL                                                        RemoteVersionsURL,
 
-                                                          TimeSpan?                                                  TOTP_ValidityTime            = null,
-                                                          UInt32?                                                    TOTP_Length                  = null,
-                                                          String?                                                    TOTP_Alphabet                = null,
+                                                          TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                                                          UInt32?                                                    RemoteTOTP_Length            = null,
+                                                          String?                                                    RemoteTOTP_Alphabet          = null,
 
                                                           IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                           Version_Id?                                                SelectedVersionId            = null,
@@ -6797,9 +6604,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
 
-                                     TOTP_ValidityTime,
-                                     TOTP_Length,
-                                     TOTP_Alphabet,
+                                     RemoteTOTP_ValidityTime,
+                                     RemoteTOTP_Length,
+                                     RemoteTOTP_Alphabet,
 
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -6949,13 +6756,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                      AccessToken                                                RemoteAccessToken,
                                                      URL                                                        RemoteVersionsURL,
 
-                                                     TimeSpan?                                                  TOTP_ValidityTime            = null,
-                                                     UInt32?                                                    TOTP_Length                  = null,
-                                                     String?                                                    TOTP_Alphabet                = null,
+                                                     TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                                                     UInt32?                                                    RemoteTOTP_Length            = null,
+                                                     String?                                                    RemoteTOTP_Alphabet          = null,
 
                                                      IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                      Version_Id?                                                SelectedVersionId            = null,
 
+                                                     TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                                                     UInt32?                                                    LocalTOTP_Length             = null,
+                                                     String?                                                    LocalTOTP_Alphabet           = null,
                                                      DateTimeOffset?                                            LocalAccessNotBefore         = null,
                                                      DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
@@ -6994,13 +6804,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
 
-                                     TOTP_ValidityTime,
-                                     TOTP_Length,
-                                     TOTP_Alphabet,
+                                     RemoteTOTP_ValidityTime,
+                                     RemoteTOTP_Length,
+                                     RemoteTOTP_Alphabet,
 
                                      RemoteVersionIds,
                                      SelectedVersionId,
 
+                                     LocalTOTP_ValidityTime,
+                                     LocalTOTP_Length,
+                                     LocalTOTP_Alphabet,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
 
@@ -7053,6 +6866,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public async Task<Boolean> UpdateRemoteParty(RemoteParty                                                ExistingRemoteParty,
 
                                                      AccessToken                                                AccessToken,
+                                                     TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                                                     UInt32?                                                    LocalTOTP_Length             = null,
+                                                     String?                                                    LocalTOTP_Alphabet           = null,
                                                      DateTimeOffset?                                            LocalAccessNotBefore         = null,
                                                      DateTimeOffset?                                            LocalAccessNotAfter          = null,
                                                      Boolean?                                                   AccessTokenBase64Encoding    = null,
@@ -7088,6 +6904,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      AccessStatus,
 
                                      PartyStatus,
+                                     LocalTOTP_ValidityTime,
+                                     LocalTOTP_Length,
+                                     LocalTOTP_Alphabet,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
 
@@ -7134,9 +6953,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                      AccessToken                                                RemoteAccessToken,
                                                      URL                                                        RemoteVersionsURL,
 
-                                                     TimeSpan?                                                  TOTP_ValidityTime            = null,
-                                                     UInt32?                                                    TOTP_Length                  = null,
-                                                     String?                                                    TOTP_Alphabet                = null,
+                                                     TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                                                     UInt32?                                                    RemoteTOTP_Length            = null,
+                                                     String?                                                    RemoteTOTP_Alphabet          = null,
 
                                                      IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                      Version_Id?                                                SelectedVersionId            = null,
@@ -7172,9 +6991,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
 
-                                     TOTP_ValidityTime,
-                                     TOTP_Length,
-                                     TOTP_Alphabet,
+                                     RemoteTOTP_ValidityTime,
+                                     RemoteTOTP_Length,
+                                     RemoteTOTP_Alphabet,
 
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -10264,7 +10083,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (party.Tariffs.TryGetValue(Tariff.Id,
                                               out var existingTariff,
-                                              Tariff.NotBefore ?? DateTime.MinValue))
+                                              Tariff.NotBefore ?? DateTimeOffset.MinValue))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&

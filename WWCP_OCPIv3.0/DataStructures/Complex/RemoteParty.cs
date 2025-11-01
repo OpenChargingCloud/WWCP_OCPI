@@ -258,6 +258,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            AccessStatus                                               AccessStatus                 = AccessStatus.ALLOWED,
                            PartyStatus                                                Status                       = PartyStatus.ENABLED,
 
+                           TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                           UInt32?                                                    LocalTOTP_Length             = null,
+                           String?                                                    LocalTOTP_Alphabet           = null,
                            DateTimeOffset?                                            LocalAccessNotBefore         = null,
                            DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
@@ -282,6 +285,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        new LocalAccessInfo(
                            AccessToken,
                            AccessStatus,
+                           LocalTOTP_ValidityTime,
+                           LocalTOTP_Length,
+                           LocalTOTP_Alphabet,
                            LocalAccessNotBefore,
                            LocalAccessNotAfter,
                            AccessTokenBase64Encoding,
@@ -395,13 +401,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            AccessToken                                                RemoteAccessToken,
                            URL                                                        RemoteVersionsURL,
 
-                           TimeSpan?                                                  TOTP_ValidityTime            = null,
-                           UInt32?                                                    TOTP_Length                  = null,
-                           String?                                                    TOTP_Alphabet                = null,
+                           TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                           UInt32?                                                    RemoteTOTP_Length            = null,
+                           String?                                                    RemoteTOTP_Alphabet          = null,
 
                            IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                            Version_Id?                                                SelectedVersionId            = null,
 
+                           TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                           UInt32?                                                    LocalTOTP_Length             = null,
+                           String?                                                    LocalTOTP_Alphabet           = null,
                            DateTimeOffset?                                            LocalAccessNotBefore         = null,
                            DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
@@ -434,6 +443,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        new LocalAccessInfo(
                            AccessToken,
                            AccessStatus,
+                           LocalTOTP_ValidityTime,
+                           LocalTOTP_Length,
+                           LocalTOTP_Alphabet,
                            LocalAccessNotBefore,
                            LocalAccessNotAfter,
                            AccessTokenBase64Encoding,
@@ -444,9 +456,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        new RemoteAccessInfo(
                            RemoteAccessToken,
                            RemoteVersionsURL,
-                           TOTP_ValidityTime,
-                           TOTP_Length,
-                           TOTP_Alphabet,
+                           RemoteTOTP_ValidityTime,
+                           RemoteTOTP_Length,
+                           RemoteTOTP_Alphabet,
                            RemoteVersionIds,
                            SelectedVersionId,
                            RemoteStatus,

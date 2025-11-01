@@ -603,31 +603,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region AddRemoteParty(...)
 
-        public Task<Boolean> AddRemoteParty(OCPI.CountryCode          CountryCode,
-                                            OCPI.Party_Id             PartyId,
-                                            OCPI.Role                 Role,
-                                            OCPI.BusinessDetails      BusinessDetails,
+        public Task<Boolean> AddRemoteParty(CountryCode               CountryCode,
+                                            Party_Id                  PartyId,
+                                            Role                      Role,
+                                            BusinessDetails           BusinessDetails,
 
-                                            OCPI.AccessToken          AccessToken,
+                                            AccessToken               AccessToken,
 
-                                            OCPI.AccessToken          RemoteAccessToken,
+                                            AccessToken               RemoteAccessToken,
                                             URL                       RemoteVersionsURL,
 
-                                            TimeSpan?                 TOTP_ValidityTime           = null,
-                                            UInt32?                   TOTP_Length                 = null,
-                                            String?                   TOTP_Alphabet               = null,
+                                            TimeSpan?                 RemoteTOTP_ValidityTime     = null,
+                                            UInt32?                   RemoteTOTP_Length           = null,
+                                            String?                   RemoteTOTP_Alphabet         = null,
 
                                             IEnumerable<Version_Id>?  RemoteVersionIds            = null,
                                             Version_Id?               SelectedVersionId           = null,
 
+                                            TimeSpan?                 LocalTOTP_ValidityTime      = null,
+                                            UInt32?                   LocalTOTP_Length            = null,
+                                            String?                   LocalTOTP_Alphabet          = null,
                                             DateTimeOffset?           LocalAccessNotBefore        = null,
                                             DateTimeOffset?           LocalAccessNotAfter         = null,
 
                                             Boolean?                  AccessTokenBase64Encoding   = null,
                                             Boolean?                  AllowDowngrades             = false,
-                                            OCPI.AccessStatus         AccessStatus                = OCPI.AccessStatus.      ALLOWED,
-                                            OCPI.RemoteAccessStatus?  RemoteStatus                = OCPI.RemoteAccessStatus.ONLINE,
-                                            OCPI.PartyStatus          PartyStatus                 = OCPI.PartyStatus.       ENABLED)
+                                            AccessStatus              AccessStatus                = AccessStatus.      ALLOWED,
+                                            RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
+                                            PartyStatus               PartyStatus                 = PartyStatus.       ENABLED)
 
             => CommonAPI.AddRemoteParty(
 
@@ -641,13 +644,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    RemoteAccessToken,
                    RemoteVersionsURL,
 
-                   TOTP_ValidityTime,
-                   TOTP_Length,
-                   TOTP_Alphabet,
+                   RemoteTOTP_ValidityTime,
+                   RemoteTOTP_Length,
+                   RemoteTOTP_Alphabet,
 
                    RemoteVersionIds,
                    SelectedVersionId,
 
+                   LocalTOTP_ValidityTime,
+                   LocalTOTP_Length,
+                   LocalTOTP_Alphabet,
                    LocalAccessNotBefore,
                    LocalAccessNotAfter,
 
@@ -663,20 +669,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region AddRemoteParty(...)
 
-        public Task<Boolean> AddRemoteParty(OCPI.CountryCode      CountryCode,
-                                            OCPI.Party_Id         PartyId,
-                                            OCPI.Role             Role,
-                                            OCPI.BusinessDetails  BusinessDetails,
+        public Task<Boolean> AddRemoteParty(CountryCode      CountryCode,
+                                            Party_Id         PartyId,
+                                            Role             Role,
+                                            BusinessDetails  BusinessDetails,
 
-                                            OCPI.AccessToken      AccessToken,
-                                            DateTimeOffset?       LocalAccessNotBefore        = null,
-                                            DateTimeOffset?       LocalAccessNotAfter         = null,
-                                            Boolean?              AccessTokenBase64Encoding   = null,
-                                            Boolean?              AllowDowngrades             = false,
+                                            AccessToken      AccessToken,
+                                            TimeSpan?        LocalTOTP_ValidityTime      = null,
+                                            UInt32?          LocalTOTP_Length            = null,
+                                            String?          LocalTOTP_Alphabet          = null,
+                                            DateTimeOffset?  LocalAccessNotBefore        = null,
+                                            DateTimeOffset?  LocalAccessNotAfter         = null,
+                                            Boolean?         AccessTokenBase64Encoding   = null,
+                                            Boolean?         AllowDowngrades             = false,
+                                            AccessStatus     AccessStatus                = AccessStatus.ALLOWED,
 
-                                            OCPI.AccessStatus     AccessStatus                = OCPI.AccessStatus.ALLOWED,
-
-                                            OCPI.PartyStatus      PartyStatus                 = OCPI.PartyStatus. ENABLED)
+                                            PartyStatus      PartyStatus                 = PartyStatus. ENABLED)
 
             => CommonAPI.AddRemoteParty(
 
@@ -685,6 +693,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    Role,
                    BusinessDetails,
                    AccessToken,
+                   LocalTOTP_ValidityTime,
+                   LocalTOTP_Length,
+                   LocalTOTP_Alphabet,
                    LocalAccessNotBefore,
                    LocalAccessNotAfter,
                    AccessTokenBase64Encoding,

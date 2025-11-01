@@ -1469,7 +1469,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region ParseMandatoryTariff       (this Request, CommonAPI, out CountryCode, out PartyId, out TariffId,  out Tariff,   out OCPIResponseBuilder)
+        #region ParseMandatoryTariff                (this Request, CommonAPI, out CountryCode, out PartyId, out TariffId,  out Tariff,   out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -1498,26 +1498,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             Tariff               = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1534,9 +1515,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1553,9 +1535,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             }
 
-            TariffId = Tariff_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId = partyId;
 
-            if (!TariffId.HasValue) {
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Tariff_Id>  ("tariffId",     Tariff_Id.       TryParse, out var tariffId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -1570,6 +1554,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 return false;
 
             }
+
+            TariffId = tariffId;
 
 
             if (!CommonAPI.TryGetTariff(
@@ -1601,7 +1587,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseOptionalTariff        (this Request, CommonAPI, out CountryCode, out PartyId, out TariffId,  out Tariff,   out OCPIResponseBuilder)
+        #region ParseOptionalTariff                 (this Request, CommonAPI, out CountryCode, out PartyId, out TariffId,  out Tariff,   out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -1630,26 +1616,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             Tariff               = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<CountryCode>("country_code", OCPI.CountryCode.TryParse, out var countryCode))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1666,9 +1633,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             }
 
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+            CountryCode = countryCode;
 
-            if (!PartyId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1685,13 +1653,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             }
 
-            TariffId = Tariff_Id.TryParse(Request.ParsedURLParameters[2]);
+            PartyId = partyId;
 
-            if (!TariffId.HasValue) {
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Tariff_Id>  ("tariffId",     Tariff_Id.       TryParse, out var tariffId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
-                    StatusMessage        = "Invalid tariff identification!",
+                    StatusMessage        = "Invalid location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
@@ -1703,13 +1673,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             }
 
+            TariffId = tariffId;
+
 
             CommonAPI.TryGetTariff(
                 Party_Idv3.From(
                     CountryCode.Value,
                     PartyId.Value
                 ),
-                TariffId.Value,
+                tariffId,
                 out Tariff
             );
 
@@ -1719,7 +1691,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseTariff                (this Request, CommonAPI, out TariffId, out Tariff,                                                            out HTTPResponse)
+        #region ParseTariff                         (this Request, CommonAPI, out TariffId, out Tariff,                                                            out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -1743,26 +1715,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             Tariff               =  default;
             OCPIResponseBuilder  =  default;
 
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            TariffId = Tariff_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!TariffId.HasValue)
+            if (!Request.HTTPRequest.TryParseURLParameter<Tariff_Id>("tariffId", Tariff_Id.TryParse, out var tariffId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1779,6 +1732,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             }
 
+            TariffId = tariffId;
+
 
             foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
             {
@@ -1787,7 +1742,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         countryCodeWithPartyId.Item1,
                         countryCodeWithPartyId.Item2
                     ),
-                    TariffId.Value,
+                    tariffId,
                     out Tariff))
                 {
                     return true;
@@ -1812,7 +1767,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region ParseSessionId             (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId,               out OCPIResponseBuilder)
+        #region ParseSessionId                      (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId,               out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
@@ -1903,7 +1858,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseMandatorySession      (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId, out Session,  out OCPIResponseBuilder)
+        #region ParseMandatorySession               (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId, out Session,  out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
@@ -2015,7 +1970,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseOptionalSession       (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId, out Session,  out OCPIResponseBuilder)
+        #region ParseOptionalSession                (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId, out Session,  out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
@@ -2119,7 +2074,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseSession               (this Request, CommonAPI, out SessionId, out Session,                                                          out HTTPResponse)
+        #region ParseSession                        (this Request, CommonAPI, out SessionId, out Session,                                                          out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
@@ -2195,7 +2150,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region ParseMandatoryCDR          (this Request, CommonAPI, out CountryCode, out PartyId, out CDRId,     out CDR,      out OCPIResponseBuilder)
+        #region ParseMandatoryCDR                   (this Request, CommonAPI, out CountryCode, out PartyId, out CDRId,     out CDR,      out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the charge detail record identification
@@ -2312,7 +2267,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseOptionalCDR           (this Request, CommonAPI, out CountryCode, out PartyId, out CDRId,     out CDR,      out OCPIResponseBuilder)
+        #region ParseOptionalCDR                    (this Request, CommonAPI, out CountryCode, out PartyId, out CDRId,     out CDR,      out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the charge detail record identification
@@ -2415,7 +2370,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseCDR                   (this Request, CommonAPI, out CDRId, out CDR,                                                                  out HTTPResponse)
+        #region ParseCDR                            (this Request, CommonAPI, out CDRId, out CDR,                                                                  out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the CDR identification
@@ -2508,7 +2463,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region ParseTokenId               (this Request, CommonAPI,                               out TokenId,                 out OCPIResponseBuilder)
+        #region ParseTokenId                        (this Request, CommonAPI,                               out TokenId,                 out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the token identification
@@ -2553,7 +2508,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseTokenId               (this Request, CommonAPI, out CountryCode, out PartyId, out TokenId,                                           out HTTPResponse)
+        #region ParseTokenId                        (this Request, CommonAPI, out CountryCode, out PartyId, out TokenId,                                           out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -2644,7 +2599,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseMandatoryToken        (this Request, CommonAPI,                               out TokenId,   out Token,    out OCPIResponseBuilder)
+        #region ParseMandatoryToken                 (this Request, CommonAPI,                               out TokenId,   out Token,    out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the token identification
@@ -2733,7 +2688,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseOptionalToken         (this Request, CommonAPI,                               out TokenId,   out Token,    out OCPIResponseBuilder)
+        #region ParseOptionalToken                  (this Request, CommonAPI,                               out TokenId,   out Token,    out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the token identification
@@ -2807,7 +2762,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseMandatoryToken        (this Request, CommonAPI, out CountryCode, out PartyId, out TokenId, out TokenStatus,                          out HTTPResponse)
+        #region ParseMandatoryToken                 (this Request, CommonAPI, out CountryCode, out PartyId, out TokenId, out TokenStatus,                          out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -2962,7 +2917,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseOptionalToken         (this Request, CommonAPI, out CountryCode, out PartyId, out TokenId, out TokenStatus,                          out HTTPResponse)
+        #region ParseOptionalToken                  (this Request, CommonAPI, out CountryCode, out PartyId, out TokenId, out TokenStatus,                          out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -3107,7 +3062,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region ParseCommandId             (this Request, CommonAPI,                               out CommandId,                                         out HTTPResponse)
+        #region ParseCommandId                      (this Request, CommonAPI,                               out CommandId,                                         out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the command identification
@@ -4682,29 +4637,52 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             // Store credential of the other side!
             await AddOrUpdateRemoteParty(
-                      oldRemoteParty.Id,
-                      receivedCredentials.Roles,
 
-                      CREDENTIALS_TOKEN_C,
+                      oldRemoteParty.Id,          // Id
+                      receivedCredentials.Roles,  // CredentialsRoles
 
-                      receivedCredentials.Token,
-                      receivedCredentials.URL,
+                      CREDENTIALS_TOKEN_C,        // AccessToken
 
-                      null, // TOTP
-                      null, // TOTP
-                      null, // TOTP
+                      receivedCredentials.Token,  // RemoteAccessToken
+                      receivedCredentials.URL,    // RemoteVersionsURL
 
-                      otherVersions.Data?.Select(version => version.Id) ?? Array.Empty<Version_Id>(),
-                      Version.Id,
+                      null,                       // RemoteTOTP_ValidityTime
+                      null,                       // RemoteTOTP_Length
+                      null,                       // RemoteTOTP_Alphabet
 
-                      null,
-                      null,
-                      null,
-                      null,
+                      otherVersions.Data?.Select(version => version.Id) ?? [],
+                      Version.Id,                 // SelectedVersionId
 
-                      AccessStatus.      ALLOWED,
-                      RemoteAccessStatus.ONLINE,
-                      PartyStatus.       ENABLED
+                      null,                       // LocalTOTP_ValidityTime
+                      null,                       // LocalTOTP_Length
+                      null,                       // LocalTOTP_Alphabet
+                      null,                       // LocalAccessNotBefore
+                      null,                       // LocalAccessNotAfter
+
+                      null,                       // AccessTokenBase64Encoding
+                      null,                       // AllowDowngrades
+                      AccessStatus.      ALLOWED, // AccessStatus
+                      RemoteAccessStatus.ONLINE,  // RemoteStatus
+                      PartyStatus.       ENABLED, // PartyStatus
+
+                      null,                       // RemoteAccessNotBefore
+                      null                        // RemoteAccessNotAfter
+
+                      // PreferIPv4
+                      // RemoteCertificateValidator
+                      // LocalCertificateSelector
+                      // ClientCert
+                      // TLSProtocol
+                      // HTTPUserAgent
+                      // RequestTimeout
+                      // TransmissionRetryDelay
+                      // MaxNumberOfRetries
+                      // InternalBufferSize
+                      // UseHTTPPipelining
+
+                      // EventTrackingId
+                      // CurrentUserId
+
                   );
 
 
@@ -5289,13 +5267,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                   AccessToken                                                RemoteAccessToken,
                                                   URL                                                        RemoteVersionsURL,
 
-                                                  TimeSpan?                                                  TOTP_ValidityTime            = null,
-                                                  UInt32?                                                    TOTP_Length                  = null,
-                                                  String?                                                    TOTP_Alphabet                = null,
+                                                  TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                                                  UInt32?                                                    RemoteTOTP_Length            = null,
+                                                  String?                                                    RemoteTOTP_Alphabet          = null,
 
                                                   IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                   Version_Id?                                                SelectedVersionId            = null,
 
+                                                  TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                                                  UInt32?                                                    LocalTOTP_Length             = null,
+                                                  String?                                                    LocalTOTP_Alphabet           = null,
                                                   DateTimeOffset?                                            LocalAccessNotBefore         = null,
                                                   DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
@@ -5325,6 +5306,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         {
 
             var newRemoteParty = new RemoteParty(
+
                                      Id,
                                      CredentialsRoles,
 
@@ -5333,13 +5315,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
 
-                                     TOTP_ValidityTime,
-                                     TOTP_Length,
-                                     TOTP_Alphabet,
+                                     RemoteTOTP_ValidityTime,
+                                     RemoteTOTP_Length,
+                                     RemoteTOTP_Alphabet,
 
                                      RemoteVersionIds,
                                      SelectedVersionId,
 
+                                     LocalTOTP_ValidityTime,
+                                     LocalTOTP_Length,
+                                     LocalTOTP_Alphabet,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
 
@@ -5362,6 +5347,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining
+
                                  );
 
             if (remoteParties.TryAdd(newRemoteParty.Id,
@@ -5390,6 +5376,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                   IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                                                   AccessToken                                                AccessToken,
+                                                  TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                                                  UInt32?                                                    LocalTOTP_Length             = null,
+                                                  String?                                                    LocalTOTP_Alphabet           = null,
                                                   DateTimeOffset?                                            LocalAccessNotBefore         = null,
                                                   DateTimeOffset?                                            LocalAccessNotAfter          = null,
                                                   Boolean?                                                   AccessTokenBase64Encoding    = null,
@@ -5415,6 +5404,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         {
 
             var newRemoteParty = new RemoteParty(
+
                                      Id,
                                      CredentialsRoles,
 
@@ -5424,6 +5414,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      AccessStatus,
 
                                      PartyStatus,
+                                     LocalTOTP_ValidityTime,
+                                     LocalTOTP_Length,
+                                     LocalTOTP_Alphabet,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
 
@@ -5438,6 +5431,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining
+
                                  );
 
             if (remoteParties.TryAdd(newRemoteParty.Id,
@@ -5469,9 +5463,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                   AccessToken                                                RemoteAccessToken,
                                                   URL                                                        RemoteVersionsURL,
 
-                                                  TimeSpan?                                                  TOTP_ValidityTime            = null,
-                                                  UInt32?                                                    TOTP_Length                  = null,
-                                                  String?                                                    TOTP_Alphabet                = null,
+                                                  TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                                                  UInt32?                                                    RemoteTOTP_Length            = null,
+                                                  String?                                                    RemoteTOTP_Alphabet          = null,
 
                                                   IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                   Version_Id?                                                SelectedVersionId            = null,
@@ -5500,15 +5494,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         {
 
             var newRemoteParty = new RemoteParty(
+
                                      Id,
                                      CredentialsRoles,
 
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
 
-                                     TOTP_ValidityTime,
-                                     TOTP_Length,
-                                     TOTP_Alphabet,
+                                     RemoteTOTP_ValidityTime,
+                                     RemoteTOTP_Length,
+                                     RemoteTOTP_Alphabet,
 
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -5531,6 +5526,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining
+
                                  );
 
             if (remoteParties.TryAdd(newRemoteParty.Id,
@@ -5583,6 +5579,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         {
 
             var newRemoteParty = new RemoteParty(
+
                                      Id,
                                      CredentialsRoles,
 
@@ -5604,6 +5601,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      UseHTTPPipelining,
 
                                      LastUpdated
+
                                  );
 
             if (remoteParties.TryAdd(newRemoteParty.Id,
@@ -5638,13 +5636,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                              AccessToken                                                RemoteAccessToken,
                                                              URL                                                        RemoteVersionsURL,
 
-                                                             TimeSpan?                                                  TOTP_ValidityTime            = null,
-                                                             UInt32?                                                    TOTP_Length                  = null,
-                                                             String?                                                    TOTP_Alphabet                = null,
+                                                             TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                                                             UInt32?                                                    RemoteTOTP_Length            = null,
+                                                             String?                                                    RemoteTOTP_Alphabet          = null,
 
                                                              IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                              Version_Id?                                                SelectedVersionId            = null,
 
+                                                             TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                                                             UInt32?                                                    LocalTOTP_Length             = null,
+                                                             String?                                                    LocalTOTP_Alphabet           = null,
                                                              DateTimeOffset?                                            LocalAccessNotBefore         = null,
                                                              DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
@@ -5686,13 +5687,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
 
-                                     TOTP_ValidityTime,
-                                     TOTP_Length,
-                                     TOTP_Alphabet,
+                                     RemoteTOTP_ValidityTime,
+                                     RemoteTOTP_Length,
+                                     RemoteTOTP_Alphabet,
 
                                      RemoteVersionIds,
                                      SelectedVersionId,
 
+                                     LocalTOTP_ValidityTime,
+                                     LocalTOTP_Length,
+                                     LocalTOTP_Alphabet,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
 
@@ -5745,6 +5749,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                              IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                                                              AccessToken                                                AccessToken,
+
+                                                             TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                                                             UInt32?                                                    LocalTOTP_Length             = null,
+                                                             String?                                                    LocalTOTP_Alphabet           = null,
                                                              DateTimeOffset?                                            LocalAccessNotBefore         = null,
                                                              DateTimeOffset?                                            LocalAccessNotAfter          = null,
                                                              Boolean?                                                   AccessTokenBase64Encoding    = null,
@@ -5783,6 +5791,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      AccessStatus,
 
                                      PartyStatus,
+                                     LocalTOTP_ValidityTime,
+                                     LocalTOTP_Length,
+                                     LocalTOTP_Alphabet,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
 
@@ -5829,9 +5840,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                              AccessToken                                                RemoteAccessToken,
                                                              URL                                                        RemoteVersionsURL,
 
-                                                             TimeSpan?                                                  TOTP_ValidityTime            = null,
-                                                             UInt32?                                                    TOTP_Length                  = null,
-                                                             String?                                                    TOTP_Alphabet                = null,
+                                                             TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                                                             UInt32?                                                    RemoteTOTP_Length            = null,
+                                                             String?                                                    RemoteTOTP_Alphabet          = null,
 
                                                              IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                              Version_Id?                                                SelectedVersionId            = null,
@@ -5870,9 +5881,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
 
-                                     TOTP_ValidityTime,
-                                     TOTP_Length,
-                                     TOTP_Alphabet,
+                                     RemoteTOTP_ValidityTime,
+                                     RemoteTOTP_Length,
+                                     RemoteTOTP_Alphabet,
 
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -6008,13 +6019,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                           AccessToken                                                RemoteAccessToken,
                                                           URL                                                        RemoteVersionsURL,
 
-                                                          TimeSpan?                                                  TOTP_ValidityTime            = null,
-                                                          UInt32?                                                    TOTP_Length                  = null,
-                                                          String?                                                    TOTP_Alphabet                = null,
+                                                          TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                                                          UInt32?                                                    RemoteTOTP_Length            = null,
+                                                          String?                                                    RemoteTOTP_Alphabet          = null,
 
                                                           IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                           Version_Id?                                                SelectedVersionId            = null,
 
+                                                          TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                                                          UInt32?                                                    LocalTOTP_Length             = null,
+                                                          String?                                                    LocalTOTP_Alphabet           = null,
                                                           DateTimeOffset?                                            LocalAccessNotBefore         = null,
                                                           DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
@@ -6053,13 +6067,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
 
-                                     TOTP_ValidityTime,
-                                     TOTP_Length,
-                                     TOTP_Alphabet,
+                                     RemoteTOTP_ValidityTime,
+                                     RemoteTOTP_Length,
+                                     RemoteTOTP_Alphabet,
 
                                      RemoteVersionIds,
                                      SelectedVersionId,
 
+                                     LocalTOTP_ValidityTime,
+                                     LocalTOTP_Length,
+                                     LocalTOTP_Alphabet,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
 
@@ -6121,6 +6138,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                           IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                                                           AccessToken                                                AccessToken,
+                                                          TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                                                          UInt32?                                                    LocalTOTP_Length             = null,
+                                                          String?                                                    LocalTOTP_Alphabet           = null,
                                                           DateTimeOffset?                                            LocalAccessNotBefore         = null,
                                                           DateTimeOffset?                                            LocalAccessNotAfter          = null,
                                                           Boolean?                                                   AccessTokenBase64Encoding    = null,
@@ -6156,6 +6176,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      AccessStatus,
 
                                      PartyStatus,
+                                     LocalTOTP_ValidityTime,
+                                     LocalTOTP_Length,
+                                     LocalTOTP_Alphabet,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
 
@@ -6211,9 +6234,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                           AccessToken                                                RemoteAccessToken,
                                                           URL                                                        RemoteVersionsURL,
 
-                                                          TimeSpan?                                                  TOTP_ValidityTime            = null,
-                                                          UInt32?                                                    TOTP_Length                  = null,
-                                                          String?                                                    TOTP_Alphabet                = null,
+                                                          TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                                                          UInt32?                                                    RemoteTOTP_Length            = null,
+                                                          String?                                                    RemoteTOTP_Alphabet          = null,
 
                                                           IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                           Version_Id?                                                SelectedVersionId            = null,
@@ -6249,9 +6272,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
 
-                                     TOTP_ValidityTime,
-                                     TOTP_Length,
-                                     TOTP_Alphabet,
+                                     RemoteTOTP_ValidityTime,
+                                     RemoteTOTP_Length,
+                                     RemoteTOTP_Alphabet,
 
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -6401,13 +6424,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                      AccessToken                                                RemoteAccessToken,
                                                      URL                                                        RemoteVersionsURL,
 
-                                                     TimeSpan?                                                  TOTP_ValidityTime            = null,
-                                                     UInt32?                                                    TOTP_Length                  = null,
-                                                     String?                                                    TOTP_Alphabet                = null,
+                                                     TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                                                     UInt32?                                                    RemoteTOTP_Length            = null,
+                                                     String?                                                    RemoteTOTP_Alphabet          = null,
 
                                                      IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                      Version_Id?                                                SelectedVersionId            = null,
 
+                                                     TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                                                     UInt32?                                                    LocalTOTP_Length             = null,
+                                                     String?                                                    LocalTOTP_Alphabet           = null,
                                                      DateTimeOffset?                                            LocalAccessNotBefore         = null,
                                                      DateTimeOffset?                                            LocalAccessNotAfter          = null,
 
@@ -6446,13 +6472,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
 
-                                     TOTP_ValidityTime,
-                                     TOTP_Length,
-                                     TOTP_Alphabet,
+                                     RemoteTOTP_ValidityTime,
+                                     RemoteTOTP_Length,
+                                     RemoteTOTP_Alphabet,
 
                                      RemoteVersionIds,
                                      SelectedVersionId,
 
+                                     LocalTOTP_ValidityTime,
+                                     LocalTOTP_Length,
+                                     LocalTOTP_Alphabet,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
 
@@ -6505,6 +6534,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public async Task<Boolean> UpdateRemoteParty(RemoteParty                                                ExistingRemoteParty,
 
                                                      AccessToken                                                AccessToken,
+                                                     TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
+                                                     UInt32?                                                    LocalTOTP_Length             = null,
+                                                     String?                                                    LocalTOTP_Alphabet           = null,
                                                      DateTimeOffset?                                            LocalAccessNotBefore         = null,
                                                      DateTimeOffset?                                            LocalAccessNotAfter          = null,
                                                      Boolean?                                                   AccessTokenBase64Encoding    = null,
@@ -6540,6 +6572,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      AccessStatus,
 
                                      PartyStatus,
+                                     LocalTOTP_ValidityTime,
+                                     LocalTOTP_Length,
+                                     LocalTOTP_Alphabet,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
 
@@ -6586,9 +6621,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                      AccessToken                                                RemoteAccessToken,
                                                      URL                                                        RemoteVersionsURL,
 
-                                                     TimeSpan?                                                  TOTP_ValidityTime            = null,
-                                                     UInt32?                                                    TOTP_Length                  = null,
-                                                     String?                                                    TOTP_Alphabet                = null,
+                                                     TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
+                                                     UInt32?                                                    RemoteTOTP_Length            = null,
+                                                     String?                                                    RemoteTOTP_Alphabet          = null,
 
                                                      IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
                                                      Version_Id?                                                SelectedVersionId            = null,
@@ -6624,9 +6659,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      RemoteAccessToken,
                                      RemoteVersionsURL,
 
-                                     TOTP_ValidityTime,
-                                     TOTP_Length,
-                                     TOTP_Alphabet,
+                                     RemoteTOTP_ValidityTime,
+                                     RemoteTOTP_Length,
+                                     RemoteTOTP_Alphabet,
 
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -9254,7 +9289,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (party.Tariffs.TryGetValue(Tariff.Id,
                                               out var existingTariff,
-                                              Tariff.NotBefore ?? DateTime.MinValue))
+                                              Tariff.NotBefore ?? DateTimeOffset.MinValue))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
