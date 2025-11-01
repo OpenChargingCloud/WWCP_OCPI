@@ -4113,8 +4113,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                         var filters           = request.GetDateAndPaginationFilters();
 
-                                        var allSessions       = CommonAPI.GetSessions(session => request.LocalAccessInfo.Roles.Any(role => role.CountryCode == session.CountryCode &&
-                                                                                                                                           role.PartyId     == session.PartyId)).
+                                        var allSessions       = CommonAPI.GetSessions(session => request.LocalAccessInfo.Roles.Any(role => role.PartyId.CountryCode == session.CountryCode &&
+                                                                                                                                           role.PartyId.Party       == session.PartyId)).
                                                                           ToArray();
 
                                         var filteredSessions  = allSessions.Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
@@ -4277,12 +4277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
                                         foreach (var role in request.LocalAccessInfo.Roles)
-                                            await CommonAPI.RemoveAllSessions(
-                                                      Party_Idv3.From(
-                                                          role.CountryCode,
-                                                          role.PartyId
-                                                      )
-                                                  );
+                                            await CommonAPI.RemoveAllSessions(role.PartyId);
 
 
                                         return new OCPIResponse.Builder(request) {

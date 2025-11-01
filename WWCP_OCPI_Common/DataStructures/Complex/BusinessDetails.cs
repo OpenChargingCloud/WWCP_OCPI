@@ -37,25 +37,40 @@ namespace cloud.charging.open.protocols.OCPI
                                    IComparable
     {
 
+        #region Data
+
+        /// <summary>
+        /// The default JSON-LD context of this object.
+        /// </summary>
+        public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse("https://open.charging.cloud/contexts/OCPI/businessDetails");
+
+        #endregion
+
         #region Properties
 
         /// <summary>
-        /// The name of the operator.
+        /// The name of the company.
         /// </summary>
         [Mandatory]
-        public String  Name       { get; }
+        public String           Name                { get; }
 
         /// <summary>
         /// The optional URL of the company’s website.
         /// </summary>
         [Optional]
-        public URL?    Website    { get; }
+        public URL?             Website             { get; }
 
         /// <summary>
         /// The optional image link to the operator's logo.
         /// </summary>
         [Optional]
-        public Image?  Logo       { get; }
+        public Image?           Logo                { get; }
+
+        /// <summary>
+        /// The optional contact point of the company for technical matters.
+        /// </summary>
+        [Optional]
+        public PointOfContact?  TechnicalContact    { get; }
 
         #endregion
 
@@ -64,27 +79,31 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Create new business details.
         /// </summary>
-        /// <param name="Name">Name of the operator.</param>
+        /// <param name="Name">The name of the company.</param>
         /// <param name="Website">An optional URL of the company’s website.</param>
         /// <param name="Logo">An optional image link to the operator's logo.</param>
-        public BusinessDetails(String  Name,
-                               URL?    Website   = null,
-                               Image?  Logo      = null)
+        /// <param name="TechnicalContact">An optional contact point of the company for technical matters.</param>
+        public BusinessDetails(String          Name,
+                               URL?            Website            = null,
+                               Image?          Logo               = null,
+                               PointOfContact? TechnicalContact   = null)
         {
 
             if (Name.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(Name), "The given name must not be null or empty!");
 
-            this.Name     = Name.Trim();
-            this.Website  = Website;
-            this.Logo     = Logo;
+            this.Name              = Name.Trim();
+            this.Website           = Website;
+            this.Logo              = Logo;
+            this.TechnicalContact  = TechnicalContact;
 
             unchecked
             {
 
-                hashCode = this.Name.    GetHashCode()       * 5 ^
-                          (this.Website?.GetHashCode() ?? 0) * 3 ^
-                           this.Logo?.   GetHashCode() ?? 0;
+                hashCode = this.Name.             GetHashCode()       * 7 ^
+                          (this.Website?.         GetHashCode() ?? 0) * 5 ^
+                          (this.Logo?.            GetHashCode() ?? 0) * 3 ^
+                           this.TechnicalContact?.GetHashCode() ?? 0;
 
             }
 
@@ -163,7 +182,7 @@ namespace cloud.charging.open.protocols.OCPI
                     return false;
                 }
 
-                #region Parse Name        [mandatory]
+                #region Parse Name                [mandatory]
 
                 if (!JSON.ParseMandatoryText("name",
                                              "name",
@@ -175,7 +194,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #endregion
 
-                #region Parse Website     [optional]
+                #region Parse Website             [optional]
 
                 if (JSON.ParseOptional("website",
                                        "website",
@@ -189,7 +208,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #endregion
 
-                #region Parse Logo        [optional]
+                #region Parse Logo                [optional]
 
                 if (JSON.ParseOptionalJSON("logo",
                                            "logo",
@@ -203,11 +222,26 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #endregion
 
+                #region Parse TechnicalContact    [optional]
+
+                if (JSON.ParseOptionalJSON("technical_contact",
+                                           "technical contact",
+                                           PointOfContact.TryParse,
+                                           out PointOfContact? TechnicalContact,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
 
                 BusinessDetails = new BusinessDetails(
                                       Name,
                                       Website,
-                                      Logo
+                                      Logo,
+                                      TechnicalContact
                                   );
 
 
@@ -229,27 +263,33 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region ToJSON(CustomBusinessDetailsSerializer = null, CustomImageSerializer = null)
+        #region ToJSON(CustomBusinessDetailsSerializer = null, CustomImageSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom images.</param>
+        /// <param name="CustomPointOfContactSerializer">A delegate to serialize custom point of contacts.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<BusinessDetails>?  CustomBusinessDetailsSerializer   = null,
-                              CustomJObjectSerializerDelegate<Image>?            CustomImageSerializer             = null)
+                              CustomJObjectSerializerDelegate<Image>?            CustomImageSerializer             = null,
+                              CustomJObjectSerializerDelegate<PointOfContact>?   CustomPointOfContactSerializer    = null)
         {
 
             var json = JSONObject.Create(
 
-                                 new JProperty("name",      Name),
+                                 new JProperty("name",               Name),
 
                            Website.HasValue
-                               ? new JProperty("website",   Website.ToString())
+                               ? new JProperty("website",            Website.         ToString())
                                : null,
 
                            Logo is not null
-                               ? new JProperty("logo",      Logo.   ToJSON(CustomImageSerializer))
+                               ? new JProperty("logo",               Logo.            ToJSON(CustomImageSerializer))
+                               : null,
+
+                           TechnicalContact is not null
+                               ? new JProperty("technical_contact",  TechnicalContact.ToJSON(CustomPointOfContactSerializer))
                                : null
 
                        );
@@ -270,9 +310,10 @@ namespace cloud.charging.open.protocols.OCPI
         public BusinessDetails Clone()
 
             => new (
-                   Name.    CloneString(),
-                   Website?.Clone(),
-                   Logo?.   Clone()
+                   Name.             CloneString(),
+                   Website?.         Clone(),
+                   Logo?.            Clone(),
+                   TechnicalContact?.Clone()
                );
 
         #endregion
@@ -426,6 +467,11 @@ namespace cloud.charging.open.protocols.OCPI
                         ? Logo.CompareTo(BusinessDetails.Logo)
                         : Logo is not null ? 1 : BusinessDetails.Logo is not null ? -1 : 0;
 
+            if (c == 0)
+                c = TechnicalContact is not null && BusinessDetails.TechnicalContact is not null
+                        ? TechnicalContact.CompareTo(BusinessDetails.TechnicalContact)
+                        : TechnicalContact is not null ? 1 : BusinessDetails.TechnicalContact is not null ? -1 : 0;
+
             return c;
 
         }
@@ -457,15 +503,18 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="BusinessDetails">Business details to compare with.</param>
         public Boolean Equals(BusinessDetails? BusinessDetails)
 
-            => BusinessDetails is not null &&
+             => BusinessDetails is not null &&
 
-               Name.Equals(BusinessDetails.Name) &&
+                Name.Equals(BusinessDetails.Name) &&
 
-            ((!Website.HasValue    && !BusinessDetails.Website.HasValue)    ||
-              (Website.HasValue    &&  BusinessDetails.Website.HasValue    && Website.Value.Equals(BusinessDetails.Website.Value))) &&
+             ((!Website.         HasValue    && !BusinessDetails.Website.         HasValue) ||
+               (Website.         HasValue    &&  BusinessDetails.Website.         HasValue    && Website.Value.   Equals(BusinessDetails.Website.Value))) &&
 
-             ((Logo    is     null &&  BusinessDetails.Logo    is     null) ||
-              (Logo    is not null &&  BusinessDetails.Logo    is not null && Logo.         Equals(BusinessDetails.Logo)));
+              ((Logo             is null     &&  BusinessDetails.Logo             is null) ||
+               (Logo             is not null &&  BusinessDetails.Logo             is not null && Logo.            Equals(BusinessDetails.Logo)))          &&
+
+              ((TechnicalContact is null     &&  BusinessDetails.TechnicalContact is null) ||
+               (TechnicalContact is not null &&  BusinessDetails.TechnicalContact is not null && TechnicalContact.Equals(BusinessDetails.TechnicalContact)));
 
         #endregion
 
@@ -501,6 +550,10 @@ namespace cloud.charging.open.protocols.OCPI
 
                    Logo is not null
                        ? "; " + Logo
+                       : "",
+
+                   TechnicalContact is not null
+                       ? "; " + TechnicalContact
                        : ""
 
                );

@@ -190,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatoryJSON("business_details",
                                              "business details",
-                                             OCPIv3_0.BusinessDetails.TryParse,
+                                             OCPI.BusinessDetails.TryParse,
                                              out BusinessDetails? BusinessDetails,
                                              out ErrorResponse))
                 {

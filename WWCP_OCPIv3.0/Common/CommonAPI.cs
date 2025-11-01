@@ -2418,7 +2418,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                            Data                 = new Credentials(
                                                                       Request.LocalAccessInfo?.AccessToken ?? AccessToken.Parse("<any>"),
                                                                       BaseAPI.OurVersionsURL,
-                                                                      parties.Values.Select(CredentialsRole.From)
+                                                                      parties.Values.Select(partyData => partyData.ToCredentialsRole())
                                                                   ).ToJSON(),
                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                HTTPStatusCode             = HTTPStatusCode.OK,
@@ -2904,7 +2904,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Data                 = new Credentials(
                                                       CREDENTIALS_TOKEN_C,
                                                       BaseAPI.OurVersionsURL,
-                                                      parties.Values.Select(CredentialsRole.From)
+                                                      parties.Values.Select(partyData => partyData.ToCredentialsRole())
                                                   ).ToJSON(),
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.OK,
@@ -4909,7 +4909,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CountryCode">A country code.</param>
         /// <param name="PartyId">A party identification.</param>
         public IEnumerable<RemoteParty> GetRemoteParties(CountryCode  CountryCode,
-                                                         Party_Idv3     PartyId)
+                                                         Party_Idv3   PartyId)
 
             => remoteParties.Values.
                              Where(remoteParty => remoteParty.Roles.Any(credentialsRole => credentialsRole.PartyId == PartyId));
@@ -5071,8 +5071,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region RemoveRemoteParty(CountryCode, PartyId, Role, AccessToken)
 
         public async Task<Boolean> RemoveRemoteParty(CountryCode        CountryCode,
-                                                     Party_Idv3           PartyId,
-                                                     Role              Role,
+                                                     Party_Idv3         PartyId,
+                                                     Role               Role,
                                                      AccessToken        AccessToken,
                                                      EventTracking_Id?  EventTrackingId   = null,
                                                      User_Id?           CurrentUserId     = null)

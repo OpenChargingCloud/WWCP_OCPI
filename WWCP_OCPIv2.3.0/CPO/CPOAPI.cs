@@ -3553,7 +3553,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     #region Check token
 
                     if (!request.ParseMandatoryToken(CommonAPI,
-                                                     request.LocalAccessInfo.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+                                                     request.LocalAccessInfo.Roles.Select(role => role.PartyId),
                                                      out var countryCode,
                                                      out var partyId,
                                                      out var tokenId,
@@ -3746,7 +3746,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     #region Check token
 
                     if (!request.ParseMandatoryToken(CommonAPI,
-                                                     request.LocalAccessInfo.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+                                                     request.LocalAccessInfo.Roles.Select(role => role.PartyId),
                                                      out var countryCode,
                                                      out var partyId,
                                                      out var tokenId,
@@ -3845,7 +3845,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     #region Check token (status)
 
                     if (!request.ParseMandatoryToken(CommonAPI,
-                                                     request.LocalAccessInfo.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+                                                     request.LocalAccessInfo.Roles.Select(role => role.PartyId),
                                                      out var countryCode,
                                                      out var partyId,
                                                      out var tokenId,

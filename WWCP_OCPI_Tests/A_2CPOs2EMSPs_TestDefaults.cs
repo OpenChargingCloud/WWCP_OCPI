@@ -2166,7 +2166,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            Role.CPO
                                                        ),
                           CredentialsRoles:            [
-                                                           OCPIv2_2_1.CredentialsRole.From(cpo1CommonAPI_v2_2_1.Parties.First())
+                                                           cpo1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
                                                        ],
                           AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
                           AccessStatus:                AccessStatus.ALLOWED,
@@ -2190,7 +2190,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            Role.CPO
                                                        ),
                           CredentialsRoles:            [
-                                                           OCPIv2_3_0.CredentialsRole.From(cpo1CommonAPI_v2_3_0.Parties.First())
+                                                           cpo1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
                                                        ],
                           AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
                           AccessStatus:                AccessStatus.ALLOWED,
@@ -2240,7 +2240,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            Role.CPO
                                                        ),
                           CredentialsRoles:            [
-                                                           OCPIv2_2_1.CredentialsRole.From(cpo1CommonAPI_v2_2_1.Parties.First())
+                                                           cpo1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
                                                        ],
                           AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
                           AccessStatus:                AccessStatus.ALLOWED,
@@ -2264,7 +2264,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            Role.CPO
                                                        ),
                           CredentialsRoles:            [
-                                                           OCPIv2_3_0.CredentialsRole.From(cpo1CommonAPI_v2_3_0.Parties.First())
+                                                           cpo1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
                                                        ],
                           AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
                           AccessStatus:                AccessStatus.ALLOWED,
@@ -2315,7 +2315,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            Role.CPO
                                                        ),
                           CredentialsRoles:            [
-                                                           OCPIv2_2_1.CredentialsRole.From(cpo2CommonAPI_v2_2_1.Parties.First())
+                                                           cpo2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
                                                        ],
                           AccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
                           AccessStatus:                AccessStatus.ALLOWED,
@@ -2339,7 +2339,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            Role.CPO
                                                        ),
                           CredentialsRoles:            [
-                                                           OCPIv2_3_0.CredentialsRole.From(cpo2CommonAPI_v2_3_0.Parties.First())
+                                                           cpo2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
                                                        ],
                           AccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
                           AccessStatus:                AccessStatus.ALLOWED,
@@ -2389,7 +2389,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            Role.CPO
                                                        ),
                           CredentialsRoles:            [
-                                                           OCPIv2_2_1.CredentialsRole.From(cpo2CommonAPI_v2_2_1.Parties.First())
+                                                           cpo2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
                                                        ],
                           AccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
                           AccessStatus:                AccessStatus.ALLOWED,
@@ -2413,7 +2413,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            Role.CPO
                                                        ),
                           CredentialsRoles:            [
-                                                           OCPIv2_3_0.CredentialsRole.From(cpo2CommonAPI_v2_3_0.Parties.First())
+                                                           cpo2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
                                                        ],
                           AccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
                           AccessStatus:                AccessStatus.ALLOWED,
@@ -2464,14 +2464,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            Role.EMSP
                                                        ),
                           CredentialsRoles:            [
-                                                           OCPIv2_2_1.CredentialsRole.From(emsp1CommonAPI_v2_2_1.Parties.First())
-                                                           //new OCPIv2_2_1.CredentialsRole(
-                                                           //    CountryCode:       emsp1CommonAPI_v2_2_1.OurCountryCode,
-                                                           //    PartyId:           emsp1CommonAPI_v2_2_1.OurPartyId,
-                                                           //    Role:              Role.EMSP,
-                                                           //    BusinessDetails:   emsp1CommonAPI_v2_2_1.OurBusinessDetails,
-                                                           //    AllowDowngrades: true
-                                                           //)
+                                                           emsp1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
                                                        ],
 
                           AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
@@ -2496,14 +2489,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            Role.EMSP
                                                        ),
                           CredentialsRoles:            [
-                                                           OCPIv2_3_0.CredentialsRole.From(emsp1CommonAPI_v2_3_0.Parties.First())
-                                                           //new OCPIv2_3_0.CredentialsRole(
-                                                           //    CountryCode:       emsp1CommonAPI_v2_3.OurCountryCode,
-                                                           //    PartyId:           emsp1CommonAPI_v2_3.OurPartyId,
-                                                           //    Role:              Role.EMSP,
-                                                           //    BusinessDetails:   emsp1CommonAPI_v2_3.OurBusinessDetails,
-                                                           //    AllowDowngrades: true
-                                                           //)
+                                                           emsp1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
                                                        ],
 
                           AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
@@ -2554,14 +2540,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            Role.EMSP
                                                        ),
                           CredentialsRoles:            [
-                                                           OCPIv2_2_1.CredentialsRole.From(emsp2CommonAPI_v2_2_1.Parties.First())
-                                                           //new OCPIv2_2_1.CredentialsRole(
-                                                           //    CountryCode:       emsp2CommonAPI_v2_2_1.OurCountryCode,
-                                                           //    PartyId:           emsp2CommonAPI_v2_2_1.OurPartyId,
-                                                           //    Role:              Role.EMSP,
-                                                           //    BusinessDetails:   emsp2CommonAPI_v2_2_1.OurBusinessDetails,
-                                                           //    AllowDowngrades: true
-                                                           //)
+                                                           emsp2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
                                                        ],
 
                           AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
@@ -2586,14 +2565,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            Role.EMSP
                                                        ),
                           CredentialsRoles:            [
-                                                           OCPIv2_3_0.CredentialsRole.From(emsp2CommonAPI_v2_3_0.Parties.First())
-                                                           //new OCPIv2_3_0.CredentialsRole(
-                                                           //    CountryCode:       emsp2CommonAPI_v2_3.OurCountryCode,
-                                                           //    PartyId:           emsp2CommonAPI_v2_3.OurPartyId,
-                                                           //    Role:              Role.EMSP,
-                                                           //    BusinessDetails:   emsp2CommonAPI_v2_3.OurBusinessDetails,
-                                                           //    AllowDowngrades: true
-                                                           //)
+                                                           emsp2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
                                                        ],
 
                           AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
@@ -2645,14 +2617,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            Role.EMSP
                                                        ),
                           CredentialsRoles:            [
-                                                           OCPIv2_2_1.CredentialsRole.From(emsp1CommonAPI_v2_2_1.Parties.First())
-                                                           //new OCPIv2_2_1.CredentialsRole(
-                                                           //    CountryCode:       emsp1CommonAPI_v2_2_1.OurCountryCode,
-                                                           //    PartyId:           emsp1CommonAPI_v2_2_1.OurPartyId,
-                                                           //    Role:              Role.EMSP,
-                                                           //    BusinessDetails:   emsp1CommonAPI_v2_2_1.OurBusinessDetails,
-                                                           //    AllowDowngrades: true
-                                                           //)
+                                                           emsp1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
                                                        ],
 
                           AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
@@ -2677,14 +2642,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            Role.EMSP
                                                        ),
                           CredentialsRoles:            [
-                                                           OCPIv2_3_0.CredentialsRole.From(emsp1CommonAPI_v2_3_0.Parties.First())
-                                                           //new OCPIv2_3_0.CredentialsRole(
-                                                           //    CountryCode:       emsp1CommonAPI_v2_3.OurCountryCode,
-                                                           //    PartyId:           emsp1CommonAPI_v2_3.OurPartyId,
-                                                           //    Role:              Role.EMSP,
-                                                           //    BusinessDetails:   emsp1CommonAPI_v2_3.OurBusinessDetails,
-                                                           //    AllowDowngrades: true
-                                                           //)
+                                                           emsp1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
                                                        ],
 
                           AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
@@ -2735,14 +2693,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            Role.EMSP
                                                        ),
                           CredentialsRoles:            [
-                                                           OCPIv2_2_1.CredentialsRole.From(emsp2CommonAPI_v2_2_1.Parties.First())
-                                                           //new OCPIv2_2_1.CredentialsRole(
-                                                           //    CountryCode:       emsp2CommonAPI_v2_2_1.OurCountryCode,
-                                                           //    PartyId:           emsp2CommonAPI_v2_2_1.OurPartyId,
-                                                           //    Role:              Role.EMSP,
-                                                           //    BusinessDetails:   emsp2CommonAPI_v2_2_1.OurBusinessDetails,
-                                                           //    AllowDowngrades: true
-                                                           //)
+                                                           emsp2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
                                                        ],
 
                           AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),
@@ -2767,14 +2718,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            Role.EMSP
                                                        ),
                           CredentialsRoles:            [
-                                                           OCPIv2_3_0.CredentialsRole.From(emsp2CommonAPI_v2_3_0.Parties.First())
-                                                           //new OCPIv2_3_0.CredentialsRole(
-                                                           //    CountryCode:       emsp2CommonAPI_v2_3.OurCountryCode,
-                                                           //    PartyId:           emsp2CommonAPI_v2_3.OurPartyId,
-                                                           //    Role:              Role.EMSP,
-                                                           //    BusinessDetails:   emsp2CommonAPI_v2_3.OurBusinessDetails,
-                                                           //    AllowDowngrades: true
-                                                           //)
+                                                           emsp2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
                                                        ],
 
                           AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),

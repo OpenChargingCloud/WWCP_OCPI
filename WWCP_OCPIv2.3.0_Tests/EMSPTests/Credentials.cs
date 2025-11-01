@@ -102,15 +102,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 if (credentials is not null)
                 {
 
-                    ClassicAssert.AreEqual ("cso-2-emp1:token",                           credentials.    Token.                    ToString());
-                    ClassicAssert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.2/versions",   credentials.    URL.                      ToString());
-                    ClassicAssert.AreEqual ("DE",                                         credentials.    Roles.First().CountryCode.ToString());
-                    ClassicAssert.AreEqual ("GEF",                                        credentials.    Roles.First().PartyId.    ToString());
+                    ClassicAssert.AreEqual ("cso-2-emp1:token",                           credentials.    Token.                            ToString());
+                    ClassicAssert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.2/versions",   credentials.    URL.                              ToString());
+                    ClassicAssert.AreEqual ("DE",                                         credentials.    Roles.First().PartyId.CountryCode.ToString());
+                    ClassicAssert.AreEqual ("GEF",                                        credentials.    Roles.First().PartyId.Party.      ToString());
 
                     var businessDetails = credentials.Roles.First().BusinessDetails;
                     ClassicAssert.IsNotNull(businessDetails);
                     ClassicAssert.AreEqual ("GraphDefined CSO Services",                  businessDetails.Name);
-                    ClassicAssert.AreEqual ("https://www.graphdefined.com/cso",           businessDetails.Website.                  ToString());
+                    ClassicAssert.AreEqual ("https://www.graphdefined.com/cso",           businessDetails.Website.                          ToString());
 
                 }
 
@@ -189,15 +189,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 if (credentials is not null)
                 {
 
-                    ClassicAssert.AreEqual ("cso-2-emp2:token",                           credentials.    Token.                    ToString());
-                    ClassicAssert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.2/versions",   credentials.    URL.                      ToString());
-                    ClassicAssert.AreEqual ("DE",                                         credentials.    Roles.First().CountryCode.ToString());
-                    ClassicAssert.AreEqual ("GEF",                                        credentials.    Roles.First().PartyId.    ToString());
+                    ClassicAssert.AreEqual ("cso-2-emp2:token",                           credentials.    Token.                            ToString());
+                    ClassicAssert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.2/versions",   credentials.    URL.                              ToString());
+                    ClassicAssert.AreEqual ("DE",                                         credentials.    Roles.First().PartyId.CountryCode.ToString());
+                    ClassicAssert.AreEqual ("GEF",                                        credentials.    Roles.First().PartyId.Party.      ToString());
 
                     var businessDetails = credentials.Roles.First().BusinessDetails;
                     ClassicAssert.IsNotNull(businessDetails);
                     ClassicAssert.AreEqual ("GraphDefined CSO Services",                  businessDetails.Name);
-                    ClassicAssert.AreEqual ("https://www.graphdefined.com/cso",           businessDetails.Website.                  ToString());
+                    ClassicAssert.AreEqual ("https://www.graphdefined.com/cso",           businessDetails.Website.                          ToString());
 
                 }
 

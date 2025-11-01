@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                    Content         = new OCPIResponse<JObject>(
                                                          JSONObject.Create(
                                                              new JProperty("description",  e.Message),
-                                                             new JProperty("stacktrace",   new JArray(e.StackTrace?.Split(new[] { Environment.NewLine }, StringSplitOptions.None).ToArray() ?? Array.Empty<String>())),
+                                                             new JProperty("stacktrace",   new JArray(e.StackTrace?.Split(new[] { Environment.NewLine }, StringSplitOptions.None).ToArray() ?? [])),
                                                              new JProperty("source",       e.TargetSite?.Module.Name),
                                                              new JProperty("type",         e.TargetSite?.ReflectedType?.Name)
                                                          ),
@@ -424,15 +424,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                              FromPartyId.    HasValue)
                     {
 
-                        var filteredParties = parties.Where(party => //party.Roles.Any(credentialsRole => credentialsRole.CountryCode == FromCountryCode.Value) &&
-                                                                     party.Roles.Any(credentialsRole => credentialsRole.PartyId     == FromPartyId.    Value)).
+                        var filteredParties = parties.Where(party => party.Roles.Any(credentialsRole => credentialsRole.PartyId == FromPartyId.Value)).
                                                       ToArray();
 
                         if (filteredParties.Length == 1)
                         {
 
-                            this.LocalAccessInfo   = new LocalAccessInfo2(AccessToken.Value,
-                                                                         filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken).Status);
+                            this.LocalAccessInfo   = new LocalAccessInfo2(
+                                                         AccessToken.Value,
+                                                         filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken).Status
+                                                     );
 
                             //this.AccessInfo2  = filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken);
 

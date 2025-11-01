@@ -2916,6 +2916,159 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
+        #region ParseMandatoryToken                 (this Request, CommonAPI, out CountryCode, out PartyId, out TokenId, out TokenStatus,                          out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the tariff identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="PartyIds">The allowed party identifications.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="TokenId">The parsed unique tariff identification.</param>
+        /// <param name="TokenStatus">The resolved tariff with status.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        public static Boolean ParseMandatoryToken(this OCPIRequest                                Request,
+                                                  CommonAPI                                       CommonAPI,
+                                                  IEnumerable<Party_Idv3>                         PartyIds,
+                                                  [NotNullWhen(true)]  out CountryCode?           CountryCode,
+                                                  [NotNullWhen(true)]  out Party_Id?              PartyId,
+                                                  [NotNullWhen(true)]  out Token_Id?              TokenId,
+                                                  [NotNullWhen(true)]  out TokenStatus?           TokenStatus,
+                                                  [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
+        {
+
+            CountryCode          = default;
+            PartyId              = default;
+            TokenId              = default;
+            TokenStatus          = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 3)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing country code, party identification and/or tariff identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!CountryCode.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid country code!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+
+            if (!PartyId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid party identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            TokenId = Token_Id.TryParse(Request.ParsedURLParameters[2]);
+
+            if (!TokenId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid token identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+
+            foreach (var partyId in PartyIds)
+            {
+                if (CommonAPI.TryGetTokenStatus(
+                    partyId,
+                    TokenId.Value,
+                    out TokenStatus) &&
+                    TokenStatus.Token is not null)
+                {
+
+                    if (TokenStatus.Token.CountryCode != CountryCode ||
+                        TokenStatus.Token.PartyId     != PartyId)
+                    {
+
+                        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                            StatusCode           = 2004,
+                            StatusMessage        = "Invalid token identification!",
+                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                HTTPStatusCode             = HTTPStatusCode.UnprocessableEntity,
+                                //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                                AccessControlAllowHeaders  = [ "Authorization" ]
+                            }
+                        };
+
+                    }
+
+                    return true;
+
+                }
+            }
+
+
+            OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                StatusCode           = 2004,
+                StatusMessage        = "Unknown token identification!",
+                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                    HTTPStatusCode             = HTTPStatusCode.NotFound,
+                    //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                    AccessControlAllowHeaders  = [ "Authorization" ]
+                }
+            };
+
+            return false;
+
+        }
+
+        #endregion
+
         #region ParseOptionalToken                  (this Request, CommonAPI, out CountryCode, out PartyId, out TokenId, out TokenStatus,                          out HTTPResponse)
 
         /// <summary>
@@ -4535,7 +4688,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                    Data                 = new Credentials(
                                                               request.LocalAccessInfo?.AccessToken ?? AccessToken.Parse("<any>"),
                                                               BaseAPI.OurVersionsURL,
-                                                              parties.Values.Select(CredentialsRole.From)
+                                                              parties.Values.Select(partyData => partyData.ToCredentialsRole())
                                                           ).ToJSON(),
                                    HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.OK,
@@ -4944,9 +5097,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 foreach (var oldCredentialsRole in oldRemoteParty.Roles)
                 {
-                    if (oldCredentialsRole.CountryCode == receivedCredentialsRole.CountryCode &&
-                        oldCredentialsRole.PartyId     == receivedCredentialsRole.PartyId &&
-                        oldCredentialsRole.Role        == receivedCredentialsRole.Role)
+                    if (oldCredentialsRole.PartyId == receivedCredentialsRole.PartyId &&
+                        oldCredentialsRole.Role    == receivedCredentialsRole.Role)
                     {
                         existingCredentialsRole = receivedCredentialsRole;
                         break;
@@ -5032,7 +5184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            Data                 = new Credentials(
                                                       CREDENTIALS_TOKEN_C,
                                                       BaseAPI.OurVersionsURL,
-                                                      parties.Values.Select(CredentialsRole.From)
+                                                      parties.Values.Select(partyData => partyData.ToCredentialsRole())
                                                   ).ToJSON(),
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.OK,
@@ -7188,8 +7340,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                          Party_Id     PartyId)
 
             => remoteParties.Values.
-                             Where(remoteParty => remoteParty.Roles.Any(credentialsRole => credentialsRole.CountryCode == CountryCode &&
-                                                                                           credentialsRole.PartyId     == PartyId));
+                             Where(remoteParty => remoteParty.Roles.Any(credentialsRole => credentialsRole.PartyId.CountryCode == CountryCode &&
+                                                                                           credentialsRole.PartyId.Party       == PartyId));
 
         #endregion
 
@@ -7206,9 +7358,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                          Role         Role)
 
             => remoteParties.Values.
-                             Where(remoteParty => remoteParty.Roles.Any(credentialsRole => credentialsRole.CountryCode == CountryCode &&
-                                                                                           credentialsRole.PartyId     == PartyId &&
-                                                                                           credentialsRole.Role        == Role));
+                             Where(remoteParty => remoteParty.Roles.Any(credentialsRole => credentialsRole.PartyId.CountryCode == CountryCode &&
+                                                                                           credentialsRole.PartyId.Party       == PartyId &&
+                                                                                           credentialsRole.Role                == Role));
 
         #endregion
 
@@ -7357,9 +7509,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         {
 
             foreach (var remoteParty in remoteParties.Values.
-                                                      Where(remoteParty => remoteParty.Roles.            Any(credentialsRole  => credentialsRole.CountryCode == CountryCode &&
-                                                                                                                                 credentialsRole.PartyId     == PartyId &&
-                                                                                                                                 credentialsRole.Role        == Role) &&
+                                                      Where(remoteParty => remoteParty.Roles.            Any(credentialsRole  => credentialsRole.PartyId.CountryCode == CountryCode &&
+                                                                                                                                 credentialsRole.PartyId.Party       == PartyId &&
+                                                                                                                                 credentialsRole.Role                == Role) &&
 
                                                                            remoteParty.RemoteAccessInfos.Any(remoteAccessInfo => remoteAccessInfo.AccessToken == AccessToken)))
             {

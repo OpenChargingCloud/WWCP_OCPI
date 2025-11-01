@@ -2330,7 +2330,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     var credentials = new Credentials(
                                           credentialTokenB,
                                           CommonAPI.BaseAPI.OurVersionsURL,
-                                          CommonAPI.Parties.Select(CredentialsRole.From)
+                                          CommonAPI.Parties.Select(partyData => partyData.ToCredentialsRole())
                                       );
 
                     #region Upstream HTTP request...

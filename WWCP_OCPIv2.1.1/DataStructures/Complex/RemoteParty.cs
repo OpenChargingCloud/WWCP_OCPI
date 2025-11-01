@@ -106,7 +106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// A remote party.
     /// In OCPI v2.1.x this is a single CPO or EMSP.
     /// </summary>
-    public class RemoteParty : IRemoteParty,
+    public class RemoteParty : ARemoteParty,
                                IEquatable<RemoteParty>,
                                IComparable<RemoteParty>
     {
@@ -123,146 +123,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
-        /// The unique identification of this remote party
-        /// (country code + party identification + role).
-        /// </summary>
-        [Mandatory]
-        public RemoteParty_Id                        Id                            { get; }
-
-        /// <summary>
         /// ISO-3166 alpha-2 country code of the country this party is operating in.
         /// </summary>
         [Mandatory]
-        public CountryCode                           CountryCode                   { get; }
+        public CountryCode      CountryCode        { get; }
 
         /// <summary>
         /// CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public Party_Id                              PartyId                       { get; }
+        public Party_Id         PartyId            { get; }
 
         /// <summary>
         /// The type of the role.
         /// </summary>
         [Mandatory]
-        public Role                                  Role                          { get; }
+        public Role             Role               { get; }
 
         /// <summary>
         /// Business details of this party.
         /// </summary>
         [Mandatory]
-        public BusinessDetails                       BusinessDetails               { get; }
-
-        /// <summary>
-        /// The current status of the party.
-        /// </summary>
-        [Mandatory]
-        public PartyStatus                           Status                        { get; }
-
-        /// <summary>
-        /// The timestamp when this remote party was created.
-        /// </summary>
-        [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public DateTimeOffset                        Created                       { get; }
-
-        /// <summary>
-        /// Timestamp when this remote party was last updated (or created).
-        /// </summary>
-        [Mandatory]
-        public DateTimeOffset                        LastUpdated                   { get; }
-
-        /// <summary>
-        /// The SHA256 hash of the JSON representation of this remote party.
-        /// </summary>
-        [Mandatory]
-        public String                                ETag                          { get; private set; }
-
-
-
-        /// <summary>
-        /// The remote TLS certificate validator.
-        /// </summary>
-        public RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator    { get; }
-
-        /// <summary>
-        /// A delegate to select a TLS client certificate.
-        /// </summary>
-        public LocalCertificateSelectionHandler?     LocalCertificateSelector     { get; }
-
-        /// <summary>
-        /// The TLS client certificate to use of HTTP authentication.
-        /// </summary>
-        public X509Certificate?                      ClientCert                    { get; }
-
-        /// <summary>
-        /// The TLS protocol to use.
-        /// </summary>
-        public SslProtocols?                         TLSProtocol                   { get; }
-
-        /// <summary>
-        /// Prefer IPv4 instead of IPv6.
-        /// </summary>
-        public Boolean?                              PreferIPv4                    { get; }
-
-        /// <summary>
-        /// The optional HTTP accept header.
-        /// </summary>
-        public AcceptTypes?                          Accept                        { get; }
-
-        /// <summary>
-        /// The optional HTTP authentication to use.
-        /// </summary>
-        public IHTTPAuthentication?                  HTTPAuthentication            { get; }
-
-        /// <summary>
-        /// The HTTP user agent identification.
-        /// </summary>
-        public String?                               HTTPUserAgent                 { get; }
-
-        /// <summary>
-        /// The timeout for upstream requests.
-        /// </summary>
-        public TimeSpan?                             RequestTimeout                { get; set; }
-
-        /// <summary>
-        /// The delay between transmission retries.
-        /// </summary>
-        public TransmissionRetryDelayDelegate?       TransmissionRetryDelay        { get; }
-
-        /// <summary>
-        /// The maximum number of retries when communicating with the remote HTTP service.
-        /// </summary>
-        public UInt16?                               MaxNumberOfRetries            { get; }
-
-        /// <summary>
-        /// The size of the internal buffers of HTTP clients.
-        /// </summary>
-        public UInt32?                               InternalBufferSize            { get; }
-
-        /// <summary>
-        /// Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.
-        /// </summary>
-        public Boolean?                              UseHTTPPipelining             { get; }
-
-
-
-        private readonly List<LocalAccessInfo> localAccessInfos;
-
-        /// <summary>
-        /// Local access information.
-        /// </summary>
-        public IEnumerable<LocalAccessInfo> LocalAccessInfos
-            => localAccessInfos;
-
-
-
-        private readonly List<RemoteAccessInfo> remoteAccessInfos;
-
-        /// <summary>
-        /// Remote access information.
-        /// </summary>
-        public IEnumerable<RemoteAccessInfo> RemoteAccessInfos
-            => remoteAccessInfos;
+        public BusinessDetails  BusinessDetails    { get; }
 
         #endregion
 
@@ -552,39 +434,60 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            DateTimeOffset?                                            Created                      = null,
                            DateTimeOffset?                                            LastUpdated                  = null)
 
+            : base(RemoteParty_Id.Parse($"{CountryCode}-{PartyId}_{Role}"),
+
+                   LocalAccessInfos,
+                   RemoteAccessInfos,
+                   Status,
+
+                   PreferIPv4,
+                   RemoteCertificateValidator,
+                   LocalCertificateSelector,
+                   ClientCert,
+                   TLSProtocol,
+                   HTTPUserAgent,
+                   RequestTimeout,
+                   TransmissionRetryDelay,
+                   MaxNumberOfRetries,
+                   InternalBufferSize,
+                   UseHTTPPipelining,
+
+                   Created,
+                   LastUpdated)
+
         {
 
-            this.Id                          = RemoteParty_Id.Parse($"{CountryCode}-{PartyId}_{Role}");
+           // this.Id                          = RemoteParty_Id.Parse($"{CountryCode}-{PartyId}_{Role}");
 
             this.CountryCode                 = CountryCode;
             this.PartyId                     = PartyId;
             this.Role                        = Role;
             this.BusinessDetails             = BusinessDetails;
-            this.Status                      = Status                     ?? PartyStatus.ENABLED;
+            //this.Status                      = Status                     ?? PartyStatus.ENABLED;
 
-            this.RemoteCertificateValidator  = RemoteCertificateValidator ?? ((sender,
-                                                                               certificate,
-                                                                               certificateChain,
-                                                                               tlsClient,
-                                                                               policyErrors) => (true, Array.Empty<String>()));
-            this.LocalCertificateSelector    = LocalCertificateSelector;
-            this.ClientCert                  = ClientCert;
-            this.TLSProtocol                 = TLSProtocol;
-            this.PreferIPv4                  = PreferIPv4;
-            this.HTTPUserAgent               = HTTPUserAgent;
-            this.RequestTimeout              = RequestTimeout;
-            this.TransmissionRetryDelay      = TransmissionRetryDelay;
-            this.MaxNumberOfRetries          = MaxNumberOfRetries;
-            this.InternalBufferSize          = InternalBufferSize;
-            this.UseHTTPPipelining           = UseHTTPPipelining;
+            //this.RemoteCertificateValidator  = RemoteCertificateValidator ?? ((sender,
+            //                                                                   certificate,
+            //                                                                   certificateChain,
+            //                                                                   tlsClient,
+            //                                                                   policyErrors) => (true, []));
+            //this.LocalCertificateSelector    = LocalCertificateSelector;
+            //this.ClientCert                  = ClientCert;
+            //this.TLSProtocol                 = TLSProtocol;
+            //this.PreferIPv4                  = PreferIPv4;
+            //this.HTTPUserAgent               = HTTPUserAgent;
+            //this.RequestTimeout              = RequestTimeout;
+            //this.TransmissionRetryDelay      = TransmissionRetryDelay;
+            //this.MaxNumberOfRetries          = MaxNumberOfRetries;
+            //this.InternalBufferSize          = InternalBufferSize;
+            //this.UseHTTPPipelining           = UseHTTPPipelining;
 
-            this.Created                     = Created     ?? LastUpdated ?? Timestamp.Now;
-            this.LastUpdated                 = LastUpdated ?? Created     ?? Timestamp.Now;
+            //this.Created                     = Created     ?? LastUpdated ?? Timestamp.Now;
+            //this.LastUpdated                 = LastUpdated ?? Created     ?? Timestamp.Now;
 
-            this.localAccessInfos            = LocalAccessInfos. IsNeitherNullNorEmpty() ? [.. LocalAccessInfos]  : [];
-            this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? [.. RemoteAccessInfos] : [];
+            //this.localAccessInfos            = LocalAccessInfos. IsNeitherNullNorEmpty() ? [.. LocalAccessInfos]  : [];
+            //this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? [.. RemoteAccessInfos] : [];
 
-            this.ETag                        = CalcSHA256Hash();
+            //this.ETag                        = CalcSHA256Hash();
 
             unchecked
             {

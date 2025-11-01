@@ -23,16 +23,13 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
-using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_3_0;
-
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3_0
+namespace cloud.charging.open.protocols.OCPI
 {
 
     /// <summary>
-    /// Opening and access credentials roles.
+    /// Credentials role.
     /// </summary>
     public readonly struct CredentialsRole : IEquatable<CredentialsRole>,
                                              IComparable<CredentialsRole>,
@@ -42,16 +39,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region Properties
 
         /// <summary>
-        /// ISO-3166 alpha-2 country code of the country this party is operating in.
-        /// </summary>
-        [Mandatory]
-        public CountryCode      CountryCode         { get; }
-
-        /// <summary>
         /// CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public Party_Id         PartyId             { get; }
+        public Party_Idv3       PartyId             { get; }
 
         /// <summary>
         /// The type of the role.
@@ -77,6 +68,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region Constructor(s)
 
+        #region CredentialsRole(CountryCode, PartyId, Role, BusinessDetails, AllowDowngrades = null)
+
         /// <summary>
         /// Create a new credentials role.
         /// </summary>
@@ -90,9 +83,32 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                Role             Role,
                                BusinessDetails  BusinessDetails,
                                Boolean?         AllowDowngrades   = null)
+
+            : this(Party_Idv3.From(CountryCode, PartyId),
+                   Role,
+                   BusinessDetails,
+                   AllowDowngrades)
+
+        { }
+
+        #endregion
+
+        #region CredentialsRole(             PartyId, Role, BusinessDetails, AllowDowngrades = null)
+
+        /// <summary>
+        /// Create a new credentials role.
+        /// </summary>
+        /// <param name="CountryCode">ISO-3166 alpha-2 country code of the country this party is operating in.</param>
+        /// <param name="PartyId">CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).</param>
+        /// <param name="Role">The type of the role.</param>
+        /// <param name="BusinessDetails">Business details of this party.</param>
+        /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
+        public CredentialsRole(Party_Idv3       PartyId,
+                               Role             Role,
+                               BusinessDetails  BusinessDetails,
+                               Boolean?         AllowDowngrades   = null)
         {
 
-            this.CountryCode      = CountryCode;
             this.PartyId          = PartyId;
             this.Role             = Role;
             this.BusinessDetails  = BusinessDetails;
@@ -101,8 +117,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             unchecked
             {
 
-                hashCode = this.CountryCode.     GetHashCode() * 11 ^
-                           this.PartyId.         GetHashCode() *  7 ^
+                hashCode = this.PartyId.         GetHashCode() *  7 ^
                            this.Role.            GetHashCode() *  5 ^
                            this.BusinessDetails. GetHashCode() *  3 ^
                            this.AllowDowngrades?.GetHashCode() ?? 0;
@@ -110,6 +125,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             }
 
         }
+
+        #endregion
 
         #endregion
 
@@ -294,11 +311,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             var json = JSONObject.Create(
 
-                                 new JProperty("country_code",       CountryCode.    ToString()),
-                                 new JProperty("party_id",           PartyId.        ToString()),
-                                 new JProperty("role",               Role.           ToString()),
-                                 new JProperty("business_details",   BusinessDetails.ToJSON(CustomBusinessDetailsSerializer,
-                                                                                            CustomImageSerializer)),
+                                 new JProperty("country_code",       PartyId.CountryCode.ToString()),
+                                 new JProperty("party_id",           PartyId.Party.      ToString()),
+                                 new JProperty("role",               Role.               ToString()),
+                                 new JProperty("business_details",   BusinessDetails.    ToJSON  (CustomBusinessDetailsSerializer,
+                                                                                                  CustomImageSerializer)),
 
                            AllowDowngrades.HasValue
                                ? new JProperty("allow_downgrades",   AllowDowngrades.Value)
@@ -322,7 +339,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public CredentialsRole Clone()
 
             => new (
-                   CountryCode.    Clone(),
                    PartyId.        Clone(),
                    Role.           Clone(),
                    BusinessDetails.Clone(),
@@ -330,17 +346,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                );
 
         #endregion
-
-
-        public static CredentialsRole From(PartyData PartyData)
-
-            => new (
-                   PartyData.Id.CountryCode,
-                   PartyData.Id.Party,
-                   PartyData.Role,
-                   PartyData.BusinessDetails,
-                   PartyData.AllowDowngrades
-               );
 
 
         #region Operator overloading
@@ -463,10 +468,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public Int32 CompareTo(CredentialsRole CredentialsRole)
         {
 
-            var c = CountryCode.          CompareTo(CredentialsRole.CountryCode);
-
-            if (c == 0)
-                c = PartyId.              CompareTo(CredentialsRole.PartyId);
+            var c = PartyId.              CompareTo(CredentialsRole.PartyId);
 
             if (c == 0)
                 c = Role.                 CompareTo(CredentialsRole.Role);
@@ -505,8 +507,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="CredentialsRole">A credentials role to compare with.</param>
         public Boolean Equals(CredentialsRole CredentialsRole)
 
-            => CountryCode.    Equals(CredentialsRole.CountryCode)     &&
-               PartyId.        Equals(CredentialsRole.PartyId)         &&
+            => PartyId.        Equals(CredentialsRole.PartyId)         &&
                Role.           Equals(CredentialsRole.Role)            &&
                BusinessDetails.Equals(CredentialsRole.BusinessDetails) &&
                AllowDowngrades.Equals(CredentialsRole.AllowDowngrades);
@@ -534,7 +535,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         public override String ToString()
 
-            => $"{BusinessDetails.Name} ({CountryCode}{(Role == Role.EMSP ? "-" : "*")}{PartyId} {Role}) {(AllowDowngrades.HasValue ? AllowDowngrades.Value ? "[Downgrades allowed]" : "[No downgrades]" : "")}";
+            => $"{BusinessDetails.Name} ({PartyId.CountryCode}{(Role == Role.EMSP ? "-" : "*")}{PartyId.Party} {Role}) {(AllowDowngrades.HasValue ? AllowDowngrades.Value ? "[Downgrades allowed]" : "[No downgrades]" : "")}";
 
         #endregion
 

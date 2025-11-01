@@ -1872,9 +1872,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                     foreach (var oldCredentialsRole in oldRemoteParty.Roles)
                                     {
-                                        if (oldCredentialsRole.CountryCode == receivedCredentialsRole.CountryCode &&
-                                            oldCredentialsRole.PartyId     == receivedCredentialsRole.PartyId &&
-                                            oldCredentialsRole.Role        == receivedCredentialsRole.Role)
+                                        if (oldCredentialsRole.PartyId == receivedCredentialsRole.PartyId &&
+                                            oldCredentialsRole.Role    == receivedCredentialsRole.Role)
                                         {
                                             existingCredentialsRole = receivedCredentialsRole;
                                             break;
@@ -2293,7 +2292,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         var credentials = new Credentials(
                                               credentialTokenB,
                                               CommonAPI.BaseAPI.OurVersionsURL,
-                                              CommonAPI.Parties.Select(CredentialsRole.From)
+                                              CommonAPI.Parties.Select(partyData => partyData.ToCredentialsRole())
                                           );
 
                         #region Upstream HTTP request...
@@ -2399,9 +2398,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                         foreach (var oldCredentialsRole in oldRemoteParty.Roles)
                                         {
-                                            if (oldCredentialsRole.CountryCode == receivedCredentialsRole.CountryCode &&
-                                                oldCredentialsRole.PartyId     == receivedCredentialsRole.PartyId &&
-                                                oldCredentialsRole.Role        == receivedCredentialsRole.Role)
+                                            if (oldCredentialsRole.PartyId == receivedCredentialsRole.PartyId &&
+                                                oldCredentialsRole.Role    == receivedCredentialsRole.Role)
                                             {
                                                 existingCredentialsRole = receivedCredentialsRole;
                                                 break;

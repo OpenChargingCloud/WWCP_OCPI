@@ -109,7 +109,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
     /// A remote party.
     /// In OCPI v3.0 this is a roaming network operator serving multiple CPOs and/or EMSPs.
     /// </summary>
-    public class RemoteParty : IRemoteParty,
+    public class RemoteParty : ARemoteParty,
                                IEquatable<RemoteParty>,
                                IComparable<RemoteParty>
     {
@@ -125,18 +125,18 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Properties
 
-        /// <summary>
-        /// The unique identification of this remote party
-        /// (country code + party identification + role).
-        /// </summary>
-        [Mandatory]
-        public RemoteParty_Id                       Id                            { get; }
+        ///// <summary>
+        ///// The unique identification of this remote party
+        ///// (country code + party identification + role).
+        ///// </summary>
+        //[Mandatory]
+        //public RemoteParty_Id                       Id                            { get; }
 
-        /// <summary>
-        /// The current status of the party.
-        /// </summary>
-        [Mandatory]
-        public PartyStatus                          Status                        { get; }
+        ///// <summary>
+        ///// The current status of the party.
+        ///// </summary>
+        //[Mandatory]
+        //public PartyStatus                          Status                        { get; }
 
         /// <summary>
         /// The enumeration of credential roles.
@@ -144,104 +144,104 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         [Mandatory]
         public IEnumerable<CredentialsRole>         Roles                         { get; }
 
-        /// <summary>
-        /// Timestamp when this remote party was last updated (or created).
-        /// </summary>
-        [Mandatory]
-        public DateTimeOffset                       LastUpdated                   { get; }
+        ///// <summary>
+        ///// Timestamp when this remote party was last updated (or created).
+        ///// </summary>
+        //[Mandatory]
+        //public DateTimeOffset                       LastUpdated                   { get; }
 
-        /// <summary>
-        /// The SHA256 hash of the JSON representation of this remote party.
-        /// </summary>
-        [Mandatory]
-        public String                               ETag                          { get; private set; }
-
-
-
-        /// <summary>
-        /// The remote TLS certificate validator.
-        /// </summary>
-        public RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator    { get; }
-
-        /// <summary>
-        /// A delegate to select a TLS client certificate.
-        /// </summary>
-        public LocalCertificateSelectionHandler?    LocalCertificateSelector     { get; }
-
-        /// <summary>
-        /// The TLS client certificate to use of HTTP authentication.
-        /// </summary>
-        public X509Certificate?                     ClientCert                    { get; }
-
-        /// <summary>
-        /// The TLS protocol to use.
-        /// </summary>
-        public SslProtocols?                        TLSProtocol                   { get; }
-
-        /// <summary>
-        /// Prefer IPv4 instead of IPv6.
-        /// </summary>
-        public Boolean?                             PreferIPv4                    { get; }
-
-        /// <summary>
-        /// The optional HTTP accept header.
-        /// </summary>
-        public AcceptTypes?                         Accept                        { get; }
-
-        /// <summary>
-        /// The optional HTTP authentication to use.
-        /// </summary>
-        public IHTTPAuthentication?                 HTTPAuthentication            { get; }
-
-        /// <summary>
-        /// The HTTP user agent identification.
-        /// </summary>
-        public String?                              HTTPUserAgent                 { get; }
-
-        /// <summary>
-        /// The timeout for upstream requests.
-        /// </summary>
-        public TimeSpan?                            RequestTimeout                { get; set; }
-
-        /// <summary>
-        /// The delay between transmission retries.
-        /// </summary>
-        public TransmissionRetryDelayDelegate?      TransmissionRetryDelay        { get; }
-
-        /// <summary>
-        /// The maximum number of retries when communicating with the remote HTTP service.
-        /// </summary>
-        public UInt16?                              MaxNumberOfRetries            { get; }
-
-        /// <summary>
-        /// The size of the internal buffers of HTTP clients.
-        /// </summary>
-        public UInt32?                              InternalBufferSize            { get; }
-
-        /// <summary>
-        /// Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.
-        /// </summary>
-        public Boolean?                             UseHTTPPipelining             { get; }
+        ///// <summary>
+        ///// The SHA256 hash of the JSON representation of this remote party.
+        ///// </summary>
+        //[Mandatory]
+        //public String                               ETag                          { get; private set; }
 
 
 
-        private readonly List<LocalAccessInfo> localAccessInfos;
+        ///// <summary>
+        ///// The remote TLS certificate validator.
+        ///// </summary>
+        //public RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator    { get; }
 
-        /// <summary>
-        /// Local access information.
-        /// </summary>
-        public IEnumerable<LocalAccessInfo> LocalAccessInfos
-            => localAccessInfos;
+        ///// <summary>
+        ///// A delegate to select a TLS client certificate.
+        ///// </summary>
+        //public LocalCertificateSelectionHandler?    LocalCertificateSelector     { get; }
+
+        ///// <summary>
+        ///// The TLS client certificate to use of HTTP authentication.
+        ///// </summary>
+        //public X509Certificate?                     ClientCert                    { get; }
+
+        ///// <summary>
+        ///// The TLS protocol to use.
+        ///// </summary>
+        //public SslProtocols?                        TLSProtocol                   { get; }
+
+        ///// <summary>
+        ///// Prefer IPv4 instead of IPv6.
+        ///// </summary>
+        //public Boolean?                             PreferIPv4                    { get; }
+
+        ///// <summary>
+        ///// The optional HTTP accept header.
+        ///// </summary>
+        //public AcceptTypes?                         Accept                        { get; }
+
+        ///// <summary>
+        ///// The optional HTTP authentication to use.
+        ///// </summary>
+        //public IHTTPAuthentication?                 HTTPAuthentication            { get; }
+
+        ///// <summary>
+        ///// The HTTP user agent identification.
+        ///// </summary>
+        //public String?                              HTTPUserAgent                 { get; }
+
+        ///// <summary>
+        ///// The timeout for upstream requests.
+        ///// </summary>
+        //public TimeSpan?                            RequestTimeout                { get; set; }
+
+        ///// <summary>
+        ///// The delay between transmission retries.
+        ///// </summary>
+        //public TransmissionRetryDelayDelegate?      TransmissionRetryDelay        { get; }
+
+        ///// <summary>
+        ///// The maximum number of retries when communicating with the remote HTTP service.
+        ///// </summary>
+        //public UInt16?                              MaxNumberOfRetries            { get; }
+
+        ///// <summary>
+        ///// The size of the internal buffers of HTTP clients.
+        ///// </summary>
+        //public UInt32?                              InternalBufferSize            { get; }
+
+        ///// <summary>
+        ///// Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.
+        ///// </summary>
+        //public Boolean?                             UseHTTPPipelining             { get; }
 
 
 
-        private readonly List<RemoteAccessInfo> remoteAccessInfos;
+        //private readonly List<LocalAccessInfo> localAccessInfos;
 
-        /// <summary>
-        /// Remote access information.
-        /// </summary>
-        public IEnumerable<RemoteAccessInfo> RemoteAccessInfos
-            => remoteAccessInfos;
+        ///// <summary>
+        ///// Local access information.
+        ///// </summary>
+        //public IEnumerable<LocalAccessInfo> LocalAccessInfos
+        //    => localAccessInfos;
+
+
+
+        //private readonly List<RemoteAccessInfo> remoteAccessInfos;
+
+        ///// <summary>
+        ///// Remote access information.
+        ///// </summary>
+        //public IEnumerable<RemoteAccessInfo> RemoteAccessInfos
+        //    => remoteAccessInfos;
 
         #endregion
 
@@ -510,30 +510,52 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            UInt32?                                                    InternalBufferSize           = null,
                            Boolean?                                                   UseHTTPPipelining            = null,
 
+                           DateTimeOffset?                                            Created                      = null,
                            DateTimeOffset?                                            LastUpdated                  = null)
+
+            : base(Id,
+
+                   LocalAccessInfos,
+                   RemoteAccessInfos,
+                   Status,
+
+                   PreferIPv4,
+                   RemoteCertificateValidator,
+                   LocalCertificateSelector,
+                   ClientCert,
+                   TLSProtocol,
+                   HTTPUserAgent,
+                   RequestTimeout,
+                   TransmissionRetryDelay,
+                   MaxNumberOfRetries,
+                   InternalBufferSize,
+                   UseHTTPPipelining,
+
+                   Created,
+                   LastUpdated)
 
         {
 
-            this.Id                          = Id;
+            //this.Id                          = Id;
             this.Roles                       = Roles;
-            this.Status                      = Status;
+            //this.Status                      = Status;
 
-            this.PreferIPv4                  = PreferIPv4;
-            this.RemoteCertificateValidator  = RemoteCertificateValidator;
-            this.LocalCertificateSelector    = LocalCertificateSelector;
-            this.ClientCert                  = ClientCert;
-            this.TLSProtocol                 = TLSProtocol;
-            this.HTTPUserAgent               = HTTPUserAgent;
-            this.RequestTimeout              = RequestTimeout;
-            this.TransmissionRetryDelay      = TransmissionRetryDelay;
-            this.MaxNumberOfRetries          = MaxNumberOfRetries;
-            this.InternalBufferSize          = InternalBufferSize;
-            this.UseHTTPPipelining           = UseHTTPPipelining;
+            //this.PreferIPv4                  = PreferIPv4;
+            //this.RemoteCertificateValidator  = RemoteCertificateValidator;
+            //this.LocalCertificateSelector    = LocalCertificateSelector;
+            //this.ClientCert                  = ClientCert;
+            //this.TLSProtocol                 = TLSProtocol;
+            //this.HTTPUserAgent               = HTTPUserAgent;
+            //this.RequestTimeout              = RequestTimeout;
+            //this.TransmissionRetryDelay      = TransmissionRetryDelay;
+            //this.MaxNumberOfRetries          = MaxNumberOfRetries;
+            //this.InternalBufferSize          = InternalBufferSize;
+            //this.UseHTTPPipelining           = UseHTTPPipelining;
 
-            this.LastUpdated                 = LastUpdated ?? Timestamp.Now;
+            //this.LastUpdated                 = LastUpdated ?? Timestamp.Now;
 
-            this.localAccessInfos            = LocalAccessInfos. IsNeitherNullNorEmpty() ? [.. LocalAccessInfos] : [];
-            this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? [.. RemoteAccessInfos] : [];
+            //this.localAccessInfos            = LocalAccessInfos. IsNeitherNullNorEmpty() ? [.. LocalAccessInfos] : [];
+            //this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? [.. RemoteAccessInfos] : [];
 
             this.ETag                        = CalcSHA256Hash();
 

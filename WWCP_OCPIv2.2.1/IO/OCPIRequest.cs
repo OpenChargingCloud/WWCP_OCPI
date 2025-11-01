@@ -112,7 +112,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    Content         = new OCPIResponse<JObject>(
                                                          JSONObject.Create(
                                                              new JProperty("description",  e.Message),
-                                                             new JProperty("stacktrace",   new JArray(e.StackTrace?.Split(new[] { Environment.NewLine }, StringSplitOptions.None).ToArray() ?? Array.Empty<String>())),
+                                                             new JProperty("stacktrace",   new JArray(e.StackTrace?.Split(new[] { Environment.NewLine }, StringSplitOptions.None).ToArray() ?? [])),
                                                              new JProperty("source",       e.TargetSite?.Module.Name),
                                                              new JProperty("type",         e.TargetSite?.ReflectedType?.Name)
                                                          ),
@@ -366,12 +366,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                            );
 
                         CPOIds           = RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.CPO).
-                                                             Select(credentialsRole => CPO_Id. Parse($"{LocalAccessInfo.Roles.First().CountryCode}*{LocalAccessInfo.Roles.First().PartyId}")).
+                                                             Select(credentialsRole => CPO_Id. Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}*{LocalAccessInfo.Roles.First().PartyId.Party}")).
                                                              Distinct().
                                                              ToArray();
 
                         EMSPIds          = RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.EMSP).
-                                                             Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().CountryCode}-{LocalAccessInfo.Roles.First().PartyId}")).
+                                                             Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}-{LocalAccessInfo.Roles.First().PartyId.Party}")).
                                                              Distinct().
                                                              ToArray();
 
@@ -409,8 +409,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                              FromPartyId.    HasValue)
                     {
 
-                        var filteredParties = parties.Where(party => party.Roles.Any(credentialsRole => credentialsRole.CountryCode == FromCountryCode.Value) &&
-                                                                     party.Roles.Any(credentialsRole => credentialsRole.PartyId     == FromPartyId.    Value)).
+                        var filteredParties = parties.Where(party => party.Roles.Any(credentialsRole => credentialsRole.PartyId.CountryCode == FromCountryCode.Value) &&
+                                                                     party.Roles.Any(credentialsRole => credentialsRole.PartyId.Party       == FromPartyId.    Value)).
                                                       ToArray();
 
                         if (filteredParties.Length == 1)

@@ -35,7 +35,7 @@ namespace cloud.charging.open.protocols.OCPI
     /// In OCPI v2.2 this is a roaming network operator serving multiple CPOs and/or EMSPs.
     /// </summary>
     public interface IRemoteParty : IHasId<RemoteParty_Id>,
-                                    IComparable
+                                    IComparable<RemoteParty_Id>
     {
 
         /// <summary>
