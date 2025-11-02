@@ -278,12 +278,20 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
     /// <summary>
     /// OCPI test defaults for tests with 2 CPOs and 2 EMSPs.
     /// </summary>
-    public abstract class A_2CPOs2EMSPs_TestDefaults
+    public abstract class A_2CPOs2EMSPs_TestDefaults(TimeSpan? TOTPValidityTime = null)
     {
 
         #region Data
 
-        private readonly DNSClient DNSClient;
+        private   readonly DNSClient  DNSClient          = new (SearchForIPv6DNSServers: false);
+
+        private   readonly TimeSpan?  TOTPValidityTime   = TOTPValidityTime;
+
+        protected const    String     UnknownToken       = "UnknownUnknownUnknownToken";
+
+        protected const    String     BlockedToken       = "blocked-token";
+        protected const    String     BlockedCPOToken    = "blocked-cpo";
+        protected const    String     BlockedEMSPToken   = "blocked-emsp";
 
         #region CPO #1
 
@@ -448,23 +456,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected const String                                                         emsp2_accessing_cpo2__token   = "emsp2_accessing_cpo2++token";
 
         #endregion
-
-        protected const String  UnknownToken      = "UnknownUnknownUnknownToken";
-
-        protected const String  BlockedToken      = "blocked-token";
-        protected const String  BlockedCPOToken   = "blocked-cpo";
-        protected const String  BlockedEMSPToken  = "blocked-emsp";
-
-        #endregion
-
-        #region Constructor(s)
-
-        public A_2CPOs2EMSPs_TestDefaults()
-        {
-
-            this.DNSClient = new DNSClient(SearchForIPv6DNSServers: false);
-
-        }
 
         #endregion
 
@@ -2146,8 +2137,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                           AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo1__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
                           SelectedVersionId:           OCPIv2_2_1.Version.Id,
@@ -2170,8 +2163,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                        ],
                           AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo1__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
                           SelectedVersionId:           OCPIv2_2_1.Version.Id,
@@ -2194,8 +2189,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                        ],
                           AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo1__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_3_0.Version.Id ],
                           SelectedVersionId:           OCPIv2_3_0.Version.Id,
@@ -2220,8 +2217,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                           AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(emsp2_accessing_cpo1__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
                           SelectedVersionId:           OCPIv2_2_1.Version.Id,
@@ -2244,8 +2243,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                        ],
                           AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(emsp2_accessing_cpo1__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
                           SelectedVersionId:           OCPIv2_2_1.Version.Id,
@@ -2268,8 +2269,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                        ],
                           AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(emsp2_accessing_cpo1__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_3_0.Version.Id ],
                           SelectedVersionId:           OCPIv2_3_0.Version.Id,
@@ -2295,8 +2298,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                           AccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo2__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
                           SelectedVersionId:           OCPIv2_2_1.Version.Id,
@@ -2319,8 +2324,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                        ],
                           AccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo2__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
                           SelectedVersionId:           OCPIv2_2_1.Version.Id,
@@ -2343,8 +2350,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                        ],
                           AccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo2__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_3_0.Version.Id ],
                           SelectedVersionId:           OCPIv2_3_0.Version.Id,
@@ -2369,8 +2378,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                           AccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(emsp2_accessing_cpo2__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
                           SelectedVersionId:           OCPIv2_2_1.Version.Id,
@@ -2393,8 +2404,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                        ],
                           AccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(emsp2_accessing_cpo2__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
                           SelectedVersionId:           OCPIv2_2_1.Version.Id,
@@ -2417,8 +2430,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                        ],
                           AccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(emsp2_accessing_cpo2__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_3_0.Version.Id ],
                           SelectedVersionId:           OCPIv2_3_0.Version.Id,
@@ -2444,8 +2459,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                           AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(cpo1_accessing_emsp1__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_1_1.Version.Id ],
                           SelectedVersionId:           OCPIv2_1_1.Version.Id,
@@ -2469,8 +2486,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                           AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(cpo1_accessing_emsp1__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
                           SelectedVersionId:           OCPIv2_2_1.Version.Id,
@@ -2494,8 +2513,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                           AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(cpo1_accessing_emsp1__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_3_0.Version.Id ],
                           SelectedVersionId:           OCPIv2_3_0.Version.Id,
@@ -2520,8 +2541,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                           AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(cpo1_accessing_emsp2__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_1_1.Version.Id ],
                           SelectedVersionId:           OCPIv2_1_1.Version.Id,
@@ -2545,8 +2568,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                           AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(cpo1_accessing_emsp2__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
                           SelectedVersionId:           OCPIv2_2_1.Version.Id,
@@ -2570,8 +2595,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                           AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(cpo1_accessing_emsp2__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_3_0.Version.Id ],
                           SelectedVersionId:           OCPIv2_3_0.Version.Id,
@@ -2597,8 +2624,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                           AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(cpo2_accessing_emsp1__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_1_1.Version.Id ],
                           SelectedVersionId:           OCPIv2_1_1.Version.Id,
@@ -2622,8 +2651,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                           AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(cpo2_accessing_emsp1__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
                           SelectedVersionId:           OCPIv2_2_1.Version.Id,
@@ -2647,8 +2678,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                           AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(cpo2_accessing_emsp1__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_3_0.Version.Id ],
                           SelectedVersionId:           OCPIv2_3_0.Version.Id,
@@ -2673,8 +2706,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                           AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(cpo2_accessing_emsp2__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_1_1.Version.Id ],
                           SelectedVersionId:           OCPIv2_1_1.Version.Id,
@@ -2698,8 +2733,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                           AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(cpo2_accessing_emsp2__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
                           SelectedVersionId:           OCPIv2_2_1.Version.Id,
@@ -2723,8 +2760,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                           AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),
                           AccessStatus:                AccessStatus.ALLOWED,
+                          LocalTOTP_ValidityTime:      TOTPValidityTime,
 
                           RemoteAccessToken:           AccessToken.Parse(cpo2_accessing_emsp2__token),
+                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
                           RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
                           RemoteVersionIds:            [ OCPIv2_3_0.Version.Id ],
                           SelectedVersionId:           OCPIv2_3_0.Version.Id,

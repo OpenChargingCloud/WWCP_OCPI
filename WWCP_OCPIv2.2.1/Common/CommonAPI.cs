@@ -7069,14 +7069,58 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region GetRemoteParties   (AccessToken, out RemoteParties)
 
-        public Boolean TryGetRemoteParties(AccessToken                   AccessToken,
-                                           out IEnumerable<RemoteParty>  RemoteParties)
+        public Boolean TryGetRemoteParties(AccessToken                                           AccessToken,
+                                           out IEnumerable<Tuple<RemoteParty, LocalAccessInfo>>  RemoteParties)
         {
 
-            RemoteParties = remoteParties.Values.
-                                          Where(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken == AccessToken));
+            var _remoteParties = new List<Tuple<RemoteParty, LocalAccessInfo>>();
 
-            return RemoteParties.Any();
+            foreach (var remoteParty in remoteParties.Values)
+            {
+                foreach (var localAccessInfo in remoteParty.LocalAccessInfos)
+                {
+
+                    if (!localAccessInfo.TOTP_ValidityTime.HasValue)
+                    {
+                        if (localAccessInfo.AccessToken == AccessToken)
+                            _remoteParties.Add(new Tuple<RemoteParty, LocalAccessInfo>(remoteParty, localAccessInfo));
+                    }
+
+                    // TOTP validation...
+                    else
+                    {
+
+                        var accessToken  = AccessToken.ToString();
+
+                        var totpConfig   = new TOTPConfig(
+                                               SharedSecret:  localAccessInfo.AccessToken.ToString(),
+                                               ValidityTime:  localAccessInfo.TOTP_ValidityTime,
+                                               TOTPLength:    localAccessInfo.TOTP_Length,
+                                               Alphabet:      localAccessInfo.TOTP_Alphabet
+                                           );
+
+                        var (previous,
+                             current,
+                             next,
+                             remainingTime,
+                             endTime)    = TOTPGenerator.GenerateTOTPs(
+                                               totpConfig!.SharedSecret,
+                                               totpConfig.ValidityTime,
+                                               totpConfig.TOTPLength,
+                                               totpConfig.Alphabet
+                                           );
+
+                        if (accessToken == current || accessToken == previous || accessToken == next)
+                            _remoteParties.Add(new Tuple<RemoteParty, LocalAccessInfo>(remoteParty, localAccessInfo));
+
+                    }
+
+                }
+            }
+
+            RemoteParties = _remoteParties;
+
+            return _remoteParties.Count > 0;
 
         }
 

@@ -540,14 +540,49 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             this.CommonAPI          = CommonAPI;
             this.RemoteParty        = RemoteParty;
-            this.AccessToken        = RemoteParty.RemoteAccessInfos.First().AccessToken;
-            this.RemoteVersionsURL  = RemoteParty.RemoteAccessInfos.First().VersionsURL;
 
-            this.TokenAuth          = () => HTTPTokenAuthentication.Parse(
-                                          RemoteParty.RemoteAccessInfos.First().AccessTokenIsBase64Encoded
-                                              ? RemoteParty.RemoteAccessInfos.First().AccessToken.ToString().ToBase64()
-                                              : RemoteParty.RemoteAccessInfos.First().AccessToken.ToString()
+            var remoteAccessInfo = RemoteParty.RemoteAccessInfos.First();
+
+            this.AccessToken        = remoteAccessInfo.AccessToken;
+            this.RemoteVersionsURL  = remoteAccessInfo.VersionsURL;
+
+            if (!remoteAccessInfo.TOTP_ValidityTime.HasValue)
+                this.TokenAuth      =  () => HTTPTokenAuthentication.Parse(
+                                                 remoteAccessInfo.AccessTokenIsBase64Encoded
+                                                     ? remoteAccessInfo.AccessToken.ToString().ToBase64()
+                                                     : remoteAccessInfo.AccessToken.ToString()
+                                             );
+
+            else
+            {
+
+                this.TOTPConfig     = new TOTPConfig(
+                                          SharedSecret:  remoteAccessInfo.AccessToken.ToString(),
+                                          ValidityTime:  remoteAccessInfo.TOTP_ValidityTime,
+                                          TOTPLength:    remoteAccessInfo.TOTP_Length,
+                                          Alphabet:      remoteAccessInfo.TOTP_Alphabet
                                       );
+
+                this.TokenAuth      = () => {
+
+                                                 var (current,
+                                                      remainingTime,
+                                                      endTime) = TOTPGenerator.GenerateTOTP(
+                                                                     this.TOTPConfig!.SharedSecret,
+                                                                     this.TOTPConfig.ValidityTime,
+                                                                     this.TOTPConfig.TOTPLength,
+                                                                     this.TOTPConfig.Alphabet
+                                                                 );
+
+                                                 return HTTPTokenAuthentication.Parse(
+                                                            remoteAccessInfo.AccessTokenIsBase64Encoded
+                                                                ? current.ToBase64()
+                                                                : current
+                                                        );
+
+                                            };
+
+            }
 
             this.Counters           = new CommonAPICounters();
 

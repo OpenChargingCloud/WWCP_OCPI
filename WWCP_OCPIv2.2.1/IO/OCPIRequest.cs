@@ -348,17 +348,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             if (this.AccessToken.HasValue)
             {
 
-                if (CommonAPI.TryGetRemoteParties(AccessToken.Value, out var parties))
+                if (CommonAPI.TryGetRemoteParties(AccessToken.Value, out var partiesAccessInfos))
                 {
 
-                    if (parties.Count() == 1)
+                    if (partiesAccessInfos.Count() == 1)
                     {
 
-                        RemoteParty      = parties.First();
+                        RemoteParty      = partiesAccessInfos.First().Item1;
 
                         LocalAccessInfo  = new LocalAccessInfo2(
                                                AccessToken.Value,
-                                               RemoteParty.LocalAccessInfos.First(localAccessInfo => localAccessInfo.AccessToken == AccessToken).Status,
+                                               //RemoteParty.LocalAccessInfos.First(localAccessInfo => localAccessInfo.AccessToken == AccessToken).Status,
+                                               partiesAccessInfos.First().Item2.Status,
                                                RemoteParty.Roles,
                                                null,
                                                null,
@@ -404,24 +405,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     }
 
-                    else if (parties.Count() > 1      &&
-                             FromCountryCode.HasValue &&
+                    else if (partiesAccessInfos.Count() > 1 &&
+                             FromCountryCode.HasValue       &&
                              FromPartyId.    HasValue)
                     {
 
-                        var filteredParties = parties.Where(party => party.Roles.Any(credentialsRole => credentialsRole.PartyId.CountryCode == FromCountryCode.Value) &&
-                                                                     party.Roles.Any(credentialsRole => credentialsRole.PartyId.Party       == FromPartyId.    Value)).
-                                                      ToArray();
+                        var filteredParties = partiesAccessInfos.Where(party => party.Item1.Roles.Any(credentialsRole => credentialsRole.PartyId.CountryCode == FromCountryCode.Value) &&
+                                                                                party.Item1.Roles.Any(credentialsRole => credentialsRole.PartyId.Party       == FromPartyId.    Value)).
+                                                                 ToArray();
 
                         if (filteredParties.Length == 1)
                         {
 
-                            this.LocalAccessInfo   = new LocalAccessInfo2(AccessToken.Value,
-                                                                         filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken).Status);
+                            this.LocalAccessInfo  = new LocalAccessInfo2(
+                                                        AccessToken.Value,
+                                                        //filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken).Status
+                                                        filteredParties.First().Item2.Status
+                                                    );
 
-                            //this.AccessInfo2  = filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken);
+                            //this.AccessInfo2      = filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken);
 
-                            this.RemoteParty  = filteredParties.First();
+                            this.RemoteParty      = filteredParties.First().Item1;
 
                         }
 
