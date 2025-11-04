@@ -17,10 +17,8 @@
 
 #region Usings
 
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
-using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
 
@@ -28,83 +26,10 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
-using cloud.charging.open.protocols.OCPI;
-
 #endregion
 
 namespace cloud.charging.open.protocols.OCPI
 {
-
-    //public delegate Boolean RemotePartyProviderDelegate(RemoteParty_Id RemotePartyId, out RemoteParty RemoteParty);
-
-    //public delegate JObject RemotePartyToJSONDelegate(RemoteParty                                         RemoteParty,
-    //                                                  Boolean                                             Embedded                           = false,
-    //                                                  CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer        = null,
-    //                                                  CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer    = null,
-    //                                                  CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
-    //                                                  CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
-    //                                                  CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
-    //                                                  CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null);
-
-
-    /// <summary>
-    /// Extension methods for remote parties.
-    /// </summary>
-    public static partial class RemotePartyExtensions
-    {
-
-        #region ToJSON(this RemoteParties, Skip = null, Take = null, Embedded = false, ...)
-
-        ///// <summary>
-        ///// Return a JSON representation for the given enumeration of remote parties.
-        ///// </summary>
-        ///// <param name="RemoteParties">An enumeration of remote parties.</param>
-        ///// <param name="Skip">The optional number of remote parties to skip.</param>
-        ///// <param name="Take">The optional number of remote parties to return.</param>
-        ///// <param name="Embedded">Whether this data is embedded into another data structure, e.g. into a remote party.</param>
-        //public static JArray ToJSON(this IEnumerable<RemoteParty>                       RemoteParties,
-        //                            UInt64?                                             Skip                               = null,
-        //                            UInt64?                                             Take                               = null,
-        //                            Boolean                                             Embedded                           = false,
-        //                            CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer        = null,
-        //                            CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer    = null,
-        //                            CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
-        //                            CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
-        //                            CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
-        //                            CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null,
-        //                            RemotePartyToJSONDelegate?                          RemotePartyToJSON                  = null)
-
-
-        //    => RemoteParties?.Any() != true
-
-        //           ? new JArray()
-
-        //           : new JArray(RemoteParties.
-        //                            Where         (remoteParty => remoteParty is not null).
-        //                            OrderBy       (remoteParty => remoteParty.Id).
-        //                            SkipTakeFilter(Skip, Take).
-        //                            Select        (remoteParty => RemotePartyToJSON is not null
-        //                                                              ? RemotePartyToJSON (remoteParty,
-        //                                                                                   Embedded,
-        //                                                                                   CustomRemotePartySerializer,
-        //                                                                                   CustomCredentialsRoleSerializer,
-        //                                                                                   CustomBusinessDetailsSerializer,
-        //                                                                                   CustomImageSerializer,
-        //                                                                                   CustomLocalAccessInfoSerializer,
-        //                                                                                   CustomRemoteAccessInfoSerializer)
-
-        //                                                              : remoteParty.ToJSON(Embedded,
-        //                                                                                   CustomRemotePartySerializer,
-        //                                                                                   CustomCredentialsRoleSerializer,
-        //                                                                                   CustomBusinessDetailsSerializer,
-        //                                                                                   CustomImageSerializer,
-        //                                                                                   CustomLocalAccessInfoSerializer,
-        //                                                                                   CustomRemoteAccessInfoSerializer)));
-
-        #endregion
-
-    }
-
 
     /// <summary>
     /// A remote party serving multiple CPOs and/or EMSPs.
@@ -135,8 +60,10 @@ namespace cloud.charging.open.protocols.OCPI
                                Boolean?                                                   PreferIPv4                   = null,
                                RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
                                LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                               X509Certificate?                                           ClientCert                   = null,
-                               SslProtocols?                                              TLSProtocol                  = null,
+                               X509Certificate2?                                          ClientCertificate            = null,
+                               SslProtocols?                                              TLSProtocols                 = null,
+                               HTTPContentType?                                           ContentType                  = null,
+                               AcceptTypes?                                               Accept                       = null,
                                String?                                                    HTTPUserAgent                = null,
                                TimeSpan?                                                  RequestTimeout               = null,
                                TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
@@ -156,8 +83,10 @@ namespace cloud.charging.open.protocols.OCPI
                    PreferIPv4,
                    RemoteCertificateValidator,
                    LocalCertificateSelector,
-                   ClientCert,
-                   TLSProtocol,
+                   ClientCertificate,
+                   TLSProtocols,
+                   ContentType,
+                   Accept,
                    HTTPUserAgent,
                    RequestTimeout,
                    TransmissionRetryDelay,
@@ -394,7 +323,7 @@ namespace cloud.charging.open.protocols.OCPI
                            CustomRemoteAccessInfoSerializer
                        );
 
-            json["@id"]?.AddAfterSelf(
+            json.Property("partyStatus")?.AddAfterSelf(
                 new JProperty(
                     "roles",
                     new JArray(

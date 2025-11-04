@@ -339,13 +339,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.HTTPRequest      = Request ?? throw new ArgumentNullException(nameof(Request), "The given HTTP request must not be null!");
             this.CommonAPI        = CommonAPI;
 
-            this.RequestId        = Request.TryParseHeaderField<Request_Id>    ("X-Request-ID",           Request_Id.    TryParse) ?? Request_Id.    NewRandom(IsLocal: true);
-            this.CorrelationId    = Request.TryParseHeaderField<Correlation_Id>("X-Correlation-ID",       Correlation_Id.TryParse) ?? Correlation_Id.NewRandom(IsLocal: true);
-            this.ToCountryCode    = Request.TryParseHeaderField<CountryCode>   ("OCPI-to-country-code",   CountryCode.   TryParse);
-            this.ToPartyId        = Request.TryParseHeaderField<Party_Idv3>      ("OCPI-to-party-id",       Party_Idv3.      TryParse);
-            this.FromCountryCode  = Request.TryParseHeaderField<CountryCode>   ("OCPI-from-country-code", CountryCode.   TryParse);
-            this.FromPartyId      = Request.TryParseHeaderField<Party_Idv3>      ("OCPI-from-party-id",     Party_Idv3.      TryParse);
-
+            this.RequestId        = Request.TryParseHeaderField<Request_Id>    ("X-Request-ID",       Request_Id.    TryParse) ?? Request_Id.    NewRandom(IsLocal: true);
+            this.CorrelationId    = Request.TryParseHeaderField<Correlation_Id>("X-Correlation-ID",   Correlation_Id.TryParse) ?? Correlation_Id.NewRandom(IsLocal: true);
+            this.ToPartyId        = Request.TryParseHeaderField<Party_Idv3>    ("OCPI-to-party-id",   Party_Idv3.    TryParse);
+            this.FromPartyId      = Request.TryParseHeaderField<Party_Idv3>    ("OCPI-from-party-id", Party_Idv3.    TryParse);
+            var  totp             = Request.GetHeaderField     <String>        ("TOTP");
 
             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
                 TokenAuth.Token.TryParseBASE64_UTF8(out var decodedToken, out var errorResponse) &&
@@ -363,13 +361,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (this.AccessToken.HasValue)
             {
 
-                if (CommonAPI.TryGetRemoteParties(AccessToken.Value, out var parties))
+                if (CommonAPI.TryGetRemoteParties(AccessToken.Value,
+                                                  totp,
+                                                  out var partiesAccessInfos))
                 {
 
-                    if (parties.Count() == 1)
+                    if (partiesAccessInfos.Count() == 1)
                     {
 
-                        RemoteParty      = parties.First();
+                        RemoteParty      = partiesAccessInfos.First().Item1;
 
                         LocalAccessInfo  = new LocalAccessInfo2(
                                                AccessToken.Value,
@@ -419,25 +419,25 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                     }
 
-                    else if (parties.Count() > 1      &&
-                             FromCountryCode.HasValue &&
+                    else if (partiesAccessInfos.Count() > 1 &&
+                             FromCountryCode.HasValue       &&
                              FromPartyId.    HasValue)
                     {
 
-                        var filteredParties = parties.Where(party => party.Roles.Any(credentialsRole => credentialsRole.PartyId == FromPartyId.Value)).
-                                                      ToArray();
+                        var filteredParties = partiesAccessInfos.Where(party => party.Item1.Roles.Any(credentialsRole => credentialsRole.PartyId == FromPartyId.Value)).
+                                                                 ToArray();
 
                         if (filteredParties.Length == 1)
                         {
 
                             this.LocalAccessInfo   = new LocalAccessInfo2(
                                                          AccessToken.Value,
-                                                         filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken).Status
+                                                         filteredParties.First().Item2.Status
                                                      );
 
                             //this.AccessInfo2  = filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken);
 
-                            this.RemoteParty  = filteredParties.First();
+                            this.RemoteParty  = filteredParties.First().Item1;
 
                         }
 

@@ -491,19 +491,23 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
                 #region Validate via HTTP (with authorization)
 
                 await cpo1Adapter.CommonAPI.AddRemoteParty(
-                          Id:                RemoteParty_Id.Parse("DE-GDF_EMSP"),
-                          CredentialsRoles:  [
-                                                 new CredentialsRole(
-                                                     PartyId:          Party_Idv3.Parse("DEGDF"),
-                                                     Role:             Role.EMSP,
-                                                     BusinessDetails:  new BusinessDetails(
-                                                                           "GraphDefined EMSP"
-                                                                       )
-                                                 )
-                                             ],
-                          AccessToken:       AccessToken.Parse("1234xyz"),
-                          AccessStatus:      AccessStatus.ALLOWED,
-                          PartyStatus:       PartyStatus.ENABLED
+
+                          Id:                  RemoteParty_Id.Parse("DE-GDF_EMSP"),
+                          CredentialsRoles:    [
+                                                   new CredentialsRole(
+                                                       PartyId:          Party_Idv3.Parse("DEGDF"),
+                                                       Role:             Role.EMSP,
+                                                       BusinessDetails:  new BusinessDetails(
+                                                                             "GraphDefined EMSP"
+                                                                         )
+                                                   )
+                                               ],
+
+                          Status:              PartyStatus.ENABLED,
+
+                          LocalAccessToken:    AccessToken.Parse("1234xyz"),
+                          LocalAccessStatus:   AccessStatus.ALLOWED
+
                       );
 
                 {

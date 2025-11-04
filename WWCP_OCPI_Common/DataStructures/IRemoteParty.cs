@@ -68,6 +68,12 @@ namespace cloud.charging.open.protocols.OCPI
 
 
 
+
+        /// <summary>
+        /// Prefer IPv4 instead of IPv6.
+        /// </summary>
+        Boolean?                                                   PreferIPv4                    { get; }
+
         /// <summary>
         /// A delegate to select a TLS client certificate.
         /// </summary>
@@ -79,29 +85,29 @@ namespace cloud.charging.open.protocols.OCPI
         LocalCertificateSelectionHandler?                          LocalCertificateSelector      { get; }
 
         /// <summary>
-        /// The TLS client certificate to use of HTTP authentication.
+        /// The TLS client certificate to use for HTTP authentication.
         /// </summary>
-        X509Certificate?                                           ClientCert                    { get; }
+        X509Certificate2?                                          ClientCertificate                    { get; }
 
         /// <summary>
         /// The TLS protocol to use.
         /// </summary>
-        SslProtocols?                                              TLSProtocol                   { get; }
+        SslProtocols?                                              TLSProtocols                   { get; }
 
         /// <summary>
-        /// Prefer IPv4 instead of IPv6.
+        /// The optional HTTP accept header.
         /// </summary>
-        Boolean?                                                   PreferIPv4                    { get; }
+        HTTPContentType?                                           ContentType                   { get; }
+
+        /// <summary>
+        /// The optional HTTP accept header.
+        /// </summary>
+        AcceptTypes?                                               Accept                        { get; }
 
         /// <summary>
         /// The HTTP user agent identification.
         /// </summary>
         String?                                                    HTTPUserAgent                 { get; }
-
-        /// <summary>
-        /// The optional HTTP authentication to use.
-        /// </summary>
-        IHTTPAuthentication?                                       HTTPAuthentication            { get; }
 
         /// <summary>
         /// The timeout for upstream requests.

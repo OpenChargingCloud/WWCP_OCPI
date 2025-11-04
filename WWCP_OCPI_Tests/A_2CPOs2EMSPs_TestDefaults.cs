@@ -283,15 +283,15 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         #region Data
 
-        private   readonly DNSClient  DNSClient          = new (SearchForIPv6DNSServers: false);
+        private   readonly DNSClient    DNSClient          = new (SearchForIPv6DNSServers: false);
 
-        private   readonly TimeSpan?  TOTPValidityTime   = TOTPValidityTime;
+        private   readonly TimeSpan?    TOTPValidityTime   = TOTPValidityTime;
 
-        protected const    String     UnknownToken       = "UnknownUnknownUnknownToken";
+        protected const    String       UnknownToken       = "UnknownUnknownUnknownToken";
 
-        protected const    String     BlockedToken       = "blocked-token";
-        protected const    String     BlockedCPOToken    = "blocked-cpo";
-        protected const    String     BlockedEMSPToken   = "blocked-emsp";
+        protected readonly AccessToken  BlockedToken       = AccessToken.Parse("blocked-token");
+        protected readonly AccessToken  BlockedCPOToken    = AccessToken.Parse("blocked-cpo");
+        protected readonly AccessToken  BlockedEMSPToken   = AccessToken.Parse("blocked-emsp");
 
         #region CPO #1
 
@@ -2130,76 +2130,79 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             Assert.That(
                 await emsp1CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
-                          CountryCode:                 cpo1CommonAPI_v2_1_1.OurCountryCode,
-                          PartyId:                     cpo1CommonAPI_v2_1_1.OurPartyId,
-                          Role:                        Role.CPO,
-                          BusinessDetails:             cpo1CommonAPI_v2_1_1.OurBusinessDetails,
+                          CountryCode:                       cpo1CommonAPI_v2_1_1.OurCountryCode,
+                          PartyId:                           cpo1CommonAPI_v2_1_1.OurPartyId,
+                          Role:                              Role.CPO,
+                          BusinessDetails:                   cpo1CommonAPI_v2_1_1.OurBusinessDetails,
 
-                          AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp1__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    false,
 
-                          RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo1__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
-                          SelectedVersionId:           OCPIv2_2_1.Version.Id,
-                          AccessTokenBase64Encoding:   false,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   false,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
 
             Assert.That(
                 await emsp1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                          Id:                          RemoteParty_Id.Parse(
-                                                           cpo1CommonAPI_v2_2_1.DefaultPartyId,
-                                                           Role.CPO
-                                                       ),
-                          CredentialsRoles:            [
-                                                           cpo1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                       ],
-                          AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          Id:                                RemoteParty_Id.Parse(
+                                                                 cpo1CommonAPI_v2_2_1.DefaultPartyId,
+                                                                 Role.CPO
+                                                             ),
+                          CredentialsRoles:                  [
+                                                                 cpo1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                             ],
+                          LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp1__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    true,
 
-                          RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo1__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
-                          SelectedVersionId:           OCPIv2_2_1.Version.Id,
-                          AccessTokenBase64Encoding:   true,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   true,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
 
             Assert.That(
                 await emsp1CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                          Id:                          RemoteParty_Id.Parse(
-                                                           cpo1CommonAPI_v2_3_0.DefaultPartyId,
-                                                           Role.CPO
-                                                       ),
-                          CredentialsRoles:            [
-                                                           cpo1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
-                                                       ],
-                          AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          Id:                                RemoteParty_Id.Parse(
+                                                                 cpo1CommonAPI_v2_3_0.DefaultPartyId,
+                                                                 Role.CPO
+                                                             ),
+                          CredentialsRoles:                  [
+                                                                 cpo1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
+                                                             ],
+                          LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp1__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    true,
 
-                          RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo1__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_3_0.Version.Id ],
-                          SelectedVersionId:           OCPIv2_3_0.Version.Id,
-                          AccessTokenBase64Encoding:   true,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_3_0.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   true,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
@@ -2210,76 +2213,79 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             Assert.That(
                 await emsp2CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
-                          CountryCode:                 cpo1CommonAPI_v2_1_1.OurCountryCode,
-                          PartyId:                     cpo1CommonAPI_v2_1_1.OurPartyId,
-                          Role:                        Role.CPO,
-                          BusinessDetails:             cpo1CommonAPI_v2_1_1.OurBusinessDetails,
+                          CountryCode:                       cpo1CommonAPI_v2_1_1.OurCountryCode,
+                          PartyId:                           cpo1CommonAPI_v2_1_1.OurPartyId,
+                          Role:                              Role.CPO,
+                          BusinessDetails:                   cpo1CommonAPI_v2_1_1.OurBusinessDetails,
 
-                          AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp2__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    false,
 
-                          RemoteAccessToken:           AccessToken.Parse(emsp2_accessing_cpo1__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
-                          SelectedVersionId:           OCPIv2_2_1.Version.Id,
-                          AccessTokenBase64Encoding:   false,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   false,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
 
             Assert.That(
                 await emsp2CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                          Id:                          RemoteParty_Id.Parse(
-                                                           cpo1CommonAPI_v2_2_1.DefaultPartyId,
-                                                           Role.CPO
-                                                       ),
-                          CredentialsRoles:            [
-                                                           cpo1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                       ],
-                          AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          Id:                                RemoteParty_Id.Parse(
+                                                                 cpo1CommonAPI_v2_2_1.DefaultPartyId,
+                                                                 Role.CPO
+                                                             ),
+                          CredentialsRoles:                  [
+                                                                 cpo1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                             ],
+                          LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp2__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    true,
 
-                          RemoteAccessToken:           AccessToken.Parse(emsp2_accessing_cpo1__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
-                          SelectedVersionId:           OCPIv2_2_1.Version.Id,
-                          AccessTokenBase64Encoding:   true,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   true,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
 
             Assert.That(
                 await emsp2CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                          Id:                          RemoteParty_Id.Parse(
-                                                           cpo1CommonAPI_v2_3_0.DefaultPartyId,
-                                                           Role.CPO
-                                                       ),
-                          CredentialsRoles:            [
-                                                           cpo1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
-                                                       ],
-                          AccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          Id:                                RemoteParty_Id.Parse(
+                                                                 cpo1CommonAPI_v2_3_0.DefaultPartyId,
+                                                                 Role.CPO
+                                                             ),
+                          CredentialsRoles:                  [
+                                                                 cpo1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
+                                                             ],
+                          LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp2__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    true,
 
-                          RemoteAccessToken:           AccessToken.Parse(emsp2_accessing_cpo1__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_3_0.Version.Id ],
-                          SelectedVersionId:           OCPIv2_3_0.Version.Id,
-                          AccessTokenBase64Encoding:   true,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_3_0.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   true,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
@@ -2291,76 +2297,79 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             Assert.That(
                 await emsp1CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
-                          CountryCode:                 cpo2CommonAPI_v2_1_1.OurCountryCode,
-                          PartyId:                     cpo2CommonAPI_v2_1_1.OurPartyId,
-                          Role:                        Role.CPO,
-                          BusinessDetails:             cpo2CommonAPI_v2_1_1.OurBusinessDetails,
+                          CountryCode:                       cpo2CommonAPI_v2_1_1.OurCountryCode,
+                          PartyId:                           cpo2CommonAPI_v2_1_1.OurPartyId,
+                          Role:                              Role.CPO,
+                          BusinessDetails:                   cpo2CommonAPI_v2_1_1.OurBusinessDetails,
 
-                          AccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp1__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    false,
 
-                          RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo2__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
-                          SelectedVersionId:           OCPIv2_2_1.Version.Id,
-                          AccessTokenBase64Encoding:   false,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   false,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
 
             Assert.That(
                 await emsp1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                          Id:                          RemoteParty_Id.Parse(
-                                                           cpo2CommonAPI_v2_2_1.DefaultPartyId,
-                                                           Role.CPO
-                                                       ),
-                          CredentialsRoles:            [
-                                                           cpo2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                       ],
-                          AccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          Id:                                RemoteParty_Id.Parse(
+                                                                 cpo2CommonAPI_v2_2_1.DefaultPartyId,
+                                                                 Role.CPO
+                                                             ),
+                          CredentialsRoles:                  [
+                                                                 cpo2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                             ],
+                          LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp1__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    true,
 
-                          RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo2__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
-                          SelectedVersionId:           OCPIv2_2_1.Version.Id,
-                          AccessTokenBase64Encoding:   true,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   true,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
 
             Assert.That(
                 await emsp1CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                          Id:                          RemoteParty_Id.Parse(
-                                                           cpo2CommonAPI_v2_3_0.DefaultPartyId,
-                                                           Role.CPO
-                                                       ),
-                          CredentialsRoles:            [
-                                                           cpo2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
-                                                       ],
-                          AccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          Id:                                RemoteParty_Id.Parse(
+                                                                 cpo2CommonAPI_v2_3_0.DefaultPartyId,
+                                                                 Role.CPO
+                                                             ),
+                          CredentialsRoles:                  [
+                                                                 cpo2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
+                                                             ],
+                          LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp1__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    true,
 
-                          RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo2__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_3_0.Version.Id ],
-                          SelectedVersionId:           OCPIv2_3_0.Version.Id,
-                          AccessTokenBase64Encoding:   true,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_3_0.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   true,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
@@ -2371,76 +2380,79 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             Assert.That(
                 await emsp2CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
-                          CountryCode:                 cpo2CommonAPI_v2_1_1.OurCountryCode,
-                          PartyId:                     cpo2CommonAPI_v2_1_1.OurPartyId,
-                          Role:                        Role.CPO,
-                          BusinessDetails:             cpo2CommonAPI_v2_1_1.OurBusinessDetails,
+                          CountryCode:                       cpo2CommonAPI_v2_1_1.OurCountryCode,
+                          PartyId:                           cpo2CommonAPI_v2_1_1.OurPartyId,
+                          Role:                              Role.CPO,
+                          BusinessDetails:                   cpo2CommonAPI_v2_1_1.OurBusinessDetails,
 
-                          AccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp2__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    false,
 
-                          RemoteAccessToken:           AccessToken.Parse(emsp2_accessing_cpo2__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
-                          SelectedVersionId:           OCPIv2_2_1.Version.Id,
-                          AccessTokenBase64Encoding:   false,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   false,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
 
             Assert.That(
                 await emsp2CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                          Id:                          RemoteParty_Id.Parse(
-                                                           cpo2CommonAPI_v2_2_1.DefaultPartyId,
-                                                           Role.CPO
-                                                       ),
-                          CredentialsRoles:            [
-                                                           cpo2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                       ],
-                          AccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          Id:                                RemoteParty_Id.Parse(
+                                                                 cpo2CommonAPI_v2_2_1.DefaultPartyId,
+                                                                 Role.CPO
+                                                             ),
+                          CredentialsRoles:                  [
+                                                                 cpo2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                             ],
+                          LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp2__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    true,
 
-                          RemoteAccessToken:           AccessToken.Parse(emsp2_accessing_cpo2__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
-                          SelectedVersionId:           OCPIv2_2_1.Version.Id,
-                          AccessTokenBase64Encoding:   true,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   true,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
 
             Assert.That(
                 await emsp2CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                          Id:                          RemoteParty_Id.Parse(
-                                                           cpo2CommonAPI_v2_3_0.DefaultPartyId,
-                                                           Role.CPO
-                                                       ),
-                          CredentialsRoles:            [
-                                                           cpo2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
-                                                       ],
-                          AccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          Id:                                RemoteParty_Id.Parse(
+                                                                 cpo2CommonAPI_v2_3_0.DefaultPartyId,
+                                                                 Role.CPO
+                                                             ),
+                          CredentialsRoles:                  [
+                                                                 cpo2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
+                                                             ],
+                          LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp2__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    true,
 
-                          RemoteAccessToken:           AccessToken.Parse(emsp2_accessing_cpo2__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_3_0.Version.Id ],
-                          SelectedVersionId:           OCPIv2_3_0.Version.Id,
-                          AccessTokenBase64Encoding:   true,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_3_0.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   true,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
@@ -2452,78 +2464,81 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             Assert.That(
                 await cpo1CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
-                          CountryCode:                 emsp1CommonAPI_v2_1_1.OurCountryCode,
-                          PartyId:                     emsp1CommonAPI_v2_1_1.OurPartyId,
-                          Role:                        Role.EMSP,
-                          BusinessDetails:             emsp1CommonAPI_v2_1_1.OurBusinessDetails,
+                          CountryCode:                       emsp1CommonAPI_v2_1_1.OurCountryCode,
+                          PartyId:                           emsp1CommonAPI_v2_1_1.OurPartyId,
+                          Role:                              Role.EMSP,
+                          BusinessDetails:                   emsp1CommonAPI_v2_1_1.OurBusinessDetails,
 
-                          AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo1__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    false,
 
-                          RemoteAccessToken:           AccessToken.Parse(cpo1_accessing_emsp1__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_1_1.Version.Id ],
-                          SelectedVersionId:           OCPIv2_1_1.Version.Id,
-                          AccessTokenBase64Encoding:   false,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_1_1.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_1_1.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   false,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
 
             Assert.That(
                 await cpo1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                          Id:                          RemoteParty_Id.Parse(
-                                                           emsp1CommonAPI_v2_2_1.DefaultPartyId,
-                                                           Role.EMSP
-                                                       ),
-                          CredentialsRoles:            [
-                                                           emsp1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                       ],
+                          Id:                                RemoteParty_Id.Parse(
+                                                                 emsp1CommonAPI_v2_2_1.DefaultPartyId,
+                                                                 Role.EMSP
+                                                             ),
+                          CredentialsRoles:                  [
+                                                                 emsp1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                             ],
 
-                          AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo1__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    true,
 
-                          RemoteAccessToken:           AccessToken.Parse(cpo1_accessing_emsp1__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
-                          SelectedVersionId:           OCPIv2_2_1.Version.Id,
-                          AccessTokenBase64Encoding:   true,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   true,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
 
             Assert.That(
                 await cpo1CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                          Id:                          RemoteParty_Id.Parse(
-                                                           emsp1CommonAPI_v2_3_0.DefaultPartyId,
-                                                           Role.EMSP
-                                                       ),
-                          CredentialsRoles:            [
-                                                           emsp1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
-                                                       ],
+                          Id:                                RemoteParty_Id.Parse(
+                                                                 emsp1CommonAPI_v2_3_0.DefaultPartyId,
+                                                                 Role.EMSP
+                                                             ),
+                          CredentialsRoles:                  [
+                                                                 emsp1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
+                                                             ],
+                          LocalAccessTokenBase64Encoding:    true,
 
-                          AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo1__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
 
-                          RemoteAccessToken:           AccessToken.Parse(cpo1_accessing_emsp1__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_3_0.Version.Id ],
-                          SelectedVersionId:           OCPIv2_3_0.Version.Id,
-                          AccessTokenBase64Encoding:   true,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_3_0.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   true,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
@@ -2534,78 +2549,81 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             Assert.That(
                 await cpo1CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
-                          CountryCode:                 emsp2CommonAPI_v2_1_1.OurCountryCode,
-                          PartyId:                     emsp2CommonAPI_v2_1_1.OurPartyId,
-                          Role:                        Role.EMSP,
-                          BusinessDetails:             emsp2CommonAPI_v2_1_1.OurBusinessDetails,
+                          CountryCode:                       emsp2CommonAPI_v2_1_1.OurCountryCode,
+                          PartyId:                           emsp2CommonAPI_v2_1_1.OurPartyId,
+                          Role:                              Role.EMSP,
+                          BusinessDetails:                   emsp2CommonAPI_v2_1_1.OurBusinessDetails,
 
-                          AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo1__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    false,
 
-                          RemoteAccessToken:           AccessToken.Parse(cpo1_accessing_emsp2__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_1_1.Version.Id ],
-                          SelectedVersionId:           OCPIv2_1_1.Version.Id,
-                          AccessTokenBase64Encoding:   false,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_1_1.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_1_1.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   false,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
 
             Assert.That(
                 await cpo1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                          Id:                          RemoteParty_Id.Parse(
-                                                           emsp2CommonAPI_v2_2_1.DefaultPartyId,
-                                                           Role.EMSP
-                                                       ),
-                          CredentialsRoles:            [
-                                                           emsp2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                       ],
+                          Id:                                RemoteParty_Id.Parse(
+                                                                 emsp2CommonAPI_v2_2_1.DefaultPartyId,
+                                                                 Role.EMSP
+                                                             ),
+                          CredentialsRoles:                  [
+                                                                 emsp2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                             ],
 
-                          AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo1__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    true,
 
-                          RemoteAccessToken:           AccessToken.Parse(cpo1_accessing_emsp2__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
-                          SelectedVersionId:           OCPIv2_2_1.Version.Id,
-                          AccessTokenBase64Encoding:   true,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   true,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
 
             Assert.That(
                 await cpo1CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                          Id:                          RemoteParty_Id.Parse(
-                                                           emsp2CommonAPI_v2_3_0.DefaultPartyId,
-                                                           Role.EMSP
-                                                       ),
-                          CredentialsRoles:            [
-                                                           emsp2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
-                                                       ],
+                          Id:                                RemoteParty_Id.Parse(
+                                                                 emsp2CommonAPI_v2_3_0.DefaultPartyId,
+                                                                 Role.EMSP
+                                                             ),
+                          CredentialsRoles:                  [
+                                                                 emsp2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
+                                                             ],
 
-                          AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo1__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    true,
 
-                          RemoteAccessToken:           AccessToken.Parse(cpo1_accessing_emsp2__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_3_0.Version.Id ],
-                          SelectedVersionId:           OCPIv2_3_0.Version.Id,
-                          AccessTokenBase64Encoding:   true,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_3_0.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   true,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
@@ -2617,78 +2635,81 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             Assert.That(
                 await cpo2CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
-                          CountryCode:                 emsp1CommonAPI_v2_1_1.OurCountryCode,
-                          PartyId:                     emsp1CommonAPI_v2_1_1.OurPartyId,
-                          Role:                        Role.EMSP,
-                          BusinessDetails:             emsp1CommonAPI_v2_1_1.OurBusinessDetails,
+                          CountryCode:                       emsp1CommonAPI_v2_1_1.OurCountryCode,
+                          PartyId:                           emsp1CommonAPI_v2_1_1.OurPartyId,
+                          Role:                              Role.EMSP,
+                          BusinessDetails:                   emsp1CommonAPI_v2_1_1.OurBusinessDetails,
 
-                          AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo2__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    false,
 
-                          RemoteAccessToken:           AccessToken.Parse(cpo2_accessing_emsp1__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_1_1.Version.Id ],
-                          SelectedVersionId:           OCPIv2_1_1.Version.Id,
-                          AccessTokenBase64Encoding:   false,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_1_1.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_1_1.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   false,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
 
             Assert.That(
                 await cpo2CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                          Id:                          RemoteParty_Id.Parse(
-                                                           emsp1CommonAPI_v2_2_1.DefaultPartyId,
-                                                           Role.EMSP
-                                                       ),
-                          CredentialsRoles:            [
-                                                           emsp1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                       ],
+                          Id:                                RemoteParty_Id.Parse(
+                                                                 emsp1CommonAPI_v2_2_1.DefaultPartyId,
+                                                                 Role.EMSP
+                                                             ),
+                          CredentialsRoles:                  [
+                                                                 emsp1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                             ],
 
-                          AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo2__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    true,
 
-                          RemoteAccessToken:           AccessToken.Parse(cpo2_accessing_emsp1__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
-                          SelectedVersionId:           OCPIv2_2_1.Version.Id,
-                          AccessTokenBase64Encoding:   true,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   true,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
 
             Assert.That(
                 await cpo2CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                          Id:                          RemoteParty_Id.Parse(
-                                                           emsp1CommonAPI_v2_3_0.DefaultPartyId,
-                                                           Role.EMSP
-                                                       ),
-                          CredentialsRoles:            [
-                                                           emsp1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
-                                                       ],
+                          Id:                                RemoteParty_Id.Parse(
+                                                                 emsp1CommonAPI_v2_3_0.DefaultPartyId,
+                                                                 Role.EMSP
+                                                             ),
+                          CredentialsRoles:                  [
+                                                                 emsp1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
+                                                             ],
 
-                          AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo2__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    true,
 
-                          RemoteAccessToken:           AccessToken.Parse(cpo2_accessing_emsp1__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_3_0.Version.Id ],
-                          SelectedVersionId:           OCPIv2_3_0.Version.Id,
-                          AccessTokenBase64Encoding:   true,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_3_0.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   true,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
@@ -2699,78 +2720,81 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             Assert.That(
                 await cpo2CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
-                          CountryCode:                 emsp2CommonAPI_v2_1_1.OurCountryCode,
-                          PartyId:                     emsp2CommonAPI_v2_1_1.OurPartyId,
-                          Role:                        Role.EMSP,
-                          BusinessDetails:             emsp2CommonAPI_v2_1_1.OurBusinessDetails,
+                          CountryCode:                       emsp2CommonAPI_v2_1_1.OurCountryCode,
+                          PartyId:                           emsp2CommonAPI_v2_1_1.OurPartyId,
+                          Role:                              Role.EMSP,
+                          BusinessDetails:                   emsp2CommonAPI_v2_1_1.OurBusinessDetails,
 
-                          AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo2__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    false,
 
-                          RemoteAccessToken:           AccessToken.Parse(cpo2_accessing_emsp2__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_1_1.Version.Id ],
-                          SelectedVersionId:           OCPIv2_1_1.Version.Id,
-                          AccessTokenBase64Encoding:   false,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_1_1.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_1_1.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   false,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
 
             Assert.That(
                 await cpo2CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                          Id:                          RemoteParty_Id.Parse(
-                                                           emsp2CommonAPI_v2_2_1.DefaultPartyId,
-                                                           Role.EMSP
-                                                       ),
-                          CredentialsRoles:            [
-                                                           emsp2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                       ],
+                          Id:                                RemoteParty_Id.Parse(
+                                                                 emsp2CommonAPI_v2_2_1.DefaultPartyId,
+                                                                 Role.EMSP
+                                                             ),
+                          CredentialsRoles:                  [
+                                                                 emsp2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                             ],
 
-                          AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo2__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    true,
 
-                          RemoteAccessToken:           AccessToken.Parse(cpo2_accessing_emsp2__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_2_1.Version.Id ],
-                          SelectedVersionId:           OCPIv2_2_1.Version.Id,
-                          AccessTokenBase64Encoding:   true,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   true,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
 
             Assert.That(
                 await cpo2CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                          Id:                          RemoteParty_Id.Parse(
-                                                           emsp2CommonAPI_v2_3_0.DefaultPartyId,
-                                                           Role.EMSP
-                                                       ),
-                          CredentialsRoles:            [
-                                                           emsp2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
-                                                       ],
+                          Id:                                RemoteParty_Id.Parse(
+                                                                 emsp2CommonAPI_v2_3_0.DefaultPartyId,
+                                                                 Role.EMSP
+                                                             ),
+                          CredentialsRoles:                  [
+                                                                 emsp2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
+                                                             ],
 
-                          AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),
-                          AccessStatus:                AccessStatus.ALLOWED,
-                          LocalTOTP_ValidityTime:      TOTPValidityTime,
+                          LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo2__token),
+                          LocalAccessStatus:                 AccessStatus.ALLOWED,
+                          LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
+                          LocalAccessTokenBase64Encoding:    true,
 
-                          RemoteAccessToken:           AccessToken.Parse(cpo2_accessing_emsp2__token),
-                          RemoteTOTP_ValidityTime:     TOTPValidityTime,
-                          RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
-                          RemoteVersionIds:            [ OCPIv2_3_0.Version.Id ],
-                          SelectedVersionId:           OCPIv2_3_0.Version.Id,
-                          AccessTokenBase64Encoding:   true,
-                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
+                          RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
+                          RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
+                          RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
+                          SelectedVersionId:                 OCPIv2_3_0.Version.Id,
+                          RemoteAccessTokenBase64Encoding:   true,
+                          RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                          PartyStatus:                 PartyStatus.ENABLED
+                          Status:                            PartyStatus.ENABLED
                       ),
                 Is.True
             );
@@ -2819,22 +2843,22 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             #region Blocked Tokens
 
             await cpo1CommonAPI_v2_1_1.AddAccessToken(
-                      AccessToken.Parse(BlockedToken),
+                      BlockedToken,
                       AccessStatus.BLOCKED
                   );
 
             await cpo2CommonAPI_v2_1_1.AddAccessToken(
-                      AccessToken.Parse(BlockedToken),
+                      BlockedToken,
                       AccessStatus.BLOCKED
                   );
 
             await emsp1CommonAPI_v2_1_1.AddAccessToken(
-                      AccessToken.Parse(BlockedToken),
+                      BlockedToken,
                       AccessStatus.BLOCKED
                   );
 
             await emsp2CommonAPI_v2_1_1.AddAccessToken(
-                      AccessToken.Parse(BlockedToken),
+                      BlockedToken,
                       AccessStatus.BLOCKED
                   );
 
@@ -2842,28 +2866,28 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
             await cpo1CommonAPI_v2_1_1.AddRemoteParty(
-                      CountryCode:       CountryCode.Parse("XX"),
-                      PartyId:           Party_Id.   Parse("BLE"),
-                      Role:              Role.EMSP,
-                      BusinessDetails:   new BusinessDetails(
-                                             "Blocked EMSP"
-                                         ),
-                      AccessToken:       AccessToken.Parse(BlockedEMSPToken),
-                      AccessStatus:      AccessStatus.BLOCKED,
-                      PartyStatus:       PartyStatus. ENABLED
+                      CountryCode:         CountryCode.Parse("XX"),
+                      PartyId:             Party_Id.   Parse("BLE"),
+                      Role:                Role.EMSP,
+                      BusinessDetails:     new BusinessDetails(
+                                               "Blocked EMSP"
+                                           ),
+                      LocalAccessToken:    BlockedEMSPToken,
+                      LocalAccessStatus:   AccessStatus.BLOCKED,
+                      Status:              PartyStatus. ENABLED
                   );
 
 
             await emsp1CommonAPI_v2_1_1.AddRemoteParty(
-                      CountryCode:       CountryCode.Parse("XX"),
-                      PartyId:           Party_Id.   Parse("BLC"),
-                      Role:              Role.EMSP,
-                      BusinessDetails:   new BusinessDetails(
-                                             "Blocked CPO"
-                                         ),
-                      AccessToken:       AccessToken.Parse(BlockedCPOToken),
-                      AccessStatus:      AccessStatus.BLOCKED,
-                      PartyStatus:       PartyStatus. ENABLED
+                      CountryCode:         CountryCode.Parse("XX"),
+                      PartyId:             Party_Id.   Parse("BLC"),
+                      Role:                Role.EMSP,
+                      BusinessDetails:     new BusinessDetails(
+                                               "Blocked CPO"
+                                           ),
+                      LocalAccessToken:    BlockedCPOToken,
+                      LocalAccessStatus:   AccessStatus.BLOCKED,
+                      Status:              PartyStatus. ENABLED
                   );
 
 

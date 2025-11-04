@@ -49,8 +49,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             }
 
             var graphDefinedCPO1 = new OCPIv2_1_1.CommonClient(
-                                       VersionsURL:  cpo1CommonHTTPAPI.OurVersionsURL,
-                                       AccessToken:  BlockedToken
+                                       RemoteVersionsURL:  cpo1CommonHTTPAPI.OurVersionsURL,
+                                       RemoteAccessToken:  BlockedToken
                                    );
 
             Assert.That(graphDefinedCPO1, Is.Not.Null);
@@ -118,8 +118,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             }
 
             var graphDefinedEMSP1 = new OCPIv2_1_1.CommonClient(
-                                        VersionsURL:  emsp1CommonHTTPAPI.OurVersionsURL,
-                                        AccessToken:  BlockedToken
+                                        RemoteVersionsURL:  emsp1CommonHTTPAPI.OurVersionsURL,
+                                        RemoteAccessToken:  BlockedToken
                                     );
 
             Assert.That(graphDefinedEMSP1, Is.Not.Null);
@@ -188,8 +188,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             }
 
             var graphDefinedCPO1 = new OCPIv2_2_1.CommonClient(
-                                       VersionsURL:  cpo1CommonHTTPAPI.OurVersionsURL,
-                                       AccessToken:  BlockedToken
+                                       RemoteVersionsURL:  cpo1CommonHTTPAPI.OurVersionsURL,
+                                       RemoteAccessToken:  BlockedToken
                                    );
 
             Assert.That(graphDefinedCPO1, Is.Not.Null);
@@ -257,8 +257,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             }
 
             var graphDefinedEMSP1 = new OCPIv2_2_1.CommonClient(
-                                        VersionsURL:  emsp1CommonHTTPAPI.OurVersionsURL,
-                                        AccessToken:  BlockedToken
+                                        RemoteVersionsURL:  emsp1CommonHTTPAPI.OurVersionsURL,
+                                        RemoteAccessToken:  BlockedToken
                                     );
 
             Assert.That(graphDefinedEMSP1, Is.Not.Null);
@@ -327,8 +327,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             }
 
             var graphDefinedCPO1 = new OCPIv2_3_0.CommonClient(
-                                       VersionsURL:  cpo1CommonHTTPAPI.OurVersionsURL,
-                                       AccessToken:  BlockedToken
+                                       RemoteVersionsURL:  cpo1CommonHTTPAPI.OurVersionsURL,
+                                       RemoteAccessToken:  BlockedToken
                                    );
 
             Assert.That(graphDefinedCPO1, Is.Not.Null);
@@ -396,8 +396,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             }
 
             var graphDefinedEMSP1 = new OCPIv2_3_0.CommonClient(
-                                        VersionsURL:  emsp1CommonHTTPAPI.OurVersionsURL,
-                                        AccessToken:  BlockedToken
+                                        RemoteVersionsURL:  emsp1CommonHTTPAPI.OurVersionsURL,
+                                        RemoteAccessToken:  BlockedToken
                                     );
 
             Assert.That(graphDefinedEMSP1, Is.Not.Null);

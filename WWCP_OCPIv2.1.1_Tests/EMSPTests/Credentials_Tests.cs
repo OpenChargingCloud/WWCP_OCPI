@@ -252,18 +252,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 #region Configure Remote Parties
 
-                cpoCommonAPI.  RemoveAllRemoteParties();
-                emsp1CommonAPI.RemoveAllRemoteParties();
+                await cpoCommonAPI.  RemoveAllRemoteParties();
+                await emsp1CommonAPI.RemoveAllRemoteParties();
 
-                cpoCommonAPI.  AddRemoteParty(CountryCode:       emsp1CommonAPI.OurCountryCode,
-                                              PartyId:           emsp1CommonAPI.OurPartyId,
-                                              Role:              Role.EMSP,
-                                              BusinessDetails:   emsp1CommonAPI.OurBusinessDetails,
+                await cpoCommonAPI.  AddRemoteParty(
+                          CountryCode:         emsp1CommonAPI.OurCountryCode,
+                          PartyId:             emsp1CommonAPI.OurPartyId,
+                          Role:                Role.EMSP,
+                          BusinessDetails:     emsp1CommonAPI.OurBusinessDetails,
 
-                                              AccessToken:       AccessToken.Parse(emsp1_accessing_cpo__token),
-                                              AccessStatus:      AccessStatus.ALLOWED,
+                          LocalAccessToken:    AccessToken.Parse(emsp1_accessing_cpo__token),
+                          LocalAccessStatus:   AccessStatus.ALLOWED,
 
-                                              PartyStatus:       PartyStatus.ENABLED);
+                          Status:              PartyStatus.ENABLED
+                      );
 
                 #endregion
 
@@ -384,7 +386,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                     #region Validate, that the existing EMSPClient updated the internal access token(s)
 
-                    var graphDefinedCPO_AccessToken   = graphDefinedCPO.AccessToken.ToString();
+                    var graphDefinedCPO_AccessToken   = graphDefinedCPO.RemoteAccessToken.ToString();
                     var graphDefinedCPO_TokenAuth     = graphDefinedCPO.TokenAuth.Token;
 
                     var response2                     = await graphDefinedCPO.GetCDRs();
@@ -411,7 +413,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                     if (graphDefinedCPO2 is not null)
                     {
 
-                        var graphDefinedCPO2_AccessToken  = graphDefinedCPO2.AccessToken.ToString();
+                        var graphDefinedCPO2_AccessToken  = graphDefinedCPO2.RemoteAccessToken.ToString();
                         var graphDefinedCPO2_TokenAuth    = graphDefinedCPO2.TokenAuth.Token;
 
                         var response3                     = await graphDefinedCPO2.GetCDRs();
@@ -1745,24 +1747,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 emsp1CommonAPI is not null)
             {
 
-                cpoCommonAPI.RemoveAllRemoteParties();
+                await cpoCommonAPI.RemoveAllRemoteParties();
 
-                cpoCommonAPI.AddRemoteParty(CountryCode:                 emsp1CommonAPI.OurCountryCode,
-                                            PartyId:                     emsp1CommonAPI.OurPartyId,
-                                            Role:                        Role.EMSP,
-                                            BusinessDetails:             emsp1CommonAPI.OurBusinessDetails,
+                await cpoCommonAPI.AddRemoteParty(
+                          CountryCode:                 emsp1CommonAPI.OurCountryCode,
+                          PartyId:                     emsp1CommonAPI.OurPartyId,
+                          Role:                        Role.EMSP,
+                          BusinessDetails:             emsp1CommonAPI.OurBusinessDetails,
 
-                                            AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo__token),
-                                            AccessStatus:                AccessStatus.ALLOWED,
+                          LocalAccessToken:            AccessToken.Parse(emsp1_accessing_cpo__token),
+                          LocalAccessStatus:           AccessStatus.ALLOWED,
 
-                                            //RemoteAccessToken:           AccessToken.Parse("cpo_accessing_emsp1++token"),
-                                            //RemoteVersionsURL:           null, // 
-                                            //RemoteVersionIds:            [ Version.Id ],
-                                            //SelectedVersionId:           Version.Id,
-                                            //AccessTokenBase64Encoding:   false,
-                                            //RemoteStatus:                RemoteAccessStatus.ONLINE,
+                          //RemoteAccessToken:           AccessToken.Parse("cpo_accessing_emsp1++token"),
+                          //RemoteVersionsURL:           null, // 
+                          //RemoteVersionIds:            [ Version.Id ],
+                          //SelectedVersionId:           Version.Id,
+                          //AccessTokenBase64Encoding:   false,
+                          //RemoteStatus:                RemoteAccessStatus.ONLINE,
 
-                                            PartyStatus:                 PartyStatus.ENABLED);
+                          Status:                      PartyStatus.ENABLED
+                      );
 
 
                 var newAccessToken  = AccessToken.Parse("updatedAccessToken");

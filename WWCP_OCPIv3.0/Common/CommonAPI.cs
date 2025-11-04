@@ -2850,50 +2850,49 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             // Store credential of the other side!
             await AddOrUpdateRemoteParty(
 
-                      oldRemoteParty.Id,          // Id
-                      receivedCredentials.Roles,  // CredentialsRoles
+                      oldRemoteParty.Id,                                        // Id
+                      receivedCredentials.Roles,                                // CredentialsRoles
 
-                      CREDENTIALS_TOKEN_C,        // AccessToken
+                      CREDENTIALS_TOKEN_C,                                      // LocalAccessToken
+                      receivedCredentials.URL,                                  // RemoteVersionsURL
+                      receivedCredentials.Token,                                // RemoteAccessToken
 
-                      receivedCredentials.Token,  // RemoteAccessToken
-                      receivedCredentials.URL,    // RemoteVersionsURL
+                      PartyStatus.ENABLED,                                      // PartyStatus
 
-                      null,                       // RemoteTOTP_ValidityTime
-                      null,                       // RemoteTOTP_Length
-                      null,                       // RemoteTOTP_Alphabet
+                      null,                                                     // RemoteAccessTokenBase64Encoding
+                      null,                                                     // RemoteTOTPConfig
+                      null,                                                     // RemoteAccessNotBefore
+                      null,                                                     // RemoteAccessNotAfter
+                      RemoteAccessStatus.ONLINE,                                // RemoteStatus
+                      otherVersions.Data?.Select(version => version.Id) ?? [],  // RemoteVersionIds
+                      Version.Id,                                               // SelectedVersionId
+                      null,                                                     // RemoteAllowDowngrades
 
-                      otherVersions.Data?.Select(version => version.Id) ?? [],
-                      Version.Id,                 // SelectedVersionId
+                      null,                                                     // LocalAccessTokenBase64Encoding
+                      null,                                                     // LocalTOTPConfig
+                      null,                                                     // LocalAccessNotBefore
+                      null,                                                     // LocalAccessNotAfter
+                      null,                                                     // LocalAllowDowngrades
+                      AccessStatus.ALLOWED,                                     // LocalAccessStatus
 
-                      null,                       // LocalTOTP_ValidityTime
-                      null,                       // LocalTOTP_Length
-                      null,                       // LocalTOTP_Alphabet
-                      null,                       // LocalAccessNotBefore
-                      null,                       // LocalAccessNotAfter
+                      null,                                                     // PreferIPv4
+                      null,                                                     // RemoteCertificateValidator
+                      null,                                                     // LocalCertificateSelector
+                      null,                                                     // ClientCertificate
+                      null,                                                     // TLSProtocols
+                      null,                                                     // ContentType
+                      null,                                                     // Accept
+                      null,                                                     // HTTPUserAgent
+                      null,                                                     // RequestTimeout
+                      null,                                                     // TransmissionRetryDelay
+                      null,                                                     // MaxNumberOfRetries
+                      null,                                                     // InternalBufferSize
+                      null,                                                     // UseHTTPPipelining
 
-                      null,                       // AccessTokenBase64Encoding
-                      null,                       // AllowDowngrades
-                      AccessStatus.      ALLOWED, // AccessStatus
-                      RemoteAccessStatus.ONLINE,  // RemoteStatus
-                      PartyStatus.       ENABLED, // PartyStatus
-
-                      null,                       // RemoteAccessNotBefore
-                      null                        // RemoteAccessNotAfter
-
-                      // PreferIPv4
-                      // RemoteCertificateValidator
-                      // LocalCertificateSelector
-                      // ClientCert
-                      // TLSProtocol
-                      // HTTPUserAgent
-                      // RequestTimeout
-                      // TransmissionRetryDelay
-                      // MaxNumberOfRetries
-                      // InternalBufferSize
-                      // UseHTTPPipelining
-
-                      // EventTrackingId
-                      // CurrentUserId
+                      null,                                                     // EventTrackingId
+                      null,                                                     // CurrentUserId
+                      null,                                                     // Created
+                      Timestamp.Now                                             // LastUpdated
 
                   );
 
@@ -3315,46 +3314,46 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public async Task<Boolean> AddRemoteParty(RemoteParty_Id                                             Id,
                                                   IEnumerable<CredentialsRole>                               CredentialsRoles,
 
-                                                  AccessToken                                                AccessToken,
-
-                                                  AccessToken                                                RemoteAccessToken,
+                                                  AccessToken                                                LocalAccessToken,
                                                   URL                                                        RemoteVersionsURL,
+                                                  AccessToken                                                RemoteAccessToken,
 
-                                                  TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
-                                                  UInt32?                                                    RemoteTOTP_Length            = null,
-                                                  String?                                                    RemoteTOTP_Alphabet          = null,
+                                                  PartyStatus?                                               Status                            = PartyStatus.ENABLED,
 
-                                                  IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
-                                                  Version_Id?                                                SelectedVersionId            = null,
+                                                  Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
+                                                  TOTPConfig?                                                RemoteTOTPConfig                  = null,
+                                                  DateTimeOffset?                                            RemoteAccessNotBefore             = null,
+                                                  DateTimeOffset?                                            RemoteAccessNotAfter              = null,
+                                                  RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
+                                                  IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
+                                                  Version_Id?                                                SelectedVersionId                 = null,
+                                                  Boolean?                                                   RemoteAllowDowngrades             = null,
 
-                                                  TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
-                                                  UInt32?                                                    LocalTOTP_Length             = null,
-                                                  String?                                                    LocalTOTP_Alphabet           = null,
-                                                  DateTimeOffset?                                            LocalAccessNotBefore         = null,
-                                                  DateTimeOffset?                                            LocalAccessNotAfter          = null,
+                                                  Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
+                                                  TOTPConfig?                                                LocalTOTPConfig                   = null,
+                                                  DateTimeOffset?                                            LocalAccessNotBefore              = null,
+                                                  DateTimeOffset?                                            LocalAccessNotAfter               = null,
+                                                  Boolean?                                                   LocalAllowDowngrades              = false,
+                                                  AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
-                                                  Boolean?                                                   AccessTokenBase64Encoding    = null,
-                                                  Boolean?                                                   AllowDowngrades              = false,
-                                                  AccessStatus                                               AccessStatus                 = AccessStatus.      ALLOWED,
-                                                  RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.ONLINE,
-                                                  PartyStatus                                                PartyStatus                  = PartyStatus.       ENABLED,
-                                                  DateTimeOffset?                                            RemoteAccessNotBefore        = null,
-                                                  DateTimeOffset?                                            RemoteAccessNotAfter         = null,
+                                                  Boolean?                                                   PreferIPv4                        = null,
+                                                  RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
+                                                  LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
+                                                  X509Certificate2?                                          ClientCertificate                 = null,
+                                                  SslProtocols?                                              TLSProtocols                      = null,
+                                                  HTTPContentType?                                           ContentType                       = null,
+                                                  AcceptTypes?                                               Accept                            = null,
+                                                  String?                                                    HTTPUserAgent                     = null,
+                                                  TimeSpan?                                                  RequestTimeout                    = null,
+                                                  TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
+                                                  UInt16?                                                    MaxNumberOfRetries                = null,
+                                                  UInt32?                                                    InternalBufferSize                = null,
+                                                  Boolean?                                                   UseHTTPPipelining                 = null,
 
-                                                  Boolean?                                                   PreferIPv4                   = null,
-                                                  RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                                                  LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                                  X509Certificate?                                           ClientCert                   = null,
-                                                  SslProtocols?                                              TLSProtocol                  = null,
-                                                  String?                                                    HTTPUserAgent                = null,
-                                                  TimeSpan?                                                  RequestTimeout               = null,
-                                                  TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                                                  UInt16?                                                    MaxNumberOfRetries           = null,
-                                                  UInt32?                                                    InternalBufferSize           = null,
-                                                  Boolean?                                                   UseHTTPPipelining            = null,
-
-                                                  EventTracking_Id?                                          EventTrackingId              = null,
-                                                  User_Id?                                                   CurrentUserId                = null)
+                                                  EventTracking_Id?                                          EventTrackingId                   = null,
+                                                  User_Id?                                                   CurrentUserId                     = null,
+                                                  DateTimeOffset?                                            Created                           = null,
+                                                  DateTimeOffset?                                            LastUpdated                       = null)
 
         {
 
@@ -3363,43 +3362,44 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      Id,
                                      CredentialsRoles,
 
-                                     AccessToken,
-
-                                     RemoteAccessToken,
+                                     LocalAccessToken,
                                      RemoteVersionsURL,
+                                     RemoteAccessToken,
 
-                                     RemoteTOTP_ValidityTime,
-                                     RemoteTOTP_Length,
-                                     RemoteTOTP_Alphabet,
+                                     Status,
 
-                                     RemoteVersionIds,
-                                     SelectedVersionId,
-
-                                     LocalTOTP_ValidityTime,
-                                     LocalTOTP_Length,
-                                     LocalTOTP_Alphabet,
-                                     LocalAccessNotBefore,
-                                     LocalAccessNotAfter,
-
-                                     AccessTokenBase64Encoding,
-                                     AllowDowngrades,
-                                     AccessStatus,
-                                     RemoteStatus,
-                                     PartyStatus,
+                                     RemoteAccessTokenBase64Encoding,
+                                     RemoteTOTPConfig,
                                      RemoteAccessNotBefore,
                                      RemoteAccessNotAfter,
+                                     RemoteStatus,
+                                     RemoteVersionIds,
+                                     SelectedVersionId,
+                                     RemoteAllowDowngrades,
+
+                                     LocalAccessTokenBase64Encoding,
+                                     LocalTOTPConfig,
+                                     LocalAccessNotBefore,
+                                     LocalAccessNotAfter,
+                                     LocalAllowDowngrades,
+                                     LocalAccessStatus,
 
                                      PreferIPv4,
                                      RemoteCertificateValidator,
                                      LocalCertificateSelector,
-                                     ClientCert,
-                                     TLSProtocol,
+                                     ClientCertificate,
+                                     TLSProtocols,
+                                     ContentType,
+                                     Accept,
                                      HTTPUserAgent,
                                      RequestTimeout,
                                      TransmissionRetryDelay,
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
-                                     UseHTTPPipelining
+                                     UseHTTPPipelining,
+
+                                     Created,
+                                     LastUpdated
 
                                  );
 
@@ -3428,32 +3428,35 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public async Task<Boolean> AddRemoteParty(RemoteParty_Id                                             Id,
                                                   IEnumerable<CredentialsRole>                               CredentialsRoles,
 
-                                                  AccessToken                                                AccessToken,
-                                                  TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
-                                                  UInt32?                                                    LocalTOTP_Length             = null,
-                                                  String?                                                    LocalTOTP_Alphabet           = null,
-                                                  DateTimeOffset?                                            LocalAccessNotBefore         = null,
-                                                  DateTimeOffset?                                            LocalAccessNotAfter          = null,
-                                                  Boolean?                                                   AccessTokenBase64Encoding    = null,
-                                                  Boolean?                                                   AllowDowngrades              = false,
-                                                  AccessStatus                                               AccessStatus                 = AccessStatus.ALLOWED,
+                                                  AccessToken                                                LocalAccessToken,
 
-                                                  PartyStatus                                                PartyStatus                  = PartyStatus. ENABLED,
+                                                  PartyStatus?                                               Status                           = PartyStatus.ENABLED,
 
-                                                  Boolean?                                                   PreferIPv4                   = null,
-                                                  RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                                                  LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                                  X509Certificate?                                           ClientCert                   = null,
-                                                  SslProtocols?                                              TLSProtocol                  = null,
-                                                  String?                                                    HTTPUserAgent                = null,
-                                                  TimeSpan?                                                  RequestTimeout               = null,
-                                                  TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                                                  UInt16?                                                    MaxNumberOfRetries           = null,
-                                                  UInt32?                                                    InternalBufferSize           = null,
-                                                  Boolean?                                                   UseHTTPPipelining            = null,
+                                                  Boolean?                                                   LocalAccessTokenBase64Encoding   = null,
+                                                  TOTPConfig?                                                LocalTOTPConfig                  = null,
+                                                  DateTimeOffset?                                            LocalAccessNotBefore             = null,
+                                                  DateTimeOffset?                                            LocalAccessNotAfter              = null,
+                                                  Boolean?                                                   LocalAllowDowngrades             = false,
+                                                  AccessStatus?                                              LocalAccessStatus                = AccessStatus.ALLOWED,
 
-                                                  EventTracking_Id?                                          EventTrackingId              = null,
-                                                  User_Id?                                                   CurrentUserId                = null)
+                                                  Boolean?                                                   PreferIPv4                       = null,
+                                                  RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator       = null,
+                                                  LocalCertificateSelectionHandler?                          LocalCertificateSelector         = null,
+                                                  X509Certificate2?                                          ClientCertificate                = null,
+                                                  SslProtocols?                                              TLSProtocols                     = null,
+                                                  HTTPContentType?                                           ContentType                      = null,
+                                                  AcceptTypes?                                               Accept                           = null,
+                                                  String?                                                    HTTPUserAgent                    = null,
+                                                  TimeSpan?                                                  RequestTimeout                   = null,
+                                                  TransmissionRetryDelayDelegate?                            TransmissionRetryDelay           = null,
+                                                  UInt16?                                                    MaxNumberOfRetries               = null,
+                                                  UInt32?                                                    InternalBufferSize               = null,
+                                                  Boolean?                                                   UseHTTPPipelining                = null,
+
+                                                  EventTracking_Id?                                          EventTrackingId                  = null,
+                                                  User_Id?                                                   CurrentUserId                    = null,
+                                                  DateTimeOffset?                                            Created                          = null,
+                                                  DateTimeOffset?                                            LastUpdated                      = null)
         {
 
             var newRemoteParty = new RemoteParty(
@@ -3461,29 +3464,33 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      Id,
                                      CredentialsRoles,
 
-                                     AccessToken,
-                                     AccessTokenBase64Encoding,
-                                     AllowDowngrades,
-                                     AccessStatus,
+                                     LocalAccessToken,
 
-                                     PartyStatus,
-                                     LocalTOTP_ValidityTime,
-                                     LocalTOTP_Length,
-                                     LocalTOTP_Alphabet,
+                                     Status,
+
+                                     LocalAccessTokenBase64Encoding,
+                                     LocalTOTPConfig,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
+                                     LocalAllowDowngrades,
+                                     LocalAccessStatus,
 
                                      PreferIPv4,
                                      RemoteCertificateValidator,
                                      LocalCertificateSelector,
-                                     ClientCert,
-                                     TLSProtocol,
+                                     ClientCertificate,
+                                     TLSProtocols,
+                                     ContentType,
+                                     Accept,
                                      HTTPUserAgent,
                                      RequestTimeout,
                                      TransmissionRetryDelay,
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
-                                     UseHTTPPipelining
+                                     UseHTTPPipelining,
+
+                                     Created,
+                                     LastUpdated
 
                                  );
 
@@ -3513,37 +3520,38 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public async Task<Boolean> AddRemoteParty(RemoteParty_Id                                             Id,
                                                   IEnumerable<CredentialsRole>                               CredentialsRoles,
 
-                                                  AccessToken                                                RemoteAccessToken,
                                                   URL                                                        RemoteVersionsURL,
+                                                  AccessToken                                                RemoteAccessToken,
 
-                                                  TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
-                                                  UInt32?                                                    RemoteTOTP_Length            = null,
-                                                  String?                                                    RemoteTOTP_Alphabet          = null,
+                                                  PartyStatus?                                               Status                            = PartyStatus.ENABLED,
 
-                                                  IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
-                                                  Version_Id?                                                SelectedVersionId            = null,
+                                                  Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
+                                                  TOTPConfig?                                                RemoteTOTPConfig                  = null,
+                                                  DateTimeOffset?                                            RemoteAccessNotBefore             = null,
+                                                  DateTimeOffset?                                            RemoteAccessNotAfter              = null,
+                                                  RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
+                                                  IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
+                                                  Version_Id?                                                SelectedVersionId                 = null,
+                                                  Boolean?                                                   RemoteAllowDowngrades             = null,
 
-                                                  Boolean?                                                   AccessTokenBase64Encoding    = null,
-                                                  Boolean?                                                   AllowDowngrades              = null,
-                                                  RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.UNKNOWN,
-                                                  PartyStatus                                                PartyStatus                  = PartyStatus.       ENABLED,
-                                                  DateTimeOffset?                                            RemoteAccessNotBefore        = null,
-                                                  DateTimeOffset?                                            RemoteAccessNotAfter         = null,
+                                                  Boolean?                                                   PreferIPv4                        = null,
+                                                  RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
+                                                  LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
+                                                  X509Certificate2?                                          ClientCertificate                 = null,
+                                                  SslProtocols?                                              TLSProtocols                      = null,
+                                                  HTTPContentType?                                           ContentType                       = null,
+                                                  AcceptTypes?                                               Accept                            = null,
+                                                  String?                                                    HTTPUserAgent                     = null,
+                                                  TimeSpan?                                                  RequestTimeout                    = null,
+                                                  TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
+                                                  UInt16?                                                    MaxNumberOfRetries                = null,
+                                                  UInt32?                                                    InternalBufferSize                = null,
+                                                  Boolean?                                                   UseHTTPPipelining                 = null,
 
-                                                  Boolean?                                                   PreferIPv4                   = null,
-                                                  RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                                                  LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                                  X509Certificate?                                           ClientCert                   = null,
-                                                  SslProtocols?                                              TLSProtocol                  = null,
-                                                  String?                                                    HTTPUserAgent                = null,
-                                                  TimeSpan?                                                  RequestTimeout               = null,
-                                                  TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                                                  UInt16?                                                    MaxNumberOfRetries           = null,
-                                                  UInt32?                                                    InternalBufferSize           = null,
-                                                  Boolean?                                                   UseHTTPPipelining            = null,
-
-                                                  EventTracking_Id?                                          EventTrackingId              = null,
-                                                  User_Id?                                                   CurrentUserId                = null)
+                                                  EventTracking_Id?                                          EventTrackingId                   = null,
+                                                  User_Id?                                                   CurrentUserId                     = null,
+                                                  DateTimeOffset?                                            Created                           = null,
+                                                  DateTimeOffset?                                            LastUpdated                       = null)
         {
 
             var newRemoteParty = new RemoteParty(
@@ -3551,34 +3559,36 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      Id,
                                      CredentialsRoles,
 
-                                     RemoteAccessToken,
                                      RemoteVersionsURL,
+                                     RemoteAccessToken,
 
-                                     RemoteTOTP_ValidityTime,
-                                     RemoteTOTP_Length,
-                                     RemoteTOTP_Alphabet,
+                                     Status,
 
-                                     RemoteVersionIds,
-                                     SelectedVersionId,
-
-                                     AccessTokenBase64Encoding,
-                                     AllowDowngrades,
-                                     RemoteStatus,
-                                     PartyStatus,
+                                     RemoteAccessTokenBase64Encoding,
+                                     RemoteTOTPConfig,
                                      RemoteAccessNotBefore,
                                      RemoteAccessNotAfter,
+                                     RemoteStatus,
+                                     RemoteVersionIds,
+                                     SelectedVersionId,
+                                     RemoteAllowDowngrades,
 
                                      PreferIPv4,
                                      RemoteCertificateValidator,
                                      LocalCertificateSelector,
-                                     ClientCert,
-                                     TLSProtocol,
+                                     ClientCertificate,
+                                     TLSProtocols,
+                                     ContentType,
+                                     Accept,
                                      HTTPUserAgent,
                                      RequestTimeout,
                                      TransmissionRetryDelay,
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
-                                     UseHTTPPipelining
+                                     UseHTTPPipelining,
+
+                                     Created,
+                                     LastUpdated
 
                                  );
 
@@ -3616,8 +3626,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                   Boolean?                                                   PreferIPv4                   = null,
                                                   RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
                                                   LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                                  X509Certificate?                                           ClientCert                   = null,
-                                                  SslProtocols?                                              TLSProtocol                  = null,
+                                                  X509Certificate2?                                          ClientCertificate            = null,
+                                                  SslProtocols?                                              TLSProtocols                 = null,
+                                                  HTTPContentType?                                           ContentType                  = null,
+                                                  AcceptTypes?                                               Accept                       = null,
                                                   String?                                                    HTTPUserAgent                = null,
                                                   TimeSpan?                                                  RequestTimeout               = null,
                                                   TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
@@ -3625,10 +3637,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                   UInt32?                                                    InternalBufferSize           = null,
                                                   Boolean?                                                   UseHTTPPipelining            = null,
 
-                                                  DateTimeOffset?                                            LastUpdated                  = null,
-
                                                   EventTracking_Id?                                          EventTrackingId              = null,
-                                                  User_Id?                                                   CurrentUserId                = null)
+                                                  User_Id?                                                   CurrentUserId                = null,
+                                                  DateTimeOffset?                                            Created                      = null,
+                                                  DateTimeOffset?                                            LastUpdated                  = null)
         {
 
             var newRemoteParty = new RemoteParty(
@@ -3644,8 +3656,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      PreferIPv4,
                                      RemoteCertificateValidator,
                                      LocalCertificateSelector,
-                                     ClientCert,
-                                     TLSProtocol,
+                                     ClientCertificate,
+                                     TLSProtocols,
+                                     ContentType,
+                                     Accept,
                                      HTTPUserAgent,
                                      RequestTimeout,
                                      TransmissionRetryDelay,
@@ -3653,6 +3667,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      InternalBufferSize,
                                      UseHTTPPipelining,
 
+                                     Created,
                                      LastUpdated
 
                                  );
@@ -3684,100 +3699,100 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public async Task<Boolean> AddRemotePartyIfNotExists(RemoteParty_Id                                             Id,
                                                              IEnumerable<CredentialsRole>                               CredentialsRoles,
 
-                                                             AccessToken                                                AccessToken,
-
-                                                             AccessToken                                                RemoteAccessToken,
+                                                             AccessToken                                                LocalAccessToken,
                                                              URL                                                        RemoteVersionsURL,
+                                                             AccessToken                                                RemoteAccessToken,
 
-                                                             TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
-                                                             UInt32?                                                    RemoteTOTP_Length            = null,
-                                                             String?                                                    RemoteTOTP_Alphabet          = null,
+                                                             PartyStatus?                                               Status                            = PartyStatus.ENABLED,
 
-                                                             IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
-                                                             Version_Id?                                                SelectedVersionId            = null,
+                                                             Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
+                                                             TOTPConfig?                                                RemoteTOTPConfig                  = null,
+                                                             DateTimeOffset?                                            RemoteAccessNotBefore             = null,
+                                                             DateTimeOffset?                                            RemoteAccessNotAfter              = null,
+                                                             RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
+                                                             IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
+                                                             Version_Id?                                                SelectedVersionId                 = null,
+                                                             Boolean?                                                   RemoteAllowDowngrades             = null,
 
-                                                             TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
-                                                             UInt32?                                                    LocalTOTP_Length             = null,
-                                                             String?                                                    LocalTOTP_Alphabet           = null,
-                                                             DateTimeOffset?                                            LocalAccessNotBefore         = null,
-                                                             DateTimeOffset?                                            LocalAccessNotAfter          = null,
+                                                             Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
+                                                             TOTPConfig?                                                LocalTOTPConfig                   = null,
+                                                             DateTimeOffset?                                            LocalAccessNotBefore              = null,
+                                                             DateTimeOffset?                                            LocalAccessNotAfter               = null,
+                                                             Boolean?                                                   LocalAllowDowngrades              = false,
+                                                             AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
-                                                             Boolean?                                                   AccessTokenBase64Encoding    = null,
-                                                             Boolean?                                                   AllowDowngrades              = false,
-                                                             AccessStatus                                               AccessStatus                 = AccessStatus.      ALLOWED,
-                                                             RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.ONLINE,
-                                                             PartyStatus                                                PartyStatus                  = PartyStatus.       ENABLED,
-                                                             DateTimeOffset?                                            RemoteAccessNotBefore        = null,
-                                                             DateTimeOffset?                                            RemoteAccessNotAfter         = null,
+                                                             Boolean?                                                   PreferIPv4                        = null,
+                                                             RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
+                                                             LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
+                                                             X509Certificate2?                                          ClientCertificate                 = null,
+                                                             SslProtocols?                                              TLSProtocols                      = null,
+                                                             HTTPContentType?                                           ContentType                       = null,
+                                                             AcceptTypes?                                               Accept                            = null,
+                                                             String?                                                    HTTPUserAgent                     = null,
+                                                             TimeSpan?                                                  RequestTimeout                    = null,
+                                                             TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
+                                                             UInt16?                                                    MaxNumberOfRetries                = null,
+                                                             UInt32?                                                    InternalBufferSize                = null,
+                                                             Boolean?                                                   UseHTTPPipelining                 = null,
 
-                                                             Boolean?                                                   PreferIPv4                   = null,
-                                                             RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                                                             LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                                             X509Certificate?                                           ClientCert                   = null,
-                                                             SslProtocols?                                              TLSProtocol                  = null,
-                                                             String?                                                    HTTPUserAgent                = null,
-                                                             TimeSpan?                                                  RequestTimeout               = null,
-                                                             TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                                                             UInt16?                                                    MaxNumberOfRetries           = null,
-                                                             UInt32?                                                    InternalBufferSize           = null,
-                                                             Boolean?                                                   UseHTTPPipelining            = null,
-
-                                                             EventTracking_Id?                                          EventTrackingId              = null,
-                                                             User_Id?                                                   CurrentUserId                = null)
+                                                             EventTracking_Id?                                          EventTrackingId                   = null,
+                                                             User_Id?                                                   CurrentUserId                     = null,
+                                                             DateTimeOffset?                                            Created                           = null,
+                                                             DateTimeOffset?                                            LastUpdated                       = null)
 
         {
+
+            if (remoteParties.ContainsKey(Id))
+                return true;
 
             var newRemoteParty = new RemoteParty(
 
                                      Id,
                                      CredentialsRoles,
 
-                                     AccessToken,
-
-                                     RemoteAccessToken,
+                                     LocalAccessToken,
                                      RemoteVersionsURL,
+                                     RemoteAccessToken,
 
-                                     RemoteTOTP_ValidityTime,
-                                     RemoteTOTP_Length,
-                                     RemoteTOTP_Alphabet,
+                                     Status,
 
-                                     RemoteVersionIds,
-                                     SelectedVersionId,
-
-                                     LocalTOTP_ValidityTime,
-                                     LocalTOTP_Length,
-                                     LocalTOTP_Alphabet,
-                                     LocalAccessNotBefore,
-                                     LocalAccessNotAfter,
-
-                                     AccessTokenBase64Encoding,
-                                     AllowDowngrades,
-                                     AccessStatus,
-                                     RemoteStatus,
-                                     PartyStatus,
+                                     RemoteAccessTokenBase64Encoding,
+                                     RemoteTOTPConfig,
                                      RemoteAccessNotBefore,
                                      RemoteAccessNotAfter,
+                                     RemoteStatus,
+                                     RemoteVersionIds,
+                                     SelectedVersionId,
+                                     RemoteAllowDowngrades,
+
+                                     LocalAccessTokenBase64Encoding,
+                                     LocalTOTPConfig,
+                                     LocalAccessNotBefore,
+                                     LocalAccessNotAfter,
+                                     LocalAllowDowngrades,
+                                     LocalAccessStatus,
 
                                      PreferIPv4,
                                      RemoteCertificateValidator,
                                      LocalCertificateSelector,
-                                     ClientCert,
-                                     TLSProtocol,
+                                     ClientCertificate,
+                                     TLSProtocols,
+                                     ContentType,
+                                     Accept,
                                      HTTPUserAgent,
                                      RequestTimeout,
                                      TransmissionRetryDelay,
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
-                                     UseHTTPPipelining
+                                     UseHTTPPipelining,
+
+                                     Created,
+                                     LastUpdated
 
                                  );
 
-            var result = remoteParties.GetOrAdd(
-                             newRemoteParty.Id,
-                             value => newRemoteParty
-                         );
-
-            if (result == newRemoteParty)
+            if (remoteParties.TryAdd(newRemoteParty.Id,
+                                     newRemoteParty))
             {
 
                 await LogRemoteParty(
@@ -3802,71 +3817,77 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public async Task<Boolean> AddRemotePartyIfNotExists(RemoteParty_Id                                             Id,
                                                              IEnumerable<CredentialsRole>                               CredentialsRoles,
 
-                                                             AccessToken                                                AccessToken,
-                                                             TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
-                                                             UInt32?                                                    LocalTOTP_Length             = null,
-                                                             String?                                                    LocalTOTP_Alphabet           = null,
-                                                             DateTimeOffset?                                            LocalAccessNotBefore         = null,
-                                                             DateTimeOffset?                                            LocalAccessNotAfter          = null,
-                                                             Boolean?                                                   AccessTokenBase64Encoding    = null,
-                                                             Boolean?                                                   AllowDowngrades              = false,
-                                                             AccessStatus                                               AccessStatus                 = AccessStatus.ALLOWED,
+                                                             AccessToken                                                LocalAccessToken,
 
-                                                             PartyStatus                                                PartyStatus                  = PartyStatus. ENABLED,
+                                                             PartyStatus?                                               Status                           = PartyStatus.ENABLED,
 
-                                                             Boolean?                                                   PreferIPv4                   = null,
-                                                             RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                                                             LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                                             X509Certificate?                                           ClientCert                   = null,
-                                                             SslProtocols?                                              TLSProtocol                  = null,
-                                                             String?                                                    HTTPUserAgent                = null,
-                                                             TimeSpan?                                                  RequestTimeout               = null,
-                                                             TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                                                             UInt16?                                                    MaxNumberOfRetries           = null,
-                                                             UInt32?                                                    InternalBufferSize           = null,
-                                                             Boolean?                                                   UseHTTPPipelining            = null,
+                                                             Boolean?                                                   LocalAccessTokenBase64Encoding   = null,
+                                                             TOTPConfig?                                                LocalTOTPConfig                  = null,
+                                                             DateTimeOffset?                                            LocalAccessNotBefore             = null,
+                                                             DateTimeOffset?                                            LocalAccessNotAfter              = null,
+                                                             Boolean?                                                   LocalAllowDowngrades             = false,
+                                                             AccessStatus?                                              LocalAccessStatus                = AccessStatus.ALLOWED,
 
-                                                             EventTracking_Id?                                          EventTrackingId              = null,
-                                                             User_Id?                                                   CurrentUserId                = null)
+                                                             Boolean?                                                   PreferIPv4                       = null,
+                                                             RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator       = null,
+                                                             LocalCertificateSelectionHandler?                          LocalCertificateSelector         = null,
+                                                             X509Certificate2?                                          ClientCertificate                = null,
+                                                             SslProtocols?                                              TLSProtocols                     = null,
+                                                             HTTPContentType?                                           ContentType                      = null,
+                                                             AcceptTypes?                                               Accept                           = null,
+                                                             String?                                                    HTTPUserAgent                    = null,
+                                                             TimeSpan?                                                  RequestTimeout                   = null,
+                                                             TransmissionRetryDelayDelegate?                            TransmissionRetryDelay           = null,
+                                                             UInt16?                                                    MaxNumberOfRetries               = null,
+                                                             UInt32?                                                    InternalBufferSize               = null,
+                                                             Boolean?                                                   UseHTTPPipelining                = null,
+
+                                                             EventTracking_Id?                                          EventTrackingId                  = null,
+                                                             User_Id?                                                   CurrentUserId                    = null,
+                                                             DateTimeOffset?                                            Created                          = null,
+                                                             DateTimeOffset?                                            LastUpdated                      = null)
         {
+
+            if (remoteParties.ContainsKey(Id))
+                return true;
 
             var newRemoteParty = new RemoteParty(
 
                                      Id,
                                      CredentialsRoles,
 
-                                     AccessToken,
-                                     AccessTokenBase64Encoding,
-                                     AllowDowngrades,
-                                     AccessStatus,
+                                     LocalAccessToken,
 
-                                     PartyStatus,
-                                     LocalTOTP_ValidityTime,
-                                     LocalTOTP_Length,
-                                     LocalTOTP_Alphabet,
+                                     Status,
+
+                                     LocalAccessTokenBase64Encoding,
+                                     LocalTOTPConfig,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
+                                     LocalAllowDowngrades,
+                                     LocalAccessStatus,
 
                                      PreferIPv4,
                                      RemoteCertificateValidator,
                                      LocalCertificateSelector,
-                                     ClientCert,
-                                     TLSProtocol,
+                                     ClientCertificate,
+                                     TLSProtocols,
+                                     ContentType,
+                                     Accept,
                                      HTTPUserAgent,
                                      RequestTimeout,
                                      TransmissionRetryDelay,
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
-                                     UseHTTPPipelining
+                                     UseHTTPPipelining,
+
+                                     Created,
+                                     LastUpdated
 
                                  );
 
-            var result = remoteParties.GetOrAdd(
-                             newRemoteParty.Id,
-                             value => newRemoteParty
-                         );
-
-            if (result == newRemoteParty)
+            if (remoteParties.TryAdd(newRemoteParty.Id,
+                                     newRemoteParty))
             {
 
                 await LogRemoteParty(
@@ -3891,81 +3912,83 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public async Task<Boolean> AddRemotePartyIfNotExists(RemoteParty_Id                                             Id,
                                                              IEnumerable<CredentialsRole>                               CredentialsRoles,
 
-                                                             AccessToken                                                RemoteAccessToken,
                                                              URL                                                        RemoteVersionsURL,
+                                                             AccessToken                                                RemoteAccessToken,
 
-                                                             TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
-                                                             UInt32?                                                    RemoteTOTP_Length            = null,
-                                                             String?                                                    RemoteTOTP_Alphabet          = null,
+                                                             PartyStatus?                                               Status                            = PartyStatus.ENABLED,
 
-                                                             IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
-                                                             Version_Id?                                                SelectedVersionId            = null,
+                                                             Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
+                                                             TOTPConfig?                                                RemoteTOTPConfig                  = null,
+                                                             DateTimeOffset?                                            RemoteAccessNotBefore             = null,
+                                                             DateTimeOffset?                                            RemoteAccessNotAfter              = null,
+                                                             RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
+                                                             IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
+                                                             Version_Id?                                                SelectedVersionId                 = null,
+                                                             Boolean?                                                   RemoteAllowDowngrades             = null,
 
-                                                             Boolean?                                                   AccessTokenBase64Encoding    = null,
-                                                             Boolean?                                                   AllowDowngrades              = null,
-                                                             RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.UNKNOWN,
-                                                             PartyStatus                                                PartyStatus                  = PartyStatus.       ENABLED,
-                                                             DateTimeOffset?                                            RemoteAccessNotBefore        = null,
-                                                             DateTimeOffset?                                            RemoteAccessNotAfter         = null,
+                                                             Boolean?                                                   PreferIPv4                        = null,
+                                                             RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
+                                                             LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
+                                                             X509Certificate2?                                          ClientCertificate                 = null,
+                                                             SslProtocols?                                              TLSProtocols                      = null,
+                                                             HTTPContentType?                                           ContentType                       = null,
+                                                             AcceptTypes?                                               Accept                            = null,
+                                                             String?                                                    HTTPUserAgent                     = null,
+                                                             TimeSpan?                                                  RequestTimeout                    = null,
+                                                             TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
+                                                             UInt16?                                                    MaxNumberOfRetries                = null,
+                                                             UInt32?                                                    InternalBufferSize                = null,
+                                                             Boolean?                                                   UseHTTPPipelining                 = null,
 
-                                                             Boolean?                                                   PreferIPv4                   = null,
-                                                             RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                                                             LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                                             X509Certificate?                                           ClientCert                   = null,
-                                                             SslProtocols?                                              TLSProtocol                  = null,
-                                                             String?                                                    HTTPUserAgent                = null,
-                                                             TimeSpan?                                                  RequestTimeout               = null,
-                                                             TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                                                             UInt16?                                                    MaxNumberOfRetries           = null,
-                                                             UInt32?                                                    InternalBufferSize           = null,
-                                                             Boolean?                                                   UseHTTPPipelining            = null,
-
-                                                             EventTracking_Id?                                          EventTrackingId              = null,
-                                                             User_Id?                                                   CurrentUserId                = null)
+                                                             EventTracking_Id?                                          EventTrackingId                   = null,
+                                                             User_Id?                                                   CurrentUserId                     = null,
+                                                             DateTimeOffset?                                            Created                           = null,
+                                                             DateTimeOffset?                                            LastUpdated                       = null)
         {
+
+            if (remoteParties.ContainsKey(Id))
+                return true;
 
             var newRemoteParty = new RemoteParty(
 
                                      Id,
                                      CredentialsRoles,
 
-                                     RemoteAccessToken,
                                      RemoteVersionsURL,
+                                     RemoteAccessToken,
 
-                                     RemoteTOTP_ValidityTime,
-                                     RemoteTOTP_Length,
-                                     RemoteTOTP_Alphabet,
+                                     Status,
 
-                                     RemoteVersionIds,
-                                     SelectedVersionId,
-
-                                     AccessTokenBase64Encoding,
-                                     AllowDowngrades,
-                                     RemoteStatus,
-                                     PartyStatus,
+                                     RemoteAccessTokenBase64Encoding,
+                                     RemoteTOTPConfig,
                                      RemoteAccessNotBefore,
                                      RemoteAccessNotAfter,
+                                     RemoteStatus,
+                                     RemoteVersionIds,
+                                     SelectedVersionId,
+                                     RemoteAllowDowngrades,
 
                                      PreferIPv4,
                                      RemoteCertificateValidator,
                                      LocalCertificateSelector,
-                                     ClientCert,
-                                     TLSProtocol,
+                                     ClientCertificate,
+                                     TLSProtocols,
+                                     ContentType,
+                                     Accept,
                                      HTTPUserAgent,
                                      RequestTimeout,
                                      TransmissionRetryDelay,
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
-                                     UseHTTPPipelining
+                                     UseHTTPPipelining,
+
+                                     Created,
+                                     LastUpdated
 
                                  );
 
-            var result = remoteParties.GetOrAdd(
-                             newRemoteParty.Id,
-                             value => newRemoteParty
-                         );
-
-            if (result == newRemoteParty)
+            if (remoteParties.TryAdd(newRemoteParty.Id,
+                                     newRemoteParty))
             {
 
                 await LogRemoteParty(
@@ -3998,8 +4021,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                              Boolean?                                                   PreferIPv4                   = null,
                                                              RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
                                                              LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                                             X509Certificate?                                           ClientCert                   = null,
-                                                             SslProtocols?                                              TLSProtocol                  = null,
+                                                             X509Certificate2?                                          ClientCertificate            = null,
+                                                             SslProtocols?                                              TLSProtocols                 = null,
+                                                             HTTPContentType?                                           ContentType                  = null,
+                                                             AcceptTypes?                                               Accept                       = null,
                                                              String?                                                    HTTPUserAgent                = null,
                                                              TimeSpan?                                                  RequestTimeout               = null,
                                                              TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
@@ -4007,11 +4032,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                              UInt32?                                                    InternalBufferSize           = null,
                                                              Boolean?                                                   UseHTTPPipelining            = null,
 
-                                                             DateTimeOffset?                                            LastUpdated                  = null,
-
                                                              EventTracking_Id?                                          EventTrackingId              = null,
-                                                             User_Id?                                                   CurrentUserId                = null)
+                                                             User_Id?                                                   CurrentUserId                = null,
+                                                             DateTimeOffset?                                            Created                      = null,
+                                                             DateTimeOffset?                                            LastUpdated                  = null)
         {
+
+            if (remoteParties.ContainsKey(Id))
+                return true;
 
             var newRemoteParty = new RemoteParty(
 
@@ -4026,8 +4054,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      PreferIPv4,
                                      RemoteCertificateValidator,
                                      LocalCertificateSelector,
-                                     ClientCert,
-                                     TLSProtocol,
+                                     ClientCertificate,
+                                     TLSProtocols,
+                                     ContentType,
+                                     Accept,
                                      HTTPUserAgent,
                                      RequestTimeout,
                                      TransmissionRetryDelay,
@@ -4035,16 +4065,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      InternalBufferSize,
                                      UseHTTPPipelining,
 
+                                     Created,
                                      LastUpdated
 
                                  );
 
-            var result = remoteParties.GetOrAdd(
-                             newRemoteParty.Id,
-                             value => newRemoteParty
-                         );
-
-            if (result == newRemoteParty)
+            if (remoteParties.TryAdd(newRemoteParty.Id,
+                                     newRemoteParty))
             {
 
                 await LogRemoteParty(
@@ -4070,46 +4097,46 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public async Task<Boolean> AddOrUpdateRemoteParty(RemoteParty_Id                                             Id,
                                                           IEnumerable<CredentialsRole>                               CredentialsRoles,
 
-                                                          AccessToken                                                AccessToken,
-
-                                                          AccessToken                                                RemoteAccessToken,
+                                                          AccessToken                                                LocalAccessToken,
                                                           URL                                                        RemoteVersionsURL,
+                                                          AccessToken                                                RemoteAccessToken,
 
-                                                          TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
-                                                          UInt32?                                                    RemoteTOTP_Length            = null,
-                                                          String?                                                    RemoteTOTP_Alphabet          = null,
+                                                          PartyStatus?                                               Status                            = PartyStatus.ENABLED,
 
-                                                          IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
-                                                          Version_Id?                                                SelectedVersionId            = null,
+                                                          Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
+                                                          TOTPConfig?                                                RemoteTOTPConfig                  = null,
+                                                          DateTimeOffset?                                            RemoteAccessNotBefore             = null,
+                                                          DateTimeOffset?                                            RemoteAccessNotAfter              = null,
+                                                          RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
+                                                          IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
+                                                          Version_Id?                                                SelectedVersionId                 = null,
+                                                          Boolean?                                                   RemoteAllowDowngrades             = null,
 
-                                                          TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
-                                                          UInt32?                                                    LocalTOTP_Length             = null,
-                                                          String?                                                    LocalTOTP_Alphabet           = null,
-                                                          DateTimeOffset?                                            LocalAccessNotBefore         = null,
-                                                          DateTimeOffset?                                            LocalAccessNotAfter          = null,
+                                                          Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
+                                                          TOTPConfig?                                                LocalTOTPConfig                   = null,
+                                                          DateTimeOffset?                                            LocalAccessNotBefore              = null,
+                                                          DateTimeOffset?                                            LocalAccessNotAfter               = null,
+                                                          Boolean?                                                   LocalAllowDowngrades              = false,
+                                                          AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
-                                                          Boolean?                                                   AccessTokenBase64Encoding    = null,
-                                                          Boolean?                                                   AllowDowngrades              = false,
-                                                          AccessStatus                                               AccessStatus                 = AccessStatus.      ALLOWED,
-                                                          RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.ONLINE,
-                                                          PartyStatus                                                PartyStatus                  = PartyStatus.       ENABLED,
-                                                          DateTimeOffset?                                            RemoteAccessNotBefore        = null,
-                                                          DateTimeOffset?                                            RemoteAccessNotAfter         = null,
+                                                          Boolean?                                                   PreferIPv4                        = null,
+                                                          RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
+                                                          LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
+                                                          X509Certificate2?                                          ClientCertificate                 = null,
+                                                          SslProtocols?                                              TLSProtocols                      = null,
+                                                          HTTPContentType?                                           ContentType                       = null,
+                                                          AcceptTypes?                                               Accept                            = null,
+                                                          String?                                                    HTTPUserAgent                     = null,
+                                                          TimeSpan?                                                  RequestTimeout                    = null,
+                                                          TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
+                                                          UInt16?                                                    MaxNumberOfRetries                = null,
+                                                          UInt32?                                                    InternalBufferSize                = null,
+                                                          Boolean?                                                   UseHTTPPipelining                 = null,
 
-                                                          Boolean?                                                   PreferIPv4                   = null,
-                                                          RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                                                          LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                                          X509Certificate?                                           ClientCert                   = null,
-                                                          SslProtocols?                                              TLSProtocol                  = null,
-                                                          String?                                                    HTTPUserAgent                = null,
-                                                          TimeSpan?                                                  RequestTimeout               = null,
-                                                          TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                                                          UInt16?                                                    MaxNumberOfRetries           = null,
-                                                          UInt32?                                                    InternalBufferSize           = null,
-                                                          Boolean?                                                   UseHTTPPipelining            = null,
-
-                                                          EventTracking_Id?                                          EventTrackingId              = null,
-                                                          User_Id?                                                   CurrentUserId                = null)
+                                                          EventTracking_Id?                                          EventTrackingId                   = null,
+                                                          User_Id?                                                   CurrentUserId                     = null,
+                                                          DateTimeOffset?                                            Created                           = null,
+                                                          DateTimeOffset?                                            LastUpdated                       = null)
 
         {
 
@@ -4118,43 +4145,44 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      Id,
                                      CredentialsRoles,
 
-                                     AccessToken,
-
-                                     RemoteAccessToken,
+                                     LocalAccessToken,
                                      RemoteVersionsURL,
+                                     RemoteAccessToken,
 
-                                     RemoteTOTP_ValidityTime,
-                                     RemoteTOTP_Length,
-                                     RemoteTOTP_Alphabet,
+                                     Status,
 
-                                     RemoteVersionIds,
-                                     SelectedVersionId,
-
-                                     LocalTOTP_ValidityTime,
-                                     LocalTOTP_Length,
-                                     LocalTOTP_Alphabet,
-                                     LocalAccessNotBefore,
-                                     LocalAccessNotAfter,
-
-                                     AccessTokenBase64Encoding,
-                                     AllowDowngrades,
-                                     AccessStatus,
-                                     RemoteStatus,
-                                     PartyStatus,
+                                     RemoteAccessTokenBase64Encoding,
+                                     RemoteTOTPConfig,
                                      RemoteAccessNotBefore,
                                      RemoteAccessNotAfter,
+                                     RemoteStatus,
+                                     RemoteVersionIds,
+                                     SelectedVersionId,
+                                     RemoteAllowDowngrades,
+
+                                     LocalAccessTokenBase64Encoding,
+                                     LocalTOTPConfig,
+                                     LocalAccessNotBefore,
+                                     LocalAccessNotAfter,
+                                     LocalAllowDowngrades,
+                                     LocalAccessStatus,
 
                                      PreferIPv4,
                                      RemoteCertificateValidator,
                                      LocalCertificateSelector,
-                                     ClientCert,
-                                     TLSProtocol,
+                                     ClientCertificate,
+                                     TLSProtocols,
+                                     ContentType,
+                                     Accept,
                                      HTTPUserAgent,
                                      RequestTimeout,
                                      TransmissionRetryDelay,
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
-                                     UseHTTPPipelining
+                                     UseHTTPPipelining,
+
+                                     Created,
+                                     LastUpdated
 
                                  );
 
@@ -4193,32 +4221,35 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public async Task<Boolean> AddOrUpdateRemoteParty(RemoteParty_Id                                             Id,
                                                           IEnumerable<CredentialsRole>                               CredentialsRoles,
 
-                                                          AccessToken                                                AccessToken,
-                                                          TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
-                                                          UInt32?                                                    LocalTOTP_Length             = null,
-                                                          String?                                                    LocalTOTP_Alphabet           = null,
-                                                          DateTimeOffset?                                            LocalAccessNotBefore         = null,
-                                                          DateTimeOffset?                                            LocalAccessNotAfter          = null,
-                                                          Boolean?                                                   AccessTokenBase64Encoding    = null,
-                                                          Boolean?                                                   AllowDowngrades              = false,
-                                                          AccessStatus                                               AccessStatus                 = AccessStatus.ALLOWED,
+                                                          AccessToken                                                LocalAccessToken,
 
-                                                          PartyStatus                                                PartyStatus                  = PartyStatus. ENABLED,
+                                                          PartyStatus?                                               Status                           = PartyStatus.ENABLED,
 
-                                                          Boolean?                                                   PreferIPv4                   = null,
-                                                          RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                                                          LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                                          X509Certificate?                                           ClientCert                   = null,
-                                                          SslProtocols?                                              TLSProtocol                  = null,
-                                                          String?                                                    HTTPUserAgent                = null,
-                                                          TimeSpan?                                                  RequestTimeout               = null,
-                                                          TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                                                          UInt16?                                                    MaxNumberOfRetries           = null,
-                                                          UInt32?                                                    InternalBufferSize           = null,
-                                                          Boolean?                                                   UseHTTPPipelining            = null,
+                                                          Boolean?                                                   LocalAccessTokenBase64Encoding   = null,
+                                                          TOTPConfig?                                                LocalTOTPConfig                  = null,
+                                                          DateTimeOffset?                                            LocalAccessNotBefore             = null,
+                                                          DateTimeOffset?                                            LocalAccessNotAfter              = null,
+                                                          Boolean?                                                   LocalAllowDowngrades             = false,
+                                                          AccessStatus?                                              LocalAccessStatus                = AccessStatus.ALLOWED,
 
-                                                          EventTracking_Id?                                          EventTrackingId              = null,
-                                                          User_Id?                                                   CurrentUserId                = null)
+                                                          Boolean?                                                   PreferIPv4                       = null,
+                                                          RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator       = null,
+                                                          LocalCertificateSelectionHandler?                          LocalCertificateSelector         = null,
+                                                          X509Certificate2?                                          ClientCertificate                = null,
+                                                          SslProtocols?                                              TLSProtocols                     = null,
+                                                          HTTPContentType?                                           ContentType                      = null,
+                                                          AcceptTypes?                                               Accept                           = null,
+                                                          String?                                                    HTTPUserAgent                    = null,
+                                                          TimeSpan?                                                  RequestTimeout                   = null,
+                                                          TransmissionRetryDelayDelegate?                            TransmissionRetryDelay           = null,
+                                                          UInt16?                                                    MaxNumberOfRetries               = null,
+                                                          UInt32?                                                    InternalBufferSize               = null,
+                                                          Boolean?                                                   UseHTTPPipelining                = null,
+
+                                                          EventTracking_Id?                                          EventTrackingId                  = null,
+                                                          User_Id?                                                   CurrentUserId                    = null,
+                                                          DateTimeOffset?                                            Created                          = null,
+                                                          DateTimeOffset?                                            LastUpdated                      = null)
         {
 
             var newRemoteParty = new RemoteParty(
@@ -4226,29 +4257,33 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      Id,
                                      CredentialsRoles,
 
-                                     AccessToken,
-                                     AccessTokenBase64Encoding,
-                                     AllowDowngrades,
-                                     AccessStatus,
+                                     LocalAccessToken,
 
-                                     PartyStatus,
-                                     LocalTOTP_ValidityTime,
-                                     LocalTOTP_Length,
-                                     LocalTOTP_Alphabet,
+                                     Status,
+
+                                     LocalAccessTokenBase64Encoding,
+                                     LocalTOTPConfig,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
+                                     LocalAllowDowngrades,
+                                     LocalAccessStatus,
 
                                      PreferIPv4,
                                      RemoteCertificateValidator,
                                      LocalCertificateSelector,
-                                     ClientCert,
-                                     TLSProtocol,
+                                     ClientCertificate,
+                                     TLSProtocols,
+                                     ContentType,
+                                     Accept,
                                      HTTPUserAgent,
                                      RequestTimeout,
                                      TransmissionRetryDelay,
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
-                                     UseHTTPPipelining
+                                     UseHTTPPipelining,
+
+                                     Created,
+                                     LastUpdated
 
                                  );
 
@@ -4287,37 +4322,38 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public async Task<Boolean> AddOrUpdateRemoteParty(RemoteParty_Id                                             Id,
                                                           IEnumerable<CredentialsRole>                               CredentialsRoles,
 
-                                                          AccessToken                                                RemoteAccessToken,
                                                           URL                                                        RemoteVersionsURL,
+                                                          AccessToken                                                RemoteAccessToken,
 
-                                                          TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
-                                                          UInt32?                                                    RemoteTOTP_Length            = null,
-                                                          String?                                                    RemoteTOTP_Alphabet          = null,
+                                                          PartyStatus?                                               Status                            = PartyStatus.ENABLED,
 
-                                                          IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
-                                                          Version_Id?                                                SelectedVersionId            = null,
+                                                          Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
+                                                          TOTPConfig?                                                RemoteTOTPConfig                  = null,
+                                                          DateTimeOffset?                                            RemoteAccessNotBefore             = null,
+                                                          DateTimeOffset?                                            RemoteAccessNotAfter              = null,
+                                                          RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
+                                                          IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
+                                                          Version_Id?                                                SelectedVersionId                 = null,
+                                                          Boolean?                                                   RemoteAllowDowngrades             = null,
 
-                                                          Boolean?                                                   AccessTokenBase64Encoding    = null,
-                                                          Boolean?                                                   AllowDowngrades              = null,
-                                                          RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.UNKNOWN,
-                                                          PartyStatus                                                PartyStatus                  = PartyStatus.       ENABLED,
-                                                          DateTimeOffset?                                            RemoteAccessNotBefore        = null,
-                                                          DateTimeOffset?                                            RemoteAccessNotAfter         = null,
+                                                          Boolean?                                                   PreferIPv4                        = null,
+                                                          RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
+                                                          LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
+                                                          X509Certificate2?                                          ClientCertificate                 = null,
+                                                          SslProtocols?                                              TLSProtocols                      = null,
+                                                          HTTPContentType?                                           ContentType                       = null,
+                                                          AcceptTypes?                                               Accept                            = null,
+                                                          String?                                                    HTTPUserAgent                     = null,
+                                                          TimeSpan?                                                  RequestTimeout                    = null,
+                                                          TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
+                                                          UInt16?                                                    MaxNumberOfRetries                = null,
+                                                          UInt32?                                                    InternalBufferSize                = null,
+                                                          Boolean?                                                   UseHTTPPipelining                 = null,
 
-                                                          Boolean?                                                   PreferIPv4                   = null,
-                                                          RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                                                          LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                                          X509Certificate?                                           ClientCert                   = null,
-                                                          SslProtocols?                                              TLSProtocol                  = null,
-                                                          String?                                                    HTTPUserAgent                = null,
-                                                          TimeSpan?                                                  RequestTimeout               = null,
-                                                          TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                                                          UInt16?                                                    MaxNumberOfRetries           = null,
-                                                          UInt32?                                                    InternalBufferSize           = null,
-                                                          Boolean?                                                   UseHTTPPipelining            = null,
-
-                                                          EventTracking_Id?                                          EventTrackingId              = null,
-                                                          User_Id?                                                   CurrentUserId                = null)
+                                                          EventTracking_Id?                                          EventTrackingId                   = null,
+                                                          User_Id?                                                   CurrentUserId                     = null,
+                                                          DateTimeOffset?                                            Created                           = null,
+                                                          DateTimeOffset?                                            LastUpdated                       = null)
         {
 
             var newRemoteParty = new RemoteParty(
@@ -4325,34 +4361,36 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      Id,
                                      CredentialsRoles,
 
-                                     RemoteAccessToken,
                                      RemoteVersionsURL,
+                                     RemoteAccessToken,
 
-                                     RemoteTOTP_ValidityTime,
-                                     RemoteTOTP_Length,
-                                     RemoteTOTP_Alphabet,
+                                     Status,
 
-                                     RemoteVersionIds,
-                                     SelectedVersionId,
-
-                                     AccessTokenBase64Encoding,
-                                     AllowDowngrades,
-                                     RemoteStatus,
-                                     PartyStatus,
+                                     RemoteAccessTokenBase64Encoding,
+                                     RemoteTOTPConfig,
                                      RemoteAccessNotBefore,
                                      RemoteAccessNotAfter,
+                                     RemoteStatus,
+                                     RemoteVersionIds,
+                                     SelectedVersionId,
+                                     RemoteAllowDowngrades,
 
                                      PreferIPv4,
                                      RemoteCertificateValidator,
                                      LocalCertificateSelector,
-                                     ClientCert,
-                                     TLSProtocol,
+                                     ClientCertificate,
+                                     TLSProtocols,
+                                     ContentType,
+                                     Accept,
                                      HTTPUserAgent,
                                      RequestTimeout,
                                      TransmissionRetryDelay,
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
-                                     UseHTTPPipelining
+                                     UseHTTPPipelining,
+
+                                     Created,
+                                     LastUpdated
 
                                  );
 
@@ -4399,8 +4437,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                           Boolean?                                                   PreferIPv4                   = null,
                                                           RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
                                                           LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                                          X509Certificate?                                           ClientCert                   = null,
-                                                          SslProtocols?                                              TLSProtocol                  = null,
+                                                          X509Certificate2?                                          ClientCertificate            = null,
+                                                          SslProtocols?                                              TLSProtocols                 = null,
+                                                          HTTPContentType?                                           ContentType                  = null,
+                                                          AcceptTypes?                                               Accept                       = null,
                                                           String?                                                    HTTPUserAgent                = null,
                                                           TimeSpan?                                                  RequestTimeout               = null,
                                                           TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
@@ -4408,10 +4448,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                           UInt32?                                                    InternalBufferSize           = null,
                                                           Boolean?                                                   UseHTTPPipelining            = null,
 
-                                                          DateTimeOffset?                                            LastUpdated                  = null,
-
                                                           EventTracking_Id?                                          EventTrackingId              = null,
-                                                          User_Id?                                                   CurrentUserId                = null)
+                                                          User_Id?                                                   CurrentUserId                = null,
+                                                          DateTimeOffset?                                            Created                      = null,
+                                                          DateTimeOffset?                                            LastUpdated                  = null)
         {
 
             var newRemoteParty = new RemoteParty(
@@ -4427,8 +4467,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      PreferIPv4,
                                      RemoteCertificateValidator,
                                      LocalCertificateSelector,
-                                     ClientCert,
-                                     TLSProtocol,
+                                     ClientCertificate,
+                                     TLSProtocols,
+                                     ContentType,
+                                     Accept,
                                      HTTPUserAgent,
                                      RequestTimeout,
                                      TransmissionRetryDelay,
@@ -4436,6 +4478,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      InternalBufferSize,
                                      UseHTTPPipelining,
 
+                                     Created,
                                      LastUpdated
 
                                  );
@@ -4474,272 +4517,94 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region UpdateRemoteParty(...)
 
         public async Task<Boolean> UpdateRemoteParty(RemoteParty                                                ExistingRemoteParty,
+                                                     IEnumerable<CredentialsRole>                               CredentialsRoles,
 
-                                                     AccessToken                                                AccessToken,
-
-                                                     AccessToken                                                RemoteAccessToken,
+                                                     AccessToken                                                LocalAccessToken,
                                                      URL                                                        RemoteVersionsURL,
+                                                     AccessToken                                                RemoteAccessToken,
 
-                                                     TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
-                                                     UInt32?                                                    RemoteTOTP_Length            = null,
-                                                     String?                                                    RemoteTOTP_Alphabet          = null,
+                                                     PartyStatus?                                               Status                            = PartyStatus.ENABLED,
 
-                                                     IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
-                                                     Version_Id?                                                SelectedVersionId            = null,
+                                                     Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
+                                                     TOTPConfig?                                                RemoteTOTPConfig                  = null,
+                                                     DateTimeOffset?                                            RemoteAccessNotBefore             = null,
+                                                     DateTimeOffset?                                            RemoteAccessNotAfter              = null,
+                                                     RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
+                                                     IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
+                                                     Version_Id?                                                SelectedVersionId                 = null,
+                                                     Boolean?                                                   RemoteAllowDowngrades             = null,
 
-                                                     TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
-                                                     UInt32?                                                    LocalTOTP_Length             = null,
-                                                     String?                                                    LocalTOTP_Alphabet           = null,
-                                                     DateTimeOffset?                                            LocalAccessNotBefore         = null,
-                                                     DateTimeOffset?                                            LocalAccessNotAfter          = null,
+                                                     Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
+                                                     TOTPConfig?                                                LocalTOTPConfig                   = null,
+                                                     DateTimeOffset?                                            LocalAccessNotBefore              = null,
+                                                     DateTimeOffset?                                            LocalAccessNotAfter               = null,
+                                                     Boolean?                                                   LocalAllowDowngrades              = false,
+                                                     AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
-                                                     Boolean?                                                   AccessTokenBase64Encoding    = null,
-                                                     Boolean?                                                   AllowDowngrades              = false,
-                                                     AccessStatus                                               AccessStatus                 = AccessStatus.      ALLOWED,
-                                                     RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.ONLINE,
-                                                     PartyStatus                                                PartyStatus                  = PartyStatus.       ENABLED,
-                                                     DateTimeOffset?                                            RemoteAccessNotBefore        = null,
-                                                     DateTimeOffset?                                            RemoteAccessNotAfter         = null,
+                                                     Boolean?                                                   PreferIPv4                        = null,
+                                                     RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
+                                                     LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
+                                                     X509Certificate2?                                          ClientCertificate                 = null,
+                                                     SslProtocols?                                              TLSProtocols                      = null,
+                                                     HTTPContentType?                                           ContentType                       = null,
+                                                     AcceptTypes?                                               Accept                            = null,
+                                                     String?                                                    HTTPUserAgent                     = null,
+                                                     TimeSpan?                                                  RequestTimeout                    = null,
+                                                     TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
+                                                     UInt16?                                                    MaxNumberOfRetries                = null,
+                                                     UInt32?                                                    InternalBufferSize                = null,
+                                                     Boolean?                                                   UseHTTPPipelining                 = null,
 
-                                                     Boolean?                                                   PreferIPv4                   = null,
-                                                     RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                                                     LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                                     X509Certificate?                                           ClientCert                   = null,
-                                                     SslProtocols?                                              TLSProtocol                  = null,
-                                                     String?                                                    HTTPUserAgent                = null,
-                                                     TimeSpan?                                                  RequestTimeout               = null,
-                                                     TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                                                     UInt16?                                                    MaxNumberOfRetries           = null,
-                                                     UInt32?                                                    InternalBufferSize           = null,
-                                                     Boolean?                                                   UseHTTPPipelining            = null,
-
-                                                     EventTracking_Id?                                          EventTrackingId              = null,
-                                                     User_Id?                                                   CurrentUserId                = null)
+                                                     EventTracking_Id?                                          EventTrackingId                   = null,
+                                                     User_Id?                                                   CurrentUserId                     = null,
+                                                     DateTimeOffset?                                            Created                           = null,
+                                                     DateTimeOffset?                                            LastUpdated                       = null)
 
         {
 
             var newRemoteParty = new RemoteParty(
 
                                      ExistingRemoteParty.Id,
-                                     ExistingRemoteParty.Roles,
+                                     CredentialsRoles,
 
-                                     AccessToken,
-
-                                     RemoteAccessToken,
+                                     LocalAccessToken,
                                      RemoteVersionsURL,
+                                     RemoteAccessToken,
 
-                                     RemoteTOTP_ValidityTime,
-                                     RemoteTOTP_Length,
-                                     RemoteTOTP_Alphabet,
+                                     Status,
 
-                                     RemoteVersionIds,
-                                     SelectedVersionId,
-
-                                     LocalTOTP_ValidityTime,
-                                     LocalTOTP_Length,
-                                     LocalTOTP_Alphabet,
-                                     LocalAccessNotBefore,
-                                     LocalAccessNotAfter,
-
-                                     AccessTokenBase64Encoding,
-                                     AllowDowngrades,
-                                     AccessStatus,
-                                     RemoteStatus,
-                                     PartyStatus,
+                                     RemoteAccessTokenBase64Encoding,
+                                     RemoteTOTPConfig,
                                      RemoteAccessNotBefore,
                                      RemoteAccessNotAfter,
-
-                                     PreferIPv4,
-                                     RemoteCertificateValidator,
-                                     LocalCertificateSelector,
-                                     ClientCert,
-                                     TLSProtocol,
-                                     HTTPUserAgent,
-                                     RequestTimeout,
-                                     TransmissionRetryDelay,
-                                     MaxNumberOfRetries,
-                                     InternalBufferSize,
-                                     UseHTTPPipelining
-
-                                 );
-
-            if (remoteParties.TryUpdate(newRemoteParty.Id,
-                                        newRemoteParty,
-                                        ExistingRemoteParty))
-            {
-
-                await LogRemoteParty(
-                          CommonHTTPAPI.updateRemoteParty,
-                          newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
-                      );
-
-                return true;
-
-            }
-
-            return false;
-
-        }
-
-        #endregion
-
-        #region UpdateRemoteParty(...)
-
-        public async Task<Boolean> UpdateRemoteParty(RemoteParty                                                ExistingRemoteParty,
-
-                                                     AccessToken                                                AccessToken,
-                                                     TimeSpan?                                                  LocalTOTP_ValidityTime       = null,
-                                                     UInt32?                                                    LocalTOTP_Length             = null,
-                                                     String?                                                    LocalTOTP_Alphabet           = null,
-                                                     DateTimeOffset?                                            LocalAccessNotBefore         = null,
-                                                     DateTimeOffset?                                            LocalAccessNotAfter          = null,
-                                                     Boolean?                                                   AccessTokenBase64Encoding    = null,
-                                                     Boolean?                                                   AllowDowngrades              = false,
-                                                     AccessStatus                                               AccessStatus                 = AccessStatus.ALLOWED,
-
-                                                     PartyStatus                                                PartyStatus                  = PartyStatus. ENABLED,
-
-                                                     Boolean?                                                   PreferIPv4                   = null,
-                                                     RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                                                     LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                                     X509Certificate?                                           ClientCert                   = null,
-                                                     SslProtocols?                                              TLSProtocol                  = null,
-                                                     String?                                                    HTTPUserAgent                = null,
-                                                     TimeSpan?                                                  RequestTimeout               = null,
-                                                     TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                                                     UInt16?                                                    MaxNumberOfRetries           = null,
-                                                     UInt32?                                                    InternalBufferSize           = null,
-                                                     Boolean?                                                   UseHTTPPipelining            = null,
-
-                                                     EventTracking_Id?                                          EventTrackingId              = null,
-                                                     User_Id?                                                   CurrentUserId                = null)
-        {
-
-            var newRemoteParty = new RemoteParty(
-
-                                     ExistingRemoteParty.Id,
-                                     ExistingRemoteParty.Roles,
-
-                                     AccessToken,
-                                     AccessTokenBase64Encoding,
-                                     AllowDowngrades,
-                                     AccessStatus,
-
-                                     PartyStatus,
-                                     LocalTOTP_ValidityTime,
-                                     LocalTOTP_Length,
-                                     LocalTOTP_Alphabet,
-                                     LocalAccessNotBefore,
-                                     LocalAccessNotAfter,
-
-                                     PreferIPv4,
-                                     RemoteCertificateValidator,
-                                     LocalCertificateSelector,
-                                     ClientCert,
-                                     TLSProtocol,
-                                     HTTPUserAgent,
-                                     RequestTimeout,
-                                     TransmissionRetryDelay,
-                                     MaxNumberOfRetries,
-                                     InternalBufferSize,
-                                     UseHTTPPipelining
-
-                                 );
-
-            if (remoteParties.TryUpdate(newRemoteParty.Id,
-                                        newRemoteParty,
-                                        ExistingRemoteParty))
-            {
-
-                await LogRemoteParty(
-                          CommonHTTPAPI.updateRemoteParty,
-                          newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
-                      );
-
-                return true;
-
-            }
-
-            return false;
-
-        }
-
-        #endregion
-
-        #region UpdateRemoteParty(...)
-
-        public async Task<Boolean> UpdateRemoteParty(RemoteParty                                                ExistingRemoteParty,
-
-                                                     AccessToken                                                RemoteAccessToken,
-                                                     URL                                                        RemoteVersionsURL,
-
-                                                     TimeSpan?                                                  RemoteTOTP_ValidityTime      = null,
-                                                     UInt32?                                                    RemoteTOTP_Length            = null,
-                                                     String?                                                    RemoteTOTP_Alphabet          = null,
-
-                                                     IEnumerable<Version_Id>?                                   RemoteVersionIds             = null,
-                                                     Version_Id?                                                SelectedVersionId            = null,
-
-                                                     Boolean?                                                   AccessTokenBase64Encoding    = null,
-                                                     Boolean?                                                   AllowDowngrades              = null,
-                                                     RemoteAccessStatus?                                        RemoteStatus                 = RemoteAccessStatus.UNKNOWN,
-                                                     PartyStatus                                                PartyStatus                  = PartyStatus.       ENABLED,
-                                                     DateTimeOffset?                                            RemoteAccessNotBefore        = null,
-                                                     DateTimeOffset?                                            RemoteAccessNotAfter         = null,
-
-                                                     Boolean?                                                   PreferIPv4                   = null,
-                                                     RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                                                     LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                                     X509Certificate?                                           ClientCert                   = null,
-                                                     SslProtocols?                                              TLSProtocol                  = null,
-                                                     String?                                                    HTTPUserAgent                = null,
-                                                     TimeSpan?                                                  RequestTimeout               = null,
-                                                     TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                                                     UInt16?                                                    MaxNumberOfRetries           = null,
-                                                     UInt32?                                                    InternalBufferSize           = null,
-                                                     Boolean?                                                   UseHTTPPipelining            = null,
-
-                                                     EventTracking_Id?                                          EventTrackingId              = null,
-                                                     User_Id?                                                   CurrentUserId                = null)
-        {
-
-            var newRemoteParty = new RemoteParty(
-
-                                     ExistingRemoteParty.Id,
-                                     ExistingRemoteParty.Roles,
-
-                                     RemoteAccessToken,
-                                     RemoteVersionsURL,
-
-                                     RemoteTOTP_ValidityTime,
-                                     RemoteTOTP_Length,
-                                     RemoteTOTP_Alphabet,
-
+                                     RemoteStatus,
                                      RemoteVersionIds,
                                      SelectedVersionId,
+                                     RemoteAllowDowngrades,
 
-                                     AccessTokenBase64Encoding,
-                                     AllowDowngrades,
-                                     RemoteStatus,
-                                     PartyStatus,
-                                     RemoteAccessNotBefore,
-                                     RemoteAccessNotAfter,
+                                     LocalAccessTokenBase64Encoding,
+                                     LocalTOTPConfig,
+                                     LocalAccessNotBefore,
+                                     LocalAccessNotAfter,
+                                     LocalAllowDowngrades,
+                                     LocalAccessStatus,
 
                                      PreferIPv4,
                                      RemoteCertificateValidator,
                                      LocalCertificateSelector,
-                                     ClientCert,
-                                     TLSProtocol,
+                                     ClientCertificate,
+                                     TLSProtocols,
+                                     ContentType,
+                                     Accept,
                                      HTTPUserAgent,
                                      RequestTimeout,
                                      TransmissionRetryDelay,
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
-                                     UseHTTPPipelining
+                                     UseHTTPPipelining,
+
+                                     Created,
+                                     LastUpdated
 
                                  );
 
@@ -4768,6 +4633,199 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region UpdateRemoteParty(...)
 
         public async Task<Boolean> UpdateRemoteParty(RemoteParty                                                ExistingRemoteParty,
+                                                     IEnumerable<CredentialsRole>                               CredentialsRoles,
+
+                                                     AccessToken                                                LocalAccessToken,
+
+                                                     PartyStatus?                                               Status                           = PartyStatus.ENABLED,
+
+                                                     Boolean?                                                   LocalAccessTokenBase64Encoding   = null,
+                                                     TOTPConfig?                                                LocalTOTPConfig                  = null,
+                                                     DateTimeOffset?                                            LocalAccessNotBefore             = null,
+                                                     DateTimeOffset?                                            LocalAccessNotAfter              = null,
+                                                     Boolean?                                                   LocalAllowDowngrades             = false,
+                                                     AccessStatus?                                              LocalAccessStatus                = AccessStatus.ALLOWED,
+
+                                                     Boolean?                                                   PreferIPv4                       = null,
+                                                     RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator       = null,
+                                                     LocalCertificateSelectionHandler?                          LocalCertificateSelector         = null,
+                                                     X509Certificate2?                                          ClientCertificate                = null,
+                                                     SslProtocols?                                              TLSProtocols                     = null,
+                                                     HTTPContentType?                                           ContentType                      = null,
+                                                     AcceptTypes?                                               Accept                           = null,
+                                                     String?                                                    HTTPUserAgent                    = null,
+                                                     TimeSpan?                                                  RequestTimeout                   = null,
+                                                     TransmissionRetryDelayDelegate?                            TransmissionRetryDelay           = null,
+                                                     UInt16?                                                    MaxNumberOfRetries               = null,
+                                                     UInt32?                                                    InternalBufferSize               = null,
+                                                     Boolean?                                                   UseHTTPPipelining                = null,
+
+                                                     EventTracking_Id?                                          EventTrackingId                  = null,
+                                                     User_Id?                                                   CurrentUserId                    = null,
+                                                     DateTimeOffset?                                            Created                          = null,
+                                                     DateTimeOffset?                                            LastUpdated                      = null)
+        {
+
+            var newRemoteParty = new RemoteParty(
+
+                                     ExistingRemoteParty.Id,
+                                     CredentialsRoles,
+
+                                     LocalAccessToken,
+
+                                     Status,
+
+                                     LocalAccessTokenBase64Encoding,
+                                     LocalTOTPConfig,
+                                     LocalAccessNotBefore,
+                                     LocalAccessNotAfter,
+                                     LocalAllowDowngrades,
+                                     LocalAccessStatus,
+
+                                     PreferIPv4,
+                                     RemoteCertificateValidator,
+                                     LocalCertificateSelector,
+                                     ClientCertificate,
+                                     TLSProtocols,
+                                     ContentType,
+                                     Accept,
+                                     HTTPUserAgent,
+                                     RequestTimeout,
+                                     TransmissionRetryDelay,
+                                     MaxNumberOfRetries,
+                                     InternalBufferSize,
+                                     UseHTTPPipelining,
+
+                                     Created,
+                                     LastUpdated
+
+                                 );
+
+            if (remoteParties.TryUpdate(newRemoteParty.Id,
+                                        newRemoteParty,
+                                        ExistingRemoteParty))
+            {
+
+                await LogRemoteParty(
+                          CommonHTTPAPI.updateRemoteParty,
+                          newRemoteParty.ToJSON(true),
+                          EventTrackingId ?? EventTracking_Id.New,
+                          CurrentUserId
+                      );
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+        #endregion
+
+        #region UpdateRemoteParty(...)
+
+        public async Task<Boolean> UpdateRemoteParty(RemoteParty                                                ExistingRemoteParty,
+                                                     IEnumerable<CredentialsRole>                               CredentialsRoles,
+
+                                                     URL                                                        RemoteVersionsURL,
+                                                     AccessToken                                                RemoteAccessToken,
+
+                                                     PartyStatus?                                               Status                            = PartyStatus.ENABLED,
+
+                                                     Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
+                                                     TOTPConfig?                                                RemoteTOTPConfig                  = null,
+                                                     DateTimeOffset?                                            RemoteAccessNotBefore             = null,
+                                                     DateTimeOffset?                                            RemoteAccessNotAfter              = null,
+                                                     RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
+                                                     IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
+                                                     Version_Id?                                                SelectedVersionId                 = null,
+                                                     Boolean?                                                   RemoteAllowDowngrades             = null,
+
+                                                     Boolean?                                                   PreferIPv4                        = null,
+                                                     RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
+                                                     LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
+                                                     X509Certificate2?                                          ClientCertificate                 = null,
+                                                     SslProtocols?                                              TLSProtocols                      = null,
+                                                     HTTPContentType?                                           ContentType                       = null,
+                                                     AcceptTypes?                                               Accept                            = null,
+                                                     String?                                                    HTTPUserAgent                     = null,
+                                                     TimeSpan?                                                  RequestTimeout                    = null,
+                                                     TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
+                                                     UInt16?                                                    MaxNumberOfRetries                = null,
+                                                     UInt32?                                                    InternalBufferSize                = null,
+                                                     Boolean?                                                   UseHTTPPipelining                 = null,
+
+                                                     EventTracking_Id?                                          EventTrackingId                   = null,
+                                                     User_Id?                                                   CurrentUserId                     = null,
+                                                     DateTimeOffset?                                            Created                           = null,
+                                                     DateTimeOffset?                                            LastUpdated                       = null)
+        {
+
+            var newRemoteParty = new RemoteParty(
+
+                                     ExistingRemoteParty.Id,
+                                     CredentialsRoles,
+
+                                     RemoteVersionsURL,
+                                     RemoteAccessToken,
+
+                                     Status,
+
+                                     RemoteAccessTokenBase64Encoding,
+                                     RemoteTOTPConfig,
+                                     RemoteAccessNotBefore,
+                                     RemoteAccessNotAfter,
+                                     RemoteStatus,
+                                     RemoteVersionIds,
+                                     SelectedVersionId,
+                                     RemoteAllowDowngrades,
+
+                                     PreferIPv4,
+                                     RemoteCertificateValidator,
+                                     LocalCertificateSelector,
+                                     ClientCertificate,
+                                     TLSProtocols,
+                                     ContentType,
+                                     Accept,
+                                     HTTPUserAgent,
+                                     RequestTimeout,
+                                     TransmissionRetryDelay,
+                                     MaxNumberOfRetries,
+                                     InternalBufferSize,
+                                     UseHTTPPipelining,
+
+                                     Created,
+                                     LastUpdated
+
+                                 );
+
+            if (remoteParties.TryUpdate(newRemoteParty.Id,
+                                        newRemoteParty,
+                                        ExistingRemoteParty))
+            {
+
+                await LogRemoteParty(
+                          CommonHTTPAPI.updateRemoteParty,
+                          newRemoteParty.ToJSON(true),
+                          EventTrackingId ?? EventTracking_Id.New,
+                          CurrentUserId
+                      );
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+        #endregion
+
+        #region UpdateRemoteParty(...)
+
+        public async Task<Boolean> UpdateRemoteParty(RemoteParty                                                ExistingRemoteParty,
+                                                     IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                                                      IEnumerable<LocalAccessInfo>                               LocalAccessInfos,
                                                      IEnumerable<RemoteAccessInfo>                              RemoteAccessInfos,
@@ -4777,8 +4835,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                      Boolean?                                                   PreferIPv4                   = null,
                                                      RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
                                                      LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                                     X509Certificate?                                           ClientCert                   = null,
-                                                     SslProtocols?                                              TLSProtocol                  = null,
+                                                     X509Certificate2?                                          ClientCertificate            = null,
+                                                     SslProtocols?                                              TLSProtocols                 = null,
+                                                     HTTPContentType?                                           ContentType                  = null,
+                                                     AcceptTypes?                                               Accept                       = null,
                                                      String?                                                    HTTPUserAgent                = null,
                                                      TimeSpan?                                                  RequestTimeout               = null,
                                                      TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
@@ -4786,16 +4846,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                      UInt32?                                                    InternalBufferSize           = null,
                                                      Boolean?                                                   UseHTTPPipelining            = null,
 
-                                                     DateTimeOffset?                                            LastUpdated                  = null,
-
                                                      EventTracking_Id?                                          EventTrackingId              = null,
-                                                     User_Id?                                                   CurrentUserId                = null)
+                                                     User_Id?                                                   CurrentUserId                = null,
+                                                     DateTimeOffset?                                            Created                      = null,
+                                                     DateTimeOffset?                                            LastUpdated                  = null)
         {
 
             var newRemoteParty = new RemoteParty(
 
                                      ExistingRemoteParty.Id,
-                                     ExistingRemoteParty.Roles,
+                                     CredentialsRoles,
 
                                      LocalAccessInfos,
                                      RemoteAccessInfos,
@@ -4805,8 +4865,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      PreferIPv4,
                                      RemoteCertificateValidator,
                                      LocalCertificateSelector,
-                                     ClientCert,
-                                     TLSProtocol,
+                                     ClientCertificate,
+                                     TLSProtocols,
+                                     ContentType,
+                                     Accept,
                                      HTTPUserAgent,
                                      RequestTimeout,
                                      TransmissionRetryDelay,
@@ -4814,6 +4876,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      InternalBufferSize,
                                      UseHTTPPipelining,
 
+                                     Created,
                                      LastUpdated
 
                                  );
@@ -4967,16 +5030,53 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region GetRemoteParties   (AccessToken, out RemoteParties)
+        #region GetRemoteParties   (AccessToken, TOTP, out RemoteParties)
 
-        public Boolean TryGetRemoteParties(AccessToken                   AccessToken,
-                                           out IEnumerable<RemoteParty>  RemoteParties)
+        public Boolean TryGetRemoteParties(AccessToken                                           AccessToken,
+                                           String?                                               TOTP,
+                                           out IEnumerable<Tuple<RemoteParty, LocalAccessInfo>>  RemoteParties)
         {
 
-            RemoteParties = remoteParties.Values.
-                                          Where(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken == AccessToken));
+            var _remoteParties = new List<Tuple<RemoteParty, LocalAccessInfo>>();
 
-            return RemoteParties.Any();
+            foreach (var remoteParty in remoteParties.Values)
+            {
+                foreach (var localAccessInfo in remoteParty.LocalAccessInfos)
+                {
+
+                    if (localAccessInfo.TOTPConfig is not null)
+                    {
+
+                        var accessToken  = AccessToken.ToString();
+
+                        var (previous,
+                             current,
+                             next,
+                             _,
+                             _) = TOTPGenerator.GenerateTOTPs(
+                                      localAccessInfo.TOTPConfig.SharedSecret,
+                                      localAccessInfo.TOTPConfig.ValidityTime,
+                                      localAccessInfo.TOTPConfig.Length,
+                                      localAccessInfo.TOTPConfig.Alphabet
+                                  );
+
+                        if (TOTP == current || TOTP == previous || TOTP == next)
+                            _remoteParties.Add(new Tuple<RemoteParty, LocalAccessInfo>(remoteParty, localAccessInfo));
+
+                    }
+
+                    else
+                    {
+                        if (localAccessInfo.AccessToken == AccessToken)
+                            _remoteParties.Add(new Tuple<RemoteParty, LocalAccessInfo>(remoteParty, localAccessInfo));
+                    }
+
+                }
+            }
+
+            RemoteParties = _remoteParties;
+
+            return _remoteParties.Count > 0;
 
         }
 

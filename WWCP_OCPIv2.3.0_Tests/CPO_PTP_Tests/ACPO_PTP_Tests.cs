@@ -299,63 +299,63 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
             await cpoCommonAPI.AddRemoteParty(
 
-                      Id:                          RemoteParty_Id.Parse(
-                                                       ptpCommonAPI.Parties.First().Id.CountryCode,
-                                                       ptpCommonAPI.Parties.First().Id.Party,
-                                                       ptpCommonAPI.Parties.First().Role
-                                                   ),
+                      Id:                                RemoteParty_Id.Parse(
+                                                             ptpCommonAPI.Parties.First().Id.CountryCode,
+                                                             ptpCommonAPI.Parties.First().Id.Party,
+                                                             ptpCommonAPI.Parties.First().Role
+                                                         ),
 
-                      CredentialsRoles:            [
-                                                       new CredentialsRole(
-                                                           CountryCode:       ptpCommonAPI.Parties.First().Id.CountryCode,
-                                                           PartyId:           ptpCommonAPI.Parties.First().Id.Party,
-                                                           Role:              Role.PTP,
-                                                           BusinessDetails:   ptpCommonAPI.Parties.First().BusinessDetails,
-                                                           AllowDowngrades:   false
-                                                       )
-                                                   ],
+                      CredentialsRoles:                  [
+                                                             new CredentialsRole(
+                                                                 CountryCode:       ptpCommonAPI.Parties.First().Id.CountryCode,
+                                                                 PartyId:           ptpCommonAPI.Parties.First().Id.Party,
+                                                                 Role:              Role.PTP,
+                                                                 BusinessDetails:   ptpCommonAPI.Parties.First().BusinessDetails,
+                                                                 AllowDowngrades:   false
+                                                             )
+                                                         ],
 
-                      AccessToken:                 AccessToken.Parse("cpo-2-ptp:token"),
-                      AccessStatus:                AccessStatus.ALLOWED,
+                      LocalAccessToken:                  AccessToken.Parse("cpo-2-ptp:token"),
+                      LocalAccessStatus:                 AccessStatus.ALLOWED,
 
-                      RemoteAccessToken:           AccessToken.Parse("ptp-2-cpo:token"),
-                      RemoteVersionsURL:           ptpCommonAPI.BaseAPI.OurVersionsURL,
-                      RemoteVersionIds:            null,
-                      AccessTokenBase64Encoding:   true,
-                      RemoteStatus:                RemoteAccessStatus.ONLINE,
+                      RemoteAccessToken:                 AccessToken.Parse("ptp-2-cpo:token"),
+                      RemoteVersionsURL:                 ptpCommonAPI.BaseAPI.OurVersionsURL,
+                      RemoteVersionIds:                  null,
+                      RemoteAccessTokenBase64Encoding:   true,
+                      RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                      PartyStatus:                 PartyStatus.ENABLED
+                      Status:                            PartyStatus.ENABLED
 
                   );
 
 
             await ptpCommonAPI.AddRemoteParty(
 
-                      Id:                          RemoteParty_Id.Parse(
-                                                       cpoCommonAPI.Parties.First().Id.CountryCode,
-                                                       cpoCommonAPI.Parties.First().Id.Party,
-                                                       cpoCommonAPI.Parties.First().Role
-                                                   ),
-                      CredentialsRoles:            [
-                                                       new CredentialsRole(
-                                                           CountryCode:       cpoCommonAPI.Parties.First().Id.CountryCode,
-                                                           PartyId:           cpoCommonAPI.Parties.First().Id.Party,
-                                                           Role:              Role.CPO,
-                                                           BusinessDetails:   cpoCommonAPI.Parties.First().BusinessDetails,
-                                                           AllowDowngrades:   false
-                                                       )
-                                                   ],
+                      Id:                                RemoteParty_Id.Parse(
+                                                             cpoCommonAPI.Parties.First().Id.CountryCode,
+                                                             cpoCommonAPI.Parties.First().Id.Party,
+                                                             cpoCommonAPI.Parties.First().Role
+                                                         ),
+                      CredentialsRoles:                  [
+                                                             new CredentialsRole(
+                                                                 CountryCode:       cpoCommonAPI.Parties.First().Id.CountryCode,
+                                                                 PartyId:           cpoCommonAPI.Parties.First().Id.Party,
+                                                                 Role:              Role.CPO,
+                                                                 BusinessDetails:   cpoCommonAPI.Parties.First().BusinessDetails,
+                                                                 AllowDowngrades:   false
+                                                             )
+                                                         ],
 
-                      AccessToken:                 AccessToken.Parse("ptp-2-cpo:token"),
-                      AccessStatus:                AccessStatus.ALLOWED,
+                      LocalAccessToken:                  AccessToken.Parse("ptp-2-cpo:token"),
+                      LocalAccessStatus:                 AccessStatus.ALLOWED,
 
-                      RemoteAccessToken:           AccessToken.Parse("cpo-2-ptp:token"),
-                      RemoteVersionsURL:           cpoCommonAPI.BaseAPI.OurVersionsURL,
-                      RemoteVersionIds:            null,
-                      AccessTokenBase64Encoding:   true,
-                      RemoteStatus:                RemoteAccessStatus.ONLINE,
+                      RemoteAccessToken:                 AccessToken.Parse("cpo-2-ptp:token"),
+                      RemoteVersionsURL:                 cpoCommonAPI.BaseAPI.OurVersionsURL,
+                      RemoteVersionIds:                  null,
+                      RemoteAccessTokenBase64Encoding:   true,
+                      RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                      PartyStatus:                 PartyStatus.ENABLED
+                      Status:                            PartyStatus.ENABLED
 
                   );
 

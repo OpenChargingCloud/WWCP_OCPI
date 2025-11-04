@@ -590,15 +590,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI.AddRemoteParty(
-                          CountryCode:       CountryCode.Parse("DE"),
-                          PartyId:           Party_Id.   Parse("GDF"),
-                          Role:              Role.EMSP,
-                          BusinessDetails:   new BusinessDetails(
-                                                 "GraphDefined EMSP"
-                                             ),
-                          AccessToken:       AccessToken.Parse("1234xyz"),
-                          AccessStatus:      AccessStatus.ALLOWED,
-                          PartyStatus:       PartyStatus.ENABLED
+
+                          CountryCode:         CountryCode.Parse("DE"),
+                          PartyId:             Party_Id.   Parse("GDF"),
+                          Role:                Role.EMSP,
+                          BusinessDetails:     new BusinessDetails(
+                                                   "GraphDefined EMSP"
+                                               ),
+
+                          Status:              PartyStatus.ENABLED,
+
+                          LocalAccessToken:    AccessToken.Parse("1234xyz"),
+                          LocalAccessStatus:   AccessStatus.ALLOWED
+
                       );
 
                 {
@@ -755,15 +759,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI!.AddRemoteParty(
-                          CountryCode:       CountryCode.Parse("DE"),
-                          PartyId:           Party_Id.Parse("GDF"),
-                          Role:              Role.EMSP,
-                          BusinessDetails:   new BusinessDetails(
-                                                 "GraphDefined EMSP"
-                                             ),
-                          AccessToken:       AccessToken.Parse("1234xyz"),
-                          AccessStatus:      AccessStatus.ALLOWED,
-                          PartyStatus:       PartyStatus.ENABLED
+
+                          CountryCode:         CountryCode.Parse("DE"),
+                          PartyId:             Party_Id.Parse("GDF"),
+                          Role:                Role.EMSP,
+                          BusinessDetails:     new BusinessDetails(
+                                                   "GraphDefined EMSP"
+                                               ),
+
+                          Status:              PartyStatus.ENABLED,
+
+                          LocalAccessToken:    AccessToken.Parse("1234xyz"),
+                          LocalAccessStatus:   AccessStatus.ALLOWED
+
                       );
 
                 {
@@ -1198,15 +1206,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI!.AddRemoteParty(
-                          CountryCode:       CountryCode.Parse("DE"),
-                          PartyId:           Party_Id.Parse("GDF"),
-                          Role:              Role.EMSP,
-                          BusinessDetails:   new BusinessDetails(
-                                                 "GraphDefined EMSP"
-                                             ),
-                          AccessToken:       AccessToken.Parse("1234xyz"),
-                          AccessStatus:      AccessStatus.ALLOWED,
-                          PartyStatus:       PartyStatus.ENABLED
+
+                          CountryCode:         CountryCode.Parse("DE"),
+                          PartyId:             Party_Id.Parse("GDF"),
+                          Role:                Role.EMSP,
+                          BusinessDetails:     new BusinessDetails(
+                                                   "GraphDefined EMSP"
+                                               ),
+
+                          Status:              PartyStatus.ENABLED,
+
+                          LocalAccessToken:    AccessToken.Parse("1234xyz"),
+                          LocalAccessStatus:   AccessStatus.ALLOWED
+
                       );
 
                 {
@@ -1372,15 +1384,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI!.AddRemoteParty(
-                          CountryCode:       CountryCode.Parse("DE"),
-                          PartyId:           Party_Id.Parse("GDF"),
-                          Role:              Role.EMSP,
-                          BusinessDetails:   new BusinessDetails(
-                                                 "GraphDefined EMSP"
-                                             ),
-                          AccessToken:       AccessToken.Parse("1234xyz"),
-                          AccessStatus:      AccessStatus.ALLOWED,
-                          PartyStatus:       PartyStatus.ENABLED
+
+                          CountryCode:         CountryCode.Parse("DE"),
+                          PartyId:             Party_Id.Parse("GDF"),
+                          Role:                Role.EMSP,
+                          BusinessDetails:     new BusinessDetails(
+                                                   "GraphDefined EMSP"
+                                               ),
+
+                          Status:              PartyStatus.ENABLED,
+
+                          LocalAccessToken:    AccessToken.Parse("1234xyz"),
+                          LocalAccessStatus:   AccessStatus.ALLOWED
+
                       );
 
                 {
@@ -1720,15 +1736,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI!.AddRemoteParty(
-                          CountryCode:       CountryCode.Parse("DE"),
-                          PartyId:           Party_Id.Parse("GDF"),
-                          Role:              Role.EMSP,
-                          BusinessDetails:   new BusinessDetails(
-                                                 "GraphDefined EMSP"
-                                             ),
-                          AccessToken:       AccessToken.Parse("1234xyz"),
-                          AccessStatus:      AccessStatus.ALLOWED,
-                          PartyStatus:       PartyStatus.ENABLED
+
+                          CountryCode:         CountryCode.Parse("DE"),
+                          PartyId:             Party_Id.Parse("GDF"),
+                          Role:                Role.EMSP,
+                          BusinessDetails:     new BusinessDetails(
+                                                   "GraphDefined EMSP"
+                                               ),
+
+                          Status:              PartyStatus.ENABLED
+                          ,
+                          LocalAccessToken:    AccessToken.Parse("1234xyz"),
+                          LocalAccessStatus:   AccessStatus.ALLOWED
+
                       );
 
                 {
@@ -1901,15 +1921,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI!.AddRemoteParty(
-                          CountryCode:       CountryCode.Parse("DE"),
-                          PartyId:           Party_Id.Parse("GDF"),
-                          Role:              Role.EMSP,
-                          BusinessDetails:   new BusinessDetails(
-                                                 "GraphDefined EMSP"
-                                             ),
-                          AccessToken:       AccessToken.Parse("1234xyz"),
-                          AccessStatus:      AccessStatus.ALLOWED,
-                          PartyStatus:       PartyStatus.ENABLED
+
+                          CountryCode:         CountryCode.Parse("DE"),
+                          PartyId:             Party_Id.Parse("GDF"),
+                          Role:                Role.EMSP,
+                          BusinessDetails:     new BusinessDetails(
+                                                   "GraphDefined EMSP"
+                                               ),
+
+                          Status:              PartyStatus.ENABLED,
+
+                          LocalAccessToken:    AccessToken.Parse("1234xyz"),
+                          LocalAccessStatus:   AccessStatus.ALLOWED
+
                       );
 
                 {
@@ -2284,15 +2308,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI!.AddRemoteParty(
-                          CountryCode:       CountryCode.Parse("DE"),
-                          PartyId:           Party_Id.Parse("GDF"),
-                          Role:              Role.EMSP,
-                          BusinessDetails:   new BusinessDetails(
-                                                 "GraphDefined EMSP"
-                                             ),
-                          AccessToken:       AccessToken.Parse("1234xyz"),
-                          AccessStatus:      AccessStatus.ALLOWED,
-                          PartyStatus:       PartyStatus.ENABLED
+
+                          CountryCode:         CountryCode.Parse("DE"),
+                          PartyId:             Party_Id.Parse("GDF"),
+                          Role:                Role.EMSP,
+                          BusinessDetails:     new BusinessDetails(
+                                                   "GraphDefined EMSP"
+                                               ),
+
+                          Status:              PartyStatus.ENABLED,
+
+                          LocalAccessToken:    AccessToken.Parse("1234xyz"),
+                          LocalAccessStatus:   AccessStatus.ALLOWED
+
                       );
 
                 {
@@ -2461,15 +2489,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI!.AddRemoteParty(
-                          CountryCode:       CountryCode.Parse("DE"),
-                          PartyId:           Party_Id.Parse("GDF"),
-                          Role:              Role.EMSP,
-                          BusinessDetails:   new BusinessDetails(
-                                                 "GraphDefined EMSP"
-                                             ),
-                          AccessToken:       AccessToken.Parse("1234xyz"),
-                          AccessStatus:      AccessStatus.ALLOWED,
-                          PartyStatus:       PartyStatus.ENABLED
+
+                          CountryCode:         CountryCode.Parse("DE"),
+                          PartyId:             Party_Id.Parse("GDF"),
+                          Role:                Role.EMSP,
+                          BusinessDetails:     new BusinessDetails(
+                                                   "GraphDefined EMSP"
+                                               ),
+
+                          Status:              PartyStatus.ENABLED,
+
+                          LocalAccessToken:    AccessToken.Parse("1234xyz"),
+                          LocalAccessStatus:   AccessStatus.ALLOWED
+
                       );
 
                 {
@@ -2898,15 +2930,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI!.AddRemoteParty(
-                          CountryCode:       CountryCode.Parse("DE"),
-                          PartyId:           Party_Id.Parse("GDF"),
-                          Role:              Role.EMSP,
-                          BusinessDetails:   new BusinessDetails(
-                                                 "GraphDefined EMSP"
-                                             ),
-                          AccessToken:       AccessToken.Parse("1234xyz"),
-                          AccessStatus:      AccessStatus.ALLOWED,
-                          PartyStatus:       PartyStatus.ENABLED
+
+                          CountryCode:         CountryCode.Parse("DE"),
+                          PartyId:             Party_Id.Parse("GDF"),
+                          Role:                Role.EMSP,
+                          BusinessDetails:     new BusinessDetails(
+                                                   "GraphDefined EMSP"
+                                               ),
+
+                          Status:              PartyStatus.ENABLED,
+
+                          LocalAccessToken:    AccessToken.Parse("1234xyz"),
+                          LocalAccessStatus:   AccessStatus.ALLOWED
+
                       );
 
                 {
@@ -3083,15 +3119,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI!.AddRemoteParty(
-                          CountryCode:      CountryCode.Parse("DE"),
-                          PartyId:          Party_Id.Parse("GDF"),
-                          Role:             Role.EMSP,
-                          BusinessDetails:  new BusinessDetails(
-                                                "GraphDefined EMSP"
-                                            ),
-                          AccessToken:      AccessToken.Parse("1234xyz"),
-                          AccessStatus:     AccessStatus.ALLOWED,
-                          PartyStatus:      PartyStatus.ENABLED
+
+                          CountryCode:         CountryCode.Parse("DE"),
+                          PartyId:             Party_Id.Parse("GDF"),
+                          Role:                Role.EMSP,
+                          BusinessDetails:     new BusinessDetails(
+                                                   "GraphDefined EMSP"
+                                               ),
+
+                          Status:              PartyStatus.ENABLED,
+
+                          LocalAccessToken:    AccessToken.Parse("1234xyz"),
+                          LocalAccessStatus:   AccessStatus.ALLOWED
+
                       );
 
                 {
@@ -3342,15 +3382,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI!.AddRemoteParty(
-                          CountryCode:      CountryCode.Parse("DE"),
-                          PartyId:          Party_Id.Parse("GDF"),
-                          Role:             Role.EMSP,
-                          BusinessDetails:  new BusinessDetails(
-                                                "GraphDefined EMSP"
-                                            ),
-                          AccessToken:      AccessToken.Parse("1234xyz"),
-                          AccessStatus:     AccessStatus.ALLOWED,
-                          PartyStatus:      PartyStatus.ENABLED
+
+                          CountryCode:         CountryCode.Parse("DE"),
+                          PartyId:             Party_Id.Parse("GDF"),
+                          Role:                Role.EMSP,
+                          BusinessDetails:     new BusinessDetails(
+                                                   "GraphDefined EMSP"
+                                               ),
+
+                          Status:              PartyStatus.ENABLED,
+
+                          LocalAccessToken:    AccessToken.Parse("1234xyz"),
+                          LocalAccessStatus:   AccessStatus.ALLOWED
+
                       );
 
                 {

@@ -116,59 +116,53 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// The CommonAPI.
         /// </summary>
-        public CommonAPI?                      CommonAPI                { get; }
+        public CommonAPI?                CommonAPI                { get; }
 
         /// <summary>
         /// The remote party.
         /// </summary>
-        public RemoteParty?                    RemoteParty              { get; }
+        public RemoteParty?              RemoteParty              { get; }
 
         /// <summary>
         /// The current remote URL of the remote VERSIONS endpoint to connect to.
         /// The remote party might define multiple for H/A reasons.
         /// </summary>
-        public URL                             RemoteVersionsURL        { get; }
+        public URL                       RemoteVersionsURL        { get; }
 
         /// <summary>
         /// The current access token.
         /// The remote party might define different access token for each VersionsAPI endpoint for H/A and/or security reasons.
         /// The access token might be updated during the REGISTRATION process!
         /// </summary>
-        public AccessToken?                    AccessToken              { get; private set; }
-
-        /// <summary>
-        /// An optional TOTP configuration to generate time-based one-time access tokens.
-        /// Note: The AccessToken will be used as shared secret!
-        /// </summary>
-        public TOTPConfig?                     TOTPConfig               { get; private set; }
+        public AccessToken?              RemoteAccessToken        { get; private set; }
 
         /// <summary>
         /// The current HTTP Token Authentication based on the current access token.
         /// The remote party might define different access token for each VersionsAPI endpoint for H/A and/or security reasons.
         /// The access token might be updated during the REGISTRATION process!
         /// </summary>
-        public Func<HTTPTokenAuthentication>?  TokenAuth                { get; private set; }
+        public HTTPTokenAuthentication?  TokenAuth                { get; private set; }
 
         /// <summary>
         /// The selected OCPI version.
         /// The selected OCPI version might be updated during the REGISTRATION process!
         /// </summary>
-        public Version_Id?                     SelectedOCPIVersionId    { get; set; }
+        public Version_Id?               SelectedOCPIVersionId    { get; set; }
 
         /// <summary>
         /// The JSON formatting used.
         /// </summary>
-        public Formatting                      JSONFormat               { get; set; } = Formatting.None;
+        public Formatting                JSONFormat               { get; set; } = Formatting.None;
 
         /// <summary>
         /// CPO client event counters.
         /// </summary>
-        public CommonAPICounters               Counters                 { get; }
+        public CommonAPICounters         Counters                 { get; }
 
         /// <summary>
         /// The attached HTTP client logger.
         /// </summary>
-        public new Logger?                     HTTPLogger
+        public new Logger?               HTTPLogger
         {
             get
             {
@@ -371,19 +365,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// Create a new OCPI Common client.
         /// </summary>
-        /// <param name="VersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
-        /// <param name="AccessToken">The optional OCPI access token.</param>
+        /// <param name="RemoteVersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
+        /// <param name="RemoteAccessToken">The optional OCPI remote access token.</param>
+        /// <param name="RemoteAccessTokenBase64Encoding">Whether the remote access token shall be Base64 encoded.</param>
+        /// <param name="TOTPConfig">The optional Time-Based One-Time Password (TOTP) configuration as 2nd factor authentication.</param>
         /// 
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this client.</param>
         /// <param name="PreferIPv4">Prefer IPv4 instead of IPv6.</param>
         /// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
         /// <param name="LocalCertificateSelector">A delegate to select a TLS client certificate.</param>
-        /// <param name="ClientCert">The TLS client certificate to use of HTTP authentication.</param>
-        /// <param name="TLSProtocol">The TLS protocol to use.</param>
+        /// <param name="ClientCertificate">The TLS client certificate to use for HTTP authentication.</param>
+        /// <param name="TLSProtocols">The TLS protocols to use.</param>
         /// <param name="ContentType">An optional HTTP content type.</param>
         /// <param name="Accept">The optional HTTP accept header.</param>
-        /// <param name="HTTPAuthentication">The optional HTTP authentication to use.</param>
         /// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
         /// <param name="Connection">The optional HTTP connection type.</param>
         /// <param name="RequestTimeout">An optional request timeout.</param>
@@ -397,50 +392,52 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CommonClient(URL                                                        VersionsURL,
-                            String?                                                    AccessToken                  = null,
+        public CommonClient(URL                                                        RemoteVersionsURL,
+                            AccessToken?                                               RemoteAccessToken                 = null,
+                            Boolean                                                    RemoteAccessTokenBase64Encoding   = true,
+                            TOTPConfig?                                                TOTPConfig                        = null,
 
-                            TimeSpan?                                                  TOTP_ValidityTime            = null,
-                            UInt32?                                                    TOTP_Length                  = null,
-                            String?                                                    TOTP_Alphabet                = null,
+                            HTTPHostname?                                              VirtualHostname                   = null,
+                            I18NString?                                                Description                       = null,
+                            Boolean?                                                   PreferIPv4                        = null,
+                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
+                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
+                            X509Certificate2?                                          ClientCertificate                 = null,
+                            SslProtocols?                                              TLSProtocols                      = null,
+                            HTTPContentType?                                           ContentType                       = null,
+                            AcceptTypes?                                               Accept                            = null,
+                            String?                                                    HTTPUserAgent                     = DefaultHTTPUserAgent,
+                            ConnectionType?                                            Connection                        = null,
+                            TimeSpan?                                                  RequestTimeout                    = null,
+                            TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
+                            UInt16?                                                    MaxNumberOfRetries                = DefaultMaxNumberOfRetries,
+                            UInt32?                                                    InternalBufferSize                = DefaultInternalBufferSize,
+                            Boolean?                                                   UseHTTPPipelining                 = null,
+                            Boolean?                                                   DisableLogging                    = false,
+                            String?                                                    LoggingPath                       = null,
+                            String?                                                    LoggingContext                    = null,
+                            OCPILogfileCreatorDelegate?                                LogfileCreator                    = null,
+                            HTTPClientLogger?                                          HTTPLogger                        = null,
+                            IDNSClient?                                                DNSClient                         = null)
 
-                            HTTPHostname?                                              VirtualHostname              = null,
-                            I18NString?                                                Description                  = null,
-                            Boolean?                                                   PreferIPv4                   = null,
-                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                            LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                            X509Certificate?                                           ClientCert                   = null,
-                            SslProtocols?                                              TLSProtocol                  = null,
-                            HTTPContentType?                                           ContentType                  = null,
-                            AcceptTypes?                                               Accept                       = null,
-                            IHTTPAuthentication?                                       HTTPAuthentication           = null,
-                            String?                                                    HTTPUserAgent                = DefaultHTTPUserAgent,
-                            ConnectionType?                                            Connection                   = null,
-                            TimeSpan?                                                  RequestTimeout               = null,
-                            TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                            UInt16?                                                    MaxNumberOfRetries           = DefaultMaxNumberOfRetries,
-                            UInt32?                                                    InternalBufferSize           = DefaultInternalBufferSize,
-                            Boolean?                                                   UseHTTPPipelining            = null,
-                            Boolean?                                                   DisableLogging               = false,
-                            String?                                                    LoggingPath                  = null,
-                            String?                                                    LoggingContext               = null,
-                            OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
-                            HTTPClientLogger?                                          HTTPLogger                   = null,
-                            IDNSClient?                                                DNSClient                    = null)
-
-            : base(VersionsURL,
+            : base(RemoteVersionsURL,
                    VirtualHostname,
                    Description,
                    PreferIPv4,
                    RemoteCertificateValidator,
                    LocalCertificateSelector,
-                   ClientCert,
-                   TLSProtocol,
+                   ClientCertificate,
+                   TLSProtocols,
                    ContentType        ?? HTTPContentType.Application.JSON_UTF8,
                    Accept             ?? AcceptTypes.FromHTTPContentTypes(HTTPContentType.Application.JSON_UTF8),
-                   HTTPAuthentication ?? (AccessToken.IsNotNullOrEmpty()
-                                              ? HTTPTokenAuthentication.Parse(AccessToken)
-                                              : null),
+                   RemoteAccessToken.HasValue
+                       ? HTTPTokenAuthentication.Parse(
+                             RemoteAccessTokenBase64Encoding
+                                 ? RemoteAccessToken.Value.ToString().ToBase64()
+                                 : RemoteAccessToken.Value.ToString()
+                         )
+                       : null,
+                   TOTPConfig,
                    HTTPUserAgent      ?? DefaultHTTPUserAgent,
                    Connection         ?? ConnectionType.Close,
                    RequestTimeout     ?? DefaultRequestTimeout,
@@ -454,24 +451,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         {
 
-            this.RemoteVersionsURL  = VersionsURL;
-
-            this.AccessToken        = AccessToken.IsNotNullOrEmpty()
-                                          ? OCPI.AccessToken.Parse(AccessToken)
-                                          : null;
-
-            this.TOTPConfig         = AccessToken.IsNotNullOrEmpty() && TOTP_ValidityTime.HasValue
-                                          ? new TOTPConfig(
-                                                SharedSecret:  AccessToken.ToString(),
-                                                ValidityTime:  TOTP_ValidityTime,
-                                                TOTPLength:    TOTP_Length,
-                                                Alphabet:      TOTP_Alphabet
-                                            )
-                                          : null;
-
-            this.TokenAuth          = AccessToken.IsNotNullOrEmpty()
-                                          ? () => HTTPTokenAuthentication.Parse(AccessToken)
-                                          : null;
+            this.RemoteVersionsURL  = RemoteVersionsURL;
+            this.RemoteAccessToken  = RemoteAccessToken;
+            this.TokenAuth          = HTTPAuthentication as HTTPTokenAuthentication;
 
             this.Counters           = new CommonAPICounters();
 
@@ -519,11 +501,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    RemoteParty.PreferIPv4,
                    RemoteParty.RemoteCertificateValidator,
                    RemoteParty.LocalCertificateSelector,
-                   RemoteParty.ClientCert,
-                   RemoteParty.TLSProtocol,
+                   RemoteParty.ClientCertificate,
+                   RemoteParty.TLSProtocols,
                    HTTPContentType.Application.JSON_UTF8,
                    RemoteParty.Accept,
-                   RemoteParty.HTTPAuthentication,
+                   RemoteParty.RemoteAccessInfos.First().AccessToken.IsNotNullOrEmpty
+                       ? HTTPTokenAuthentication.Parse(
+                             RemoteParty.RemoteAccessInfos.First().AccessTokenIsBase64Encoded
+                                 ? RemoteParty.RemoteAccessInfos.First().AccessToken.ToString().ToBase64()
+                                 : RemoteParty.RemoteAccessInfos.First().AccessToken.ToString()
+                         )
+                       : null,
+                   RemoteParty.RemoteAccessInfos.First().TOTPConfig,
                    RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent,
                    ConnectionType.Close,
                    RemoteParty.RequestTimeout,
@@ -539,14 +528,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             this.CommonAPI          = CommonAPI;
             this.RemoteParty        = RemoteParty;
-            this.AccessToken        = RemoteParty.RemoteAccessInfos.First().AccessToken;
-            this.RemoteVersionsURL  = RemoteParty.RemoteAccessInfos.First().VersionsURL;
 
-            this.TokenAuth          = () => HTTPTokenAuthentication.Parse(
-                                          RemoteParty.RemoteAccessInfos.First().AccessTokenIsBase64Encoded
-                                              ? RemoteParty.RemoteAccessInfos.First().AccessToken.ToString().ToBase64()
-                                              : RemoteParty.RemoteAccessInfos.First().AccessToken.ToString()
-                                      );
+            if (!RemoteParty.RemoteAccessInfos.Any())
+                throw new ArgumentException(
+                          "The given remote party must have at least one remote access info defined!",
+                          nameof(RemoteParty)
+                      );
+
+            var remoteAccessInfo    = RemoteParty.RemoteAccessInfos.First();
+
+            this.RemoteVersionsURL  = remoteAccessInfo.VersionsURL;
+            this.RemoteAccessToken  = remoteAccessInfo.AccessToken;
+            this.TokenAuth          = HTTPAuthentication as HTTPTokenAuthentication;
 
             this.Counters           = new CommonAPICounters();
 
@@ -563,60 +556,68 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region CommonClient(RemoteVersionsURL, AccessToken, MyCommonAPI, ...)
+        #region CommonClient(CommonAPI, RemoteVersionsURL, RemoteAccessToken, ...)
 
         /// <summary>
         /// Create a new OCPI Common client.
+        /// We will start the OCPI registration process afterwards.
         /// </summary>
         /// <param name="CommonAPI">The CommonAPI.</param>
-        /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
-        /// <param name="RemoteAccessToken">The access token.</param>
+        /// <param name="RemoteVersionsURL">The remote URL of the "OCPI Versions" endpoint to connect to.</param>
+        /// <param name="RemoteAccessToken">The remote access token to use.</param>
+        /// <param name="RemoteAccessTokenBase64Encoding">Whether the remote access token is Base64 encoded.</param>
+        /// <param name="TOTPConfig">The optional Time-Based One-Time Password (TOTP) configuration as 2nd factor authentication.</param>
+        /// 
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
-        /// <param name="Description">An optional description of this CPO client.</param>
+        /// <param name="Description">An optional description of this OCPI Common client.</param>
+        /// <param name="PreferIPv4"></param>
         /// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
-        /// <param name="ClientCert">The TLS client certificate to use of HTTP authentication.</param>
-        /// <param name="Accept">The optional HTTP accept header field.</param>
-        /// <param name="Authentication">The optional HTTP authentication to use.</param>
+        /// <param name="LocalCertificateSelector"></param>
+        /// <param name="ClientCertificate">The TLS client certificate to use for HTTP authentication.</param>
+        /// <param name="TLSProtocols"></param>
+        /// <param name="ContentType">The optional HTTP content type to use.</param>
+        /// <param name="Accept">The optional HTTP accept header to use.</param>
         /// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
         /// <param name="RequestTimeout">An optional request timeout.</param>
         /// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
         /// <param name="MaxNumberOfRetries">The maximum number of transmission retries for HTTP request.</param>
+        /// <param name="InternalBufferSize"></param>
+        /// <param name="UseHTTPPipelining"></param>
+        /// <param name="HTTPLogger"></param>
+        /// 
         /// <param name="DisableLogging">Disable all logging.</param>
+        /// <param name="LoggingPath"></param>
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
         public CommonClient(CommonAPI                                                  CommonAPI,
                             URL                                                        RemoteVersionsURL,
-
                             AccessToken                                                RemoteAccessToken,
+                            Boolean                                                    RemoteAccessTokenBase64Encoding   = true,
+                            TOTPConfig?                                                TOTPConfig                        = null,
 
-                            TimeSpan?                                                  TOTP_ValidityTime            = null,
-                            UInt32?                                                    TOTP_Length                  = null,
-                            String?                                                    TOTP_Alphabet                = null,
+                            HTTPHostname?                                              VirtualHostname                   = null,
+                            I18NString?                                                Description                       = null,
+                            Boolean?                                                   PreferIPv4                        = null,
+                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
+                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
+                            X509Certificate2?                                          ClientCertificate                 = null,
+                            SslProtocols?                                              TLSProtocols                      = null,
+                            HTTPContentType?                                           ContentType                       = null,
+                            AcceptTypes?                                               Accept                            = null,
+                            String?                                                    HTTPUserAgent                     = null,
+                            TimeSpan?                                                  RequestTimeout                    = null,
+                            TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
+                            UInt16?                                                    MaxNumberOfRetries                = null,
+                            UInt32?                                                    InternalBufferSize                = null,
+                            Boolean?                                                   UseHTTPPipelining                 = null,
+                            HTTPClientLogger?                                          HTTPLogger                        = null,
 
-                            HTTPHostname?                                              VirtualHostname              = null,
-                            I18NString?                                                Description                  = null,
-                            Boolean?                                                   PreferIPv4                   = null,
-                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                            LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                            X509Certificate?                                           ClientCert                   = null,
-                            SslProtocols?                                              TLSProtocol                  = null,
-                            AcceptTypes?                                               Accept                       = null,
-                            IHTTPAuthentication?                                       Authentication               = null,
-                            String?                                                    HTTPUserAgent                = null,
-                            TimeSpan?                                                  RequestTimeout               = null,
-                            TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                            UInt16?                                                    MaxNumberOfRetries           = null,
-                            UInt32?                                                    InternalBufferSize           = null,
-                            Boolean?                                                   UseHTTPPipelining            = null,
-                            HTTPClientLogger?                                          HTTPLogger                   = null,
-                            Boolean                                                    AccessTokenBase64Encoding    = true,
-
-                            Boolean?                                                   DisableLogging               = false,
-                            String?                                                    LoggingPath                  = null,
-                            String?                                                    LoggingContext               = null,
-                            OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
-                            IDNSClient?                                                DNSClient                    = null)
+                            Boolean?                                                   DisableLogging                    = false,
+                            String?                                                    LoggingPath                       = null,
+                            String?                                                    LoggingContext                    = null,
+                            OCPILogfileCreatorDelegate?                                LogfileCreator                    = null,
+                            IDNSClient?                                                DNSClient                         = null)
 
             : this(CommonAPI,
                    new RemoteParty(
@@ -624,28 +625,27 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                        RemoteParty_Id.Unknown,
                        [],
 
-                       RemoteAccessToken,
                        RemoteVersionsURL,
+                       RemoteAccessToken,
 
-                       TOTP_ValidityTime,
-                       TOTP_Length,
-                       TOTP_Alphabet,
+                       PartyStatus.PreRegistration,
 
-                       null, //RemoteVersionIds,
-                       null, //SelectedVersionId,
-                       AccessTokenBase64Encoding,
-                       null, //AllowDowngrades,
-
-                       null, //RemoteStatus,
-                       null, //Status,
-                       null, //RemoteAccessNotBefore,
-                       null, //RemoteAccessNotAfter,
+                       RemoteAccessTokenBase64Encoding,
+                       TOTPConfig,
+                       null,  // RemoteAccessNotBefore
+                       null,  // RemoteAccessNotAfter
+                       null,  // RemoteStatus
+                       null,  // RemoteVersionIds
+                       null,  // SelectedVersionId
+                       null,  // RemoteAllowDowngrades
 
                        PreferIPv4,
                        RemoteCertificateValidator,
                        LocalCertificateSelector,
-                       ClientCert,
-                       TLSProtocol,
+                       ClientCertificate,
+                       TLSProtocols,
+                       ContentType,
+                       Accept,
                        HTTPUserAgent,
                        RequestTimeout,
                        TransmissionRetryDelay,
@@ -653,7 +653,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                        InternalBufferSize,
                        UseHTTPPipelining,
 
-                       null //LastUpdated
+                       null,  // Created
+                       null   // LastUpdated
 
                    ),
                    VirtualHostname,
@@ -694,7 +695,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            : null,
 
                        new JProperty("remoteVersionsURL",        RemoteVersionsURL.    ToString()),
-                       new JProperty("accessToken",              AccessToken.          ToString()),
+                       new JProperty("accessToken",              RemoteAccessToken.          ToString()),
 
                        VirtualHostname.HasValue
                            ? new JProperty("virtualHostname",    VirtualHostname.Value.ToString())
@@ -800,11 +801,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCert,
+                                                 ClientCertificate,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
-                                                 Authentication,
+                                                 HTTPAuthentication,
+                                                 TOTPConfig,
                                                  HTTPUserAgent,
                                                  Connection,
                                                  RequestTimeout,
@@ -819,7 +821,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                              GET(RemoteVersionsURL.Path,
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth?.Invoke(),
+                                                 Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -1035,11 +1037,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                          PreferIPv4,
                                                          RemoteCertificateValidator,
                                                          LocalCertificateSelector,
-                                                         ClientCert,
+                                                         ClientCertificate,
                                                          TLSProtocols,
                                                          ContentType,
                                                          Accept,
-                                                         Authentication,
+                                                         HTTPAuthentication,
+                                                         TOTPConfig,
                                                          HTTPUserAgent,
                                                          Connection,
                                                          RequestTimeout,
@@ -1054,7 +1057,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                                      GET(versionURL.Path,
                                                          Accept:                ocpiAcceptTypes,
-                                                         Authentication:        TokenAuth?.Invoke(),
+                                                         Authentication:        TokenAuth,
                                                          Connection:            ConnectionType.Close,
                                                          RequestBuilder:        requestBuilder => {
                                                                                     requestBuilder.Set("X-Request-ID",     requestId);
@@ -1382,11 +1385,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                      PreferIPv4,
                                                      RemoteCertificateValidator,
                                                      LocalCertificateSelector,
-                                                     ClientCert,
+                                                     ClientCertificate,
                                                      TLSProtocols,
                                                      ContentType,
                                                      Accept,
-                                                     Authentication,
+                                                     HTTPAuthentication,
+                                                     TOTPConfig,
                                                      HTTPUserAgent,
                                                      Connection,
                                                      RequestTimeout,
@@ -1401,7 +1405,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                                  GET(remoteURL.Value.Path,
                                                      Accept:                ocpiAcceptTypes,
-                                                     Authentication:        TokenAuth?.Invoke(),
+                                                     Authentication:        TokenAuth,
                                                      Connection:            ConnectionType.Close,
                                                      RequestBuilder:        requestBuilder => {
                                                                                 requestBuilder.Set("X-Request-ID",     requestId);
@@ -1591,11 +1595,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                      PreferIPv4,
                                                      RemoteCertificateValidator,
                                                      LocalCertificateSelector,
-                                                     ClientCert,
+                                                     ClientCertificate,
                                                      TLSProtocols,
                                                      ContentType,
                                                      Accept,
-                                                     Authentication,
+                                                     HTTPAuthentication,
+                                                     TOTPConfig,
                                                      HTTPUserAgent,
                                                      Connection,
                                                      RequestTimeout,
@@ -1612,7 +1617,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                       Content:               Credentials.ToJSON().ToUTF8Bytes(JSONFormat),
                                                       ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                       Accept:                ocpiAcceptTypes,
-                                                      Authentication:        TokenAuth?.Invoke(),
+                                                      Authentication:        TokenAuth,
                                                       Connection:            ConnectionType.Close,
                                                       RequestBuilder:        requestBuilder => {
                                                                                  requestBuilder.Set("X-Request-ID",     requestId);
@@ -1803,11 +1808,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                      PreferIPv4,
                                                      RemoteCertificateValidator,
                                                      LocalCertificateSelector,
-                                                     ClientCert,
+                                                     ClientCertificate,
                                                      TLSProtocols,
                                                      ContentType,
                                                      Accept,
-                                                     Authentication,
+                                                     HTTPAuthentication,
+                                                     TOTPConfig,
                                                      HTTPUserAgent,
                                                      Connection,
                                                      RequestTimeout,
@@ -1824,7 +1830,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                      Content:               Credentials.ToJSON().ToUTF8Bytes(JSONFormat),
                                                      ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                      Accept:                ocpiAcceptTypes,
-                                                     Authentication:        TokenAuth?.Invoke(),
+                                                     Authentication:        TokenAuth,
                                                      Connection:            ConnectionType.Close,
                                                      RequestBuilder:        requestBuilder => {
                                                                                 requestBuilder.Set("X-Request-ID",     requestId);
@@ -1854,7 +1860,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         if (response.Data is not null)
                         {
 
-                            TokenAuth = () => HTTPTokenAuthentication.Parse(response.Data.Token.ToString().ToBase64());
+                            TokenAuth = HTTPTokenAuthentication.Parse(response.Data.Token.ToString().ToBase64());
 
                             var oldRemoteParty = this.RemoteParty;
 
@@ -1893,18 +1899,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                            Id:                  oldRemoteParty.Id,
                                                            CredentialsRoles:    response.Data.Roles,
 
-                                                           AccessToken:         Credentials.Token,
-                                                           AccessStatus:        AccessStatus.ALLOWED,
+                                                           Status:              PartyStatus.ENABLED,
 
-                                                           RemoteAccessToken:   response.Data.Token,
+                                                           LocalAccessToken:    Credentials.Token,
                                                            RemoteVersionsURL:   response.Data.URL,
-                                                           RemoteVersionIds:    new[] {
-                                                                                    Version.Id
-                                                                                },
+                                                           RemoteAccessToken:   response.Data.Token,
+                                                           RemoteStatus:        RemoteAccessStatus.ONLINE,
+                                                           RemoteVersionIds:    [Version.Id ],
                                                            SelectedVersionId:   Version.Id,
 
-                                                           PartyStatus:         PartyStatus.ENABLED,
-                                                           RemoteStatus:        RemoteAccessStatus.ONLINE
+                                                           LocalAccessStatus:   AccessStatus.ALLOWED
                                                        );
 
                                     if (!result)
@@ -2075,11 +2079,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                      PreferIPv4,
                                                      RemoteCertificateValidator,
                                                      LocalCertificateSelector,
-                                                     ClientCert,
+                                                     ClientCertificate,
                                                      TLSProtocols,
                                                      ContentType,
                                                      Accept,
-                                                     Authentication,
+                                                     HTTPAuthentication,
+                                                     TOTPConfig,
                                                      HTTPUserAgent,
                                                      Connection,
                                                      RequestTimeout,
@@ -2094,7 +2099,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                                  DELETE(remoteURL.Value.Path,
                                                         Accept:                ocpiAcceptTypes,
-                                                        Authentication:        TokenAuth?.Invoke(),
+                                                        Authentication:        TokenAuth,
                                                         Connection:            ConnectionType.Close,
                                                         RequestBuilder:        requestBuilder => {
                                                                                    requestBuilder.Set("X-Request-ID",     requestId);
@@ -2211,7 +2216,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                      Request_Id?        RequestId             = null,
                      Correlation_Id?    CorrelationId         = null,
 
-                     DateTime?          Timestamp             = null,
+                     DateTime?          RequestTimestamp      = null,
                      EventTracking_Id?  EventTrackingId       = null,
                      TimeSpan?          RequestTimeout        = null,
                      CancellationToken  CancellationToken     = default)
@@ -2220,15 +2225,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #region Init
 
-            var versionId        = VersionId       ?? SelectedOCPIVersionId;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var versionId        = VersionId        ?? SelectedOCPIVersionId;
+            var requestId        = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId    = CorrelationId    ?? Correlation_Id.NewRandom();
 
-            var timestamp        = Timestamp       ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? base.RequestTimeout;
+            var timestamp        = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId  = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout   = RequestTimeout   ?? base.RequestTimeout;
 
-            var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime        = Timestamp.Now;
             var stopwatch        = Stopwatch.StartNew();
 
             Counters.Register.IncRequests_OK();
@@ -2261,7 +2266,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Byte                       transmissionRetry = 0;
             OCPIResponse<Credentials>  response;
 
-            var credentialTokenB = CredentialTokenB ?? OCPI.AccessToken.NewRandom();
+            var credentialTokenB = CredentialTokenB ?? AccessToken.NewRandom();
 
             do
             {
@@ -2280,7 +2285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     // Might be updated!
                     versionId ??= SelectedOCPIVersionId;
 
-                    if      (!versionId.    HasValue)
+                    if      (!versionId.HasValue)
                         response = OCPIResponse<String, Credentials>.Error("No version identification available!");
 
                     else if (!remoteURL.HasValue)
@@ -2304,11 +2309,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                      PreferIPv4,
                                                      RemoteCertificateValidator,
                                                      LocalCertificateSelector,
-                                                     ClientCert,
+                                                     ClientCertificate,
                                                      TLSProtocols,
                                                      ContentType,
                                                      Accept,
-                                                     Authentication,
+                                                     HTTPAuthentication,
+                                                     TOTPConfig,
                                                      HTTPUserAgent,
                                                      Connection,
                                                      RequestTimeout,
@@ -2325,7 +2331,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                       Content:               credentials.ToJSON().ToUTF8Bytes(JSONFormat),
                                                       ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                       Accept:                ocpiAcceptTypes,
-                                                      Authentication:        TokenAuth?.Invoke(),
+                                                      Authentication:        TokenAuth,
                                                       Connection:            ConnectionType.Close,
                                                       RequestBuilder:        requestBuilder => {
                                                                                  requestBuilder.Set("X-Request-ID",     requestId);
@@ -2375,8 +2381,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         {
 
                             SelectedOCPIVersionId  = versionId;
-                            AccessToken            = response.Data.Token;
-                            TokenAuth              = () => HTTPTokenAuthentication.Parse(AccessToken.ToString().ToBase64());
+                            RemoteAccessToken      = response.Data.Token;
+                            TokenAuth              = HTTPTokenAuthentication.Parse(RemoteAccessToken.Value.ToString().ToBase64());
 
                             var oldRemoteParty     = this.RemoteParty;
 
@@ -2418,40 +2424,51 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                         // Only the access token and the business details are allowed to be changed!
                                         var addOrUpdateResult = await CommonAPI.AddOrUpdateRemoteParty(
-                                                                          Id:                           oldRemoteParty.Id,
-                                                                          CredentialsRoles:             response.Data.Roles,
 
-                                                                          AccessToken:                  credentialTokenB,
+                                                                          oldRemoteParty.Id,          // Id
+                                                                          response.Data.Roles,        // CredentialsRoles
 
-                                                                          RemoteAccessToken:            response.Data.Token,
-                                                                          RemoteVersionsURL:            response.Data.URL,
-                                                                          RemoteVersionIds:             [ versionId.Value ],
-                                                                          SelectedVersionId:            versionId.Value,
+                                                                          credentialTokenB,           // LocalAccessToken
+                                                                          response.Data.URL,          // RemoteVersionsURL
+                                                                          response.Data.Token,        // RemoteAccessToken
 
-                                                                          LocalAccessNotBefore:         null,
-                                                                          LocalAccessNotAfter:          null,
+                                                                          PartyStatus.ENABLED,        // PartyStatus
 
-                                                                          AccessTokenBase64Encoding:    null,
-                                                                          AllowDowngrades:              null,
-                                                                          AccessStatus:                 AccessStatus.ALLOWED,
-                                                                          RemoteStatus:                 RemoteAccessStatus.ONLINE,
-                                                                          PartyStatus:                  PartyStatus.ENABLED,
-                                                                          RemoteAccessNotBefore:        null,
-                                                                          RemoteAccessNotAfter:         null,
+                                                                          null,                       // RemoteAccessTokenBase64Encoding
+                                                                          null,                       // RemoteTOTPConfig
+                                                                          null,                       // RemoteAccessNotBefore
+                                                                          null,                       // RemoteAccessNotAfter
+                                                                          RemoteAccessStatus.ONLINE,  // RemoteStatus
+                                                                          [ versionId.Value ],        // RemoteVersionIds
+                                                                          versionId.Value,            // SelectedVersionId
+                                                                          null,                       // RemoteAllowDowngrades
 
-                                                                          RemoteCertificateValidator:   null,
-                                                                          LocalCertificateSelector:     null,
-                                                                          ClientCert:                   null,
-                                                                          TLSProtocol:                  null,
-                                                                          PreferIPv4:                   null,
-                                                                          HTTPUserAgent:                null,
-                                                                          RequestTimeout:               null,
-                                                                          TransmissionRetryDelay:       null,
-                                                                          MaxNumberOfRetries:           null,
-                                                                          UseHTTPPipelining:            null,
+                                                                          null,                       // LocalAccessTokenBase64Encoding
+                                                                          null,                       // LocalTOTPConfig
+                                                                          null,                       // LocalAccessNotBefore
+                                                                          null,                       // LocalAccessNotAfter
+                                                                          null,                       // LocalAllowDowngrades
+                                                                          AccessStatus.ALLOWED,       // LocalAccessStatus
 
-                                                                          EventTrackingId:              eventTrackingId,
-                                                                          CurrentUserId:                null
+                                                                          null,                       // PreferIPv4
+                                                                          null,                       // RemoteCertificateValidator
+                                                                          null,                       // LocalCertificateSelector
+                                                                          null,                       // ClientCertificate
+                                                                          null,                       // TLSProtocols
+                                                                          null,                       // ContentType
+                                                                          null,                       // Accept
+                                                                          null,                       // HTTPUserAgent
+                                                                          null,                       // RequestTimeout
+                                                                          null,                       // TransmissionRetryDelay
+                                                                          null,                       // MaxNumberOfRetries
+                                                                          null,                       // InternalBufferSize
+                                                                          null,                       // UseHTTPPipelining
+
+                                                                          eventTrackingId,            // EventTrackingId
+                                                                          null,                       // CurrentUserId
+                                                                          null,                       // Created
+                                                                          Timestamp.Now               // LastUpdated
+
                                                                       );
 
                                         if (!addOrUpdateResult)

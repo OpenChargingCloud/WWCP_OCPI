@@ -687,7 +687,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         ///// <param name="PreferIPv4">Prefer IPv4 instead of IPv6.</param>
         ///// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
         ///// <param name="LocalCertificateSelector">A delegate to select a TLS client certificate.</param>
-        ///// <param name="ClientCert">The TLS client certificate to use of HTTP authentication.</param>
+        ///// <param name="ClientCert">The TLS client certificate to use for HTTP authentication.</param>
         ///// <param name="TLSProtocol">The TLS protocol to use.</param>
         ///// <param name="ContentType">An optional HTTP content type.</param>
         ///// <param name="Accept">The optional HTTP accept header.</param>
@@ -713,7 +713,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         //                  Boolean?                                                   PreferIPv4                   = null,
         //                  RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
         //                  LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-        //                  X509Certificate?                                           ClientCert                   = null,
+        //                  X509Certificate?                                           ClientCertificate            = null,
         //                  SslProtocols?                                              TLSProtocol                  = null,
         //                  HTTPContentType?                                           ContentType                  = null,
         //                  AcceptTypes?                                               Accept                       = null,
@@ -930,11 +930,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                               PreferIPv4,
                                                               RemoteCertificateValidator,
                                                               LocalCertificateSelector,
-                                                              ClientCert,
+                                                              ClientCertificate,
                                                               TLSProtocols,
                                                               ContentType,
                                                               Accept,
-                                                              Authentication,
+                                                              HTTPAuthentication,
+                                                              TOTPConfig,
                                                               HTTPUserAgent,
                                                               Connection,
                                                               RequestTimeout,
@@ -949,7 +950,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                           GET(remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
-                                                              Authentication:        TokenAuth?.Invoke(),
+                                                              Authentication:        TokenAuth,
                                                               Connection:            ConnectionType.Close,
                                                               RequestBuilder:        requestBuilder => {
                                                                                          requestBuilder.Set("X-Request-ID",     requestId);
@@ -1107,11 +1108,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCert,
+                                                 ClientCertificate,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
-                                                 Authentication,
+                                                 HTTPAuthentication,
+                                                 TOTPConfig,
                                                  HTTPUserAgent,
                                                  Connection,
                                                  RequestTimeout,
@@ -1126,7 +1128,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                              GET(remoteURL.Value.Path + LocationId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth?.Invoke(),
+                                                 Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -1289,11 +1291,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCert,
+                                                 ClientCertificate,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
-                                                 Authentication,
+                                                 HTTPAuthentication,
+                                                 TOTPConfig,
                                                  HTTPUserAgent,
                                                  Connection,
                                                  RequestTimeout,
@@ -1308,7 +1311,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                              GET(remoteURL.Value.Path + LocationId.ToString() + EVSEUId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth?.Invoke(),
+                                                 Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -1475,11 +1478,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCert,
+                                                 ClientCertificate,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
-                                                 Authentication,
+                                                 HTTPAuthentication,
+                                                 TOTPConfig,
                                                  HTTPUserAgent,
                                                  Connection,
                                                  RequestTimeout,
@@ -1494,7 +1498,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                              GET(remoteURL.Value.Path + LocationId.ToString() + EVSEUId.ToString() + ConnectorId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth?.Invoke(),
+                                                 Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -1663,11 +1667,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                               PreferIPv4,
                                                               RemoteCertificateValidator,
                                                               LocalCertificateSelector,
-                                                              ClientCert,
+                                                              ClientCertificate,
                                                               TLSProtocols,
                                                               ContentType,
                                                               Accept,
-                                                              Authentication,
+                                                              HTTPAuthentication,
+                                                              TOTPConfig,
                                                               HTTPUserAgent,
                                                               Connection,
                                                               RequestTimeout,
@@ -1682,7 +1687,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                           GET(remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
-                                                              Authentication:        TokenAuth?.Invoke(),
+                                                              Authentication:        TokenAuth,
                                                               Connection:            ConnectionType.Close,
                                                               RequestBuilder:        requestBuilder => {
                                                                                          requestBuilder.Set("X-Request-ID",     requestId);
@@ -1840,11 +1845,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCert,
+                                                 ClientCertificate,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
-                                                 Authentication,
+                                                 HTTPAuthentication,
+                                                 TOTPConfig,
                                                  HTTPUserAgent,
                                                  Connection,
                                                  RequestTimeout,
@@ -1859,7 +1865,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                              GET(remoteURL.Value.Path + TariffId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth?.Invoke(),
+                                                 Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -2026,11 +2032,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                               PreferIPv4,
                                                               RemoteCertificateValidator,
                                                               LocalCertificateSelector,
-                                                              ClientCert,
+                                                              ClientCertificate,
                                                               TLSProtocols,
                                                               ContentType,
                                                               Accept,
-                                                              Authentication,
+                                                              HTTPAuthentication,
+                                                              TOTPConfig,
                                                               HTTPUserAgent,
                                                               Connection,
                                                               RequestTimeout,
@@ -2045,7 +2052,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                           GET(remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
-                                                              Authentication:        TokenAuth?.Invoke(),
+                                                              Authentication:        TokenAuth,
                                                               Connection:            ConnectionType.Close,
                                                               RequestBuilder:        requestBuilder => {
                                                                                          requestBuilder.Set("X-Request-ID",     requestId);
@@ -2219,11 +2226,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCert,
+                                                 ClientCertificate,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
-                                                 Authentication,
+                                                 HTTPAuthentication,
+                                                 TOTPConfig,
                                                  HTTPUserAgent,
                                                  Connection,
                                                  RequestTimeout,
@@ -2238,7 +2246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                              GET(remoteURL.Value.Path + SessionId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth?.Invoke(),
+                                                 Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -2407,11 +2415,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                               PreferIPv4,
                                                               RemoteCertificateValidator,
                                                               LocalCertificateSelector,
-                                                              ClientCert,
+                                                              ClientCertificate,
                                                               TLSProtocols,
                                                               ContentType,
                                                               Accept,
-                                                              Authentication,
+                                                              HTTPAuthentication,
+                                                              TOTPConfig,
                                                               HTTPUserAgent,
                                                               Connection,
                                                               RequestTimeout,
@@ -2426,7 +2435,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                           GET(remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
-                                                              Authentication:        TokenAuth?.Invoke(),
+                                                              Authentication:        TokenAuth,
                                                               Connection:            ConnectionType.Close,
                                                               RequestBuilder:        requestBuilder => {
                                                                                          requestBuilder.Set("X-Request-ID",     requestId);
@@ -2584,11 +2593,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCert,
+                                                 ClientCertificate,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
-                                                 Authentication,
+                                                 HTTPAuthentication,
+                                                 TOTPConfig,
                                                  HTTPUserAgent,
                                                  Connection,
                                                  RequestTimeout,
@@ -2603,7 +2613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                              GET(remoteURL.Value.Path + CDRId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth?.Invoke(),
+                                                 Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -2762,11 +2772,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCert,
+                                                 ClientCertificate,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
-                                                 Authentication,
+                                                 HTTPAuthentication,
+                                                 TOTPConfig,
                                                  HTTPUserAgent,
                                                  Connection,
                                                  RequestTimeout,
@@ -2783,7 +2794,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                                         PartyId.    ToString() +
                                                                         TokenId.    ToString(),
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth?.Invoke(),
+                                                 Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -2941,11 +2952,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCert,
+                                                 ClientCertificate,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
-                                                 Authentication,
+                                                 HTTPAuthentication,
+                                                 TOTPConfig,
                                                  HTTPUserAgent,
                                                  Connection,
                                                  RequestTimeout,
@@ -2964,7 +2976,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                  Content:               Token.ToJSON().ToUTF8Bytes(JSONFormat),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                  Accept:                ocpiAcceptTypes,
-                                                 Authentication:        TokenAuth?.Invoke(),
+                                                 Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -3131,11 +3143,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCert,
+                                                 ClientCertificate,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
-                                                 Authentication,
+                                                 HTTPAuthentication,
+                                                 TOTPConfig,
                                                  HTTPUserAgent,
                                                  Connection,
                                                  RequestTimeout,
@@ -3154,7 +3167,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                    Content:               TokenPatch.ToUTF8Bytes(JSONFormat),
                                                    ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                    Accept:                ocpiAcceptTypes,
-                                                   Authentication:        TokenAuth?.Invoke(),
+                                                   Authentication:        TokenAuth,
                                                    Connection:            ConnectionType.Close,
                                                    RequestBuilder:        requestBuilder => {
                                                                               requestBuilder.Set("X-Request-ID",     requestId);
@@ -3349,11 +3362,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCert,
+                                                 ClientCertificate,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
-                                                 Authentication,
+                                                 HTTPAuthentication,
+                                                 TOTPConfig,
                                                  HTTPUserAgent,
                                                  Connection,
                                                  RequestTimeout,
@@ -3370,7 +3384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                   Content:               command.ToJSON().ToUTF8Bytes(JSONFormat),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth?.Invoke(),
+                                                  Authentication:        TokenAuth,
                                                   Connection:            ConnectionType.Close,
                                                   RequestBuilder:        requestBuilder => {
                                                                              requestBuilder.Set("X-Request-ID",     requestId);
@@ -3553,11 +3567,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCert,
+                                                 ClientCertificate,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
-                                                 Authentication,
+                                                 HTTPAuthentication,
+                                                 TOTPConfig,
                                                  HTTPUserAgent,
                                                  Connection,
                                                  RequestTimeout,
@@ -3574,7 +3589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                   Content:               command.ToJSON().ToUTF8Bytes(JSONFormat),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth?.Invoke(),
+                                                  Authentication:        TokenAuth,
                                                   Connection:            ConnectionType.Close,
                                                   RequestBuilder:        requestBuilder => {
                                                                              requestBuilder.Set("X-Request-ID",     requestId);
@@ -3765,11 +3780,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCert,
+                                                 ClientCertificate,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
-                                                 Authentication,
+                                                 HTTPAuthentication,
+                                                 TOTPConfig,
                                                  HTTPUserAgent,
                                                  Connection,
                                                  RequestTimeout,
@@ -3786,7 +3802,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                   Content:               command.ToJSON().ToUTF8Bytes(JSONFormat),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth?.Invoke(),
+                                                  Authentication:        TokenAuth,
                                                   Connection:            ConnectionType.Close,
                                                   RequestBuilder:        requestBuilder => {
                                                                              requestBuilder.Set("X-Request-ID",     requestId);
@@ -3969,11 +3985,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCert,
+                                                 ClientCertificate,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
-                                                 Authentication,
+                                                 HTTPAuthentication,
+                                                 TOTPConfig,
                                                  HTTPUserAgent,
                                                  Connection,
                                                  RequestTimeout,
@@ -3990,7 +4007,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                   Content:               command.ToJSON().ToUTF8Bytes(JSONFormat),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth?.Invoke(),
+                                                  Authentication:        TokenAuth,
                                                   Connection:            ConnectionType.Close,
                                                   RequestBuilder:        requestBuilder => {
                                                                              requestBuilder.Set("X-Request-ID",     requestId);
@@ -4175,11 +4192,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCert,
+                                                 ClientCertificate,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
-                                                 Authentication,
+                                                 HTTPAuthentication,
+                                                 TOTPConfig,
                                                  HTTPUserAgent,
                                                  Connection,
                                                  RequestTimeout,
@@ -4196,7 +4214,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                   Content:               command.ToJSON().ToUTF8Bytes(JSONFormat),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth?.Invoke(),
+                                                  Authentication:        TokenAuth,
                                                   Connection:            ConnectionType.Close,
                                                   RequestBuilder:        requestBuilder => {
                                                                              requestBuilder.Set("X-Request-ID",     requestId);

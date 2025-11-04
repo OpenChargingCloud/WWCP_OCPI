@@ -24,7 +24,7 @@ namespace cloud.charging.open.protocols.OCPI
     public static class PartyStatusExtensions
     {
 
-        #region Parse   (Text)
+        #region Parse    (Text)
 
         /// <summary>
         /// Parse the given text as a party status.
@@ -33,8 +33,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static PartyStatus Parse(String Text)
         {
 
-            if (TryParse(Text, out var status))
-                return status;
+            if (TryParse(Text, out var partyStatus))
+                return partyStatus;
 
             return PartyStatus.Unknown;
 
@@ -42,7 +42,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region TryParse(Text)
+        #region TryParse (Text)
 
         /// <summary>
         /// Try to parse the given text as a party status.
@@ -51,8 +51,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static PartyStatus? TryParse(String Text)
         {
 
-            if (TryParse(Text, out var status))
-                return status;
+            if (TryParse(Text, out var partyStatus))
+                return partyStatus;
 
             return null;
 
@@ -60,7 +60,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region TryParse(Text, out PartyStatus)
+        #region TryParse (Text, out PartyStatus)
 
         /// <summary>
         /// Try to parse the given text as a party status.
@@ -71,6 +71,10 @@ namespace cloud.charging.open.protocols.OCPI
         {
             switch (Text.Trim().ToUpper())
             {
+
+                case "PREREGISTRATION":
+                    PartyStatus = PartyStatus.PreRegistration;
+                    return true;
 
                 case "DISABLED":
                     PartyStatus = PartyStatus.DISABLED;
@@ -89,14 +93,15 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region AsText(this PartyStatus)
+        #region AsText   (this PartyStatus)
 
         public static String AsText(this PartyStatus PartyStatus)
 
             => PartyStatus switch {
-                   PartyStatus.DISABLED  => "DISABLED",
-                   PartyStatus.ENABLED   => "ENABLED",
-                _                        => "unknown"
+                   PartyStatus.PreRegistration  => "PreRegistration",
+                   PartyStatus.DISABLED         => "DISABLED",
+                   PartyStatus.ENABLED          => "ENABLED",
+                   _                            => "unknown"
                };
 
         #endregion
@@ -114,6 +119,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// Unknown party status.
         /// </summary>
         Unknown,
+
+        /// <summary>
+        /// The party is pre registration.
+        /// </summary>
+        PreRegistration,
 
         /// <summary>
         /// The party is disabled.

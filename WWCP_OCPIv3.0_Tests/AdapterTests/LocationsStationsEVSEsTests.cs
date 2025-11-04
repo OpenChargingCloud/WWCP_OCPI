@@ -425,19 +425,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI!.AddRemoteParty(
-                          Id:                RemoteParty_Id.Parse("DE-GDF_EMSP"),
-                          CredentialsRoles:  [
-                                                 new CredentialsRole(
-                                                     PartyId:          Party_Idv3.Parse("DEGDF"),
-                                                     Role:             Role.EMSP,
-                                                     BusinessDetails:  new BusinessDetails(
-                                                                           "GraphDefined EMSP"
-                                                                       )
-                                                 )
-                                             ],
-                          AccessToken:       AccessToken.Parse("1234xyz"),
-                          AccessStatus:      AccessStatus.ALLOWED,
-                          PartyStatus:       PartyStatus.ENABLED
+                          Id:                  RemoteParty_Id.Parse("DE-GDF_EMSP"),
+                          CredentialsRoles:    [
+                                                   new CredentialsRole(
+                                                       PartyId:          Party_Idv3.Parse("DEGDF"),
+                                                       Role:             Role.EMSP,
+                                                       BusinessDetails:  new BusinessDetails(
+                                                                             "GraphDefined EMSP"
+                                                                         )
+                                                   )
+                                               ],
+                          LocalAccessToken:    AccessToken.Parse("1234xyz"),
+                          LocalAccessStatus:   AccessStatus.ALLOWED,
+                          Status:              PartyStatus.ENABLED
                       );
 
                 {
@@ -1237,19 +1237,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI!.AddRemoteParty(
-                          Id:                RemoteParty_Id.Parse("DE-GDF_EMSP"),
-                          CredentialsRoles:  [
-                                                 new CredentialsRole(
-                                                     PartyId:          Party_Idv3.Parse("DEGDF"),
-                                                     Role:             Role.EMSP,
-                                                     BusinessDetails:  new BusinessDetails(
-                                                                           "GraphDefined EMSP"
-                                                                       )
-                                                 )
-                                             ],
-                          AccessToken:       AccessToken.Parse("1234xyz"),
-                          AccessStatus:      AccessStatus.ALLOWED,
-                          PartyStatus:       PartyStatus.ENABLED
+                          Id:                  RemoteParty_Id.Parse("DE-GDF_EMSP"),
+                          CredentialsRoles:    [
+                                                   new CredentialsRole(
+                                                       PartyId:          Party_Idv3.Parse("DEGDF"),
+                                                       Role:             Role.EMSP,
+                                                       BusinessDetails:  new BusinessDetails(
+                                                                             "GraphDefined EMSP"
+                                                                         )
+                                                   )
+                                               ],
+                          LocalAccessToken:    AccessToken.Parse("1234xyz"),
+                          LocalAccessStatus:   AccessStatus.ALLOWED,
+                          Status:              PartyStatus.ENABLED
                       );
 
                 {
@@ -1799,34 +1799,34 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI!.AddRemoteParty(
-                          Id:                RemoteParty_Id.Parse("DE-GDF_EMSP"),
-                          CredentialsRoles:  [
-                                                 new CredentialsRole(
-                                                     PartyId:          Party_Idv3.Parse("DEGDF"),
-                                                     Role:             Role.EMSP,
-                                                     BusinessDetails:  new BusinessDetails(
-                                                                           "GraphDefined EMSP"
-                                                                       )
-                                                 )
-                                             ],
-                          AccessToken:       AccessToken.Parse("1234xyz"),
-                          AccessStatus:      AccessStatus.ALLOWED,
-                          PartyStatus:       PartyStatus.ENABLED
+                          Id:                  RemoteParty_Id.Parse("DE-GDF_EMSP"),
+                          CredentialsRoles:    [
+                                                   new CredentialsRole(
+                                                       PartyId:          Party_Idv3.Parse("DEGDF"),
+                                                       Role:             Role.EMSP,
+                                                       BusinessDetails:  new BusinessDetails(
+                                                                             "GraphDefined EMSP"
+                                                                         )
+                                                   )
+                                               ],
+                          LocalAccessToken:    AccessToken.Parse("1234xyz"),
+                          LocalAccessStatus:   AccessStatus.ALLOWED,
+                          Status:              PartyStatus.ENABLED
                       );
 
                 {
 
                     var httpResponse = await new HTTPSClient(remoteURL).
-                                                  Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                         remoteURL.Path,
-                                                                                         RequestBuilder: requestBuilder => {
-                                                                                             requestBuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
-                                                                                             requestBuilder.Connection     = ConnectionType.Close;
-                                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                             requestBuilder.Set("X-Request-ID",      "123");
-                                                                                             requestBuilder.Set("X-Correlation-ID",  "123");
-                                                                                         })).
-                                                  ConfigureAwait(false);
+                                                 Execute(client => client.CreateRequest(HTTPMethod.GET,
+                                                                                        remoteURL.Path,
+                                                                                        RequestBuilder: requestBuilder => {
+                                                                                            requestBuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
+                                                                                            requestBuilder.Connection     = ConnectionType.Close;
+                                                                                            requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                            requestBuilder.Set("X-Request-ID",      "123");
+                                                                                            requestBuilder.Set("X-Correlation-ID",  "123");
+                                                                                        })).
+                                                 ConfigureAwait(false);
 
                     ClassicAssert.IsNotNull(httpResponse);
                     ClassicAssert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);

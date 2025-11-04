@@ -255,6 +255,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.RequestId        = Request.TryParseHeaderField<Request_Id>    ("X-Request-ID",     Request_Id.    TryParse) ?? Request_Id.    NewRandom(IsLocal: true);
             this.CorrelationId    = Request.TryParseHeaderField<Correlation_Id>("X-Correlation-ID", Correlation_Id.TryParse) ?? Correlation_Id.NewRandom(IsLocal: true);
+            var  totp             = Request.GetHeaderField     <String>        ("TOTP");
 
             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
                // TokenAuth.Token.TryBase64Decode_UTF8(out String DecodedToken)   &&
@@ -272,13 +273,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (this.AccessToken.HasValue)
             {
 
-                if (CommonAPI.TryGetRemoteParties(AccessToken.Value, out var parties))
+                if (CommonAPI.TryGetRemoteParties(AccessToken.Value,
+                                                  totp,
+                                                  out var partiesAccessInfos))
                 {
 
-                    if (parties.Count() == 1)
+                    if (partiesAccessInfos.Count() == 1)
                     {
 
-                        RemoteParty      = parties.First();
+                        RemoteParty      = partiesAccessInfos.First().Item1;
 
                         LocalAccessInfo  = new LocalAccessInfo2(
                                                AccessToken.Value,

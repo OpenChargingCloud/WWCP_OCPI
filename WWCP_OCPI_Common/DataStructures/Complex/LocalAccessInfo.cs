@@ -22,6 +22,7 @@ using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
@@ -45,10 +46,10 @@ namespace cloud.charging.open.protocols.OCPI
         [Mandatory]
         public AccessToken       AccessToken                   { get; }
 
-        public TimeSpan?         TOTP_ValidityTime             { get; }
-        public UInt32?           TOTP_Length                   { get; }
-        public String?           TOTP_Alphabet                 { get; }
-
+        /// <summary>
+        /// Configuration of the Time-Based One-Time Password (TOTP) 2nd factor authentication.
+        /// </summary>
+        public TOTPConfig?       TOTPConfig                    { get; }
 
         /// <summary>
         /// The access status.
@@ -90,17 +91,16 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         /// <param name="AccessToken">An access token.</param>
         /// <param name="Status">An access status.</param>
+        /// 
+        /// <param name="TOTPConfig">An optional configuration of the Time-Based One-Time Password (TOTP) 2nd factor authentication.</param>
         /// <param name="NotBefore">This local access information should not be used before this timestamp.</param>
         /// <param name="NotAfter">This local access information should not be used after this timestamp.</param>
         /// <param name="AccessTokenIsBase64Encoded">Whether the access token is base64 encoded or not.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         public LocalAccessInfo(AccessToken      AccessToken,
-                               AccessStatus     Status,
 
-                               TimeSpan?        TOTP_ValidityTime            = null,
-                               UInt32?          TOTP_Length                  = null,
-                               String?          TOTP_Alphabet                = null,
-
+                               AccessStatus?    Status                       = AccessStatus.ALLOWED,
+                               TOTPConfig?      TOTPConfig                   = null,
                                DateTimeOffset?  NotBefore                    = null,
                                DateTimeOffset?  NotAfter                     = null,
                                Boolean?         AccessTokenIsBase64Encoded   = true,
@@ -108,12 +108,9 @@ namespace cloud.charging.open.protocols.OCPI
         {
 
             this.AccessToken                 = AccessToken;
-            this.Status                      = Status;
+            this.Status                      = Status                     ?? AccessStatus.ALLOWED;
 
-            this.TOTP_ValidityTime           = TOTP_ValidityTime;
-            this.TOTP_Length                 = TOTP_Length;
-            this.TOTP_Alphabet               = TOTP_Alphabet;
-
+            this.TOTPConfig                  = TOTPConfig;
             this.NotBefore                   = NotBefore;
             this.NotAfter                    = NotAfter;
             this.AccessTokenIsBase64Encoded  = AccessTokenIsBase64Encoded ?? true;
@@ -122,13 +119,10 @@ namespace cloud.charging.open.protocols.OCPI
             unchecked
             {
 
-                this.hashCode = this.AccessToken.               GetHashCode()       * 29 ^
-                                this.Status.                    GetHashCode()       * 13 ^
+                this.hashCode = this.AccessToken.               GetHashCode()       * 23 ^
+                                this.Status.                    GetHashCode()       * 19 ^
 
-                               (this.TOTP_ValidityTime?.        GetHashCode() ?? 0) * 23 ^
-                               (this.TOTP_Length?.              GetHashCode() ?? 0) * 19 ^
-                               (this.TOTP_Alphabet?.            GetHashCode() ?? 0) * 17 ^
-
+                               (this.TOTPConfig?.               GetHashCode() ?? 0) * 17 ^
                                (this.NotBefore?.                GetHashCode() ?? 0) * 11 ^
                                (this.NotAfter?.                 GetHashCode() ?? 0) *  7 ^
                                 this.AccessTokenIsBase64Encoded.GetHashCode()       *  3 ^
@@ -224,46 +218,19 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
-                #region Parse TOTP Validity Time            [optional]
+                #region Parse TOTPConfig                    [optional]
 
-                if (JSON.ParseOptional("totpValidityTime",
-                                       "validity time of the time-based one-time password",
-                                       TimeSpanExtensions.TryParseSeconds,
-                                       out TimeSpan? totpValidityTime,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalJSON("totpConfig",
+                                           "time-based one-time password configuration",
+                                           TOTPConfig.TryParse,
+                                           out TOTPConfig? totpConfig,
+                                           out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
                 }
 
                 #endregion
-
-                #region Parse TOTP Length                   [optional]
-
-                if (JSON.ParseOptional("totpLength",
-                                       "length of the time-based one-time password",
-                                       out Byte? totpLength,
-                                       out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                #endregion
-
-                #region Parse TOTP Alphabet                 [optional]
-
-                if (JSON.ParseOptional("totpAlphabet",
-                                       "alphabet of the time-based one-time password",
-                                       out String? totpAlphabet,
-                                       out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                #endregion
-
 
                 #region Parse Status                        [mandatory]
 
@@ -332,12 +299,9 @@ namespace cloud.charging.open.protocols.OCPI
                 LocalAccessInfo = new LocalAccessInfo(
 
                                       AccessToken,
+
                                       Status,
-
-                                      totpValidityTime,
-                                      totpLength,
-                                      totpAlphabet,
-
+                                      totpConfig,
                                       NotBefore,
                                       NotAfter,
                                       AccessTokenIsBase64Encoded,
@@ -378,16 +342,8 @@ namespace cloud.charging.open.protocols.OCPI
                                  new JProperty("accessToken",                  AccessToken.    ToString()),
                                  new JProperty("status",                       Status.         ToString()),
 
-                           TOTP_ValidityTime.HasValue
-                               ? new JProperty("totpValidityTime",             (UInt16) TOTP_ValidityTime.Value.TotalSeconds)
-                               : null,
-
-                           TOTP_Length.      HasValue
-                               ? new JProperty("totpLength",                   TOTP_Length.               Value)
-                               : null,
-
-                           TOTP_Alphabet is not null
-                               ? new JProperty("totpAlphabet",                 TOTP_Alphabet)
+                           TOTPConfig is not null
+                               ? new JProperty("totpConfig",                   TOTPConfig.     ToJSON())
                                : null,
 
                            NotBefore.HasValue
@@ -420,13 +376,10 @@ namespace cloud.charging.open.protocols.OCPI
 
             => new (
 
-                   AccessToken,
+                   AccessToken.Clone(),
                    Status,
 
-                   TOTP_ValidityTime,
-                   TOTP_Length,
-                   TOTP_Alphabet?.CloneString(),
-
+                   TOTPConfig?.Clone(),
                    NotBefore,
                    NotAfter,
                    AccessTokenIsBase64Encoded,
@@ -578,14 +531,8 @@ namespace cloud.charging.open.protocols.OCPI
             if (c == 0)
                 c = Status.                    CompareTo(LocalAccessInfo.Status);
 
-            if (c == 0 && TOTP_ValidityTime.HasValue && LocalAccessInfo.TOTP_ValidityTime.HasValue)
-                c = TOTP_ValidityTime.Value.   CompareTo(LocalAccessInfo.TOTP_ValidityTime.Value);
-
-            if (c == 0 && TOTP_Length.      HasValue && LocalAccessInfo.TOTP_Length.      HasValue)
-                c = TOTP_Length.      Value.   CompareTo(LocalAccessInfo.TOTP_Length.      Value);
-
-            if (c == 0 && TOTP_Alphabet is not null && LocalAccessInfo.TOTP_Alphabet is not null)
-                c = TOTP_Alphabet.             CompareTo(LocalAccessInfo.TOTP_Alphabet);
+            if (c == 0 && TOTPConfig    is not null && LocalAccessInfo.TOTPConfig is not null)
+                c = TOTPConfig.                CompareTo(LocalAccessInfo.TOTPConfig);
 
             if (c == 0 && NotBefore.HasValue && LocalAccessInfo.NotBefore.HasValue)
                 c = NotBefore.  Value.         CompareTo(LocalAccessInfo.NotBefore.  Value);
@@ -637,20 +584,14 @@ namespace cloud.charging.open.protocols.OCPI
                AccessTokenIsBase64Encoded.Equals(LocalAccessInfo.AccessTokenIsBase64Encoded) &&
                AllowDowngrades.           Equals(LocalAccessInfo.AllowDowngrades)            &&
 
-            ((!TOTP_ValidityTime.HasValue && !LocalAccessInfo.TOTP_ValidityTime.HasValue) ||
-              (TOTP_ValidityTime.HasValue &&  LocalAccessInfo.TOTP_ValidityTime.HasValue && TOTP_ValidityTime.Value.Equals(LocalAccessInfo.TOTP_ValidityTime.Value))) &&
+             ((TOTPConfig is null      &&  LocalAccessInfo.TOTPConfig is null)     ||
+              (TOTPConfig is not null  &&  LocalAccessInfo.TOTPConfig is not null && TOTPConfig.     Equals(LocalAccessInfo.TOTPConfig     ))) &&
 
-            ((!TOTP_Length.      HasValue && !LocalAccessInfo.TOTP_Length.      HasValue) ||
-              (TOTP_Length.      HasValue &&  LocalAccessInfo.TOTP_Length.      HasValue && TOTP_Length.      Value.Equals(LocalAccessInfo.TOTP_Length.      Value))) &&
+            ((!NotBefore. HasValue     && !LocalAccessInfo.NotBefore. HasValue)    ||
+              (NotBefore. HasValue     &&  LocalAccessInfo.NotBefore. HasValue    && NotBefore.Value.Equals(LocalAccessInfo.NotBefore.Value))) &&
 
-             ((TOTP_Alphabet is null      &&  LocalAccessInfo.TOTP_Alphabet is null)      ||
-              (TOTP_Alphabet is not null  &&  LocalAccessInfo.TOTP_Alphabet is not null  && TOTP_Alphabet.          Equals(LocalAccessInfo.TOTP_Alphabet          ))) &&
-
-            ((!NotBefore.HasValue && !LocalAccessInfo.NotBefore.HasValue) ||
-              (NotBefore.HasValue &&  LocalAccessInfo.NotBefore.HasValue && NotBefore.Value.Equals(LocalAccessInfo.NotBefore.Value))) &&
-
-            ((!NotAfter. HasValue && !LocalAccessInfo.NotAfter. HasValue) ||
-              (NotAfter. HasValue &&  LocalAccessInfo.NotAfter. HasValue && NotAfter. Value.Equals(LocalAccessInfo.NotAfter. Value)));
+            ((!NotAfter.  HasValue     && !LocalAccessInfo.NotAfter.  HasValue)    ||
+              (NotAfter.  HasValue     &&  LocalAccessInfo.NotAfter.  HasValue    && NotAfter. Value.Equals(LocalAccessInfo.NotAfter. Value)));
 
         #endregion
 
