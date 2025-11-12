@@ -20,13 +20,9 @@
 using Newtonsoft.Json.Linq;
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
-using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
-using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPI;
 
 #endregion
@@ -53,46 +49,48 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.SetupTests
                 emsp1EMSPAPI is not null)
             {
 
-                var cpo1Keys   = cpo1CPOAPI.  CommonAPI.BaseAPI.GenerateECCKeyPair();
-                var cpo1CSR    = cpo1CPOAPI.  CommonAPI.BaseAPI.GenerateCSR(KeyPair:              cpo1Keys,
-                                                                            KeySerialNumber:      UUIDv7.Generate().ToString(),
-                                                                            PartyIds:             ["DEGEF", "DEGE2"],
-                                                                            SubCPOIds:            ["DE*GEF", "DE*GE2"],
-                                                                            NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
-                                                                            NotAfter:             Timestamp.Now + TimeSpan.FromDays(13),
-                                                                            CommonName:           "open.charging.cloud",
-                                                                            Organization:         "GraphDefined GmbH",
-                                                                            OrganizationalUnit:   "CPO Services",
-                                                                            EMailAddress:         "roaming-cpo@charging.cloud",
-                                                                            TelephoneNumber:      "+49 1234 56789012",
-                                                                            PostalCode:           "07749",
-                                                                            Locality:             "Jena",
-                                                                            Country:              "DE",
-                                                                            Description:          "Main CPO key...");
+                var pki           = new OCPI_PKI();
 
-                var emsp1Keys  = emsp1EMSPAPI.CommonAPI.BaseAPI.GenerateECCKeyPair();
-                var emsp1CSR   = emsp1EMSPAPI.CommonAPI.BaseAPI.GenerateCSR(KeyPair:              emsp1Keys,
-                                                                            KeySerialNumber:      UUIDv7.Generate().ToString(),
-                                                                            PartyIds:             ["DEGDF", "DEGD2"],
-                                                                            SubEMSPIds:           ["DE-GDF", "DE-GD2"],
-                                                                            NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
-                                                                            NotAfter:             Timestamp.Now + TimeSpan.FromDays(13),
-                                                                            CommonName:           "open.charging.cloud",
-                                                                            Organization:         "GraphDefined GmbH",
-                                                                            OrganizationalUnit:   "EMSP Services",
-                                                                            EMailAddress:         "roaming-emsp@charging.cloud",
-                                                                            TelephoneNumber:      "+49 5678 90123456",
-                                                                            PostalCode:           "07749",
-                                                                            Locality:             "Jena",
-                                                                            Country:              "DE",
-                                                                            Description:          "Main EMSP key...");
+                var cpo1KeyPair   = pki.GenerateECCKeyPair();
+                var cpo1CSR       = pki.GenerateServerCSR (PublicKey:            cpo1KeyPair.Public,
+                                                           KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                           PartyIds:             ["DEGEF", "DEGE2"],
+                                                           SubCPOIds:            ["DE*GEF", "DE*GE2"],
+                                                           NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                           NotAfter:             Timestamp.Now + TimeSpan.FromDays(13),
+                                                           CommonName:           "open.charging.cloud",
+                                                           Organization:         "GraphDefined GmbH",
+                                                           OrganizationalUnit:   "CPO Services",
+                                                           EMailAddress:         "roaming-cpo@charging.cloud",
+                                                           TelephoneNumber:      "+49 1234 56789012",
+                                                           PostalCode:           "07749",
+                                                           Locality:             "Jena",
+                                                           Country:              "DE",
+                                                           Description:          "Main CPO key...");
+
+                var emsp1KeyPair  = pki.GenerateECCKeyPair();
+                var emsp1CSR      = pki.GenerateServerCSR (PublicKey:            emsp1KeyPair.Public,
+                                                           KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                           PartyIds:             ["DEGDF", "DEGD2"],
+                                                           SubEMSPIds:           ["DE-GDF", "DE-GD2"],
+                                                           NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                           NotAfter:             Timestamp.Now + TimeSpan.FromDays(13),
+                                                           CommonName:           "open.charging.cloud",
+                                                           Organization:         "GraphDefined GmbH",
+                                                           OrganizationalUnit:   "EMSP Services",
+                                                           EMailAddress:         "roaming-emsp@charging.cloud",
+                                                           TelephoneNumber:      "+49 5678 90123456",
+                                                           PostalCode:           "07749",
+                                                           Locality:             "Jena",
+                                                           Country:              "DE",
+                                                           Description:          "Main EMSP key...");
 
 
                 // openssl req -in csr.txt -noout -text (will not print out the dates correctly!)
                 // https://ssl-trust.com/SSL-Zertifikate/csr-decoder
                 // https://lapo.it/asn1js
-                var pcsr1      = cpo1CPOAPI.  CommonAPI.BaseAPI.ParsePEMEncodedCSR(cpo1CSR);
-                var pcsr2      = emsp1EMSPAPI.CommonAPI.BaseAPI.ParsePEMEncodedCSR(emsp1CSR);
+                //var pcsr1      = pki.ParsePEMEncodedCSR(cpo1CSR);
+                //var pcsr2      = pki.ParsePEMEncodedCSR(emsp1CSR);
 
             }
 

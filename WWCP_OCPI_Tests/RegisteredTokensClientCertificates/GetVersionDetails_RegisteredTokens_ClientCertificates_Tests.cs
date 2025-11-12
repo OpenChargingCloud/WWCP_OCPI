@@ -31,15 +31,15 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
     /// Testing the OCPI GetVersionDetails method(s) using registered OCPI tokens.
     /// </summary>
     [TestFixture]
-    public class GetVersionDetails_RegisteredTokens_TOTP_Tests : A_2CPOs2EMSPs_TestDefaults
+    public class GetVersionDetails_RegisteredTokens_ClientCertificates_Tests : A_2CPOs2EMSPs_TestDefaults
     {
 
         #region Constructor(s)
 
-        public GetVersionDetails_RegisteredTokens_TOTP_Tests()
+        public GetVersionDetails_RegisteredTokens_ClientCertificates_Tests()
 
-              // This will enable additional TOTP authentication!
-            : base(TOTPValidityTime: TimeSpan.FromSeconds(30))
+              // This will enable client certificates for TLS authentication!
+            : base(ECCAlgorithm: "secp256r1")
 
         {
 
