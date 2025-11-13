@@ -246,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPI
                                  new JProperty("partyStatus",         Status.ToString()),
 
                            localAccessInfos. Count != 0
-                               ? new JProperty("accessInfos",         new JArray(localAccessInfos. Select(localAccessInfo  => localAccessInfo. ToJSON(CustomLocalAccessInfoSerializer))))
+                               ? new JProperty("localAccessInfos",    new JArray(localAccessInfos. Select(localAccessInfo  => localAccessInfo. ToJSON(CustomLocalAccessInfoSerializer))))
                                : null,
 
                            remoteAccessInfos.Count != 0
