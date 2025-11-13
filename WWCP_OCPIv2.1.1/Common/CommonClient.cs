@@ -2514,7 +2514,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Send OnRegisterResponse event
 
-            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = Timestamp.Now;
 
             try
             {

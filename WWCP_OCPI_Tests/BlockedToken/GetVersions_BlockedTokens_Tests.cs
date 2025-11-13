@@ -181,13 +181,20 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task GetVersions_v2_2_1_fromCPO1_Test1()
         {
 
-            if (cpo1CommonHTTPAPI is null)
+            if (emsp1CommonAPI_v2_2_1 is null)
             {
-                Assert.Fail("cpo1BaseAPI is null!");
+                Assert.Fail("emsp1CommonAPI_v2_2_1 is null!");
                 return;
             }
 
-            var graphDefinedCPO1 = new OCPIv2_2_1.CommonClient(
+            if (cpo1CommonHTTPAPI is null)
+            {
+                Assert.Fail("cpo1CommonHTTPAPI is null!");
+                return;
+            }
+
+            var graphDefinedCPO1 = emsp1CommonAPI_v2_2_1.GetCommonClient(
+                                       RemoteParty_Id.Unknown,
                                        RemoteVersionsURL:  cpo1CommonHTTPAPI.OurVersionsURL,
                                        RemoteAccessToken:  BlockedToken
                                    );
@@ -250,13 +257,20 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task GetVersions_v2_2_1_fromEMSP1_Test1()
         {
 
-            if (emsp1CommonHTTPAPI is null)
+            if (cpo1CommonAPI_v2_2_1 is null)
             {
-                Assert.Fail("emsp1BaseAPI is null!");
+                Assert.Fail("cpo1CommonAPI_v2_2_1 is null!");
                 return;
             }
 
-            var graphDefinedEMSP1 = new OCPIv2_2_1.CommonClient(
+            if (emsp1CommonHTTPAPI is null)
+            {
+                Assert.Fail("emsp1CommonHTTPAPI is null!");
+                return;
+            }
+
+            var graphDefinedEMSP1 = cpo1CommonAPI_v2_2_1.GetCommonClient(
+                                        RemoteParty_Id.Unknown,
                                         RemoteVersionsURL:  emsp1CommonHTTPAPI.OurVersionsURL,
                                         RemoteAccessToken:  BlockedToken
                                     );

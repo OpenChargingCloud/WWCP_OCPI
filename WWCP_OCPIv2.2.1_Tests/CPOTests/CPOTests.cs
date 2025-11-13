@@ -163,7 +163,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                         Status:              PartyStatus.ENABLED
                                     );
 
-                ClassicAssert.IsTrue(result2);
+                ClassicAssert.IsTrue(result2.IsSuccess);
 
             }
 
@@ -270,7 +270,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                         Status:              PartyStatus.ENABLED
                                     );
 
-            ClassicAssert.IsTrue(addEMSPResult);
+            ClassicAssert.IsTrue(addEMSPResult.IsSuccess);
 
 
             var addCPOResult = await emsp1CommonAPI.AddRemoteParty(
@@ -303,7 +303,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                         Status:              PartyStatus.ENABLED
                                     );
 
-            ClassicAssert.IsTrue(addCPOResult);
+            ClassicAssert.IsTrue(addCPOResult.IsSuccess);
 
             #endregion
 
@@ -703,7 +703,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 Status:              PartyStatus.ENABLED
             );
 
-            ClassicAssert.IsTrue(addEMSPResult);
+            ClassicAssert.IsTrue(addEMSPResult.IsSuccess);
 
 
             var addCPOResult = await emsp1CommonAPI.AddRemoteParty(
@@ -736,7 +736,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 Status:              PartyStatus.ENABLED
             );
 
-            ClassicAssert.IsTrue(addCPOResult);
+            ClassicAssert.IsTrue(addCPOResult.IsSuccess);
 
             #endregion
 
@@ -823,7 +823,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 Status:              PartyStatus.ENABLED
             );
 
-            ClassicAssert.IsTrue(addEMSPResult);
+            ClassicAssert.IsTrue(addEMSPResult.IsSuccess);
 
 
             var addCPOResult = await emsp1CommonAPI.AddRemoteParty(
@@ -856,7 +856,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 Status:              PartyStatus.ENABLED
             );
 
-            ClassicAssert.IsTrue(addCPOResult);
+            ClassicAssert.IsTrue(addCPOResult.IsSuccess);
 
             #endregion
 
@@ -924,9 +924,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                          new RemoteAccessInfo(
                                              AccessToken:        AccessToken.Parse("yyyyyy"),
                                              VersionsURL:        emsp1VersionsAPIURL.Value,
-                                             VersionIds:         new Version_Id[] {
-                                                                     Version_Id.Parse("2.2")
-                                                                 },
+                                             VersionIds:         [ Version_Id.Parse("2.2") ],
                                              SelectedVersionId:  Version_Id.Parse("2.2"),
                                              Status:             RemoteAccessStatus.ONLINE
                                          )
@@ -934,7 +932,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 Status:              PartyStatus.ENABLED
             );
 
-            ClassicAssert.IsTrue(addEMSPResult);
+            ClassicAssert.IsTrue(addEMSPResult.IsSuccess);
 
 
             var addCPOResult = await emsp1CommonAPI.AddRemoteParty(
@@ -967,7 +965,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 Status:              PartyStatus.ENABLED
             );
 
-            ClassicAssert.IsTrue(addCPOResult);
+            ClassicAssert.IsTrue(addCPOResult.IsSuccess);
 
             #endregion
 
@@ -1129,7 +1127,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                         Status:              PartyStatus.ENABLED
                                     );
 
-                ClassicAssert.IsTrue(result2);
+                ClassicAssert.IsTrue(result2.IsSuccess);
 
             }
 
