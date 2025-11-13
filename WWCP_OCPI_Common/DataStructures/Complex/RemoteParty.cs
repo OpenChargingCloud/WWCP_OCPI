@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// The remote TLS certificate validator.
         /// </summary>
-        public RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator    { get; }
+        public RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator    { get; set; }
 
         /// <summary>
         /// A delegate to select a TLS client certificate.
