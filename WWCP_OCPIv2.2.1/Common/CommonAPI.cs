@@ -2219,7 +2219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             PartyId     = partyId;
 
 
-            if (!Request.HTTPRequest.TryParseURLParameter<CDR_Id>     ("cdr_Id",       CDR_Id.          TryParse, out var cdrId))
+            if (!Request.HTTPRequest.TryParseURLParameter<CDR_Id>     ("cdrId",        CDR_Id.          TryParse, out var cdrId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2336,7 +2336,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             PartyId     = partyId;
 
 
-            if (!Request.HTTPRequest.TryParseURLParameter<CDR_Id>   ("cdr_Id",     CDR_Id.        TryParse, out var cdrId))
+            if (!Request.HTTPRequest.TryParseURLParameter<CDR_Id>   ("cdrId",      CDR_Id.        TryParse, out var cdrId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2383,24 +2383,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CDRId">The parsed unique CDR identification.</param>
         /// <param name="CDR">The resolved user.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        public static Boolean ParseCDR(this OCPIRequest                           Request,
-                                       CommonAPI                                  CommonAPI,
-                                       IEnumerable<Tuple<CountryCode, Party_Id>>  CountryCodesWithPartyIds,
-                                       out CDR_Id?                                CDRId,
-                                       out CDR?                                   CDR,
-                                       out OCPIResponse.Builder?                  OCPIResponseBuilder)
+        public static Boolean ParseCDR(this OCPIRequest                                Request,
+                                       CommonAPI                                       CommonAPI,
+                                       IEnumerable<Tuple<CountryCode, Party_Id>>       CountryCodesWithPartyIds,
+                                       [NotNullWhen(true)]  out CDR_Id?                CDRId,
+                                       [NotNullWhen(true)]  out CDR?                   CDR,
+                                       [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             CDRId                =  default;
             CDR                  =  default;
             OCPIResponseBuilder  =  default;
 
-            if (Request.ParsedURLParameters.Length < 1)
+            if (!Request.HTTPRequest.TryParseURLParameter<CDR_Id>("cdrId", CDR_Id.TryParse, out var cdrId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
-                    StatusMessage        = "Missing CDR identification!",
+                    StatusMessage        = "Invalid charge detail record identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
@@ -2412,24 +2412,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             }
 
-            CDRId = CDR_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CDRId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid CDR identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
+            CDRId = cdrId;
 
 
             foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)

@@ -3158,8 +3158,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                           CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
                                           out var cdrId,
                                           out var cdr,
-                                          out var ocpiResponseBuilder) ||
-                         cdr is null)
+                                          out var ocpiResponseBuilder))
                     {
                         return Task.FromResult(ocpiResponseBuilder!);
                     }
