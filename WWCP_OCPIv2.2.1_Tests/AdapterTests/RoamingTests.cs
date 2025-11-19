@@ -156,7 +156,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                     GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
 
-                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialAdminStatus:   ChargingStationAdminStatusType.Operational,
                                                     InitialStatus:        ChargingStationStatusType.Available,
 
                                                     Configurator:         chargingStation => {
@@ -181,7 +181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                     GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
 
-                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialAdminStatus:   ChargingStationAdminStatusType.Operational,
                                                     InitialStatus:        ChargingStationStatusType.Available,
 
                                                     Configurator:         chargingStation => {
@@ -206,7 +206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                     GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
 
-                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialAdminStatus:   ChargingStationAdminStatusType.Operational,
                                                     InitialStatus:        ChargingStationStatusType.Available,
 
                                                     Configurator:         chargingStation => {
@@ -458,7 +458,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                     GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
 
-                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialAdminStatus:   ChargingStationAdminStatusType.Operational,
                                                     InitialStatus:        ChargingStationStatusType.Available,
 
                                                     Configurator:         chargingStation => {
@@ -483,7 +483,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                     GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
 
-                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialAdminStatus:   ChargingStationAdminStatusType.Operational,
                                                     InitialStatus:        ChargingStationStatusType.Available,
 
                                                     Configurator:         chargingStation => {
@@ -508,7 +508,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                     GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
 
-                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialAdminStatus:   ChargingStationAdminStatusType.Operational,
                                                     InitialStatus:        ChargingStationStatusType.Available,
 
                                                     Configurator:         chargingStation => {
@@ -1044,7 +1044,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                     GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
 
-                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialAdminStatus:   ChargingStationAdminStatusType.Operational,
                                                     InitialStatus:        ChargingStationStatusType.Available,
 
                                                     Configurator:         chargingStation => {
@@ -1069,7 +1069,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                     GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
 
-                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialAdminStatus:   ChargingStationAdminStatusType.Operational,
                                                     InitialStatus:        ChargingStationStatusType.Available,
 
                                                     Configurator:         chargingStation => {
@@ -1094,7 +1094,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                     GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
 
-                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialAdminStatus:   ChargingStationAdminStatusType.Operational,
                                                     InitialStatus:        ChargingStationStatusType.Available,
 
                                                     Configurator:         chargingStation => {
@@ -1507,7 +1507,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                     GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
 
-                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialAdminStatus:   ChargingStationAdminStatusType.Operational,
                                                     InitialStatus:        ChargingStationStatusType.Available,
 
                                                     Configurator:         chargingStation => {
@@ -1532,7 +1532,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                     GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
 
-                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialAdminStatus:   ChargingStationAdminStatusType.Operational,
                                                     InitialStatus:        ChargingStationStatusType.Available,
 
                                                     Configurator:         chargingStation => {
@@ -1557,7 +1557,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                     GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
 
-                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialAdminStatus:   ChargingStationAdminStatusType.Operational,
                                                     InitialStatus:        ChargingStationStatusType.Available,
 
                                                     Configurator:         chargingStation => {
