@@ -454,7 +454,7 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
                     }
                     catch (exception)
                     {
-                        DoSearchError("Exception occured: " + exception);
+                        DoSearchError("Exception occurred: " + exception);
                     }
 
                     if (whenDone)
@@ -854,7 +854,7 @@ async function OCPIGetCollection<TMetadata extends TMetadataDefaults, TSearchRes
     //        }
     //        catch (exception)
     //        {
-    //            DoSearchError("Exception occured: " + exception);
+    //            DoSearchError("Exception occurred: " + exception);
     //        }
     //
     //        if (doFinish)

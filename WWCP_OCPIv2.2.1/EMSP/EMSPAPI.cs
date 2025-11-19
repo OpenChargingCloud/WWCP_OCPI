@@ -6641,7 +6641,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Set a user-friendly response message for the ev driver
 
-                    var responseText = "An error occured!";
+                    var responseText = "An error occurred!";
 
                     if (!authorizationInfo.Info.HasValue)
                     {
@@ -6756,7 +6756,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         else
                         {
 
-                            responseText = "An error occured!";
+                            responseText = "An error occurred!";
 
                             if (authorizationInfo.Token?.UILanguage.HasValue == true)
                             {
