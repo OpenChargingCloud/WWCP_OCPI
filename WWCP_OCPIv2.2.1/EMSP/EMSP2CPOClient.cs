@@ -834,9 +834,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         #endregion
 
 
-        public override JObject ToJSON()
-            => base.ToJSON(nameof(EMSP2CPOClient));
-
 
         #region GetLocations      (...)
 
@@ -3868,6 +3865,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
         #endregion
 
+
+        #region ToJSON()
+
+        public override JObject ToJSON()
+            => base.ToJSON(nameof(EMSP2CPOClient));
+
+        #endregion
 
         #region Dispose()
 

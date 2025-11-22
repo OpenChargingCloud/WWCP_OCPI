@@ -838,9 +838,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         #endregion
 
 
-        public override JObject ToJSON()
-            => base.ToJSON(nameof(EMSP2CPOClient));
-
 
         #region GetLocations(...)
 
@@ -3103,7 +3100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
         // Commands
 
-        #region ReserveNow       (Token, ExpirationTimestamp, ReservationId, LocationId, EVSEUId, AuthorizationReference, ...)
+        #region ReserveNow        (Token, ExpirationTimestamp, ReservationId, LocationId, EVSEUId, AuthorizationReference, ...)
 
         /// <summary>
         /// Put/store the given token on/within the remote API.
@@ -3309,7 +3306,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
         #endregion
 
-        #region CancelReservation(ReservationId, ...)
+        #region CancelReservation (ReservationId, ...)
 
         /// <summary>
         /// Put/store the given token on/within the remote API.
@@ -3497,7 +3494,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
         #endregion
 
-        #region StartSession     (Token, LocationId, EVSEUId, AuthorizationReference, ...)
+        #region StartSession      (Token, LocationId, EVSEUId, AuthorizationReference, ...)
 
         /// <summary>
         /// Put/store the given token on/within the remote API.
@@ -3694,7 +3691,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
         #endregion
 
-        #region StopSession      (SessionId, ...)
+        #region StopSession       (SessionId, ...)
 
         /// <summary>
         /// Put/store the given token on/within the remote API.
@@ -3883,7 +3880,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
         #endregion
 
-        #region UnlockConnector  (LocationId, EVSEUId, ConnectorId, ...)
+        #region UnlockConnector   (LocationId, EVSEUId, ConnectorId, ...)
 
         /// <summary>
         /// Put/store the given token on/within the remote API.
@@ -4080,6 +4077,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
         #endregion
 
+
+
+        #region ToJSON()
+
+        public override JObject ToJSON()
+            => base.ToJSON(nameof(EMSP2CPOClient));
+
+        #endregion
 
         #region Dispose()
 
