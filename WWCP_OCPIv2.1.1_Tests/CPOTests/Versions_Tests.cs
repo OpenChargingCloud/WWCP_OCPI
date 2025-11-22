@@ -337,7 +337,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                     Status:              PartyStatus.ENABLED
                 );
 
-                ClassicAssert.IsTrue(addEMSPResult);
+                ClassicAssert.IsTrue(addEMSPResult.IsSuccess);
 
                 #endregion
 

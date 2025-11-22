@@ -5327,8 +5327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                             if (command.JSONObject is not null &&
                                 RemoteParty.TryParse(command.JSONObject,
                                                      out remoteParty,
-                                                     out errorResponse) &&
-                                remoteParty is not null)
+                                                     out errorResponse))
                             {
                                 remoteParties.TryAdd(remoteParty.Id, remoteParty);
                             }
@@ -5351,8 +5350,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                             if (command.JSONObject is not null &&
                                 RemoteParty.TryParse(command.JSONObject,
                                                      out remoteParty,
-                                                     out errorResponse) &&
-                                remoteParty is not null)
+                                                     out errorResponse))
                             {
                                 remoteParties.TryAdd(remoteParty.Id, remoteParty);
                             }
@@ -5375,8 +5373,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                             if (command.JSONObject is not null &&
                                 RemoteParty.TryParse(command.JSONObject,
                                                      out remoteParty,
-                                                     out errorResponse) &&
-                                remoteParty is not null)
+                                                     out errorResponse))
                             {
 
                                 if (remoteParties.ContainsKey(remoteParty.Id))
@@ -5404,8 +5401,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                             if (command.JSONObject is not null &&
                                 RemoteParty.TryParse(command.JSONObject,
                                                      out remoteParty,
-                                                     out errorResponse) &&
-                                remoteParty is not null)
+                                                     out errorResponse))
                             {
                                 remoteParties.Remove(remoteParty.Id, out _);
                                 remoteParties.TryAdd(remoteParty.Id, remoteParty);
@@ -5429,8 +5425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                             if (command.JSONObject is not null &&
                                 RemoteParty.TryParse(command.JSONObject,
                                                      out remoteParty,
-                                                     out errorResponse) &&
-                                remoteParty is not null)
+                                                     out errorResponse))
                             {
                                 remoteParties.Remove(remoteParty.Id, out _);
                             }

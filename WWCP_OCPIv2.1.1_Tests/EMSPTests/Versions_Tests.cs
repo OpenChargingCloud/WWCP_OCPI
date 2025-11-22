@@ -156,7 +156,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                     Status:              PartyStatus.ENABLED
                 );
 
-                ClassicAssert.IsTrue(updateCPOResult);
+                ClassicAssert.IsTrue(updateCPOResult.IsSuccess);
 
                 #endregion
 
@@ -273,7 +273,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                     Status:              PartyStatus.ENABLED
                 );
 
-                ClassicAssert.IsTrue(addCPOResult);
+                ClassicAssert.IsTrue(addCPOResult.IsSuccess);
 
                 #endregion
 

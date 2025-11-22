@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Net.Security;
+using System.Security.Cryptography;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
@@ -25,8 +27,6 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using System.Security.Cryptography;
-using System.Net.Security;
 
 #endregion
 
@@ -84,7 +84,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// The remote TLS certificate validator.
         /// </summary>
-        public RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator    { get; set; }
+        public RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator    { get; protected set; }
 
         /// <summary>
         /// A delegate to select a TLS client certificate.
@@ -211,7 +211,7 @@ namespace cloud.charging.open.protocols.OCPI
                                                                                certificate,
                                                                                certificateChain,
                                                                                tlsClient,
-                                                                               policyErrors) => (false, []));
+                                                                               policyErrors) => (false, [ $"The default behavior within {nameof(ARemoteParty)} is to reject all remote TLS server certificates!" ] ));
             this.LocalCertificateSelector    = LocalCertificateSelector;
             this.ClientCertificates          = ClientCertificates         ?? [];
             this.ClientCertificateContext    = ClientCertificateContext;
@@ -235,6 +235,12 @@ namespace cloud.charging.open.protocols.OCPI
         }
 
         #endregion
+
+
+        public void SetRemoteCertificateValidator(RemoteTLSServerCertificateValidationHandler<IHTTPClient> RemoteCertificateValidator)
+        {
+            this.RemoteCertificateValidator = RemoteCertificateValidator;
+        }
 
 
         #region ToJSON(JSONLDContext, CustomLocalAccessInfoSerializer, CustomRemoteAccessInfoSerializer)

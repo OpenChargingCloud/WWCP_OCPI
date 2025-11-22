@@ -2289,7 +2289,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                        );
 
-                        if (!addOrUpdateResult)
+                        if (addOrUpdateResult.IsFailed)
                             DebugX.Log("Illegal AddOrUpdateRemoteParty(...) after Register(...)!");
 
                     }
