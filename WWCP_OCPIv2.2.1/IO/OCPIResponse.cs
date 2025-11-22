@@ -25,6 +25,8 @@ using Hermod = org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1;
+using org.GraphDefined.Vanaheimr.Hermod;
+using System.Threading.Tasks;
 
 #endregion
 
@@ -736,10 +738,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 var toCountryCode        = Response.TryParseHeaderField<CountryCode>    ("OCPI-to-country-code",   CountryCode.    TryParse);
                 var toPartyId            = Response.TryParseHeaderField<Party_Id>       ("OCPI-to-party-id",       Party_Id.       TryParse);
 
+                var text = "";
+
                 if (Response.HTTPBody?.Length > 0)
+                    text = Response.HTTPBodyAsUTF8String;
+
+                //if (Response.HTTPBodyStream is ChunkedTransferEncodingStream chunkedStream)
+                //    text = Response.ReadAllChunks().GetAwaiter().GetResult();
+
+                if (text.IsNotNullOrEmpty())
                 {
 
-                    var text  = Response.HTTPBodyAsUTF8String;
                     var json  = text is not null
                                     ? JObject.Parse(text)
                                     : null;
@@ -830,21 +839,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 }
 
-                result ??= new OCPIResponse<IEnumerable<TResponse>>(Array.Empty<TResponse>(),
-                                                                    -1,
-                                                                    Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
-                                                                    null,
-                                                                    Response.Timestamp,
+                result ??= new OCPIResponse<IEnumerable<TResponse>>(
+                               [],
+                               -1,
+                               Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
+                               null,
+                               Response.Timestamp,
 
-                                                                    Response,
-                                                                    remoteRequestId,
-                                                                    remoteCorrelationId,
-                                                                    remoteLocation,
+                               Response,
+                               remoteRequestId,
+                               remoteCorrelationId,
+                               remoteLocation,
 
-                                                                    fromCountryCode,
-                                                                    fromPartyId,
-                                                                    toCountryCode,
-                                                                    toPartyId);
+                               fromCountryCode,
+                               fromPartyId,
+                               toCountryCode,
+                               toPartyId
+                           );
 
             }
             catch (Exception e)
@@ -889,10 +900,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 var toCountryCode        = Response.TryParseHeaderField<CountryCode>    ("OCPI-to-country-code",   CountryCode.    TryParse);
                 var toPartyId            = Response.TryParseHeaderField<Party_Id>       ("OCPI-to-party-id",       Party_Id.       TryParse);
 
+                var text = "";
+
                 if (Response.HTTPBody?.Length > 0)
+                    text = Response.HTTPBodyAsUTF8String;
+
+                //if (Response.HTTPBodyStream is ChunkedTransferEncodingStream chunkedStream)
+                //    text = Response.ReadAllChunks().GetAwaiter().GetResult();
+
+                if (text.IsNotNullOrEmpty())
                 {
 
-                    var text  = Response.HTTPBodyAsUTF8String;
                     var json  = text is not null
                                     ? JObject.Parse(text)
                                     : null;
@@ -913,71 +931,81 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         {
 
                             if (json["data"] is JObject JSONObject)
-                                result = new OCPIResponse<TResponse>(Parser(JSONObject),
-                                                                     statusCode    ?? 3000,
-                                                                     statusMessage ?? String.Empty,
-                                                                     null,
-                                                                     timestamp,
+                                result = new OCPIResponse<TResponse>(
+                                                 Parser(JSONObject),
+                                                 statusCode    ?? 3000,
+                                                 statusMessage ?? String.Empty,
+                                                 null,
+                                                 timestamp,
 
-                                                                     Response,
-                                                                     remoteRequestId,
-                                                                     remoteCorrelationId,
-                                                                     remoteLocation,
+                                                 Response,
+                                                 remoteRequestId,
+                                                 remoteCorrelationId,
+                                                 remoteLocation,
 
-                                                                     fromCountryCode,
-                                                                     fromPartyId,
-                                                                     toCountryCode,
-                                                                     toPartyId);
+                                                 fromCountryCode,
+                                                 fromPartyId,
+                                                 toCountryCode,
+                                                 toPartyId
+                                             );
 
                         }
 
                         else
-                            result = new OCPIResponse<TResponse>(statusCode    ?? 3000,
-                                                                 statusMessage ?? String.Empty,
-                                                                 null,
-                                                                 timestamp,
+                            result = new OCPIResponse<TResponse>(
+                                             statusCode    ?? 3000,
+                                             statusMessage ?? String.Empty,
+                                             null,
+                                             timestamp,
 
-                                                                 Response,
-                                                                 remoteRequestId,
-                                                                 remoteCorrelationId,
-                                                                 remoteLocation,
+                                             Response,
+                                             remoteRequestId,
+                                             remoteCorrelationId,
+                                             remoteLocation,
 
-                                                                 fromCountryCode,
-                                                                 fromPartyId,
-                                                                 toCountryCode,
-                                                                 toPartyId);
+                                             fromCountryCode,
+                                             fromPartyId,
+                                             toCountryCode,
+                                             toPartyId
+                                         );
 
                     }
 
                 }
 
-                result ??= new OCPIResponse<TResponse>(-1,
-                                                       Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
-                                                       null,
-                                                       Response.Timestamp,
+                result ??= new OCPIResponse<TResponse>(
+                                   -1,
+                                   Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
+                                   null,
+                                   Response.Timestamp,
 
-                                                       Response,
-                                                       remoteRequestId,
-                                                       remoteCorrelationId,
-                                                       remoteLocation,
+                                   Response,
+                                   remoteRequestId,
+                                   remoteCorrelationId,
+                                   remoteLocation,
 
-                                                       fromCountryCode,
-                                                       fromPartyId,
-                                                       toCountryCode,
-                                                       toPartyId);
+                                   fromCountryCode,
+                                   fromPartyId,
+                                   toCountryCode,
+                                   toPartyId
+                               );
 
             }
             catch (Exception e)
             {
 
-                result = new OCPIResponse<TResponse>(-1,
-                                                     e.Message,
-                                                     e.StackTrace);
+                result = new OCPIResponse<TResponse>(
+                                 -1,
+                                 e.Message,
+                                 e.StackTrace
+                             );
 
             }
 
-            result ??= new OCPIResponse<TResponse>(-1,
-                                                   String.Empty);
+            result ??= new OCPIResponse<TResponse>(
+                               -1,
+                               String.Empty
+                           );
 
             return result;
 
@@ -1209,31 +1237,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                      Func<JObject, TResponse>  Parser)
         {
 
-            var r = ParseJObject(Response,
-                                 RequestId,
-                                 CorrelationId,
-                                 Parser);
+            var r = ParseJObject(
+                        Response,
+                        RequestId,
+                        CorrelationId,
+                        Parser
+                    );
 
-            return new OCPIResponse<TRequest, TResponse>(Request,
-                                                         r.Data,
-                                                         r.StatusCode,
-                                                         r.StatusMessage,
-                                                         r.AdditionalInformation,
-                                                         r.Timestamp,
+            return new OCPIResponse<TRequest, TResponse>(
+                           Request,
+                           r.Data,
+                           r.StatusCode,
+                           r.StatusMessage,
+                           r.AdditionalInformation,
+                           r.Timestamp,
 
-                                                         r.HTTPResponse,
-                                                         r.RequestId,
-                                                         r.CorrelationId,
-                                                         r.HTTPLocation,
+                           r.HTTPResponse,
+                           r.RequestId,
+                           r.CorrelationId,
+                           r.HTTPLocation,
 
-                                                         r.FromCountryCode,
-                                                         r.FromPartyId,
-                                                         r.ToCountryCode,
-                                                         r.ToPartyId);
+                           r.FromCountryCode,
+                           r.FromPartyId,
+                           r.ToCountryCode,
+                           r.ToPartyId
+                       );
 
         }
 
         #endregion
+
 
     }
 

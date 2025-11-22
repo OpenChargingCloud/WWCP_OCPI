@@ -87,12 +87,12 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// The TLS client certificate to use for HTTP authentication.
         /// </summary>
-        X509Certificate2?                                          ClientCertificate                    { get; }
+        IEnumerable<X509Certificate2>?                             ClientCertificates            { get; }
 
         /// <summary>
         /// The TLS protocol to use.
         /// </summary>
-        SslProtocols?                                              TLSProtocols                   { get; }
+        SslProtocols?                                              TLSProtocols                  { get; }
 
         /// <summary>
         /// The optional HTTP accept header.

@@ -48,9 +48,22 @@ namespace cloud.charging.open.protocols.OCPI
 
         /// <summary>
         /// The access token for accessing the remote party.
+        /// Null, when remote data is publicly accessible as Open Data.
         /// </summary>
-        [Mandatory]
-        public AccessToken              AccessToken                   { get; }
+        [Optional]
+        public AccessToken?             AccessToken                   { get; }
+
+        /// <summary>
+        /// Whether the access token is base64 encoded or not.
+        /// </summary>
+        [Optional]
+        public Boolean?                 AccessTokenIsBase64Encoded    { get; }
+
+        /// <summary>
+        /// Configuration of the Time-Based One-Time Password (TOTP) 2nd factor authentication.
+        /// </summary>
+        public TOTPConfig?              TOTPConfig                    { get; }
+
 
         /// <summary>
         /// The remote access status.
@@ -58,10 +71,6 @@ namespace cloud.charging.open.protocols.OCPI
         [Mandatory]
         public RemoteAccessStatus       Status                        { get; }
 
-        /// <summary>
-        /// Configuration of the Time-Based One-Time Password (TOTP) 2nd factor authentication.
-        /// </summary>
-        public TOTPConfig?              TOTPConfig                    { get; }
 
         /// <summary>
         /// All available OCPI versions of the remote party.
@@ -86,12 +95,6 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         [Optional]
         public DateTimeOffset?          NotAfter                      { get; }
-
-        /// <summary>
-        /// Whether the access token is base64 encoded or not.
-        /// </summary>
-        [Mandatory]
-        public Boolean                  AccessTokenIsBase64Encoded    { get; }
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
@@ -119,44 +122,47 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="AccessTokenIsBase64Encoded">Whether the access token is base64 encoded or not.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         public RemoteAccessInfo(URL                       VersionsURL,
-                                AccessToken               AccessToken,
+                                AccessToken?              AccessToken                  = null,
+                                Boolean?                  AccessTokenIsBase64Encoded   = null,
+                                TOTPConfig?               TOTPConfig                   = null,
 
                                 RemoteAccessStatus?       Status                       = RemoteAccessStatus.ONLINE,
-                                TOTPConfig?               TOTPConfig                   = null,
+
                                 IEnumerable<Version_Id>?  VersionIds                   = null,
                                 Version_Id?               SelectedVersionId            = null,
                                 DateTimeOffset?           NotBefore                    = null,
                                 DateTimeOffset?           NotAfter                     = null,
-                                Boolean?                  AccessTokenIsBase64Encoded   = true,
                                 Boolean?                  AllowDowngrades              = false)
         {
 
             this.VersionsURL                 = VersionsURL;
             this.AccessToken                 = AccessToken;
+            this.AccessTokenIsBase64Encoded  = AccessTokenIsBase64Encoded;
+            this.TOTPConfig                  = TOTPConfig;
 
             this.Status                      = Status                     ?? RemoteAccessStatus.ONLINE;
-            this.TOTPConfig                  = TOTPConfig;
+
             this.VersionIds                  = VersionIds?.Distinct()     ?? [];
             this.SelectedVersionId           = SelectedVersionId;
             this.NotBefore                   = NotBefore;
             this.NotAfter                    = NotAfter;
-            this.AccessTokenIsBase64Encoded  = AccessTokenIsBase64Encoded ?? true;
             this.AllowDowngrades             = AllowDowngrades            ?? false;
 
             unchecked
             {
 
-                this.hashCode = this.VersionsURL.               GetHashCode()       * 29 ^
-                                this.AccessToken.               GetHashCode()       * 23 ^
+                this.hashCode = this.VersionsURL.                GetHashCode()       * 29 ^
+                               (this.AccessToken?.               GetHashCode() ?? 0) * 23 ^
+                               (this.AccessTokenIsBase64Encoded?.GetHashCode() ?? 0) * 19 ^
+                               (this.TOTPConfig?.                GetHashCode() ?? 0) * 17 ^
 
-                                this.Status.                    GetHashCode()       * 19 ^
-                               (this.TOTPConfig?.               GetHashCode() ?? 0) * 17 ^
-                                this.VersionIds.                CalcHashCode()      * 13 ^
-                               (this.SelectedVersionId?.        GetHashCode() ?? 0) * 11 ^
-                               (this.NotBefore?.                GetHashCode() ?? 0) *  7 ^
-                               (this.NotAfter?.                 GetHashCode() ?? 0) *  5 ^
-                                this.AccessTokenIsBase64Encoded.GetHashCode()       *  3 ^
-                                this.AllowDowngrades.           GetHashCode();
+                                this.Status.                     GetHashCode()       * 13 ^
+
+                                this.VersionIds.                 CalcHashCode()      * 11 ^
+                               (this.SelectedVersionId?.         GetHashCode() ?? 0) *  7 ^
+                               (this.NotBefore?.                 GetHashCode() ?? 0) *  5 ^
+                               (this.NotAfter?.                  GetHashCode() ?? 0) *  3 ^
+                                this.AllowDowngrades.            GetHashCode();
 
             }
 
@@ -247,15 +253,43 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #endregion
 
-                #region Parse AccessToken                   [mandatory]
+                #region Parse AccessToken                   [optional]
 
-                if (!JSON.ParseMandatory("accessToken",
-                                         "access token",
-                                         OCPI.AccessToken.TryParse,
-                                         out AccessToken AccessToken,
-                                         out ErrorResponse))
+                if (JSON.ParseOptional("accessToken",
+                                       "access token",
+                                       OCPI.AccessToken.TryParse,
+                                       out AccessToken? AccessToken,
+                                       out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse AccessTokenIsBase64Encoded    [optional]
+
+                if (JSON.ParseOptional("accessTokenIsBase64Encoded",
+                                       "access token is base64 encoded",
+                                       out Boolean? AccessTokenIsBase64Encoded,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse TOTPConfig                    [optional]
+
+                if (JSON.ParseOptionalJSON("totpConfig",
+                                           "time-based one-time password configuration",
+                                           TOTPConfig.TryParse,
+                                           out TOTPConfig? totpConfig,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -274,19 +308,6 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #endregion
 
-                #region Parse TOTPConfig                    [optional]
-
-                if (JSON.ParseOptionalJSON("totpConfig",
-                                           "time-based one-time password configuration",
-                                           TOTPConfig.TryParse,
-                                           out TOTPConfig? totpConfig,
-                                           out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                #endregion
 
                 #region Parse SelectedVersionId             [optional]
 
@@ -328,18 +349,6 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #endregion
 
-                #region Parse AccessTokenIsBase64Encoded    [mandatory]
-
-                if (!JSON.ParseMandatory("accessTokenIsBase64Encoded",
-                                         "access token is base64 encoded",
-                                         out Boolean AccessTokenIsBase64Encoded,
-                                         out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
                 #region Parse AllowDowngrades               [mandatory]
 
                 if (!JSON.ParseMandatory("allowDowngrades",
@@ -357,14 +366,15 @@ namespace cloud.charging.open.protocols.OCPI
 
                                        VersionsURL,
                                        AccessToken,
+                                       AccessTokenIsBase64Encoded,
+                                       totpConfig,
 
                                        Status,
-                                       totpConfig,
+
                                        null, // VersionIds
                                        SelectedVersionId,
                                        NotBefore,
                                        NotAfter,
-                                       AccessTokenIsBase64Encoded,
                                        AllowDowngrades
 
                                    );
@@ -400,12 +410,22 @@ namespace cloud.charging.open.protocols.OCPI
             var json = JSONObject.Create(
 
                                  new JProperty("versionsURL",                  VersionsURL.      ToString()),
-                                 new JProperty("accessToken",                  AccessToken.      ToString()),
-                                 new JProperty("status",                       Status.           ToString()),
+
+                           AccessToken.HasValue
+                               ? new JProperty("accessToken",                  AccessToken.      ToString())
+                               : null,
+
+                           AccessTokenIsBase64Encoded.HasValue
+                               ? new JProperty("accessTokenIsBase64Encoded",   AccessTokenIsBase64Encoded.Value)
+                               : null,
 
                            TOTPConfig is not null
                                ? new JProperty("totpConfig",                   TOTPConfig.       ToJSON())
                                : null,
+
+
+                                 new JProperty("status",                       Status.           ToString()),
+
 
                            VersionIds.IsNeitherNullNorEmpty()
                                ? new JProperty("versionIds",                   new JArray(VersionIds.Select(versionId => versionId.ToString())))
@@ -423,7 +443,6 @@ namespace cloud.charging.open.protocols.OCPI
                                ? new JProperty("notAfter",                     NotAfter. Value.ToISO8601())
                                : null,
 
-                                 new JProperty("accessTokenIsBase64Encoded",   AccessTokenIsBase64Encoded),
                                  new JProperty("allowDowngrades",              AllowDowngrades)
 
                        );
@@ -445,16 +464,17 @@ namespace cloud.charging.open.protocols.OCPI
 
             => new (
 
-                   VersionsURL.Clone(),
-                   AccessToken.Clone(),
+                   VersionsURL. Clone(),
+                   AccessToken?.Clone(),
+                   AccessTokenIsBase64Encoded,
+                   TOTPConfig?. Clone(),
 
                    Status,
-                   TOTPConfig?.Clone(),
+
                    VersionIds.Select(versionId => versionId.Clone()),
                    SelectedVersionId,
                    NotBefore,
                    NotAfter,
-                   AccessTokenIsBase64Encoded,
                    AllowDowngrades
 
                );
@@ -598,34 +618,36 @@ namespace cloud.charging.open.protocols.OCPI
             if (RemoteAccessInfo is null)
                 throw new ArgumentNullException(nameof(RemoteAccessInfo), "The given remote access information must not be null!");
 
-            var c = VersionsURL.               CompareTo(RemoteAccessInfo.VersionsURL);
+            var c = VersionsURL.                     CompareTo(RemoteAccessInfo.VersionsURL);
 
-            if (c == 0)
-                c = AccessToken.               CompareTo(RemoteAccessInfo.AccessToken);
+            if (c == 0 && AccessToken.               HasValue && RemoteAccessInfo.AccessToken.               HasValue)
+                c = AccessToken.Value.               CompareTo(RemoteAccessInfo.AccessToken.Value);
 
-            if (c == 0)
-                c = Status.                    CompareTo(RemoteAccessInfo.Status);
-
-            if (c == 0)
-                c = AccessTokenIsBase64Encoded.CompareTo(RemoteAccessInfo.AccessTokenIsBase64Encoded);
-
-            if (c == 0)
-                c = AllowDowngrades.           CompareTo(RemoteAccessInfo.AllowDowngrades);
-
-            if (c == 0 && NotBefore.HasValue && RemoteAccessInfo.NotBefore.HasValue)
-                c = NotBefore.        Value.   CompareTo(RemoteAccessInfo.NotBefore.        Value);
-
-            if (c == 0 && NotAfter. HasValue && RemoteAccessInfo.NotAfter. HasValue)
-                c = NotAfter.         Value.   CompareTo(RemoteAccessInfo.NotAfter.         Value);
-
-            if (c == 0 && SelectedVersionId.HasValue && RemoteAccessInfo.SelectedVersionId.HasValue)
-                c = SelectedVersionId.Value.   CompareTo(RemoteAccessInfo.SelectedVersionId.Value);
+            if (c == 0 && AccessTokenIsBase64Encoded.HasValue && RemoteAccessInfo.AccessTokenIsBase64Encoded.HasValue)
+                c = AccessTokenIsBase64Encoded.Value.CompareTo(RemoteAccessInfo.AccessTokenIsBase64Encoded.Value);
 
             if (c == 0 && TOTPConfig    is not null && RemoteAccessInfo.TOTPConfig is not null)
-                c = TOTPConfig.                CompareTo(RemoteAccessInfo.TOTPConfig);
+                c = TOTPConfig.                      CompareTo(RemoteAccessInfo.TOTPConfig);
+
 
             if (c == 0)
-                c = VersionIds.Count().        CompareTo(RemoteAccessInfo.VersionIds.Count());
+                c = Status.                          CompareTo(RemoteAccessInfo.Status);
+
+
+            if (c == 0)
+                c = AllowDowngrades.                 CompareTo(RemoteAccessInfo.AllowDowngrades);
+
+            if (c == 0 && NotBefore.HasValue && RemoteAccessInfo.NotBefore.HasValue)
+                c = NotBefore.        Value.         CompareTo(RemoteAccessInfo.NotBefore.        Value);
+
+            if (c == 0 && NotAfter. HasValue && RemoteAccessInfo.NotAfter. HasValue)
+                c = NotAfter.         Value.         CompareTo(RemoteAccessInfo.NotAfter.         Value);
+
+            if (c == 0 && SelectedVersionId.HasValue && RemoteAccessInfo.SelectedVersionId.HasValue)
+                c = SelectedVersionId.Value.         CompareTo(RemoteAccessInfo.SelectedVersionId.Value);
+
+            if (c == 0)
+                c = VersionIds.Count().              CompareTo(RemoteAccessInfo.VersionIds.Count());
 
             if (c == 0)
                 c = VersionIds.OrderBy(versionId => versionId.ToString()).AggregateWith(",").CompareTo(RemoteAccessInfo.VersionIds.OrderBy(versionId => versionId.ToString()).AggregateWith(","));
@@ -664,19 +686,25 @@ namespace cloud.charging.open.protocols.OCPI
             => RemoteAccessInfo is not null &&
 
                VersionsURL.               Equals(RemoteAccessInfo.VersionsURL)                &&
-               AccessToken.               Equals(RemoteAccessInfo.AccessToken)                &&
+
+            ((!AccessToken.               HasValue && !RemoteAccessInfo.AccessToken.               HasValue) ||
+              (AccessToken.               HasValue &&  RemoteAccessInfo.AccessToken.               HasValue && AccessToken.               Value.Equals(RemoteAccessInfo.AccessToken.               Value))) &&
+
+            ((!AccessTokenIsBase64Encoded.HasValue && !RemoteAccessInfo.AccessTokenIsBase64Encoded.HasValue) ||
+              (AccessTokenIsBase64Encoded.HasValue &&  RemoteAccessInfo.AccessTokenIsBase64Encoded.HasValue && AccessTokenIsBase64Encoded.Value.Equals(RemoteAccessInfo.AccessTokenIsBase64Encoded.Value))) &&
+
                Status.                    Equals(RemoteAccessInfo.Status)                     &&
-               AccessTokenIsBase64Encoded.Equals(RemoteAccessInfo.AccessTokenIsBase64Encoded) &&
+
                AllowDowngrades.           Equals(RemoteAccessInfo.AllowDowngrades)            &&
 
-            ((!NotBefore.        HasValue && !RemoteAccessInfo.NotBefore.        HasValue) ||
-              (NotBefore.        HasValue &&  RemoteAccessInfo.NotBefore.        HasValue && NotBefore.        Value.Equals(RemoteAccessInfo.NotBefore.        Value))) &&
+            ((!NotBefore.                 HasValue && !RemoteAccessInfo.NotBefore.                 HasValue) ||
+              (NotBefore.                 HasValue &&  RemoteAccessInfo.NotBefore.                 HasValue && NotBefore.                 Value.Equals(RemoteAccessInfo.NotBefore.                 Value))) &&
 
-            ((!NotAfter.         HasValue && !RemoteAccessInfo.NotAfter.         HasValue) ||
-              (NotAfter.         HasValue &&  RemoteAccessInfo.NotAfter.         HasValue && NotAfter.         Value.Equals(RemoteAccessInfo.NotAfter.         Value))) &&
+            ((!NotAfter.                  HasValue && !RemoteAccessInfo.NotAfter.                  HasValue) ||
+              (NotAfter.                  HasValue &&  RemoteAccessInfo.NotAfter.                  HasValue && NotAfter.                  Value.Equals(RemoteAccessInfo.NotAfter.                  Value))) &&
 
-            ((!SelectedVersionId.HasValue && !RemoteAccessInfo.SelectedVersionId.HasValue) ||
-              (SelectedVersionId.HasValue &&  RemoteAccessInfo.SelectedVersionId.HasValue && SelectedVersionId.Value.Equals(RemoteAccessInfo.SelectedVersionId.Value))) &&
+            ((!SelectedVersionId.         HasValue && !RemoteAccessInfo.SelectedVersionId.         HasValue) ||
+              (SelectedVersionId.         HasValue &&  RemoteAccessInfo.SelectedVersionId.         HasValue && SelectedVersionId.         Value.Equals(RemoteAccessInfo.SelectedVersionId.         Value))) &&
 
              ((TOTPConfig is null         &&  RemoteAccessInfo.TOTPConfig is null)         ||
               (TOTPConfig is not null     &&  RemoteAccessInfo.TOTPConfig is not null     && TOTPConfig.             Equals(RemoteAccessInfo.TOTPConfig             ))) &&
@@ -707,7 +735,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public override String ToString()
 
-            => $"{AccessToken}{(AccessTokenIsBase64Encoded ? "[base64}" : "")} @ {VersionsURL} {Status}";
+            => $"{AccessToken}{(AccessTokenIsBase64Encoded.HasValue && AccessTokenIsBase64Encoded.Value ? " [base64]" : "")} @ {VersionsURL} {Status}";
 
         #endregion
 

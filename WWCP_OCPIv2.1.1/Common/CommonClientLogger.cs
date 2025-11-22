@@ -20,6 +20,8 @@
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1
@@ -28,7 +30,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// <summary>
     /// The OCPI common client.
     /// </summary>
-    public partial class CommonClient : AHTTPClient
+    public partial class CommonClient : ACommonHTTPClient
     {
 
         /// <summary>

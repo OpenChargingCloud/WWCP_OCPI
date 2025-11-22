@@ -3051,7 +3051,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                              PUT(remoteURL.Value.Path + Token.CountryCode.ToString() +
                                                                         Token.PartyId.    ToString() +
                                                                         Token.Id.         ToString(),
-                                                 Content:               Token.ToJSON().ToUTF8Bytes(JSONFormat),
+                                                 Content:               Token.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -3244,7 +3244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                              PATCH(remoteURL.Value.Path + CountryCode.ToString() +
                                                                           PartyId.    ToString() +
                                                                           TokenId.    ToString(),
-                                                   Content:               TokenPatch.ToUTF8Bytes(JSONFormat),
+                                                   Content:               TokenPatch.ToUTF8Bytes(JSONFormatting),
                                                    ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                    Accept:                ocpiAcceptTypes,
                                                    Authentication:        TokenAuth,
@@ -3606,7 +3606,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                              ).
 
                                              POST(remoteURL.Value.Path,
-                                                  Content:               BookingRequest.ToJSON().ToUTF8Bytes(JSONFormat),
+                                                  Content:               BookingRequest.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
                                                   Authentication:        TokenAuth,
@@ -3821,7 +3821,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                              ).
 
                                              POST(remoteURL.Value.Path + "RESERVE_NOW",
-                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormat),
+                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
                                                   Authentication:        TokenAuth,
@@ -4028,7 +4028,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                              ).
 
                                              POST(remoteURL.Value.Path + "CANCEL_RESERVATION",
-                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormat),
+                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
                                                   Authentication:        TokenAuth,
@@ -4243,7 +4243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                              ).
 
                                              POST(remoteURL.Value.Path + "START_SESSION",
-                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormat),
+                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
                                                   Authentication:        TokenAuth,
@@ -4450,7 +4450,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                              ).
 
                                              POST(remoteURL.Value.Path + "STOP_SESSION",
-                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormat),
+                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
                                                   Authentication:        TokenAuth,
@@ -4659,7 +4659,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                              ).
 
                                              POST(remoteURL.Value.Path + "UNLOCK_CONNECTOR",
-                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormat),
+                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
                                                   Authentication:        TokenAuth,

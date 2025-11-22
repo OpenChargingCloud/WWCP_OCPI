@@ -150,8 +150,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             var graphDefinedCPO1 = emsp1CommonAPI_v2_2_1.GetCommonClient(
                                        RemoteParty_Id.Unknown,
-                                       RemoteVersionsURL:  cpo1CommonHTTPAPI.OurVersionsURL,
-                                       RemoteAccessToken:  BlockedToken
+                                       RemoteVersionsURL:  cpo1CommonHTTPAPI.OurVersionsURL
+                                    //   RemoteAccessToken:  BlockedToken
                                    );
 
             Assert.That(graphDefinedCPO1, Is.Not.Null);
@@ -238,13 +238,20 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task GetVersions_v2_3_0_fromCPO1_Test1()
         {
 
+            if (emsp1CommonAPI_v2_3_0 is null)
+            {
+                Assert.Fail("emsp1CommonAPI_v2_3_0 is null!");
+                return;
+            }
+
             if (cpo1CommonHTTPAPI is null)
             {
                 Assert.Fail("cpo1BaseAPI is null!");
                 return;
             }
 
-            var graphDefinedCPO1 = new OCPIv2_3_0.CommonClient(
+            var graphDefinedCPO1 = emsp1CommonAPI_v2_3_0.GetCommonClient(
+                                       RemoteParty_Id.Unknown,
                                        cpo1CommonHTTPAPI.OurVersionsURL
                                    );
 

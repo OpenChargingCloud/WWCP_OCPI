@@ -1337,7 +1337,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                                             CustomEnergyMixSerializer,
                                                                             CustomEnergySourceSerializer,
                                                                             CustomEnvironmentalImpactSerializer
-                                                                        ).ToUTF8Bytes(JSONFormat),
+                                                                        ).ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -1529,7 +1529,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                              PATCH(remoteURL.Value.Path + CountryCode.ToString() +
                                                                           PartyId.    ToString() +
                                                                           LocationId. ToString(),
-                                                   Content:               LocationPatch.ToUTF8Bytes(JSONFormat),
+                                                   Content:               LocationPatch.ToUTF8Bytes(JSONFormatting),
                                                    ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                    Accept:                ocpiAcceptTypes,
                                                    Authentication:        TokenAuth,
@@ -1970,7 +1970,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                                             CustomDisplayTextSerializer,
                                                                             CustomEVSEParkingSerializer,
                                                                             CustomImageSerializer
-                                                                        ).ToUTF8Bytes(JSONFormat),
+                                                                        ).ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -2169,7 +2169,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                                           PartyId.    ToString() +
                                                                           LocationId. ToString() +
                                                                           EVSEUId.    ToString(),
-                                                   Content:               EVSEPatch.ToUTF8Bytes(JSONFormat),
+                                                   Content:               EVSEPatch.ToUTF8Bytes(JSONFormatting),
                                                    ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                    Accept:                ocpiAcceptTypes,
                                                    Authentication:        TokenAuth,
@@ -2566,7 +2566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                                             true,
                                                                             EMSPId,
                                                                             CustomConnectorSerializer
-                                                                        ).ToUTF8Bytes(JSONFormat),
+                                                                        ).ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -2758,7 +2758,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                                           LocationId. ToString() +
                                                                           EVSEUId.    ToString() +
                                                                           ConnectorId.ToString(),
-                                                   Content:               ConnectorPatch.ToUTF8Bytes(JSONFormat),
+                                                   Content:               ConnectorPatch.ToUTF8Bytes(JSONFormatting),
                                                    ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                    Accept:                ocpiAcceptTypes,
                                                    Authentication:        TokenAuth,
@@ -3142,7 +3142,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                                             CustomEnergyMixSerializer,
                                                                             CustomEnergySourceSerializer,
                                                                             CustomEnvironmentalImpactSerializer
-                                                                        ).ToUTF8Bytes(JSONFormat),
+                                                                        ).ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -3335,7 +3335,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                              PATCH(remoteURL.Value.Path + CountryCode.ToString() +
                                                                           PartyId.    ToString() +
                                                                           TariffId.   ToString(),
-                                                   Content:               TariffPatch.ToUTF8Bytes(JSONFormat),
+                                                   Content:               TariffPatch.ToUTF8Bytes(JSONFormatting),
                                                    ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                    Accept:                ocpiAcceptTypes,
                                                    Authentication:        TokenAuth,
@@ -3896,7 +3896,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                                             CustomCDRDimensionSerializer,
                                                                             CustomPriceSerializer,
                                                                             CustomTaxAmountSerializer
-                                                                        ).ToUTF8Bytes(JSONFormat),
+                                                                        ).ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -4089,7 +4089,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                              PATCH(remoteURL.Value.Path + CountryCode.ToString() +
                                                                           PartyId.    ToString() +
                                                                           SessionId.  ToString(),
-                                                   Content:               SessionPatch.ToUTF8Bytes(JSONFormat),
+                                                   Content:               SessionPatch.ToUTF8Bytes(JSONFormatting),
                                                    ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                    Accept:                ocpiAcceptTypes,
                                                    Authentication:        TokenAuth,
@@ -4478,7 +4478,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                                              CustomCDRDimensionSerializer,
                                                                              CustomSignedDataSerializer,
                                                                              CustomSignedValueSerializer
-                                                                         ).ToUTF8Bytes(JSONFormat),
+                                                                         ).ToUTF8Bytes(JSONFormatting),
                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                   Accept:                ocpiAcceptTypes,
                                                   Authentication:        TokenAuth,
@@ -5057,7 +5057,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                                              {
                                                                                  requestBuilder.Content     = LocationReference.Value.ToJSON(
                                                                                                                   CustomLocationReferenceSerializer
-                                                                                                              ).ToUTF8Bytes(JSONFormat);
+                                                                                                              ).ToUTF8Bytes(JSONFormatting);
                                                                                  requestBuilder.ContentType = HTTPContentType.Application.JSON_UTF8;
                                                                              }
 
@@ -5277,7 +5277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                                             //CustomEnergyMixSerializer,
                                                                             //CustomEnergySourceSerializer,
                                                                             //CustomEnvironmentalImpactSerializer
-                                                                        ).ToUTF8Bytes(JSONFormat),
+                                                                        ).ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -5473,7 +5473,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                                             CustomSetChargingProfileSerializer,
                                                                             CustomChargingProfileSerializer,
                                                                             CustomChargingProfilePeriodSerializer
-                                                                        ).ToUTF8Bytes(JSONFormat),
+                                                                        ).ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,

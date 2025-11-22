@@ -29,6 +29,7 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using System.Net.Security;
 
 #endregion
 
@@ -175,7 +176,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Boolean?                                                   PreferIPv4                       = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator       = null,
                            LocalCertificateSelectionHandler?                          LocalCertificateSelector         = null,
-                           X509Certificate2?                                          ClientCertificate                = null,
+                           IEnumerable<X509Certificate2>?                             ClientCertificates               = null,
+                           SslStreamCertificateContext?                               ClientCertificateContext         = null,
+                           IEnumerable<X509Certificate2>?                             ClientCertificateChain           = null,
                            SslProtocols?                                              TLSProtocols                     = null,
                            HTTPContentType?                                           ContentType                      = null,
                            AcceptTypes?                                               Accept                           = null,
@@ -211,7 +214,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    PreferIPv4,
                    RemoteCertificateValidator,
                    LocalCertificateSelector,
-                   ClientCertificate,
+                   ClientCertificates,
+                   ClientCertificateContext,
+                   ClientCertificateChain,
                    TLSProtocols,
                    ContentType,
                    Accept,
@@ -257,7 +262,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Boolean?                                                   PreferIPv4                        = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
-                           X509Certificate2?                                          ClientCertificate                 = null,
+                           IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
+                           SslStreamCertificateContext?                               ClientCertificateContext          = null,
+                           IEnumerable<X509Certificate2>?                             ClientCertificateChain            = null,
                            SslProtocols?                                              TLSProtocols                      = null,
                            HTTPContentType?                                           ContentType                       = null,
                            AcceptTypes?                                               Accept                            = null,
@@ -281,13 +288,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        new RemoteAccessInfo(
                            RemoteVersionsURL,
                            RemoteAccessToken,
-                           RemoteStatus,
+                           RemoteAccessTokenBase64Encoding,
                            RemoteTOTPConfig,
+
+                           RemoteStatus,
+
                            RemoteVersionIds,
                            SelectedVersionId,
                            RemoteAccessNotBefore,
                            RemoteAccessNotAfter,
-                           RemoteAccessTokenBase64Encoding,
                            RemoteAllowDowngrades
                        )
                    ],
@@ -296,7 +305,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    PreferIPv4,
                    RemoteCertificateValidator,
                    LocalCertificateSelector,
-                   ClientCertificate,
+                   ClientCertificates,
+                   ClientCertificateContext,
+                   ClientCertificateChain,
                    TLSProtocols,
                    ContentType,
                    Accept,
@@ -346,7 +357,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Boolean?                                                   PreferIPv4                        = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
-                           X509Certificate2?                                          ClientCertificate                 = null,
+                           IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
+                           SslStreamCertificateContext?                               ClientCertificateContext          = null,
+                           IEnumerable<X509Certificate2>?                             ClientCertificateChain            = null,
                            SslProtocols?                                              TLSProtocols                      = null,
                            HTTPContentType?                                           ContentType                       = null,
                            AcceptTypes?                                               Accept                            = null,
@@ -380,13 +393,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        new RemoteAccessInfo(
                            RemoteVersionsURL,
                            RemoteAccessToken,
-                           RemoteStatus,
+                           RemoteAccessTokenBase64Encoding,
                            RemoteTOTPConfig,
+
+                           RemoteStatus,
+
                            RemoteVersionIds,
                            SelectedVersionId,
                            RemoteAccessNotBefore,
                            RemoteAccessNotAfter,
-                           RemoteAccessTokenBase64Encoding,
                            RemoteAllowDowngrades
                        )
                    ],
@@ -395,7 +410,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    PreferIPv4,
                    RemoteCertificateValidator,
                    LocalCertificateSelector,
-                   ClientCertificate,
+                   ClientCertificates,
+                   ClientCertificateContext,
+                   ClientCertificateChain,
                    TLSProtocols,
                    ContentType,
                    Accept,
@@ -428,7 +445,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Boolean?                                                   PreferIPv4                   = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
                            LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                           X509Certificate2?                                          ClientCertificate            = null,
+                           IEnumerable<X509Certificate2>?                             ClientCertificates           = null,
+                           SslStreamCertificateContext?                               ClientCertificateContext     = null,
+                           IEnumerable<X509Certificate2>?                             ClientCertificateChain       = null,
                            SslProtocols?                                              TLSProtocols                 = null,
                            HTTPContentType?                                           ContentType                  = null,
                            AcceptTypes?                                               Accept                       = null,
@@ -451,7 +470,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    PreferIPv4,
                    RemoteCertificateValidator,
                    LocalCertificateSelector,
-                   ClientCertificate,
+                   ClientCertificates,
+                   ClientCertificateContext,
+                   ClientCertificateChain,
                    TLSProtocols,
                    ContentType,
                    Accept,
@@ -670,11 +691,55 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 // ...
 
+                #region Parse ClientCertificate    [optional]
+
+                X509Certificate2? clientCert = null;
+
+                if (JSON.ParseOptionalText("clientCertPEM",
+                                           "remote TLS client certificate (PEM)",
+                                           out String? clientCertPEM,
+                                           out ErrorResponse))
+                {
+
+                    if (ErrorResponse is not null)
+                        return false;
+
+                    try
+                    {
+                        clientCert = X509CertificateLoader.LoadCertificate(clientCertPEM.ToUTF8Bytes());
+                    }
+                    catch (Exception e)
+                    {
+                        ErrorResponse = "The given remote TLS client certificate (PEM) is invalid: " + e.Message;
+                        return false;
+                    }
+
+                }
+
+                #endregion
+
+                // ...
+
+                #region Parse HTTPUserAgent        [optional]
+
+                if (JSON.ParseOptionalText("httpUserAgent",
+                                           "remote HTTP UserAgent",
+                                           out String? httpUserAgent,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                // ...
+
                 #region Parse Created              [optional, NonStandard]
 
                 if (JSON.ParseOptional("created",
                                        "created",
-                                       out DateTime? Created,
+                                       out DateTime? created,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -687,7 +752,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
-                                         out DateTime LastUpdated,
+                                         out DateTime lastUpdated,
                                          out ErrorResponse))
                 {
                     return false;
@@ -708,8 +773,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                   Status,
 
-                                  Created:      Created,
-                                  LastUpdated:  LastUpdated
+                                  null,  // PreferIPv4
+                                  null,  // RemoteCertificateValidator
+                                  null,  // LocalCertificateSelector
+                                  clientCert is not null
+                                      ? [ clientCert ]
+                                      : null,
+                                  null,  // ClientCertificateContext
+                                  null,  // ClientCertificateChain
+
+                                  null,  // TLSProtocols
+                                  null,  // ContentType
+                                  null,  // Accept
+                                  httpUserAgent,
+                                  null,  // RequestTimeout
+                                  null,  // TransmissionRetryDelay
+                                  null,  // MaxNumberOfRetries
+                                  null,  // InternalBufferSize
+                                  null,  // UseHTTPPipelining
+
+                                  created,
+                                  lastUpdated
 
                               );
 
@@ -810,7 +894,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    PreferIPv4,
                    RemoteCertificateValidator,
                    LocalCertificateSelector,
-                   ClientCertificate,
+                   ClientCertificates,//.    Select(clientCertificate  => clientCertificate. Clone()),
+                   ClientCertificateContext,
+                   ClientCertificateChain,//.    Select(certificate  => certificate. Clone()),
                    TLSProtocols,
                    ContentType,
                    Accept,

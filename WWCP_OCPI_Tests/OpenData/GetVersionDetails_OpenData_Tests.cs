@@ -264,13 +264,20 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task GetVersionDetails_v2_3_0_fromCPO1_Test1()
         {
 
-            if (cpo1CommonHTTPAPI is null)
+            if (emsp1CommonAPI_v2_2_1 is null)
             {
-                Assert.Fail("cpo1BaseAPI is null!");
+                Assert.Fail("emsp1CommonAPI_v2_2_1 is null!");
                 return;
             }
 
-            var graphDefinedCPO1 = new OCPIv2_3_0.CommonClient(
+            if (cpo1CommonHTTPAPI is null)
+            {
+                Assert.Fail("cpo1CommonHTTPAPI is null!");
+                return;
+            }
+
+            var graphDefinedCPO1 = emsp1CommonAPI_v2_3_0.GetCommonClient(
+                                       RemoteParty_Id.Unknown,
                                        cpo1CommonHTTPAPI.OurVersionsURL
                                    );
 

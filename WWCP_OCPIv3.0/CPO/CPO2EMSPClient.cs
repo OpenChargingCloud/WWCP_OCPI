@@ -29,6 +29,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv3_0;
+using System.Net.Security;
 
 #endregion
 
@@ -857,15 +858,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
                               HTTPHostname?                                              VirtualHostname                   = null,
                               I18NString?                                                Description                       = null,
+                              UInt16?                                                    MaxNumberOfPooledClients          = null,
                               Boolean?                                                   PreferIPv4                        = null,
                               RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                               LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
-                              X509Certificate2?                                          ClientCertificate                 = null,
+                              IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
+                              SslStreamCertificateContext?                               ClientCertificateContext          = null,
+                              IEnumerable<X509Certificate2>?                             ClientCertificateChain            = null,
                               SslProtocols?                                              TLSProtocols                      = null,
-                              HTTPContentType?                                           ContentType                       = null,
-                              AcceptTypes?                                               Accept                            = null,
+
                               String?                                                    HTTPUserAgent                     = null,
+                              AcceptTypes?                                               Accept                            = null,
+                              HTTPContentType?                                           ContentType                       = null,
                               ConnectionType?                                            Connection                        = null,
+
                               TimeSpan?                                                  RequestTimeout                    = null,
                               TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
                               UInt16?                                                    MaxNumberOfRetries                = null,
@@ -885,15 +891,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
                    VirtualHostname,
                    Description,
+                   MaxNumberOfPooledClients,
                    PreferIPv4,
                    RemoteCertificateValidator,
                    LocalCertificateSelector,
-                   ClientCertificate,
+                   ClientCertificates,
+                   ClientCertificateContext,
+                   ClientCertificateChain,
                    TLSProtocols,
-                   ContentType,
-                   Accept,
+
                    HTTPUserAgent,
+                   Accept,
+                   ContentType,
                    Connection,
+
                    RequestTimeout,
                    TransmissionRetryDelay,
                    MaxNumberOfRetries,

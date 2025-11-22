@@ -30,6 +30,7 @@ using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv3_0;
+using System.Net.Security;
 
 #endregion
 
@@ -388,36 +389,43 @@ namespace cloud.charging.open.protocols.OCPIv3_0.SCSP.HTTP
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
         public SCSPClient(CommonAPI                                                  CommonAPI,
+                          RemoteParty_Id                                             RemotePartyId,
+
                           URL                                                        RemoteVersionsURL,
                           AccessToken                                                RemoteAccessToken,
                           Boolean                                                    RemoteAccessTokenBase64Encoding   = true,
                           TOTPConfig?                                                TOTPConfig                        = null,
 
-                          HTTPHostname?                                              VirtualHostname              = null,
-                          I18NString?                                                Description                  = null,
-                          Boolean?                                                   PreferIPv4                   = null,
-                          RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                          LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                          X509Certificate2?                                          ClientCertificate            = null,
-                          SslProtocols?                                              TLSProtocols                 = null,
-                          HTTPContentType?                                           ContentType                  = null,
-                          AcceptTypes?                                               Accept                       = null,
-                          String?                                                    HTTPUserAgent                = DefaultHTTPUserAgent,
-                          TimeSpan?                                                  RequestTimeout               = null,
-                          TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                          UInt16?                                                    MaxNumberOfRetries           = null,
-                          UInt32?                                                    InternalBufferSize           = null,
-                          Boolean                                                    UseHTTPPipelining            = false,
-                          HTTPClientLogger?                                          HTTPLogger                   = null,
-                          Boolean                                                    AccessTokenBase64Encoding    = true,
+                          HTTPHostname?                                              VirtualHostname                   = null,
+                          I18NString?                                                Description                       = null,
+                          UInt16?                                                    MaxNumberOfPooledClients          = null,
+                          Boolean?                                                   PreferIPv4                        = null,
+                          RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
+                          LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
+                          IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
+                          SslStreamCertificateContext?                               ClientCertificateContext          = null,
+                          IEnumerable<X509Certificate2>?                             ClientCertificateChain            = null,
+                          SslProtocols?                                              TLSProtocols                      = null,
+                          HTTPContentType?                                           ContentType                       = null,
+                          AcceptTypes?                                               Accept                            = null,
+                          String?                                                    HTTPUserAgent                     = DefaultHTTPUserAgent,
+                          TimeSpan?                                                  RequestTimeout                    = null,
+                          TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
+                          UInt16?                                                    MaxNumberOfRetries                = null,
+                          UInt32?                                                    InternalBufferSize                = null,
+                          Boolean                                                    UseHTTPPipelining                 = false,
+                          HTTPClientLogger?                                          HTTPLogger                        = null,
+                          Boolean                                                    AccessTokenBase64Encoding         = true,
 
-                          Boolean?                                                   DisableLogging               = false,
-                          String?                                                    LoggingPath                  = null,
-                          String?                                                    LoggingContext               = null,
-                          OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
-                          IDNSClient?                                                DNSClient                    = null)
+                          Boolean?                                                   DisableLogging                    = false,
+                          String?                                                    LoggingPath                       = null,
+                          String?                                                    LoggingContext                    = null,
+                          OCPILogfileCreatorDelegate?                                LogfileCreator                    = null,
+                          IDNSClient?                                                DNSClient                         = null)
 
             : base(CommonAPI,
+                   RemotePartyId,
+
                    RemoteVersionsURL,
                    RemoteAccessToken,
                    RemoteAccessTokenBase64Encoding,
@@ -425,10 +433,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0.SCSP.HTTP
 
                    VirtualHostname,
                    Description,
+                   MaxNumberOfPooledClients,
                    PreferIPv4,
                    RemoteCertificateValidator,
                    LocalCertificateSelector,
-                   ClientCertificate,
+                   ClientCertificates,
+                   ClientCertificateContext,
+                   ClientCertificateChain,
                    TLSProtocols,
                    ContentType,
                    Accept,

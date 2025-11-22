@@ -17,11 +17,11 @@
 
 #region Usings
 
+using System.Net.Security;
 using System.Collections.Concurrent;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -39,7 +39,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// <summary>
     /// The OCPI common client.
     /// </summary>
-    public partial class CommonClient : AHTTPClient
+    public partial class CommonClient : ACommonHTTPClient
     {
 
         #region (class) CommonAPICounters
@@ -111,11 +111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public const        String                                           DefaultLoggingContext   = nameof(CommonClient);
 
-        protected readonly  ConcurrentDictionary<Version_Id, URL>            versions                = new();
-
-        protected readonly  ConcurrentDictionary<Version_Id, VersionDetail>  versionDetails          = new();
-
-        protected HTTPTestClient newHTTPClient;
+        protected readonly  ConcurrentDictionary<Version_Id, VersionDetail>  versionDetails          = [];
 
         #endregion
 
@@ -130,35 +126,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The remote party.
         /// </summary>
         public RemoteParty?              RemoteParty              { get; }
-
-        /// <summary>
-        /// The current remote URL of the remote VERSIONS endpoint to connect to.
-        /// The remote party might define multiple for H/A reasons.
-        /// </summary>
-        public URL                       RemoteVersionsURL        { get; }
-
-        /// <summary>
-        /// The current access token.
-        /// The remote party might define different access token for each VersionsAPI endpoint for H/A and/or security reasons.
-        /// The access token might be updated during the REGISTRATION process!
-        /// </summary>
-        public AccessToken?              RemoteAccessToken        { get; private set; }
-
-        /// <summary>
-        /// The current HTTP Token Authentication based on the current access token.
-        /// </summary>
-        public HTTPTokenAuthentication?  TokenAuth                { get; private set; }
-
-        /// <summary>
-        /// The selected OCPI version.
-        /// The selected OCPI version might be updated during the REGISTRATION process!
-        /// </summary>
-        public Version_Id?               SelectedOCPIVersionId    { get; set; }
-
-        /// <summary>
-        /// The JSON formatting used.
-        /// </summary>
-        public Formatting                JSONFormat               { get; set; } = Formatting.None;
 
         /// <summary>
         /// CPO client event counters.
@@ -371,15 +338,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Create a new OCPI Common client.
         /// </summary>
-        /// <param name="RemoteVersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
-        /// <param name="RemoteAccessToken">The optional OCPI access token.</param>
+        /// <param name="VersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
+        /// <param name="AccessToken">The optional OCPI access token.</param>
         /// 
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this client.</param>
         /// <param name="PreferIPv4">Prefer IPv4 instead of IPv6.</param>
         /// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
         /// <param name="LocalCertificateSelector">A delegate to select a TLS client certificate.</param>
-        /// <param name="ClientCertificate">The TLS client certificate to use for HTTP authentication.</param>
+        /// <param name="ClientCertificates">The TLS client certificates to use for HTTP authentication.</param>
         /// <param name="TLSProtocols">The TLS protocol to use.</param>
         /// <param name="ContentType">An optional HTTP content type.</param>
         /// <param name="Accept">The optional HTTP accept header.</param>
@@ -396,21 +363,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CommonClient(URL                                                        RemoteVersionsURL,
-                            AccessToken?                                               RemoteAccessToken            = null,
-                            TOTPConfig?                                                RemoteTOTPConfig             = null,
+        public CommonClient(URL                                                        VersionsURL,
+                            AccessToken?                                               AccessToken                  = null,
+                            Boolean                                                    AccessTokenIsBase64Encoded   = false,
+                            TOTPConfig?                                                TOTPConfig                   = null,
 
                             HTTPHostname?                                              VirtualHostname              = null,
                             I18NString?                                                Description                  = null,
+                            UInt16?                                                    MaxNumberOfPooledClients     = null,
                             Boolean?                                                   PreferIPv4                   = null,
                             RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
                             LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                            X509Certificate2?                                          ClientCertificate            = null,
+                            IEnumerable<X509Certificate2>?                             ClientCertificates           = null,
+                            SslStreamCertificateContext?                               ClientCertificateContext     = null,
+                            IEnumerable<X509Certificate2>?                             ClientCertificateChain       = null,
                             SslProtocols?                                              TLSProtocols                 = null,
-                            HTTPContentType?                                           ContentType                  = null,
-                            AcceptTypes?                                               Accept                       = null,
+
                             String?                                                    HTTPUserAgent                = DefaultHTTPUserAgent,
+                            AcceptTypes?                                               Accept                       = null,
+                            HTTPContentType?                                           ContentType                  = null,
                             ConnectionType?                                            Connection                   = null,
+
                             TimeSpan?                                                  RequestTimeout               = null,
                             TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
                             UInt16?                                                    MaxNumberOfRetries           = DefaultMaxNumberOfRetries,
@@ -423,23 +396,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                             HTTPClientLogger?                                          HTTPLogger                   = null,
                             IDNSClient?                                                DNSClient                    = null)
 
-            : base(RemoteVersionsURL,
+            : base(VersionsURL,
+                   AccessToken,
+                   AccessTokenIsBase64Encoded,
+                   TOTPConfig,
+
                    VirtualHostname,
                    Description,
+                   MaxNumberOfPooledClients,
                    PreferIPv4,
                    RemoteCertificateValidator,
                    LocalCertificateSelector,
-                   ClientCertificate,
+                   ClientCertificates,
+                   ClientCertificateContext,
+                   ClientCertificateChain,
                    TLSProtocols,
-                   ContentType        ?? HTTPContentType.Application.JSON_UTF8,
-                   Accept             ?? AcceptTypes.FromHTTPContentTypes(HTTPContentType.Application.JSON_UTF8),
-                   RemoteAccessToken.HasValue
-                       ? HTTPTokenAuthentication.Parse(RemoteAccessToken.Value.ToString())
-                       : null,
-                   RemoteTOTPConfig,
-                   HTTPUserAgent      ?? DefaultHTTPUserAgent,
-                   Connection         ?? ConnectionType.Close,
-                   RequestTimeout     ?? DefaultRequestTimeout,
+
+                   HTTPUserAgent ?? DefaultHTTPUserAgent,
+                   Accept,
+                   ContentType,
+                   Connection,
+
+                   RequestTimeout,
                    TransmissionRetryDelay,
                    MaxNumberOfRetries,
                    InternalBufferSize,
@@ -450,22 +428,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         {
 
-            this.RemoteVersionsURL  = RemoteVersionsURL;
-            this.RemoteAccessToken  = RemoteAccessToken;
-            this.TokenAuth          = HTTPAuthentication as HTTPTokenAuthentication;
+            this.Counters    = new CommonAPICounters();
 
-            this.Counters           = new CommonAPICounters();
-
-            base.HTTPLogger         = this.DisableLogging == false
-                                          ? new Logger(
-                                                this,
-                                                LoggingPath,
-                                                LoggingContext ?? DefaultLoggingContext,
-                                                LogfileCreator is not null
-                                                    ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                                                    : null
-                                            )
-                                          : null;
+            base.HTTPLogger  = this.DisableLogging == false
+                                   ? new Logger(
+                                         this,
+                                         LoggingPath,
+                                         LoggingContext ?? DefaultLoggingContext,
+                                         LogfileCreator is not null
+                                             ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
+                                             : null
+                                     )
+                                   : null;
 
         }
 
@@ -497,25 +471,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                             IDNSClient?                  DNSClient         = null)
 
             : base(RemoteParty.RemoteAccessInfos.First().VersionsURL,
+                   RemoteParty.RemoteAccessInfos.First().AccessToken,
+                   RemoteParty.RemoteAccessInfos.First().AccessTokenIsBase64Encoded,
+                   RemoteParty.RemoteAccessInfos.First().TOTPConfig,
+
                    VirtualHostname,
                    Description,
+                   RemoteParty.MaxNumberOfPooledClients,
                    RemoteParty.PreferIPv4,
                    RemoteParty.RemoteCertificateValidator,
                    RemoteParty.LocalCertificateSelector,
-                   RemoteParty.ClientCertificate,
+                   RemoteParty.ClientCertificates,
+                   RemoteParty.ClientCertificateContext,
+                   RemoteParty.ClientCertificateChain,
                    RemoteParty.TLSProtocols,
-                   HTTPContentType.Application.JSON_UTF8,
-                   RemoteParty.Accept,
-                   RemoteParty.RemoteAccessInfos.First().AccessToken.IsNotNullOrEmpty
-                       ? HTTPTokenAuthentication.Parse(
-                             RemoteParty.RemoteAccessInfos.First().AccessTokenIsBase64Encoded
-                                 ? RemoteParty.RemoteAccessInfos.First().AccessToken.ToString().ToBase64()
-                                 : RemoteParty.RemoteAccessInfos.First().AccessToken.ToString()
-                         )
-                       : null,
-                   RemoteParty.RemoteAccessInfos.First().TOTPConfig,
+
                    RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent,
-                   ConnectionType.Close,
+                   RemoteParty.Accept,
+                   RemoteParty.ContentType,
+                   RemoteParty.ConnectionType,
+
                    RemoteParty.RequestTimeout,
                    RemoteParty.TransmissionRetryDelay,
                    RemoteParty.MaxNumberOfRetries,
@@ -527,8 +502,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         {
 
-            this.CommonAPI          = CommonAPI;
-            this.RemoteParty        = RemoteParty;
+            this.CommonAPI    = CommonAPI;
+            this.RemoteParty  = RemoteParty;
 
             if (!RemoteParty.RemoteAccessInfos.Any())
                 throw new ArgumentException(
@@ -536,24 +511,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                           nameof(RemoteParty)
                       );
 
-            var remoteAccessInfo    = RemoteParty.RemoteAccessInfos.First();
+            this.Counters     = new CommonAPICounters();
 
-            this.RemoteVersionsURL  = remoteAccessInfo.VersionsURL;
-            this.RemoteAccessToken  = remoteAccessInfo.AccessToken;
-            this.TokenAuth          = HTTPAuthentication as HTTPTokenAuthentication;
-
-            this.Counters           = new CommonAPICounters();
-
-            base.HTTPLogger         = this.DisableLogging == false
-                                          ? new Logger(
-                                                this,
-                                                LoggingPath,
-                                                LoggingContext ?? DefaultLoggingContext,
-                                                LogfileCreator is not null
-                                                    ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                                                    : null
-                                            )
-                                          : null;
+            base.HTTPLogger   = this.DisableLogging == false
+                                    ? new Logger(
+                                          this,
+                                          LoggingPath,
+                                          LoggingContext ?? DefaultLoggingContext,
+                                          LogfileCreator is not null
+                                              ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
+                                              : null
+                                      )
+                                    : null;
 
         }
 
@@ -568,7 +537,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="RemoteVersionsURL">The remote URL of the "OCPI Versions" endpoint to connect to.</param>
         /// <param name="RemoteAccessToken">The remote access token to use.</param>
         /// <param name="RemoteAccessTokenBase64Encoding">Whether the remote access token is Base64 encoded.</param>
-        /// <param name="TOTPConfig">The optional Time-Based One-Time Password (TOTP) configuration as 2nd factor authentication.</param>
+        /// <param name="RemoteTOTPConfig">The optional Time-Based One-Time Password (TOTP) configuration as 2nd factor authentication.</param>
         /// 
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this OCPI Common client.</param>
@@ -593,17 +562,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
         public CommonClient(CommonAPI                                                  CommonAPI,
+                            RemoteParty_Id                                             RemotePartyId,
+
                             URL                                                        RemoteVersionsURL,
                             AccessToken                                                RemoteAccessToken,
                             Boolean                                                    RemoteAccessTokenBase64Encoding   = true,
-                            TOTPConfig?                                                TOTPConfig                        = null,
+                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
                             HTTPHostname?                                              VirtualHostname                   = null,
                             I18NString?                                                Description                       = null,
                             Boolean?                                                   PreferIPv4                        = null,
                             RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                             LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
-                            X509Certificate2?                                          ClientCertificate                 = null,
+                            IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
+                            SslStreamCertificateContext?                               ClientCertificateContext          = null,
+                            IEnumerable<X509Certificate2>?                             ClientCertificateChain            = null,
                             SslProtocols?                                              TLSProtocols                      = null,
                             HTTPContentType?                                           ContentType                       = null,
                             AcceptTypes?                                               Accept                            = null,
@@ -624,11 +597,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             : this(CommonAPI,
                    new RemoteParty(
 
-                       CountryCode.Parse("xx"),
-                       Party_Id.   Parse("xxx"),
-                       Role.       OTHER,
+                       RemotePartyId.CountryCode,
+                       RemotePartyId.PartyId,
+                       RemotePartyId.Role,
                        new BusinessDetails(
-                           "xxx"
+                           RemotePartyId.ToString()
                        ),
 
                        RemoteVersionsURL,
@@ -637,7 +610,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        PartyStatus.PreRegistration,
 
                        RemoteAccessTokenBase64Encoding,
-                       TOTPConfig,
+                       RemoteTOTPConfig,
                        null,  // RemoteAccessNotBefore
                        null,  // RemoteAccessNotAfter
                        null,  // RemoteVersionIds
@@ -648,7 +621,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        PreferIPv4,
                        RemoteCertificateValidator,
                        LocalCertificateSelector,
-                       ClientCertificate,
+                       ClientCertificates,
+                       ClientCertificateContext,
+                       ClientCertificateChain,
                        TLSProtocols,
                        ContentType,
                        Accept,
@@ -803,50 +778,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await HTTPClientFactory.Create(
-                                                 RemoteURL,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificate,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 requestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).
-                                             GET(
-                                                 Path:                 RemoteVersionsURL.Path,
-                                                 QueryString:          null,
-                                                 Accept:               AcceptTypes.FromHTTPContentTypes(
-                                                                           HTTPContentType.Application.JSON_UTF8
-                                                                       ),
-                                                 Authentication:       TokenAuth,
-                                                 UserAgent:            RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent,
-                                                 Connection:           ConnectionType.Close,
-                                                 RequestTimeout:       requestTimeout,
-                                                 EventTrackingId:      eventTrackingId,
-                                                 NumberOfRetry:        transmissionRetry,
-                                                 RequestBuilder:       requestBuilder => {
-                                                                           requestBuilder.Set("X-Request-ID",     requestId);
-                                                                           requestBuilder.Set("X-Correlation-ID", correlationId);
-                                                                       },
-                                                 RequestLogDelegate:   OnGetVersionsHTTPRequest,
-                                                 ResponseLogDelegate:  OnGetVersionsHTTPResponse,
-                                                 CancellationToken:    CancellationToken
-                                             ).
+                    var httpResponse = await newHTTPClient.GET(
+                                                 Path:                  RemoteVersionsURL.Path,
+                                                 Authentication:        TokenAuth,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnGetVersionsHTTPRequest,
+                                                 ResponseLogDelegate:   OnGetVersionsHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
+
                                              ConfigureAwait(false);
 
                     #endregion
@@ -1057,50 +1002,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             #region Upstream HTTP request...
 
-                            var httpResponse = await HTTPClientFactory.Create(
-                                                         versionURL,
-                                                         VirtualHostname,
-                                                         Description,
-                                                         PreferIPv4,
-                                                         RemoteCertificateValidator,
-                                                         LocalCertificateSelector,
-                                                         ClientCertificate,
-                                                         TLSProtocols,
-                                                         ContentType,
-                                                         Accept,
-                                                         HTTPAuthentication,
-                                                         TOTPConfig,
-                                                         HTTPUserAgent,
-                                                         Connection,
-                                                         requestTimeout,
-                                                         TransmissionRetryDelay,
-                                                         MaxNumberOfRetries,
-                                                         InternalBufferSize,
-                                                         UseHTTPPipelining,
-                                                         DisableLogging,
-                                                         HTTPLogger,
-                                                         DNSClient
-                                                     ).
-                                                     GET(
-                                                         Path:                 versionURL.Path,
-                                                         QueryString:          null,
-                                                         Accept:               AcceptTypes.FromHTTPContentTypes(
-                                                                                   HTTPContentType.Application.JSON_UTF8
-                                                                               ),
-                                                         Authentication:       TokenAuth,
-                                                         UserAgent:            RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent,
-                                                         Connection:           ConnectionType.Close,
-                                                         RequestTimeout:       requestTimeout,
-                                                         EventTrackingId:      eventTrackingId,
-                                                         NumberOfRetry:        transmissionRetry,
-                                                         RequestBuilder:       requestBuilder => {
-                                                                                   requestBuilder.Set("X-Request-ID",     requestId);
-                                                                                   requestBuilder.Set("X-Correlation-ID", correlationId);
-                                                                               },
-                                                         RequestLogDelegate:   OnGetVersionDetailsHTTPRequest,
-                                                         ResponseLogDelegate:  OnGetVersionDetailsHTTPResponse,
-                                                         CancellationToken:    CancellationToken
-                                                     ).
+                            var httpResponse = await newHTTPClient.GET(
+                                                         Path:                  versionURL.Path,
+                                                         Authentication:        TokenAuth,
+                                                         RequestBuilder:        requestBuilder => {
+                                                                                    requestBuilder.Set("X-Request-ID",     requestId);
+                                                                                    requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                                },
+                                                         RequestLogDelegate:    OnGetVersionDetailsHTTPRequest,
+                                                         ResponseLogDelegate:   OnGetVersionDetailsHTTPResponse,
+                                                         EventTrackingId:       eventTrackingId,
+                                                         NumberOfRetry:         transmissionRetry,
+                                                         RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                         CancellationToken:     CancellationToken).
+
                                                      ConfigureAwait(false);
 
                             #endregion
@@ -1415,57 +1330,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         #region Upstream HTTP request...
 
-                        var httpResponse = await new HTTPSClient(
-                                                     remoteURL.Value,
-                                                     VirtualHostname,
-                                                     Description,
-                                                     PreferIPv4,
-                                                     RemoteCertificateValidator,
-                                                     LocalCertificateSelector,
-                                                     ClientCertificate,
-                                                     TLSProtocols,
-                                                     ContentType,
-                                                     Accept,
-                                                     HTTPAuthentication,
-                                                     TOTPConfig,
-                                                     HTTPUserAgent,
-                                                     Connection,
-                                                     RequestTimeout,
-                                                     TransmissionRetryDelay,
-                                                     MaxNumberOfRetries,
-                                                     InternalBufferSize,
-                                                     UseHTTPPipelining,
-                                                     DisableLogging,
-                                                     HTTPLogger,
-                                                     DNSClient
-                                                 ).Execute(client => client.CreateRequest(
-                                                                         HTTPMethod.GET,
-                                                                         remoteURL.Value.Path,
-                                                                         RequestBuilder: requestBuilder => {
-                                                                             requestBuilder.Authorization  = TokenAuth;
-                                                                             requestBuilder.UserAgent      = RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent;
-                                                                             requestBuilder.Connection     = ConnectionType.Close;
-                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                             requestBuilder.Set("X-Request-ID",      requestId);
-                                                                             requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                         }
-                                                                     ),
+                        var httpResponse = await newHTTPClient.GET(
+                                                     Path:                  remoteURL.Value.Path,
+                                                     Authentication:        TokenAuth,
+                                                     RequestBuilder:        requestBuilder => {
+                                                                                requestBuilder.Set("X-Request-ID",     requestId);
+                                                                                requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            },
+                                                     RequestLogDelegate:    OnGetCredentialsHTTPRequest,
+                                                     ResponseLogDelegate:   OnGetCredentialsHTTPResponse,
+                                                     EventTrackingId:       eventTrackingId,
+                                                     NumberOfRetry:         transmissionRetry,
+                                                     RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                     CancellationToken:     CancellationToken).
 
-                                                           RequestLogDelegate:   OnGetCredentialsHTTPRequest,
-                                                           ResponseLogDelegate:  OnGetCredentialsHTTPResponse,
-                                                           CancellationToken:    CancellationToken,
-                                                           EventTrackingId:      eventTrackingId,
-                                                           RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
-
-                                                   ConfigureAwait(false);
+                                                 ConfigureAwait(false);
 
                         #endregion
 
-                        response = OCPIResponse<Credentials>.ParseJObject(httpResponse,
-                                                                          requestId,
-                                                                          correlationId,
-                                                                          json => Credentials.Parse(json,
-                                                                                                    CustomCredentialsParser));
+                        response = OCPIResponse<Credentials>.ParseJObject(
+                                       httpResponse,
+                                       requestId,
+                                       correlationId,
+                                       json => Credentials.Parse(
+                                                   json,
+                                                   CustomCredentialsParser
+                                               )
+                                   );
 
                     }
 
@@ -1635,59 +1526,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         #region Upstream HTTP request...
 
-                        var httpResponse = await new HTTPSClient(
-                                                     remoteURL.Value,
-                                                     VirtualHostname,
-                                                     Description,
-                                                     PreferIPv4,
-                                                     RemoteCertificateValidator,
-                                                     LocalCertificateSelector,
-                                                     ClientCertificate,
-                                                     TLSProtocols,
-                                                     ContentType,
-                                                     Accept,
-                                                     HTTPAuthentication,
-                                                     TOTPConfig,
-                                                     HTTPUserAgent,
-                                                     Connection,
-                                                     RequestTimeout,
-                                                     TransmissionRetryDelay,
-                                                     MaxNumberOfRetries,
-                                                     InternalBufferSize,
-                                                     UseHTTPPipelining,
-                                                     DisableLogging,
-                                                     HTTPLogger,
-                                                     DNSClient
-                                                 ).Execute(client => client.CreateRequest(
-                                                                         HTTPMethod.POST,
-                                                                         remoteURL.Value.Path,
-                                                                         RequestBuilder: requestBuilder => {
-                                                                             requestBuilder.Authorization  = TokenAuth;
-                                                                             requestBuilder.UserAgent      = RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent;
-                                                                             requestBuilder.Connection     = ConnectionType.Close;
-                                                                             requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                             requestBuilder.Content        = Credentials.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                             requestBuilder.Set("X-Request-ID",      requestId);
-                                                                             requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                         }
-                                                                     ),
+                        var httpResponse = await newHTTPClient.POST(
+                                                     Path:                  remoteURL.Value.Path,
+                                                     Content:               Credentials.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                     Authentication:        TokenAuth,
+                                                     RequestBuilder:        requestBuilder => {
+                                                                                requestBuilder.Set("X-Request-ID",     requestId);
+                                                                                requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            },
+                                                     RequestLogDelegate:    OnPostCredentialsHTTPRequest,
+                                                     ResponseLogDelegate:   OnPostCredentialsHTTPResponse,
+                                                     EventTrackingId:       eventTrackingId,
+                                                     NumberOfRetry:         transmissionRetry,
+                                                     RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                     CancellationToken:     CancellationToken).
 
-                                                           RequestLogDelegate:   OnPostCredentialsHTTPRequest,
-                                                           ResponseLogDelegate:  OnPostCredentialsHTTPResponse,
-                                                           CancellationToken:    CancellationToken,
-                                                           EventTrackingId:      eventTrackingId,
-                                                           RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
-
-                                                   ConfigureAwait(false);
+                                                 ConfigureAwait(false);
 
                         #endregion
 
-                        response = OCPIResponse<Credentials>.ParseJObject(httpResponse,
-                                                                          requestId,
-                                                                          correlationId,
-                                                                          json => Credentials.Parse(json,
-                                                                                                    CustomCredentialsParser));
+                        response = OCPIResponse<Credentials>.ParseJObject(
+                                       httpResponse,
+                                       requestId,
+                                       correlationId,
+                                       json => Credentials.Parse(
+                                                   json,
+                                                   CustomCredentialsParser
+                                               )
+                                   );
 
                     }
 
@@ -1860,59 +1726,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         #region Upstream HTTP request...
 
-                        var httpResponse = await new HTTPSClient(
-                                                     remoteURL.Value,
-                                                     VirtualHostname,
-                                                     Description,
-                                                     PreferIPv4,
-                                                     RemoteCertificateValidator,
-                                                     LocalCertificateSelector,
-                                                     ClientCertificate,
-                                                     TLSProtocols,
-                                                     ContentType,
-                                                     Accept,
-                                                     HTTPAuthentication,
-                                                     TOTPConfig,
-                                                     HTTPUserAgent,
-                                                     Connection,
-                                                     RequestTimeout,
-                                                     TransmissionRetryDelay,
-                                                     MaxNumberOfRetries,
-                                                     InternalBufferSize,
-                                                     UseHTTPPipelining,
-                                                     DisableLogging,
-                                                     HTTPLogger,
-                                                     DNSClient
-                                                 ).Execute(client => client.CreateRequest(
-                                                                         HTTPMethod.PUT,
-                                                                         remoteURL.Value.Path,
-                                                                         RequestBuilder: requestBuilder => {
-                                                                             requestBuilder.Authorization  = TokenAuth;
-                                                                             requestBuilder.UserAgent      = RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent;
-                                                                             requestBuilder.Connection     = ConnectionType.Close;
-                                                                             requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                             requestBuilder.Content        = Credentials.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                             requestBuilder.Set("X-Request-ID",      requestId);
-                                                                             requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                         }
-                                                                     ),
+                        var httpResponse = await newHTTPClient.PUT(
+                                                     Path:                  remoteURL.Value.Path,
+                                                     Content:               Credentials.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                     Authentication:        TokenAuth,
+                                                     RequestBuilder:        requestBuilder => {
+                                                                                requestBuilder.Set("X-Request-ID",     requestId);
+                                                                                requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            },
+                                                     RequestLogDelegate:    OnPutCredentialsHTTPRequest,
+                                                     ResponseLogDelegate:   OnPutCredentialsHTTPResponse,
+                                                     EventTrackingId:       eventTrackingId,
+                                                     NumberOfRetry:         transmissionRetry,
+                                                     RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                     CancellationToken:     CancellationToken).
 
-                                                           RequestLogDelegate:   OnPutCredentialsHTTPRequest,
-                                                           ResponseLogDelegate:  OnPutCredentialsHTTPResponse,
-                                                           CancellationToken:    CancellationToken,
-                                                           EventTrackingId:      eventTrackingId,
-                                                           RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
-
-                                                   ConfigureAwait(false);
+                                                 ConfigureAwait(false);
 
                         #endregion
 
-                        response = OCPIResponse<Credentials>.ParseJObject(httpResponse,
-                                                                          requestId,
-                                                                          correlationId,
-                                                                          json => Credentials.Parse(json,
-                                                                                                    CustomCredentialsParser));
+                        response = OCPIResponse<Credentials>.ParseJObject(
+                                       httpResponse,
+                                       requestId,
+                                       correlationId,
+                                       json => Credentials.Parse(
+                                                   json,
+                                                   CustomCredentialsParser
+                                       )
+                                   );
 
                         if (response.Data is not null)
                         {
@@ -2117,54 +1958,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         #region Upstream HTTP request...
 
-                        var httpResponse = await new HTTPSClient(
-                                                     remoteURL.Value,
-                                                     VirtualHostname,
-                                                     Description,
-                                                     PreferIPv4,
-                                                     RemoteCertificateValidator,
-                                                     LocalCertificateSelector,
-                                                     ClientCertificate,
-                                                     TLSProtocols,
-                                                     ContentType,
-                                                     Accept,
-                                                     HTTPAuthentication,
-                                                     TOTPConfig,
-                                                     HTTPUserAgent,
-                                                     Connection,
-                                                     RequestTimeout,
-                                                     TransmissionRetryDelay,
-                                                     MaxNumberOfRetries,
-                                                     InternalBufferSize,
-                                                     UseHTTPPipelining,
-                                                     DisableLogging,
-                                                     HTTPLogger,
-                                                     DNSClient
-                                                 ).Execute(client => client.CreateRequest(
-                                                                         HTTPMethod.DELETE,
-                                                                         remoteURL.Value.Path,
-                                                                         RequestBuilder: requestBuilder => {
-                                                                             requestBuilder.Authorization  = TokenAuth;
-                                                                             requestBuilder.UserAgent      = RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent;
-                                                                             requestBuilder.Connection     = ConnectionType.Close;
-                                                                             requestBuilder.Set("X-Request-ID",      requestId);
-                                                                             requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                         }
-                                                                     ),
+                        var httpResponse = await newHTTPClient.DELETE(
+                                                     Path:                  remoteURL.Value.Path,
+                                                     Authentication:        TokenAuth,
+                                                     RequestBuilder:        requestBuilder => {
+                                                                                requestBuilder.Set("X-Request-ID",     requestId);
+                                                                                requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            },
+                                                     RequestLogDelegate:    OnDeleteCredentialsHTTPRequest,
+                                                     ResponseLogDelegate:   OnDeleteCredentialsHTTPResponse,
+                                                     EventTrackingId:       eventTrackingId,
+                                                     NumberOfRetry:         transmissionRetry,
+                                                     RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                     CancellationToken:     CancellationToken).
 
-                                                           RequestLogDelegate:   OnDeleteCredentialsHTTPRequest,
-                                                           ResponseLogDelegate:  OnDeleteCredentialsHTTPResponse,
-                                                           CancellationToken:    CancellationToken,
-                                                           EventTrackingId:      eventTrackingId,
-                                                           RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
-
-                                                   ConfigureAwait(false);
+                                                 ConfigureAwait(false);
 
                         #endregion
 
-                        response = OCPIResponse.Parse(httpResponse,
-                                                      requestId,
-                                                      correlationId);
+                        response = OCPIResponse.Parse(
+                                       httpResponse,
+                                       requestId,
+                                       correlationId
+                                   );
 
                     }
 
@@ -2364,51 +2180,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     #region Upstream HTTP request... meanwhile the other side will access our 'versions endpoint'!
 
-                    var httpResponse = await new HTTPSClient(
-                                                 remoteURL.Value,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificate,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).Execute(client => client.CreateRequest(
-                                                                     HTTPMethod.POST,
-                                                                     remoteURL.Value.Path,
-                                                                     RequestBuilder: requestBuilder => {
-                                                                         requestBuilder.Authorization  = TokenAuth;
-                                                                         requestBuilder.UserAgent      = RemoteParty?.HTTPUserAgent ?? DefaultHTTPUserAgent;
-                                                                         requestBuilder.Connection     = ConnectionType.Close;
-                                                                         requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                         requestBuilder.Content        = credentials.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                         requestBuilder.Set("X-Request-ID",      requestId);
-                                                                         requestBuilder.Set("X-Correlation-ID",  correlationId);
-                                                                     }
-                                                                 ),
+                    var httpResponse = await newHTTPClient.POST(
+                                                 Path:                  remoteURL.Value.Path,
+                                                 Content:               credentials.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                 Authentication:        TokenAuth,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnRegisterHTTPRequest,
+                                                 ResponseLogDelegate:   OnRegisterHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
-                                                       RequestLogDelegate:   OnRegisterHTTPRequest,
-                                                       ResponseLogDelegate:  OnRegisterHTTPResponse,
-                                                       CancellationToken:    CancellationToken,
-                                                       EventTrackingId:      eventTrackingId,
-                                                       RequestTimeout:       TimeSpan.FromMinutes(5)).// RequestTimeout ?? this.RequestTimeout).
-
-                                               ConfigureAwait(false);
+                                             ConfigureAwait(false);
 
 
                     // HTTP/1.1 500 Internal Server Error
@@ -2434,10 +2221,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     #endregion
 
-                    response = OCPIResponse<Credentials>.ParseJObject(httpResponse,
-                                                                      requestId,
-                                                                      correlationId,
-                                                                      json => Credentials.Parse(json));
+                    response = OCPIResponse<Credentials>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Credentials.Parse(json)
+                               );
 
                     if (response.Data is not null)
                     {
@@ -2480,7 +2269,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                            null,                       // PreferIPv4
                                                            null,                       // RemoteCertificateValidator
                                                            null,                       // LocalCertificateSelector
-                                                           null,                       // ClientCertificate
+                                                           null,                       // ClientCertificates
+                                                           null,                       // ClientCertificateContext
+                                                           null,                       // ClientCertificateChain
                                                            null,                       // TLSProtocols
                                                            null,                       // ContentType
                                                            null,                       // Accept

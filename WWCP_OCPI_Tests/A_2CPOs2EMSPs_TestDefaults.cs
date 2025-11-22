@@ -3005,7 +3005,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                               RemoteAccessTokenBase64Encoding:   false,
                               RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                              ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                      ? null
                                                                      : null,
 
@@ -3036,7 +3036,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                RemoteAccessTokenBase64Encoding:   true,
                                RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                               ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                               ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                       ? null
                                                                       : null,
 
@@ -3067,7 +3067,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                               RemoteAccessTokenBase64Encoding:   true,
                               RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                              ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                      ? null
                                                                      : null,
 
@@ -3100,7 +3100,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                               RemoteAccessTokenBase64Encoding:   false,
                               RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                              ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                      ? null
                                                                      : null,
 
@@ -3131,7 +3131,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                RemoteAccessTokenBase64Encoding:   true,
                                RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                               ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                               ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                       ? null
                                                                       : null,
 
@@ -3162,7 +3162,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                               RemoteAccessTokenBase64Encoding:   true,
                               RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                              ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                      ? null
                                                                      : null,
 
@@ -3196,7 +3196,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                               RemoteAccessTokenBase64Encoding:   false,
                               RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                              ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                      ? null
                                                                      : null,
 
@@ -3227,7 +3227,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                RemoteAccessTokenBase64Encoding:   true,
                                RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                               ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                               ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                       ? null
                                                                       : null,
 
@@ -3258,7 +3258,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                               RemoteAccessTokenBase64Encoding:   true,
                               RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                              ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                      ? null
                                                                      : null,
 
@@ -3291,7 +3291,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                               RemoteAccessTokenBase64Encoding:   false,
                               RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                              ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                      ? null
                                                                      : null,
 
@@ -3322,7 +3322,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                RemoteAccessTokenBase64Encoding:   true,
                                RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                               ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                               ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                       ? null
                                                                       : null,
 
@@ -3353,7 +3353,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                               RemoteAccessTokenBase64Encoding:   true,
                               RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                              ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                      ? null
                                                                      : null,
 
@@ -3387,7 +3387,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                               RemoteAccessTokenBase64Encoding:   false,
                               RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                              ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                      ? null
                                                                      : null,
 
@@ -3419,7 +3419,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                RemoteAccessTokenBase64Encoding:   true,
                                RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                               ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                               ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                       ? null
                                                                       : null,
 
@@ -3451,7 +3451,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                               RemoteAccessTokenBase64Encoding:   true,
                               RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                              ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                      ? null
                                                                      : null,
 
@@ -3484,7 +3484,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                               RemoteAccessTokenBase64Encoding:   false,
                               RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                              ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                      ? null
                                                                      : null,
 
@@ -3516,7 +3516,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                RemoteAccessTokenBase64Encoding:   true,
                                RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                               ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                               ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                       ? null
                                                                       : null,
 
@@ -3548,7 +3548,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                               RemoteAccessTokenBase64Encoding:   true,
                               RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                              ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                      ? null
                                                                      : null,
 
@@ -3582,7 +3582,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                               RemoteAccessTokenBase64Encoding:   false,
                               RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                              ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                      ? null
                                                                      : null,
 
@@ -3614,7 +3614,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                RemoteAccessTokenBase64Encoding:   true,
                                RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                               ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                               ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                       ? null
                                                                       : null,
 
@@ -3646,7 +3646,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                               RemoteAccessTokenBase64Encoding:   true,
                               RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                              ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                      ? null
                                                                      : null,
 
@@ -3679,7 +3679,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                               RemoteAccessTokenBase64Encoding:   false,
                               RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                              ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                      ? null
                                                                      : null,
 
@@ -3711,7 +3711,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                RemoteAccessTokenBase64Encoding:   true,
                                RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                               ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                               ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                       ? null
                                                                       : null,
 
@@ -3743,7 +3743,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                               RemoteAccessTokenBase64Encoding:   true,
                               RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                              ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
                                                                      ? null
                                                                      : null,
 

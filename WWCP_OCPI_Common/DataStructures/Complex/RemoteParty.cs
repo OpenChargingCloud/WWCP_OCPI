@@ -26,6 +26,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using System.Security.Cryptography;
+using System.Net.Security;
 
 #endregion
 
@@ -77,6 +78,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public Boolean?                                                   PreferIPv4                    { get; }
 
+
+        public UInt16?                                                    MaxNumberOfPooledClients      { get; }
+
         /// <summary>
         /// The remote TLS certificate validator.
         /// </summary>
@@ -88,9 +92,14 @@ namespace cloud.charging.open.protocols.OCPI
         public LocalCertificateSelectionHandler?                          LocalCertificateSelector      { get; }
 
         /// <summary>
-        /// The TLS client certificate and private key to use for HTTP authentication.
+        /// The TLS client certificates with private key to use for HTTP authentication.
         /// </summary>
-        public X509Certificate2?                                          ClientCertificate             { get; }
+        public IEnumerable<X509Certificate2>                              ClientCertificates            { get; }
+
+        public SslStreamCertificateContext?                               ClientCertificateContext      { get; }
+
+        public IEnumerable<X509Certificate2>                              ClientCertificateChain        { get; }
+
 
         /// <summary>
         /// The TLS protocol to use.
@@ -116,6 +125,10 @@ namespace cloud.charging.open.protocols.OCPI
         /// The timeout for upstream requests.
         /// </summary>
         public TimeSpan?                                                  RequestTimeout                { get; set; }
+
+
+        public ConnectionType?                                            ConnectionType                { get; }
+
 
         /// <summary>
         /// The delay between transmission retries.
@@ -171,8 +184,11 @@ namespace cloud.charging.open.protocols.OCPI
                             Boolean?                                                   PreferIPv4                   = null,
                             RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
                             LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                            X509Certificate2?                                          ClientCertificate            = null,
+                            IEnumerable<X509Certificate2>?                             ClientCertificates           = null,
+                            SslStreamCertificateContext?                               ClientCertificateContext     = null,
+                            IEnumerable<X509Certificate2>?                             ClientCertificateChain       = null,
                             SslProtocols?                                              TLSProtocols                 = null,
+
                             HTTPContentType?                                           ContentType                  = null,
                             AcceptTypes?                                               Accept                       = null,
                             String?                                                    HTTPUserAgent                = null,
@@ -197,7 +213,9 @@ namespace cloud.charging.open.protocols.OCPI
                                                                                tlsClient,
                                                                                policyErrors) => (false, []));
             this.LocalCertificateSelector    = LocalCertificateSelector;
-            this.ClientCertificate           = ClientCertificate;
+            this.ClientCertificates          = ClientCertificates         ?? [];
+            this.ClientCertificateContext    = ClientCertificateContext;
+            this.ClientCertificateChain      = ClientCertificateChain     ?? [];
             this.TLSProtocols                = TLSProtocols;
             this.ContentType                 = ContentType                ?? HTTPContentType.Application.JSON_UTF8;
             this.Accept                      = Accept                     ?? AcceptTypes.FromHTTPContentTypes(HTTPContentType.Application.JSON_UTF8);
@@ -232,49 +250,64 @@ namespace cloud.charging.open.protocols.OCPI
                               CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer)
         {
 
-            AsymmetricAlgorithm? clientPrivateKey = ClientCertificate?.GetRSAPrivateKey();
-            clientPrivateKey ??= ClientCertificate?.GetDSAPrivateKey();
+            var clientPrivateKeys = new List<AsymmetricAlgorithm>();
+
+            foreach (var clientCertificate in ClientCertificates)
+            {
+                if (clientCertificate.HasPrivateKey)
+                {
+
+                    var privateRSAKey = clientCertificate.GetRSAPrivateKey();
+                    if (privateRSAKey is not null)
+                        clientPrivateKeys.Add(privateRSAKey);
+
+                    var privateDSAKey = clientCertificate.GetDSAPrivateKey();
+                    if (privateDSAKey is not null)
+                        clientPrivateKeys.Add(privateDSAKey);
+
+                }
+            }
 
             var json = JSONObject.Create(
 
-                                 new JProperty("@id",                 Id.ToString()),
+                                 new JProperty("@id",                  Id.ToString()),
 
                            JSONLDContext.HasValue
-                               ? new JProperty("@context",            JSONLDContext.ToString())
+                               ? new JProperty("@context",             JSONLDContext.ToString())
                                : null,
 
-                                 new JProperty("partyStatus",         Status.ToString()),
+                                 new JProperty("partyStatus",          Status.ToString()),
 
                            localAccessInfos. Count != 0
-                               ? new JProperty("localAccessInfos",    new JArray(localAccessInfos. Select(localAccessInfo  => localAccessInfo. ToJSON(CustomLocalAccessInfoSerializer))))
+                               ? new JProperty("localAccessInfos",     new JArray(localAccessInfos.  Select(localAccessInfo   => localAccessInfo.  ToJSON(CustomLocalAccessInfoSerializer))))
                                : null,
 
                            remoteAccessInfos.Count != 0
-                               ? new JProperty("remoteAccessInfos",   new JArray(remoteAccessInfos.Select(remoteAccessInfo => remoteAccessInfo.ToJSON(CustomRemoteAccessInfoSerializer))))
+                               ? new JProperty("remoteAccessInfos",    new JArray(remoteAccessInfos. Select(remoteAccessInfo  => remoteAccessInfo. ToJSON(CustomRemoteAccessInfoSerializer))))
                                : null,
 
 
                            // ...
 
-                           ClientCertificate is not null
-                               ? new JProperty("clientCertificate",   ClientCertificate.ExportCertificatePem())
+                           ClientCertificates is not null
+                               ? new JProperty("clientCertificates",   new JArray(ClientCertificates.Select(clientCertificate => clientCertificate.ExportCertificatePem())))
                                : null,
 
-                           ClientCertificate is not null && ClientCertificate.HasPrivateKey && clientPrivateKey is not null
-                               ? new JProperty("clientPrivateKey",    clientPrivateKey.ExportPkcs8PrivateKeyPem())
+                           clientPrivateKeys.Count > 0
+                               ? new JProperty("clientPrivateKeys",    new JArray(clientPrivateKeys. Select(clientPrivateKey  => clientPrivateKey. ExportPkcs8PrivateKeyPem())))
                                : null,
 
                            // ...
 
                            HTTPUserAgent.IsNotNullOrEmpty()
-                               ? new JProperty("httpUserAgent",       HTTPUserAgent)
+                               ? new JProperty("httpUserAgent",        HTTPUserAgent)
                                : null,
 
                            // ...
 
 
-                                 new JProperty("created",             Created.    ToISO8601()),
-                                 new JProperty("last_updated",        LastUpdated.ToISO8601())
+                                 new JProperty("created",              Created.    ToISO8601()),
+                                 new JProperty("last_updated",         LastUpdated.ToISO8601())
 
                        );
 

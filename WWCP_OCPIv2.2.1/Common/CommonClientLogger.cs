@@ -30,7 +30,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     /// <summary>
     /// The OCPI common client.
     /// </summary>
-    public partial class CommonClient : AHTTPClient
+    public partial class CommonClient : OCPI.ACommonHTTPClient
     {
 
         /// <summary>
