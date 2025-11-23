@@ -73,7 +73,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The runtime of the authorization.
         /// </summary>
         [Optional, VendorExtension(VE.GraphDefined)]
-        public TimeSpan            Runtime        { get; }
+        public TimeSpan            Runtime        { get; internal set; }
 
         #endregion
 

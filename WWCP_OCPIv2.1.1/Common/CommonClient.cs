@@ -1169,13 +1169,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region GetRemoteURL(ModuleId, InterfaceRole, VersionId = null, ...)
+        #region GetModuleRemoteURL  (ModuleId, VersionId = null, ...)
 
-        public async Task<URL?> GetRemoteURL(Module_Id          ModuleId,
-                                             Version_Id?        VersionId           = null,
+        /// <summary>
+        /// Get the remote URL of the given OCPI module.
+        /// </summary>
+        /// <param name="ModuleId">The OCPI module identification.</param>
+        /// <param name="VersionId">An optional OCPI version identification.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        public async Task<URL?> GetModuleRemoteURL(Module_Id          ModuleId,
+                                                   Version_Id?        VersionId           = null,
 
-                                             EventTracking_Id?  EventTrackingId     = null,
-                                             CancellationToken  CancellationToken   = default)
+                                                   EventTracking_Id?  EventTrackingId     = null,
+                                                   CancellationToken  CancellationToken   = default)
         {
 
             var versionId        = VersionId       ?? SelectedOCPIVersionId;
@@ -1221,6 +1228,98 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             }
 
             return new URL?();
+
+        }
+
+        #endregion
+
+        #region GetModuleHTTPClient (ModuleId, VersionId = null, ...)
+
+        /// <summary>
+        /// OCPI allows every OCPI module to be hosted on a different server.
+        /// </summary>
+        /// <param name="ModuleId">The OCPI module identification.</param>
+        /// <param name="VersionId">An optional OCPI version identification.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        public async Task<HTTPTestClient?>
+
+            GetModuleHTTPClient(Module_Id          ModuleId,
+                                Version_Id?        VersionId           = null,
+
+                                EventTracking_Id?  EventTrackingId     = null,
+                                CancellationToken  CancellationToken   = default)
+
+        {
+
+            var remoteURL = await GetModuleRemoteURL(
+                                      ModuleId,
+                                      VersionId,
+                                      EventTrackingId,
+                                      CancellationToken
+                                  );
+
+            if (remoteURL.HasValue)
+            {
+
+                HTTPTestClient? httpClient = null;
+
+                if (remoteURL.Value.Hostname.ToString() == newHTTPClient.DomainName?.ToString())
+                {
+                    httpClient = newHTTPClient;
+                }
+
+                else
+                {
+
+                    httpClient = new HTTPTestClient(
+
+                                     remoteURL.Value,
+                                     Description:                           newHTTPClient.Description,
+                                     HTTPUserAgent:                         newHTTPClient.HTTPUserAgent,
+                                     Accept:                                newHTTPClient.Accept,
+                                     ContentType:                           newHTTPClient.ContentType,
+                                     Connection:                            newHTTPClient.Connection,
+                                     DefaultRequestBuilder:                 newHTTPClient.DefaultRequestBuilder,
+
+                                     RemoteCertificateValidator:            (sender, certificate, chain, httpTestClient, policyErrors) => {
+                                                                                var x = newHTTPClient.RemoteCertificateValidator?.Invoke(sender, certificate, chain, httpTestClient, policyErrors);
+                                                                                return x ?? (false,[]);
+                                                                            },
+                                     LocalCertificateSelector:              newHTTPClient.LocalCertificateSelector,
+                                     ClientCertificates:                    newHTTPClient.ClientCertificates,
+                                     ClientCertificateContext:              newHTTPClient.ClientCertificateContext,
+                                     ClientCertificateChain:                newHTTPClient.ClientCertificateChain,
+                                     TLSProtocols:                          newHTTPClient.TLSProtocols,
+                                     CipherSuitesPolicy:                    newHTTPClient.CipherSuitesPolicy,
+                                     CertificateChainPolicy:                newHTTPClient.CertificateChainPolicy,
+                                     CertificateRevocationCheckMode:        newHTTPClient.CertificateRevocationCheckMode,
+                                     ApplicationProtocols:                  newHTTPClient.ApplicationProtocols,
+                                     AllowRenegotiation:                    newHTTPClient.AllowRenegotiation,
+                                     AllowTLSResume:                        newHTTPClient.AllowTLSResume,
+
+                                     PreferIPv4:                            newHTTPClient.PreferIPv4,
+                                     ConnectTimeout:                        newHTTPClient.ConnectTimeout,
+                                     ReceiveTimeout:                        newHTTPClient.ReceiveTimeout,
+                                     SendTimeout:                           newHTTPClient.SendTimeout,
+                                     TransmissionRetryDelay:                newHTTPClient.TransmissionRetryDelay,
+                                     MaxNumberOfRetries:                    newHTTPClient.MaxNumberOfRetries,
+                                     BufferSize:                            newHTTPClient.BufferSize,
+
+                                     ConsumeRequestChunkedTEImmediately:    newHTTPClient.ConsumeRequestChunkedTEImmediately,
+                                     ConsumeResponseChunkedTEImmediately:   newHTTPClient.ConsumeResponseChunkedTEImmediately,
+
+                                     DNSClient:                             newHTTPClient.DNSClient
+
+                                 );
+
+                }
+
+                return httpClient;
+
+            }
+
+            return null;
 
         }
 
@@ -1309,7 +1408,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 try
                 {
 
-                    var remoteURL = await GetRemoteURL(
+                    var remoteURL = await GetModuleRemoteURL(
                                               Module_Id.Credentials,
                                               versionId,
                                               eventTrackingId,
@@ -1505,7 +1604,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 try
                 {
 
-                    var remoteURL = await GetRemoteURL(
+                    var remoteURL = await GetModuleRemoteURL(
                                               Module_Id.Credentials,
                                               versionId,
                                               eventTrackingId,
@@ -1705,7 +1804,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 try
                 {
 
-                    var remoteURL = await GetRemoteURL(
+                    var remoteURL = await GetModuleRemoteURL(
                                               Module_Id.Credentials,
                                               versionId,
                                               eventTrackingId,
@@ -1937,7 +2036,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 try
                 {
 
-                    var remoteURL = await GetRemoteURL(
+                    var remoteURL = await GetModuleRemoteURL(
                                               Module_Id.Credentials,
                                               VersionId,
                                               eventTrackingId,
@@ -2151,7 +2250,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 var credentialTokenB  = CredentialTokenB ?? AccessToken.NewRandom();
 
-                var remoteURL         = await GetRemoteURL(
+                var remoteURL         = await GetModuleRemoteURL(
                                                   Module_Id.Credentials,
                                                   versionId,
                                                   eventTrackingId,

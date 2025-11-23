@@ -908,20 +908,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Locations,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path,
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path,
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -1079,20 +1079,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Locations,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path + LocationId.ToString(),
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -1255,21 +1255,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Locations,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path + LocationId.ToString() +
-                                                                                               EVSEUId.   ToString(),
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString() +
+                                                                                                    EVSEUId.   ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -1432,22 +1432,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Locations,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path + LocationId. ToString() +
-                                                                                               EVSEUId.    ToString() +
-                                                                                               ConnectorId.ToString(),
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + LocationId. ToString() +
+                                                                                                    EVSEUId.    ToString() +
+                                                                                                    ConnectorId.ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -1606,20 +1606,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Tariffs,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Tariffs,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path,
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path,
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
 
@@ -1789,20 +1789,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Tariffs,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Tariffs,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path + TariffId.ToString(),
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + TariffId.ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
 
@@ -1966,20 +1966,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Sessions,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Sessions,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path,
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path,
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -2137,20 +2137,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Sessions,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Sessions,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path + SessionId.ToString(),
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + SessionId.ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -2308,20 +2308,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.CDRs,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.CDRs,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path,
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path,
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -2479,20 +2479,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.CDRs,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.CDRs,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path + CDRId.ToString(),
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + CDRId.ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -2578,6 +2578,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
         #endregion
 
+
         #region GetToken  (CountryCode, PartyId, TokenId, ...)
 
         /// <summary>
@@ -2650,22 +2651,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Tokens,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Tokens,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                               PartyId.    ToString() +
-                                                                                               TokenId.    ToString(),
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    TokenId.    ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -2818,20 +2819,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Tokens,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Tokens,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.PUT(
-                                                 Path:                  remoteURL.Value.Path + Token.Id.ToString(),
+                    var httpResponse = await httpClient.PUT(
+                                                 Path:                  httpClient.RemoteURL.Path + Token.Id.ToString(),
                                                  Content:               Token.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -2995,22 +2996,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Tokens,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Tokens,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.PATCH(
-                                                 Path:                  remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                               PartyId.    ToString() +
-                                                                                               TokenId.    ToString(),
+                    var httpResponse = await httpClient.PATCH(
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    TokenId.    ToString(),
                                                  Content:               TokenPatch.ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -3179,27 +3180,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL  = await GetRemoteURL(
-                                           Module_Id.Commands,
-                                           VersionId,
-                                           eventTrackingId,
-                                           CancellationToken
-                                       );
+                var httpClient  = await GetModuleHTTPClient(
+                                            Module_Id.Commands,
+                                            VersionId,
+                                            eventTrackingId,
+                                            CancellationToken
+                                        );
 
-                var command    = new ReserveNowCommand(
-                                     Token,
-                                     ExpirationTimestamp,
-                                     ReservationId,
-                                     LocationId,
-                                     CommonAPI.GetModuleURL(
-                                         Module_Id.Commands,
-                                         SelectedOCPIVersionId.ToString() + "/emsp"
-                                     ) + "RESERVE_NOW" + commandId.ToString(),
-                                     EVSEUId,
-                                     commandId,
-                                     requestId,
-                                     correlationId
-                                 );
+                var command     = new ReserveNowCommand(
+                                      Token,
+                                      ExpirationTimestamp,
+                                      ReservationId,
+                                      LocationId,
+                                      CommonAPI.GetModuleURL(
+                                          Module_Id.Commands,
+                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                      ) + "RESERVE_NOW" + commandId.ToString(),
+                                      EVSEUId,
+                                      commandId,
+                                      requestId,
+                                      correlationId
+                                  );
 
                 CommonAPI.CommandValueStore.AddOrUpdate(
                     commandId,
@@ -3208,13 +3209,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                 );
 
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.POST(
-                                                 Path:                  remoteURL.Value.Path + "RESERVE_NOW",
+                    var httpResponse = await httpClient.POST(
+                                                 Path:                  httpClient.RemoteURL.Path + "RESERVE_NOW",
                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -3375,23 +3376,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL  = await GetRemoteURL(
-                                           Module_Id.Commands,
-                                           VersionId,
-                                           eventTrackingId,
-                                           CancellationToken
-                                       );
+                var httpClient  = await GetModuleHTTPClient(
+                                            Module_Id.Commands,
+                                            VersionId,
+                                            eventTrackingId,
+                                            CancellationToken
+                                        );
 
-                var command    = new CancelReservationCommand(
-                                     ReservationId,
-                                     CommonAPI.GetModuleURL(
-                                         Module_Id.Commands,
-                                         SelectedOCPIVersionId.ToString() + "/emsp"
-                                     ) + "CANCEL_RESERVATION" + commandId.ToString(),
-                                     commandId,
-                                     requestId,
-                                     correlationId
-                                 );
+                var command     = new CancelReservationCommand(
+                                      ReservationId,
+                                      CommonAPI.GetModuleURL(
+                                          Module_Id.Commands,
+                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                      ) + "CANCEL_RESERVATION" + commandId.ToString(),
+                                      commandId,
+                                      requestId,
+                                      correlationId
+                                  );
 
                 CommonAPI.CommandValueStore.AddOrUpdate(
                     commandId,
@@ -3400,13 +3401,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                 );
 
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.POST(
-                                                 Path:                  remoteURL.Value.Path + "CANCEL_RESERVATION",
+                    var httpResponse = await httpClient.POST(
+                                                 Path:                  httpClient.RemoteURL.Path + "CANCEL_RESERVATION",
                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -3568,25 +3569,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL  = await GetRemoteURL(
-                                           Module_Id.Commands,
-                                           VersionId,
-                                           eventTrackingId,
-                                           CancellationToken
-                                       );
+                var httpClient  = await GetModuleHTTPClient(
+                                            Module_Id.Commands,
+                                            VersionId,
+                                            eventTrackingId,
+                                            CancellationToken
+                                        );
 
-                var command    = new StartSessionCommand(
-                                     Token,
-                                     LocationId,
-                                     CommonAPI.GetModuleURL(
-                                         Module_Id.Commands,
-                                         SelectedOCPIVersionId.ToString() + "/emsp"
-                                     ) + "START_SESSION" + commandId.ToString(),
-                                     EVSEUId,
-                                     commandId,
-                                     requestId,
-                                     correlationId
-                                 );
+                var command     = new StartSessionCommand(
+                                      Token,
+                                      LocationId,
+                                      CommonAPI.GetModuleURL(
+                                          Module_Id.Commands,
+                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                      ) + "START_SESSION" + commandId.ToString(),
+                                      EVSEUId,
+                                      commandId,
+                                      requestId,
+                                      correlationId
+                                  );
 
                 CommonAPI.CommandValueStore.AddOrUpdate(
                     commandId,
@@ -3595,13 +3596,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                 );
 
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.POST(
-                                                 Path:                  remoteURL.Value.Path + "START_SESSION",
+                    var httpResponse = await httpClient.POST(
+                                                 Path:                  httpClient.RemoteURL.Path + "START_SESSION",
                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -3761,23 +3762,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL  = await GetRemoteURL(
-                                           Module_Id.Commands,
-                                           VersionId,
-                                           eventTrackingId,
-                                           CancellationToken
-                                       );
+                var httpClient  = await GetModuleHTTPClient(
+                                            Module_Id.Commands,
+                                            VersionId,
+                                            eventTrackingId,
+                                            CancellationToken
+                                        );
 
-                var command    = new StopSessionCommand(
-                                     SessionId,
-                                     CommonAPI.GetModuleURL(
-                                         Module_Id.Commands,
-                                         SelectedOCPIVersionId.ToString() + "/emsp"
-                                     ) + "STOP_SESSION" + commandId.ToString(),
-                                     commandId,
-                                     requestId,
-                                     correlationId
-                                 );
+                var command     = new StopSessionCommand(
+                                      SessionId,
+                                      CommonAPI.GetModuleURL(
+                                          Module_Id.Commands,
+                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                      ) + "STOP_SESSION" + commandId.ToString(),
+                                      commandId,
+                                      requestId,
+                                      correlationId
+                                  );
 
                 CommonAPI.CommandValueStore.AddOrUpdate(
                     commandId,
@@ -3786,13 +3787,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                 );
 
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.POST(
-                                                 Path:                  remoteURL.Value.Path + "STOP_SESSION",
+                    var httpResponse = await httpClient.POST(
+                                                 Path:                  httpClient.RemoteURL.Path + "STOP_SESSION",
                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -3954,25 +3955,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             try
             {
 
-                var remoteURL  = await GetRemoteURL(
-                                           Module_Id.Commands,
-                                           VersionId,
-                                           eventTrackingId,
-                                           CancellationToken
-                                       );
+                var httpClient  = await GetModuleHTTPClient(
+                                            Module_Id.Commands,
+                                            VersionId,
+                                            eventTrackingId,
+                                            CancellationToken
+                                        );
 
-                var command    = new UnlockConnectorCommand(
-                                     LocationId,
-                                     EVSEUId,
-                                     ConnectorId,
-                                     CommonAPI.GetModuleURL(
-                                         Module_Id.Commands,
-                                         SelectedOCPIVersionId.ToString() + "/emsp"
-                                     ) + "UNLOCK_CONNECTOR" + commandId.ToString(),
-                                     commandId,
-                                     requestId,
-                                     correlationId
-                                 );
+                var command     = new UnlockConnectorCommand(
+                                      LocationId,
+                                      EVSEUId,
+                                      ConnectorId,
+                                      CommonAPI.GetModuleURL(
+                                          Module_Id.Commands,
+                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                      ) + "UNLOCK_CONNECTOR" + commandId.ToString(),
+                                      commandId,
+                                      requestId,
+                                      correlationId
+                                  );
 
                 CommonAPI.CommandValueStore.AddOrUpdate(
                     commandId,
@@ -3981,13 +3982,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                 );
 
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.POST(
-                                                 Path:                  remoteURL.Value.Path + "UNLOCK_CONNECTOR",
+                    var httpResponse = await httpClient.POST(
+                                                 Path:                  httpClient.RemoteURL.Path + "UNLOCK_CONNECTOR",
                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {

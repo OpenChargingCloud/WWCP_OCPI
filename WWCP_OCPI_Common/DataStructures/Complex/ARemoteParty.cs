@@ -211,7 +211,9 @@ namespace cloud.charging.open.protocols.OCPI
                                                                                certificate,
                                                                                certificateChain,
                                                                                tlsClient,
-                                                                               policyErrors) => (false, [ $"The default behavior within {nameof(ARemoteParty)} is to reject all remote TLS server certificates!" ] ));
+                                                                               policyErrors) => {
+                                                                                    return (false, [ $"The default behavior within {nameof(ARemoteParty)} for '{Id}' is to reject all remote TLS server certificates!" ] );
+                                                                               });
             this.LocalCertificateSelector    = LocalCertificateSelector;
             this.ClientCertificates          = ClientCertificates         ?? [];
             this.ClientCertificateContext    = ClientCertificateContext;

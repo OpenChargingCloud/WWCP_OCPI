@@ -17,9 +17,7 @@
 
 #region Usings
 
-using System.Security.Authentication;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
 
@@ -29,7 +27,6 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_2_1;
 
 #endregion
 
@@ -1057,7 +1054,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Locations,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -1212,7 +1209,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Locations,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -1394,7 +1391,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Locations,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -1551,7 +1548,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Locations,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -1763,7 +1760,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Locations,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -1943,7 +1940,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Locations,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -2108,7 +2105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Locations,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -2277,7 +2274,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Locations,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -2443,7 +2440,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Locations,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -2606,7 +2603,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Tariffs,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -2760,7 +2757,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Tariffs,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -2937,7 +2934,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Tariffs,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -3095,7 +3092,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Tariffs,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -3252,7 +3249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Sessions,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -3406,7 +3403,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Sessions,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -3576,7 +3573,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Sessions,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -3734,7 +3731,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Sessions,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -3887,7 +3884,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.CDRs,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -4061,7 +4058,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.CDRs,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -4221,7 +4218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Tokens,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -4386,7 +4383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Tokens,
                                           InterfaceRoles.SENDER,
                                           VersionId,
@@ -4483,9 +4480,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             }
 
 
-            #region Send OnPostTokenResponse event
-
             var endtime = Timestamp.Now;
+            var runtime = endtime - startTime;
+
+            if (response.Data is not null)
+                response.Data.Runtime = runtime;
+
+
+            #region Send OnPostTokenResponse event
 
             await LogEvent(
                       OnPostTokenResponse,
@@ -4504,7 +4506,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                           requestTimeout,
 
                           response,
-                          endtime - startTime
+                          runtime
                       )
                   );
 
@@ -4583,7 +4585,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.ChargingProfiles,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,

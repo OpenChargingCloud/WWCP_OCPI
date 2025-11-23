@@ -491,7 +491,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
+                var remoteURL = await GetModuleRemoteURL(Module_Id.Locations,
                                                    InterfaceRoles.SENDER,
                                                    VersionId);
 
@@ -507,7 +507,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCertificate,
+                                                 ClientCertificates,
+                                                 ClientCertificateContext,
+                                                 ClientCertificateChain,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
@@ -680,7 +682,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
+                var remoteURL = await GetModuleRemoteURL(Module_Id.Locations,
                                                    InterfaceRoles.SENDER,
                                                    VersionId);
 
@@ -696,7 +698,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCertificate,
+                                                 ClientCertificates,
+                                                 ClientCertificateContext,
+                                                 ClientCertificateChain,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
@@ -874,7 +878,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
+                var remoteURL = await GetModuleRemoteURL(Module_Id.Locations,
                                                    InterfaceRoles.SENDER,
                                                    VersionId);
 
@@ -890,7 +894,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCertificate,
+                                                 ClientCertificates,
+                                                 ClientCertificateContext,
+                                                 ClientCertificateChain,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
@@ -1072,7 +1078,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
+                var remoteURL = await GetModuleRemoteURL(Module_Id.Locations,
                                                    InterfaceRoles.SENDER,
                                                    VersionId);
 
@@ -1088,7 +1094,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCertificate,
+                                                 ClientCertificates,
+                                                 ClientCertificateContext,
+                                                 ClientCertificateChain,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
@@ -1261,7 +1269,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Sessions,
+                var remoteURL = await GetModuleRemoteURL(Module_Id.Sessions,
                                                    InterfaceRoles.SENDER,
                                                    VersionId);
 
@@ -1277,7 +1285,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCertificate,
+                                                 ClientCertificates,
+                                                 ClientCertificateContext,
+                                                 ClientCertificateChain,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,
@@ -1450,7 +1460,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Sessions,
+                var remoteURL = await GetModuleRemoteURL(Module_Id.Sessions,
                                                    InterfaceRoles.SENDER,
                                                    VersionId);
 
@@ -1466,7 +1476,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                  PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  LocalCertificateSelector,
-                                                 ClientCertificate,
+                                                 ClientCertificates,
+                                                 ClientCertificateContext,
+                                                 ClientCertificateChain,
                                                  TLSProtocols,
                                                  ContentType,
                                                  Accept,

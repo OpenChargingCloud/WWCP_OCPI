@@ -1059,20 +1059,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Locations,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path + LocationId.ToString(),
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -1225,20 +1225,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Locations,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.PUT(
-                                                 Path:                  remoteURL.Value.Path + Location.Id.ToString(),
+                    var httpResponse = await httpClient.PUT(
+                                                 Path:                  httpClient.RemoteURL.Path + Location.Id.ToString(),
                                                  Content:               Location.ToJSON(
                                                                             false,
                                                                             false,
@@ -1422,20 +1422,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Locations,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.PATCH(
-                                                 Path:                  remoteURL.Value.Path + LocationId.ToString(),
+                    var httpResponse = await httpClient.PATCH(
+                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString(),
                                                  Content:               LocationPatch.ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -1590,21 +1590,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Locations,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path + LocationId.ToString() +
-                                                                                               EVSEUId.   ToString(),
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString() +
+                                                                                                    EVSEUId.   ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -1807,21 +1807,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Locations,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.PUT(
-                                                 Path:                  remoteURL.Value.Path + LocationId.ToString() +
-                                                                                               EVSE.UId.  ToString(),
+                    var httpResponse = await httpClient.PUT(
+                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString() +
+                                                                                                    EVSE.UId.  ToString(),
                                                  Content:               EVSE.ToJSON(
                                                                             EMSPId,
                                                                             false,
@@ -1996,21 +1996,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Locations,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.PATCH(
-                                                 Path:                  remoteURL.Value.Path + LocationId.ToString() +
-                                                                                               EVSEUId.   ToString(),
+                    var httpResponse = await httpClient.PATCH(
+                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString() +
+                                                                                                    EVSEUId.   ToString(),
                                                  Content:               EVSEPatch.ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -2168,22 +2168,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Locations,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path + LocationId. ToString() +
-                                                                                               EVSEUId.    ToString() +
-                                                                                               ConnectorId.ToString(),
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + LocationId. ToString() +
+                                                                                                    EVSEUId.    ToString() +
+                                                                                                    ConnectorId.ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -2348,22 +2348,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Locations,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.PUT(
-                                                 Path:                  remoteURL.Value.Path + Connector.ParentEVSE.ParentLocation.Id. ToString() +
-                                                                                               Connector.ParentEVSE.               UId.ToString() +
-                                                                                               Connector.                          Id. ToString(),
+                    var httpResponse = await httpClient.PUT(
+                                                 Path:                  httpClient.RemoteURL.Path + Connector.ParentEVSE.ParentLocation.Id. ToString() +
+                                                                                                    Connector.ParentEVSE.               UId.ToString() +
+                                                                                                    Connector.                          Id. ToString(),
                                                  Content:               Connector.ToJSON(
                                                                             EMSPId,
                                                                             CustomConnectorSerializer
@@ -2521,22 +2521,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Locations,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.PATCH(
-                                                 Path:                  remoteURL.Value.Path + LocationId. ToString() +
-                                                                                               EVSEUId.    ToString() +
-                                                                                               ConnectorId.ToString(),
+                    var httpResponse = await httpClient.PATCH(
+                                                 Path:                  httpClient.RemoteURL.Path + LocationId. ToString() +
+                                                                                                    EVSEUId.    ToString() +
+                                                                                                    ConnectorId.ToString(),
                                                  Content:               ConnectorPatch.ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -2695,22 +2695,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Tariffs,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Tariffs,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                               PartyId.    ToString() +
-                                                                                               TariffId.   ToString(),
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    TariffId.   ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -2864,20 +2864,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Tariffs,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Tariffs,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.PUT(
-                                                 Path:                  remoteURL.Value.Path + Tariff.Id.ToString(),
+                    var httpResponse = await httpClient.PUT(
+                                                 Path:                  httpClient.RemoteURL.Path + Tariff.Id.ToString(),
                                                  Content:               Tariff.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -3041,22 +3041,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Tariffs,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Tariffs,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.PATCH(
-                                                 Path:                  remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                               PartyId.    ToString() +
-                                                                                               TariffId.   ToString(),
+                    var httpResponse = await httpClient.PATCH(
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    TariffId.   ToString(),
                                                  Content:               TariffPatch.ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -3214,22 +3214,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Tariffs,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Tariffs,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.DELETE(
-                                                 Path:                  remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                               PartyId.    ToString() +
-                                                                                               TariffId.   ToString(),
+                    var httpResponse = await httpClient.DELETE(
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    TariffId.   ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -3386,22 +3386,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Sessions,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Sessions,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                               PartyId.    ToString() +
-                                                                                               SessionId.  ToString(),
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    SessionId.  ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -3555,20 +3555,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Sessions,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Sessions,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.PUT(
-                                                 Path:                  remoteURL.Value.Path + Session.Id.ToString(),
+                    var httpResponse = await httpClient.PUT(
+                                                 Path:                  httpClient.RemoteURL.Path + Session.Id.ToString(),
                                                  Content:               Session.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -3732,22 +3732,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Sessions,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Sessions,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.PATCH(
-                                                 Path:                  remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                               PartyId.    ToString() +
-                                                                                               SessionId.  ToString(),
+                    var httpResponse = await httpClient.PATCH(
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    SessionId.  ToString(),
                                                  Content:               SessionPatch.ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -3905,22 +3905,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Sessions,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Sessions,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.DELETE(
-                                                 Path:                  remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                               PartyId.    ToString() +
-                                                                                               SessionId.  ToString(),
+                    var httpResponse = await httpClient.DELETE(
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    SessionId.  ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -4074,20 +4074,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.CDRs,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.CDRs,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.POST(
-                                                 Path:                  remoteURL.Value.Path,
+                    var httpResponse = await httpClient.POST(
+                                                 Path:                  httpClient.RemoteURL.Path,
                                                  Content:               CDR.ToJSON(
                                                                             false,
                                                                             false,
@@ -4268,20 +4268,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.CDRs,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.CDRs,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path + CDRId.ToString(),
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + CDRId.ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -4439,12 +4439,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Tokens,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Tokens,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
                 var offsetLimit    = "";
 
@@ -4458,13 +4458,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     offsetLimit = String.Concat("?", offsetLimit.AsSpan(1));
 
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
-                                                 Path:                  remoteURL.Value.Path + offsetLimit,
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + offsetLimit,
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -4619,20 +4619,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Tokens,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Tokens,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.POST(
-                                                 Path:                  remoteURL.Value.Path + TokenId.ToString() + "authorize",
+                    var httpResponse = await httpClient.POST(
+                                                 Path:                  httpClient.RemoteURL.Path + TokenId.ToString() + "authorize",
                                                  Content:               null,
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -4712,9 +4712,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
 
 
-            #region Send OnPostTokenResponse event
-
             var endtime = Timestamp.Now;
+            var runtime = endtime - startTime;
+
+            if (response.Data is not null)
+                response.Data.Runtime = runtime;
+
+
+            #region Send OnPostTokenResponse event
 
             try
             {
@@ -4736,7 +4741,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     runtime))).
                                        ConfigureAwait(false);
 
             }

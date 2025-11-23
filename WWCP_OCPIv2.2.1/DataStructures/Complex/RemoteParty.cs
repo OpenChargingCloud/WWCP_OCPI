@@ -17,6 +17,7 @@
 
 #region Usings
 
+using System.Net.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
@@ -29,7 +30,8 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using System.Net.Security;
+using cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP;
+using cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP;
 
 #endregion
 
@@ -121,6 +123,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The default JSON-LD context of this object.
         /// </summary>
         public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse("https://open.charging.cloud/contexts/OCPIv2.2/remoteParty");
+
+        #endregion
+
+        #region Properties
+
+        public CPO2EMSPClient?  CPO2EMSPClient    { get; set; }
+
+        public EMSP2CPOClient?  EMSP2CPOClient    { get; set; }
 
         #endregion
 

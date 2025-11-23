@@ -905,7 +905,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Locations,
                                           InterfaceRoles.SENDER,
                                           VersionId,
@@ -1064,7 +1064,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                     Module_Id.Locations,
                                     InterfaceRoles.SENDER,
                                     VersionId,
@@ -1221,7 +1221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                     Module_Id.Locations,
                                     InterfaceRoles.SENDER,
                                     VersionId,
@@ -1382,7 +1382,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                     Module_Id.Locations,
                                     InterfaceRoles.SENDER,
                                     VersionId,
@@ -1543,7 +1543,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                     Module_Id.Tariffs,
                                     InterfaceRoles.SENDER,
                                     VersionId,
@@ -1702,7 +1702,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                     Module_Id.Tariffs,
                                     InterfaceRoles.SENDER,
                                     VersionId,
@@ -1861,7 +1861,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                     Module_Id.Sessions,
                                     InterfaceRoles.SENDER,
                                     VersionId,
@@ -2036,7 +2036,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                     Module_Id.Sessions,
                                     InterfaceRoles.SENDER,
                                     VersionId,
@@ -2199,7 +2199,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.CDRs,
                                           InterfaceRoles.SENDER,
                                           VersionId,
@@ -2358,7 +2358,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.CDRs,
                                           InterfaceRoles.SENDER,
                                           VersionId,
@@ -2511,7 +2511,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Tokens,
                                           InterfaceRoles.SENDER,
                                           VersionId,
@@ -2667,7 +2667,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Tokens,
                                           InterfaceRoles.SENDER,
                                           VersionId,
@@ -2831,7 +2831,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Tokens,
                                           InterfaceRoles.RECEIVER,
                                           VersionId,
@@ -3000,7 +3000,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL  = await GetRemoteURL(
+                var remoteURL  = await GetModuleRemoteURL(
                                            Module_Id.Commands,
                                            InterfaceRoles.RECEIVER,
                                            VersionId,
@@ -3183,7 +3183,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL  = await GetRemoteURL(
+                var remoteURL  = await GetModuleRemoteURL(
                                            Module_Id.Commands,
                                            InterfaceRoles.RECEIVER,
                                            VersionId,
@@ -3365,7 +3365,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL  = await GetRemoteURL(
+                var remoteURL  = await GetModuleRemoteURL(
                                            Module_Id.Commands,
                                            InterfaceRoles.RECEIVER,
                                            VersionId,
@@ -3547,7 +3547,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL  = await GetRemoteURL(
+                var remoteURL  = await GetModuleRemoteURL(
                                            Module_Id.Commands,
                                            InterfaceRoles.RECEIVER,
                                            VersionId,
@@ -3725,7 +3725,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             try
             {
 
-                var remoteURL  = await GetRemoteURL(
+                var remoteURL  = await GetModuleRemoteURL(
                                            Module_Id.Commands,
                                            InterfaceRoles.RECEIVER,
                                            VersionId,
