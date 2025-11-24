@@ -19,6 +19,16 @@ Most changes are intended to simplify the daily operations business or to suppor
 **Note:** OCPI v3.0 has not been officially released yet. The latest draft, *"OCPI v3.0-2 review2, 2024-02-22"*, still contains numerous issues. As a result, this implementation should be considered a technology preview rather than a production-ready solution.
 
 
+## 2nd-Secret Authentication via Time-based One-Time Passwords (TOTPs)
+
+The OCPI security model is fundamentally fragile. In practice it boils down to a single static token plus the legacy CREDENTIALS module, a combination that has been known to be unsafe since OCPI v2.2. This implementation addresses that weakness by introducing a second, independent secret derived from a Time-based One-Time Password (TOTP).
+
+Instead of relying on a long-lived access token alone, an additional HTTP header carries a short-lived TOTP value that rotates (for example) every 30 seconds. The static OCPI token effectively becomes the identifier (similar to a login or username), while the TOTP functions as the ephemeral time-bound secret or password.
+
+Together this yields a *two-secret* handshake on every OCPI request, removes the single-secret failure mode, and enables proper replay-protection and token-theft mitigation without breaking OCPI interoperability.
+
+*Note:* This is a *Two-Secret Scheme*, not a real *2nd, Two-Factor or Multi-Factor Authentication Scheme*, as the TOTP is not based on a different factor class *(“something you know”, “something you have”, “something you are”)*.
+
 ## Open Data by Default
 
 This OCPI implementation includes an optional feature to enable anonymous, unauthenticated access to the VERSIONS, LOCATIONS, and TARIFFS endpoints via a simple WebAPI. By activating this feature, you can ensure compliance with regulatory requirements such as the *EU Alternative Fuels Infrastructure Regulation (AFIR)* and the *UK's Public Charge Point Regulations 2023*.
