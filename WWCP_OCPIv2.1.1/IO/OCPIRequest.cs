@@ -170,27 +170,92 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region DateAndPaginationFilters
 
-        public readonly struct DateAndPaginationFilters
+        /// <summary>
+        /// Date and pagination filters.
+        /// </summary>
+        /// <param name="From">An optional 'from' timestamp (inclusive).</param>
+        /// <param name="To">An optional 'to' timestamp (exclusive).</param>
+        /// <param name="Offset">An optional 'offset' within the result set.</param>
+        /// <param name="Limit">An optional 'limit' of the result set.</param>
+        public readonly struct DateAndPaginationFilters(DateTimeOffset?  From,
+                                                        DateTimeOffset?  To,
+                                                        UInt64?          Offset,
+                                                        UInt64?          Limit)
         {
 
-            public DateTime?  From     { get; }
-            public DateTime?  To       { get; }
-            public UInt64?    Offset   { get; }
-            public UInt64?    Limit    { get; }
+            #region Properties
+
+            /// <summary>
+            /// The optional 'from' timestamp (inclusive).
+            /// </summary>
+            public DateTimeOffset?  From      { get; } = From;
+
+            /// <summary>
+            /// The optional 'to' timestamp (exclusive).
+            /// </summary>
+            public DateTimeOffset?  To        { get; } = To;
+
+            /// <summary>
+            /// The optional 'offset' within the result set.
+            /// </summary>
+            public UInt64?          Offset    { get; } = Offset;
+
+            /// <summary>
+            /// The optional 'limit' of the result set.
+            /// </summary>
+            public UInt64?          Limit     { get; } = Limit;
+
+            #endregion
 
 
-            public DateAndPaginationFilters(DateTime?  From,
-                                            DateTime?  To,
-                                            UInt64?    Offset,
-                                            UInt64?    Limit)
-            {
+            #region ToHTTPQueryString()
 
-                this.From    = From;
-                this.To      = To;
-                this.Offset  = Offset;
-                this.Limit   = Limit;
+            /// <summary>
+            /// Return a HTTP QueryString representation of this object.
+            /// </summary>
+            public String ToHTTPQueryString()
 
-            }
+                => (From.  HasValue ||
+                    To.    HasValue ||
+                    Offset.HasValue ||
+                    Limit. HasValue)
+
+                    ? "?" + new String[] {
+                          From.  HasValue ? "date_from=" + From.  Value.ToISO8601() : "",
+                          To.    HasValue ? "date_to="   + To.    Value.ToISO8601() : "",
+                          Offset.HasValue ? "offset="    + Offset.Value.ToString()  : "",
+                          Limit. HasValue ? "limit="     + Limit. Value.ToString()  : ""
+                      }.Where(text => text.IsNotNullOrEmpty()).
+                        AggregateWith("&")
+
+                    : "";
+
+            #endregion
+
+            #region (override) ToString()
+
+            /// <summary>
+            /// Return a text representation of this object.
+            /// </summary>
+            public override String ToString()
+
+                => (From.  HasValue ||
+                    To.    HasValue ||
+                    Offset.HasValue ||
+                    Limit. HasValue)
+
+                    ? new String[] {
+                          From.  HasValue ? "from: "   + From.  Value.ToString() : "",
+                          To.    HasValue ? "to: "     + To.    Value.ToString() : "",
+                          Offset.HasValue ? "offset: " + Offset.Value.ToString() : "",
+                          Limit. HasValue ? "limit: "  + Limit. Value.ToString() : ""
+                      }.Where(text => text.IsNotNullOrEmpty()).
+                        AggregateWith(", ")
+
+                    : "";
+
+            #endregion
+
 
         }
 

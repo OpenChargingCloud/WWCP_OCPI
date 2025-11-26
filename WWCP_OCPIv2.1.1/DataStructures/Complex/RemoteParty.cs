@@ -254,7 +254,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            BusinessDetails                                            BusinessDetails,
 
                            URL                                                        RemoteVersionsURL,
-                           AccessToken                                                RemoteAccessToken,
+                           AccessToken?                                               RemoteAccessToken,
 
                            PartyStatus?                                               Status                            = PartyStatus.ENABLED,
 
@@ -496,37 +496,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         {
 
-           // this.Id                          = RemoteParty_Id.Parse($"{CountryCode}-{PartyId}_{Role}");
-
-            this.CountryCode                 = CountryCode;
-            this.PartyId                     = PartyId;
-            this.Role                        = Role;
-            this.BusinessDetails             = BusinessDetails;
-            //this.Status                      = Status                     ?? PartyStatus.ENABLED;
-
-            //this.RemoteCertificateValidator  = RemoteCertificateValidator ?? ((sender,
-            //                                                                   certificate,
-            //                                                                   certificateChain,
-            //                                                                   tlsClient,
-            //                                                                   policyErrors) => (true, []));
-            //this.LocalCertificateSelector    = LocalCertificateSelector;
-            //this.ClientCert                  = ClientCert;
-            //this.TLSProtocol                 = TLSProtocol;
-            //this.PreferIPv4                  = PreferIPv4;
-            //this.HTTPUserAgent               = HTTPUserAgent;
-            //this.RequestTimeout              = RequestTimeout;
-            //this.TransmissionRetryDelay      = TransmissionRetryDelay;
-            //this.MaxNumberOfRetries          = MaxNumberOfRetries;
-            //this.InternalBufferSize          = InternalBufferSize;
-            //this.UseHTTPPipelining           = UseHTTPPipelining;
-
-            //this.Created                     = Created     ?? LastUpdated ?? Timestamp.Now;
-            //this.LastUpdated                 = LastUpdated ?? Created     ?? Timestamp.Now;
-
-            //this.localAccessInfos            = LocalAccessInfos. IsNeitherNullNorEmpty() ? [.. LocalAccessInfos]  : [];
-            //this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? [.. RemoteAccessInfos] : [];
-
-            //this.ETag                        = CalcSHA256Hash();
+            this.CountryCode      = CountryCode;
+            this.PartyId          = PartyId;
+            this.Role             = Role;
+            this.BusinessDetails  = BusinessDetails;
 
             unchecked
             {

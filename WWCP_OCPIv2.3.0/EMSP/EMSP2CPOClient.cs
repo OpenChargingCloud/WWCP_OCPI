@@ -18,9 +18,7 @@
 #region Usings
 
 using System.Diagnostics;
-using System.Security.Authentication;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
 
@@ -30,8 +28,6 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_3_0;
-using static cloud.charging.open.protocols.OCPIv2_3_0.OCPIRequest;
 
 #endregion
 
@@ -729,110 +725,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
         #region Constructor(s)
 
-        #region EMSP2CPOClient(VersionsURL, AccessToken = null, ...)
-
-        ///// <summary>
-        ///// Create a new EMSP2CPO client.
-        ///// </summary>
-        ///// <param name="VersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
-        ///// <param name="AccessToken">The optional OCPI token.</param>
-        ///// 
-        ///// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
-        ///// <param name="Description">An optional description of this client.</param>
-        ///// <param name="PreferIPv4">Prefer IPv4 instead of IPv6.</param>
-        ///// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
-        ///// <param name="LocalCertificateSelector">A delegate to select a TLS client certificate.</param>
-        ///// <param name="ClientCert">The TLS client certificate to use for HTTP authentication.</param>
-        ///// <param name="TLSProtocol">The TLS protocol to use.</param>
-        ///// <param name="ContentType">An optional HTTP content type.</param>
-        ///// <param name="Accept">The optional HTTP accept header.</param>
-        ///// <param name="HTTPAuthentication">The optional HTTP authentication to use.</param>
-        ///// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
-        ///// <param name="Connection">The optional HTTP connection type.</param>
-        ///// <param name="RequestTimeout">An optional request timeout.</param>
-        ///// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
-        ///// <param name="MaxNumberOfRetries">An optional maximum number of transmission retries for HTTP request.</param>
-        ///// <param name="InternalBufferSize">An optional size of the internal HTTP client buffers.</param>
-        ///// <param name="UseHTTPPipelining">Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.</param>
-        ///// <param name="DisableLogging">Whether to disable all logging.</param>
-        ///// <param name="HTTPLogger">An optional delegate to log HTTP(S) requests and responses.</param>
-        ///// <param name="LoggingPath">An optional path for logging.</param>
-        ///// <param name="LoggingContext">An optional context for logging.</param>
-        ///// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-        ///// <param name="DNSClient">The DNS client to use.</param>
-        //public EMSP2CPOClient(URL                                                        VersionsURL,
-        //                  String?                                                    AccessToken                  = null,
-
-        //                  HTTPHostname?                                              VirtualHostname              = null,
-        //                  I18NString?                                                Description                  = null,
-        //                  Boolean?                                                   PreferIPv4                   = null,
-        //                  RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-        //                  LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-        //                  X509Certificate?                                           ClientCertificate            = null,
-        //                  SslProtocols?                                              TLSProtocol                  = null,
-        //                  HTTPContentType?                                           ContentType                  = null,
-        //                  AcceptTypes?                                               Accept                       = null,
-        //                  IHTTPAuthentication?                                       HTTPAuthentication           = null,
-        //                  String?                                                    HTTPUserAgent                = null,
-        //                  ConnectionType?                                            Connection                   = null,
-        //                  TimeSpan?                                                  RequestTimeout               = null,
-        //                  TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-        //                  UInt16?                                                    MaxNumberOfRetries           = null,
-        //                  UInt32?                                                    InternalBufferSize           = null,
-        //                  Boolean?                                                   UseHTTPPipelining            = null,
-        //                  Boolean?                                                   DisableLogging               = null,
-        //                  String?                                                    LoggingPath                  = null,
-        //                  String?                                                    LoggingContext               = null,
-        //                  OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
-        //                  HTTPClientLogger?                                          HTTPLogger                   = null,
-        //                  IDNSClient?                                                DNSClient                    = null)
-
-        //    : base(VersionsURL,
-        //           AccessToken,
-
-        //           VirtualHostname,
-        //           Description,
-        //           PreferIPv4,
-        //           RemoteCertificateValidator,
-        //           LocalCertificateSelector,
-        //           ClientCert,
-        //           TLSProtocol,
-        //           ContentType,
-        //           Accept,
-        //           HTTPAuthentication,
-        //           HTTPUserAgent,
-        //           Connection,
-        //           RequestTimeout,
-        //           TransmissionRetryDelay,
-        //           MaxNumberOfRetries,
-        //           InternalBufferSize,
-        //           UseHTTPPipelining,
-        //           DisableLogging,
-        //           LoggingPath,
-        //           LoggingContext,
-        //           LogfileCreator,
-        //           HTTPLogger,
-        //           DNSClient)
-
-        //{
-
-        //    this.Counters    = new APICounters();
-
-        //    base.HTTPLogger  = this.DisableLogging == false
-        //                           ? new Logger(
-        //                                 this,
-        //                                 LoggingPath,
-        //                                 LoggingContext ?? DefaultLoggingContext,
-        //                                 LogfileCreator
-        //                             )
-        //                           : null;
-
-        //}
-
-        #endregion
-
-        #region EMSP2CPOClient(EMSPAPI, RemoteParty, ...)
-
         /// <summary>
         /// Create a new EMSP2CPO client.
         /// </summary>
@@ -886,8 +778,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
         #endregion
 
-        #endregion
-
 
         public override JObject ToJSON()
             => base.ToJSON(nameof(EMSP2CPOClient));
@@ -912,29 +802,33 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Location>>>
 
-            GetLocations(DateTime?           From                = null,
-                         DateTime?           To                  = null,
-                         UInt64?             Offset              = null,
-                         UInt64?             Limit               = null,
+            GetLocations(DateTime?          From                = null,
+                         DateTime?          To                  = null,
+                         UInt64?            Offset              = null,
+                         UInt64?            Limit               = null,
 
-                         Version_Id?         VersionId           = null,
-                         Request_Id?         RequestId           = null,
-                         Correlation_Id?     CorrelationId       = null,
+                         Version_Id?        VersionId           = null,
+                         Request_Id?        RequestId           = null,
+                         Correlation_Id?    CorrelationId       = null,
 
-                         EventTracking_Id?   EventTrackingId     = null,
-                         TimeSpan?           RequestTimeout      = null,
-                         CancellationToken   CancellationToken   = default)
+                         DateTimeOffset?    RequestTimestamp    = null,
+                         EventTracking_Id?  EventTrackingId     = null,
+                         TimeSpan?          RequestTimeout      = null,
+                         CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetLocations.IncRequests_OK();
 
@@ -964,49 +858,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Locations,
-                                          InterfaceRoles.SENDER,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           InterfaceRoles.SENDER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var dateAndPaginationFilters  = new DateAndPaginationFilters(From, To, Offset, Limit);
+                    var dateAndPaginationFilters  = new OCPIRequest.DateAndPaginationFilters(
+                                                        From,
+                                                        To,
+                                                        Offset,
+                                                        Limit
+                                                    );
 
-                    var httpResponse              = await HTTPClientFactory.Create(
-                                                              remoteURL.Value,
-                                                              VirtualHostname,
-                                                              Description,
-                                                              PreferIPv4,
-                                                              RemoteCertificateValidator,
-                                                              LocalCertificateSelector,
-                                                              ClientCertificates,
-                                                              ClientCertificateContext,
-                                                              ClientCertificateChain,
-                                                              TLSProtocols,
-                                                              ContentType,
-                                                              Accept,
-                                                              HTTPAuthentication,
-                                                              TOTPConfig,
-                                                              HTTPUserAgent,
-                                                              Connection,
-                                                              RequestTimeout,
-                                                              TransmissionRetryDelay,
-                                                              MaxNumberOfRetries,
-                                                              InternalBufferSize,
-                                                              UseHTTPPipelining,
-                                                              DisableLogging,
-                                                              HTTPLogger,
-                                                              DNSClient
-                                                          ).
-
-                                                          GET(remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
+                    var httpResponse              = await newHTTPClient.GET(
+                                                              Path:                  httpClient.RemoteURL.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
                                                               Authentication:        TokenAuth,
                                                               Connection:            ConnectionType.Close,
@@ -1053,8 +926,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnGetLocationsResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnGetLocationsResponse,
@@ -1097,26 +970,30 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Location>>
 
-            GetLocation(Location_Id         LocationId,
+            GetLocation(Location_Id        LocationId,
 
-                        Version_Id?         VersionId           = null,
-                        Request_Id?         RequestId           = null,
-                        Correlation_Id?     CorrelationId       = null,
+                        Version_Id?        VersionId           = null,
+                        Request_Id?        RequestId           = null,
+                        Correlation_Id?    CorrelationId       = null,
 
-                        EventTracking_Id?   EventTrackingId     = null,
-                        TimeSpan?           RequestTimeout      = null,
-                        CancellationToken   CancellationToken   = default)
+                        DateTimeOffset?    RequestTimestamp    = null,
+                        EventTracking_Id?  EventTrackingId     = null,
+                        TimeSpan?          RequestTimeout      = null,
+                        CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetLocation.IncRequests_OK();
 
@@ -1148,47 +1025,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                    Module_Id.Locations,
-                                    InterfaceRoles.SENDER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           InterfaceRoles.SENDER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await HTTPClientFactory.Create(
-                                                 remoteURL.Value,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificates,
-                                                 ClientCertificateContext,
-                                                 ClientCertificateChain,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).
-
-                                             GET(remoteURL.Value.Path + LocationId.ToString(),
+                    var httpResponse = await newHTTPClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
@@ -1235,8 +1086,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnGetLocationResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnGetLocationResponse,
@@ -1282,27 +1133,31 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<EVSE>>
 
-            GetEVSE(Location_Id         LocationId,
-                    EVSE_UId            EVSEUId,
+            GetEVSE(Location_Id        LocationId,
+                    EVSE_UId           EVSEUId,
 
-                    Version_Id?         VersionId           = null,
-                    Request_Id?         RequestId           = null,
-                    Correlation_Id?     CorrelationId       = null,
+                    Version_Id?        VersionId           = null,
+                    Request_Id?        RequestId           = null,
+                    Correlation_Id?    CorrelationId       = null,
 
-                    EventTracking_Id?   EventTrackingId     = null,
-                    TimeSpan?           RequestTimeout      = null,
-                    CancellationToken   CancellationToken   = default)
+                    DateTimeOffset?    RequestTimestamp    = null,
+                    EventTracking_Id?  EventTrackingId     = null,
+                    TimeSpan?          RequestTimeout      = null,
+                    CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetEVSE.IncRequests_OK();
 
@@ -1335,47 +1190,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                    Module_Id.Locations,
-                                    InterfaceRoles.SENDER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           InterfaceRoles.SENDER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await HTTPClientFactory.Create(
-                                                 remoteURL.Value,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificates,
-                                                 ClientCertificateContext,
-                                                 ClientCertificateChain,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).
-
-                                             GET(remoteURL.Value.Path + LocationId.ToString() + EVSEUId.ToString(),
+                    var httpResponse = await newHTTPClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString() +
+                                                                                                    EVSEUId.   ToString(),
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
@@ -1422,8 +1252,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnGetEVSEResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnGetEVSEResponse,
@@ -1471,28 +1301,32 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Connector>>
 
-            GetConnector(Location_Id         LocationId,
-                         EVSE_UId            EVSEUId,
-                         Connector_Id        ConnectorId,
+            GetConnector(Location_Id        LocationId,
+                         EVSE_UId           EVSEUId,
+                         Connector_Id       ConnectorId,
 
-                         Version_Id?         VersionId           = null,
-                         Request_Id?         RequestId           = null,
-                         Correlation_Id?     CorrelationId       = null,
+                         Version_Id?        VersionId           = null,
+                         Request_Id?        RequestId           = null,
+                         Correlation_Id?    CorrelationId       = null,
 
-                         EventTracking_Id?   EventTrackingId     = null,
-                         TimeSpan?           RequestTimeout      = null,
-                         CancellationToken   CancellationToken   = default)
+                         DateTimeOffset?    RequestTimestamp    = null,
+                         EventTracking_Id?  EventTrackingId     = null,
+                         TimeSpan?          RequestTimeout      = null,
+                         CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetConnector.IncRequests_OK();
 
@@ -1526,47 +1360,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                    Module_Id.Locations,
-                                    InterfaceRoles.SENDER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           InterfaceRoles.SENDER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await HTTPClientFactory.Create(
-                                                 remoteURL.Value,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificates,
-                                                 ClientCertificateContext,
-                                                 ClientCertificateChain,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).
-
-                                             GET(remoteURL.Value.Path + LocationId.ToString() + EVSEUId.ToString() + ConnectorId.ToString(),
+                    var httpResponse = await newHTTPClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString() + EVSEUId.ToString() + ConnectorId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
@@ -1613,8 +1421,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnGetConnectorResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnGetConnectorResponse,
@@ -1665,18 +1473,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Tariff>>>
 
-            GetTariffs(DateTime?           From                = null,
-                       DateTime?           To                  = null,
-                       UInt64?             Offset              = null,
-                       UInt64?             Limit               = null,
+            GetTariffs(DateTimeOffset?    From                = null,
+                       DateTimeOffset?    To                  = null,
+                       UInt64?            Offset              = null,
+                       UInt64?            Limit               = null,
 
-                       Version_Id?         VersionId           = null,
-                       Request_Id?         RequestId           = null,
-                       Correlation_Id?     CorrelationId       = null,
+                       Version_Id?        VersionId           = null,
+                       Request_Id?        RequestId           = null,
+                       Correlation_Id?    CorrelationId       = null,
 
-                       EventTracking_Id?   EventTrackingId     = null,
-                       TimeSpan?           RequestTimeout      = null,
-                       CancellationToken   CancellationToken   = default)
+                       DateTimeOffset?    RequestTimestamp    = null,
+                       EventTracking_Id?  EventTrackingId     = null,
+                       TimeSpan?          RequestTimeout      = null,
+                       CancellationToken  CancellationToken   = default)
 
         {
 
@@ -1705,6 +1514,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           requestId,
                           correlationId,
 
+                          From,
+                          To,
+                          Offset,
+                          Limit,
+
                           CancellationToken,
                           eventTrackingId,
                           requestTimeout
@@ -1717,49 +1531,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                    Module_Id.Tariffs,
-                                    InterfaceRoles.SENDER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Tariffs,
+                                           InterfaceRoles.SENDER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var dateAndPaginationFilters  = new DateAndPaginationFilters(From, To, Offset, Limit);
+                    var dateAndPaginationFilters  = new OCPIRequest.DateAndPaginationFilters(
+                                                        From,
+                                                        To,
+                                                        Offset,
+                                                        Limit
+                                                    );
 
-                    var httpResponse              = await HTTPClientFactory.Create(
-                                                              remoteURL.Value,
-                                                              VirtualHostname,
-                                                              Description,
-                                                              PreferIPv4,
-                                                              RemoteCertificateValidator,
-                                                              LocalCertificateSelector,
-                                                              ClientCertificates,
-                                                              ClientCertificateContext,
-                                                              ClientCertificateChain,
-                                                              TLSProtocols,
-                                                              ContentType,
-                                                              Accept,
-                                                              HTTPAuthentication,
-                                                              TOTPConfig,
-                                                              HTTPUserAgent,
-                                                              Connection,
-                                                              RequestTimeout,
-                                                              TransmissionRetryDelay,
-                                                              MaxNumberOfRetries,
-                                                              InternalBufferSize,
-                                                              UseHTTPPipelining,
-                                                              DisableLogging,
-                                                              HTTPLogger,
-                                                              DNSClient
-                                                          ).
-
-                                                          GET(remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
+                    var httpResponse              = await newHTTPClient.GET(
+                                                              Path:                  httpClient.RemoteURL.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
                                                               Authentication:        TokenAuth,
                                                               Connection:            ConnectionType.Close,
@@ -1806,8 +1599,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnGetTariffsResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnGetTariffsResponse,
@@ -1816,6 +1609,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           this,
                           requestId,
                           correlationId,
+
+                          From,
+                          To,
+                          Offset,
+                          Limit,
 
                           CancellationToken,
                           eventTrackingId,
@@ -1850,26 +1648,32 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Tariff>>
 
-            GetTariff(Tariff_Id           TariffId,
+            GetTariff(Tariff_Id          TariffId,
+                      DateTimeOffset?    TariffTimestamp     = null,
+                      TimeSpan?          Tolerance           = null,
 
-                      Version_Id?         VersionId           = null,
-                      Request_Id?         RequestId           = null,
-                      Correlation_Id?     CorrelationId       = null,
+                      Version_Id?        VersionId           = null,
+                      Request_Id?        RequestId           = null,
+                      Correlation_Id?    CorrelationId       = null,
 
-                      EventTracking_Id?   EventTrackingId     = null,
-                      TimeSpan?           RequestTimeout      = null,
-                      CancellationToken   CancellationToken   = default)
+                      DateTimeOffset?    RequestTimestamp    = null,
+                      EventTracking_Id?  EventTrackingId     = null,
+                      TimeSpan?          RequestTimeout      = null,
+                      CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetTariff.IncRequests_OK();
 
@@ -1888,6 +1692,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           correlationId,
 
                           TariffId,
+                          TariffTimestamp,
+                          Tolerance,
 
                           CancellationToken,
                           eventTrackingId,
@@ -1901,47 +1707,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                    Module_Id.Tariffs,
-                                    InterfaceRoles.SENDER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Tariffs,
+                                           InterfaceRoles.SENDER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await HTTPClientFactory.Create(
-                                                 remoteURL.Value,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificates,
-                                                 ClientCertificateContext,
-                                                 ClientCertificateChain,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).
-
-                                             GET(remoteURL.Value.Path + TariffId.ToString(),
+                    var httpResponse = await newHTTPClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + TariffId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
@@ -1988,8 +1768,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnGetTariffResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnGetTariffResponse,
@@ -2000,6 +1780,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                           correlationId,
 
                           TariffId,
+                          TariffTimestamp,
+                          Tolerance,
 
                           CancellationToken,
                           eventTrackingId,
@@ -2038,29 +1820,33 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Session>>>
 
-            GetSessions(DateTime?           From                = null,
-                        DateTime?           To                  = null,
-                        UInt64?             Offset              = null,
-                        UInt64?             Limit               = null,
+            GetSessions(DateTime?          From                = null,
+                        DateTime?          To                  = null,
+                        UInt64?            Offset              = null,
+                        UInt64?            Limit               = null,
 
-                        Version_Id?         VersionId           = null,
-                        Request_Id?         RequestId           = null,
-                        Correlation_Id?     CorrelationId       = null,
+                        Version_Id?        VersionId           = null,
+                        Request_Id?        RequestId           = null,
+                        Correlation_Id?    CorrelationId       = null,
 
-                        EventTracking_Id?   EventTrackingId     = null,
-                        TimeSpan?           RequestTimeout      = null,
-                        CancellationToken   CancellationToken   = default)
+                        DateTimeOffset?    RequestTimestamp    = null,
+                        EventTracking_Id?  EventTrackingId     = null,
+                        TimeSpan?          RequestTimeout      = null,
+                        CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetSessions.IncRequests_OK();
 
@@ -2068,7 +1854,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #endregion
 
-            #region Send OnGetSessionRequest event
+            #region Send OnGetSessionsRequest event
 
             await LogEvent(
                       OnGetSessionsRequest,
@@ -2090,49 +1876,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                    Module_Id.Sessions,
-                                    InterfaceRoles.SENDER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Sessions,
+                                           InterfaceRoles.SENDER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var dateAndPaginationFilters  = new DateAndPaginationFilters(From, To, Offset, Limit);
+                    var dateAndPaginationFilters  = new OCPIRequest.DateAndPaginationFilters(
+                                                        From,
+                                                        To,
+                                                        Offset,
+                                                        Limit
+                                                    );
 
-                    var httpResponse              = await HTTPClientFactory.Create(
-                                                              remoteURL.Value,
-                                                              VirtualHostname,
-                                                              Description,
-                                                              PreferIPv4,
-                                                              RemoteCertificateValidator,
-                                                              LocalCertificateSelector,
-                                                              ClientCertificates,
-                                                              ClientCertificateContext,
-                                                              ClientCertificateChain,
-                                                              TLSProtocols,
-                                                              ContentType,
-                                                              Accept,
-                                                              HTTPAuthentication,
-                                                              TOTPConfig,
-                                                              HTTPUserAgent,
-                                                              Connection,
-                                                              RequestTimeout,
-                                                              TransmissionRetryDelay,
-                                                              MaxNumberOfRetries,
-                                                              InternalBufferSize,
-                                                              UseHTTPPipelining,
-                                                              DisableLogging,
-                                                              HTTPLogger,
-                                                              DNSClient
-                                                          ).
-
-                                                          GET(remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
+                    var httpResponse              = await newHTTPClient.GET(
+                                                              Path:                  httpClient.RemoteURL.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
                                                               Authentication:        TokenAuth,
                                                               Connection:            ConnectionType.Close,
@@ -2195,8 +1960,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnGetSessionsResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnGetSessionsResponse,
@@ -2239,26 +2004,30 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Session>>
 
-            GetSession(Session_Id          SessionId,
+            GetSession(Session_Id         SessionId,
 
-                       Version_Id?         VersionId           = null,
-                       Request_Id?         RequestId           = null,
-                       Correlation_Id?     CorrelationId       = null,
+                       Version_Id?        VersionId           = null,
+                       Request_Id?        RequestId           = null,
+                       Correlation_Id?    CorrelationId       = null,
 
-                       EventTracking_Id?   EventTrackingId     = null,
-                       TimeSpan?           RequestTimeout      = null,
-                       CancellationToken   CancellationToken   = default)
+                       DateTimeOffset?    RequestTimestamp    = null,
+                       EventTracking_Id?  EventTrackingId     = null,
+                       TimeSpan?          RequestTimeout      = null,
+                       CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetSession.IncRequests_OK();
 
@@ -2290,47 +2059,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                    Module_Id.Sessions,
-                                    InterfaceRoles.SENDER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Sessions,
+                                           InterfaceRoles.SENDER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await HTTPClientFactory.Create(
-                                                 remoteURL.Value,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificates,
-                                                 ClientCertificateContext,
-                                                 ClientCertificateChain,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).
-
-                                             GET(remoteURL.Value.Path + SessionId.ToString(),
+                    var httpResponse = await newHTTPClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + SessionId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
@@ -2377,8 +2120,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnGetSessionResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnGetSessionResponse,
@@ -2410,7 +2153,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         // PUT     ~/sessions/{session_id}/charging_preferences
 
 
-        #region GetCDRs            (...)
+        #region GetCDRs           (...)
 
         /// <summary>
         /// Get all charge detail records from the remote API.
@@ -2429,29 +2172,33 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<CDR>>>
 
-            GetCDRs(DateTime?           From                = null,
-                    DateTime?           To                  = null,
-                    UInt64?             Offset              = null,
-                    UInt64?             Limit               = null,
+            GetCDRs(DateTime?          From                = null,
+                    DateTime?          To                  = null,
+                    UInt64?            Offset              = null,
+                    UInt64?            Limit               = null,
 
-                    Version_Id?         VersionId           = null,
-                    Request_Id?         RequestId           = null,
-                    Correlation_Id?     CorrelationId       = null,
+                    Version_Id?        VersionId           = null,
+                    Request_Id?        RequestId           = null,
+                    Correlation_Id?    CorrelationId       = null,
 
-                    EventTracking_Id?   EventTrackingId     = null,
-                    TimeSpan?           RequestTimeout      = null,
-                    CancellationToken   CancellationToken   = default)
+                    DateTimeOffset?    RequestTimestamp    = null,
+                    EventTracking_Id?  EventTrackingId     = null,
+                    TimeSpan?          RequestTimeout      = null,
+                    CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetCDRs.IncRequests_OK();
 
@@ -2481,49 +2228,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.CDRs,
-                                          InterfaceRoles.SENDER,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.CDRs,
+                                           InterfaceRoles.SENDER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var dateAndPaginationFilters  = new DateAndPaginationFilters(From, To, Offset, Limit);
+                    var dateAndPaginationFilters  = new OCPIRequest.DateAndPaginationFilters(
+                                                        From,
+                                                        To,
+                                                        Offset,
+                                                        Limit
+                                                    );
 
-                    var httpResponse              = await HTTPClientFactory.Create(
-                                                              remoteURL.Value,
-                                                              VirtualHostname,
-                                                              Description,
-                                                              PreferIPv4,
-                                                              RemoteCertificateValidator,
-                                                              LocalCertificateSelector,
-                                                              ClientCertificates,
-                                                              ClientCertificateContext,
-                                                              ClientCertificateChain,
-                                                              TLSProtocols,
-                                                              ContentType,
-                                                              Accept,
-                                                              HTTPAuthentication,
-                                                              TOTPConfig,
-                                                              HTTPUserAgent,
-                                                              Connection,
-                                                              RequestTimeout,
-                                                              TransmissionRetryDelay,
-                                                              MaxNumberOfRetries,
-                                                              InternalBufferSize,
-                                                              UseHTTPPipelining,
-                                                              DisableLogging,
-                                                              HTTPLogger,
-                                                              DNSClient
-                                                          ).
-
-                                                          GET(remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
+                    var httpResponse              = await httpClient.GET(
+                                                              Path:                  httpClient.RemoteURL.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
                                                               Authentication:        TokenAuth,
                                                               Connection:            ConnectionType.Close,
@@ -2570,8 +2296,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnGetCDRsResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnGetCDRsResponse,
@@ -2614,26 +2340,30 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<CDR>>
 
-            GetCDR(CDR_Id              CDRId,
+            GetCDR(CDR_Id             CDRId,
 
-                   Version_Id?         VersionId           = null,
-                   Request_Id?         RequestId           = null,
-                   Correlation_Id?     CorrelationId       = null,
+                   Version_Id?        VersionId           = null,
+                   Request_Id?        RequestId           = null,
+                   Correlation_Id?    CorrelationId       = null,
 
-                   EventTracking_Id?   EventTrackingId     = null,
-                   TimeSpan?           RequestTimeout      = null,
-                   CancellationToken   CancellationToken   = default)
+                   DateTimeOffset?    RequestTimestamp    = null,
+                   EventTracking_Id?  EventTrackingId     = null,
+                   TimeSpan?          RequestTimeout      = null,
+                   CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetCDR.IncRequests_OK();
 
@@ -2665,47 +2395,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.CDRs,
-                                          InterfaceRoles.SENDER,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.CDRs,
+                                           InterfaceRoles.SENDER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await HTTPClientFactory.Create(
-                                                 remoteURL.Value,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificates,
-                                                 ClientCertificateContext,
-                                                 ClientCertificateChain,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).
-
-                                             GET(remoteURL.Value.Path + CDRId.ToString(),
+                    var httpResponse = await httpClient.GET(
+                                                 Path:                  httpClient.RemoteURL.Path + CDRId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
@@ -2752,8 +2456,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnGetCDRResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnGetCDRResponse,
@@ -2793,28 +2497,32 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Token>>
 
-            GetToken(CountryCode         CountryCode,
-                     Party_Id            PartyId,
-                     Token_Id            TokenId,
+            GetToken(CountryCode        CountryCode,
+                     Party_Id           PartyId,
+                     Token_Id           TokenId,
 
-                     Request_Id?         RequestId           = null,
-                     Correlation_Id?     CorrelationId       = null,
-                     Version_Id?         VersionId           = null,
+                     Request_Id?        RequestId           = null,
+                     Correlation_Id?    CorrelationId       = null,
+                     Version_Id?        VersionId           = null,
 
-                     EventTracking_Id?   EventTrackingId     = null,
-                     TimeSpan?           RequestTimeout      = null,
-                     CancellationToken   CancellationToken   = default)
+                     DateTimeOffset?    RequestTimestamp    = null,
+                     EventTracking_Id?  EventTrackingId     = null,
+                     TimeSpan?          RequestTimeout      = null,
+                     CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetToken.IncRequests_OK();
 
@@ -2848,7 +2556,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Tokens,
                                           InterfaceRoles.SENDER,
                                           VersionId,
@@ -2937,8 +2645,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnGetTokenResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnGetTokenResponse,
@@ -2981,26 +2689,30 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Token>>
 
-            PutToken(Token               Token,
+            PutToken(Token              Token,
 
-                     Request_Id?         RequestId           = null,
-                     Correlation_Id?     CorrelationId       = null,
-                     Version_Id?         VersionId           = null,
+                     Request_Id?        RequestId           = null,
+                     Correlation_Id?    CorrelationId       = null,
+                     Version_Id?        VersionId           = null,
 
-                     EventTracking_Id?   EventTrackingId     = null,
-                     TimeSpan?           RequestTimeout      = null,
-                     CancellationToken   CancellationToken   = default)
+                     DateTimeOffset?    RequestTimestamp    = null,
+                     EventTracking_Id?  EventTrackingId     = null,
+                     TimeSpan?          RequestTimeout      = null,
+                     CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.PutToken.IncRequests_OK();
 
@@ -3032,7 +2744,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
+                var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Tokens,
                                           InterfaceRoles.SENDER,
                                           VersionId,
@@ -3045,36 +2757,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await HTTPClientFactory.Create(
-                                                 remoteURL.Value,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificates,
-                                                 ClientCertificateContext,
-                                                 ClientCertificateChain,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).
-
-                                             PUT(remoteURL.Value.Path + Token.CountryCode.ToString() +
-                                                                        Token.PartyId.    ToString() +
-                                                                        Token.Id.         ToString(),
+                    var httpResponse = await newHTTPClient.PUT(
+                                                 Path:                  remoteURL.Value.Path + Token.CountryCode.ToString() +
+                                                                                               Token.PartyId.    ToString() +
+                                                                                               Token.Id.         ToString(),
                                                  Content:               Token.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                  Accept:                ocpiAcceptTypes,
@@ -3123,8 +2809,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnPutTokenResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnPutTokenResponse,
@@ -3172,6 +2858,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                        Request_Id?         RequestId           = null,
                        Correlation_Id?     CorrelationId       = null,
 
+                       DateTime?           RequestTimestamp    = null,
                        EventTracking_Id?   EventTrackingId     = null,
                        TimeSpan?           RequestTimeout      = null,
                        CancellationToken   CancellationToken   = default)
@@ -3187,12 +2874,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.PatchToken.IncRequests_OK();
 
@@ -3227,64 +2917,38 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Tokens,
-                                          InterfaceRoles.RECEIVER,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient  = await GetModuleHTTPClient(
+                                            Module_Id.Tokens,
+                                            InterfaceRoles.RECEIVER,
+                                            VersionId,
+                                            eventTrackingId,
+                                            CancellationToken
+                                        );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await HTTPClientFactory.Create(
-                                                 remoteURL.Value,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificates,
-                                                 ClientCertificateContext,
-                                                 ClientCertificateChain,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).
-
-                                             PATCH(remoteURL.Value.Path + CountryCode.ToString() +
-                                                                          PartyId.    ToString() +
-                                                                          TokenId.    ToString(),
-                                                   Content:               TokenPatch.ToUTF8Bytes(JSONFormatting),
-                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
-                                                   Accept:                ocpiAcceptTypes,
-                                                   Authentication:        TokenAuth,
-                                                   Connection:            ConnectionType.Close,
-                                                   RequestBuilder:        requestBuilder => {
-                                                                              requestBuilder.Set("X-Request-ID",     requestId);
-                                                                              requestBuilder.Set("X-Correlation-ID", correlationId);
-                                                                          },
-                                                   RequestLogDelegate:    OnPatchTokenHTTPRequest,
-                                                   ResponseLogDelegate:   OnPatchTokenHTTPResponse,
-                                                   EventTrackingId:       eventTrackingId,
-                                                   //NumberOfRetry:         transmissionRetry,
-                                                   RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
-                                                   CancellationToken:     CancellationToken).
+                    var httpResponse = await newHTTPClient.PATCH(
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    TokenId.    ToString(),
+                                                 Content:               TokenPatch.ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnPatchTokenHTTPRequest,
+                                                 ResponseLogDelegate:   OnPatchTokenHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
@@ -3318,8 +2982,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnPatchTokenResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnPatchTokenResponse,
@@ -3352,7 +3016,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         #endregion
 
 
-        #region GET   ~/bookings (...)
+        #region GET   ~/bookings  (...)
 
         /// <summary>
         /// Get all bookings from the remote API.
@@ -3380,6 +3044,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                         Request_Id?         RequestId           = null,
                         Correlation_Id?     CorrelationId       = null,
 
+                        DateTime?           RequestTimestamp    = null,
                         EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null,
                         CancellationToken   CancellationToken   = default)
@@ -3388,12 +3053,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetBookings.IncRequests_OK();
 
@@ -3423,49 +3091,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(
-                                          Module_Id.Bookings,
-                                          InterfaceRoles.SENDER,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient  = await GetModuleHTTPClient(
+                                            Module_Id.Bookings,
+                                            InterfaceRoles.SENDER,
+                                            VersionId,
+                                            eventTrackingId,
+                                            CancellationToken
+                                        );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var dateAndPaginationFilters  = new DateAndPaginationFilters(From, To, Offset, Limit);
+                    var dateAndPaginationFilters  = new OCPIRequest.DateAndPaginationFilters(
+                                                        From,
+                                                        To,
+                                                        Offset,
+                                                        Limit
+                                                    );
 
-                    var httpResponse              = await HTTPClientFactory.Create(
-                                                              remoteURL.Value,
-                                                              VirtualHostname,
-                                                              Description,
-                                                              PreferIPv4,
-                                                              RemoteCertificateValidator,
-                                                              LocalCertificateSelector,
-                                                              ClientCertificates,
-                                                              ClientCertificateContext,
-                                                              ClientCertificateChain,
-                                                              TLSProtocols,
-                                                              ContentType,
-                                                              Accept,
-                                                              HTTPAuthentication,
-                                                              TOTPConfig,
-                                                              HTTPUserAgent,
-                                                              Connection,
-                                                              RequestTimeout,
-                                                              TransmissionRetryDelay,
-                                                              MaxNumberOfRetries,
-                                                              InternalBufferSize,
-                                                              UseHTTPPipelining,
-                                                              DisableLogging,
-                                                              HTTPLogger,
-                                                              DNSClient
-                                                          ).
-
-                                                          GET(remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
+                    var httpResponse              = await httpClient.GET(
+                                                              Path:                  httpClient.RemoteURL.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
                                                               Authentication:        TokenAuth,
                                                               Connection:            ConnectionType.Close,
@@ -3512,8 +3159,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnGetBookingsResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnGetBookingsResponse,
@@ -3540,30 +3187,34 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
         #endregion
 
-        #region POST  ~/bookings (...)
+        #region POST  ~/bookings  (...)
 
         public async Task<OCPIResponse<Booking>>
 
-            PostBooking(BookingRequest           BookingRequest,
+            PostBooking(BookingRequest      BookingRequest,
 
-                        Request_Id?              RequestId                = null,
-                        Correlation_Id?          CorrelationId            = null,
-                        Version_Id?              VersionId                = null,
+                        Request_Id?         RequestId           = null,
+                        Correlation_Id?     CorrelationId       = null,
+                        Version_Id?         VersionId           = null,
 
-                        EventTracking_Id?        EventTrackingId          = null,
-                        TimeSpan?                RequestTimeout           = null,
-                        CancellationToken        CancellationToken        = default)
+                        DateTime?           RequestTimestamp    = null,
+                        EventTracking_Id?   EventTrackingId     = null,
+                        TimeSpan?           RequestTimeout      = null,
+                        CancellationToken   CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.ReserveNow.IncRequests_OK();
 
@@ -3595,62 +3246,36 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL  = await GetRemoteURL(
-                                           Module_Id.Bookings,
-                                           InterfaceRoles.SENDER,
-                                           VersionId,
-                                           eventTrackingId,
-                                           CancellationToken
-                                       );
+                var httpClient  = await GetModuleHTTPClient(
+                                            Module_Id.Bookings,
+                                            InterfaceRoles.SENDER,
+                                            VersionId,
+                                            eventTrackingId,
+                                            CancellationToken
+                                        );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await HTTPClientFactory.Create(
-                                                 remoteURL.Value,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificates,
-                                                 ClientCertificateContext,
-                                                 ClientCertificateChain,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).
-
-                                             POST(remoteURL.Value.Path,
-                                                  Content:               BookingRequest.ToJSON().ToUTF8Bytes(JSONFormatting),
-                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
-                                                  Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth,
-                                                  Connection:            ConnectionType.Close,
-                                                  RequestBuilder:        requestBuilder => {
-                                                                             requestBuilder.Set("X-Request-ID",     requestId);
-                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
-                                                                         },
-                                                  RequestLogDelegate:    OnPostBookingsHTTPRequest,
-                                                  ResponseLogDelegate:   OnPostBookingsHTTPResponse,
-                                                  EventTrackingId:       eventTrackingId,
-                                                  //NumberOfRetry:         transmissionRetry,
-                                                  RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
-                                                  CancellationToken:     CancellationToken).
+                    var httpResponse = await newHTTPClient.PATCH(
+                                                 Path:                  httpClient.RemoteURL.Path,
+                                                 Content:               BookingRequest.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnPostBookingsHTTPRequest,
+                                                 ResponseLogDelegate:   OnPostBookingsHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
@@ -3682,8 +3307,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnPostBookingResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnPostBookingsResponse,
@@ -3738,6 +3363,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                        Correlation_Id?          CorrelationId            = null,
                        Version_Id?              VersionId                = null,
 
+                       DateTime?                RequestTimestamp         = null,
                        EventTracking_Id?        EventTrackingId          = null,
                        TimeSpan?                RequestTimeout           = null,
                        CancellationToken        CancellationToken        = default)
@@ -3746,13 +3372,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var commandId        = CommandId       ?? Command_Id.    NewRandom();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var commandId         = CommandId        ?? Command_Id.    NewRandom();
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.ReserveNow.IncRequests_OK();
 
@@ -3789,85 +3418,59 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL  = await GetRemoteURL(
-                                           Module_Id.Commands,
-                                           InterfaceRoles.RECEIVER,
-                                           VersionId,
-                                           eventTrackingId,
-                                           CancellationToken
-                                       );
+                var httpClient  = await GetModuleHTTPClient(
+                                            Module_Id.Commands,
+                                            InterfaceRoles.RECEIVER,
+                                            VersionId,
+                                            eventTrackingId,
+                                            CancellationToken
+                                        );
 
-                var command    = new ReserveNowCommand(
-                                     Token,
-                                     ExpirationTimestamp,
-                                     ReservationId,
-                                     LocationId,
-                                     CommonAPI.GetModuleURL(
-                                         Module_Id.Commands,
-                                         SelectedOCPIVersionId.ToString() + "/emsp"
-                                     ) + "RESERVE_NOW" + commandId.ToString(),
-                                     EVSEUId,
-                                     AuthorizationReference,
-                                     commandId,
-                                     requestId,
-                                     correlationId
-                                 );
-
-                CommonAPI.CommandValueStore.AddOrUpdate(
-                    commandId,
-                    (id)    => CommandValues.FromCommand        (command),
-                    (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand)
-                );
-
-
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
+
+                    var command = new ReserveNowCommand(
+                                      Token,
+                                      ExpirationTimestamp,
+                                      ReservationId,
+                                      LocationId,
+                                      CommonAPI.GetModuleURL(
+                                          Module_Id.Commands,
+                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                      ) + "RESERVE_NOW" + commandId.ToString(),
+                                      EVSEUId,
+                                      AuthorizationReference,
+                                      commandId,
+                                      requestId,
+                                      correlationId
+                                  );
+
+                    CommonAPI.CommandValueStore.AddOrUpdate(
+                        commandId,
+                        (id)    => CommandValues.FromCommand        (command),
+                        (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand)
+                    );
+
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await HTTPClientFactory.Create(
-                                                 remoteURL.Value,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificates,
-                                                 ClientCertificateContext,
-                                                 ClientCertificateChain,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).
-
-                                             POST(remoteURL.Value.Path + "RESERVE_NOW",
-                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
-                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
-                                                  Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth,
-                                                  Connection:            ConnectionType.Close,
-                                                  RequestBuilder:        requestBuilder => {
-                                                                             requestBuilder.Set("X-Request-ID",     requestId);
-                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
-                                                                         },
-                                                  RequestLogDelegate:    OnReserveNowHTTPRequest,
-                                                  ResponseLogDelegate:   OnReserveNowHTTPResponse,
-                                                  EventTrackingId:       eventTrackingId,
-                                                  //NumberOfRetry:         transmissionRetry,
-                                                  RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
-                                                  CancellationToken:     CancellationToken).
+                    var httpResponse = await newHTTPClient.POST(
+                                                 Path:                  httpClient.RemoteURL.Path + "RESERVE_NOW",
+                                                 Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnReserveNowHTTPRequest,
+                                                 ResponseLogDelegate:   OnReserveNowHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
@@ -3906,8 +3509,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnReserveNowResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnReserveNowResponse,
@@ -3958,6 +3561,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                               Correlation_Id?     CorrelationId       = null,
                               Version_Id?         VersionId           = null,
 
+                              DateTime?           RequestTimestamp    = null,
                               EventTracking_Id?   EventTrackingId     = null,
                               TimeSpan?           RequestTimeout      = null,
                               CancellationToken   CancellationToken   = default)
@@ -3966,13 +3570,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var commandId        = CommandId       ?? Command_Id.    NewRandom();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var commandId         = CommandId        ?? Command_Id.    NewRandom();
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.CancelReservation.IncRequests_OK();
 
@@ -4000,10 +3607,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #endregion
 
+
             try
             {
 
-                var remoteURL  = await GetRemoteURL(
+                var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Commands,
                                            InterfaceRoles.RECEIVER,
                                            VersionId,
@@ -4011,72 +3619,46 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                            CancellationToken
                                        );
 
-                var command    = new CancelReservationCommand(
-                                     ReservationId,
-                                     CommonAPI.GetModuleURL(
-                                         Module_Id.Commands,
-                                         SelectedOCPIVersionId.ToString() + "/emsp"
-                                     ) + "CANCEL_RESERVATION" + commandId.ToString(),
-                                     commandId,
-                                     requestId,
-                                     correlationId
-                                 );
-
-                CommonAPI.CommandValueStore.AddOrUpdate(
-                    commandId,
-                    (id)    => CommandValues.FromCommand(command),
-                    (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand)
-                );
-
-
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
+
+                    var command = new CancelReservationCommand(
+                                      ReservationId,
+                                      CommonAPI.GetModuleURL(
+                                          Module_Id.Commands,
+                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                      ) + "CANCEL_RESERVATION" + commandId.ToString(),
+                                      commandId,
+                                      requestId,
+                                      correlationId
+                                  );
+
+                    CommonAPI.CommandValueStore.AddOrUpdate(
+                        commandId,
+                        (id)    => CommandValues.FromCommand(command),
+                        (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand)
+                    );
+
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await HTTPClientFactory.Create(
-                                                 remoteURL.Value,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificates,
-                                                 ClientCertificateContext,
-                                                 ClientCertificateChain,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).
-
-                                             POST(remoteURL.Value.Path + "CANCEL_RESERVATION",
-                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
-                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
-                                                  Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth,
-                                                  Connection:            ConnectionType.Close,
-                                                  RequestBuilder:        requestBuilder => {
-                                                                             requestBuilder.Set("X-Request-ID",     requestId);
-                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
-                                                                         },
-                                                  RequestLogDelegate:    OnCancelReservationHTTPRequest,
-                                                  ResponseLogDelegate:   OnCancelReservationHTTPResponse,
-                                                  EventTrackingId:       eventTrackingId,
-                                                  //NumberOfRetry:         transmissionRetry,
-                                                  RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
-                                                  CancellationToken:     CancellationToken).
+                    var httpResponse = await newHTTPClient.POST(
+                                                 Path:                  httpClient.RemoteURL.Path + "CANCEL_RESERVATION",
+                                                 Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnCancelReservationHTTPRequest,
+                                                 ResponseLogDelegate:   OnCancelReservationHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
@@ -4115,8 +3697,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnCancelReservationResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnCancelReservationResponse,
@@ -4166,6 +3748,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                          Correlation_Id?          CorrelationId            = null,
                          Version_Id?              VersionId                = null,
 
+                         DateTime?                RequestTimestamp         = null,
                          EventTracking_Id?        EventTrackingId          = null,
                          TimeSpan?                RequestTimeout           = null,
                          CancellationToken        CancellationToken        = default)
@@ -4174,13 +3757,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var commandId        = CommandId       ?? Command_Id.    NewRandom();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var commandId         = CommandId        ?? Command_Id.    NewRandom();
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.StartSession.IncRequests_OK();
 
@@ -4216,7 +3802,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL  = await GetRemoteURL(
+                var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Commands,
                                            InterfaceRoles.RECEIVER,
                                            VersionId,
@@ -4224,76 +3810,50 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                            CancellationToken
                                        );
 
-                var command    = new StartSessionCommand(
-                                     Token,
-                                     LocationId,
-                                     CommonAPI.GetModuleURL(
-                                         Module_Id.Commands,
-                                         SelectedOCPIVersionId.ToString() + "/emsp"
-                                     ) + "START_SESSION" + commandId.ToString(),
-                                     EVSEUId,
-                                     ConnectorId,
-                                     AuthorizationReference,
-                                     commandId,
-                                     requestId,
-                                     correlationId
-                                 );
-
-                CommonAPI.CommandValueStore.AddOrUpdate(
-                    commandId,
-                    (id)    => CommandValues.FromCommand(command),
-                    (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand)
-                );
-
-
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
+
+                    var command = new StartSessionCommand(
+                                      Token,
+                                      LocationId,
+                                      CommonAPI.GetModuleURL(
+                                          Module_Id.Commands,
+                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                      ) + "START_SESSION" + commandId.ToString(),
+                                      EVSEUId,
+                                      ConnectorId,
+                                      AuthorizationReference,
+                                      commandId,
+                                      requestId,
+                                      correlationId
+                                  );
+
+                    CommonAPI.CommandValueStore.AddOrUpdate(
+                        commandId,
+                        (id)    => CommandValues.FromCommand(command),
+                        (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand)
+                    );
+
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await HTTPClientFactory.Create(
-                                                 remoteURL.Value,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificates,
-                                                 ClientCertificateContext,
-                                                 ClientCertificateChain,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).
-
-                                             POST(remoteURL.Value.Path + "START_SESSION",
-                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
-                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
-                                                  Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth,
-                                                  Connection:            ConnectionType.Close,
-                                                  RequestBuilder:        requestBuilder => {
-                                                                             requestBuilder.Set("X-Request-ID",     requestId);
-                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
-                                                                         },
-                                                  RequestLogDelegate:    OnStartSessionHTTPRequest,
-                                                  ResponseLogDelegate:   OnStartSessionHTTPResponse,
-                                                  EventTrackingId:       eventTrackingId,
-                                                  //NumberOfRetry:         transmissionRetry,
-                                                  RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
-                                                  CancellationToken:     CancellationToken).
+                    var httpResponse = await httpClient.POST(
+                                                 Path:                  httpClient.RemoteURL.Path + "START_SESSION",
+                                                 Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnStartSessionHTTPRequest,
+                                                 ResponseLogDelegate:   OnStartSessionHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
@@ -4332,8 +3892,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnStartSessionResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnStartSessionResponse,
@@ -4383,21 +3943,25 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                         Correlation_Id?     CorrelationId       = null,
                         Version_Id?         VersionId           = null,
 
-                        EventTracking_Id?   EventTrackingId     = null,
-                        TimeSpan?           RequestTimeout      = null,
-                        CancellationToken   CancellationToken   = default)
+                        DateTimeOffset?    RequestTimestamp    = null,
+                        EventTracking_Id?  EventTrackingId     = null,
+                        TimeSpan?          RequestTimeout      = null,
+                        CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var stopwatch        = Stopwatch.StartNew();
-            var commandId        = CommandId       ?? Command_Id.    NewRandom();
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var commandId         = CommandId        ?? Command_Id.    NewRandom();
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.StopSession.IncRequests_OK();
 
@@ -4429,80 +3993,54 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL  = await GetRemoteURL(
-                                           Module_Id.Commands,
-                                           InterfaceRoles.RECEIVER,
-                                           VersionId,
-                                           eventTrackingId,
-                                           CancellationToken
-                                       );
+                var httpClient  = await GetModuleHTTPClient(
+                                            Module_Id.Commands,
+                                            InterfaceRoles.RECEIVER,
+                                            VersionId,
+                                            eventTrackingId,
+                                            CancellationToken
+                                        );
 
-                var command    = new StopSessionCommand(
-                                     SessionId,
-                                     CommonAPI.GetModuleURL(
-                                         Module_Id.Commands,
-                                         SelectedOCPIVersionId.ToString() + "/emsp"
-                                     ) + "STOP_SESSION" + commandId.ToString(),
-                                     commandId,
-                                     requestId,
-                                     correlationId
-                                 );
-
-                CommonAPI.CommandValueStore.AddOrUpdate(
-                    commandId,
-                    (id)    => CommandValues.FromCommand(command),
-                    (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand)
-                );
-
-
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
+
+                    var command = new StopSessionCommand(
+                                      SessionId,
+                                      CommonAPI.GetModuleURL(
+                                          Module_Id.Commands,
+                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                      ) + "STOP_SESSION" + commandId.ToString(),
+                                      commandId,
+                                      requestId,
+                                      correlationId
+                                  );
+
+                    CommonAPI.CommandValueStore.AddOrUpdate(
+                        commandId,
+                        (id)    => CommandValues.FromCommand(command),
+                        (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand)
+                    );
+
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await HTTPClientFactory.Create(
-                                                 remoteURL.Value,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificates,
-                                                 ClientCertificateContext,
-                                                 ClientCertificateChain,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).
-
-                                             POST(remoteURL.Value.Path + "STOP_SESSION",
-                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
-                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
-                                                  Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth,
-                                                  Connection:            ConnectionType.Close,
-                                                  RequestBuilder:        requestBuilder => {
-                                                                             requestBuilder.Set("X-Request-ID",     requestId);
-                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
-                                                                         },
-                                                  RequestLogDelegate:    OnStopSessionHTTPRequest,
-                                                  ResponseLogDelegate:   OnStopSessionHTTPResponse,
-                                                  EventTrackingId:       eventTrackingId,
-                                                  //NumberOfRetry:         transmissionRetry,
-                                                  RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
-                                                  CancellationToken:     CancellationToken).
+                    var httpResponse = await newHTTPClient.POST(
+                                                 Path:                  httpClient.RemoteURL.Path + "STOP_SESSION",
+                                                 Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnStopSessionHTTPRequest,
+                                                 ResponseLogDelegate:   OnStopSessionHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
@@ -4541,8 +4079,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Send OnStopSessionResponse event
 
-            var endtime = Timestamp.Now;
             stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
             await LogEvent(
                       OnStopSessionResponse,
@@ -4638,82 +4176,56 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL  = await GetRemoteURL(
-                                           Module_Id.Commands,
-                                           InterfaceRoles.RECEIVER,
-                                           VersionId,
-                                           eventTrackingId,
-                                           CancellationToken
-                                       );
+                var httpClient  = await GetModuleHTTPClient(
+                                            Module_Id.Commands,
+                                            InterfaceRoles.RECEIVER,
+                                            VersionId,
+                                            eventTrackingId,
+                                            CancellationToken
+                                        );
 
-                var command    = new UnlockConnectorCommand(
-                                     LocationId,
-                                     EVSEUId,
-                                     ConnectorId,
-                                     CommonAPI.GetModuleURL(
-                                         Module_Id.Commands,
-                                         SelectedOCPIVersionId.ToString() + "/emsp"
-                                     ) + "UNLOCK_CONNECTOR" + commandId.ToString(),
-                                     commandId,
-                                     requestId,
-                                     correlationId
-                                 );
-
-                CommonAPI.CommandValueStore.AddOrUpdate(
-                    commandId,
-                    (id)    => CommandValues.FromCommand(command),
-                    (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand)
-                );
-
-
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
+
+                    var command = new UnlockConnectorCommand(
+                                      LocationId,
+                                      EVSEUId,
+                                      ConnectorId,
+                                      CommonAPI.GetModuleURL(
+                                          Module_Id.Commands,
+                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                      ) + "UNLOCK_CONNECTOR" + commandId.ToString(),
+                                      commandId,
+                                      requestId,
+                                      correlationId
+                                  );
+
+                    CommonAPI.CommandValueStore.AddOrUpdate(
+                        commandId,
+                        (id)    => CommandValues.FromCommand(command),
+                        (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand)
+                    );
+
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await HTTPClientFactory.Create(
-                                                 remoteURL.Value,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificates,
-                                                 ClientCertificateContext,
-                                                 ClientCertificateChain,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).
-
-                                             POST(remoteURL.Value.Path + "UNLOCK_CONNECTOR",
-                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
-                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
-                                                  Accept:                ocpiAcceptTypes,
-                                                  Authentication:        TokenAuth,
-                                                  Connection:            ConnectionType.Close,
-                                                  RequestBuilder:        requestBuilder => {
-                                                                             requestBuilder.Set("X-Request-ID",     requestId);
-                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
-                                                                         },
-                                                  RequestLogDelegate:    OnUnlockConnectorHTTPRequest,
-                                                  ResponseLogDelegate:   OnUnlockConnectorHTTPResponse,
-                                                  EventTrackingId:       eventTrackingId,
-                                                  //NumberOfRetry:         transmissionRetry,
-                                                  RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
-                                                  CancellationToken:     CancellationToken).
+                    var httpResponse = await newHTTPClient.POST(
+                                                 Path:                  httpClient.RemoteURL.Path + "UNLOCK_CONNECTOR",
+                                                 Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnUnlockConnectorHTTPRequest,
+                                                 ResponseLogDelegate:   OnUnlockConnectorHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 

@@ -17,9 +17,7 @@
 
 #region Usings
 
-using System.Net.Security;
-using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
+using System.Runtime.CompilerServices;
 
 using Newtonsoft.Json.Linq;
 
@@ -48,101 +46,107 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Properties
 
-            public APICounterValues  GetLocation       { get; }
-            public APICounterValues  PutLocation       { get; }
-            public APICounterValues  PatchLocation     { get; }
+            public APICounterValues  GetLocation           { get; }
+            public APICounterValues  PutLocation           { get; }
+            public APICounterValues  PatchLocation         { get; }
 
-            public APICounterValues  GetEVSE           { get; }
-            public APICounterValues  PutEVSE           { get; }
-            public APICounterValues  PatchEVSE         { get; }
+            public APICounterValues  GetEVSE               { get; }
+            public APICounterValues  PutEVSE               { get; }
+            public APICounterValues  PatchEVSE             { get; }
 
-            public APICounterValues  GetConnector      { get; }
-            public APICounterValues  PutConnector      { get; }
-            public APICounterValues  PatchConnector    { get; }
+            public APICounterValues  GetConnector          { get; }
+            public APICounterValues  PutConnector          { get; }
+            public APICounterValues  PatchConnector        { get; }
 
-            public APICounterValues  GetTariff         { get; }
-            public APICounterValues  PutTariff         { get; }
-            public APICounterValues  PatchTariff       { get; }
-            public APICounterValues  DeleteTariff      { get; }
+            public APICounterValues  GetTariff             { get; }
+            public APICounterValues  PutTariff             { get; }
+            public APICounterValues  PatchTariff           { get; }
+            public APICounterValues  DeleteTariff          { get; }
 
-            public APICounterValues  GetSession        { get; }
-            public APICounterValues  PutSession        { get; }
-            public APICounterValues  PatchSession      { get; }
-            public APICounterValues  DeleteSession     { get; }
+            public APICounterValues  GetSession            { get; }
+            public APICounterValues  PutSession            { get; }
+            public APICounterValues  PatchSession          { get; }
+            public APICounterValues  DeleteSession         { get; }
 
-            public APICounterValues  PostCDR           { get; }
-            public APICounterValues  GetCDR            { get; }
+            public APICounterValues  PostCDR               { get; }
+            public APICounterValues  GetCDR                { get; }
 
-            public APICounterValues  GetTokens         { get; }
-            public APICounterValues  PostToken         { get; }
+            public APICounterValues  GetTokens             { get; }
+            public APICounterValues  PostToken             { get; }
+
+            public APICounterValues  SetChargingProfile    { get; }
 
             #endregion
 
             #region Constructor(s)
 
-            public APICounters(APICounterValues?  GetVersions      = null,
-                               APICounterValues?  Register         = null,
+            public APICounters(APICounterValues?  GetVersions          = null,
+                               APICounterValues?  Register             = null,
 
-                               APICounterValues?  GetLocation      = null,
-                               APICounterValues?  PutLocation      = null,
-                               APICounterValues?  PatchLocation    = null,
+                               APICounterValues?  GetLocation          = null,
+                               APICounterValues?  PutLocation          = null,
+                               APICounterValues?  PatchLocation        = null,
 
-                               APICounterValues?  GetEVSE          = null,
-                               APICounterValues?  PutEVSE          = null,
-                               APICounterValues?  PatchEVSE        = null,
+                               APICounterValues?  GetEVSE              = null,
+                               APICounterValues?  PutEVSE              = null,
+                               APICounterValues?  PatchEVSE            = null,
 
-                               APICounterValues?  GetConnector     = null,
-                               APICounterValues?  PutConnector     = null,
-                               APICounterValues?  PatchConnector   = null,
+                               APICounterValues?  GetConnector         = null,
+                               APICounterValues?  PutConnector         = null,
+                               APICounterValues?  PatchConnector       = null,
 
-                               APICounterValues?  GetTariff        = null,
-                               APICounterValues?  PutTariff        = null,
-                               APICounterValues?  PatchTariff      = null,
-                               APICounterValues?  DeleteTariff     = null,
+                               APICounterValues?  GetTariff            = null,
+                               APICounterValues?  PutTariff            = null,
+                               APICounterValues?  PatchTariff          = null,
+                               APICounterValues?  DeleteTariff         = null,
 
-                               APICounterValues?  GetSession       = null,
-                               APICounterValues?  PutSession       = null,
-                               APICounterValues?  PatchSession     = null,
-                               APICounterValues?  DeleteSession    = null,
+                               APICounterValues?  GetSession           = null,
+                               APICounterValues?  PutSession           = null,
+                               APICounterValues?  PatchSession         = null,
+                               APICounterValues?  DeleteSession        = null,
 
-                               APICounterValues?  PostCDR          = null,
-                               APICounterValues?  GetCDR           = null,
+                               APICounterValues?  PostCDR              = null,
+                               APICounterValues?  GetCDR               = null,
 
-                               APICounterValues?  GetTokens        = null,
-                               APICounterValues?  PostToken        = null)
+                               APICounterValues?  GetTokens            = null,
+                               APICounterValues?  PostToken            = null,
+
+                               APICounterValues?  SetChargingProfile   = null)
 
                 : base(GetVersions,
                        Register)
 
             {
 
-                this.GetLocation     = GetLocation     ?? new APICounterValues();
-                this.PutLocation     = PutLocation     ?? new APICounterValues();
-                this.PatchLocation   = PatchLocation   ?? new APICounterValues();
+                this.GetLocation         = GetLocation        ?? new APICounterValues();
+                this.PutLocation         = PutLocation        ?? new APICounterValues();
+                this.PatchLocation       = PatchLocation      ?? new APICounterValues();
 
-                this.GetEVSE         = GetEVSE         ?? new APICounterValues();
-                this.PutEVSE         = PutEVSE         ?? new APICounterValues();
-                this.PatchEVSE       = PatchEVSE       ?? new APICounterValues();
+                this.GetEVSE             = GetEVSE            ?? new APICounterValues();
+                this.PutEVSE             = PutEVSE            ?? new APICounterValues();
+                this.PatchEVSE           = PatchEVSE          ?? new APICounterValues();
 
-                this.GetConnector    = GetConnector    ?? new APICounterValues();
-                this.PutConnector    = PutConnector    ?? new APICounterValues();
-                this.PatchConnector  = PatchConnector  ?? new APICounterValues();
+                this.GetConnector        = GetConnector       ?? new APICounterValues();
+                this.PutConnector        = PutConnector       ?? new APICounterValues();
+                this.PatchConnector      = PatchConnector     ?? new APICounterValues();
 
-                this.GetTariff       = GetTariff       ?? new APICounterValues();
-                this.PutTariff       = PutTariff       ?? new APICounterValues();
-                this.PatchTariff     = PatchTariff     ?? new APICounterValues();
-                this.DeleteTariff    = DeleteTariff    ?? new APICounterValues();
+                this.GetTariff           = GetTariff          ?? new APICounterValues();
+                this.PutTariff           = PutTariff          ?? new APICounterValues();
+                this.PatchTariff         = PatchTariff        ?? new APICounterValues();
+                this.DeleteTariff        = DeleteTariff       ?? new APICounterValues();
 
-                this.GetSession      = GetSession      ?? new APICounterValues();
-                this.PutSession      = PutSession      ?? new APICounterValues();
-                this.PatchSession    = PatchSession    ?? new APICounterValues();
-                this.DeleteSession   = DeleteSession   ?? new APICounterValues();
+                this.GetSession          = GetSession         ?? new APICounterValues();
+                this.PutSession          = PutSession         ?? new APICounterValues();
+                this.PatchSession        = PatchSession       ?? new APICounterValues();
+                this.DeleteSession       = DeleteSession      ?? new APICounterValues();
 
-                this.PostCDR         = PostCDR         ?? new APICounterValues();
-                this.GetCDR          = GetCDR          ?? new APICounterValues();
+                this.PostCDR             = PostCDR            ?? new APICounterValues();
+                this.GetCDR              = GetCDR             ?? new APICounterValues();
 
-                this.GetTokens       = GetTokens       ?? new APICounterValues();
-                this.PostToken       = PostToken       ?? new APICounterValues();
+                this.GetTokens           = GetTokens          ?? new APICounterValues();
+                this.PostToken           = PostToken          ?? new APICounterValues();
+
+                this.SetChargingProfile  = SetChargingProfile ?? new APICounterValues();
 
             }
 
@@ -156,33 +160,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var json = base.ToJSON();
 
-                json.Add(new JProperty("getLocation",     GetLocation.   ToJSON()));
-                json.Add(new JProperty("putLocation",     PutLocation.   ToJSON()));
-                json.Add(new JProperty("patchLocation",   PatchLocation. ToJSON()));
+                json.Add(new JProperty("getLocation",         GetLocation.       ToJSON()));
+                json.Add(new JProperty("putLocation",         PutLocation.       ToJSON()));
+                json.Add(new JProperty("patchLocation",       PatchLocation.     ToJSON()));
 
-                json.Add(new JProperty("getEVSE",         GetEVSE.       ToJSON()));
-                json.Add(new JProperty("putEVSE",         PutEVSE.       ToJSON()));
-                json.Add(new JProperty("patchEVSE",       PatchEVSE.     ToJSON()));
+                json.Add(new JProperty("getEVSE",             GetEVSE.           ToJSON()));
+                json.Add(new JProperty("putEVSE",             PutEVSE.           ToJSON()));
+                json.Add(new JProperty("patchEVSE",           PatchEVSE.         ToJSON()));
 
-                json.Add(new JProperty("getConnector",    GetConnector.  ToJSON()));
-                json.Add(new JProperty("putConnector",    PutConnector.  ToJSON()));
-                json.Add(new JProperty("patchConnector",  PatchConnector.ToJSON()));
+                json.Add(new JProperty("getConnector",        GetConnector.      ToJSON()));
+                json.Add(new JProperty("putConnector",        PutConnector.      ToJSON()));
+                json.Add(new JProperty("patchConnector",      PatchConnector.    ToJSON()));
 
-                json.Add(new JProperty("getTariff",       GetTariff.     ToJSON()));
-                json.Add(new JProperty("putTariff",       PutTariff.     ToJSON()));
-                json.Add(new JProperty("patchTariff",     PatchTariff.   ToJSON()));
-                json.Add(new JProperty("deleteTariff",    DeleteTariff.  ToJSON()));
+                json.Add(new JProperty("getTariff",           GetTariff.         ToJSON()));
+                json.Add(new JProperty("putTariff",           PutTariff.         ToJSON()));
+                json.Add(new JProperty("patchTariff",         PatchTariff.       ToJSON()));
+                json.Add(new JProperty("deleteTariff",        DeleteTariff.      ToJSON()));
 
-                json.Add(new JProperty("getSession",      GetSession.    ToJSON()));
-                json.Add(new JProperty("putSession",      PutSession.    ToJSON()));
-                json.Add(new JProperty("patchSession",    PatchSession.  ToJSON()));
-                json.Add(new JProperty("deleteSession",   DeleteSession. ToJSON()));
+                json.Add(new JProperty("getSession",          GetSession.        ToJSON()));
+                json.Add(new JProperty("putSession",          PutSession.        ToJSON()));
+                json.Add(new JProperty("patchSession",        PatchSession.      ToJSON()));
+                json.Add(new JProperty("deleteSession",       DeleteSession.     ToJSON()));
 
-                json.Add(new JProperty("postCDR",         PostCDR.       ToJSON()));
-                json.Add(new JProperty("getCDR",          GetCDR.        ToJSON()));
+                json.Add(new JProperty("postCDR",             PostCDR.           ToJSON()));
+                json.Add(new JProperty("getCDR",              GetCDR.            ToJSON()));
 
-                json.Add(new JProperty("getTokens",       GetTokens.     ToJSON()));
-                json.Add(new JProperty("postToken",       PostToken.     ToJSON()));
+                json.Add(new JProperty("getTokens",           GetTokens.         ToJSON()));
+                json.Add(new JProperty("postToken",           PostToken.         ToJSON()));
+
+                json.Add(new JProperty("setChargingProfile",  SetChargingProfile.ToJSON()));
 
                 return json;
 
@@ -817,122 +823,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #region Constructor(s)
 
-        #region CPO2EMSPClient(RemoteVersionsURL, RemoteAccessToken = null, ...)
-
-        /// <summary>
-        /// Create a new CPO2EMSP client.
-        /// </summary>
-        /// <param name="RemoteVersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
-        /// <param name="RemoteAccessToken">The optional OCPI token.</param>
-        /// <param name="RemoteTOTPConfig">The optional Time-Based One-Time Password configuration.</param>
-        /// 
-        /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
-        /// <param name="Description">An optional description of this client.</param>
-        /// <param name="PreferIPv4">Prefer IPv4 instead of IPv6.</param>
-        /// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
-        /// <param name="LocalCertificateSelector">A delegate to select a TLS client certificate.</param>
-        /// <param name="ClientCertificate">The TLS client certificate to use for HTTP authentication.</param>
-        /// <param name="TLSProtocols">The TLS protocol to use.</param>
-        /// <param name="ContentType">An optional HTTP content type.</param>
-        /// <param name="Accept">The optional HTTP accept header.</param>
-        /// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
-        /// <param name="Connection">The optional HTTP connection type.</param>
-        /// <param name="RequestTimeout">An optional request timeout.</param>
-        /// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
-        /// <param name="MaxNumberOfRetries">An optional maximum number of transmission retries for HTTP request.</param>
-        /// <param name="InternalBufferSize">An optional size of the internal HTTP client buffers.</param>
-        /// <param name="UseHTTPPipelining">Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.</param>
-        /// <param name="DisableLogging">Whether to disable all logging.</param>
-        /// <param name="HTTPLogger">An optional delegate to log HTTP(S) requests and responses.</param>
-        /// <param name="LoggingPath">An optional path for logging.</param>
-        /// <param name="LoggingContext">An optional context for logging.</param>
-        /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-        /// <param name="DNSClient">The DNS client to use.</param>
-        public CPO2EMSPClient(URL                                                        RemoteVersionsURL,
-                              AccessToken?                                               RemoteAccessToken            = null,
-                              Boolean                                                    AccessTokenIsBase64Encoded   = false,
-                              TOTPConfig?                                                RemoteTOTPConfig             = null,
-
-                              HTTPHostname?                                              VirtualHostname              = null,
-                              I18NString?                                                Description                  = null,
-                              UInt16?                                                    MaxNumberOfPooledClients     = null,
-                              Boolean?                                                   PreferIPv4                   = null,
-                              RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                              LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                              IEnumerable<X509Certificate2>?                             ClientCertificates           = null,
-                              SslStreamCertificateContext?                               ClientCertificateContext     = null,
-                              IEnumerable<X509Certificate2>?                             ClientCertificateChain       = null,
-                              SslProtocols?                                              TLSProtocols                 = null,
-
-                              String?                                                    HTTPUserAgent                = null,
-                              AcceptTypes?                                               Accept                       = null,
-                              HTTPContentType?                                           ContentType                  = null,
-                              ConnectionType?                                            Connection                   = null,
-
-                              TimeSpan?                                                  RequestTimeout               = null,
-                              TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                              UInt16?                                                    MaxNumberOfRetries           = null,
-                              UInt32?                                                    InternalBufferSize           = null,
-                              Boolean?                                                   UseHTTPPipelining            = null,
-                              Boolean?                                                   DisableLogging               = null,
-                              String?                                                    LoggingPath                  = null,
-                              String?                                                    LoggingContext               = null,
-                              OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
-                              HTTPClientLogger?                                          HTTPLogger                   = null,
-                              IDNSClient?                                                DNSClient                    = null)
-
-            : base(RemoteVersionsURL,
-                   RemoteAccessToken,
-                   AccessTokenIsBase64Encoded,
-                   RemoteTOTPConfig,
-
-                   VirtualHostname,
-                   Description,
-                   MaxNumberOfPooledClients,
-                   PreferIPv4,
-                   RemoteCertificateValidator,
-                   LocalCertificateSelector,
-                   ClientCertificates,
-                   ClientCertificateContext,
-                   ClientCertificateChain,
-                   TLSProtocols,
-
-                   HTTPUserAgent,
-                   Accept,
-                   ContentType,
-                   Connection,
-
-                   RequestTimeout,
-                   TransmissionRetryDelay,
-                   MaxNumberOfRetries,
-                   InternalBufferSize,
-                   UseHTTPPipelining,
-                   DisableLogging,
-                   LoggingPath,
-                   LoggingContext,
-                   LogfileCreator,
-                   HTTPLogger,
-                   DNSClient)
-
-        {
-
-            this.Counters    = new APICounters();
-
-            base.HTTPLogger  = this.DisableLogging == false
-                                   ? new Logger(
-                                         this,
-                                         LoggingPath,
-                                         LoggingContext ?? DefaultLoggingContext,
-                                         LogfileCreator
-                                     )
-                                   : null;
-
-        }
-
-        #endregion
-
-        #region CPO2EMSPClient(CPOAPI, RemoteParty, ...)
-
         /// <summary>
         /// Create a new CPO2EMSP client.
         /// </summary>
@@ -984,8 +874,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                    : null;
 
         }
-
-        #endregion
 
         #endregion
 
@@ -4758,6 +4646,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
+
+
+        #region (private) LogEvent (Logger, LogHandler, ...)
+
+        private Task LogEvent<TDelegate>(TDelegate?                                         Logger,
+                                         Func<TDelegate, Task>                              LogHandler,
+                                         [CallerArgumentExpression(nameof(Logger))] String  EventName     = "",
+                                         [CallerMemberName()]                       String  OCPICommand   = "")
+
+            where TDelegate : Delegate
+
+            => LogEvent(
+                   nameof(CPO2EMSPClient),
+                   Logger,
+                   LogHandler,
+                   EventName,
+                   OCPICommand
+               );
+
+        #endregion
 
 
         #region ToJSON()

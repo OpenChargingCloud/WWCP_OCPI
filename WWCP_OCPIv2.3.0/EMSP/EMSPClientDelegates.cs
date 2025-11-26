@@ -181,6 +181,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                                      Request_Id                            RequestId,
                                                      Correlation_Id                        CorrelationId,
 
+                                                     DateTimeOffset?                       From,
+                                                     DateTimeOffset?                       To,
+                                                     UInt64?                               Offset,
+                                                     UInt64?                               Limit,
+
                                                      CancellationToken?                    CancellationToken,
                                                      EventTracking_Id                      EventTrackingId,
                                                      TimeSpan                              RequestTimeout);
@@ -192,6 +197,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                                       EMSP2CPOClient                        Sender,
                                                       Request_Id                            RequestId,
                                                       Correlation_Id                        CorrelationId,
+
+                                                      DateTimeOffset?                       From,
+                                                      DateTimeOffset?                       To,
+                                                      UInt64?                               Offset,
+                                                      UInt64?                               Limit,
 
                                                       CancellationToken?                    CancellationToken,
                                                       EventTracking_Id                      EventTrackingId,
@@ -213,6 +223,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                                     Correlation_Id           CorrelationId,
 
                                                     Tariff_Id                TariffId,
+                                                    DateTimeOffset?          TariffTimestamp,
+                                                    TimeSpan?                Tolerance,
 
                                                     CancellationToken        CancellationToken,
                                                     EventTracking_Id         EventTrackingId,
@@ -227,6 +239,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                                      Correlation_Id           CorrelationId,
 
                                                      Tariff_Id                TariffId,
+                                                     DateTimeOffset?          TariffTimestamp,
+                                                     TimeSpan?                Tolerance,
 
                                                      CancellationToken        CancellationToken,
                                                      EventTracking_Id         EventTrackingId,

@@ -17,6 +17,7 @@
 
 #region Usings
 
+using System.Net.Security;
 using System.Collections.Concurrent;
 using System.Security.Authentication;
 using System.Diagnostics.CodeAnalysis;
@@ -26,11 +27,11 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
+using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 using cloud.charging.open.protocols.OCPI;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
-using System.Net.Security;
 
 #endregion
 
@@ -4046,6 +4047,215 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+
+        #region GetCommonClient (               RemoteVersionsURL, ...)
+
+        /// <summary>
+        /// Return a common OCPI client for the given parameters.
+        /// </summary>
+        /// <param name="RemoteVersionsURL">The remote URL of the "OCPI Versions" endpoint to connect to.</param>
+        /// <param name="RemoteAccessToken">The remote access token to use.</param>
+        /// <param name="RemoteAccessTokenBase64Encoding">Whether the remote access token is Base64 encoded.</param>
+        /// <param name="RemoteTOTPConfig">The optional Time-Based One-Time Password (TOTP) configuration as 2nd factor authentication.</param>
+        /// 
+        /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
+        /// <param name="Description">An optional description of this OCPI Common client.</param>
+        /// <param name="PreferIPv4">Whether IPv4 should be preferred over IPv6.</param>
+        /// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
+        /// <param name="LocalCertificateSelector">An optional local TLS certificate selector.</param>
+        /// <param name="ClientCertificates">An optional TLS client certificate to use for HTTP authentication.</param>
+        /// <param name="ClientCertificateContext">An optional TLS client certificate context.</param>
+        /// <param name="ClientCertificateChain">An optional TLS client certificate chain.</param>
+        /// <param name="TLSProtocols">Optional list of allowed TLS protocols.</param>
+        /// <param name="ContentType">The optional HTTP content type to use.</param>
+        /// <param name="Accept">The optional HTTP accept header to use.</param>
+        /// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
+        /// <param name="RequestTimeout">An optional request timeout.</param>
+        /// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
+        /// <param name="MaxNumberOfRetries">The maximum number of transmission retries for HTTP request.</param>
+        /// <param name="InternalBufferSize"></param>
+        /// <param name="UseHTTPPipelining"></param>
+        /// <param name="HTTPLogger"></param>
+        /// 
+        /// <param name="DisableLogging">Disable all logging.</param>
+        /// <param name="LoggingPath"></param>
+        /// <param name="LoggingContext">An optional context for logging.</param>
+        /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
+        /// <param name="DNSClient">The DNS client to use.</param>
+        public CommonClient GetCommonClient(URL                                                        RemoteVersionsURL,
+                                            AccessToken?                                               RemoteAccessToken                 = null,
+                                            Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
+                                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
+
+                                            HTTPHostname?                                              VirtualHostname                   = null,
+                                            I18NString?                                                Description                       = null,
+                                            Boolean?                                                   PreferIPv4                        = null,
+                                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
+                                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
+                                            IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
+                                            SslStreamCertificateContext?                               ClientCertificateContext          = null,
+                                            IEnumerable<X509Certificate2>?                             ClientCertificateChain            = null,
+                                            SslProtocols?                                              TLSProtocols                      = null,
+                                            HTTPContentType?                                           ContentType                       = null,
+                                            AcceptTypes?                                               Accept                            = null,
+                                            String?                                                    HTTPUserAgent                     = null,
+                                            TimeSpan?                                                  RequestTimeout                    = null,
+                                            TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
+                                            UInt16?                                                    MaxNumberOfRetries                = null,
+                                            UInt32?                                                    InternalBufferSize                = null,
+                                            Boolean?                                                   UseHTTPPipelining                 = null,
+                                            HTTPClientLogger?                                          HTTPLogger                        = null,
+
+                                            Boolean?                                                   DisableLogging                    = false,
+                                            String?                                                    LoggingPath                       = null,
+                                            String?                                                    LoggingContext                    = null,
+                                            OCPILogfileCreatorDelegate?                                LogfileCreator                    = null,
+                                            IDNSClient?                                                DNSClient                         = null)
+
+            => GetCommonClient(
+
+                   RemoteParty_Id.Unknown,
+
+                   RemoteVersionsURL,
+                   RemoteAccessToken,
+                   RemoteAccessTokenBase64Encoding,
+                   RemoteTOTPConfig,
+
+                   VirtualHostname,
+                   Description,
+                   PreferIPv4,
+                   RemoteCertificateValidator,
+                   LocalCertificateSelector,
+                   ClientCertificates,
+                   ClientCertificateContext,
+                   ClientCertificateChain,
+                   TLSProtocols,
+                   ContentType,
+                   Accept,
+                   HTTPUserAgent,
+                   RequestTimeout,
+                   TransmissionRetryDelay,
+                   MaxNumberOfRetries,
+                   InternalBufferSize,
+                   UseHTTPPipelining,
+                   HTTPLogger,
+
+                   DisableLogging,
+                   LoggingPath,
+                   LoggingContext,
+                   LogfileCreator,
+                   DNSClient
+
+               );
+
+        #endregion
+
+        #region GetCommonClient (RemotePartyId, RemoteVersionsURL, ...)
+
+        /// <summary>
+        /// Return a common OCPI client for the given parameters.
+        /// </summary>
+        /// <param name="RemotePartyId">The remote party identification.</param>
+        /// 
+        /// <param name="RemoteVersionsURL">The remote URL of the "OCPI Versions" endpoint to connect to.</param>
+        /// <param name="RemoteAccessToken">The remote access token to use.</param>
+        /// <param name="RemoteAccessTokenBase64Encoding">Whether the remote access token is Base64 encoded.</param>
+        /// <param name="RemoteTOTPConfig">The optional Time-Based One-Time Password (TOTP) configuration as 2nd factor authentication.</param>
+        /// 
+        /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
+        /// <param name="Description">An optional description of this OCPI Common client.</param>
+        /// <param name="PreferIPv4">Whether IPv4 should be preferred over IPv6.</param>
+        /// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
+        /// <param name="LocalCertificateSelector">An optional local TLS certificate selector.</param>
+        /// <param name="ClientCertificates">An optional TLS client certificate to use for HTTP authentication.</param>
+        /// <param name="ClientCertificateContext">An optional TLS client certificate context.</param>
+        /// <param name="ClientCertificateChain">An optional TLS client certificate chain.</param>
+        /// <param name="TLSProtocols">Optional list of allowed TLS protocols.</param>
+        /// <param name="ContentType">The optional HTTP content type to use.</param>
+        /// <param name="Accept">The optional HTTP accept header to use.</param>
+        /// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
+        /// <param name="RequestTimeout">An optional request timeout.</param>
+        /// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
+        /// <param name="MaxNumberOfRetries">The maximum number of transmission retries for HTTP request.</param>
+        /// <param name="InternalBufferSize"></param>
+        /// <param name="UseHTTPPipelining"></param>
+        /// <param name="HTTPLogger"></param>
+        /// 
+        /// <param name="DisableLogging">Disable all logging.</param>
+        /// <param name="LoggingPath"></param>
+        /// <param name="LoggingContext">An optional context for logging.</param>
+        /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
+        /// <param name="DNSClient">The DNS client to use.</param>
+        public CommonClient GetCommonClient(RemoteParty_Id                                             RemotePartyId,
+
+                                            URL                                                        RemoteVersionsURL,
+                                            AccessToken?                                               RemoteAccessToken                 = null,
+                                            Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
+                                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
+
+                                            HTTPHostname?                                              VirtualHostname                   = null,
+                                            I18NString?                                                Description                       = null,
+                                            Boolean?                                                   PreferIPv4                        = null,
+                                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
+                                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
+                                            IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
+                                            SslStreamCertificateContext?                               ClientCertificateContext          = null,
+                                            IEnumerable<X509Certificate2>?                             ClientCertificateChain            = null,
+                                            SslProtocols?                                              TLSProtocols                      = null,
+                                            HTTPContentType?                                           ContentType                       = null,
+                                            AcceptTypes?                                               Accept                            = null,
+                                            String?                                                    HTTPUserAgent                     = null,
+                                            TimeSpan?                                                  RequestTimeout                    = null,
+                                            TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
+                                            UInt16?                                                    MaxNumberOfRetries                = null,
+                                            UInt32?                                                    InternalBufferSize                = null,
+                                            Boolean?                                                   UseHTTPPipelining                 = null,
+                                            HTTPClientLogger?                                          HTTPLogger                        = null,
+
+                                            Boolean?                                                   DisableLogging                    = false,
+                                            String?                                                    LoggingPath                       = null,
+                                            String?                                                    LoggingContext                    = null,
+                                            OCPILogfileCreatorDelegate?                                LogfileCreator                    = null,
+                                            IDNSClient?                                                DNSClient                         = null)
+
+            => new (
+
+                   this,
+                   RemotePartyId,
+
+                   RemoteVersionsURL,
+                   RemoteAccessToken,
+                   RemoteAccessTokenBase64Encoding,
+                   RemoteTOTPConfig,
+
+                   VirtualHostname,
+                   Description,
+                   PreferIPv4,
+                   RemoteCertificateValidator,
+                   LocalCertificateSelector,
+                   ClientCertificates,
+                   ClientCertificateContext,
+                   ClientCertificateChain,
+                   TLSProtocols,
+                   ContentType,
+                   Accept,
+                   HTTPUserAgent,
+                   RequestTimeout,
+                   TransmissionRetryDelay,
+                   MaxNumberOfRetries,
+                   InternalBufferSize,
+                   UseHTTPPipelining,
+                   HTTPLogger,
+
+                   DisableLogging,
+                   LoggingPath,
+                   LoggingContext,
+                   LogfileCreator,
+                   DNSClient
+
+               );
+
+        #endregion
 
 
         //ToDo: Wrap the following into a pluggable interface!

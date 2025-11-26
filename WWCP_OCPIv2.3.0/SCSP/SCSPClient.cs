@@ -489,7 +489,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
+                var remoteURL = await GetModuleRemoteURL(Module_Id.Locations,
                                                    InterfaceRoles.SENDER,
                                                    VersionId);
 
@@ -682,7 +682,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
+                var remoteURL = await GetModuleRemoteURL(Module_Id.Locations,
                                                    InterfaceRoles.SENDER,
                                                    VersionId);
 
@@ -880,7 +880,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
+                var remoteURL = await GetModuleRemoteURL(Module_Id.Locations,
                                                    InterfaceRoles.SENDER,
                                                    VersionId);
 
@@ -1082,7 +1082,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
+                var remoteURL = await GetModuleRemoteURL(Module_Id.Locations,
                                                    InterfaceRoles.SENDER,
                                                    VersionId);
 
@@ -1275,7 +1275,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Sessions,
+                var remoteURL = await GetModuleRemoteURL(Module_Id.Sessions,
                                                    InterfaceRoles.SENDER,
                                                    VersionId);
 
@@ -1468,7 +1468,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Sessions,
+                var remoteURL = await GetModuleRemoteURL(Module_Id.Sessions,
                                                    InterfaceRoles.SENDER,
                                                    VersionId);
 

@@ -175,10 +175,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="To">An optional 'to' timestamp (exclusive).</param>
         /// <param name="Offset">An optional 'offset' within the result set.</param>
         /// <param name="Limit">An optional 'limit' of the result set.</param>
-        public readonly struct DateAndPaginationFilters(DateTime?  From,
-                                                        DateTime?  To,
-                                                        UInt64?    Offset,
-                                                        UInt64?    Limit)
+        public readonly struct DateAndPaginationFilters(DateTimeOffset?  From,
+                                                        DateTimeOffset?  To,
+                                                        UInt64?          Offset,
+                                                        UInt64?          Limit)
         {
 
             #region Properties
@@ -186,22 +186,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             /// <summary>
             /// The optional 'from' timestamp (inclusive).
             /// </summary>
-            public DateTime?  From      { get; } = From;
+            public DateTimeOffset?  From      { get; } = From;
 
             /// <summary>
             /// The optional 'to' timestamp (exclusive).
             /// </summary>
-            public DateTime?  To        { get; } = To;
+            public DateTimeOffset?  To        { get; } = To;
 
             /// <summary>
             /// The optional 'offset' within the result set.
             /// </summary>
-            public UInt64?    Offset    { get; } = Offset;
+            public UInt64?          Offset    { get; } = Offset;
 
             /// <summary>
             /// The optional 'limit' of the result set.
             /// </summary>
-            public UInt64?    Limit     { get; } = Limit;
+            public UInt64?          Limit     { get; } = Limit;
 
             #endregion
 

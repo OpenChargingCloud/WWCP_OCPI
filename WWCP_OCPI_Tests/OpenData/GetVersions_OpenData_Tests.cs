@@ -42,14 +42,20 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async Task GetVersions_v2_1_1_fromCPO1_Test1()
         {
 
-            if (cpo1CommonHTTPAPI is null)
+            if (emsp1CommonAPI_v2_1_1 is null)
             {
-                Assert.Fail("cpo1BaseAPI is null!");
+                Assert.Fail("emsp1CommonAPI_v2_1_1 is null!");
                 return;
             }
 
-            var graphDefinedCPO1 = new OCPIv2_1_1.CommonClient(
-                                       cpo1CommonHTTPAPI.OurVersionsURL
+            if (cpo1CommonHTTPAPI is null)
+            {
+                Assert.Fail("cpo1CommonHTTPAPI is null!");
+                return;
+            }
+
+            var graphDefinedCPO1 = emsp1CommonAPI_v2_1_1.GetCommonClient(
+                                       RemoteVersionsURL:  cpo1CommonHTTPAPI.OurVersionsURL
                                    );
 
             Assert.That(graphDefinedCPO1, Is.Not.Null);
@@ -149,9 +155,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             }
 
             var graphDefinedCPO1 = emsp1CommonAPI_v2_2_1.GetCommonClient(
-                                       RemoteParty_Id.Unknown,
                                        RemoteVersionsURL:  cpo1CommonHTTPAPI.OurVersionsURL
-                                    //   RemoteAccessToken:  BlockedToken
                                    );
 
             Assert.That(graphDefinedCPO1, Is.Not.Null);
@@ -251,8 +255,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             }
 
             var graphDefinedCPO1 = emsp1CommonAPI_v2_3_0.GetCommonClient(
-                                       RemoteParty_Id.Unknown,
-                                       cpo1CommonHTTPAPI.OurVersionsURL
+                                       RemoteVersionsURL:  cpo1CommonHTTPAPI.OurVersionsURL
                                    );
 
             Assert.That(graphDefinedCPO1, Is.Not.Null);
@@ -331,7 +334,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #endregion
 
 
-        // Note: EMSP OpenData is probably not really useful!
+        // Note: EMSP OpenData is probably not really very useful!
 
 
     }

@@ -828,110 +828,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         #region Constructor(s)
 
-        #region CPO2EMSPClient(VersionsURL, AccessToken = null, ...)
-
-        ///// <summary>
-        ///// Create a new CPO2EMSP client.
-        ///// </summary>
-        ///// <param name="VersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
-        ///// <param name="AccessToken">The optional OCPI token.</param>
-        ///// 
-        ///// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
-        ///// <param name="Description">An optional description of this client.</param>
-        ///// <param name="PreferIPv4">Prefer IPv4 instead of IPv6.</param>
-        ///// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
-        ///// <param name="LocalCertificateSelector">A delegate to select a TLS client certificate.</param>
-        ///// <param name="ClientCert">The TLS client certificate to use for HTTP authentication.</param>
-        ///// <param name="TLSProtocol">The TLS protocol to use.</param>
-        ///// <param name="ContentType">An optional HTTP content type.</param>
-        ///// <param name="Accept">The optional HTTP accept header.</param>
-        ///// <param name="HTTPAuthentication">The optional HTTP authentication to use.</param>
-        ///// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
-        ///// <param name="Connection">The optional HTTP connection type.</param>
-        ///// <param name="RequestTimeout">An optional request timeout.</param>
-        ///// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
-        ///// <param name="MaxNumberOfRetries">An optional maximum number of transmission retries for HTTP request.</param>
-        ///// <param name="InternalBufferSize">An optional size of the internal HTTP client buffers.</param>
-        ///// <param name="UseHTTPPipelining">Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.</param>
-        ///// <param name="DisableLogging">Whether to disable all logging.</param>
-        ///// <param name="HTTPLogger">An optional delegate to log HTTP(S) requests and responses.</param>
-        ///// <param name="LoggingPath">An optional path for logging.</param>
-        ///// <param name="LoggingContext">An optional context for logging.</param>
-        ///// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-        ///// <param name="DNSClient">The DNS client to use.</param>
-        //public CPOClient(URL                                                        VersionsURL,
-        //                 String?                                                    AccessToken                  = null,
-
-        //                 HTTPHostname?                                              VirtualHostname              = null,
-        //                 I18NString?                                                Description                  = null,
-        //                 Boolean?                                                   PreferIPv4                   = null,
-        //                 RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-        //                 LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-        //                 X509Certificate?                                           ClientCertificate            = null,
-        //                 SslProtocols?                                              TLSProtocol                  = null,
-        //                 HTTPContentType?                                           ContentType                  = null,
-        //                 AcceptTypes?                                               Accept                       = null,
-        //                 IHTTPAuthentication?                                       HTTPAuthentication           = null,
-        //                 String?                                                    HTTPUserAgent                = null,
-        //                 ConnectionType?                                            Connection                   = null,
-        //                 TimeSpan?                                                  RequestTimeout               = null,
-        //                 TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-        //                 UInt16?                                                    MaxNumberOfRetries           = null,
-        //                 UInt32?                                                    InternalBufferSize           = null,
-        //                 Boolean?                                                   UseHTTPPipelining            = null,
-        //                 Boolean?                                                   DisableLogging               = null,
-        //                 String?                                                    LoggingPath                  = null,
-        //                 String?                                                    LoggingContext               = null,
-        //                 OCPILogfileCreatorDelegate?                                LogfileCreator               = null,
-        //                 HTTPClientLogger?                                          HTTPLogger                   = null,
-        //                 IDNSClient?                                                DNSClient                    = null)
-
-        //    : base(VersionsURL,
-        //           AccessToken,
-
-        //           VirtualHostname,
-        //           Description,
-        //           PreferIPv4,
-        //           RemoteCertificateValidator,
-        //           LocalCertificateSelector,
-        //           ClientCert,
-        //           TLSProtocol,
-        //           ContentType,
-        //           Accept,
-        //           HTTPAuthentication,
-        //           HTTPUserAgent,
-        //           Connection,
-        //           RequestTimeout,
-        //           TransmissionRetryDelay,
-        //           MaxNumberOfRetries,
-        //           InternalBufferSize,
-        //           UseHTTPPipelining,
-        //           DisableLogging,
-        //           LoggingPath,
-        //           LoggingContext,
-        //           LogfileCreator,
-        //           HTTPLogger,
-        //           DNSClient)
-
-        //{
-
-        //    this.Counters    = new APICounters();
-
-        //    base.HTTPLogger  = this.DisableLogging == false
-        //                           ? new Logger(
-        //                                 this,
-        //                                 LoggingPath,
-        //                                 LoggingContext ?? DefaultLoggingContext,
-        //                                 LogfileCreator
-        //                             )
-        //                           : null;
-
-        //}
-
-        #endregion
-
-        #region CPO2EMSPClient(CPOAPI, RemoteParty, ...)
-
         /// <summary>
         /// Create a new CPO2EMSP client.
         /// </summary>
@@ -983,8 +879,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                    : null;
 
         }
-
-        #endregion
 
         #endregion
 

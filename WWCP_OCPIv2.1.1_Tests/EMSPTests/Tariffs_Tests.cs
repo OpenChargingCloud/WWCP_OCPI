@@ -562,7 +562,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 #region Get tariff at timestamp before first tariff switch
 
-                var response1 = await graphDefinedCPO.GetTariffs(Timestamp: DateTime.Parse("2023-12-30").ToUniversalTime());
+                var response1 = await graphDefinedCPO.GetTariffs(From: DateTimeOffset.Parse("2023-12-30"),
+                                                                 To:   DateTimeOffset.Parse("2023-12-31"));
 
                 Assert.Multiple(() => {
 
@@ -715,7 +716,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 #region Get tariff at timestamp after second tariff switch
 
-                var response3 = await graphDefinedCPO.GetTariffs(Timestamp: DateTime.Parse("2024-05-03").ToUniversalTime());
+                var response3 = await graphDefinedCPO.GetTariffs(From: DateTimeOffset.Parse("2024-05-03"),
+                                                                 To:   DateTimeOffset.Parse("2024-05-04"));
 
                 Assert.Multiple(() => {
 
@@ -1313,9 +1315,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 #region Get tariff at timestamp before first tariff switch
 
                 var response1 = await graphDefinedCPO.GetTariff(
-                                                          TariffId:   Tariff_Id.Parse("TARIFF0001"),
-                                                          Timestamp:  DateTime. Parse("2023-12-30").ToUniversalTime()
-                                                      );
+                                          TariffId:         Tariff_Id.     Parse("TARIFF0001"),
+                                          TariffTimestamp:  DateTimeOffset.Parse("2023-12-30")
+                                      );
 
                 Assert.Multiple(() => {
 
@@ -1455,9 +1457,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 #region Get tariff at timestamp after second tariff switch
 
                 var response3 = await graphDefinedCPO.GetTariff(
-                                                          TariffId:   Tariff_Id.Parse("TARIFF0001"),
-                                                          Timestamp:  DateTime. Parse("2024-05-03").ToUniversalTime()
-                                                      );
+                                          TariffId:         Tariff_Id.     Parse("TARIFF0001"),
+                                          TariffTimestamp:  DateTimeOffset.Parse("2024-05-03")
+                                      );
 
                 Assert.Multiple(() => {
 

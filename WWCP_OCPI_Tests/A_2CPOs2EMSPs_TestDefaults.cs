@@ -1450,8 +1450,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             cpo1CommonHTTPAPI  = new CommonHTTPAPI(
 
                                      HTTPAPI:                     cpo1HTTPAPI,
-                                     OurBaseURL:                  URL.Parse($"http://127.0.0.1:{cpo1HTTPServer.TCPPort}/ocpi"),
-                                     OurVersionsURL:              URL.Parse($"http://127.0.0.1:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                                     OurBaseURL:                  URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi"),
+                                     OurVersionsURL:              URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
 
                                      Hostnames:                   null,
                                      RootPath:                    HTTPPath.Parse("/ocpi"),
@@ -1499,8 +1499,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             cpo2CommonHTTPAPI  = new CommonHTTPAPI(
 
                                      HTTPAPI:                   cpo2HTTPAPI,
-                                     OurBaseURL:                URL.Parse("http://127.0.0.1:3202/ocpi"),
-                                     OurVersionsURL:            URL.Parse("http://127.0.0.1:3202/ocpi/versions"),
+                                     OurBaseURL:                URL.Parse("http://localhost:3202/ocpi"),
+                                     OurVersionsURL:            URL.Parse("http://localhost:3202/ocpi/versions"),
 
                                      Hostnames:                 null,
                                      RootPath:                  HTTPPath.Parse("/ocpi"),
@@ -1548,8 +1548,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             emsp1CommonHTTPAPI = new CommonHTTPAPI(
 
                                      HTTPAPI:                   emsp1HTTPAPI,
-                                     OurBaseURL:                URL.Parse("http://127.0.0.1:3401/ocpi"),
-                                     OurVersionsURL:            URL.Parse("http://127.0.0.1:3401/ocpi/versions"),
+                                     OurBaseURL:                URL.Parse("http://localhost:3401/ocpi"),
+                                     OurVersionsURL:            URL.Parse("http://localhost:3401/ocpi/versions"),
 
                                      Hostnames:                 null,
                                      RootPath:                  HTTPPath.Parse("/ocpi"),
@@ -1597,8 +1597,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             emsp2CommonHTTPAPI = new CommonHTTPAPI(
 
                                      HTTPAPI:                   emsp2HTTPAPI,
-                                     OurBaseURL:                URL.Parse("http://127.0.0.1:3402/ocpi"),
-                                     OurVersionsURL:            URL.Parse("http://127.0.0.1:3402/ocpi/versions"),
+                                     OurBaseURL:                URL.Parse("http://localhost:3402/ocpi"),
+                                     OurVersionsURL:            URL.Parse("http://localhost:3402/ocpi/versions"),
 
                                      Hostnames:                 null,
                                      RootPath:                  HTTPPath.Parse("/ocpi"),
