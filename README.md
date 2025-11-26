@@ -19,6 +19,41 @@ Most changes are intended to simplify the daily operations business or to suppor
 **Note:** OCPI v3.0 has not been officially released yet. The latest draft, *"OCPI v3.0-2 review2, 2024-02-22"*, still contains numerous issues. As a result, this implementation should be considered a technology preview rather than a production-ready solution.
 
 
+## 2nd-Secret Authentication via Time-based One-Time Passwords (TOTPs)
+
+The OCPI security model is fundamentally fragile. In practice it boils down to a single static token plus the legacy CREDENTIALS module, a combination that has been known to be unsafe since OCPI v2.2. This implementation addresses that weakness by introducing a second, independent secret derived from a Time-based One-Time Password (TOTP).
+
+Instead of relying on a long-lived access token alone, an additional HTTP header carries a short-lived TOTP value that rotates (for example) every 30 seconds. The static OCPI token effectively becomes the identifier (similar to a login or username), while the TOTP functions as the ephemeral time-bound secret or password.
+
+Together this yields a *two-secret* handshake on every OCPI request, removes the single-secret failure mode, and enables proper replay-protection and token-theft mitigation without breaking OCPI interoperability.
+
+*Note:* This is a *Two-Secret Scheme*, not a real *2nd, Two-Factor (2FA) or Multi-Factor Authentication Scheme (MFA)*, as the TOTP is not based on a different factor class *(“something you know”, “something you have”, “something you are”)*. This TOTP-based two-secret scheme delivers a pragmatic, interoperable, CRA-aligned hardening of OCPI that directly mitigates the most critical weaknesses of the existing token-only model, without waiting for an unlikely consensus on mutual TLS (mTLS) adoption.
+
+### Alignment with EU CRA and EU NIS2
+
+This TOTP extension directly supports several technical obligations under the upcoming *EU Cyber Resilience Act (CRA)* and the *NIS2 Directive*, especially for manufacturers and operators of EV charging infrastructure:
+
+- **CRA Article 10: “Security by Design”**
+The native OCPI token model provides no replay protection and no mitigation against token theft. Adding per-request TOTP implements time-bound authentication, a recognized ***state-of-the-art security-by-design*** measure. Long-lived single static tokens are explicitly called out in *ENISA* and *BSI guidance* as not meeting state-of-the-art criteria.
+
+- **CRA Article 15: “Vulnerability Handling & Mitigation”**
+Static tokens are single points of failure. With TOTPs, a stolen token is insufficient to access the system, reducing the severity of credential-leak vulnerabilities and improving post-incident containment.
+
+- **CRA Annex I, Essential Requirement 1 & 2**
+These require protection against unauthorized access and prevention of common attack vectors. Short-lived TOTPs reduce the attack surface dramatically without requiring changes to OCPI message schemas.
+
+- **NIS2: Risk-based Security Controls for Essential/Important Entities**
+CPO/EMSP systems increasingly fall under NIS2 supervision (energy sector). Deploying short-lived, replay-resistant request authentication is aligned with required security hardening and incident-minimization strategies.
+
+- **NIS2 Article 21(2)(d): Strong Authentication**
+Article 21 mandates risk-based cybersecurity measures including “access control policies based on state-of-the-art authentication mechanisms” and “protection against stolen or compromised credentials”.
+This TOTP authentication is a compliant step towards stronger authentication mechanisms by removing static credentials from the threat landscape.    
+National NIS2 implementations (Germany: KRITIS-DA, Netherlands: NEN-7510 extensions, France: ANSSI référentiel) explicitly cite TOTP, short-lived tokens, or hardware-based second factors as acceptable measures.
+
+- **CRA/NIS2: Operational Monitoring and Auditability**
+Every couple of seconds all requests contain a fresh TOTP. This simplifies anomaly detection (invalid TOTPs, repeated attempts, replay patterns) and aligns with CRA/NIS2 expectations for continuous monitoring of security-relevant events.
+
+
 ## Open Data by Default
 
 This OCPI implementation includes an optional feature to enable anonymous, unauthenticated access to the VERSIONS, LOCATIONS, and TARIFFS endpoints via a simple WebAPI. By activating this feature, you can ensure compliance with regulatory requirements such as the *EU Alternative Fuels Infrastructure Regulation (AFIR)* and the *UK's Public Charge Point Regulations 2023*.
