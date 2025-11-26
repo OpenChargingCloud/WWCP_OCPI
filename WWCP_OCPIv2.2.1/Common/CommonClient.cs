@@ -2017,7 +2017,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Post the given credentials.
         /// </summary>
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>

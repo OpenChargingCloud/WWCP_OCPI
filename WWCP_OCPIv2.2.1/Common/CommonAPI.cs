@@ -4688,7 +4688,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            var justMySupportedVersion    = otherVersions.Data?.Where(version => version.Id == Version.Id).ToArray() ?? Array.Empty<VersionInformation>();
+            var justMySupportedVersion    = otherVersions.Data?.Where(version => version.Id == Version.Id).ToArray() ?? [];
 
             #region ...or send error!
 
@@ -7447,7 +7447,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (localAccessInfo.TOTPConfig is not null)
                     {
 
-                        var accessToken  = AccessToken.ToString();
+                        //var accessToken  = AccessToken.ToString();
 
                         var (previous,
                              current,
@@ -8100,7 +8100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                             {
                                 try
                                 {
-                                    OnLocationChangedLocal(Location).Wait();
+                                    OnLocationChangedLocal(Location).Wait(CancellationToken);
                                 }
                                 catch (Exception e)
                                 {
@@ -8234,7 +8234,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         {
                             try
                             {
-                                OnLocationAddedLocal(Location).Wait();
+                                OnLocationAddedLocal(Location).Wait(CancellationToken);
                             }
                             catch (Exception e)
                             {
@@ -8375,7 +8375,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         {
                             try
                             {
-                                OnLocationChangedLocal(Location).Wait();
+                                OnLocationChangedLocal(Location).Wait(CancellationToken);
                             }
                             catch (Exception e)
                             {

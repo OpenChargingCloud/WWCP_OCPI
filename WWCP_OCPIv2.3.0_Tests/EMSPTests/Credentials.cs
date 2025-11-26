@@ -54,7 +54,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
 
                 var response = await graphDefinedCPO.GetCredentials();
 
-                // GET /2.2.1/credentials HTTP/1.1
+                // GET /2.3.0.1/credentials HTTP/1.1
                 // Date:                          Mon, 26 Dec 2022 10:29:48 GMT
                 // Accept:                        application/json; charset=utf-8;q=1
                 // Host:                          127.0.0.1:7234
@@ -77,7 +77,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 // {
                 //    "data": {
                 //        "token":         "cso-2-emp1:token",
-                //        "url":           "http://127.0.0.1:3301/ocpi/v2.2/versions",
+                //        "url":           "http://127.0.0.1:3301/ocpi/v2.3.0/versions",
                 //        "business_details": {
                 //            "name":           "GraphDefined CSO Services",
                 //            "website":        "https://www.graphdefined.com/cso"
@@ -103,7 +103,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 {
 
                     ClassicAssert.AreEqual ("cso-2-emp1:token",                           credentials.    Token.                            ToString());
-                    ClassicAssert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.2/versions",   credentials.    URL.                              ToString());
+                    ClassicAssert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.3.0/versions",   credentials.    URL.                              ToString());
                     ClassicAssert.AreEqual ("DE",                                         credentials.    Roles.First().PartyId.CountryCode.ToString());
                     ClassicAssert.AreEqual ("GEF",                                        credentials.    Roles.First().PartyId.Party.      ToString());
 
@@ -141,7 +141,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
 
                 var response = await graphDefinedCPO.GetCredentials();
 
-                // GET /2.2.1/credentials HTTP/1.1
+                // GET /2.3.0.1/credentials HTTP/1.1
                 // Date:                          Mon, 26 Dec 2022 10:29:48 GMT
                 // Accept:                        application/json; charset=utf-8;q=1
                 // Host:                          127.0.0.1:7234
@@ -190,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 {
 
                     ClassicAssert.AreEqual ("cso-2-emp2:token",                           credentials.    Token.                            ToString());
-                    ClassicAssert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.2/versions",   credentials.    URL.                              ToString());
+                    ClassicAssert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.3.0/versions",   credentials.    URL.                              ToString());
                     ClassicAssert.AreEqual ("DE",                                         credentials.    Roles.First().PartyId.CountryCode.ToString());
                     ClassicAssert.AreEqual ("GEF",                                        credentials.    Roles.First().PartyId.Party.      ToString());
 

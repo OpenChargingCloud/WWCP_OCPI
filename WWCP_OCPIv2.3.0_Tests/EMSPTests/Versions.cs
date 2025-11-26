@@ -79,8 +79,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 // 
                 // {
                 //     "data": [{
-                //         "version":  "2.2.1",
-                //         "url":      "http://127.0.0.1:7234/versions/2.2.1"
+                //         "version":  "2.3.0.1",
+                //         "url":      "http://127.0.0.1:7234/versions/2.3.0.1"
                 //     }],
                 //     "status_code":      1000,
                 //     "status_message":  "Hello world!",
@@ -99,7 +99,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
 
                 var version  = versions?.First();
                 ClassicAssert.IsTrue   (version?.Id == Version.Id);
-                ClassicAssert.IsTrue   (URL.Parse("http://localhost:3301/ocpi/v2.2/versions/2.2.1") == version?.URL);
+                ClassicAssert.IsTrue   (URL.Parse("http://localhost:3301/ocpi/v2.3.0/versions/2.3.0.1") == version?.URL);
 
             }
 
@@ -128,7 +128,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
 
                 var response = await graphDefinedCPO.GetVersionDetails(Version.Id);
 
-                // GET /versions/2.2.1 HTTP/1.1
+                // GET /versions/2.3.0.1 HTTP/1.1
                 // Date:                          Mon, 26 Dec 2022 00:36:20 GMT
                 // Accept:                        application/json; charset=utf-8;q=1
                 // Host:                          127.0.0.1:7234
@@ -152,52 +152,52 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 // 
                 // {
                 //     "data": {
-                //         "version": "2.2.1",
+                //         "version": "2.3.0.1",
                 //         "endpoints": [
                 //             {
                 //                 "identifier":  "credentials",
                 //                 "role":        "SENDER",
-                //                 "url":         "http://127.0.0.1:7234/2.2.1/credentials"
+                //                 "url":         "http://127.0.0.1:7234/2.3.0.1/credentials"
                 //             },
                 //             {
                 //                 "identifier":  "credentials",
                 //                 "role":        "RECEIVER",
-                //                 "url":         "http://127.0.0.1:7234/2.2.1/credentials"
+                //                 "url":         "http://127.0.0.1:7234/2.3.0.1/credentials"
                 //             },
                 //             {
                 //                 "identifier":  "locations",
                 //                 "role":        "SENDER",
-                //                 "url":         "http://127.0.0.1:7234/2.2.1/cpo/locations"
+                //                 "url":         "http://127.0.0.1:7234/2.3.0.1/cpo/locations"
                 //             },
                 //             {
                 //                 "identifier":  "tariffs",
                 //                 "role":        "SENDER",
-                //                 "url":         "http://127.0.0.1:7234/2.2.1/cpo/tariffs"
+                //                 "url":         "http://127.0.0.1:7234/2.3.0.1/cpo/tariffs"
                 //             },
                 //             {
                 //                 "identifier":  "sessions",
                 //                 "role":        "SENDER",
-                //                 "url":         "http://127.0.0.1:7234/2.2.1/cpo/sessions"
+                //                 "url":         "http://127.0.0.1:7234/2.3.0.1/cpo/sessions"
                 //             },
                 //             {
                 //                 "identifier":  "chargingprofiles",
                 //                 "role":        "SENDER",
-                //                 "url":         "http://127.0.0.1:7234/2.2.1/cpo/chargingprofiles"
+                //                 "url":         "http://127.0.0.1:7234/2.3.0.1/cpo/chargingprofiles"
                 //             },
                 //             {
                 //                 "identifier":  "cdrs",
                 //                 "role":        "SENDER",
-                //                 "url":         "http://127.0.0.1:7234/2.2.1/cpo/cdrs"
+                //                 "url":         "http://127.0.0.1:7234/2.3.0.1/cpo/cdrs"
                 //             },
                 //             {
                 //                 "identifier":  "commands",
                 //                 "role":        "RECEIVER",
-                //                 "url":         "http://127.0.0.1:7234/2.2.1/cpo/commands"
+                //                 "url":         "http://127.0.0.1:7234/2.3.0.1/cpo/commands"
                 //             },
                 //             {
                 //                 "identifier":  "tokens",
                 //                 "role":        "RECEIVER",
-                //                 "url":         "http://127.0.0.1:7234/2.2.1/cpo/tokens"
+                //                 "url":         "http://127.0.0.1:7234/2.3.0.1/cpo/tokens"
                 //             }
                 //         ]
                 //     },
@@ -308,10 +308,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
             if (graphDefinedCPO is not null)
             {
 
-                var httpResponse = await TestHelpers.JSONRequest(URL.Parse("http://127.0.0.1:3301/ocpi/v2.2/versions/v0.7"),
+                var httpResponse = await TestHelpers.JSONRequest(URL.Parse("http://127.0.0.1:3301/ocpi/v2.3.0/versions/v0.7"),
                                                                  "xxxxxx");
 
-                // GET /ocpi/v2.2/versions/v0.7 HTTP/1.1
+                // GET /ocpi/v2.3.0/versions/v0.7 HTTP/1.1
                 // Date:                          Sat, 22 Apr 2023 11:54:54 GMT
                 // Accept:                        application/json; charset=utf-8;q=1
                 // Host:                          127.0.0.1:7235

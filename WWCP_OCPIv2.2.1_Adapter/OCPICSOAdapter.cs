@@ -17,6 +17,7 @@
 
 #region Usings
 
+using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
@@ -29,7 +30,6 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using System.Net.Security;
 
 #endregion
 
@@ -628,7 +628,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                    Location:            location,
                                                    SkipNotifications:   false,
                                                    EventTrackingId:     EventTrackingId,
-                                                   CurrentUserId:       null,
+                                                   CurrentUserId:       CurrentUserId,
                                                    CancellationToken:   CancellationToken
                                                );
 
@@ -704,6 +704,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       CancellationToken
                                   );
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             try
             {
 
@@ -724,7 +726,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         if (location is not null)
                         {
 
-                            var result = CommonAPI.AddLocation(location);
+                            var result = CommonAPI.AddLocation(
+                                             location,
+                                             false,
+                                             EventTrackingId,
+                                             CurrentUserId,
+                                             CancellationToken
+                                         );
 
                             //ToDo: Handle errors!
 
@@ -806,6 +814,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       CancellationToken
                                   );
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             try
             {
 
@@ -825,7 +835,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         if (location is not null)
                         {
 
-                            var result = CommonAPI.UpdateLocation(location);
+                            var result = CommonAPI.UpdateLocation(
+                                             location,
+                                             false,
+                                             false,
+                                             EventTrackingId,
+                                             CurrentUserId,
+                                             CancellationToken
+                                         );
 
                             //ToDo: Process errors!!!
 
@@ -1074,20 +1091,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
                                                               CancellationToken);
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             try
             {
 
                 if (lockTaken)
                 {
 
-                    OCPI.AddOrUpdateResult<EVSE> result;
+                    AddOrUpdateResult<EVSE> result;
 
                     IEnumerable<Warning> warnings = [];
 
-                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
+                    var countryCode  = CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
                     var locationId   = EVSE.ChargingPool is not null
-                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
+                                           ? Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
                                            : null;
 
                     if (countryCode.HasValue &&
@@ -1118,19 +1137,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 if (evse2 is not null)
                                     result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
                                 else
-                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
+                                    result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
                             }
                             else
-                                result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
+                                result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
 
                         }
                         else
-                            result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
+                            result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
 
                     }
                     else
-                        result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
+                        result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
 
 
                     return result.IsSuccess
@@ -1200,20 +1219,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
                                                               CancellationToken);
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             try
             {
 
                 if (lockTaken)
                 {
 
-                    OCPI.AddOrUpdateResult<EVSE> result;
+                    AddOrUpdateResult<EVSE> result;
 
                     IEnumerable<Warning> warnings = [];
 
-                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
+                    var countryCode  = CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
                     var locationId   = EVSE.ChargingPool is not null
-                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
+                                           ? Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
                                            : null;
 
                     if (countryCode.HasValue &&
@@ -1244,19 +1265,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 if (evse2 is not null)
                                     result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
                                 else
-                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
+                                    result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
                             }
                             else
-                                result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
+                                result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
 
                         }
                         else
-                            result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
+                            result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
 
                     }
                     else
-                        result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
+                        result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
 
 
                     return result.IsSuccess
@@ -1501,7 +1522,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         {
 
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
+            var lockTaken = await DataAndStatusLock.WaitAsync(
+                                      MaxLockWaitingTime,
+                                      CancellationToken
+                                  );
 
             try
             {
@@ -1525,10 +1549,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                (IncludeEVSEs is not null && IncludeEVSEs(evse)))
                             {
 
-                                var countryCode  = OCPI.CountryCode.TryParse(evse.Id.OperatorId.CountryCode.Alpha2Code);
-                                var partyId      = OCPI.Party_Id.   TryParse(evse.Id.OperatorId.Suffix);
+                                var countryCode  = CountryCode.TryParse(evse.Id.OperatorId.CountryCode.Alpha2Code);
+                                var partyId      = Party_Id.   TryParse(evse.Id.OperatorId.Suffix);
                                 var locationId   = evse.ChargingPool is not null
-                                                       ? OCPI.Location_Id.TryParse(evse.ChargingPool.Id.Suffix)
+                                                       ? Location_Id.TryParse(evse.ChargingPool.Id.Suffix)
                                                        : null;
 
                                 if (countryCode.HasValue &&
@@ -1674,7 +1698,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                 ChargingProduct,
                                                 SessionId,
                                                 CPOPartnerSessionId,
-                                                Array.Empty<WWCP.ISendAuthorizeStartStop>(),
+                                                [],
                                                 RequestTimeout);
 
             }
@@ -1935,7 +1959,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                  ChargingProduct,
                                                  SessionId,
                                                  CPOPartnerSessionId,
-                                                 Array.Empty<WWCP.ISendAuthorizeStartStop>(),
+                                                 [],
                                                  RequestTimeout,
                                                  authStartResult,
                                                  runtime);

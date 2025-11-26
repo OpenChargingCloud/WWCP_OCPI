@@ -113,7 +113,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a token example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/examples/token_put_example.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.3.0.1-bugfixes/examples/token_put_example.json
         /// </summary>
         [Test]
         public static void Token_DeserializeGitHub_Test01()
@@ -162,7 +162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a token example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/examples/token_put_example.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.3.0.1-bugfixes/examples/token_put_example.json
         /// </summary>
         [Test]
         public static void Token_DeserializeGitHub_Test02()
@@ -221,7 +221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a token example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/examples/token_example_1_app_user.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.3.0.1-bugfixes/examples/token_example_1_app_user.json
         /// </summary>
         [Test]
         public static void Token_DeserializeGitHub_Test03()

@@ -3309,7 +3309,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a location example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/location_example.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.3.0-bugfixes/examples/location_example.json
         /// </summary>
         [Test]
         public static void Location_DeserializeGitHub_Test01()
@@ -3426,7 +3426,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a location example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/location_example_parking_garage_opening_hours.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.3.0-bugfixes/examples/location_example_parking_garage_opening_hours.json
         /// </summary>
         [Test]
         public static void Location_DeserializeGitHub_Test02()
@@ -3537,7 +3537,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a location example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/location_example_uc2_destination_charger.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.3.0-bugfixes/examples/location_example_uc2_destination_charger.json
         /// </summary>
         [Test]
         public static void Location_DeserializeGitHub_Test03()
@@ -3616,7 +3616,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a location example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/location_example_uc3_destination_charger_not_published.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.3.0-bugfixes/examples/location_example_uc3_destination_charger_not_published.json
         /// </summary>
         [Test]
         public static void Location_DeserializeGitHub_Test04()
@@ -3694,7 +3694,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a location example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/location_example_uc3_destination_charger_not_published.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.3.0-bugfixes/examples/location_example_uc3_destination_charger_not_published.json
         /// </summary>
         [Test]
         public static void Location_DeserializeGitHub_Test05()
@@ -3782,7 +3782,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a location example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/location_example_uc5_home_charge_point.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.3.0-bugfixes/examples/location_example_uc5_home_charge_point.json
         /// </summary>
         [Test]
         public static void Location_DeserializeGitHub_Test06()

@@ -309,7 +309,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
 
                 var response = await graphDefinedCPO.GetLocations();
 
-                // GET /2.2.1/cpo/locations HTTP/1.1
+                // GET /2.3.0.1/cpo/locations HTTP/1.1
                 // Date:                          Tue, 18 Apr 2023 03:41:25 GMT
                 // Accept:                        application/json; charset=utf-8;q=1
                 // Host:                          127.0.0.1:7234
@@ -637,7 +637,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
 
                 var response = await graphDefinedCPO.GetLocations();
 
-                // GET /2.2.1/cpo/locations HTTP/1.1
+                // GET /2.3.0.1/cpo/locations HTTP/1.1
                 // Date:                          Tue, 18 Apr 2023 03:41:25 GMT
                 // Accept:                        application/json; charset=utf-8;q=1
                 // Host:                          127.0.0.1:7234
@@ -975,7 +975,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
 
                 var response = await graphDefinedCPO.GetLocations();
 
-                // GET /2.2.1/cpo/locations HTTP/1.1
+                // GET /2.3.0.1/cpo/locations HTTP/1.1
                 // Date:                          Tue, 18 Apr 2023 03:41:25 GMT
                 // Accept:                        application/json; charset=utf-8;q=1
                 // Host:                          127.0.0.1:7234
@@ -1304,7 +1304,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
 
                 var response = await graphDefinedCPO.GetLocation(Location_Id.Parse("LOC0001"));
 
-                // GET /2.2.1/cpo/locations HTTP/1.1
+                // GET /2.3.0.1/cpo/locations HTTP/1.1
                 // Date:                          Tue, 18 Apr 2023 03:41:25 GMT
                 // Accept:                        application/json; charset=utf-8;q=1
                 // Host:                          127.0.0.1:7234
@@ -1632,7 +1632,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
 
                 var response = await graphDefinedCPO.GetLocation(Location_Id.Parse("LOC0001"));
 
-                // GET /2.2.1/cpo/locations HTTP/1.1
+                // GET /2.3.0.1/cpo/locations HTTP/1.1
                 // Date:                          Tue, 18 Apr 2023 03:41:25 GMT
                 // Accept:                        application/json; charset=utf-8;q=1
                 // Host:                          127.0.0.1:7234

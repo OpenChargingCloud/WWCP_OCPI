@@ -34,7 +34,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
     /// <summary>
     /// Unit tests for credentials.
-    /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/credentials.asciidoc
+    /// https://github.com/ocpi/ocpi/blob/release-2.3.0-bugfixes/credentials.asciidoc
     /// </summary>
     [TestFixture]
     public static class CredentialsTests
@@ -145,7 +145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a charge detail record example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/credentials_example.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.3.0-bugfixes/examples/credentials_example.json
         /// </summary>
         [Test]
         public static void Credentials_DeserializeGitHub_Test01()
@@ -186,7 +186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a charge detail record example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/credentials_example2.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.3.0-bugfixes/examples/credentials_example2.json
         /// </summary>
         [Test]
         public static void Credentials_DeserializeGitHub_Test02()
@@ -241,7 +241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a charge detail record example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/credentials_example3.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.3.0-bugfixes/examples/credentials_example3.json
         /// </summary>
         [Test]
         public static void Credentials_DeserializeGitHub_Test03()
@@ -298,7 +298,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a charge detail record example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/credentials_example4.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.3.0-bugfixes/examples/credentials_example4.json
         /// </summary>
         [Test]
         public static void Credentials_DeserializeGitHub_Test04()

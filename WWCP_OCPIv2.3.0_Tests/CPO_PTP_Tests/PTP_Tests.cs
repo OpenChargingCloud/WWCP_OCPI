@@ -153,7 +153,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
                 var response = await graphDefinedCPO.GetVersionDetails(Version_Id.Parse("2.3.0"));
 
-                // GET /versions/2.2 HTTP/1.1
+                // GET /versions/2.3.0 HTTP/1.1
                 // Date:                          Mon, 26 Dec 2022 00:36:20 GMT
                 // Accept:                        application/json; charset=utf-8;q=1
                 // Host:                          127.0.0.1:7235
@@ -177,35 +177,35 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
                 // 
                 // {
                 //     "data": {
-                //         "version": "2.2",
+                //         "version": "2.3.0",
                 //         "endpoints": [
                 //             {
                 //                 "identifier":  "credentials",
-                //                 "url":         "http://127.0.0.1:7235/2.2/credentials"
+                //                 "url":         "http://127.0.0.1:7235/2.3.0/credentials"
                 //             },
                 //             {
                 //                 "identifier":  "locations",
-                //                 "url":         "http://127.0.0.1:7235/2.2/emsp/locations"
+                //                 "url":         "http://127.0.0.1:7235/2.3.0/emsp/locations"
                 //             },
                 //             {
                 //                 "identifier":  "tariffs",
-                //                 "url":         "http://127.0.0.1:7235/2.2/emsp/tariffs"
+                //                 "url":         "http://127.0.0.1:7235/2.3.0/emsp/tariffs"
                 //             },
                 //             {
                 //                 "identifier":  "sessions",
-                //                 "url":         "http://127.0.0.1:7235/2.2/emsp/sessions"
+                //                 "url":         "http://127.0.0.1:7235/2.3.0/emsp/sessions"
                 //             },
                 //             {
                 //                 "identifier":  "cdrs",
-                //                 "url":         "http://127.0.0.1:7235/2.2/emsp/cdrs"
+                //                 "url":         "http://127.0.0.1:7235/2.3.0/emsp/cdrs"
                 //             },
                 //             {
                 //                 "identifier":  "commands",
-                //                 "url":         "http://127.0.0.1:7235/2.2/emsp/commands"
+                //                 "url":         "http://127.0.0.1:7235/2.3.0/emsp/commands"
                 //             },
                 //             {
                 //                 "identifier":  "tokens",
-                //                 "url":         "http://127.0.0.1:7235/2.2/emsp/tokens"
+                //                 "url":         "http://127.0.0.1:7235/2.3.0/emsp/tokens"
                 //             }
                 //         ]
                 //     },
@@ -227,8 +227,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
                 var endpoints = versionDetail.Endpoints;
                 ClassicAssert.AreEqual (7, endpoints.Count());
-                //ClassicAssert.AreEqual(Version_Id.Parse("2.2"), endpoints.Id);
-                //ClassicAssert.AreEqual(emspVersionsAPIURL + "2.2", endpoints.URL);
+                //ClassicAssert.AreEqual(Version_Id.Parse("2.3.0"), endpoints.Id);
+                //ClassicAssert.AreEqual(emspVersionsAPIURL + "2.3.0", endpoints.URL);
 
 
             }

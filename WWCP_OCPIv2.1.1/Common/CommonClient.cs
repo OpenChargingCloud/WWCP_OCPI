@@ -882,7 +882,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                      CorrelationId,
 
                                                      requestTimeout,
-                                                     response.Data ?? Array.Empty<VersionInformation>(),
+                                                     response.Data ?? [],
                                                      endtime - startTime))).
                                        ConfigureAwait(false);
 
@@ -1191,8 +1191,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (!versionId.HasValue)
             {
 
-                if (this.versionDetails.Any())
-                    SelectedOCPIVersionId = versionId = this.versionDetails.Keys.OrderByDescending(id => id).First();
+                if (!versionDetails.IsEmpty)
+                    SelectedOCPIVersionId = versionId = versionDetails.Keys.OrderByDescending(id => id).First();
 
                 else
                 {
@@ -1200,7 +1200,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     await GetVersions(EventTrackingId:    eventTrackingId,
                                       CancellationToken:  CancellationToken);
 
-                    if (versions.Any())
+                    if (!versions.IsEmpty)
                     {
 
                         SelectedOCPIVersionId = versionId = versions.Keys.OrderByDescending(id => id).First();
@@ -2175,7 +2175,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="RequestId"></param>
         /// <param name="CorrelationId"></param>
         /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>

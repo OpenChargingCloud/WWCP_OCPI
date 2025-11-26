@@ -161,7 +161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a session example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/examples/session_example_1_simple_start.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.3.0.1-bugfixes/examples/session_example_1_simple_start.json
         /// </summary>
         [Test]
         public static void Session_DeserializeGitHub_Test01()
@@ -230,7 +230,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a session example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/examples/session_example_2_short_finished.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.3.0.1-bugfixes/examples/session_example_2_short_finished.json
         /// </summary>
         [Test]
         public static void Session_DeserializeGitHub_Test02()

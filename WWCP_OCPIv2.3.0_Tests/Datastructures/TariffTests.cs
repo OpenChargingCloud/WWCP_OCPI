@@ -54,15 +54,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                               Party_Id.   Parse("GEF"),
                               Tariff_Id.  Parse("TARIFF0001"),
                               Currency.EUR,
-                              new TariffElement[] {
+                              [
                                   new TariffElement(
-                                      new[] {
+                                      [
                                           PriceComponent.ChargingTime(
                                               2.00M,
                                               0.10M,
                                               TimeSpan.FromSeconds(300)
                                           )
-                                      },
+                                      ],
                                       new TariffRestrictions(
                                           Time.FromHourMin(08,00),       // Start time
                                           Time.FromHourMin(18,00),       // End time
@@ -76,20 +76,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                           9.91M,                         // MaxPower
                                           TimeSpan.FromMinutes(10),      // MinDuration
                                           TimeSpan.FromMinutes(30),      // MaxDuration
-                                          new DayOfWeek[] {
+                                          [
                                               DayOfWeek.Monday,
                                               DayOfWeek.Tuesday
-                                          },
+                                          ],
                                           ReservationRestrictions.RESERVATION
                                       )
                                   )
-                              },
+                              ],
                               TaxIncluded.Yes,
                               TariffType.PROFILE_GREEN,
-                              new[] {
+                              [
                                   new DisplayText(Languages.de, "Hallo Welt!"),
                                   new DisplayText(Languages.en, "Hello world!"),
-                              },
+                              ],
                               URL.Parse("https://open.charging.cloud"),
                               new PriceLimit( // Min Price
                                   1.10m,
@@ -103,7 +103,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                               DateTime.Parse("2020-12-31"), // End timestamp
                               new EnergyMix(
                                   true,
-                                  new[] {
+                                  [
                                       new EnergySource(
                                           EnergySourceCategory.SOLAR,
                                           80
@@ -112,13 +112,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                           EnergySourceCategory.WIND,
                                           20
                                       )
-                                  },
-                                  new[] {
+                                  ],
+                                  [
                                       new EnvironmentalImpact(
                                           EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                           0.1
                                       )
-                                  },
+                                  ],
                                   "Stadtwerke Jena-Ost",
                                   "New Green Deal"
                               ),

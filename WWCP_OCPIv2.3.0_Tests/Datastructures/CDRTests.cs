@@ -86,22 +86,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                            [
                                ChargingPeriod.Create(
                                    DateTime.Parse("2020-04-12T18:21:49Z").ToUniversalTime(),
-                                   new[] {
+                                   [
                                        CDRDimension.Create(
                                            CDRDimensionType.ENERGY,
                                            1.33M
                                        )
-                                   },
+                                   ],
                                    Tariff_Id.Parse("DE*GEF*T0001")
                                ),
                                ChargingPeriod.Create(
                                    DateTime.Parse("2020-04-12T18:21:50Z").ToUniversalTime(),
-                                   new[] {
+                                   [
                                        CDRDimension.Create(
                                            CDRDimensionType.TIME,
                                            5.12M
                                        )
-                                   },
+                                   ],
                                    Tariff_Id.Parse("DE*GEF*T0002")
                                )
                            ],
@@ -133,7 +133,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                null,
                                null,
                                null,
-                               new[] {
+                               [
                                    new TransparencySoftwareStatus(
                                        new TransparencySoftware(
                                            "Chargy Transparency Software Desktop Application",
@@ -168,25 +168,25 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                        NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
                                        NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
                                    )
-                               }
+                               ]
                            ),
                            null,
 
-                           new[] {
+                           [
                                new Tariff(
                                    CountryCode.Parse("DE"),
                                    Party_Id.   Parse("GEF"),
                                    Tariff_Id.  Parse("TARIFF0001"),
                                    Currency.EUR,
-                                   new[] {
+                                   [
                                        new TariffElement(
-                                           new[] {
+                                           [
                                                PriceComponent.ChargingTime(
                                                    2.00M,
                                                    0.10M,
                                                    TimeSpan.FromSeconds(300)
                                                )
-                                           },
+                                           ],
                                            new TariffRestrictions(
                                                Time.FromHourMin(08,00),       // Start time
                                                Time.FromHourMin(18,00),       // End time
@@ -200,20 +200,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                                9.91M,                         // MaxPower
                                                TimeSpan.FromMinutes(10),      // MinDuration
                                                TimeSpan.FromMinutes(30),      // MaxDuration
-                                               new DayOfWeek[] {
+                                               [
                                                    DayOfWeek.Monday,
                                                    DayOfWeek.Tuesday
-                                               },
+                                               ],
                                                ReservationRestrictions.RESERVATION
                                            )
                                        )
-                                   },
+                                   ],
                                    TaxIncluded.Yes,
                                    TariffType.PROFILE_GREEN,
-                                   new[] {
+                                   [
                                        new DisplayText(Languages.de, "Hallo Welt!"),
                                        new DisplayText(Languages.en, "Hello world!"),
-                                   },
+                                   ],
                                    URL.Parse("https://open.charging.cloud"),
                                    new PriceLimit( // Min Price
                                        1.10m,
@@ -227,7 +227,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                    DateTime.Parse("2020-12-31").ToUniversalTime(), // End timestamp
                                    new EnergyMix(
                                        true,
-                                       new[] {
+                                       [
                                            new EnergySource(
                                                EnergySourceCategory.SOLAR,
                                                80
@@ -236,23 +236,23 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                                EnergySourceCategory.WIND,
                                                20
                                            )
-                                       },
-                                       new[] {
+                                       ],
+                                       [
                                            new EnvironmentalImpact(
                                                EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                                0.1
                                            )
-                                       },
+                                       ],
                                        "Stadtwerke Jena-Ost",
                                        "New Green Deal"
                                    ),
                                    DateTime.Parse("2020-09-22").ToUniversalTime()
                                )
-                           },
+                           ],
 
                            new SignedData(
                                EncodingMethod.GraphDefined,
-                               new[] {
+                               [
                                    new SignedValue(
                                        SignedValueNature.START,
                                        "PlainStartValue",
@@ -268,7 +268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                        "PlainEndValue",
                                        "SignedEndValue"
                                    )
-                               },
+                               ],
                                1,     // Encoding method version
                                null,  // Public key
                                URL.Parse("https://open.charging.cloud/pools/1/stations/1/evse/1/publicKey")
@@ -373,7 +373,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a charge detail record example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/examples/cdr_example.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.3.0.1-bugfixes/examples/cdr_example.json
         /// </summary>
         [Test]
         public static void CDR_DeserializeGitHub_Test01()
