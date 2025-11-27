@@ -3047,7 +3047,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     var response           = await cpo2EMSPClient.PostCDR(
                                                        CDR:                cdr,
-                                                       EMSPId:             emspId,
+                                                  //     EMSPId:             emspId,
                                                        CancellationToken:  CancellationToken
                                                    );
 

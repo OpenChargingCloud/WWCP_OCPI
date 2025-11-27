@@ -186,44 +186,44 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The CDRs module.
         /// </summary>
-        public static Module_Id CDRs
-            => new ("cdrs");
+        public static Module_Id  CDRs           { get; }
+            = new ("cdrs");
 
         /// <summary>
         /// The commands module.
         /// </summary>
-        public static Module_Id Commands
-            => new ("commands");
+        public static Module_Id  Commands       { get; }
+            = new ("commands");
 
         /// <summary>
         /// The credentials & registration module.
         /// </summary>
-        public static Module_Id Credentials
-            => new ("credentials");
+        public static Module_Id  Credentials    { get; }
+            = new ("credentials");
 
         /// <summary>
         /// The locations module.
         /// </summary>
-        public static Module_Id Locations
-            => new ("locations");
+        public static Module_Id  Locations      { get; }
+            = new ("locations");
 
         /// <summary>
         /// The sessions module.
         /// </summary>
-        public static Module_Id Sessions
-            => new ("sessions");
+        public static Module_Id  Sessions       { get; }
+            = new ("sessions");
 
         /// <summary>
         /// The tariffs module.
         /// </summary>
-        public static Module_Id Tariffs
-            => new ("tariffs");
+        public static Module_Id  Tariffs        { get; }
+            = new ("tariffs");
 
         /// <summary>
         /// The tokens module.
         /// </summary>
-        public static Module_Id Tokens
-            => new ("tokens");
+        public static Module_Id  Tokens         { get; }
+            = new ("tokens");
 
         #endregion
 

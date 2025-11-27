@@ -17,6 +17,7 @@
 
 #region Usings
 
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 using Newtonsoft.Json.Linq;
@@ -217,12 +218,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #region Properties
 
-        public CPOAPI           CPOAPI      { get; }
+        /// <summary>
+        /// The EMSP identification of the remote party.
+        /// </summary>
+        public EMSP_Id          RemoteEMSPId    { get; }
+
+        /// <summary>
+        /// Our CPO API.
+        /// </summary>
+        public CPOAPI           CPOAPI          { get; }
 
         /// <summary>
         /// CPO client event counters.
         /// </summary>
-        public new APICounters  Counters    { get; }
+        public new APICounters  Counters        { get; }
 
         /// <summary>
         /// The attached HTTP client logger.
@@ -861,17 +870,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         {
 
-            this.CPOAPI      = CPOAPI;
-            this.Counters    = new APICounters();
+            this.RemoteEMSPId  = RemoteParty.Id.AsEMSPId;
+            this.CPOAPI        = CPOAPI;
+            this.Counters      = new APICounters();
 
-            base.HTTPLogger  = this.DisableLogging == false
-                                   ? new Logger(
-                                         this,
-                                         LoggingPath,
-                                         LoggingContext ?? DefaultLoggingContext,
-                                         LogfileCreator
-                                     )
-                                   : null;
+            base.HTTPLogger    = this.DisableLogging == false
+                                     ? new Logger(
+                                           this,
+                                           LoggingPath,
+                                           LoggingContext ?? DefaultLoggingContext,
+                                           LogfileCreator
+                                       )
+                                     : null;
 
         }
 
@@ -889,25 +899,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Location>>
 
-            GetLocation(Location_Id         LocationId,
+            GetLocation(Location_Id        LocationId,
 
-                        Request_Id?         RequestId           = null,
-                        Correlation_Id?     CorrelationId       = null,
-                        Version_Id?         VersionId           = null,
+                        Request_Id?        RequestId           = null,
+                        Correlation_Id?    CorrelationId       = null,
+                        Version_Id?        VersionId           = null,
 
-                        EventTracking_Id?   EventTrackingId     = null,
-                        TimeSpan?           RequestTimeout      = null,
-                        CancellationToken   CancellationToken   = default)
+                        DateTimeOffset?    RequestTimestamp    = null,
+                        EventTracking_Id?  EventTrackingId     = null,
+                        TimeSpan?          RequestTimeout      = null,
+                        CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetLocation.IncRequests_OK();
 
@@ -917,29 +932,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnGetLocationRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetLocationRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetLocationRequest is not null)
-                    await Task.WhenAll(OnGetLocationRequest.GetInvocationList().
-                                       Cast<OnGetLocationRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
 
-                                                     LocationId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetLocationRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1005,34 +1012,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnGetLocationResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetLocationResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetLocationResponse is not null)
-                    await Task.WhenAll(OnGetLocationResponse.GetInvocationList().
-                                       Cast<OnGetLocationResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
 
-                                                     LocationId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetLocationResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -1054,26 +1054,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Location>>
 
-            PutLocation(Location            Location,
-                        EMSP_Id?            EMSPId              = null,
+            PutLocation(Location           Location,
 
-                        Request_Id?         RequestId           = null,
-                        Correlation_Id?     CorrelationId       = null,
-                        Version_Id?         VersionId           = null,
+                        Request_Id?        RequestId           = null,
+                        Correlation_Id?    CorrelationId       = null,
+                        Version_Id?        VersionId           = null,
 
-                        EventTracking_Id?   EventTrackingId     = null,
-                        TimeSpan?           RequestTimeout      = null,
-                        CancellationToken   CancellationToken   = default)
+                        DateTimeOffset?    RequestTimestamp    = null,
+                        EventTracking_Id?  EventTrackingId     = null,
+                        TimeSpan?          RequestTimeout      = null,
+                        CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.PutLocation.IncRequests_OK();
 
@@ -1083,29 +1087,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPutLocationRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPutLocationRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutLocationRequest is not null)
-                    await Task.WhenAll(OnPutLocationRequest.GetInvocationList().
-                                       Cast<OnPutLocationRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Location,
 
-                                                     Location,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutLocationRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1130,7 +1126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                  Content:               Location.ToJSON(
                                                                             false,
                                                                             false,
-                                                                            EMSPId,
+                                                                            RemoteEMSPId,
                                                                             CustomLocationSerializer,
                                                                             CustomAdditionalGeoLocationSerializer,
                                                                             CustomEVSESerializer,
@@ -1196,34 +1192,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPutLocationResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPutLocationResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutLocationResponse is not null)
-                    await Task.WhenAll(OnPutLocationResponse.GetInvocationList().
-                                       Cast<OnPutLocationResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Location,
 
-                                                     Location,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutLocationResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -1243,16 +1232,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Location>>
 
-            PatchLocation(Location_Id         LocationId,
-                          JObject             LocationPatch,
+            PatchLocation(Location_Id        LocationId,
+                          JObject            LocationPatch,
 
-                          Request_Id?         RequestId           = null,
-                          Correlation_Id?     CorrelationId       = null,
-                          Version_Id?         VersionId           = null,
+                          Request_Id?        RequestId           = null,
+                          Correlation_Id?    CorrelationId       = null,
+                          Version_Id?        VersionId           = null,
 
-                          EventTracking_Id?   EventTrackingId     = null,
-                          TimeSpan?           RequestTimeout      = null,
-                          CancellationToken   CancellationToken   = default)
+                          DateTimeOffset?    RequestTimestamp    = null,
+                          EventTracking_Id?  EventTrackingId     = null,
+                          TimeSpan?          RequestTimeout      = null,
+                          CancellationToken  CancellationToken   = default)
 
         {
 
@@ -1265,11 +1255,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.PatchLocation.IncRequests_OK();
 
@@ -1279,30 +1273,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPatchLocationRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPatchLocationRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchLocationRequest is not null)
-                    await Task.WhenAll(OnPatchLocationRequest.GetInvocationList().
-                                       Cast<OnPatchLocationRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          LocationPatch,
 
-                                                     LocationId,
-                                                     LocationPatch,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchLocationRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1369,35 +1355,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPatchLocationResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPatchLocationResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchLocationResponse is not null)
-                    await Task.WhenAll(OnPatchLocationResponse.GetInvocationList().
-                                       Cast<OnPatchLocationResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          LocationPatch,
 
-                                                     LocationId,
-                                                     LocationPatch,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchLocationResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -1418,26 +1397,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<EVSE>>
 
-            GetEVSE(Location_Id         LocationId,
-                    EVSE_UId            EVSEUId,
+            GetEVSE(Location_Id        LocationId,
+                    EVSE_UId           EVSEUId,
 
-                    Request_Id?         RequestId           = null,
-                    Correlation_Id?     CorrelationId       = null,
-                    Version_Id?         VersionId           = null,
+                    Request_Id?        RequestId           = null,
+                    Correlation_Id?    CorrelationId       = null,
+                    Version_Id?        VersionId           = null,
 
-                    EventTracking_Id?   EventTrackingId     = null,
-                    TimeSpan?           RequestTimeout      = null,
-                    CancellationToken   CancellationToken   = default)
+                    DateTimeOffset?    RequestTimestamp    = null,
+                    EventTracking_Id?  EventTrackingId     = null,
+                    TimeSpan?          RequestTimeout      = null,
+                    CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetEVSE.IncRequests_OK();
 
@@ -1447,30 +1431,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnGetEVSERequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetEVSERequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetEVSERequest is not null)
-                    await Task.WhenAll(OnGetEVSERequest.GetInvocationList().
-                                       Cast<OnGetEVSERequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          EVSEUId,
 
-                                                     LocationId,
-                                                     EVSEUId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetEVSERequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1537,35 +1513,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnGetEVSEResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetEVSEResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetEVSEResponse is not null)
-                    await Task.WhenAll(OnGetEVSEResponse.GetInvocationList().
-                                       Cast<OnGetEVSEResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          EVSEUId,
 
-                                                     LocationId,
-                                                     EVSEUId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchLocationResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -1587,16 +1556,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<EVSE>>
 
-            PutEVSE(EVSE                EVSE,
-                    EMSP_Id?            EMSPId              = null,
+            PutEVSE(EVSE               EVSE,
 
-                    Request_Id?         RequestId           = null,
-                    Correlation_Id?     CorrelationId       = null,
-                    Version_Id?         VersionId           = null,
+                    Request_Id?        RequestId           = null,
+                    Correlation_Id?    CorrelationId       = null,
+                    Version_Id?        VersionId           = null,
 
-                    EventTracking_Id?   EventTrackingId     = null,
-                    TimeSpan?           RequestTimeout      = null,
-                    CancellationToken   CancellationToken   = default)
+                    DateTimeOffset?    RequestTimestamp    = null,
+                    EventTracking_Id?  EventTrackingId     = null,
+                    TimeSpan?          RequestTimeout      = null,
+                    CancellationToken  CancellationToken   = default)
 
         {
 
@@ -1606,12 +1575,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             return await PutEVSE(
                              EVSE,
                              EVSE.ParentLocation.Id,
-                             EMSPId,
 
                              RequestId,
                              CorrelationId,
                              VersionId,
 
+                             RequestTimestamp,
                              EventTrackingId,
                              RequestTimeout,
                              CancellationToken
@@ -1634,27 +1603,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<EVSE>>
 
-            PutEVSE(EVSE                EVSE,
-                    Location_Id         LocationId,
-                    EMSP_Id?            EMSPId              = null,
+            PutEVSE(EVSE               EVSE,
+                    Location_Id        LocationId,
 
-                    Request_Id?         RequestId           = null,
-                    Correlation_Id?     CorrelationId       = null,
-                    Version_Id?         VersionId           = null,
+                    Request_Id?        RequestId           = null,
+                    Correlation_Id?    CorrelationId       = null,
+                    Version_Id?        VersionId           = null,
 
-                    EventTracking_Id?   EventTrackingId     = null,
-                    TimeSpan?           RequestTimeout      = null,
-                    CancellationToken   CancellationToken   = default)
+                    DateTimeOffset?    RequestTimestamp    = null,
+                    EventTracking_Id?  EventTrackingId     = null,
+                    TimeSpan?          RequestTimeout      = null,
+                    CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.PutEVSE.IncRequests_OK();
 
@@ -1664,30 +1637,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPutEVSERequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPutEVSERequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutEVSERequest is not null)
-                    await Task.WhenAll(OnPutEVSERequest.GetInvocationList().
-                                       Cast<OnPutEVSERequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          EVSE,
+                          LocationId,
 
-                                                     EVSE,
-                                                     LocationId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutEVSERequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1711,7 +1676,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                  Path:                  httpClient.RemoteURL.Path + LocationId.ToString() +
                                                                                                     EVSE.UId.  ToString(),
                                                  Content:               EVSE.ToJSON(
-                                                                            EMSPId,
+                                                                            RemoteEMSPId,
                                                                             false,
                                                                             CustomEVSESerializer,
                                                                             CustomStatusScheduleSerializer,
@@ -1766,35 +1731,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPutEVSEResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPutEVSEResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutEVSEResponse is not null)
-                    await Task.WhenAll(OnPutEVSEResponse.GetInvocationList().
-                                       Cast<OnPutEVSEResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          EVSE,
+                          LocationId,
 
-                                                     EVSE,
-                                                     LocationId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutEVSEResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -1814,17 +1772,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<EVSE>>
 
-            PatchEVSE(Location_Id         LocationId,
-                      EVSE_UId            EVSEUId,
-                      JObject             EVSEPatch,
+            PatchEVSE(Location_Id        LocationId,
+                      EVSE_UId           EVSEUId,
+                      JObject            EVSEPatch,
 
-                      Request_Id?         RequestId           = null,
-                      Correlation_Id?     CorrelationId       = null,
-                      Version_Id?         VersionId           = null,
+                      Request_Id?        RequestId           = null,
+                      Correlation_Id?    CorrelationId       = null,
+                      Version_Id?        VersionId           = null,
 
-                      EventTracking_Id?   EventTrackingId     = null,
-                      TimeSpan?           RequestTimeout      = null,
-                      CancellationToken   CancellationToken   = default)
+                      DateTimeOffset?    RequestTimestamp    = null,
+                      EventTracking_Id?  EventTrackingId     = null,
+                      TimeSpan?          RequestTimeout      = null,
+                      CancellationToken  CancellationToken   = default)
 
         {
 
@@ -1838,11 +1797,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.PatchEVSE.IncRequests_OK();
 
@@ -1852,31 +1815,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPatchEVSERequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPatchEVSERequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchEVSERequest is not null)
-                    await Task.WhenAll(OnPatchEVSERequest.GetInvocationList().
-                                       Cast<OnPatchEVSERequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          EVSEUId,
+                          EVSEPatch,
 
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     EVSEPatch,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchEVSERequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -1944,36 +1899,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPatchEVSEResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPatchEVSEResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchEVSEResponse is not null)
-                    await Task.WhenAll(OnPatchEVSEResponse.GetInvocationList().
-                                       Cast<OnPatchEVSEResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          EVSEUId,
+                          EVSEPatch,
 
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     EVSEPatch,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchEVSEResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -1994,27 +1942,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional connector to cancel this request.</param>
         public async Task<OCPIResponse<Connector>>
 
-            GetConnector(Location_Id         LocationId,
-                         EVSE_UId            EVSEUId,
-                         Connector_Id        ConnectorId,
+            GetConnector(Location_Id        LocationId,
+                         EVSE_UId           EVSEUId,
+                         Connector_Id       ConnectorId,
 
-                         Request_Id?         RequestId           = null,
-                         Correlation_Id?     CorrelationId       = null,
-                         Version_Id?         VersionId           = null,
+                         Request_Id?        RequestId           = null,
+                         Correlation_Id?    CorrelationId       = null,
+                         Version_Id?        VersionId           = null,
 
-                         EventTracking_Id?   EventTrackingId     = null,
-                         TimeSpan?           RequestTimeout      = null,
-                         CancellationToken   CancellationToken   = default)
+                         DateTimeOffset?    RequestTimestamp    = null,
+                         EventTracking_Id?  EventTrackingId     = null,
+                         TimeSpan?          RequestTimeout      = null,
+                         CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetConnector.IncRequests_OK();
 
@@ -2024,31 +1977,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnGetConnectorRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetConnectorRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetConnectorRequest is not null)
-                    await Task.WhenAll(OnGetConnectorRequest.GetInvocationList().
-                                       Cast<OnGetConnectorRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          EVSEUId,
+                          ConnectorId,
 
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     ConnectorId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetConnectorRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2116,36 +2061,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnGetConnectorResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetConnectorResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetConnectorResponse is not null)
-                    await Task.WhenAll(OnGetConnectorResponse.GetInvocationList().
-                                       Cast<OnGetConnectorResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          EVSEUId,
+                          ConnectorId,
 
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     ConnectorId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetConnectorResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -2167,16 +2105,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional connector to cancel this request.</param>
         public async Task<OCPIResponse<Connector>>
 
-            PutConnector(Connector           Connector,
-                         EMSP_Id?            EMSPId              = null,
+            PutConnector(Connector          Connector,
 
-                         Request_Id?         RequestId           = null,
-                         Correlation_Id?     CorrelationId       = null,
-                         Version_Id?         VersionId           = null,
+                         Request_Id?        RequestId           = null,
+                         Correlation_Id?    CorrelationId       = null,
+                         Version_Id?        VersionId           = null,
 
-                         EventTracking_Id?   EventTrackingId     = null,
-                         TimeSpan?           RequestTimeout      = null,
-                         CancellationToken   CancellationToken   = default)
+                         DateTimeOffset?    RequestTimestamp    = null,
+                         EventTracking_Id?  EventTrackingId     = null,
+                         TimeSpan?          RequestTimeout      = null,
+                         CancellationToken  CancellationToken   = default)
 
         {
 
@@ -2192,11 +2130,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.PutConnector.IncRequests_OK();
 
@@ -2206,29 +2148,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPutConnectorRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPutConnectorRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutConnectorRequest is not null)
-                    await Task.WhenAll(OnPutConnectorRequest.GetInvocationList().
-                                       Cast<OnPutConnectorRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Connector,
 
-                                                     Connector,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutConnectorRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2253,7 +2187,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                                                     Connector.ParentEVSE.               UId.ToString() +
                                                                                                     Connector.                          Id. ToString(),
                                                  Content:               Connector.ToJSON(
-                                                                            EMSPId,
+                                                                            RemoteEMSPId,
                                                                             CustomConnectorSerializer
                                                                         ).ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
@@ -2298,34 +2232,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPutConnectorResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPutConnectorResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutConnectorResponse is not null)
-                    await Task.WhenAll(OnPutConnectorResponse.GetInvocationList().
-                                       Cast<OnPutConnectorResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Connector,
 
-                                                     Connector,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutConnectorResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -2345,28 +2272,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional connector to cancel this request.</param>
         public async Task<OCPIResponse<Connector>>
 
-            PatchConnector(Location_Id         LocationId,
-                           EVSE_UId            EVSEUId,
-                           Connector_Id        ConnectorId,
-                           JObject             ConnectorPatch,
+            PatchConnector(Location_Id        LocationId,
+                           EVSE_UId           EVSEUId,
+                           Connector_Id       ConnectorId,
+                           JObject            ConnectorPatch,
 
-                           Request_Id?         RequestId           = null,
-                           Correlation_Id?     CorrelationId       = null,
-                           Version_Id?         VersionId           = null,
+                           Request_Id?        RequestId           = null,
+                           Correlation_Id?    CorrelationId       = null,
+                           Version_Id?        VersionId           = null,
 
-                           EventTracking_Id?   EventTrackingId     = null,
-                           TimeSpan?           RequestTimeout      = null,
-                           CancellationToken   CancellationToken   = default)
+                           DateTimeOffset?    RequestTimestamp    = null,
+                           EventTracking_Id?  EventTrackingId     = null,
+                           TimeSpan?          RequestTimeout      = null,
+                           CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.PatchConnector.IncRequests_OK();
 
@@ -2376,32 +2308,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPatchConnectorRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPatchConnectorRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchConnectorRequest is not null)
-                    await Task.WhenAll(OnPatchConnectorRequest.GetInvocationList().
-                                       Cast<OnPatchConnectorRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          EVSEUId,
+                          ConnectorId,
+                          ConnectorPatch,
 
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     ConnectorId,
-                                                     ConnectorPatch,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchConnectorRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2470,37 +2394,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPatchConnectorResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPatchConnectorResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchConnectorResponse is not null)
-                    await Task.WhenAll(OnPatchConnectorResponse.GetInvocationList().
-                                       Cast<OnPatchConnectorResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          LocationId,
+                          EVSEUId,
+                          ConnectorId,
+                          ConnectorPatch,
 
-                                                     LocationId,
-                                                     EVSEUId,
-                                                     ConnectorId,
-                                                     ConnectorPatch,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchConnectorResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -2521,27 +2438,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional tariff to cancel this request.</param>
         public async Task<OCPIResponse<Tariff>>
 
-            GetTariff(CountryCode         CountryCode,
-                      Party_Id            PartyId,
-                      Tariff_Id           TariffId,
+            GetTariff(CountryCode        CountryCode,
+                      Party_Id           PartyId,
+                      Tariff_Id          TariffId,
 
-                      Request_Id?         RequestId           = null,
-                      Correlation_Id?     CorrelationId       = null,
-                      Version_Id?         VersionId           = null,
+                      Request_Id?        RequestId           = null,
+                      Correlation_Id?    CorrelationId       = null,
+                      Version_Id?        VersionId           = null,
 
-                      EventTracking_Id?   EventTrackingId     = null,
-                      TimeSpan?           RequestTimeout      = null,
-                      CancellationToken   CancellationToken   = default)
+                      DateTimeOffset?    RequestTimestamp    = null,
+                      EventTracking_Id?  EventTrackingId     = null,
+                      TimeSpan?          RequestTimeout      = null,
+                      CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetTariff.IncRequests_OK();
 
@@ -2551,31 +2473,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnGetTariffRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetTariffRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetTariffRequest is not null)
-                    await Task.WhenAll(OnGetTariffRequest.GetInvocationList().
-                                       Cast<OnGetTariffRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          TariffId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     TariffId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetTariffRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2643,36 +2557,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnGetTariffResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetTariffResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetTariffResponse is not null)
-                    await Task.WhenAll(OnGetTariffResponse.GetInvocationList().
-                                       Cast<OnGetTariffResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          TariffId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     TariffId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetTariffResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -2694,25 +2601,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional tariff to cancel this request.</param>
         public async Task<OCPIResponse<Tariff>>
 
-            PutTariff(Tariff              Tariff,
+            PutTariff(Tariff             Tariff,
 
-                      Request_Id?         RequestId           = null,
-                      Correlation_Id?     CorrelationId       = null,
-                      Version_Id?         VersionId           = null,
+                      Request_Id?        RequestId           = null,
+                      Correlation_Id?    CorrelationId       = null,
+                      Version_Id?        VersionId           = null,
 
-                      EventTracking_Id?   EventTrackingId     = null,
-                      TimeSpan?           RequestTimeout      = null,
-                      CancellationToken   CancellationToken   = default)
+                      DateTimeOffset?    RequestTimestamp    = null,
+                      EventTracking_Id?  EventTrackingId     = null,
+                      TimeSpan?          RequestTimeout      = null,
+                      CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.PutTariff.IncRequests_OK();
 
@@ -2722,29 +2634,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPutTariffRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPutTariffRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutTariffRequest is not null)
-                    await Task.WhenAll(OnPutTariffRequest.GetInvocationList().
-                                       Cast<OnPutTariffRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Tariff,
 
-                                                     Tariff,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutTariffRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2811,34 +2715,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPutTariffResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPutTariffResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutTariffResponse is not null)
-                    await Task.WhenAll(OnPutTariffResponse.GetInvocationList().
-                                       Cast<OnPutTariffResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Tariff,
 
-                                                     Tariff,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutTariffResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -2858,18 +2755,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional tariff to cancel this request.</param>
         public async Task<OCPIResponse<Tariff>>
 
-            PatchTariff(CountryCode         CountryCode,
-                        Party_Id            PartyId,
-                        Tariff_Id           TariffId,
-                        JObject             TariffPatch,
+            PatchTariff(CountryCode        CountryCode,
+                        Party_Id           PartyId,
+                        Tariff_Id          TariffId,
+                        JObject            TariffPatch,
 
-                        Request_Id?         RequestId           = null,
-                        Correlation_Id?     CorrelationId       = null,
-                        Version_Id?         VersionId           = null,
+                        Request_Id?        RequestId           = null,
+                        Correlation_Id?    CorrelationId       = null,
+                        Version_Id?        VersionId           = null,
 
-                        EventTracking_Id?   EventTrackingId     = null,
-                        TimeSpan?           RequestTimeout      = null,
-                        CancellationToken   CancellationToken   = default)
+                        DateTimeOffset?    RequestTimestamp    = null,
+                        EventTracking_Id?  EventTrackingId     = null,
+                        TimeSpan?          RequestTimeout      = null,
+                        CancellationToken  CancellationToken   = default)
 
         {
 
@@ -2882,11 +2780,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.PatchTariff.IncRequests_OK();
 
@@ -2896,32 +2798,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPatchTariffRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPatchTariffRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchTariffRequest is not null)
-                    await Task.WhenAll(OnPatchTariffRequest.GetInvocationList().
-                                       Cast<OnPatchTariffRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          TariffId,
+                          TariffPatch,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     TariffId,
-                                                     TariffPatch,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchTariffRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -2990,37 +2884,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPatchTariffResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPatchTariffResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchTariffResponse is not null)
-                    await Task.WhenAll(OnPatchTariffResponse.GetInvocationList().
-                                       Cast<OnPatchTariffResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          TariffId,
+                          TariffPatch,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     TariffId,
-                                                     TariffPatch,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchTariffResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -3040,27 +2927,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional tariff to cancel this request.</param>
         public async Task<OCPIResponse<Tariff>>
 
-            DeleteTariff(CountryCode         CountryCode,
-                         Party_Id            PartyId,
-                         Tariff_Id           TariffId,
+            DeleteTariff(CountryCode        CountryCode,
+                         Party_Id           PartyId,
+                         Tariff_Id          TariffId,
 
-                         Request_Id?         RequestId           = null,
-                         Correlation_Id?     CorrelationId       = null,
-                         Version_Id?         VersionId           = null,
+                         Request_Id?        RequestId           = null,
+                         Correlation_Id?    CorrelationId       = null,
+                         Version_Id?        VersionId           = null,
 
-                         EventTracking_Id?   EventTrackingId     = null,
-                         TimeSpan?           RequestTimeout      = null,
-                         CancellationToken   CancellationToken   = default)
+                         DateTimeOffset?    RequestTimestamp    = null,
+                         EventTracking_Id?  EventTrackingId     = null,
+                         TimeSpan?          RequestTimeout      = null,
+                         CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.DeleteTariff.IncRequests_OK();
 
@@ -3070,31 +2962,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnDeleteTariffRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnDeleteTariffRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnDeleteTariffRequest is not null)
-                    await Task.WhenAll(OnDeleteTariffRequest.GetInvocationList().
-                                       Cast<OnDeleteTariffRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          TariffId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     TariffId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnDeleteTariffRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -3162,36 +3046,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnDeleteTariffResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnDeleteTariffResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnDeleteTariffResponse is not null)
-                    await Task.WhenAll(OnDeleteTariffResponse.GetInvocationList().
-                                       Cast<OnDeleteTariffResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          TariffId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     TariffId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnDeleteTariffResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -3212,27 +3089,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional session to cancel this request.</param>
         public async Task<OCPIResponse<Session>>
 
-            GetSession(CountryCode         CountryCode,
-                       Party_Id            PartyId,
-                       Session_Id          SessionId,
+            GetSession(CountryCode        CountryCode,
+                       Party_Id           PartyId,
+                       Session_Id         SessionId,
 
-                       Request_Id?         RequestId           = null,
-                       Correlation_Id?     CorrelationId       = null,
-                       Version_Id?         VersionId           = null,
+                       Request_Id?        RequestId           = null,
+                       Correlation_Id?    CorrelationId       = null,
+                       Version_Id?        VersionId           = null,
 
-                       EventTracking_Id?   EventTrackingId     = null,
-                       TimeSpan?           RequestTimeout      = null,
-                       CancellationToken   CancellationToken   = default)
+                       DateTimeOffset?    RequestTimestamp    = null,
+                       EventTracking_Id?  EventTrackingId     = null,
+                       TimeSpan?          RequestTimeout      = null,
+                       CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetSession.IncRequests_OK();
 
@@ -3242,31 +3124,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnGetSessionRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetSessionRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetSessionRequest is not null)
-                    await Task.WhenAll(OnGetSessionRequest.GetInvocationList().
-                                       Cast<OnGetSessionRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          SessionId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     SessionId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetSessionRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -3334,36 +3208,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnGetSessionResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetSessionResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetSessionResponse is not null)
-                    await Task.WhenAll(OnGetSessionResponse.GetInvocationList().
-                                       Cast<OnGetSessionResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          SessionId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     SessionId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetSessionResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -3385,25 +3252,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional session to cancel this request.</param>
         public async Task<OCPIResponse<Session>>
 
-            PutSession(Session             Session,
+            PutSession(Session            Session,
 
-                       Request_Id?         RequestId           = null,
-                       Correlation_Id?     CorrelationId       = null,
-                       Version_Id?         VersionId           = null,
+                       Request_Id?        RequestId           = null,
+                       Correlation_Id?    CorrelationId       = null,
+                       Version_Id?        VersionId           = null,
 
-                       EventTracking_Id?   EventTrackingId     = null,
-                       TimeSpan?           RequestTimeout      = null,
-                       CancellationToken   CancellationToken   = default)
+                       DateTimeOffset?    RequestTimestamp    = null,
+                       EventTracking_Id?  EventTrackingId     = null,
+                       TimeSpan?          RequestTimeout      = null,
+                       CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.PutSession.IncRequests_OK();
 
@@ -3413,29 +3285,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPutSessionRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPutSessionRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPutSessionRequest is not null)
-                    await Task.WhenAll(OnPutSessionRequest.GetInvocationList().
-                                       Cast<OnPutSessionRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Session,
 
-                                                     Session,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutSessionRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -3549,18 +3413,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional session to cancel this request.</param>
         public async Task<OCPIResponse<Session>>
 
-            PatchSession(CountryCode         CountryCode,
-                         Party_Id            PartyId,
-                         Session_Id          SessionId,
-                         JObject             SessionPatch,
+            PatchSession(CountryCode        CountryCode,
+                         Party_Id           PartyId,
+                         Session_Id         SessionId,
+                         JObject            SessionPatch,
 
-                         Request_Id?         RequestId           = null,
-                         Correlation_Id?     CorrelationId       = null,
-                         Version_Id?         VersionId           = null,
+                         Request_Id?        RequestId           = null,
+                         Correlation_Id?    CorrelationId       = null,
+                         Version_Id?        VersionId           = null,
 
-                         EventTracking_Id?   EventTrackingId     = null,
-                         TimeSpan?           RequestTimeout      = null,
-                         CancellationToken   CancellationToken   = default)
+                         DateTimeOffset?    RequestTimestamp    = null,
+                         EventTracking_Id?  EventTrackingId     = null,
+                         TimeSpan?          RequestTimeout      = null,
+                         CancellationToken  CancellationToken   = default)
 
         {
 
@@ -3573,11 +3438,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.PatchSession.IncRequests_OK();
 
@@ -3587,32 +3456,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPatchSessionRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPatchSessionRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchSessionRequest is not null)
-                    await Task.WhenAll(OnPatchSessionRequest.GetInvocationList().
-                                       Cast<OnPatchSessionRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          SessionId,
+                          SessionPatch,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     SessionId,
-                                                     SessionPatch,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchSessionRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -3681,37 +3542,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPatchSessionResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPatchSessionResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPatchSessionResponse is not null)
-                    await Task.WhenAll(OnPatchSessionResponse.GetInvocationList().
-                                       Cast<OnPatchSessionResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          SessionId,
+                          SessionPatch,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     SessionId,
-                                                     SessionPatch,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPatchSessionResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -3731,27 +3585,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional session to cancel this request.</param>
         public async Task<OCPIResponse<Session>>
 
-            DeleteSession(CountryCode         CountryCode,
-                          Party_Id            PartyId,
-                          Session_Id          SessionId,
+            DeleteSession(CountryCode        CountryCode,
+                          Party_Id           PartyId,
+                          Session_Id         SessionId,
 
-                          Request_Id?         RequestId           = null,
-                          Correlation_Id?     CorrelationId       = null,
-                          Version_Id?         VersionId           = null,
+                          Request_Id?        RequestId           = null,
+                          Correlation_Id?    CorrelationId       = null,
+                          Version_Id?        VersionId           = null,
 
-                          EventTracking_Id?   EventTrackingId     = null,
-                          TimeSpan?           RequestTimeout      = null,
-                          CancellationToken   CancellationToken   = default)
+                          DateTimeOffset?    RequestTimestamp    = null,
+                          EventTracking_Id?  EventTrackingId     = null,
+                          TimeSpan?          RequestTimeout      = null,
+                          CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.DeleteSession.IncRequests_OK();
 
@@ -3761,31 +3620,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnDeleteSessionRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnDeleteSessionRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnDeleteSessionRequest is not null)
-                    await Task.WhenAll(OnDeleteSessionRequest.GetInvocationList().
-                                       Cast<OnDeleteSessionRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          SessionId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     SessionId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnDeleteSessionRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -3903,26 +3754,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional charge detail record to cancel this request.</param>
         public async Task<OCPIResponse>
 
-            PostCDR(CDR                 CDR,
-                    EMSP_Id?            EMSPId              = null,
+            PostCDR(CDR                CDR,
 
-                    Request_Id?         RequestId           = null,
-                    Correlation_Id?     CorrelationId       = null,
-                    Version_Id?         VersionId           = null,
+                    Request_Id?        RequestId           = null,
+                    Correlation_Id?    CorrelationId       = null,
+                    Version_Id?        VersionId           = null,
 
-                    EventTracking_Id?   EventTrackingId     = null,
-                    TimeSpan?           RequestTimeout      = null,
-                    CancellationToken   CancellationToken   = default)
+                    DateTimeOffset?    RequestTimestamp    = null,
+                    EventTracking_Id?  EventTrackingId     = null,
+                    TimeSpan?          RequestTimeout      = null,
+                    CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.PostCDR.IncRequests_OK();
 
@@ -3932,29 +3787,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPostCDRRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPostCDRRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPostCDRRequest is not null)
-                    await Task.WhenAll(OnPostCDRRequest.GetInvocationList().
-                                       Cast<OnPostCDRRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CDR,
 
-                                                     CDR,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPostCDRRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -3974,53 +3821,60 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await httpClient.POST(
-                                                 Path:                  httpClient.RemoteURL.Path,
-                                                 Content:               CDR.ToJSON(
-                                                                            false,
-                                                                            false,
-                                                                            false,
-                                                                            null,
-                                                                            CustomCDRSerializer,
-                                                                            CustomLocationSerializer,
-                                                                            CustomAdditionalGeoLocationSerializer,
-                                                                            CustomEVSESerializer,
-                                                                            CustomStatusScheduleSerializer,
-                                                                            CustomConnectorSerializer,
-                                                                            CustomLocationEnergyMeterSerializer,
-                                                                            CustomEVSEEnergyMeterSerializer,
-                                                                            CustomTransparencySoftwareStatusSerializer,
-                                                                            CustomTransparencySoftwareSerializer,
-                                                                            CustomDisplayTextSerializer,
-                                                                            CustomBusinessDetailsSerializer,
-                                                                            CustomHoursSerializer,
-                                                                            CustomImageSerializer,
-                                                                            CustomEnergyMixSerializer,
-                                                                            CustomEnergySourceSerializer,
-                                                                            CustomEnvironmentalImpactSerializer,
-                                                                            CustomTariffSerializer,
-                                                                            CustomTariffElementSerializer,
-                                                                            CustomPriceComponentSerializer,
-                                                                            CustomTariffRestrictionsSerializer,
-                                                                            CustomChargingPeriodSerializer,
-                                                                            CustomCDRDimensionSerializer,
-                                                                            CustomCDRCostDetailsSerializer,
-                                                                            CustomSignedDataSerializer,
-                                                                            CustomSignedValueSerializer
-                                                                        ).ToUTF8Bytes(JSONFormatting),
-                                                 Authentication:        TokenAuth,
-                                                 RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
-                                                                        },
-                                                 RequestLogDelegate:    OnPostCDRHTTPRequest,
-                                                 ResponseLogDelegate:   OnPostCDRHTTPResponse,
-                                                 EventTrackingId:       eventTrackingId,
-                                                 //NumberOfRetry:         transmissionRetry,
-                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
-                                                 CancellationToken:     CancellationToken).
+                    // The EMSP Id of the CDR might be different from the remote party identification,
+                    // e.g. when the remote party is a hub!
+                    var realEMSPId    = EMSP_Id.Parse(
+                                            CDR.CountryCode,
+                                            CDR.PartyId
+                                        );
 
-                                             ConfigureAwait(false);
+                    var httpResponse  = await httpClient.POST(
+                                                  Path:                  httpClient.RemoteURL.Path,
+                                                  Content:               CDR.ToJSON(
+                                                                             false,
+                                                                             false,
+                                                                             false,
+                                                                             null,
+                                                                             CustomCDRSerializer,
+                                                                             CustomLocationSerializer,
+                                                                             CustomAdditionalGeoLocationSerializer,
+                                                                             CustomEVSESerializer,
+                                                                             CustomStatusScheduleSerializer,
+                                                                             CustomConnectorSerializer,
+                                                                             CustomLocationEnergyMeterSerializer,
+                                                                             CustomEVSEEnergyMeterSerializer,
+                                                                             CustomTransparencySoftwareStatusSerializer,
+                                                                             CustomTransparencySoftwareSerializer,
+                                                                             CustomDisplayTextSerializer,
+                                                                             CustomBusinessDetailsSerializer,
+                                                                             CustomHoursSerializer,
+                                                                             CustomImageSerializer,
+                                                                             CustomEnergyMixSerializer,
+                                                                             CustomEnergySourceSerializer,
+                                                                             CustomEnvironmentalImpactSerializer,
+                                                                             CustomTariffSerializer,
+                                                                             CustomTariffElementSerializer,
+                                                                             CustomPriceComponentSerializer,
+                                                                             CustomTariffRestrictionsSerializer,
+                                                                             CustomChargingPeriodSerializer,
+                                                                             CustomCDRDimensionSerializer,
+                                                                             CustomCDRCostDetailsSerializer,
+                                                                             CustomSignedDataSerializer,
+                                                                             CustomSignedValueSerializer
+                                                                         ).ToUTF8Bytes(JSONFormatting),
+                                                  Authentication:        TokenAuth,
+                                                  RequestBuilder:        requestBuilder => {
+                                                                             requestBuilder.Set("X-Request-ID",     requestId);
+                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                         },
+                                                  RequestLogDelegate:    OnPostCDRHTTPRequest,
+                                                  ResponseLogDelegate:   OnPostCDRHTTPResponse,
+                                                  EventTrackingId:       eventTrackingId,
+                                                  //NumberOfRetry:         transmissionRetry,
+                                                  RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                  CancellationToken:     CancellationToken).
+
+                                              ConfigureAwait(false);
 
                     #endregion
 
@@ -4051,34 +3905,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPostCDRResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPostCDRResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPostCDRResponse is not null)
-                    await Task.WhenAll(OnPostCDRResponse.GetInvocationList().
-                                       Cast<OnPostCDRResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CDR,
 
-                                                     CDR,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPostCDRResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -4098,25 +3945,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional charge detail record to cancel this request.</param>
         public async Task<OCPIResponse<CDR>>
 
-            GetCDR(CDR_Id              CDRId,
+            GetCDR(CDR_Id             CDRId,
 
-                   Request_Id?         RequestId           = null,
-                   Correlation_Id?     CorrelationId       = null,
-                   Version_Id?         VersionId           = null,
+                   Request_Id?        RequestId           = null,
+                   Correlation_Id?    CorrelationId       = null,
+                   Version_Id?        VersionId           = null,
 
-                   EventTracking_Id?   EventTrackingId     = null,
-                   TimeSpan?           RequestTimeout      = null,
-                   CancellationToken   CancellationToken   = default)
+                   DateTimeOffset?    RequestTimestamp    = null,
+                   EventTracking_Id?  EventTrackingId     = null,
+                   TimeSpan?          RequestTimeout      = null,
+                   CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetCDR.IncRequests_OK();
 
@@ -4126,29 +3978,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnGetCDRRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetCDRRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetCDRRequest is not null)
-                    await Task.WhenAll(OnGetCDRRequest.GetInvocationList().
-                                       Cast<OnGetCDRRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CDRId,
 
-                                                     CDRId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetCDRRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -4214,34 +4058,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnGetCDRResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetCDRResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetCDRResponse is not null)
-                    await Task.WhenAll(OnGetCDRResponse.GetInvocationList().
-                                       Cast<OnGetCDRResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CDRId,
 
-                                                     CDRId,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetCDRResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -4267,26 +4104,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Token>>>
 
-            GetTokens(UInt64?             Offset              = null,
-                      UInt64?             Limit               = null,
+            GetTokens(UInt64?            Offset              = null,
+                      UInt64?            Limit               = null,
 
-                      Version_Id?         VersionId           = null,
-                      Request_Id?         RequestId           = null,
-                      Correlation_Id?     CorrelationId       = null,
+                      Version_Id?        VersionId           = null,
+                      Request_Id?        RequestId           = null,
+                      Correlation_Id?    CorrelationId       = null,
 
-                      EventTracking_Id?   EventTrackingId     = null,
-                      TimeSpan?           RequestTimeout      = null,
-                      CancellationToken   CancellationToken   = default)
+                      DateTimeOffset?    RequestTimestamp    = null,
+                      EventTracking_Id?  EventTrackingId     = null,
+                      TimeSpan?          RequestTimeout      = null,
+                      CancellationToken  CancellationToken   = default)
 
         {
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.GetTokens.IncRequests_OK();
 
@@ -4296,30 +4138,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnGetTokensRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnGetTokensRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetTokensRequest is not null)
-                    await Task.WhenAll(OnGetTokensRequest.GetInvocationList().
-                                       Cast<OnGetTokensRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Offset,
+                          Limit,
 
-                                                     Offset,
-                                                     Limit,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetTokensRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -4334,20 +4168,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                            CancellationToken
                                        );
 
-                var offsetLimit    = "";
-
-                if (Offset.HasValue)
-                    offsetLimit += "&offset=" + Offset.Value;
-
-                if (Limit.HasValue)
-                    offsetLimit += "&limit="  + Limit. Value;
-
-                if (offsetLimit.Length > 0)
-                    offsetLimit = String.Concat("?", offsetLimit.AsSpan(1));
-
-
                 if (httpClient is not null)
                 {
+
+                    var offsetLimit    = "";
+
+                    if (Offset.HasValue)
+                        offsetLimit += "&offset=" + Offset.Value;
+
+                    if (Limit.HasValue)
+                        offsetLimit += "&limit="  + Limit. Value;
+
+                    if (offsetLimit.Length > 0)
+                        offsetLimit = String.Concat("?", offsetLimit.AsSpan(1));
+
 
                     #region Upstream HTTP request...
 
@@ -4397,35 +4231,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnGetTokensResponse event
 
+            stopwatch.Stop();
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnGetTokensResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnGetTokensResponse is not null)
-                    await Task.WhenAll(OnGetTokensResponse.GetInvocationList().
-                                       Cast<OnGetTokensResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Offset,
+                          Limit,
 
-                                                     Offset,
-                                                     Limit,
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnGetTokensResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 
@@ -4453,6 +4280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       Correlation_Id?     CorrelationId       = null,
                       Version_Id?         VersionId           = null,
 
+                      DateTimeOffset?     RequestTimestamp    = null,
                       EventTracking_Id?   EventTrackingId     = null,
                       TimeSpan?           RequestTimeout      = null,
                       CancellationToken   CancellationToken   = default)
@@ -4461,11 +4289,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Init
 
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
 
             Counters.PostToken.IncRequests_OK();
 
@@ -4475,31 +4307,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             #region Send OnPostTokenRequest event
 
-            try
-            {
+            await LogEvent(
+                      OnPostTokenRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                if (OnPostTokenRequest is not null)
-                    await Task.WhenAll(OnPostTokenRequest.GetInvocationList().
-                                       Cast<OnPostTokenRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          TokenId,
+                          TokenType,
+                          LocationReference,
 
-                                                     TokenId,
-                                                     TokenType,
-                                                     LocationReference,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPostTokenRequest));
-            }
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
 
             #endregion
 
@@ -4600,43 +4424,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             }
 
 
-            var endtime = Timestamp.Now;
-            var runtime = endtime - startTime;
-
-            if (response.Data is not null)
-                response.Data.Runtime = runtime;
-
-
             #region Send OnPostTokenResponse event
 
-            try
-            {
+            stopwatch.Stop();
+            var endtime = Timestamp.Now;
 
-                if (OnPostTokenResponse is not null)
-                    await Task.WhenAll(OnPostTokenResponse.GetInvocationList().
-                                       Cast<OnPostTokenResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+            response.Data?.Runtime = stopwatch.Elapsed;
 
-                                                     TokenId,
-                                                     TokenType,
-                                                     LocationReference,
+            await LogEvent(
+                      OnPostTokenResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
 
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
+                          TokenId,
+                          TokenType,
+                          LocationReference,
 
-                                                     response,
-                                                     runtime))).
-                                       ConfigureAwait(false);
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
 
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPostTokenResponse));
-            }
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
 
             #endregion
 

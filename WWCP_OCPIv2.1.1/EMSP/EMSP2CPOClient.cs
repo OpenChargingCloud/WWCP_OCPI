@@ -202,12 +202,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
         #region Properties
 
-        public EMSPAPI          EMSPAPI       { get; }
+        /// <summary>
+        /// The CPO identification of the remote party.
+        /// </summary>
+        public CPO_Id           RemoteCPOId    { get; }
+
+        /// <summary>
+        /// Our EMSP API.
+        /// </summary>
+        public EMSPAPI          EMSPAPI        { get; }
 
         /// <summary>
         /// EMSP client event counters.
         /// </summary>
-        public new APICounters  Counters      { get; }
+        public new APICounters  Counters       { get; }
 
         /// <summary>
         /// The EMSP client (HTTP client) logger.
@@ -708,17 +716,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
         {
 
-            this.EMSPAPI     = EMSPAPI;
-            this.Counters    = new APICounters();
+            this.RemoteCPOId  = RemoteParty.Id.AsCPOId;
+            this.EMSPAPI      = EMSPAPI;
+            this.Counters     = new APICounters();
 
-            base.HTTPLogger  = this.DisableLogging == false
-                                   ? new Logger(
-                                         this,
-                                         LoggingPath,
-                                         LoggingContext ?? DefaultLoggingContext,
-                                         LogfileCreator
-                                     )
-                                   : null;
+            base.HTTPLogger   = this.DisableLogging == false
+                                    ? new Logger(
+                                          this,
+                                          LoggingPath,
+                                          LoggingContext ?? DefaultLoggingContext,
+                                          LogfileCreator
+                                      )
+                                    : null;
 
         }
 

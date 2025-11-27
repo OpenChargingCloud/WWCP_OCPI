@@ -80,6 +80,19 @@ namespace cloud.charging.open.protocols.OCPI
 
 
         /// <summary>
+        /// This remote party identification as a CPO identification.
+        /// </summary>
+        public CPO_Id AsCPOId
+            => CPO_Id.Parse($"{CountryCode}*{PartyId}");
+
+        /// <summary>
+        /// This remote party identification as a EMSP identification.
+        /// </summary>
+        public EMSP_Id AsEMSPId
+            => EMSP_Id.Parse($"{CountryCode}-{PartyId}");
+
+
+        /// <summary>
         /// Indicates whether this identification is null or empty.
         /// </summary>
         public Boolean      IsNullOrEmpty
@@ -317,6 +330,9 @@ namespace cloud.charging.open.protocols.OCPI
                );
 
         #endregion
+
+
+        
 
 
         #region Operator overloading
