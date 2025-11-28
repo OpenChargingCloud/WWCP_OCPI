@@ -434,6 +434,17 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                        PartyId:     Party_Id.   Parse("GEF")
                                    );
 
+            //cpo1CPOAPI_v2_2_1.HTTPBaseAPI.HTTPBaseAPI.HTTPServer.ClientCertificateValidator = (Sender,
+            //                                                                                   Certificate,
+            //                                                                                   CertificateChain,
+            //                                                                                   TLSServer,
+            //                                                                                   PolicyErrors) => {
+
+            //    return (true, []);
+
+            //};
+
+
             Assert.That(graphDefinedCPO1, Is.Not.Null);
 
             if (graphDefinedCPO1 is not null)

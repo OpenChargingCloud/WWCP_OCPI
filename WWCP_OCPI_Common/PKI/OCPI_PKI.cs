@@ -985,21 +985,221 @@ namespace cloud.charging.open.protocols.OCPI
 
 
 
-        public X509Certificate? SignServerCertificate(Pkcs10CertificationRequest  CSR,
-                                                      X509Name                    Issuer,
-                                                      AsymmetricKeyParameter      IssuerPrivateKey)
+        public X509Certificate? SignServerCertificate(Pkcs10CertificationRequest  csr,
+                                                      X509Name                    issuer,
+                                                      AsymmetricKeyParameter      issuerPrivateKey)
         {
 
-            return null;
+            try
+            {
+
+                if (!csr.Verify())
+                    throw new InvalidOperationException("CSR signature verification failed!");
+
+                var csrInfo = csr.GetCertificationRequestInfo();
+                var subject = csrInfo.Subject;
+                var clientPublicKey = csr.GetPublicKey();
+
+                // === CORRECT SAN EXTRACTION (BouncyCastle 2.2+) ===
+                //GeneralNames? subjectAltNames = null;
+
+                //foreach (AttributePkcs attr in csrInfo.Attributes)
+                //{
+                //    if (attr.AttrType.Equals(PkcsObjectIdentifiers.Pkcs9AtExtensionRequest))
+                //    {
+                //        var set = (Asn1Set)attr.AttrValues[0];
+                //        var extensions = Extensions.GetInstance(set);
+
+                //        if (extensions.GetExtensionOids().Contains(X509Extensions.SubjectAlternativeName))
+                //        {
+                //            subjectAltNames = GeneralNames.FromExtensions(
+                //                extensions, X509Extensions.SubjectAlternativeName);
+                //        }
+                //        break;
+                //    }
+                //}
+
+                //// Build SAN list
+                //var sanList = new List<GeneralName>();
+                //if (subjectAltNames != null)
+                //{
+                //    foreach (var name in subjectAltNames.GetNames())
+                //        sanList.Add(name);
+                //}
+
+                // Fallback: use CN as DNS name (legacy)
+                //if (sanList.Count == 0)
+                //{
+                //    var cn = subject.GetValueList(X509Name.CN);
+                //    if (cn.Count > 0)
+                //    {
+                //        sanList.Add(new GeneralName(GeneralName.DnsName, cn[0].ToString()));
+                //        Console.WriteLine("Warning: No SAN in CSR, using CN as DNS name (deprecated)");
+                //    }
+                //}
+
+                //if (sanList.Count == 0)
+                //    throw new InvalidOperationException("No DNS name found in CSR (SAN or CN required)");
+
+                // === Certificate generation ===
+                var serialNumber = new BigInteger(64, new SecureRandom()); // Better randomness
+
+                var certGen = new X509V3CertificateGenerator();
+                certGen.SetSerialNumber(serialNumber);
+                certGen.SetIssuerDN(issuer);
+                certGen.SetSubjectDN(subject);
+                certGen.SetNotBefore(DateTime.UtcNow.AddHours(-2));
+                certGen.SetNotAfter(DateTime.UtcNow.AddYears(1));
+                certGen.SetPublicKey(clientPublicKey);
+
+                string sigAlg = issuerPrivateKey is RsaKeyParameters
+                    ? "SHA384withRSA"
+                    : issuerPrivateKey is ECPrivateKeyParameters
+                        ? "SHA384withECDSA"
+                        : throw new NotSupportedException($"Key type not supported: {issuerPrivateKey.GetType().Name}");
+
+                var sigFactory = new Asn1SignatureFactory(sigAlg, issuerPrivateKey);
+
+                // Extensions
+                certGen.AddExtension(X509Extensions.BasicConstraints, true, new BasicConstraints(false));
+                certGen.AddExtension(X509Extensions.KeyUsage, true,
+                    new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyEncipherment));
+                certGen.AddExtension(X509Extensions.ExtendedKeyUsage, false,
+                    new ExtendedKeyUsage(KeyPurposeID.IdKPServerAuth));
+                //certGen.AddExtension(X509Extensions.SubjectAlternativeName, false,
+                //    new GeneralNames(sanList.ToArray()));
+                certGen.AddExtension(X509Extensions.SubjectKeyIdentifier, false,
+                    new SubjectKeyIdentifierStructure(clientPublicKey));
+
+                //// Authority Key Identifier
+                //AuthorityKeyIdentifier aki = issuerCertificate != null
+                //    ? new AuthorityKeyIdentifierStructure(issuerCertificate)
+                //    : new AuthorityKeyIdentifierStructure(DotNetUtilities.GetKeyPair(issuerPrivateKey).Public);
+
+                //certGen.AddExtension(X509Extensions.AuthorityKeyIdentifier, false, aki);
+
+                var certificate = certGen.Generate(sigFactory);
+                //certificate.Verify(issuerPrivateKey.Public);
+
+                return certificate;
+
+
+            }
+            catch (Exception ex)
+            {
+                // Log exception as needed
+                Console.Error.WriteLine($"Failed to sign certificate: {ex.Message}");
+                return null;
+            }
 
         }
 
-        public X509Certificate? SignClientCertificate(Pkcs10CertificationRequest  CSR,
-                                                      X509Name                    Issuer,
-                                                      AsymmetricKeyParameter      IssuerPrivateKey)
+        public X509Certificate? SignClientCertificate(Pkcs10CertificationRequest  csr,
+                                                      X509Name                    issuer,
+                                                      AsymmetricKeyParameter      issuerPrivateKey)
         {
 
-            return null;
+            try
+            {
+
+                if (!csr.Verify())
+                    throw new InvalidOperationException("CSR signature verification failed!");
+
+                // Extract subject and public key from CSR
+                X509Name subject = csr.GetCertificationRequestInfo().Subject;
+                AsymmetricKeyParameter clientPublicKey = csr.GetPublicKey();
+
+                // Generate a serial number (must be unique per CA)
+                BigInteger serialNumber = BigInteger.ValueOf(DateTime.UtcNow.Ticks + new Random().Next(1, 10000));
+
+                // Create certificate generator
+                X509V3CertificateGenerator certGen = new X509V3CertificateGenerator();
+
+                // Set issuer and subject
+                certGen.SetIssuerDN(issuer);
+                certGen.SetSubjectDN(subject);
+
+                // Set validity period (e.g., 1 year)
+                DateTime notBefore = DateTime.UtcNow.AddDays(-1); // Slight backdating to avoid clock skew issues
+                DateTime notAfter = notBefore.AddYears(1);
+
+                certGen.SetNotBefore(notBefore);
+                certGen.SetNotAfter(notAfter);
+
+                // Set serial number and public key
+                certGen.SetSerialNumber(serialNumber);
+                certGen.SetPublicKey(clientPublicKey);
+
+                // Set signature algorithm (match issuer key type)
+                string signatureAlgorithm = "";
+
+                // Determine signature algorithm based on issuer key type
+                if (issuerPrivateKey is RsaKeyParameters)
+                {
+                    signatureAlgorithm = "SHA256withRSA";
+                }
+                else if (issuerPrivateKey is ECPrivateKeyParameters ecPrivate)
+                {
+                    signatureAlgorithm = "SHA256withECDSA";
+                }
+                else if (issuerPrivateKey is ECPublicKeyParameters ecPublic)
+                {
+                    throw new InvalidOperationException($"Expected private key for signing, but got public key: {issuerPrivateKey.GetType().Name}. Use the corresponding ECPrivateKeyParameters.");
+                }
+                else
+                {
+                    throw new NotSupportedException($"Unsupported private key type: {issuerPrivateKey.GetType().Name}");
+                }
+
+
+                var sigFactory = new Asn1SignatureFactory(signatureAlgorithm, issuerPrivateKey);
+
+                // Optional: Add basic extensions (recommended for client certs)
+
+                // Basic Constraints: not a CA
+                certGen.AddExtension(
+                    X509Extensions.BasicConstraints.Id,
+                    true,
+                    new BasicConstraints(false));
+
+                // Key Usage: Digital Signature + Key Encipherment (typical for client auth)
+                certGen.AddExtension(
+                    X509Extensions.KeyUsage.Id,
+                    true,
+                    new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyEncipherment | KeyUsage.NonRepudiation));
+
+                // Extended Key Usage: Client Authentication
+                certGen.AddExtension(
+                    X509Extensions.ExtendedKeyUsage.Id,
+                    false,
+                    new ExtendedKeyUsage(KeyPurposeID.id_kp_clientAuth));
+
+                // Subject Key Identifier (optional but good practice)
+                var skiGenerator = new SubjectKeyIdentifierStructure(clientPublicKey);
+                certGen.AddExtension(
+                    X509Extensions.SubjectKeyIdentifier.Id,
+                    false,
+                    skiGenerator);
+
+                // Authority Key Identifier (if you have issuer cert)
+                // You'd need issuer certificate to compute AKID properly
+                // Skipping here for simplicity — can be added if needed
+
+                // Generate the certificate using the signature factory
+                X509Certificate certificate = certGen.Generate(sigFactory);
+
+                // Optional: Verify the generated certificate
+                //certificate.Verify(issuerPrivateKey.Public); // This checks signature only
+
+                return certificate;
+
+            }
+            catch (Exception ex)
+            {
+                // Log exception as needed
+                Console.Error.WriteLine($"Failed to sign certificate: {ex.Message}");
+                return null;
+            }
 
         }
 

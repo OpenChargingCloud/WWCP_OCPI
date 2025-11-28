@@ -109,7 +109,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="PreferIPv4">Prefer IPv4 instead of IPv6.</param>
         /// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
         /// <param name="LocalCertificateSelector">A delegate to select a TLS client certificate.</param>
-        /// <param name="ClientCertificate">The TLS client certificate to use for HTTP authentication.</param>
+        /// <param name="ClientCertificates">An optional enumeration of TLS client certificates to use for HTTP authentication.</param>
         /// <param name="TLSProtocols">The TLS protocol to use.</param>
         /// <param name="ContentType">An optional HTTP content type.</param>
         /// <param name="Accept">The optional HTTP accept header.</param>

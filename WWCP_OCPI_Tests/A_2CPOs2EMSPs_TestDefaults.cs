@@ -498,8 +498,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       AsymmetricCipherKeyPair?                                       emsp2cpo1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       emsp2cpo2TLSClientKeyPair;
         protected       Pkcs10CertificationRequest?                                    emsp2TLSServerCSR;
-        protected       Pkcs10CertificationRequest?                                    emsp2emsp1TLSClientCSR;
-        protected       Pkcs10CertificationRequest?                                    emsp2emsp2TLSClientCSR;
+        protected       Pkcs10CertificationRequest?                                    emsp2cpo1TLSClientCSR;
+        protected       Pkcs10CertificationRequest?                                    emsp2cpo2TLSClientCSR;
         protected       X509Certificate2?                                              emsp2TLSServerCertificate;
         protected       X509Certificate2?                                              emsp2cpo1TLSClientCertificate;
         protected       X509Certificate2?                                              emsp2cpo2TLSClientCertificate;
@@ -647,7 +647,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                             )
                                           : null;
 
-                serverCACertificate2  = rootCACertificate?.ToDotNet2(rootCAKeyPair?.Private);
+                serverCACertificate2  = serverCACertificate?.ToDotNet2(serverCAKeyPair?.Private);
 
                 #endregion
 
@@ -673,7 +673,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                             )
                                           : null;
 
-                clientCACertificate2  = rootCACertificate?.ToDotNet2(rootCAKeyPair?.Private);
+                clientCACertificate2  = clientCACertificate?.ToDotNet2(clientCAKeyPair?.Private);
 
                 #endregion
 
@@ -984,9 +984,9 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 #region EMSP #2
 
-                emsp1TLSServerCSR      = emsp1TLSServerKeyPair is not null
+                emsp2TLSServerCSR      = emsp2TLSServerKeyPair is not null
                                                        ? PKI.GenerateServerCSR(
-                                                             PublicKey:            emsp1TLSServerKeyPair.Public,
+                                                             PublicKey:            emsp2TLSServerKeyPair.Public,
                                                              KeySerialNumber:      UUIDv7.Generate().ToString(),
                                                              PartyIds:             [ "DEGDF" ],
                                                              SubEMSPIds:           [ "DE*GDF" ],
@@ -1001,19 +1001,19 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                              Locality:             "Jena",
                                                              Country:              "DE",
                                                              Description:         $"Main EMSP #2 OCPI CSR..."
-                                                         ).ToCSR(emsp1TLSServerKeyPair)
+                                                         ).ToCSR(emsp2TLSServerKeyPair)
                                                        : null;
 
-                // Towards CPO #2 Client CSRs
-                emsp1cpo2TLSClientCSR  = emsp1cpo2TLSClientKeyPair is not null
+                // Towards CPO #1 Client CSRs
+                emsp2cpo1TLSClientCSR  = emsp2cpo1TLSClientKeyPair is not null
                                                         ? PKI.GenerateClientCSR(
-                                                              PublicKey:            emsp1cpo2TLSClientKeyPair.Public,
+                                                              PublicKey:            emsp2cpo1TLSClientKeyPair.Public,
                                                               KeySerialNumber:      UUIDv7.Generate().ToString(),
                                                               PartyIds:             [ "DEGEF" ],
                                                               SubCPOIds:            [ "DE*GEF" ],
                                                               NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
                                                               NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
-                                                              CommonName:          $"GraphDefined OCPI {OCPIv2_1_1.Version.String} EMSP #2 to CPO #2",
+                                                              CommonName:          $"GraphDefined OCPI {OCPIv2_1_1.Version.String} EMSP #2 to CPO #1",
                                                               Organization:         "GraphDefined GmbH",
                                                               OrganizationalUnit:   "EMSP Services",
                                                               EMailAddress:         "roaming-emsp@charging.cloud",
@@ -1021,14 +1021,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                               PostalCode:           "07749",
                                                               Locality:             "Jena",
                                                               Country:              "DE",
-                                                              Description:         $"Main EMSP #2 to CPO #2 OCPI {OCPIv2_1_1.Version.String} CSR..."
-                                                          ).ToCSR(emsp1cpo2TLSClientKeyPair)
+                                                              Description:         $"Main EMSP #2 to CPO #1 OCPI {OCPIv2_1_1.Version.String} CSR..."
+                                                          ).ToCSR(emsp2cpo1TLSClientKeyPair)
                                                         : null;
 
                 // Towards CPO #2 Client CSRs
-                emsp1cpo2TLSClientCSR  = emsp1cpo2TLSClientKeyPair is not null
+                emsp2cpo2TLSClientCSR  = emsp2cpo2TLSClientKeyPair is not null
                                                         ? PKI.GenerateClientCSR(
-                                                              PublicKey:            emsp1cpo2TLSClientKeyPair.Public,
+                                                              PublicKey:            emsp2cpo2TLSClientKeyPair.Public,
                                                               KeySerialNumber:      UUIDv7.Generate().ToString(),
                                                               PartyIds:             [ "DEGEF" ],
                                                               SubCPOIds:            [ "DE*GEF" ],
@@ -1043,7 +1043,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                               Locality:             "Jena",
                                                               Country:              "DE",
                                                               Description:         $"Main EMSP #2 to CPO #2 OCPI {OCPIv2_1_1.Version.String} CSR..."
-                                                          ).ToCSR(emsp1cpo2TLSClientKeyPair)
+                                                          ).ToCSR(emsp2cpo2TLSClientKeyPair)
                                                         : null;
 
                 #endregion
@@ -1183,38 +1183,38 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                     #region EMSP #2
 
-                    emsp1TLSServerCertificate      = emsp1TLSServerCSR              is not null &&
-                                                     emsp1TLSServerKeyPair?.Private is not null
+                    emsp2TLSServerCertificate      = emsp2TLSServerCSR              is not null &&
+                                                     emsp2TLSServerKeyPair?.Private is not null
 
                                                          ? PKI.SignServerCertificate(
-                                                               emsp1TLSServerCSR,
+                                                               emsp2TLSServerCSR,
                                                                serverCertificateIssuerName,
                                                                serverCAPrivateKey
-                                                           )?.ToDotNet2(emsp1TLSServerKeyPair.Private)
+                                                           )?.ToDotNet2(emsp2TLSServerKeyPair.Private)
 
                                                          : null;
 
                     // Towards EMSP #2 Client Certificates
-                    emsp1cpo2TLSClientCertificate  = emsp1cpo2TLSClientCSR              is not null &&
-                                                     emsp1cpo2TLSClientKeyPair?.Private is not null
+                    emsp2cpo1TLSClientCertificate  = emsp2cpo1TLSClientCSR              is not null &&
+                                                     emsp2cpo1TLSClientKeyPair?.Private is not null
 
                                                          ? PKI.SignClientCertificate(
-                                                               emsp1cpo2TLSClientCSR,
+                                                               emsp2cpo1TLSClientCSR,
                                                                clientCertificateIssuerName,
                                                                clientCAPrivateKey
-                                                           )?.ToDotNet2(emsp1cpo2TLSClientKeyPair.Private)
+                                                           )?.ToDotNet2(emsp2cpo1TLSClientKeyPair.Private)
 
                                                          : null;
 
                     // Towards EMSP #2 Client Certificates
-                    emsp1cpo2TLSClientCertificate  = emsp1cpo2TLSClientCSR              is not null &&
-                                                     emsp1cpo2TLSClientKeyPair?.Private is not null
+                    emsp2cpo2TLSClientCertificate  = emsp2cpo2TLSClientCSR              is not null &&
+                                                     emsp2cpo2TLSClientKeyPair?.Private is not null
 
                                                          ? PKI.SignClientCertificate(
-                                                               emsp1cpo2TLSClientCSR,
+                                                               emsp2cpo2TLSClientCSR,
                                                                clientCertificateIssuerName,
                                                                clientCAPrivateKey
-                                                           )?.ToDotNet2(emsp1cpo2TLSClientKeyPair.Private)
+                                                           )?.ToDotNet2(emsp2cpo2TLSClientKeyPair.Private)
 
                                                          : null;
 
@@ -1236,7 +1236,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                            DNSClient:                    DNSClient,
                                            ServerCertificateSelector:    cpo1TLSServerCertificate is not null
                                                                              ? (tcpServer, tcpClient) => {
-                                                                                   return cpo2TLSServerCertificate!;
+                                                                                   return cpo1TLSServerCertificate!;
                                                                                }
                                                                              : null,
                                            ClientCertificateValidator:   emsp1cpo1TLSClientCertificate is not null &&
@@ -3030,14 +3030,31 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                                     RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
                                                     RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                                                    RemoteVersionsURL:                 URL.Parse($"http{(cpo1HTTPServer.ServerCertificateSelector is not null ? "s" : "")}://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
                                                     RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
                                                     SelectedVersionId:                 OCPIv2_2_1.Version.Id,
                                                     RemoteAccessTokenBase64Encoding:   true,
                                                     RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                                                    ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
-                                                                                           ? null
+                                                    ClientCertificates:                emsp1cpo1TLSClientCertificate is not null
+                                                                                           ? [ emsp1cpo1TLSClientCertificate ]
+                                                                                           : null,
+                                                    RemoteCertificateValidator:        cpo1TLSServerCertificate is not null
+                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                 if (serverCertificate is null)
+                                                                                                     return (false, [ "The server certificate is null!" ]);
+
+                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                       serverCertificate,
+                                                                                                                       serverCACertificate2!,
+                                                                                                                       rootCACertificate2!
+                                                                                                                   );
+
+                                                                                                 return (chainReport.IsValid,
+                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                           }
                                                                                            : null,
 
                                                     Status:                            PartyStatus.ENABLED
@@ -3427,8 +3444,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                     RemoteAccessTokenBase64Encoding:   true,
                                                     RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                                                    ClientCertificates:                cpo1emsp1TLSClientKeyPair is not null
-                                                                                           ? null
+                                                    ClientCertificates:                cpo1emsp1TLSClientCertificate is not null
+                                                                                           ? [ cpo1emsp1TLSClientCertificate ]
                                                                                            : null,
 
                                                     Status:                            PartyStatus.ENABLED
