@@ -54,6 +54,36 @@ National NIS2 implementations (Germany: KRITIS-DA, Netherlands: NEN-7510 extensi
 Every couple of seconds all requests contain a fresh TOTP. This simplifies anomaly detection (invalid TOTPs, repeated attempts, replay patterns) and aligns with CRA/NIS2 expectations for continuous monitoring of security-relevant events.
 
 
+## HTTPS/TLS Client Certificates
+
+Advanced operators can enhance their security even further by using mutual authentication via HTTPS/TLS client certificates and client certficate chains. As this kind of security is below the HTTP layer, it can easily be mixed with the traditional Token-based authentication and TOTP-based 2nd-secret authentication.
+
+The current security model assumes that a single OCPI client uses **exactly one HTTPS/TLS client certificate** for all **OCPI module endpoints** belonging to the same party-to-party relationship. In practice this is a reasonable and operationally simple constraint: a single certificate (or certificate chain) cleanly represents the authenticated identity of the client system, and module-level certificate fragmentation would significantly complicate key-management, revocation logic, and interoperability testing. If you operate environments where **per-module client certificates** are technically or organizationally required — for example, strict separation of accounting vs. operational telemetry, delegated subcontractor modules, or multi-tenant backend architectures where only specific modules are exposed through isolated gateways — please open an ***Issue*** and describe the concrete motivation, trust boundaries, and required certificate-handling rules. This will allow us to evaluate whether module-granular certificate configuration is justified and how it could be standardised without degrading the simplicity of the current model.
+
+Nevertheless you can still implement stricter *"separation of concerns"* by deploying **dedicated OCPI clients** for specific responsibilities. For example, a backend may operate a standalone client instance for submitting *Charge Detail Records (CDRs)*, authenticated with its own **HTTPS/TLS CDR-SENDER client certificate**. The primary OCPI client would then use a different certificate that is *not* authorised to push CDRs. This pattern allows:
+
+* **Granular privilege separation** at the TLS layer, enforced before any OCPI logic runs.
+* **Independent revocation** of the CDR-SENDER certificate without impacting other modules.
+* **Clear audit trails**, as each functional role maps to a distinct cryptographic identity.
+* **Tight firewalling**, where only the CDR-SENDER client is permitted to access `CDRs module` endpoints.
+* **Delegation to third parties**, e.g., outsourced billing providers with their own certificate while operational modules remain in-house.
+
+In other words, while we do not define module-level certificate selection, you can achieve effective separation of duties by simply running multiple OCPI clients — each bound to its own TLS client certificate and authorised TLS trust profile — without modifying protocol semantics.
+
+
+## HTTPS/TLS Client Certificate Public Key Infrastructre (PKI)
+
+This implementation is agnostic to the origin of the HTTPS/TLS client certificates. As long as the server-side certificate validation logic can verify the presented chain, any trust model is technically acceptable: public Internet Root CAs, privately operated enterprise Root CAs, or even peer-to-peer self-signed certificates as commonly used in OCPI v3.0 *preview* and EEBus environments.
+
+However, for production-grade interoperability and lifecycle management, the preferred architecture is a shared PKI hierarchy with a dedicated RootCA and clearly separated ServerCA and ClientCA intermediates. This enables deterministic trust domain boundaries and structured certificate workflows. On top of that, certificates can embed operational metadata:
+
+- CPO/EMSP identifiers encoded as certificate attributes.
+- Module- or role-specific authorisations (RBAC) expressed as *Extended Key Usages*, when per certificate or expressed as certificate attributes, when specific for CPO/EMSP identifiers.
+- Environment namespaces (test, staging, production) for clean segregation.
+
+Such a structured PKI avoids the ambiguities and operational fragility of ad-hoc certificate setups. It provides predictable revocation behaviour, consistent issuance policies, and machine-verifiable authorisation logic — all of which are essential when mapping OCPI authentication to **EU CRA/NIS2-ready** security requirements.
+
+
 ## Open Data by Default
 
 This OCPI implementation includes an optional feature to enable anonymous, unauthenticated access to the VERSIONS, LOCATIONS, and TARIFFS endpoints via a simple WebAPI. By activating this feature, you can ensure compliance with regulatory requirements such as the *EU Alternative Fuels Infrastructure Regulation (AFIR)* and the *UK's Public Charge Point Regulations 2023*.
