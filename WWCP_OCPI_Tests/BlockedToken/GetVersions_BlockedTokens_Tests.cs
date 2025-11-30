@@ -94,7 +94,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // }
 
                 Assert.That(response,                                                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200)); //ToDo: Would be better to have a 401 here! But does the OCPI specification allow this?
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String); //ToDo: Would be better to have a 401 here! But does the OCPI specification allow this?
                 Assert.That(response.StatusCode,                                            Is.EqualTo(2000));
                 Assert.That(response.StatusMessage,                                         Is.EqualTo("Invalid or blocked access token!"));
                 Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True);
@@ -169,7 +169,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // }
 
                 Assert.That(response,                                                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200)); //ToDo: Would be better to have a 401 here! But does the OCPI specification allow this?
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String); //ToDo: Would be better to have a 401 here! But does the OCPI specification allow this?
                 Assert.That(response.StatusCode,                                            Is.EqualTo(2000));
                 Assert.That(response.StatusMessage,                                         Is.EqualTo("Invalid or blocked access token!"));
                 Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True);
@@ -245,7 +245,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // }
 
                 Assert.That(response,                                                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200)); //ToDo: Would be better to have a 401 here! But does the OCPI specification allow this?
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String); //ToDo: Would be better to have a 401 here! But does the OCPI specification allow this?
                 Assert.That(response.StatusCode,                                            Is.EqualTo(2000));
                 Assert.That(response.StatusMessage,                                         Is.EqualTo("Invalid or blocked access token!"));
                 Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True);
@@ -320,7 +320,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // }
 
                 Assert.That(response,                                                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200)); //ToDo: Would be better to have a 401 here! But does the OCPI specification allow this?
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String); //ToDo: Would be better to have a 401 here! But does the OCPI specification allow this?
                 Assert.That(response.StatusCode,                                            Is.EqualTo(2000));
                 Assert.That(response.StatusMessage,                                         Is.EqualTo("Invalid or blocked access token!"));
                 Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True);
@@ -396,7 +396,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // }
 
                 Assert.That(response,                                                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200)); //ToDo: Would be better to have a 401 here! But does the OCPI specification allow this?
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String); //ToDo: Would be better to have a 401 here! But does the OCPI specification allow this?
                 Assert.That(response.StatusCode,                                            Is.EqualTo(2000));
                 Assert.That(response.StatusMessage,                                         Is.EqualTo("Invalid or blocked access token!"));
                 Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True);
@@ -471,7 +471,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // }
 
                 Assert.That(response,                                                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200)); //ToDo: Would be better to have a 401 here! But does the OCPI specification allow this?
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String); //ToDo: Would be better to have a 401 here! But does the OCPI specification allow this?
                 Assert.That(response.StatusCode,                                            Is.EqualTo(2000));
                 Assert.That(response.StatusMessage,                                         Is.EqualTo("Invalid or blocked access token!"));
                 Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True);

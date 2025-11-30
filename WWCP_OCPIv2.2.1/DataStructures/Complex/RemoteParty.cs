@@ -156,22 +156,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            Boolean?                                                   LocalAllowDowngrades             = false,
                            AccessStatus?                                              LocalAccessStatus                = AccessStatus.ALLOWED,
 
-                           Boolean?                                                   PreferIPv4                       = null,
-                           RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator       = null,
-                           LocalCertificateSelectionHandler?                          LocalCertificateSelector         = null,
-                           IEnumerable<X509Certificate2>?                             ClientCertificates               = null,
-                           SslStreamCertificateContext?                               ClientCertificateContext         = null,
-                           IEnumerable<X509Certificate2>?                             ClientCertificateChain           = null,
-                           SslProtocols?                                              TLSProtocols                     = null,
-                           HTTPContentType?                                           ContentType                      = null,
-                           AcceptTypes?                                               Accept                           = null,
-                           String?                                                    HTTPUserAgent                    = null,
-                           TimeSpan?                                                  RequestTimeout                   = null,
-                           TransmissionRetryDelayDelegate?                            TransmissionRetryDelay           = null,
-                           UInt16?                                                    MaxNumberOfRetries               = null,
-                           UInt32?                                                    InternalBufferSize               = null,
-                           Boolean?                                                   UseHTTPPipelining                = null,
-
                            DateTimeOffset?                                            Created                          = null,
                            DateTimeOffset?                                            LastUpdated                      = null)
 
@@ -191,22 +175,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    ],
                    [],
                    Status ?? PartyStatus.ENABLED,
-
-                   PreferIPv4,
-                   RemoteCertificateValidator,
-                   LocalCertificateSelector,
-                   ClientCertificates,
-                   ClientCertificateContext,
-                   ClientCertificateChain,
-                   TLSProtocols,
-                   ContentType,
-                   Accept,
-                   HTTPUserAgent,
-                   RequestTimeout,
-                   TransmissionRetryDelay,
-                   MaxNumberOfRetries,
-                   InternalBufferSize,
-                   UseHTTPPipelining,
 
                    Created,
                    LastUpdated)
@@ -268,6 +236,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            RemoteAccessTokenBase64Encoding,
                            RemoteTOTPConfig,
 
+                           PreferIPv4,
+                           RemoteCertificateValidator,
+                           LocalCertificateSelector,
+                           ClientCertificates,
+                           ClientCertificateContext,
+                           ClientCertificateChain,
+                           TLSProtocols,
+                           ContentType,
+                           Accept,
+                           HTTPUserAgent,
+                           RequestTimeout,
+                           TransmissionRetryDelay,
+                           MaxNumberOfRetries,
+                           InternalBufferSize,
+                           UseHTTPPipelining,
+
                            RemoteStatus,
 
                            RemoteVersionIds,
@@ -278,22 +262,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        )
                    ],
                    Status ?? PartyStatus.ENABLED,
-
-                   PreferIPv4,
-                   RemoteCertificateValidator,
-                   LocalCertificateSelector,
-                   ClientCertificates,
-                   ClientCertificateContext,
-                   ClientCertificateChain,
-                   TLSProtocols,
-                   ContentType,
-                   Accept,
-                   HTTPUserAgent,
-                   RequestTimeout,
-                   TransmissionRetryDelay,
-                   MaxNumberOfRetries,
-                   InternalBufferSize,
-                   UseHTTPPipelining,
 
                    Created,
                    LastUpdated)
@@ -369,6 +337,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            RemoteAccessTokenBase64Encoding,
                            RemoteTOTPConfig,
 
+                           PreferIPv4,
+                           RemoteCertificateValidator,
+                           LocalCertificateSelector,
+                           ClientCertificates,
+                           ClientCertificateContext,
+                           ClientCertificateChain,
+                           TLSProtocols,
+                           ContentType,
+                           Accept,
+                           HTTPUserAgent,
+                           RequestTimeout,
+                           TransmissionRetryDelay,
+                           MaxNumberOfRetries,
+                           InternalBufferSize,
+                           UseHTTPPipelining,
+
                            RemoteStatus,
 
                            RemoteVersionIds,
@@ -380,22 +364,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    ],
                    Status ?? PartyStatus.ENABLED,
 
-                   PreferIPv4,
-                   RemoteCertificateValidator,
-                   LocalCertificateSelector,
-                   ClientCertificates,
-                   ClientCertificateContext,
-                   ClientCertificateChain,
-                   TLSProtocols,
-                   ContentType,
-                   Accept,
-                   HTTPUserAgent,
-                   RequestTimeout,
-                   TransmissionRetryDelay,
-                   MaxNumberOfRetries,
-                   InternalBufferSize,
-                   UseHTTPPipelining,
-
                    Created,
                    LastUpdated)
 
@@ -406,32 +374,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region RemoteParty(Id, Roles, LocalAccessInfos, RemoteAccessInfos,                    Status = ALLOWED, ...)
 
-        public RemoteParty(RemoteParty_Id                                             Id,
-                           IEnumerable<CredentialsRole>                               Roles,
+        public RemoteParty(RemoteParty_Id                 Id,
+                           IEnumerable<CredentialsRole>   Roles,
 
-                           IEnumerable<LocalAccessInfo>                               LocalAccessInfos,
-                           IEnumerable<RemoteAccessInfo>                              RemoteAccessInfos,
+                           IEnumerable<LocalAccessInfo>   LocalAccessInfos,
+                           IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
-                           PartyStatus?                                               Status                       = PartyStatus.ENABLED,
+                           PartyStatus?                   Status        = PartyStatus.ENABLED,
 
-                           Boolean?                                                   PreferIPv4                   = null,
-                           RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                           LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                           IEnumerable<X509Certificate2>?                             ClientCertificates           = null,
-                           SslStreamCertificateContext?                               ClientCertificateContext     = null,
-                           IEnumerable<X509Certificate2>?                             ClientCertificateChain       = null,
-                           SslProtocols?                                              TLSProtocols                 = null,
-                           HTTPContentType?                                           ContentType                  = null,
-                           AcceptTypes?                                               Accept                       = null,
-                           String?                                                    HTTPUserAgent                = null,
-                           TimeSpan?                                                  RequestTimeout               = null,
-                           TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                           UInt16?                                                    MaxNumberOfRetries           = null,
-                           UInt32?                                                    InternalBufferSize           = null,
-                           Boolean?                                                   UseHTTPPipelining            = null,
-
-                           DateTimeOffset?                                            Created                      = null,
-                           DateTimeOffset?                                            LastUpdated                  = null)
+                           DateTimeOffset?                Created       = null,
+                           DateTimeOffset?                LastUpdated   = null)
 
             : base(Id,
 
@@ -439,22 +391,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    LocalAccessInfos,
                    RemoteAccessInfos,
                    Status,
-
-                   PreferIPv4,
-                   RemoteCertificateValidator,
-                   LocalCertificateSelector,
-                   ClientCertificates,
-                   ClientCertificateContext,
-                   ClientCertificateChain,
-                   TLSProtocols,
-                   ContentType,
-                   Accept,
-                   HTTPUserAgent,
-                   RequestTimeout,
-                   TransmissionRetryDelay,
-                   MaxNumberOfRetries,
-                   InternalBufferSize,
-                   UseHTTPPipelining,
 
                    Created,
                    LastUpdated)
@@ -603,53 +539,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                // ...
-
-                #region Parse ClientCertificate    [optional]
-
-                X509Certificate2? clientCert = null;
-
-                if (JSON.ParseOptionalText("clientCertPEM",
-                                           "remote TLS client certificate (PEM)",
-                                           out String? clientCertPEM,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse is not null)
-                        return false;
-
-                    try
-                    {
-                        clientCert = X509CertificateLoader.LoadCertificate(clientCertPEM.ToUTF8Bytes());
-                    }
-                    catch (Exception e)
-                    {
-                        ErrorResponse = "The given remote TLS client certificate (PEM) is invalid: " + e.Message;
-                        return false;
-                    }
-
-                }
-
-                #endregion
-
-                // ...
-
-                #region Parse HTTPUserAgent        [optional]
-
-                if (JSON.ParseOptionalText("httpUserAgent",
-                                           "remote HTTP UserAgent",
-                                           out String? httpUserAgent,
-                                           out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                #endregion
-
-                // ...
-
-
                 #region Parse Created              [optional, NonStandard]
 
                 if (JSON.ParseOptional("created",
@@ -685,25 +574,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   remoteAccessInfos,
 
                                   status,
-
-                                  null,  // PreferIPv4
-                                  null,  // RemoteCertificateValidator
-                                  null,  // LocalCertificateSelector
-                                  clientCert is not null
-                                      ? [ clientCert ]
-                                      : null,
-                                  null,  // ClientCertificateContext
-                                  null,  // ClientCertificateChain
-
-                                  null,  // TLSProtocols
-                                  null,  // ContentType
-                                  null,  // Accept
-                                  httpUserAgent,
-                                  null,  // RequestTimeout
-                                  null,  // TransmissionRetryDelay
-                                  null,  // MaxNumberOfRetries
-                                  null,  // InternalBufferSize
-                                  null,  // UseHTTPPipelining
 
                                   created,
                                   lastUpdated
@@ -787,22 +657,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                    Status,
 
-                   PreferIPv4,
-                   RemoteCertificateValidator,
-                   LocalCertificateSelector,
-                   ClientCertificates,
-                   ClientCertificateContext,
-                   ClientCertificateChain,
-                   TLSProtocols,
-                   ContentType,
-                   Accept,
-                   HTTPUserAgent,
-                   RequestTimeout,
-                   TransmissionRetryDelay,
-                   MaxNumberOfRetries,
-                   InternalBufferSize,
-                   UseHTTPPipelining,
-
+                   Created,
                    LastUpdated
 
                );

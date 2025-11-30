@@ -360,25 +360,25 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                    VirtualHostname,
                    Description,
-                   RemoteParty.MaxNumberOfPooledClients,
-                   RemoteParty.PreferIPv4,
-                   RemoteParty.RemoteCertificateValidator,
-                   RemoteParty.LocalCertificateSelector,
-                   RemoteParty.ClientCertificates,
-                   RemoteParty.ClientCertificateContext,
-                   RemoteParty.ClientCertificateChain,
-                   RemoteParty.TLSProtocols,
+                   RemoteParty.RemoteAccessInfos.First().MaxNumberOfPooledClients,
+                   RemoteParty.RemoteAccessInfos.First().PreferIPv4,
+                   RemoteParty.RemoteAccessInfos.First().RemoteCertificateValidator,
+                   RemoteParty.RemoteAccessInfos.First().LocalCertificateSelector,
+                   RemoteParty.RemoteAccessInfos.First().ClientCertificates,
+                   RemoteParty.RemoteAccessInfos.First().ClientCertificateContext,
+                   RemoteParty.RemoteAccessInfos.First().ClientCertificateChain,
+                   RemoteParty.RemoteAccessInfos.First().TLSProtocols,
 
-                   RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent,
-                   RemoteParty.Accept,
-                   RemoteParty.ContentType,
-                   RemoteParty.ConnectionType,
+                   RemoteParty.RemoteAccessInfos.First().HTTPUserAgent ?? DefaultHTTPUserAgent,
+                   RemoteParty.RemoteAccessInfos.First().Accept,
+                   RemoteParty.RemoteAccessInfos.First().ContentType,
+                   RemoteParty.RemoteAccessInfos.First().ConnectionType,
 
-                   RemoteParty.RequestTimeout,
-                   RemoteParty.TransmissionRetryDelay,
-                   RemoteParty.MaxNumberOfRetries,
-                   RemoteParty.InternalBufferSize,
-                   RemoteParty.UseHTTPPipelining,
+                   RemoteParty.RemoteAccessInfos.First().RequestTimeout,
+                   RemoteParty.RemoteAccessInfos.First().TransmissionRetryDelay,
+                   RemoteParty.RemoteAccessInfos.First().MaxNumberOfRetries,
+                   RemoteParty.RemoteAccessInfos.First().InternalBufferSize,
+                   RemoteParty.RemoteAccessInfos.First().UseHTTPPipelining,
                    DisableLogging,
                    HTTPLogger,
                    DNSClient)
@@ -2252,18 +2252,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                           null,                       // RemoteTOTPConfig
                                                                           null,                       // RemoteAccessNotBefore
                                                                           null,                       // RemoteAccessNotAfter
-                                                                          RemoteAccessStatus.ONLINE,  // RemoteStatus
-                                                                          [ versionId.Value ],        // RemoteVersionIds
-                                                                          versionId.Value,            // SelectedVersionId
-                                                                          null,                       // RemoteAllowDowngrades
-
-                                                                          null,                       // LocalAccessTokenBase64Encoding
-                                                                          null,                       // LocalTOTPConfig
-                                                                          null,                       // LocalAccessNotBefore
-                                                                          null,                       // LocalAccessNotAfter
-                                                                          null,                       // LocalAllowDowngrades
-                                                                          AccessStatus.ALLOWED,       // LocalAccessStatus
-
                                                                           null,                       // PreferIPv4
                                                                           null,                       // RemoteCertificateValidator
                                                                           null,                       // LocalCertificateSelector
@@ -2279,11 +2267,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                           null,                       // MaxNumberOfRetries
                                                                           null,                       // InternalBufferSize
                                                                           null,                       // UseHTTPPipelining
+                                                                          RemoteAccessStatus.ONLINE,  // RemoteStatus
+                                                                          [ versionId.Value ],        // RemoteVersionIds
+                                                                          versionId.Value,            // SelectedVersionId
+                                                                          null,                       // RemoteAllowDowngrades
 
+                                                                          null,                       // LocalAccessTokenBase64Encoding
+                                                                          null,                       // LocalTOTPConfig
+                                                                          null,                       // LocalAccessNotBefore
+                                                                          null,                       // LocalAccessNotAfter
+                                                                          null,                       // LocalAllowDowngrades
+                                                                          AccessStatus.ALLOWED,       // LocalAccessStatus
+
+                                                                          oldRemoteParty.Created,     // Created
+                                                                          Timestamp.Now,              // LastUpdated
                                                                           eventTrackingId,            // EventTrackingId
-                                                                          null,                       // CurrentUserId
-                                                                          null,                       // Created
-                                                                          Timestamp.Now               // LastUpdated
+                                                                          null                        // CurrentUserId
 
                                                                       );
 

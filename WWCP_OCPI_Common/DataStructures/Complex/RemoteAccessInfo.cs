@@ -17,12 +17,17 @@
 
 #region Usings
 
+using System.Net.Security;
+using System.Security.Cryptography;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
+using org.GraphDefined.Vanaheimr.Hermod.PKI;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
@@ -63,6 +68,117 @@ namespace cloud.charging.open.protocols.OCPI
         /// Configuration of the Time-Based One-Time Password (TOTP) 2nd factor authentication.
         /// </summary>
         public TOTPConfig?              TOTPConfig                    { get; }
+
+
+
+
+
+
+        /// <summary>
+        /// Prefer IPv4 instead of IPv6.
+        /// </summary>
+        public Boolean?                                                   PreferIPv4                    { get; }
+
+
+        public UInt16?                                                    MaxNumberOfPooledClients      { get; }
+
+        /// <summary>
+        /// The remote TLS certificate validator.
+        /// </summary>
+        public RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator    { get; protected set; }
+
+        /// <summary>
+        /// A delegate to select a TLS client certificate.
+        /// </summary>
+        public LocalCertificateSelectionHandler?                          LocalCertificateSelector      { get; }
+
+        /// <summary>
+        /// The TLS client certificates with private key to use for HTTP authentication.
+        /// </summary>
+        public IEnumerable<X509Certificate2>                              ClientCertificates            { get; }
+
+        public SslStreamCertificateContext?                               ClientCertificateContext      { get; }
+
+        public IEnumerable<X509Certificate2>                              ClientCertificateChain        { get; }
+
+
+        /// <summary>
+        /// The TLS protocol to use.
+        /// </summary>
+        public SslProtocols?                                              TLSProtocols                  { get; }
+
+        /// <summary>
+        /// The optional HTTP accept header.
+        /// </summary>
+        public HTTPContentType?                                           ContentType                   { get; }
+
+        /// <summary>
+        /// The optional HTTP accept header.
+        /// </summary>
+        public AcceptTypes?                                               Accept                        { get; }
+
+        /// <summary>
+        /// The HTTP user agent identification.
+        /// </summary>
+        public String?                                                    HTTPUserAgent                 { get; }
+
+        /// <summary>
+        /// The timeout for upstream requests.
+        /// </summary>
+        public TimeSpan?                                                  RequestTimeout                { get; set; }
+
+
+        public ConnectionType?                                            ConnectionType                { get; }
+
+
+        /// <summary>
+        /// The delay between transmission retries.
+        /// </summary>
+        public TransmissionRetryDelayDelegate?                            TransmissionRetryDelay        { get; }
+
+        /// <summary>
+        /// The maximum number of retries when communicating with the remote HTTP service.
+        /// </summary>
+        public UInt16?                                                    MaxNumberOfRetries            { get; }
+
+        /// <summary>
+        /// The size of the internal buffers of HTTP clients.
+        /// </summary>
+        public UInt32?                                                    InternalBufferSize            { get; }
+
+        /// <summary>
+        /// Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.
+        /// </summary>
+        public Boolean?                                                   UseHTTPPipelining             { get; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         /// <summary>
@@ -121,24 +237,63 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="NotAfter">This remote access information should not be used after this timestamp.</param>
         /// <param name="AccessTokenIsBase64Encoded">Whether the access token is base64 encoded or not.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        public RemoteAccessInfo(URL                       VersionsURL,
-                                AccessToken?              AccessToken                  = null,
-                                Boolean?                  AccessTokenIsBase64Encoded   = null,
-                                TOTPConfig?               TOTPConfig                   = null,
+        public RemoteAccessInfo(URL                                                        VersionsURL,
+                                AccessToken?                                               AccessToken                  = null,
+                                Boolean?                                                   AccessTokenIsBase64Encoded   = null,
+                                TOTPConfig?                                                TOTPConfig                   = null,
 
-                                RemoteAccessStatus?       Status                       = RemoteAccessStatus.ONLINE,
+                                Boolean?                                                   PreferIPv4                   = null,
+                                RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
+                                LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
+                                IEnumerable<X509Certificate2>?                             ClientCertificates           = null,
+                                SslStreamCertificateContext?                               ClientCertificateContext     = null,
+                                IEnumerable<X509Certificate2>?                             ClientCertificateChain       = null,
+                                SslProtocols?                                              TLSProtocols                 = null,
 
-                                IEnumerable<Version_Id>?  VersionIds                   = null,
-                                Version_Id?               SelectedVersionId            = null,
-                                DateTimeOffset?           NotBefore                    = null,
-                                DateTimeOffset?           NotAfter                     = null,
-                                Boolean?                  AllowDowngrades              = false)
+                                HTTPContentType?                                           ContentType                  = null,
+                                AcceptTypes?                                               Accept                       = null,
+                                String?                                                    HTTPUserAgent                = null,
+                                TimeSpan?                                                  RequestTimeout               = null,
+                                TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
+                                UInt16?                                                    MaxNumberOfRetries           = null,
+                                UInt32?                                                    InternalBufferSize           = null,
+                                Boolean?                                                   UseHTTPPipelining            = null,
+
+                                RemoteAccessStatus?                                        Status                       = RemoteAccessStatus.ONLINE,
+
+                                IEnumerable<Version_Id>?                                   VersionIds                   = null,
+                                Version_Id?                                                SelectedVersionId            = null,
+                                DateTimeOffset?                                            NotBefore                    = null,
+                                DateTimeOffset?                                            NotAfter                     = null,
+                                Boolean?                                                   AllowDowngrades              = false)
         {
 
             this.VersionsURL                 = VersionsURL;
             this.AccessToken                 = AccessToken;
             this.AccessTokenIsBase64Encoded  = AccessTokenIsBase64Encoded;
             this.TOTPConfig                  = TOTPConfig;
+
+            this.PreferIPv4                  = PreferIPv4;
+            this.RemoteCertificateValidator  = RemoteCertificateValidator ?? ((sender,
+                                                                               certificate,
+                                                                               certificateChain,
+                                                                               tlsClient,
+                                                                               policyErrors) => {
+                                                                                    return (false, [ $"The default behavior within {nameof(ARemoteParty)} is to reject all remote TLS server certificates!" ] );
+                                                                               });
+            this.LocalCertificateSelector    = LocalCertificateSelector;
+            this.ClientCertificates          = ClientCertificates         ?? [];
+            this.ClientCertificateContext    = ClientCertificateContext;
+            this.ClientCertificateChain      = ClientCertificateChain     ?? [];
+            this.TLSProtocols                = TLSProtocols;
+            this.ContentType                 = ContentType;//                ?? HTTPContentType.Application.JSON_UTF8;
+            this.Accept                      = Accept;//                     ?? AcceptTypes.FromHTTPContentTypes(HTTPContentType.Application.JSON_UTF8);
+            this.HTTPUserAgent               = HTTPUserAgent;
+            this.RequestTimeout              = RequestTimeout;
+            this.TransmissionRetryDelay      = TransmissionRetryDelay;
+            this.MaxNumberOfRetries          = MaxNumberOfRetries;
+            this.InternalBufferSize          = InternalBufferSize;
+            this.UseHTTPPipelining           = UseHTTPPipelining;
 
             this.Status                      = Status                     ?? RemoteAccessStatus.ONLINE;
 
@@ -295,6 +450,84 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
+                // ...
+
+                #region Parse ClientCertificates            [optional]
+
+                var clientCertificates = new List<X509Certificate2>();
+
+                if (JSON.ParseOptionalTexts("clientCertificates",
+                                            "remote TLS client certificates with private keys (PEM)",
+                                            out IEnumerable<String> clientCertificatesPEM,
+                                            out ErrorResponse))
+                {
+
+                    if (ErrorResponse is not null)
+                        return false;
+
+                    try
+                    {
+                        foreach (var clientCertPEM in clientCertificatesPEM)
+                        {
+                            clientCertificates.Add(X509CertificateLoader.LoadCertificate(clientCertPEM.ToUTF8Bytes()));
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        ErrorResponse = "The given remote TLS client certificate chain is invalid: " + e.Message;
+                        return false;
+                    }
+
+                }
+
+                #endregion
+
+                #region Parse ClientCertificateChain        [optional]
+
+                var clientCertificateChain = new List<X509Certificate2>();
+
+                if (JSON.ParseOptionalTexts("clientCertificateChain",
+                                            "remote TLS client certificate chain (PEM)",
+                                            out IEnumerable<String> clientCertificateChainPEM,
+                                            out ErrorResponse))
+                {
+
+                    if (ErrorResponse is not null)
+                        return false;
+
+                    try
+                    {
+                        foreach (var certificatePEM in clientCertificateChainPEM)
+                        {
+                            clientCertificateChain.Add(X509CertificateLoader.LoadCertificate(certificatePEM.ToUTF8Bytes()));
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        ErrorResponse = "The given remote TLS client certificate chain is invalid: " + e.Message;
+                        return false;
+                    }
+
+                }
+
+                #endregion
+
+                #region Parse HTTPUserAgent                 [optional]
+
+                if (JSON.ParseOptionalText("httpUserAgent",
+                                           "remote HTTP UserAgent",
+                                           out String? httpUserAgent,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                // ...
+
+
                 #region Parse Status                        [mandatory]
 
                 if (!JSON.ParseMandatory("status",
@@ -369,6 +602,22 @@ namespace cloud.charging.open.protocols.OCPI
                                        AccessTokenIsBase64Encoded,
                                        totpConfig,
 
+                                       null, //preferIPv4,
+                                       null, //remoteCertificateValidator,
+                                       null, //LocalCertificateSelector,
+                                       clientCertificates,
+                                       null, //ClientCertificateContext,
+                                       clientCertificateChain,
+                                       null, //TLSProtocols,
+                                       null, //ContentType,
+                                       null, //Accept,
+                                       httpUserAgent,
+                                       null, //RequestTimeout,
+                                       null, //TransmissionRetryDelay,
+                                       null, //MaxNumberOfRetries,
+                                       null, //InternalBufferSize,
+                                       null, //UseHTTPPipelining,
+
                                        Status,
 
                                        null, // VersionIds
@@ -407,12 +656,30 @@ namespace cloud.charging.open.protocols.OCPI
         public JObject ToJSON(CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null)
         {
 
+            var clientPrivateKeys = new List<AsymmetricAlgorithm>();
+
+            foreach (var clientCertificate in ClientCertificates)
+            {
+                if (clientCertificate.HasPrivateKey)
+                {
+
+                    var privateRSAKey = clientCertificate.GetRSAPrivateKey();
+                    if (privateRSAKey is not null)
+                        clientPrivateKeys.Add(privateRSAKey);
+
+                    var privateDSAKey = clientCertificate.GetDSAPrivateKey();
+                    if (privateDSAKey is not null)
+                        clientPrivateKeys.Add(privateDSAKey);
+
+                }
+            }
+
             var json = JSONObject.Create(
 
-                                 new JProperty("versionsURL",                  VersionsURL.      ToString()),
+                                 new JProperty("versionsURL",                  VersionsURL.            ToString()),
 
                            AccessToken.HasValue
-                               ? new JProperty("accessToken",                  AccessToken.      ToString())
+                               ? new JProperty("accessToken",                  AccessToken.            ToString())
                                : null,
 
                            AccessTokenIsBase64Encoded.HasValue
@@ -420,9 +687,51 @@ namespace cloud.charging.open.protocols.OCPI
                                : null,
 
                            TOTPConfig is not null
-                               ? new JProperty("totpConfig",                   TOTPConfig.       ToJSON())
+                               ? new JProperty("totpConfig",                   TOTPConfig.             ToJSON())
                                : null,
 
+
+                           PreferIPv4.HasValue
+                               ? new JProperty("preferIPv4",                   PreferIPv4.       Value)
+                               : null,
+
+                           ClientCertificates.Any()
+                               ? new JProperty("clientCertificates",           new JArray(ClientCertificates.    Select(clientCertificate => clientCertificate.ExportCertificateAndPrivateKeyPEM())))
+                               : null,
+
+                           //clientPrivateKeys.Count > 0
+                           //    ? new JProperty("clientPrivateKeys",            new JArray(clientPrivateKeys.     Select(clientPrivateKey  => clientPrivateKey. ExportPkcs8PrivateKeyPem())))
+                           //    : null,
+
+                           ClientCertificateChain.Any()
+                               ? new JProperty("clientCertificateChain",       new JArray(ClientCertificateChain.Select(certificate       => certificate.      ExportCertificatePem())))
+                               : null,
+
+                           TLSProtocols.HasValue
+                               ? new JProperty("tlsProtocols",                 TLSProtocols.     Value.ToString())
+                               : null,
+
+                           ContentType is not null
+                               ? new JProperty("contentType",                  ContentType.            ToString())
+                               : null,
+
+                           Accept is not null
+                               ? new JProperty("accept",                       Accept.                 ToString())
+                               : null,
+
+                           HTTPUserAgent.IsNotNullOrEmpty()
+                               ? new JProperty("httpUserAgent",                HTTPUserAgent)
+                               : null,
+
+                           RequestTimeout.HasValue
+                               ? new JProperty("requestTimeout",               (Int32) RequestTimeout.   Value.TotalMilliseconds)
+                               : null,
+
+                           MaxNumberOfRetries.HasValue
+                               ? new JProperty("maxNumberOfRetries",           MaxNumberOfRetries.       Value)
+                               : null,
+
+                           // ...
 
                                  new JProperty("status",                       Status.           ToString()),
 
@@ -469,6 +778,22 @@ namespace cloud.charging.open.protocols.OCPI
                    AccessTokenIsBase64Encoded,
                    TOTPConfig?. Clone(),
 
+                   PreferIPv4,
+                   RemoteCertificateValidator,
+                   LocalCertificateSelector,
+                   ClientCertificates,
+                   ClientCertificateContext,
+                   ClientCertificateChain,
+                   TLSProtocols,
+                   ContentType,
+                   Accept,
+                   HTTPUserAgent,
+                   RequestTimeout,
+                   TransmissionRetryDelay,
+                   MaxNumberOfRetries,
+                   InternalBufferSize,
+                   UseHTTPPipelining,
+
                    Status,
 
                    VersionIds.Select(versionId => versionId.Clone()),
@@ -480,6 +805,12 @@ namespace cloud.charging.open.protocols.OCPI
                );
 
         #endregion
+
+
+        public void SetRemoteCertificateValidator(RemoteTLSServerCertificateValidationHandler<IHTTPClient> RemoteCertificateValidator)
+        {
+            this.RemoteCertificateValidator = RemoteCertificateValidator;
+        }
 
 
         #region Operator overloading

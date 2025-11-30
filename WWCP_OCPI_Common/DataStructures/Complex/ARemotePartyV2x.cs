@@ -17,15 +17,9 @@
 
 #region Usings
 
-using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using System.Net.Security;
 
 #endregion
 
@@ -58,22 +52,6 @@ namespace cloud.charging.open.protocols.OCPI
 
                                PartyStatus?                                               Status                       = PartyStatus.ENABLED,
 
-                               Boolean?                                                   PreferIPv4                   = null,
-                               RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                               LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                               IEnumerable<X509Certificate2>?                             ClientCertificates           = null,
-                               SslStreamCertificateContext?                               ClientCertificateContext     = null,
-                               IEnumerable<X509Certificate2>?                             ClientCertificateChain       = null,
-                               SslProtocols?                                              TLSProtocols                 = null,
-                               HTTPContentType?                                           ContentType                  = null,
-                               AcceptTypes?                                               Accept                       = null,
-                               String?                                                    HTTPUserAgent                = null,
-                               TimeSpan?                                                  RequestTimeout               = null,
-                               TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                               UInt16?                                                    MaxNumberOfRetries           = null,
-                               UInt32?                                                    InternalBufferSize           = null,
-                               Boolean?                                                   UseHTTPPipelining            = null,
-
                                DateTimeOffset?                                            Created                      = null,
                                DateTimeOffset?                                            LastUpdated                  = null)
 
@@ -82,22 +60,6 @@ namespace cloud.charging.open.protocols.OCPI
                    LocalAccessInfos,
                    RemoteAccessInfos,
                    Status,
-
-                   PreferIPv4,
-                   RemoteCertificateValidator,
-                   LocalCertificateSelector,
-                   ClientCertificates,
-                   ClientCertificateContext,
-                   ClientCertificateChain,
-                   TLSProtocols,
-                   ContentType,
-                   Accept,
-                   HTTPUserAgent,
-                   RequestTimeout,
-                   TransmissionRetryDelay,
-                   MaxNumberOfRetries,
-                   InternalBufferSize,
-                   UseHTTPPipelining,
 
                    Created,
                    LastUpdated)

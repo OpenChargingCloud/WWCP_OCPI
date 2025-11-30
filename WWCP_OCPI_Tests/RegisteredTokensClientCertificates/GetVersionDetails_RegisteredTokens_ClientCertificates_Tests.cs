@@ -131,7 +131,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // }
 
                 Assert.That(response,                                                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200));
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String);
                 Assert.That(response.StatusCode,                                            Is.EqualTo(1000));
                 Assert.That(response.StatusMessage,                                         Is.EqualTo("Hello world!"));
                 Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True);
@@ -262,7 +262,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // }
 
                 Assert.That(response,                                                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200));
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String);
                 Assert.That(response.StatusCode,                                            Is.EqualTo(1000));
                 Assert.That(response.StatusMessage,                                         Is.EqualTo("Hello world!"));
                 Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True);
@@ -408,7 +408,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // }
 
                 Assert.That(response,                                                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200));
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String);
                 Assert.That(response.StatusCode,                                            Is.EqualTo(1000));
                 Assert.That(response.StatusMessage,                                         Is.EqualTo("Hello world!"));
                 Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True);
@@ -539,7 +539,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 Assert.That(response,                                                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200));
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String);
                 Assert.That(response.StatusCode,                                            Is.EqualTo(1000));
                 Assert.That(response.StatusMessage,                                         Is.EqualTo("Hello world!"));
                 Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True);
@@ -674,7 +674,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // }
 
                 Assert.That(response,                                                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200));
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String);
                 Assert.That(response.StatusCode,                                            Is.EqualTo(1000));
                 Assert.That(response.StatusMessage,                                         Is.EqualTo("Hello world!"));
                 Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True);
@@ -824,7 +824,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // }
 
                 Assert.That(response,                                                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200));
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String);
                 Assert.That(response.StatusCode,                                            Is.EqualTo(1000));
                 Assert.That(response.StatusMessage,                                         Is.EqualTo("Hello world!"));
                 Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True);

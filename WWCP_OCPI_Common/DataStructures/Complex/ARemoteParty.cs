@@ -17,16 +17,9 @@
 
 #region Usings
 
-using System.Net.Security;
-using System.Security.Cryptography;
-using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -46,109 +39,32 @@ namespace cloud.charging.open.protocols.OCPI
         /// (country code + party identification + role).
         /// </summary>
         [Mandatory]
-        public RemoteParty_Id                                             Id                            { get; }
+        public RemoteParty_Id  Id             { get; }
 
         /// <summary>
         /// The current status of the party.
         /// </summary>
         [Mandatory]
-        public PartyStatus                                                Status                        { get; }
+        public PartyStatus     Status         { get; }
 
         /// <summary>
         /// The timestamp when this remote party was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public DateTimeOffset                                             Created                       { get; }
+        public DateTimeOffset  Created        { get; }
 
         /// <summary>
         /// Timestamp when this remote party was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTimeOffset                                             LastUpdated                   { get; }
+        public DateTimeOffset  LastUpdated    { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this remote party.
         /// </summary>
         [Mandatory]
-        public String                                                     ETag                          { get; protected set; } = String.Empty;
+        public String          ETag           { get; protected set; } = String.Empty;
 
-
-        /// <summary>
-        /// Prefer IPv4 instead of IPv6.
-        /// </summary>
-        public Boolean?                                                   PreferIPv4                    { get; }
-
-
-        public UInt16?                                                    MaxNumberOfPooledClients      { get; }
-
-        /// <summary>
-        /// The remote TLS certificate validator.
-        /// </summary>
-        public RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator    { get; protected set; }
-
-        /// <summary>
-        /// A delegate to select a TLS client certificate.
-        /// </summary>
-        public LocalCertificateSelectionHandler?                          LocalCertificateSelector      { get; }
-
-        /// <summary>
-        /// The TLS client certificates with private key to use for HTTP authentication.
-        /// </summary>
-        public IEnumerable<X509Certificate2>                              ClientCertificates            { get; }
-
-        public SslStreamCertificateContext?                               ClientCertificateContext      { get; }
-
-        public IEnumerable<X509Certificate2>                              ClientCertificateChain        { get; }
-
-
-        /// <summary>
-        /// The TLS protocol to use.
-        /// </summary>
-        public SslProtocols?                                              TLSProtocols                  { get; }
-
-        /// <summary>
-        /// The optional HTTP accept header.
-        /// </summary>
-        public HTTPContentType?                                           ContentType                   { get; }
-
-        /// <summary>
-        /// The optional HTTP accept header.
-        /// </summary>
-        public AcceptTypes?                                               Accept                        { get; }
-
-        /// <summary>
-        /// The HTTP user agent identification.
-        /// </summary>
-        public String?                                                    HTTPUserAgent                 { get; }
-
-        /// <summary>
-        /// The timeout for upstream requests.
-        /// </summary>
-        public TimeSpan?                                                  RequestTimeout                { get; set; }
-
-
-        public ConnectionType?                                            ConnectionType                { get; }
-
-
-        /// <summary>
-        /// The delay between transmission retries.
-        /// </summary>
-        public TransmissionRetryDelayDelegate?                            TransmissionRetryDelay        { get; }
-
-        /// <summary>
-        /// The maximum number of retries when communicating with the remote HTTP service.
-        /// </summary>
-        public UInt16?                                                    MaxNumberOfRetries            { get; }
-
-        /// <summary>
-        /// The size of the internal buffers of HTTP clients.
-        /// </summary>
-        public UInt32?                                                    InternalBufferSize            { get; }
-
-        /// <summary>
-        /// Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.
-        /// </summary>
-        public Boolean?                                                   UseHTTPPipelining             { get; }
 
 
 
@@ -174,75 +90,30 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region Constructor(s)
 
-        public ARemoteParty(RemoteParty_Id                                             Id,
+        public ARemoteParty(RemoteParty_Id                 Id,
 
-                            IEnumerable<LocalAccessInfo>                               LocalAccessInfos,
-                            IEnumerable<RemoteAccessInfo>                              RemoteAccessInfos,
+                            IEnumerable<LocalAccessInfo>   LocalAccessInfos,
+                            IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
-                            PartyStatus?                                               Status                       = PartyStatus.ENABLED,
+                            PartyStatus?                   Status        = PartyStatus.ENABLED,
 
-                            Boolean?                                                   PreferIPv4                   = null,
-                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                            LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                            IEnumerable<X509Certificate2>?                             ClientCertificates           = null,
-                            SslStreamCertificateContext?                               ClientCertificateContext     = null,
-                            IEnumerable<X509Certificate2>?                             ClientCertificateChain       = null,
-                            SslProtocols?                                              TLSProtocols                 = null,
-
-                            HTTPContentType?                                           ContentType                  = null,
-                            AcceptTypes?                                               Accept                       = null,
-                            String?                                                    HTTPUserAgent                = null,
-                            TimeSpan?                                                  RequestTimeout               = null,
-                            TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                            UInt16?                                                    MaxNumberOfRetries           = null,
-                            UInt32?                                                    InternalBufferSize           = null,
-                            Boolean?                                                   UseHTTPPipelining            = null,
-
-                            DateTimeOffset?                                            Created                      = null,
-                            DateTimeOffset?                                            LastUpdated                  = null)
+                            DateTimeOffset?                Created       = null,
+                            DateTimeOffset?                LastUpdated   = null)
 
         {
 
-            this.Id                          = Id;
-            this.Status                      = Status                     ?? PartyStatus.ENABLED;
+            this.Id                 = Id;
+            this.Status             = Status                     ?? PartyStatus.ENABLED;
 
-            this.PreferIPv4                  = PreferIPv4;
-            this.RemoteCertificateValidator  = RemoteCertificateValidator ?? ((sender,
-                                                                               certificate,
-                                                                               certificateChain,
-                                                                               tlsClient,
-                                                                               policyErrors) => {
-                                                                                    return (false, [ $"The default behavior within {nameof(ARemoteParty)} for '{Id}' is to reject all remote TLS server certificates!" ] );
-                                                                               });
-            this.LocalCertificateSelector    = LocalCertificateSelector;
-            this.ClientCertificates          = ClientCertificates         ?? [];
-            this.ClientCertificateContext    = ClientCertificateContext;
-            this.ClientCertificateChain      = ClientCertificateChain     ?? [];
-            this.TLSProtocols                = TLSProtocols;
-            this.ContentType                 = ContentType                ?? HTTPContentType.Application.JSON_UTF8;
-            this.Accept                      = Accept                     ?? AcceptTypes.FromHTTPContentTypes(HTTPContentType.Application.JSON_UTF8);
-            this.HTTPUserAgent               = HTTPUserAgent;
-            this.RequestTimeout              = RequestTimeout;
-            this.TransmissionRetryDelay      = TransmissionRetryDelay;
-            this.MaxNumberOfRetries          = MaxNumberOfRetries;
-            this.InternalBufferSize          = InternalBufferSize;
-            this.UseHTTPPipelining           = UseHTTPPipelining;
+            this.Created            = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated        = LastUpdated ?? Created     ?? Timestamp.Now;
 
-            this.Created                     = Created     ?? LastUpdated ?? Timestamp.Now;
-            this.LastUpdated                 = LastUpdated ?? Created     ?? Timestamp.Now;
-
-            this.localAccessInfos            = LocalAccessInfos. IsNeitherNullNorEmpty() ? [.. LocalAccessInfos]  : [];
-            this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? [.. RemoteAccessInfos] : [];
+            this.localAccessInfos   = LocalAccessInfos. IsNeitherNullNorEmpty() ? [.. LocalAccessInfos]  : [];
+            this.remoteAccessInfos  = RemoteAccessInfos.IsNeitherNullNorEmpty() ? [.. RemoteAccessInfos] : [];
 
         }
 
         #endregion
-
-
-        public void SetRemoteCertificateValidator(RemoteTLSServerCertificateValidationHandler<IHTTPClient> RemoteCertificateValidator)
-        {
-            this.RemoteCertificateValidator = RemoteCertificateValidator;
-        }
 
 
         #region ToJSON(JSONLDContext, CustomLocalAccessInfoSerializer, CustomRemoteAccessInfoSerializer)
@@ -258,64 +129,26 @@ namespace cloud.charging.open.protocols.OCPI
                               CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer)
         {
 
-            var clientPrivateKeys = new List<AsymmetricAlgorithm>();
-
-            foreach (var clientCertificate in ClientCertificates)
-            {
-                if (clientCertificate.HasPrivateKey)
-                {
-
-                    var privateRSAKey = clientCertificate.GetRSAPrivateKey();
-                    if (privateRSAKey is not null)
-                        clientPrivateKeys.Add(privateRSAKey);
-
-                    var privateDSAKey = clientCertificate.GetDSAPrivateKey();
-                    if (privateDSAKey is not null)
-                        clientPrivateKeys.Add(privateDSAKey);
-
-                }
-            }
-
             var json = JSONObject.Create(
 
-                                 new JProperty("@id",                  Id.ToString()),
+                                 new JProperty("@id",                 Id.ToString()),
 
                            JSONLDContext.HasValue
-                               ? new JProperty("@context",             JSONLDContext.ToString())
+                               ? new JProperty("@context",            JSONLDContext.ToString())
                                : null,
 
-                                 new JProperty("partyStatus",          Status.ToString()),
+                                 new JProperty("partyStatus",         Status.ToString()),
 
                            localAccessInfos. Count != 0
-                               ? new JProperty("localAccessInfos",     new JArray(localAccessInfos.  Select(localAccessInfo   => localAccessInfo.  ToJSON(CustomLocalAccessInfoSerializer))))
+                               ? new JProperty("localAccessInfos",    new JArray(localAccessInfos.  Select(localAccessInfo   => localAccessInfo.  ToJSON(CustomLocalAccessInfoSerializer))))
                                : null,
 
                            remoteAccessInfos.Count != 0
-                               ? new JProperty("remoteAccessInfos",    new JArray(remoteAccessInfos. Select(remoteAccessInfo  => remoteAccessInfo. ToJSON(CustomRemoteAccessInfoSerializer))))
+                               ? new JProperty("remoteAccessInfos",   new JArray(remoteAccessInfos. Select(remoteAccessInfo  => remoteAccessInfo. ToJSON(CustomRemoteAccessInfoSerializer))))
                                : null,
 
-
-                           // ...
-
-                           ClientCertificates is not null
-                               ? new JProperty("clientCertificates",   new JArray(ClientCertificates.Select(clientCertificate => clientCertificate.ExportCertificatePem())))
-                               : null,
-
-                           clientPrivateKeys.Count > 0
-                               ? new JProperty("clientPrivateKeys",    new JArray(clientPrivateKeys. Select(clientPrivateKey  => clientPrivateKey. ExportPkcs8PrivateKeyPem())))
-                               : null,
-
-                           // ...
-
-                           HTTPUserAgent.IsNotNullOrEmpty()
-                               ? new JProperty("httpUserAgent",        HTTPUserAgent)
-                               : null,
-
-                           // ...
-
-
-                                 new JProperty("created",              Created.    ToISO8601()),
-                                 new JProperty("last_updated",         LastUpdated.ToISO8601())
+                                 new JProperty("created",             Created.    ToISO8601()),
+                                 new JProperty("last_updated",        LastUpdated.ToISO8601())
 
                        );
 

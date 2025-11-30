@@ -17,12 +17,7 @@
 
 #region Usings
 
-using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
-
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -69,70 +64,70 @@ namespace cloud.charging.open.protocols.OCPI
 
 
 
-        /// <summary>
-        /// Prefer IPv4 instead of IPv6.
-        /// </summary>
-        Boolean?                                                   PreferIPv4                    { get; }
+        ///// <summary>
+        ///// Prefer IPv4 instead of IPv6.
+        ///// </summary>
+        //Boolean?                                                   PreferIPv4                    { get; }
 
-        /// <summary>
-        /// A delegate to select a TLS client certificate.
-        /// </summary>
-        RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator    { get; }
+        ///// <summary>
+        ///// A delegate to select a TLS client certificate.
+        ///// </summary>
+        //RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator    { get; }
 
-        /// <summary>
-        /// A delegate to select a TLS client certificate.
-        /// </summary>
-        LocalCertificateSelectionHandler?                          LocalCertificateSelector      { get; }
+        ///// <summary>
+        ///// A delegate to select a TLS client certificate.
+        ///// </summary>
+        //LocalCertificateSelectionHandler?                          LocalCertificateSelector      { get; }
 
-        /// <summary>
-        /// The TLS client certificate to use for HTTP authentication.
-        /// </summary>
-        IEnumerable<X509Certificate2>?                             ClientCertificates            { get; }
+        ///// <summary>
+        ///// The TLS client certificate to use for HTTP authentication.
+        ///// </summary>
+        //IEnumerable<X509Certificate2>?                             ClientCertificates            { get; }
 
-        /// <summary>
-        /// The TLS protocol to use.
-        /// </summary>
-        SslProtocols?                                              TLSProtocols                  { get; }
+        ///// <summary>
+        ///// The TLS protocol to use.
+        ///// </summary>
+        //SslProtocols?                                              TLSProtocols                  { get; }
 
-        /// <summary>
-        /// The optional HTTP accept header.
-        /// </summary>
-        HTTPContentType?                                           ContentType                   { get; }
+        ///// <summary>
+        ///// The optional HTTP accept header.
+        ///// </summary>
+        //HTTPContentType?                                           ContentType                   { get; }
 
-        /// <summary>
-        /// The optional HTTP accept header.
-        /// </summary>
-        AcceptTypes?                                               Accept                        { get; }
+        ///// <summary>
+        ///// The optional HTTP accept header.
+        ///// </summary>
+        //AcceptTypes?                                               Accept                        { get; }
 
-        /// <summary>
-        /// The HTTP user agent identification.
-        /// </summary>
-        String?                                                    HTTPUserAgent                 { get; }
+        ///// <summary>
+        ///// The HTTP user agent identification.
+        ///// </summary>
+        //String?                                                    HTTPUserAgent                 { get; }
 
-        /// <summary>
-        /// The timeout for upstream requests.
-        /// </summary>
-        TimeSpan?                                                  RequestTimeout                { get; set; }
+        ///// <summary>
+        ///// The timeout for upstream requests.
+        ///// </summary>
+        //TimeSpan?                                                  RequestTimeout                { get; set; }
 
-        /// <summary>
-        /// The delay between transmission retries.
-        /// </summary>
-        TransmissionRetryDelayDelegate?                            TransmissionRetryDelay        { get; }
+        ///// <summary>
+        ///// The delay between transmission retries.
+        ///// </summary>
+        //TransmissionRetryDelayDelegate?                            TransmissionRetryDelay        { get; }
 
-        /// <summary>
-        /// The maximum number of retries when communicating with the remote HTTP service.
-        /// </summary>
-        UInt16?                                                    MaxNumberOfRetries            { get; }
+        ///// <summary>
+        ///// The maximum number of retries when communicating with the remote HTTP service.
+        ///// </summary>
+        //UInt16?                                                    MaxNumberOfRetries            { get; }
 
-        /// <summary>
-        /// The size of the internal buffers of HTTP clients.
-        /// </summary>
-        UInt32?                                                    InternalBufferSize            { get; }
+        ///// <summary>
+        ///// The size of the internal buffers of HTTP clients.
+        ///// </summary>
+        //UInt32?                                                    InternalBufferSize            { get; }
 
-        /// <summary>
-        /// Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.
-        /// </summary>
-        Boolean?                                                   UseHTTPPipelining             { get; }
+        ///// <summary>
+        ///// Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.
+        ///// </summary>
+        //Boolean?                                                   UseHTTPPipelining             { get; }
 
 
     }
