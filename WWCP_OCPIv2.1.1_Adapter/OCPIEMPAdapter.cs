@@ -618,13 +618,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            AccessToken                                                LocalAccessToken,
                            URL                                                        RemoteVersionsURL,
                            AccessToken                                                RemoteAccessToken,
-
-                           PartyStatus                                                PartyStatus                       = PartyStatus.ENABLED,
-
                            Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
-                           DateTimeOffset?                                            RemoteAccessNotBefore             = null,
-                           DateTimeOffset?                                            RemoteAccessNotAfter              = null,
+
                            Boolean?                                                   PreferIPv4                        = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
@@ -643,6 +639,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                            IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
                            Version_Id?                                                SelectedVersionId                 = null,
+                           DateTimeOffset?                                            RemoteAccessNotBefore             = null,
+                           DateTimeOffset?                                            RemoteAccessNotAfter              = null,
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
                            Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
@@ -651,6 +649,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            DateTimeOffset?                                            LocalAccessNotAfter               = null,
                            Boolean?                                                   LocalAllowDowngrades              = false,
                            AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
+
+                           PartyStatus                                                PartyStatus                       = PartyStatus.ENABLED,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null,
@@ -667,13 +667,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    LocalAccessToken,
                    RemoteVersionsURL,
                    RemoteAccessToken,
-
-                   PartyStatus,
-
                    RemoteAccessTokenBase64Encoding,
                    RemoteTOTPConfig,
-                   RemoteAccessNotBefore,
-                   RemoteAccessNotAfter,
+
                    PreferIPv4,
                    RemoteCertificateValidator,
                    LocalCertificateSelector,
@@ -692,6 +688,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    RemoteStatus,
                    RemoteVersionIds,
                    SelectedVersionId,
+                   RemoteAccessNotBefore,
+                   RemoteAccessNotAfter,
                    RemoteAllowDowngrades,
 
                    LocalAccessTokenBase64Encoding,
@@ -700,6 +698,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    LocalAccessNotAfter,
                    LocalAllowDowngrades,
                    LocalAccessStatus,
+
+                   PartyStatus,
 
                    Created,
                    LastUpdated,
@@ -720,15 +720,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            BusinessDetails    BusinessDetails,
 
                            AccessToken        LocalAccessToken,
-
-                           PartyStatus?       Status                           = PartyStatus.ENABLED,
-
                            Boolean?           LocalAccessTokenBase64Encoding   = null,
                            TOTPConfig?        LocalTOTPConfig                  = null,
                            DateTimeOffset?    LocalAccessNotBefore             = null,
                            DateTimeOffset?    LocalAccessNotAfter              = null,
                            Boolean?           LocalAllowDowngrades             = false,
                            AccessStatus?      LocalAccessStatus                = AccessStatus.ALLOWED,
+
+                           PartyStatus?       Status                           = PartyStatus.ENABLED,
 
                            DateTimeOffset?    Created                          = null,
                            DateTimeOffset?    LastUpdated                      = null,
@@ -743,15 +742,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    BusinessDetails,
 
                    LocalAccessToken,
-
-                   Status,
-
                    LocalAccessTokenBase64Encoding,
                    LocalTOTPConfig,
                    LocalAccessNotBefore,
                    LocalAccessNotAfter,
                    LocalAllowDowngrades,
                    LocalAccessStatus,
+
+                   Status,
 
                    Created,
                    LastUpdated,

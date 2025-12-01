@@ -49,7 +49,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// The versions URL of the remote party.
         /// </summary>
         [Mandatory]
-        public URL                      VersionsURL                   { get; }
+        public URL?                     VersionsURL                   { get; }
 
         /// <summary>
         /// The access token for accessing the remote party.
@@ -154,33 +154,6 @@ namespace cloud.charging.open.protocols.OCPI
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         /// <summary>
         /// The remote access status.
         /// </summary>
@@ -237,7 +210,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="NotAfter">This remote access information should not be used after this timestamp.</param>
         /// <param name="AccessTokenIsBase64Encoded">Whether the access token is base64 encoded or not.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        public RemoteAccessInfo(URL                                                        VersionsURL,
+        public RemoteAccessInfo(URL?                                                       VersionsURL                  = null,
                                 AccessToken?                                               AccessToken                  = null,
                                 Boolean?                                                   AccessTokenIsBase64Encoded   = null,
                                 TOTPConfig?                                                TOTPConfig                   = null,
@@ -295,7 +268,9 @@ namespace cloud.charging.open.protocols.OCPI
             this.InternalBufferSize          = InternalBufferSize;
             this.UseHTTPPipelining           = UseHTTPPipelining;
 
-            this.Status                      = Status                     ?? RemoteAccessStatus.ONLINE;
+            this.Status                      = Status                     ?? (VersionsURL.HasValue
+                                                                                  ? RemoteAccessStatus.ONLINE
+                                                                                  : RemoteAccessStatus.PRE_REMOTE_REGISTRATION);
 
             this.VersionIds                  = VersionIds?.Distinct()     ?? [];
             this.SelectedVersionId           = SelectedVersionId;
@@ -306,18 +281,18 @@ namespace cloud.charging.open.protocols.OCPI
             unchecked
             {
 
-                this.hashCode = this.VersionsURL.                GetHashCode()       * 29 ^
-                               (this.AccessToken?.               GetHashCode() ?? 0) * 23 ^
-                               (this.AccessTokenIsBase64Encoded?.GetHashCode() ?? 0) * 19 ^
-                               (this.TOTPConfig?.                GetHashCode() ?? 0) * 17 ^
+                this.hashCode = (this.VersionsURL?.               GetHashCode() ?? 0) * 29 ^
+                                (this.AccessToken?.               GetHashCode() ?? 0) * 23 ^
+                                (this.AccessTokenIsBase64Encoded?.GetHashCode() ?? 0) * 19 ^
+                                (this.TOTPConfig?.                GetHashCode() ?? 0) * 17 ^
 
-                                this.Status.                     GetHashCode()       * 13 ^
+                                 this.Status.                     GetHashCode()       * 13 ^
 
-                                this.VersionIds.                 CalcHashCode()      * 11 ^
-                               (this.SelectedVersionId?.         GetHashCode() ?? 0) *  7 ^
-                               (this.NotBefore?.                 GetHashCode() ?? 0) *  5 ^
-                               (this.NotAfter?.                  GetHashCode() ?? 0) *  3 ^
-                                this.AllowDowngrades.            GetHashCode();
+                                 this.VersionIds.                 CalcHashCode()      * 11 ^
+                                (this.SelectedVersionId?.         GetHashCode() ?? 0) *  7 ^
+                                (this.NotBefore?.                 GetHashCode() ?? 0) *  5 ^
+                                (this.NotAfter?.                  GetHashCode() ?? 0) *  3 ^
+                                 this.AllowDowngrades.            GetHashCode();
 
             }
 
@@ -532,7 +507,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (!JSON.ParseMandatory("status",
                                          "remote access status",
-                                         RemoteAccessStatus.TryParse,
+                                         RemoteAccessStatusExtensions.TryParse,
                                          out RemoteAccessStatus Status,
                                          out ErrorResponse))
                 {
@@ -676,7 +651,9 @@ namespace cloud.charging.open.protocols.OCPI
 
             var json = JSONObject.Create(
 
-                                 new JProperty("versionsURL",                  VersionsURL.            ToString()),
+                           VersionsURL.HasValue
+                               ? new JProperty("versionsURL",                  VersionsURL.      Value.ToString())
+                               : null,
 
                            AccessToken.HasValue
                                ? new JProperty("accessToken",                  AccessToken.            ToString())
@@ -733,7 +710,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                            // ...
 
-                                 new JProperty("status",                       Status.           ToString()),
+                                 new JProperty("status",                       Status.           AsText()),
 
 
                            VersionIds.IsNeitherNullNorEmpty()
@@ -773,7 +750,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             => new (
 
-                   VersionsURL. Clone(),
+                   VersionsURL?.Clone(),
                    AccessToken?.Clone(),
                    AccessTokenIsBase64Encoded,
                    TOTPConfig?. Clone(),
@@ -949,7 +926,10 @@ namespace cloud.charging.open.protocols.OCPI
             if (RemoteAccessInfo is null)
                 throw new ArgumentNullException(nameof(RemoteAccessInfo), "The given remote access information must not be null!");
 
-            var c = VersionsURL.                     CompareTo(RemoteAccessInfo.VersionsURL);
+            var c = 0;
+
+            if (c == 0 && VersionsURL.               HasValue && RemoteAccessInfo.VersionsURL.               HasValue)
+                c = VersionsURL.Value.               CompareTo(RemoteAccessInfo.VersionsURL.Value);
 
             if (c == 0 && AccessToken.               HasValue && RemoteAccessInfo.AccessToken.               HasValue)
                 c = AccessToken.Value.               CompareTo(RemoteAccessInfo.AccessToken.Value);

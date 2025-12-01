@@ -133,7 +133,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                            RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
                                            RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
-                                           Status:                            PartyStatus.PreRegistration,
+                                           Status:                            PartyStatus.PRE_REMOTE_REGISTRATION,
 
                                            RemoteAccessTokenBase64Encoding:   null,
                                            RemoteTOTPConfig:                  null,

@@ -36,7 +36,7 @@ namespace cloud.charging.open.protocols.OCPI
             if (TryParse(Text, out var partyStatus))
                 return partyStatus;
 
-            return PartyStatus.Unknown;
+            return PartyStatus.UNKNOWN;
 
         }
 
@@ -72,8 +72,12 @@ namespace cloud.charging.open.protocols.OCPI
             switch (Text.Trim().ToUpper())
             {
 
-                case "PREREGISTRATION":
-                    PartyStatus = PartyStatus.PreRegistration;
+                case "PRE_LOCAL_REGISTRATION":
+                    PartyStatus = PartyStatus.PRE_LOCAL_REGISTRATION;
+                    return true;
+
+                case "PRE_REMOTE_REGISTRATION":
+                    PartyStatus = PartyStatus.PRE_REMOTE_REGISTRATION;
                     return true;
 
                 case "DISABLED":
@@ -85,7 +89,7 @@ namespace cloud.charging.open.protocols.OCPI
                     return true;
 
                 default:
-                    PartyStatus = PartyStatus.Unknown;
+                    PartyStatus = PartyStatus.UNKNOWN;
                     return false;
 
             }
@@ -98,10 +102,11 @@ namespace cloud.charging.open.protocols.OCPI
         public static String AsText(this PartyStatus PartyStatus)
 
             => PartyStatus switch {
-                   PartyStatus.PreRegistration  => "PreRegistration",
-                   PartyStatus.DISABLED         => "DISABLED",
-                   PartyStatus.ENABLED          => "ENABLED",
-                   _                            => "unknown"
+                   PartyStatus.PRE_LOCAL_REGISTRATION   => "PRE_LOCAL_REGISTRATION",
+                   PartyStatus.PRE_REMOTE_REGISTRATION  => "PRE_REMOTE_REGISTRATION",
+                   PartyStatus.DISABLED                 => "DISABLED",
+                   PartyStatus.ENABLED                  => "ENABLED",
+                   _                                    => "UNKNOWN"
                };
 
         #endregion
@@ -118,12 +123,17 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Unknown party status.
         /// </summary>
-        Unknown,
+        UNKNOWN,
 
         /// <summary>
-        /// The party is pre registration.
+        /// The party is waiting for a local registration.
         /// </summary>
-        PreRegistration,
+        PRE_LOCAL_REGISTRATION,
+
+        /// <summary>
+        /// The party is waiting for a remote registration.
+        /// </summary>
+        PRE_REMOTE_REGISTRATION,
 
         /// <summary>
         /// The party is disabled.

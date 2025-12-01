@@ -131,13 +131,13 @@ namespace cloud.charging.open.protocols.OCPI
 
             var json = JSONObject.Create(
 
-                                 new JProperty("@id",                 Id.ToString()),
+                                 new JProperty("@id",                 Id.           ToString()),
 
                            JSONLDContext.HasValue
                                ? new JProperty("@context",            JSONLDContext.ToString())
                                : null,
 
-                                 new JProperty("partyStatus",         Status.ToString()),
+                                 new JProperty("partyStatus",         Status.       AsText()),
 
                            localAccessInfos. Count != 0
                                ? new JProperty("localAccessInfos",    new JArray(localAccessInfos.  Select(localAccessInfo   => localAccessInfo.  ToJSON(CustomLocalAccessInfoSerializer))))
@@ -147,8 +147,8 @@ namespace cloud.charging.open.protocols.OCPI
                                ? new JProperty("remoteAccessInfos",   new JArray(remoteAccessInfos. Select(remoteAccessInfo  => remoteAccessInfo. ToJSON(CustomRemoteAccessInfoSerializer))))
                                : null,
 
-                                 new JProperty("created",             Created.    ToISO8601()),
-                                 new JProperty("last_updated",        LastUpdated.ToISO8601())
+                                 new JProperty("created",             Created.      ToISO8601()),
+                                 new JProperty("last_updated",        LastUpdated.  ToISO8601())
 
                        );
 
@@ -267,7 +267,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region IEquatable<ARemoteParty> Members
+        #region IEquatable<RemotePartyId> Members
 
         #region Equals(Object)
 
@@ -304,7 +304,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             => ARemoteParty is not null &&
 
-               Id.Equals(ARemoteParty.Id) &&
+               Id.    Equals(ARemoteParty.Id) &&
                Status.Equals(ARemoteParty.Status) &&
 
                //Roles.Count().Equals(ARemoteParty.Roles.Count()) &&
@@ -325,13 +325,11 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region (override) GetHashCode()
 
-        private readonly Int32 hashCode;
-
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
         public override Int32 GetHashCode()
-            => hashCode;
+            => Id.GetHashCode();
 
         #endregion
 

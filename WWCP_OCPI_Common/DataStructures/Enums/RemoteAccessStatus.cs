@@ -19,7 +19,108 @@ namespace cloud.charging.open.protocols.OCPI
 {
 
     /// <summary>
-    /// The remote access status of a party.
+    /// Extensions methods for remote access status.
+    /// </summary>
+    public static class RemoteAccessStatusExtensions
+    {
+
+        #region Parse    (Text)
+
+        /// <summary>
+        /// Parse the given text as a remote access status.
+        /// </summary>
+        /// <param name="Text">A text representation of a remote access status.</param>
+        public static RemoteAccessStatus Parse(String Text)
+        {
+
+            if (TryParse(Text, out var remoteAccessStatus))
+                return remoteAccessStatus;
+
+            return RemoteAccessStatus.UNKNOWN;
+
+        }
+
+        #endregion
+
+        #region TryParse (Text)
+
+        /// <summary>
+        /// Try to parse the given text as a remote access status.
+        /// </summary>
+        /// <param name="Text">A text representation of a remote access status.</param>
+        public static RemoteAccessStatus? TryParse(String Text)
+        {
+
+            if (TryParse(Text, out var remoteAccessStatus))
+                return remoteAccessStatus;
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region TryParse (Text, out RemoteAccessStatus)
+
+        /// <summary>
+        /// Try to parse the given text as a remote access status.
+        /// </summary>
+        /// <param name="Text">A text representation of a remote access status.</param>
+        /// <param name="RemoteAccessStatus">The parsed remote access status.</param>
+        public static Boolean TryParse(String Text, out RemoteAccessStatus RemoteAccessStatus)
+        {
+            switch (Text.Trim().ToUpper())
+            {
+
+                case "PRE_LOCAL_REGISTRATION":
+                    RemoteAccessStatus = RemoteAccessStatus.PRE_LOCAL_REGISTRATION;
+                    return true;
+
+                case "PRE_REMOTE_REGISTRATION":
+                    RemoteAccessStatus = RemoteAccessStatus.PRE_REMOTE_REGISTRATION;
+                    return true;
+
+                case "OFFLINE":
+                    RemoteAccessStatus = RemoteAccessStatus.OFFLINE;
+                    return true;
+
+                case "BANNED":
+                    RemoteAccessStatus = RemoteAccessStatus.BANNED;
+                    return true;
+
+                case "ONLINE":
+                    RemoteAccessStatus = RemoteAccessStatus.ONLINE;
+                    return true;
+
+                default:
+                    RemoteAccessStatus = RemoteAccessStatus.UNKNOWN;
+                    return false;
+
+            }
+        }
+
+        #endregion
+
+        #region AsText   (this RemoteAccessStatus)
+
+        public static String AsText(this RemoteAccessStatus RemoteAccessStatus)
+
+            => RemoteAccessStatus switch {
+                   RemoteAccessStatus.PRE_LOCAL_REGISTRATION   => "PRE_LOCAL_REGISTRATION",
+                   RemoteAccessStatus.PRE_REMOTE_REGISTRATION  => "PRE_REMOTE_REGISTRATION",
+                   RemoteAccessStatus.OFFLINE                  => "OFFLINE",
+                   RemoteAccessStatus.BANNED                   => "BANNED",
+                   RemoteAccessStatus.ONLINE                   => "ONLINE",
+                   _                                           => "UNKNOWN"
+               };
+
+        #endregion
+
+    }
+
+
+    /// <summary>
+    /// The access status of a remote party.
     /// </summary>
     public enum RemoteAccessStatus
     {
@@ -28,6 +129,16 @@ namespace cloud.charging.open.protocols.OCPI
         /// The remote access status is unknown.
         /// </summary>
         UNKNOWN,
+
+        /// <summary>
+        /// The remote party is waiting for our registration.
+        /// </summary>
+        PRE_LOCAL_REGISTRATION,
+
+        /// <summary>
+        /// The remote party will soon start a registration.
+        /// </summary>
+        PRE_REMOTE_REGISTRATION,
 
         /// <summary>
         /// The remote access status is offline.

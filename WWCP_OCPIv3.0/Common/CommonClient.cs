@@ -375,7 +375,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         /// <param name="VersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
         /// <param name="AccessToken">The optional OCPI remote access token.</param>
-        /// <param name="AccessTokenBase64Encoding">Whether the remote access token shall be Base64 encoded.</param>
+        /// <param name="AccessTokenIsBase64Encoded">Whether the remote access token shall be Base64 encoded.</param>
         /// <param name="TOTPConfig">The optional Time-Based One-Time Password (TOTP) configuration as 2nd factor authentication.</param>
         /// 
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
@@ -402,7 +402,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="DNSClient">The DNS client to use.</param>
         public CommonClient(URL                                                        VersionsURL,
                             AccessToken?                                               AccessToken                  = null,
-                            Boolean                                                    AccessTokenIsBase64Encoded   = false,
+                            Boolean?                                                   AccessTokenIsBase64Encoded   = false,
                             TOTPConfig?                                                TOTPConfig                   = null,
 
                             HTTPHostname?                                              VirtualHostname              = null,
@@ -509,7 +509,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             OCPILogfileCreatorDelegate?  LogfileCreator    = null,
                             IDNSClient?                  DNSClient         = null)
 
-            : base(RemoteParty.RemoteAccessInfos.First().VersionsURL,
+            : base(RemoteParty.RemoteAccessInfos.First().VersionsURL ?? throw new ArgumentException(
+                                                                                  "The given remote party must have at least one remote access info with a remote versions URL defined! Maybe it did not yet complete the registration process!",
+                                                                                  nameof(RemoteParty)
+                                                                              ),
                    RemoteParty.RemoteAccessInfos.First().AccessToken,
                    RemoteParty.RemoteAccessInfos.First().AccessTokenIsBase64Encoded,
                    RemoteParty.RemoteAccessInfos.First().TOTPConfig,
@@ -541,8 +544,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         {
 
-            this.CommonAPI          = CommonAPI;
-            this.RemoteParty        = RemoteParty;
+            this.CommonAPI    = CommonAPI;
+            this.RemoteParty  = RemoteParty;
 
             if (!RemoteParty.RemoteAccessInfos.Any())
                 throw new ArgumentException(
@@ -550,22 +553,18 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                           nameof(RemoteParty)
                       );
 
-            var remoteAccessInfo    = RemoteParty.RemoteAccessInfos.First();
+            this.TokenAuth    = HTTPAuthentication as HTTPTokenAuthentication;
 
-            this.RemoteVersionsURL  = remoteAccessInfo.VersionsURL;
-            this.RemoteAccessToken  = remoteAccessInfo.AccessToken;
-            this.TokenAuth          = HTTPAuthentication as HTTPTokenAuthentication;
+            this.Counters     = new CommonAPICounters();
 
-            this.Counters           = new CommonAPICounters();
-
-            base.HTTPLogger         = this.DisableLogging == false
-                                          ? new Logger(
-                                                this,
-                                                LoggingPath,
-                                                LoggingContext,
-                                                LogfileCreator
-                                            )
-                                          : null;
+            base.HTTPLogger   = this.DisableLogging == false
+                                    ? new Logger(
+                                          this,
+                                          LoggingPath,
+                                          LoggingContext,
+                                          LogfileCreator
+                                      )
+                                    : null;
 
         }
 
@@ -581,14 +580,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="RemoteVersionsURL">The remote URL of the "OCPI Versions" endpoint to connect to.</param>
         /// <param name="RemoteAccessToken">The remote access token to use.</param>
         /// <param name="RemoteAccessTokenBase64Encoding">Whether the remote access token is Base64 encoded.</param>
-        /// <param name="TOTPConfig">The optional Time-Based One-Time Password (TOTP) configuration as 2nd factor authentication.</param>
+        /// <param name="RemoteTOTPConfig">The optional Time-Based One-Time Password (TOTP) configuration as 2nd factor authentication.</param>
         /// 
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this OCPI Common client.</param>
         /// <param name="PreferIPv4"></param>
         /// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
         /// <param name="LocalCertificateSelector"></param>
-        /// <param name="ClientCertificate">The TLS client certificate to use for HTTP authentication.</param>
+        /// <param name="ClientCertificates">The TLS client certificate to use for HTTP authentication.</param>
         /// <param name="TLSProtocols"></param>
         /// <param name="ContentType">The optional HTTP content type to use.</param>
         /// <param name="Accept">The optional HTTP accept header to use.</param>
@@ -610,7 +609,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                             URL                                                        RemoteVersionsURL,
                             AccessToken                                                RemoteAccessToken,
-                            Boolean                                                    RemoteAccessTokenBase64Encoding   = true,
+                            Boolean?                                                   RemoteAccessTokenBase64Encoding   = true,
                             TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
                             HTTPHostname?                                              VirtualHostname                   = null,
@@ -647,17 +646,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                        RemoteVersionsURL,
                        RemoteAccessToken,
-
-                       PartyStatus.PreRegistration,
-
                        RemoteAccessTokenBase64Encoding,
                        RemoteTOTPConfig,
-                       null,  // RemoteAccessNotBefore
-                       null,  // RemoteAccessNotAfter
-                       null,  // RemoteStatus
-                       null,  // RemoteVersionIds
-                       null,  // SelectedVersionId
-                       null,  // RemoteAllowDowngrades
 
                        PreferIPv4,
                        RemoteCertificateValidator,
@@ -674,6 +664,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        MaxNumberOfRetries,
                        InternalBufferSize,
                        UseHTTPPipelining,
+
+                       null,  // RemoteStatus
+                       null,  // RemoteVersionIds
+                       null,  // SelectedVersionId
+                       null,  // RemoteAccessNotBefore
+                       null,  // RemoteAccessNotAfter
+                       null,  // RemoteAllowDowngrades
+
+                       PartyStatus.PRE_REMOTE_REGISTRATION,
 
                        null,  // Created
                        null   // LastUpdated
@@ -2514,13 +2513,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                           credentialTokenB,           // LocalAccessToken
                                                                           response.Data.URL,          // RemoteVersionsURL
                                                                           response.Data.Token,        // RemoteAccessToken
-
-                                                                          PartyStatus.ENABLED,        // PartyStatus
-
                                                                           null,                       // RemoteAccessTokenBase64Encoding
                                                                           null,                       // RemoteTOTPConfig
-                                                                          null,                       // RemoteAccessNotBefore
-                                                                          null,                       // RemoteAccessNotAfter
+
                                                                           null,                       // PreferIPv4
                                                                           null,                       // RemoteCertificateValidator
                                                                           null,                       // LocalCertificateSelector
@@ -2539,6 +2534,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                           RemoteAccessStatus.ONLINE,  // RemoteStatus
                                                                           [ versionId.Value ],        // RemoteVersionIds
                                                                           versionId.Value,            // SelectedVersionId
+                                                                          null,                       // RemoteAccessNotBefore
+                                                                          null,                       // RemoteAccessNotAfter
                                                                           null,                       // RemoteAllowDowngrades
 
                                                                           null,                       // LocalAccessTokenBase64Encoding
@@ -2547,6 +2544,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                           null,                       // LocalAccessNotAfter
                                                                           null,                       // LocalAllowDowngrades
                                                                           AccessStatus.ALLOWED,       // LocalAccessStatus
+
+                                                                          PartyStatus.ENABLED,        // PartyStatus
 
                                                                           oldRemoteParty.Created,     // Created
                                                                           Timestamp.Now,              // LastUpdated

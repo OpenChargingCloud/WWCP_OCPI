@@ -236,7 +236,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (!JSON.ParseMandatory("status",
                                          "access status",
-                                         AccessStatus.TryParse,
+                                         AccessStatusExtensions.TryParse,
                                          out AccessStatus Status,
                                          out ErrorResponse))
                 {
@@ -340,7 +340,7 @@ namespace cloud.charging.open.protocols.OCPI
             var json = JSONObject.Create(
 
                                  new JProperty("accessToken",                  AccessToken.    ToString()),
-                                 new JProperty("status",                       Status.         ToString()),
+                                 new JProperty("status",                       Status.         AsText()),
 
                            TOTPConfig is not null
                                ? new JProperty("totpConfig",                   TOTPConfig.     ToJSON())
@@ -370,7 +370,7 @@ namespace cloud.charging.open.protocols.OCPI
         #region Clone()
 
         /// <summary>
-        /// Clone this object.
+        /// Clone this local access information.
         /// </summary>
         public LocalAccessInfo Clone()
 

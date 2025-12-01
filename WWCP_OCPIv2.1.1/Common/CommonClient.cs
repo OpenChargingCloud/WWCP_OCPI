@@ -354,7 +354,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                             OCPILogfileCreatorDelegate?  LogfileCreator    = null,
                             IDNSClient?                  DNSClient         = null)
 
-            : base(RemoteParty.RemoteAccessInfos.First().VersionsURL,
+            : base(RemoteParty.RemoteAccessInfos.First().VersionsURL ?? throw new ArgumentException(
+                                                                                  "The given remote party must have at least one remote access info with a remote versions URL defined! Maybe it did not yet complete the registration process!",
+                                                                                  nameof(RemoteParty)
+                                                                              ),
                    RemoteParty.RemoteAccessInfos.First().AccessToken,
                    RemoteParty.RemoteAccessInfos.First().AccessTokenIsBase64Encoded,
                    RemoteParty.RemoteAccessInfos.First().TOTPConfig,
@@ -494,17 +497,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        RemoteVersionsURL,
                        RemoteAccessToken,
-
-                       PartyStatus.PreRegistration,
-
                        RemoteAccessTokenBase64Encoding,
                        RemoteTOTPConfig,
-                       null,  // RemoteAccessNotBefore
-                       null,  // RemoteAccessNotAfter
-                       null,  // RemoteVersionIds
-                       null,  // RemoteStatus
-                       null,  // SelectedVersionId
-                       null,  // RemoteAllowDowngrades
 
                        PreferIPv4,
                        RemoteCertificateValidator,
@@ -521,6 +515,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        MaxNumberOfRetries,
                        InternalBufferSize,
                        UseHTTPPipelining,
+
+                       null,  // RemoteVersionIds
+                       null,  // RemoteStatus
+                       null,  // SelectedVersionId
+                       null,  // RemoteAccessNotBefore
+                       null,  // RemoteAccessNotAfter
+                       null,  // RemoteAllowDowngrades
+
+                       PartyStatus.PRE_REMOTE_REGISTRATION,
 
                        null,  // Created
                        null   // LastUpdated
@@ -2148,13 +2151,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                            credentialTokenB,           // LocalAccessToken
                                                            response.Data.URL,          // RemoteVersionsURL
                                                            response.Data.Token,        // RemoteAccessToken
-
-                                                           PartyStatus.ENABLED,        // PartyStatus
-
                                                            null,                       // RemoteAccessTokenBase64Encoding
                                                            null,                       // RemoteTOTPConfig
-                                                           null,                       // RemoteAccessNotBefore
-                                                           null,                       // RemoteAccessNotAfter
+
                                                            null,                       // PreferIPv4
                                                            null,                       // RemoteCertificateValidator
                                                            null,                       // LocalCertificateSelector
@@ -2174,6 +2173,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                            RemoteAccessStatus.ONLINE,  // RemoteStatus
                                                            [ versionId.Value ],        // RemoteVersionIds
                                                            versionId.Value,            // SelectedVersionId
+                                                           null,                       // RemoteAccessNotBefore
+                                                           null,                       // RemoteAccessNotAfter
                                                            null,                       // RemoteAllowDowngrades
 
                                                            null,                       // LocalAccessTokenBase64Encoding
@@ -2182,6 +2183,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                            null,                       // LocalAccessNotAfter
                                                            null,                       // LocalAllowDowngrades
                                                            AccessStatus.ALLOWED,       // LocalAccessStatus
+
+                                                           PartyStatus.ENABLED,        // PartyStatus
 
                                                            null,                       // Created
                                                            Timestamp.Now,              // LastUpdated

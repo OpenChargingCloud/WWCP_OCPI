@@ -343,49 +343,32 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region IComparable<RemoteParty> Members
-
-        #region CompareTo(Object)
-
-        ///// <summary>
-        ///// Compares two remote parties.
-        ///// </summary>
-        ///// <param name="Object">A remote party to compare with.</param>
-        //public Int32 CompareTo(Object? Object)
-
-        //    => Object is RemoteParty remoteParty
-        //           ? CompareTo(remoteParty)
-        //           : throw new ArgumentException("The given object is not a remote party!",
-        //                                         nameof(Object));
-
-        #endregion
-
-        #region CompareTo(RemoteParty)
+        #region CompareTo(ARemotePartyV2x)
 
         /// <summary>
         /// Compares two remote parties.
         /// </summary>
-        /// <param name="RemoteParty">A remote party to compare with.</param>
-        public Int32 CompareTo(ARemotePartyV2x? RemoteParty)
+        /// <param name="ARemotePartyV2x">A remote party to compare with.</param>
+        public Int32 CompareTo(ARemotePartyV2x? ARemotePartyV2x)
         {
 
-            if (RemoteParty is null)
-                throw new ArgumentNullException(nameof(RemoteParty), "The given remote party must not be null!");
+            if (ARemotePartyV2x is null)
+                throw new ArgumentNullException(nameof(ARemotePartyV2x), "The given remote party must not be null!");
 
-            var c = Id.CompareTo(RemoteParty.Id);
-
-            if (c == 0)
-                c = Status.CompareTo(RemoteParty.Status);
+            var c = Id.CompareTo(ARemotePartyV2x.Id);
 
             if (c == 0)
-                c = Roles.Count().CompareTo(RemoteParty.Roles.Count());
+                c = Status.CompareTo(ARemotePartyV2x.Status);
+
+            if (c == 0)
+                c = Roles.Count().CompareTo(ARemotePartyV2x.Roles.Count());
 
             if (c == 0)
             {
                 for (var i = 0; i < Roles.Count(); i++)
                 {
 
-                    c = Roles.ElementAt(i).CompareTo(RemoteParty.Roles.ElementAt(i));
+                    c = Roles.ElementAt(i).CompareTo(ARemotePartyV2x.Roles.ElementAt(i));
 
                     if (c != 0)
                         break;
@@ -394,10 +377,10 @@ namespace cloud.charging.open.protocols.OCPI
             }
 
             if (c == 0)
-                c = LastUpdated.CompareTo(RemoteParty.LastUpdated);
+                c = LastUpdated.CompareTo(ARemotePartyV2x.LastUpdated);
 
             if (c == 0)
-                c = ETag.CompareTo(RemoteParty.ETag);
+                c = ETag.CompareTo(ARemotePartyV2x.ETag);
 
             return c;
 
@@ -405,73 +388,33 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #endregion
-
-        #region IEquatable<RemoteParty> Members
-
-        #region Equals(Object)
-
-        ///// <summary>
-        ///// Compares two remote parties for equality.
-        ///// </summary>
-        ///// <param name="Object">A remote party to compare with.</param>
-        //public override Boolean Equals(Object? Object)
-
-        //    => Object is RemoteParty remoteParty &&
-        //           Equals(remoteParty);
-
-        #endregion
-
-        #region Equals(RemoteParty)
+        #region Equals(ARemotePartyV2x)
 
         /// <summary>
         /// Compares two remote parties for equality.
         /// </summary>
-        /// <param name="RemoteParty">A remote party to compare with.</param>
-        public Boolean Equals(ARemotePartyV2x? RemoteParty)
+        /// <param name="ARemotePartyV2x">A remote party to compare with.</param>
+        public Boolean Equals(ARemotePartyV2x? ARemotePartyV2x)
 
-            => RemoteParty is not null &&
+            => ARemotePartyV2x is not null &&
 
-               Id.Equals(RemoteParty.Id) &&
-               Status.Equals(RemoteParty.Status) &&
+               Id.Equals(ARemotePartyV2x.Id) &&
+               Status.Equals(ARemotePartyV2x.Status) &&
 
-               Roles.Count().Equals(RemoteParty.Roles.Count()) &&
-               Roles.All(RemoteParty.Roles.Contains) &&
+               Roles.Count().Equals(ARemotePartyV2x.Roles.Count()) &&
+               Roles.All(ARemotePartyV2x.Roles.Contains) &&
 
-               LastUpdated.Equals(RemoteParty.LastUpdated) &&
-               ETag.Equals(RemoteParty.ETag) &&
+               LastUpdated.Equals(ARemotePartyV2x.LastUpdated) &&
+               ETag.Equals(ARemotePartyV2x.ETag) &&
 
-               localAccessInfos.Count.Equals(RemoteParty.localAccessInfos.Count) &&
-               localAccessInfos.All(RemoteParty.localAccessInfos.Contains) &&
+               localAccessInfos.Count.Equals(ARemotePartyV2x.localAccessInfos.Count) &&
+               localAccessInfos.All(ARemotePartyV2x.localAccessInfos.Contains) &&
 
-               remoteAccessInfos.Count.Equals(RemoteParty.remoteAccessInfos.Count) &&
-               remoteAccessInfos.All(RemoteParty.remoteAccessInfos.Contains);
-
-        #endregion
+               remoteAccessInfos.Count.Equals(ARemotePartyV2x.remoteAccessInfos.Count) &&
+               remoteAccessInfos.All(ARemotePartyV2x.remoteAccessInfos.Contains);
 
         #endregion
 
-        #region (override) GetHashCode()
-
-        private readonly Int32 hashCode;
-
-        /// <summary>
-        /// Return the hash code of this object.
-        /// </summary>
-        public override Int32 GetHashCode()
-            => hashCode;
-
-        #endregion
-
-        #region (override) ToString()
-
-        /// <summary>
-        /// Return a text representation of this object.
-        /// </summary>
-        public override String ToString()
-            => Id.ToString();
-
-        #endregion
 
     }
 

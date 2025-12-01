@@ -119,7 +119,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The default JSON-LD context of this object.
         /// </summary>
-        public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse("https://open.charging.cloud/contexts/OCPIv2.1/remoteParty");
+        public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse($"https://open.charging.cloud/contexts/OCPI/remoteParty/{Version.String}");
 
         #endregion
 
@@ -159,7 +159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Constructor(s)
 
-        #region RemoteParty(CountryCode, PartyId, Role, BusinessDetails, LocalAccessToken,                                       Status = ALLOWED, ...)
+        #region RemoteParty(CountryCode, PartyId, Role, BusinessDetails, LocalAccessToken,                                       ..., Status = ENABLED, ...)
 
         /// <summary>
         /// Create a new Remote Party with local access only.
@@ -171,15 +171,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            BusinessDetails  BusinessDetails,
 
                            AccessToken      LocalAccessToken,
-
-                           PartyStatus?     Status                           = PartyStatus.ENABLED,
-
                            Boolean?         LocalAccessTokenBase64Encoding   = null,
                            TOTPConfig?      LocalTOTPConfig                  = null,
                            DateTimeOffset?  LocalAccessNotBefore             = null,
                            DateTimeOffset?  LocalAccessNotAfter              = null,
                            Boolean?         LocalAllowDowngrades             = false,
                            AccessStatus?    LocalAccessStatus                = AccessStatus.ALLOWED,
+
+                           PartyStatus?     Status                           = PartyStatus.ENABLED,
 
                            DateTimeOffset?  Created                          = null,
                            DateTimeOffset?  LastUpdated                      = null)
@@ -210,7 +209,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region RemoteParty(CountryCode, PartyId, Role, BusinessDetails,                   RemoteVersionsURL, RemoteAccessToken, Status = ALLOWED, ...)
+        #region RemoteParty(CountryCode, PartyId, Role, BusinessDetails,                   RemoteVersionsURL, RemoteAccessToken, ..., Status = ENABLED, ...)
 
         /// <summary>
         /// Create a new Remote Party with remote access only.
@@ -223,17 +222,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            URL                                                        RemoteVersionsURL,
                            AccessToken?                                               RemoteAccessToken,
-
-                           PartyStatus?                                               Status                            = PartyStatus.ENABLED,
-
                            Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
-                           DateTimeOffset?                                            RemoteAccessNotBefore             = null,
-                           DateTimeOffset?                                            RemoteAccessNotAfter              = null,
-                           RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
-                           IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
-                           Version_Id?                                                SelectedVersionId                 = null,
-                           Boolean?                                                   RemoteAllowDowngrades             = null,
 
                            Boolean?                                                   PreferIPv4                        = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
@@ -251,6 +241,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            UInt32?                                                    InternalBufferSize                = null,
                            Boolean?                                                   UseHTTPPipelining                 = null,
 
+                           RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
+                           IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
+                           Version_Id?                                                SelectedVersionId                 = null,
+                           DateTimeOffset?                                            RemoteAccessNotBefore             = null,
+                           DateTimeOffset?                                            RemoteAccessNotAfter              = null,
+                           Boolean?                                                   RemoteAllowDowngrades             = null,
+
+                           PartyStatus?                                               Status                            = PartyStatus.ENABLED,
+
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null)
 
@@ -262,6 +261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    [],
                    [
                        new RemoteAccessInfo(
+
                            RemoteVersionsURL,
                            RemoteAccessToken,
                            RemoteAccessTokenBase64Encoding,
@@ -290,6 +290,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            RemoteAccessNotBefore,
                            RemoteAccessNotAfter,
                            RemoteAllowDowngrades
+
                        )
                    ],
                    Status,
@@ -301,7 +302,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region RemoteParty(CountryCode, PartyId, Role, BusinessDetails, LocalAccessToken, RemoteVersionsURL, RemoteAccessToken, Status = ALLOWED, ...)
+        #region RemoteParty(CountryCode, PartyId, Role, BusinessDetails, LocalAccessToken, RemoteVersionsURL, RemoteAccessToken, ..., Status = ENABLED, ...)
 
         public RemoteParty(CountryCode                                                CountryCode,
                            Party_Id                                                   PartyId,
@@ -309,15 +310,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            BusinessDetails                                            BusinessDetails,
 
                            AccessToken                                                LocalAccessToken,
+
                            URL                                                        RemoteVersionsURL,
                            AccessToken                                                RemoteAccessToken,
-
-                           PartyStatus?                                               Status                            = PartyStatus.ENABLED,
-
                            Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
-                           DateTimeOffset?                                            RemoteAccessNotBefore             = null,
-                           DateTimeOffset?                                            RemoteAccessNotAfter              = null,
+
                            Boolean?                                                   PreferIPv4                        = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
@@ -336,6 +334,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                            IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
                            Version_Id?                                                SelectedVersionId                 = null,
+                           DateTimeOffset?                                            RemoteAccessNotBefore             = null,
+                           DateTimeOffset?                                            RemoteAccessNotAfter              = null,
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
                            Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
@@ -344,6 +344,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            DateTimeOffset?                                            LocalAccessNotAfter               = null,
                            Boolean?                                                   LocalAllowDowngrades              = false,
                            AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
+
+                           PartyStatus?                                               Status                            = PartyStatus.ENABLED,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null)
@@ -404,7 +406,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         { }
 
         #endregion
-
 
         #region RemoteParty(CountryCode, PartyId, Role, BusinessDetails, LocalAccessInfos, RemoteAccessInfos, Status = ENABLED, ...)
 
@@ -1003,16 +1004,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override Int32 GetHashCode()
             => hashCode;
-
-        #endregion
-
-        #region (override) ToString()
-
-        /// <summary>
-        /// Return a text representation of this object.
-        /// </summary>
-        public override String ToString()
-            => Id.ToString();
 
         #endregion
 
