@@ -22,22 +22,23 @@ using System.Collections.Concurrent;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
-    //public delegate String OCPILogfileCreatorDelegate(String LoggingPath, RemoteParty? RemoteParty, String Context, String LogfileName);
-
+    /// <summary>
+    /// Extension methods for OCPI/HTTP API loggers.
+    /// </summary>
     public static class OCPIAPILoggerExtensions
     {
 
-        #region RegisterDefaultConsoleLogTarget(this RequestLogger,  Logger)
+        #region RegisterDefaultConsoleLogTarget (this RequestLogger,  Logger)
 
         /// <summary>
         /// Register the default console logger.
@@ -47,12 +48,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public static OCPIAPILogger.OCPIAPIRequestLogger RegisterDefaultConsoleLogTarget(this OCPIAPILogger.OCPIAPIRequestLogger  RequestLogger,
                                                                                          OCPIAPILogger                            Logger)
 
-            => RequestLogger.RegisterLogTarget(LogTargets.Console,
-                                               Logger.Default_LogOCPIRequest_toConsole);
+            => RequestLogger.RegisterLogTarget(
+                   LogTargets.Console,
+                   Logger.Default_LogOCPIRequest_toConsole
+               );
 
         #endregion
 
-        #region RegisterDefaultConsoleLogTarget(this ResponseLogger, Logger)
+        #region RegisterDefaultConsoleLogTarget (this ResponseLogger, Logger)
 
         /// <summary>
         /// Register the default console logger.
@@ -62,13 +65,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public static OCPIAPILogger.OCPIAPIResponseLogger RegisterDefaultConsoleLogTarget(this OCPIAPILogger.OCPIAPIResponseLogger  ResponseLogger,
                                                                                           OCPIAPILogger                             Logger)
 
-            => ResponseLogger.RegisterLogTarget(LogTargets.Console,
-                                                Logger.Default_LogOCPIResponse_toConsole);
+            => ResponseLogger.RegisterLogTarget(
+                   LogTargets.Console,
+                   Logger.Default_LogOCPIResponse_toConsole
+               );
 
         #endregion
 
 
-        #region RegisterDefaultDiscLogTarget(this RequestLogger,  Logger)
+        #region RegisterDefaultDiscLogTarget    (this RequestLogger,  Logger)
 
         /// <summary>
         /// Register the default disc logger.
@@ -78,12 +83,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public static OCPIAPILogger.OCPIAPIRequestLogger RegisterDefaultDiscLogTarget(this OCPIAPILogger.OCPIAPIRequestLogger  RequestLogger,
                                                                                       OCPIAPILogger                            Logger)
 
-            => RequestLogger.RegisterLogTarget(LogTargets.Disc,
-                                               Logger.Default_LogOCPIRequest_toDisc);
+            => RequestLogger.RegisterLogTarget(
+                   LogTargets.Disc,
+                   Logger.Default_LogOCPIRequest_toDisc
+               );
 
         #endregion
 
-        #region RegisterDefaultDiscLogTarget(this ResponseLogger, Logger)
+        #region RegisterDefaultDiscLogTarget    (this ResponseLogger, Logger)
 
         /// <summary>
         /// Register the default disc logger.
@@ -93,8 +100,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public static OCPIAPILogger.OCPIAPIResponseLogger RegisterDefaultDiscLogTarget(this OCPIAPILogger.OCPIAPIResponseLogger  ResponseLogger,
                                                                                        OCPIAPILogger                             Logger)
 
-            => ResponseLogger.RegisterLogTarget(LogTargets.Disc,
-                                                Logger.Default_LogOCPIResponse_toDisc);
+            => ResponseLogger.RegisterLogTarget(
+                   LogTargets.Disc,
+                   Logger.Default_LogOCPIResponse_toDisc
+               );
 
         #endregion
 
@@ -104,83 +113,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     /// <summary>
     /// An OCPI/HTTP API logger.
     /// </summary>
-    public class OCPIAPILogger
+    public class OCPIAPILogger(HTTPTestServerX              HTTPServer,
+                               String                       Context,
+                               String?                      LoggingPath      = null,
+                               OCPILogfileCreatorDelegate?  LogfileCreator   = null)
     {
 
         #region (class) OCPIAPIRequestLogger
 
         /// <summary>
-        /// A wrapper class to manage OCPI API event subscriptions
-        /// for logging purposes.
+        /// A wrapper class to manage OCPI API HTTP Request
+        /// event subscriptions for logging purposes.
         /// </summary>
-        public sealed class OCPIAPIRequestLogger
+        /// <param name="LoggingPath">The logging path.</param>
+        /// <param name="Context">The context of the event to be logged.</param>
+        /// <param name="LogEventName">The name of the event to be logged.</param>
+        /// <param name="SubscribeToEventDelegate">An delegate called whenever the event is subscribed to.</param>
+        /// <param name="UnsubscribeFromEventDelegate">An delegate called whenever the subscription of the event is stopped.</param>
+        public sealed class OCPIAPIRequestLogger(String                         LoggingPath,
+                                                 String                         Context,
+                                                 String                         LogEventName,
+                                                 Action<OCPIRequestLogHandler>  SubscribeToEventDelegate,
+                                                 Action<OCPIRequestLogHandler>  UnsubscribeFromEventDelegate)
         {
 
             #region Data
 
-            private readonly Dictionary<LogTargets, OCPIRequestLogHandler>  subscriptionDelegates;
-            private readonly HashSet<LogTargets>                            subscriptionStatus;
+            private readonly Dictionary<LogTargets, OCPIRequestLogHandler>  subscriptionDelegates   = [];
+            private readonly HashSet<LogTargets>                            subscriptionStatus      = [];
 
             #endregion
 
             #region Properties
 
-            public String                         LoggingPath                     { get; }
+            public String                         LoggingPath                     { get; } = LoggingPath  ?? AppContext.BaseDirectory;
 
             /// <summary>
             /// The context of the event to be logged.
             /// </summary>
-            public String                         Context                         { get; }
+            public String                         Context                         { get; } = Context      ?? "";
 
             /// <summary>
             /// The name of the event to be logged.
             /// </summary>
-            public String                         LogEventName                    { get; }
+            public String                         LogEventName                    { get; } = LogEventName ?? "";
 
             /// <summary>
             /// A delegate called whenever the event is subscribed to.
             /// </summary>
-            public Action<OCPIRequestLogHandler>  SubscribeToEventDelegate        { get; }
+            public Action<OCPIRequestLogHandler>  SubscribeToEventDelegate        { get; } = SubscribeToEventDelegate;
 
             /// <summary>
             /// A delegate called whenever the subscription of the event is stopped.
             /// </summary>
-            public Action<OCPIRequestLogHandler>  UnsubscribeFromEventDelegate    { get; }
-
-            #endregion
-
-            #region Constructor(s)
-
-            /// <summary>
-            /// Create a new log event for the linked HTTP API event.
-            /// </summary>
-            /// <param name="Context">The context of the event.</param>
-            /// <param name="LogEventName">The name of the event.</param>
-            /// <param name="SubscribeToEventDelegate">A delegate for subscribing to the linked event.</param>
-            /// <param name="UnsubscribeFromEventDelegate">A delegate for subscribing from the linked event.</param>
-            public OCPIAPIRequestLogger(String                         LoggingPath,
-                                        String                         Context,
-                                        String                         LogEventName,
-                                        Action<OCPIRequestLogHandler>  SubscribeToEventDelegate,
-                                        Action<OCPIRequestLogHandler>  UnsubscribeFromEventDelegate)
-            {
-
-                #region Initial checks
-
-                if (LogEventName.IsNullOrEmpty())
-                    throw new ArgumentNullException(nameof(LogEventName), "The given log event name must not be null or empty!");
-
-                #endregion
-
-                this.LoggingPath                   = LoggingPath ?? AppContext.BaseDirectory;
-                this.Context                       = Context     ?? "";
-                this.LogEventName                  = LogEventName;
-                this.SubscribeToEventDelegate      = SubscribeToEventDelegate;
-                this.UnsubscribeFromEventDelegate  = UnsubscribeFromEventDelegate;
-                this.subscriptionDelegates         = [];
-                this.subscriptionStatus            = [];
-
-            }
+            public Action<OCPIRequestLogHandler>  UnsubscribeFromEventDelegate    { get; } = UnsubscribeFromEventDelegate;
 
             #endregion
 
@@ -285,77 +271,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region (class) OCPIAPIResponseLogger
 
         /// <summary>
-        /// A wrapper class to manage OCPI API event subscriptions
-        /// for logging purposes.
+        /// A wrapper class to manage OCPI API HTTP Response
+        /// event subscriptions for logging purposes.
         /// </summary>
-        public sealed class OCPIAPIResponseLogger
+        /// <param name="LoggingPath">The logging path.</param>
+        /// <param name="Context">The context of the event to be logged.</param>
+        /// <param name="LogEventName">The name of the event to be logged.</param>
+        /// <param name="SubscribeToEventDelegate">An delegate called whenever the event is subscribed to.</param>
+        /// <param name="UnsubscribeFromEventDelegate">An delegate called whenever the subscription of the event is stopped.</param>
+        public sealed class OCPIAPIResponseLogger(String                          LoggingPath,
+                                                  String                          Context,
+                                                  String                          LogEventName,
+                                                  Action<OCPIResponseLogHandler>  SubscribeToEventDelegate,
+                                                  Action<OCPIResponseLogHandler>  UnsubscribeFromEventDelegate)
         {
 
             #region Data
 
-            private readonly Dictionary<LogTargets, OCPIResponseLogHandler>  subscriptionDelegates;
-            private readonly HashSet<LogTargets>                             subscriptionStatus;
+            private readonly Dictionary<LogTargets, OCPIResponseLogHandler>  subscriptionDelegates   = [];
+            private readonly HashSet<LogTargets>                             subscriptionStatus      = [];
 
             #endregion
 
             #region Properties
 
-            public String                          LoggingPath                     { get; }
+            public String                          LoggingPath                     { get; } = LoggingPath  ?? AppContext.BaseDirectory;
 
             /// <summary>
             /// The context of the event to be logged.
             /// </summary>
-            public String                          Context                         { get; }
+            public String                          Context                         { get; } = Context      ?? "";
 
             /// <summary>
             /// The name of the event to be logged.
             /// </summary>
-            public String                          LogEventName                    { get; }
+            public String                          LogEventName                    { get; } = LogEventName ?? "";
 
             /// <summary>
             /// A delegate called whenever the event is subscribed to.
             /// </summary>
-            public Action<OCPIResponseLogHandler>  SubscribeToEventDelegate        { get; }
+            public Action<OCPIResponseLogHandler>  SubscribeToEventDelegate        { get; } = SubscribeToEventDelegate;
 
             /// <summary>
             /// A delegate called whenever the subscription of the event is stopped.
             /// </summary>
-            public Action<OCPIResponseLogHandler>  UnsubscribeFromEventDelegate    { get; }
-
-            #endregion
-
-            #region Constructor(s)
-
-            /// <summary>
-            /// Create a new log event for the linked HTTP API event.
-            /// </summary>
-            /// <param name="Context">The context of the event.</param>
-            /// <param name="LogEventName">The name of the event.</param>
-            /// <param name="SubscribeToEventDelegate">A delegate for subscribing to the linked event.</param>
-            /// <param name="UnsubscribeFromEventDelegate">A delegate for subscribing from the linked event.</param>
-            public OCPIAPIResponseLogger(String                          LoggingPath,
-                                         String                          Context,
-                                         String                          LogEventName,
-                                         Action<OCPIResponseLogHandler>  SubscribeToEventDelegate,
-                                         Action<OCPIResponseLogHandler>  UnsubscribeFromEventDelegate)
-            {
-
-                #region Initial checks
-
-                if (LogEventName.IsNullOrEmpty())
-                    throw new ArgumentNullException(nameof(LogEventName), "The given log event name must not be null or empty!");
-
-                #endregion
-
-                this.LoggingPath                   = LoggingPath ?? AppContext.BaseDirectory;
-                this.Context                       = Context     ?? "";
-                this.LogEventName                  = LogEventName;
-                this.SubscribeToEventDelegate      = SubscribeToEventDelegate;
-                this.UnsubscribeFromEventDelegate  = UnsubscribeFromEventDelegate;
-                this.subscriptionDelegates         = [];
-                this.subscriptionStatus            = [];
-
-            }
+            public Action<OCPIResponseLogHandler>  UnsubscribeFromEventDelegate    { get; } = UnsubscribeFromEventDelegate;
 
             #endregion
 
@@ -457,10 +417,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
+        #region Default logging delegates
 
-        // Default logging delegates
-
-        #region Default_LogOCPIRequest_toConsole (LoggingPath, Context, LogEventName, Request)
+        #region Default_LogOCPIRequest_toConsole  (LoggingPath, Context, LogEventName, Request)
 
         /// <summary>
         /// A default delegate for logging incoming OCPI requests to console.
@@ -499,7 +458,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region Default_LogOCPIResponse_toConsole(LoggingPath, Context, LogEventName, Request, Response)
+        #region Default_LogOCPIResponse_toConsole (LoggingPath, Context, LogEventName, Request, Response)
 
         /// <summary>
         /// A default delegate for logging OCPI requests/-responses to console.
@@ -561,7 +520,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region Default_LogOCPIRequest_toDisc    (LoggingPath, Context, LogEventName, Request)
+        #region Default_LogOCPIRequest_toDisc     (LoggingPath, Context, LogEventName, Request)
 
         /// <summary>
         /// A default delegate for logging incoming OCPI requests to disc.
@@ -576,12 +535,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         {
 
             //ToDo: Can we have a lock per logfile?
-            var LockTaken = await logHTTPRequest_toDisc_Lock.WaitAsync(MaxWaitingForALock);
+            var lockTaken = await logHTTPRequest_toDisc_Lock.WaitAsync(MaxWaitingForALock);
 
             try
             {
 
-                if (LockTaken)
+                if (lockTaken)
                 {
 
                     var retry = 0;
@@ -592,13 +551,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         try
                         {
 
-                            File.AppendAllText(LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName),
-                                               String.Concat(Request.HTTPRequest.HTTPSource, " -> ", Request.HTTPRequest.LocalSocket,             Environment.NewLine,
-                                                             ">>>>>>--Request----->>>>>>------>>>>>>------>>>>>>------>>>>>>------>>>>>>------",  Environment.NewLine,
-                                                             Request.HTTPRequest.Timestamp.ToISO8601(),                                                       Environment.NewLine,
-                                                             Request.HTTPRequest.EntirePDU,                                                                   Environment.NewLine,
-                                                             "--------------------------------------------------------------------------------",  Environment.NewLine),
-                                               Encoding.UTF8);
+                            var fullFileName   = LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName);
+                            var directoryPath  = Path.GetDirectoryName(fullFileName);
+
+                            if (directoryPath.IsNotNullOrEmpty())
+                                Directory.CreateDirectory(directoryPath);
+
+                            File.AppendAllText(
+                                fullFileName,
+                                String.Concat(
+                                    Request.HTTPRequest.HTTPSource, " -> ", Request.HTTPRequest.LocalSocket,             Environment.NewLine,
+                                    Request.RemoteParty is not null
+                                        ? $"Remote party: '{Request.RemoteParty.Id}'{Environment.NewLine}"
+                                        : null,
+                                    ">>>>>>--Request----->>>>>>------>>>>>>------>>>>>>------>>>>>>------>>>>>>------",  Environment.NewLine,
+                                    Request.HTTPRequest.Timestamp.ToISO8601(),                                                       Environment.NewLine,
+                                    Request.HTTPRequest.EntirePDU,                                                                   Environment.NewLine,
+                                    "--------------------------------------------------------------------------------",  Environment.NewLine
+                                ),
+                                Encoding.UTF8
+                            );
 
                             break;
 
@@ -642,7 +614,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
             finally
             {
-                if (LockTaken)
+                if (lockTaken)
                     logHTTPRequest_toDisc_Lock.Release();
             }
 
@@ -650,7 +622,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region Default_LogOCPIResponse_toDisc   (LoggingPath, Context, LogEventName, Request, Response)
+        #region Default_LogOCPIResponse_toDisc    (LoggingPath, Context, LogEventName, Request, Response)
 
         /// <summary>
         /// A default delegate for logging OCPI requests/-responses to disc.
@@ -667,12 +639,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         {
 
             //ToDo: Can we have a lock per logfile?
-            var LockTaken = await logHTTPResponse_toDisc_Lock.WaitAsync(MaxWaitingForALock);
+            var lockTaken = await logHTTPResponse_toDisc_Lock.WaitAsync(MaxWaitingForALock);
 
             try
             {
 
-                if (LockTaken)
+                if (lockTaken)
                 {
 
                     var retry = 0;
@@ -683,18 +655,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         try
                         {
 
-                            File.AppendAllText(LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName),
-                                               String.Concat(Request.HTTPRequest.HTTPSource, " -> ", Request.HTTPRequest.LocalSocket,             Environment.NewLine,
-                                                             ">>>>>>--Request----->>>>>>------>>>>>>------>>>>>>------>>>>>>------>>>>>>------",  Environment.NewLine,
-                                                             Request.HTTPRequest.Timestamp.ToISO8601(),                                                       Environment.NewLine,
-                                                             Request.HTTPRequest.EntirePDU,                                                                   Environment.NewLine,
-                                                             "<<<<<<--Response----<<<<<<------<<<<<<------<<<<<<------<<<<<<------<<<<<<------",  Environment.NewLine,
-                                                             Response.Timestamp.ToISO8601(),
-                                                                 " -> ",
-                                                                 (Response.Timestamp - Request.HTTPRequest.Timestamp).TotalMilliseconds, "ms runtime",        Environment.NewLine,
-                                                             Response.HTTPResponse?.EntirePDU ?? "",                                              Environment.NewLine,
-                                                             "--------------------------------------------------------------------------------",  Environment.NewLine),
-                                               Encoding.UTF8);
+                            var fullFileName   = LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName);
+                            var directoryPath  = Path.GetDirectoryName(fullFileName);
+
+                            if (directoryPath.IsNotNullOrEmpty())
+                                Directory.CreateDirectory(directoryPath);
+
+                            File.AppendAllText(
+                                LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName),
+                                String.Concat(
+                                    Request.HTTPRequest.HTTPSource, " -> ", Request.HTTPRequest.LocalSocket,             Environment.NewLine,
+                                    ">>>>>>--Request----->>>>>>------>>>>>>------>>>>>>------>>>>>>------>>>>>>------",  Environment.NewLine,
+                                    Request.RemoteParty is not null
+                                        ? $"Remote party: '{Request.RemoteParty.Id}'{Environment.NewLine}"
+                                        : null,
+                                    Request.HTTPRequest.Timestamp.ToISO8601(),                                                       Environment.NewLine,
+                                    Request.HTTPRequest.EntirePDU,                                                                   Environment.NewLine,
+                                    "<<<<<<--Response----<<<<<<------<<<<<<------<<<<<<------<<<<<<------<<<<<<------",  Environment.NewLine,
+                                    Response.Timestamp.ToISO8601(),
+                                        " -> ",
+                                        (Response.Timestamp - Request.HTTPRequest.Timestamp).TotalMilliseconds, "ms runtime",        Environment.NewLine,
+                                    Response.HTTPResponse?.EntirePDU ?? "",                                              Environment.NewLine,
+                                    "--------------------------------------------------------------------------------",  Environment.NewLine
+                                ),
+                                Encoding.UTF8
+                            );
 
                             break;
 
@@ -738,7 +723,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
             finally
             {
-                if (LockTaken)
+                if (lockTaken)
                     logHTTPResponse_toDisc_Lock.Release();
             }
 
@@ -746,6 +731,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
+        #endregion
 
 
         #region Data
@@ -765,9 +751,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public  static readonly  TimeSpan                                             MaxWaitingForALock            = TimeSpan.FromSeconds(15);
 
 
-        protected readonly       ConcurrentDictionary<String, HashSet<String>>        groupTags;
-        private   readonly       ConcurrentDictionary<String, OCPIAPIRequestLogger>   requestLoggers;
-        private   readonly       ConcurrentDictionary<String, OCPIAPIResponseLogger>  responseLoggers;
+        protected readonly       ConcurrentDictionary<String, HashSet<String>>        groupTags                     = new (StringComparer.OrdinalIgnoreCase);
+        private   readonly       ConcurrentDictionary<String, OCPIAPIRequestLogger>   requestLoggers                = new (StringComparer.OrdinalIgnoreCase);
+        private   readonly       ConcurrentDictionary<String, OCPIAPIResponseLogger>  responseLoggers               = new (StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// The default context of this logger.
@@ -781,61 +767,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// The HTTP server of this logger.
         /// </summary>
-        public HTTPTestServerX             HTTPServer        { get; }
+        public HTTPTestServerX             HTTPServer        { get; } = HTTPServer     ?? throw new ArgumentNullException(nameof(HTTPServer), "The given HTTP API must not be null!");
 
-        public String                      LoggingPath       { get; }
+        public String                      LoggingPath       { get; } = LoggingPath    ?? AppContext.BaseDirectory;
 
         /// <summary>
         /// The context of this HTTP logger.
         /// </summary>
-        public String                      Context           { get; }
+        public String                      Context           { get; } = Context        ?? $"OCPI{Version.String}_Logger";
 
         /// <summary>
         /// A delegate for the default ToDisc logger returning a
         /// valid logfile name based on the given log event name.
         /// </summary>
-        public OCPILogfileCreatorDelegate  LogfileCreator    { get; }
-
-        #endregion
-
-        #region Constructor(s)
-
-        /// <summary>
-        /// Create a new HTTP API logger using the given logging delegates.
-        /// </summary>
-        /// <param name="HTTPServer">A HTTP server.</param>
-        /// <param name="Context">A context of this API.</param>
-        /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public OCPIAPILogger(HTTPTestServerX              HTTPServer,
-                             String                       Context,
-                             String?                      LoggingPath      = null,
-                             OCPILogfileCreatorDelegate?  LogfileCreator   = null)
-        {
-
-            this.HTTPServer       = HTTPServer  ?? throw new ArgumentNullException(nameof(HTTPServer), "The given HTTP API must not be null!");
-            this.Context          = Context     ?? $"OCPI{Version.String}_Logger";
-            this.LoggingPath      = LoggingPath ?? AppContext.BaseDirectory;
-
-            this.requestLoggers   = new ConcurrentDictionary<String, OCPIAPIRequestLogger>();
-            this.responseLoggers  = new ConcurrentDictionary<String, OCPIAPIResponseLogger>();
-            this.groupTags        = new ConcurrentDictionary<String, HashSet<String>>();
-
-            this.LogfileCreator   = LogfileCreator ?? ((loggingPath,
-                                                        remoteParty,
-                                                        context,
-                                                        logfilename) => String.Concat(
-                                                                            loggingPath,
-                                                                            remoteParty is not null
-                                                                                ? remoteParty.Id.ToString() + Path.DirectorySeparatorChar
-                                                                                : null,
-                                                                            context is not null ? context + "_" : "",
-                                                                            logfilename, "_",
-                                                                            Timestamp.Now.Year, "-",
-                                                                            Timestamp.Now.Month.ToString("D2"),
-                                                                            ".log"
-                                                                        ));
-
-        }
+        public OCPILogfileCreatorDelegate  LogfileCreator    { get; } = LogfileCreator ?? ((loggingPath,
+                                                                                            remoteParty,
+                                                                                            context,
+                                                                                            logfileName) => String.Concat(
+                                                                                                                loggingPath + Path.DirectorySeparatorChar,
+                                                                                                                remoteParty is not null
+                                                                                                                    ? remoteParty.Id.ToString() + Path.DirectorySeparatorChar
+                                                                                                                    : null,
+                                                                                                                context is not null ? context + "_" : "",
+                                                                                                                logfileName, "_",
+                                                                                                                Timestamp.Now.Year, "-",
+                                                                                                                Timestamp.Now.Month.ToString("D2"),
+                                                                                                                ".log"
+                                                                                                            ));
 
         #endregion
 
@@ -878,7 +836,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         logEventNames.Add(LogEventName);
 
                     else
-                        groupTags.TryAdd(groupTag, new HashSet<String>(new String[] { LogEventName }));
+                        groupTags.TryAdd(groupTag, [.. new String[] { LogEventName }]);
 
                 }
 
@@ -932,7 +890,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         logEventNames.Add(LogEventName);
 
                     else
-                        groupTags.TryAdd(GroupTag, new HashSet<String>(new String[] { LogEventName }));
+                        groupTags.TryAdd(GroupTag, [.. new String[] { LogEventName }]);
 
                 }
 
@@ -949,7 +907,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region RegisterLogTarget(LogTarget, RequestLogHandler)
+        #region RegisterLogTarget (LogTarget, RequestLogHandler)
 
         public void RegisterLogTarget(LogTargets                 LogTarget,
                                       OCPIRequestLoggerDelegate  RequestLogHandler)
@@ -964,7 +922,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region RegisterLogTarget(LogTarget, ResponseLogHandler)
+        #region RegisterLogTarget (LogTarget, ResponseLogHandler)
 
         public void RegisterLogTarget(LogTargets                  LogTarget,
                                       OCPIResponseLoggerDelegate  ResponseLogHandler)
@@ -980,7 +938,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region Debug  (LogEventOrGroupName, LogTarget)
+        #region Debug   (LogEventOrGroupName, LogTarget)
 
         /// <summary>
         /// Start debugging the given log event.
@@ -1007,7 +965,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region Undebug(LogEventOrGroupName, LogTarget)
+        #region Undebug (LogEventOrGroupName, LogTarget)
 
         /// <summary>
         /// Stop debugging the given log event.
@@ -1035,7 +993,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region (protected) InternalDebug  (LogEventName, LogTarget)
+        #region (protected) InternalDebug   (LogEventName, LogTarget)
 
         protected Boolean InternalDebug(String      LogEventName,
                                         LogTargets  LogTarget)
@@ -1055,7 +1013,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region (protected) InternalUndebug(LogEventName, LogTarget)
+        #region (protected) InternalUndebug (LogEventName, LogTarget)
 
         protected Boolean InternalUndebug(String      LogEventName,
                                           LogTargets  LogTarget)

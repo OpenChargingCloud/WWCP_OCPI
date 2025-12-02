@@ -422,7 +422,17 @@ namespace cloud.charging.open.protocols.OCPI
                    LogfileName,
                    LogfileCreator is not null
                        ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                       : null)
+                       : (loggingPath, context, logfileName) => String.Concat(
+                                                                    loggingPath + Path.DirectorySeparatorChar,
+                                                                 //   remoteParty is not null
+                                                                 //       ? remoteParty.Id.ToString() + Path.DirectorySeparatorChar
+                                                                 //       : null,
+                                                                    context is not null ? context + "_" : "",
+                                                                    logfileName, "_",
+                                                                    Timestamp.Now.Year, "-",
+                                                                    Timestamp.Now.Month.ToString("D2"),
+                                                                    ".log"
+                                                                ))
 
         {
 
@@ -439,12 +449,29 @@ namespace cloud.charging.open.protocols.OCPI
             RegisterURLTemplates();
 
             if (!this.DisableLogging)
-                Logger = new CommonHTTPAPILogger(
-                             this,
-                             LoggingPath ?? AppContext.BaseDirectory,
-                             LoggingContext,
-                             LogfileCreator: LogfileCreator
-                         );
+                Logger                    = new CommonHTTPAPILogger(
+                                                this,
+                                                LoggingPath ?? AppContext.BaseDirectory,
+                                                LoggingContext,
+                                                LogfileCreator:   LogfileCreator is not null
+                                                                      ? LogfileCreator
+                                                                      : (loggingPath,
+                                                                         remoteParty,
+                                                                         context,
+                                                                         logfileName) => String.Concat(
+                                                                                             loggingPath + Path.DirectorySeparatorChar,
+                                                                                             remoteParty is not null
+                                                                                                 ? remoteParty.Id.ToString() + Path.DirectorySeparatorChar
+                                                                                                 : null,
+                                                                                             context is not null
+                                                                                                 ? context + "_"
+                                                                                                 : "",
+                                                                                             logfileName, "_",
+                                                                                             Timestamp.Now.Year, "-",
+                                                                                             Timestamp.Now.Month.ToString("D2"),
+                                                                                             ".log"
+                                                                                         )
+                                            );
 
         }
 
