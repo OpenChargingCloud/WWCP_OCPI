@@ -745,6 +745,7 @@ namespace cloud.charging.open.protocols.OCPI
                             AccessControlAllowHeaders  = [ "Authorization" ],
                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                             Content                    = JSONObject.Create(
+                                                             new JProperty("timestamp",        Timestamp.Now.ToISO8601()),
                                                              new JProperty("status_code",      1000),
                                                              new JProperty("status_message",  "Hello world!"),
                                                              new JProperty("data",             new JArray(
