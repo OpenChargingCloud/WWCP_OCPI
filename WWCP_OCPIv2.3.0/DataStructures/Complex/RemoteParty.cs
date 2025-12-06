@@ -119,6 +119,32 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                IComparable<RemoteParty>
     {
 
+        #region (class) IOModifiers
+
+        /// <summary>
+        /// Incoming and outgoing HTTP request/response modifiers.
+        /// </summary>
+        /// <param name="RequestModifier">An optional HTTP request modifier.</param>
+        /// <param name="ResponseModifier">An optional HTTP response modifier.</param>
+        public sealed class IOModifiers(Func<HTTPRequest,  HTTPRequest>?   RequestModifier    = null,
+                                        Func<HTTPResponse, HTTPResponse>?  ResponseModifier   = null)
+        {
+
+            /// <summary>
+            /// A delegate to modify HTTP requests.
+            /// </summary>
+            public Func<HTTPRequest, HTTPRequest>?    RequestModifier     { get; set; } = RequestModifier;
+
+            /// <summary>
+            /// A delegate to modify HTTP responses.
+            /// </summary>
+            public Func<HTTPResponse, HTTPResponse>?  ResponseModifier    { get; set; } = ResponseModifier;
+
+        }
+
+        #endregion
+
+
         #region Data
 
         /// <summary>
@@ -130,9 +156,25 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region Properties
 
+        /// <summary>
+        /// An optional persistent CPO to EMSP client.
+        /// </summary>
         public CPO2EMSPClient?  CPO2EMSPClient    { get; set; }
 
+        /// <summary>
+        /// An optional persistent EMSP to CPO client.
+        /// </summary>
         public EMSP2CPOClient?  EMSP2CPOClient    { get; set; }
+
+        /// <summary>
+        /// Optional incoming request and response modifiers.
+        /// </summary>
+        public IOModifiers?     IN                { get; set; }
+
+        /// <summary>
+        /// Optional outgoing request and response modifiers.
+        /// </summary>
+        public IOModifiers?     OUT               { get; set; }
 
         #endregion
 

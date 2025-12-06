@@ -6226,62 +6226,65 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             // https://example.com/ocpi/2.2/cpo/tokens/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
-                                    HTTPMethod.GET,
-                                    URLPathPrefix + "tokens",
-                                    HTTPContentType.Application.JSON_UTF8,
-                                    OCPIRequestHandler: Request => {
 
-                                        #region Check access token
+                HTTPMethod.GET,
+                URLPathPrefix + "tokens",
+                OCPIRequestLogger:   GetTokensRequest,
+                OCPIResponseLogger:  GetTokensResponse,
+                OCPIRequestHandler:  request => {
 
-                                        if (Request.LocalAccessInfo.IsNot(Role.CPO) ||
-                                            Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
-                                        {
+                    #region Check access token
 
-                                            return Task.FromResult(
-                                                new OCPIResponse.Builder(Request) {
-                                                    StatusCode           = 2000,
-                                                    StatusMessage        = "Invalid or blocked access token!",
-                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                        AccessControlAllowHeaders  = [ "Authorization" ]
-                                                    }
-                                                });
+                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    {
 
-                                        }
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = 2000,
+                                StatusMessage        = "Invalid or blocked access token!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                }
+                            });
 
-                                        #endregion
+                    }
 
-
-                                        var filters         = Request.GetDateAndPaginationFilters();
-
-                                        var allTokens       = CommonAPI.GetTokens().ToArray();
-
-                                        var filteredTokens  = allTokens.Where(token => !filters.From.HasValue || token.LastUpdated >  filters.From.Value).
-                                                                        Where(token => !filters.To.  HasValue || token.LastUpdated <= filters.To.  Value).
-                                                                        ToArray();
+                    #endregion
 
 
-                                        return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 1000,
-                                                   StatusMessage        = "Hello world!",
-                                                   Data                 = new JArray(filteredTokens.SkipTakeFilter(filters.Offset,
-                                                                                                                   filters.Limit).
-                                                                                                    Select        (token => token.ToJSON(CustomTokenSerializer,
-                                                                                                                                         CustomEnergyContractSerializer))),
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                       //LastModified               = ?
-                                                   }.
-                                                   Set("X-Total-Count", allTokens.Length)
-                                                   // X-Limit               The maximum number of objects that the server WILL return.
-                                                   // Link                  Link to the 'next' page should be provided when this is NOT the last page.
-                                            });
+                    var filters         = request.GetDateAndPaginationFilters();
 
-                                    });
+                    var allTokens       = CommonAPI.GetTokens().ToArray();
+
+                    var filteredTokens  = allTokens.Where(token => !filters.From.HasValue || token.LastUpdated >  filters.From.Value).
+                                                    Where(token => !filters.To.  HasValue || token.LastUpdated <= filters.To.  Value).
+                                                    ToArray();
+
+
+                    return Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               StatusCode           = 1000,
+                               StatusMessage        = "Hello world!",
+                               Data                 = new JArray(filteredTokens.SkipTakeFilter(filters.Offset,
+                                                                                               filters.Limit).
+                                                                                Select        (token => token.ToJSON(CustomTokenSerializer,
+                                                                                                                     CustomEnergyContractSerializer))),
+                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                                   //LastModified               = ?
+                               }.
+                               Set("X-Total-Count", allTokens.Length)
+                               // X-Limit               The maximum number of objects that the server WILL return.
+                               // Link                  Link to the 'next' page should be provided when this is NOT the last page.
+                        });
+
+                }
+            );
 
             #endregion
 
@@ -6317,469 +6320,470 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             // https://example.com/ocpi/2.2/emsp/tokens/012345678/authorize?type=RFID
             // curl -X POST http://127.0.0.1:3000/2.2/emsp/tokens/012345678/authorize?type=RFID
             CommonAPI.AddOCPIMethod(
-                                    HTTPMethod.POST,
-                                    URLPathPrefix + "tokens/{token_id}/authorize",
-                                    HTTPContentType.Application.JSON_UTF8,
-                                    OCPIRequestLogger:   PostTokenRequest,
-                                    OCPIResponseLogger:  PostTokenResponse,
-                                    OCPIRequestHandler:  async request => {
 
-                                        #region Check access token
+                HTTPMethod.POST,
+                URLPathPrefix + "tokens/{token_id}/authorize",
+                OCPIRequestLogger:   PostTokenRequest,
+                OCPIResponseLogger:  PostTokenResponse,
+                OCPIRequestHandler:  async request => {
 
-                                        if (request.LocalAccessInfo.IsNot(Role.CPO) ||
-                                            request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
-                                        {
+                    #region Check access token
 
-                                            return new OCPIResponse.Builder(request) {
-                                                       StatusCode           = 2000,
-                                                       StatusMessage        = "Invalid or blocked access token!",
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                           AccessControlAllowHeaders  = [ "Authorization" ]
-                                                       }
-                                                   };
+                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    {
 
+                        return new OCPIResponse.Builder(request) {
+                                   StatusCode           = 2000,
+                                   StatusMessage        = "Invalid or blocked access token!",
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ]
+                                   }
+                               };
+
+                    }
+
+                    #endregion
+
+                    #region Check TokenId URI parameter
+
+                    if (!request.ParseTokenId(CommonAPI,
+                                              out var tokenId,
+                                              out var ocpiResponseBuilder))
+                    {
+                        return ocpiResponseBuilder;
+                    }
+
+                    #endregion
+
+                    var requestedTokenType  = request.QueryString.Map("type", TokenType.TryParse) ?? TokenType.RFID;
+
+                    #region Parse optional LocationReference JSON
+
+                    LocationReference? locationReference = null;
+
+                    if (request.TryParseJObjectRequestBody(out var locationReferenceJSON,
+                                                           out ocpiResponseBuilder,
+                                                           AllowEmptyHTTPBody: true))
+                    {
+
+                        if (!LocationReference.TryParse(locationReferenceJSON,
+                                                        out var _locationReference,
+                                                        out var errorResponse))
+                        {
+
+                            return new OCPIResponse.Builder(request) {
+                                   StatusCode           = 2001,
+                                   StatusMessage        = "Could not parse the given location reference JSON: " + errorResponse,
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ]
+                                   }
+                               };
+
+                        }
+
+                        locationReference = _locationReference;
+
+                    }
+
+                    #endregion
+
+
+                    AuthorizationInfo? authorizationInfo = null;
+
+                    var onRFIDAuthTokenLocal = OnRFIDAuthToken;
+                    if (onRFIDAuthTokenLocal is not null)
+                    {
+
+                        try
+                        {
+
+                            var result = await onRFIDAuthTokenLocal(
+                                                   request.FromCountryCode ?? CommonAPI.DefaultPartyId.CountryCode,
+                                                   request.FromPartyId     ?? CommonAPI.DefaultPartyId.Party,
+                                                   request.ToCountryCode   ?? CommonAPI.DefaultPartyId.CountryCode,
+                                                   request.ToPartyId       ?? CommonAPI.DefaultPartyId.Party,
+                                                   tokenId.Value,
+                                                   locationReference
+                                               );
+
+                            authorizationInfo = result;
+
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogException(e, "Could not do an RFID auth!");
+                        }
+
+                    }
+
+                    else
+                    {
+
+                        #region Check existing token
+
+                        if (!CommonAPI.TryGetTokenStatus(
+                                Party_Idv3.From(
+                                    request.ToCountryCode,
+                                    request.ToPartyId
+                                ) ?? CommonAPI.DefaultPartyId,
+                                tokenId.Value,
+                                out var _tokenStatus) ||
+                            (_tokenStatus.Token.Type != requestedTokenType))
+                        {
+
+                            return new OCPIResponse.Builder(request) {
+                                       StatusCode           = 2004,
+                                       StatusMessage        = "Unknown token!",
+                                       HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                           HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
+                                           AccessControlAllowHeaders  = [ "Authorization" ]
+                                       }
+                                   };
+
+                        }
+
+                        #endregion
+
+                        authorizationInfo = new AuthorizationInfo(
+                                                  _tokenStatus.Status,
+                                                  _tokenStatus.Token,
+                                                  _tokenStatus.LocationReference,
+                                                  AuthorizationReference.NewRandom()
+                                                  //new DisplayText(
+                                                  //    _tokenStatus.Token.UILanguage ?? Languages.en,
+                                                  //    responseText
+                                                  //)
+                                            );
+
+                        #region Parse optional LocationReference JSON
+
+                        if (locationReference.HasValue)
+                        {
+
+                            Location? validLocation = null;
+
+                            if (request.FromCountryCode.HasValue && request.FromPartyId.HasValue)
+                            {
+
+                                if (!CommonAPI.TryGetLocation(
+                                    Party_Idv3.From(
+                                        request.FromCountryCode.Value,
+                                        request.FromPartyId.    Value
+                                    ),
+                                    locationReference.Value.LocationId,
+                                    out validLocation))
+                                {
+
+                                    return new OCPIResponse.Builder(request) {
+                                        StatusCode           = 2001,
+                                        StatusMessage        = "The given location is unknown!",
+                                        Data                 = new AuthorizationInfo(
+                                                                   AllowedType.NOT_ALLOWED,
+                                                                   _tokenStatus.Token,
+                                                                   locationReference.Value,
+                                                                   null,
+                                                                   new DisplayText(Languages.en, "The given location is unknown!")
+                                                               ).ToJSON(),
+                                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                            HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                            AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
+                                            AccessControlAllowHeaders  = [ "Authorization" ]
                                         }
+                                    };
 
-                                        #endregion
+                                }
 
-                                        #region Check TokenId URI parameter
+                            }
 
-                                        if (!request.ParseTokenId(CommonAPI,
-                                                                  out var tokenId,
-                                                                  out var ocpiResponseBuilder))
-                                        {
-                                            return ocpiResponseBuilder;
+                            else
+                            {
+
+                                if (request.LocalAccessInfo.Roles.Where(role => role.Role == Role.CPO).Count() != 1)
+                                {
+
+                                    return new OCPIResponse.Builder(request) {
+                                        StatusCode           = 2001,
+                                        StatusMessage        = "Could not determine the country code and party identification of the given location!",
+                                        Data                 = new AuthorizationInfo(
+                                                                   AllowedType.NOT_ALLOWED,
+                                                                   _tokenStatus.Token,
+                                                                   locationReference.Value
+                                                               ).ToJSON(),
+                                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                            HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                            AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
+                                            AccessControlAllowHeaders  = [ "Authorization" ]
                                         }
+                                    };
 
-                                        #endregion
+                                }
 
-                                        var requestedTokenType  = request.QueryString.Map("type", TokenType.TryParse) ?? TokenType.RFID;
+                                var allTheirCPORoles = request.LocalAccessInfo.Roles.Where(role => role.Role == Role.CPO).ToArray();
 
-                                        #region Parse optional LocationReference JSON
+                                if (!CommonAPI.TryGetLocation(
+                                    allTheirCPORoles[0].PartyId,
+                                    locationReference.Value.LocationId,
+                                    out validLocation))
+                                {
 
-                                        LocationReference? locationReference = null;
-
-                                        if (request.TryParseJObjectRequestBody(out var locationReferenceJSON,
-                                                                               out ocpiResponseBuilder,
-                                                                               AllowEmptyHTTPBody: true))
-                                        {
-
-                                            if (!LocationReference.TryParse(locationReferenceJSON,
-                                                                            out var _locationReference,
-                                                                            out var errorResponse))
-                                            {
-
-                                                return new OCPIResponse.Builder(request) {
-                                                       StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given location reference JSON: " + errorResponse,
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
-                                                           AccessControlAllowHeaders  = [ "Authorization" ]
-                                                       }
-                                                   };
-
-                                            }
-
-                                            locationReference = _locationReference;
-
+                                    return new OCPIResponse.Builder(request) {
+                                        StatusCode           = 2001,
+                                        StatusMessage        = "The given location is unknown!",
+                                        Data                 = new AuthorizationInfo(
+                                                                   AllowedType.NOT_ALLOWED,
+                                                                   _tokenStatus.Token,
+                                                                   locationReference.Value,
+                                                                   null,
+                                                                   new DisplayText(Languages.en, "The given location is unknown!")
+                                                               ).ToJSON(),
+                                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                            HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                            AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
+                                            AccessControlAllowHeaders  = [ "Authorization" ]
                                         }
+                                    };
 
-                                        #endregion
+                                }
+
+                            }
 
 
-                                        AuthorizationInfo? authorizationInfo = null;
+                            //ToDo: Add a event/delegate for additional location filters!
 
-                                        var onRFIDAuthTokenLocal = OnRFIDAuthToken;
-                                        if (onRFIDAuthTokenLocal is not null)
-                                        {
 
-                                            try
-                                            {
+                            if (locationReference.Value.EVSEUIds.SafeAny())
+                            {
 
-                                                var result = await onRFIDAuthTokenLocal(
-                                                                       request.FromCountryCode ?? CommonAPI.DefaultPartyId.CountryCode,
-                                                                       request.FromPartyId     ?? CommonAPI.DefaultPartyId.Party,
-                                                                       request.ToCountryCode   ?? CommonAPI.DefaultPartyId.CountryCode,
-                                                                       request.ToPartyId       ?? CommonAPI.DefaultPartyId.Party,
-                                                                       tokenId.Value,
-                                                                       locationReference
-                                                                   );
+                                locationReference = new LocationReference(locationReference.Value.LocationId,
+                                                                          locationReference.Value.EVSEUIds.
+                                                                                                  Where(evseuid => validLocation.EVSEExists(evseuid)));
 
-                                                authorizationInfo = result;
+                                if (!locationReference.Value.EVSEUIds.SafeAny())
+                                {
 
-                                            }
-                                            catch (Exception e)
-                                            {
-                                                DebugX.LogException(e, "Could not do an RFID auth!");
-                                            }
-
+                                    return new OCPIResponse.Builder(request) {
+                                        StatusCode           = 2001,
+                                        StatusMessage        = locationReference.Value.EVSEUIds.Count() == 1
+                                                                   ? "The EVSE at the given location is unknown!"
+                                                                   : "The EVSEs at the given location are unknown!",
+                                        Data                 = new AuthorizationInfo(
+                                                                   AllowedType.NOT_ALLOWED,
+                                                                   _tokenStatus.Token,
+                                                                   locationReference.Value,
+                                                                   null,
+                                                                   new DisplayText(
+                                                                       Languages.en,
+                                                                       locationReference.Value.EVSEUIds.Count() == 1
+                                                                           ? "The EVSE at the given location is unknown!"
+                                                                           : "The EVSEs at the given location are unknown!"
+                                                                   )
+                                                               ).ToJSON(),
+                                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                            HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                            AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
+                                            AccessControlAllowHeaders  = [ "Authorization" ]
                                         }
+                                    };
 
-                                        else
-                                        {
-
-                                            #region Check existing token
-
-                                            if (!CommonAPI.TryGetTokenStatus(
-                                                Party_Idv3.From(
-                                                    request.ToCountryCode,
-                                                    request.ToPartyId
-                                                ) ?? CommonAPI.DefaultPartyId,
-                                                tokenId.Value,
-                                                out var _tokenStatus) ||
-                                                (_tokenStatus.Token.Type != requestedTokenType))
-                                            {
-
-                                                return new OCPIResponse.Builder(request) {
-                                                           StatusCode           = 2004,
-                                                           StatusMessage        = "Unknown token!",
-                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                                               HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                                               AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
-                                                               AccessControlAllowHeaders  = [ "Authorization" ]
-                                                           }
-                                                       };
-
-                                            }
-
-                                            #endregion
-
-                                            authorizationInfo = new AuthorizationInfo(
-                                                                      _tokenStatus.Status,
-                                                                      _tokenStatus.Token,
-                                                                      _tokenStatus.LocationReference,
-                                                                      AuthorizationReference.NewRandom()
-                                                                      //new DisplayText(
-                                                                      //    _tokenStatus.Token.UILanguage ?? Languages.en,
-                                                                      //    responseText
-                                                                      //)
-                                                                );
-
-                                            #region Parse optional LocationReference JSON
-
-                                            if (locationReference.HasValue)
-                                            {
-
-                                                Location? validLocation = null;
-
-                                                if (request.FromCountryCode.HasValue && request.FromPartyId.HasValue)
-                                                {
-
-                                                    if (!CommonAPI.TryGetLocation(
-                                                        Party_Idv3.From(
-                                                            request.FromCountryCode.Value,
-                                                            request.FromPartyId.    Value
-                                                        ),
-                                                        locationReference.Value.LocationId,
-                                                        out validLocation))
-                                                    {
-
-                                                        return new OCPIResponse.Builder(request) {
-                                                            StatusCode           = 2001,
-                                                            StatusMessage        = "The given location is unknown!",
-                                                            Data                 = new AuthorizationInfo(
-                                                                                       AllowedType.NOT_ALLOWED,
-                                                                                       _tokenStatus.Token,
-                                                                                       locationReference.Value,
-                                                                                       null,
-                                                                                       new DisplayText(Languages.en, "The given location is unknown!")
-                                                                                   ).ToJSON(),
-                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                                                HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                                                AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
-                                                                AccessControlAllowHeaders  = [ "Authorization" ]
-                                                            }
-                                                        };
-
-                                                    }
-
-                                                }
-
-                                                else
-                                                {
-
-                                                    if (request.LocalAccessInfo.Roles.Where(role => role.Role == Role.CPO).Count() != 1)
-                                                    {
-
-                                                        return new OCPIResponse.Builder(request) {
-                                                            StatusCode           = 2001,
-                                                            StatusMessage        = "Could not determine the country code and party identification of the given location!",
-                                                            Data                 = new AuthorizationInfo(
-                                                                                       AllowedType.NOT_ALLOWED,
-                                                                                       _tokenStatus.Token,
-                                                                                       locationReference.Value
-                                                                                   ).ToJSON(),
-                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                                                HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                                                AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
-                                                                AccessControlAllowHeaders  = [ "Authorization" ]
-                                                            }
-                                                        };
-
-                                                    }
-
-                                                    var allTheirCPORoles = request.LocalAccessInfo.Roles.Where(role => role.Role == Role.CPO).ToArray();
-
-                                                    if (!CommonAPI.TryGetLocation(
-                                                        allTheirCPORoles[0].PartyId,
-                                                        locationReference.Value.LocationId,
-                                                        out validLocation))
-                                                    {
+                                }
 
-                                                        return new OCPIResponse.Builder(request) {
-                                                            StatusCode           = 2001,
-                                                            StatusMessage        = "The given location is unknown!",
-                                                            Data                 = new AuthorizationInfo(
-                                                                                       AllowedType.NOT_ALLOWED,
-                                                                                       _tokenStatus.Token,
-                                                                                       locationReference.Value,
-                                                                                       null,
-                                                                                       new DisplayText(Languages.en, "The given location is unknown!")
-                                                                                   ).ToJSON(),
-                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                                                HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                                                AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
-                                                                AccessControlAllowHeaders  = [ "Authorization" ]
-                                                            }
-                                                        };
 
-                                                    }
 
-                                                }
+                                //ToDo: Add a event/delegate for additional EVSE filters!
 
+                            }
 
-                                                //ToDo: Add a event/delegate for additional location filters!
+                        }
 
+                        #endregion
 
-                                                if (locationReference.Value.EVSEUIds.SafeAny())
-                                                {
+                    }
 
-                                                    locationReference = new LocationReference(locationReference.Value.LocationId,
-                                                                                              locationReference.Value.EVSEUIds.
-                                                                                                                      Where(evseuid => validLocation.EVSEExists(evseuid)));
+                    authorizationInfo ??= new AuthorizationInfo(
+                                              AllowedType.BLOCKED,
+                                              new Token(
+                                                  CountryCode.Parse("DE"),
+                                                  Party_Id.Parse("XXX"),
+                                                  tokenId.Value,
+                                                  requestedTokenType,
+                                                  Contract_Id.Parse("DE-XXX-" + tokenId.ToString()),
+                                                  "Error!",
+                                                  false,
+                                                  WhitelistTypes.NEVER
+                                              )
+                                          );
 
-                                                    if (!locationReference.Value.EVSEUIds.SafeAny())
-                                                    {
 
-                                                        return new OCPIResponse.Builder(request) {
-                                                            StatusCode           = 2001,
-                                                            StatusMessage        = locationReference.Value.EVSEUIds.Count() == 1
-                                                                                       ? "The EVSE at the given location is unknown!"
-                                                                                       : "The EVSEs at the given location are unknown!",
-                                                            Data                 = new AuthorizationInfo(
-                                                                                       AllowedType.NOT_ALLOWED,
-                                                                                       _tokenStatus.Token,
-                                                                                       locationReference.Value,
-                                                                                       null,
-                                                                                       new DisplayText(
-                                                                                           Languages.en,
-                                                                                           locationReference.Value.EVSEUIds.Count() == 1
-                                                                                               ? "The EVSE at the given location is unknown!"
-                                                                                               : "The EVSEs at the given location are unknown!"
-                                                                                       )
-                                                                                   ).ToJSON(),
-                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                                                HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                                                AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
-                                                                AccessControlAllowHeaders  = [ "Authorization" ]
-                                                            }
-                                                        };
+                    // too little information like e.g. no LocationReferences provided:
+                    //   => status_code 2002
 
-                                                    }
 
+                    #region Set a user-friendly response message for the ev driver
 
+                    var responseText = "An error occurred!";
 
-                                                    //ToDo: Add a event/delegate for additional EVSE filters!
+                    if (!authorizationInfo.Info.HasValue)
+                    {
 
-                                                }
+                        #region ALLOWED
 
-                                            }
+                        if (authorizationInfo.Allowed == AllowedType.ALLOWED)
+                        {
 
-                                            #endregion
+                            responseText = "Charging allowed!";
 
-                                        }
+                            if (authorizationInfo.Token?.UILanguage.HasValue == true)
+                            {
+                                switch (authorizationInfo.Token.UILanguage.Value)
+                                {
+                                    case Languages.de:
+                                        responseText = "Der Ladevorgang wird gestartet!";
+                                        break;
+                                }
+                            }
 
-                                        authorizationInfo ??= new AuthorizationInfo(
-                                                                  AllowedType.BLOCKED,
-                                                                  new Token(
-                                                                      CountryCode.Parse("DE"),
-                                                                      Party_Id.Parse("XXX"),
-                                                                      tokenId.Value,
-                                                                      requestedTokenType,
-                                                                      Contract_Id.Parse("DE-XXX-" + tokenId.ToString()),
-                                                                      "Error!",
-                                                                      false,
-                                                                      WhitelistTypes.NEVER
-                                                                  )
-                                                              );
+                        }
 
+                        #endregion
 
-                                        // too little information like e.g. no LocationReferences provided:
-                                        //   => status_code 2002
+                        #region BLOCKED
 
+                        else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
+                        {
 
-                                        #region Set a user-friendly response message for the ev driver
+                            responseText = "Sorry, your token is blocked!";
 
-                                        var responseText = "An error occurred!";
+                            if (authorizationInfo.Token?.UILanguage.HasValue == true)
+                            {
+                                switch (authorizationInfo.Token.UILanguage.Value)
+                                {
+                                    case Languages.de:
+                                        responseText = "Autorisierung fehlgeschlagen!";
+                                        break;
+                                }
+                            }
 
-                                        if (!authorizationInfo.Info.HasValue)
-                                        {
+                        }
 
-                                            #region ALLOWED
+                        #endregion
 
-                                            if (authorizationInfo.Allowed == AllowedType.ALLOWED)
-                                            {
+                        #region EXPIRED
 
-                                                responseText = "Charging allowed!";
+                        else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
+                        {
 
-                                                if (authorizationInfo.Token.UILanguage.HasValue)
-                                                {
-                                                    switch (authorizationInfo.Token.UILanguage.Value)
-                                                    {
-                                                        case Languages.de:
-                                                            responseText = "Der Ladevorgang wird gestartet!";
-                                                            break;
-                                                    }
-                                                }
+                            responseText = "Sorry, your token has expired!";
 
-                                            }
+                            if (authorizationInfo.Token?.UILanguage.HasValue == true)
+                            {
+                                switch (authorizationInfo.Token.UILanguage.Value)
+                                {
+                                    case Languages.de:
+                                        responseText = "Autorisierungstoken ungültig!";
+                                        break;
+                                }
+                            }
 
-                                            #endregion
+                        }
 
-                                            #region BLOCKED
+                        #endregion
 
-                                            else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
-                                            {
+                        #region NO_CREDIT
 
-                                                responseText = "Sorry, your token is blocked!";
+                        else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
+                        {
 
-                                                if (authorizationInfo.Token.UILanguage.HasValue)
-                                                {
-                                                    switch (authorizationInfo.Token.UILanguage.Value)
-                                                    {
-                                                        case Languages.de:
-                                                            responseText = "Autorisierung fehlgeschlagen!";
-                                                            break;
-                                                    }
-                                                }
+                            responseText = "Sorry, your have not enough credits for charging!";
 
-                                            }
+                            if (authorizationInfo.Token?.UILanguage.HasValue == true)
+                            {
+                                switch (authorizationInfo.Token.UILanguage.Value)
+                                {
+                                    case Languages.de:
+                                        responseText = "Nicht genügend Ladeguthaben!";
+                                        break;
+                                }
+                            }
 
-                                            #endregion
+                        }
 
-                                            #region EXPIRED
+                        #endregion
 
-                                            else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
-                                            {
+                        #region NOT_ALLOWED
 
-                                                responseText = "Sorry, your token has expired!";
+                        else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
+                        {
 
-                                                if (authorizationInfo.Token.UILanguage.HasValue)
-                                                {
-                                                    switch (authorizationInfo.Token.UILanguage.Value)
-                                                    {
-                                                        case Languages.de:
-                                                            responseText = "Autorisierungstoken ungültig!";
-                                                            break;
-                                                    }
-                                                }
+                            responseText = "Sorry, charging is not allowed!";
 
-                                            }
+                            if (authorizationInfo.Token?.UILanguage.HasValue == true)
+                            {
+                                switch (authorizationInfo.Token.UILanguage.Value)
+                                {
+                                    case Languages.de:
+                                        responseText = "Autorisierung abgelehnt!";
+                                        break;
+                                }
+                            }
 
-                                            #endregion
+                        }
 
-                                            #region NO_CREDIT
+                        #endregion
 
-                                            else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
-                                            {
+                        #region default
 
-                                                responseText = "Sorry, your have not enough credits for charging!";
+                        else
+                        {
 
-                                                if (authorizationInfo.Token.UILanguage.HasValue)
-                                                {
-                                                    switch (authorizationInfo.Token.UILanguage.Value)
-                                                    {
-                                                        case Languages.de:
-                                                            responseText = "Nicht genügend Ladeguthaben!";
-                                                            break;
-                                                    }
-                                                }
+                            responseText = "An error occurred!";
 
-                                            }
+                            if (authorizationInfo.Token?.UILanguage.HasValue == true)
+                            {
+                                switch (authorizationInfo.Token.UILanguage.Value)
+                                {
+                                    case Languages.de:
+                                        responseText = "Ein Fehler ist aufgetreten!";
+                                        break;
+                                }
+                            }
 
-                                            #endregion
+                        }
 
-                                            #region NOT_ALLOWED
+                        #endregion
 
-                                            else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
-                                            {
+                    }
 
-                                                responseText = "Sorry, charging is not allowed!";
+                    #endregion
 
-                                                if (authorizationInfo.Token.UILanguage.HasValue)
-                                                {
-                                                    switch (authorizationInfo.Token.UILanguage.Value)
-                                                    {
-                                                        case Languages.de:
-                                                            responseText = "Autorisierung abgelehnt!";
-                                                            break;
-                                                    }
-                                                }
 
-                                            }
+                    return new OCPIResponse.Builder(request) {
+                               StatusCode           = 1000,
+                               StatusMessage        = "Hello world!",
+                               Data                 = new AuthorizationInfo(
+                                                          authorizationInfo.Allowed,
+                                                          authorizationInfo.Token,
+                                                          authorizationInfo.Location,
+                                                          authorizationInfo.AuthorizationReference ?? AuthorizationReference.NewRandom(),
+                                                          authorizationInfo.Info                   ?? new DisplayText(
+                                                                                                          authorizationInfo.Token.UILanguage ?? Languages.en,
+                                                                                                          responseText
+                                                                                                      )
+                                                      ).ToJSON(),
+                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                           };
 
-                                            #endregion
-
-                                            #region default
-
-                                            else
-                                            {
-
-                                                responseText = "An error occurred!";
-
-                                                if (authorizationInfo.Token.UILanguage.HasValue)
-                                                {
-                                                    switch (authorizationInfo.Token.UILanguage.Value)
-                                                    {
-                                                        case Languages.de:
-                                                            responseText = "Ein Fehler ist aufgetreten!";
-                                                            break;
-                                                    }
-                                                }
-
-                                            }
-
-                                            #endregion
-
-                                        }
-
-                                        #endregion
-
-
-                                        return new OCPIResponse.Builder(request) {
-                                                   StatusCode           = 1000,
-                                                   StatusMessage        = "Hello world!",
-                                                   Data                 = new AuthorizationInfo(
-                                                                              authorizationInfo.Allowed,
-                                                                              authorizationInfo.Token,
-                                                                              authorizationInfo.Location,
-                                                                              authorizationInfo.AuthorizationReference ?? AuthorizationReference.NewRandom(),
-                                                                              authorizationInfo.Info                   ?? new DisplayText(
-                                                                                                                              authorizationInfo.Token.UILanguage ?? Languages.en,
-                                                                                                                              responseText
-                                                                                                                          )
-                                                                          ).ToJSON(),
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                   }
-                                               };
-
-                                    });
+                }
+            );
 
             #endregion
 

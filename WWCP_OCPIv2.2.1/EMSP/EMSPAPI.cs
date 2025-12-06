@@ -2719,7 +2719,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{country_code}/{party_id}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetLocationsRequest,
                 OCPIResponseLogger:  GetLocationsResponse,
                 OCPIRequestHandler:  request => {
@@ -2815,7 +2815,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "locations/{country_code}/{party_id}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   DeleteLocationsRequest,
                 OCPIResponseLogger:  DeleteLocationsResponse,
                 OCPIRequestHandler:  async request => {
@@ -2904,7 +2904,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetLocationRequest,
                 OCPIResponseLogger:  GetLocationResponse,
                 OCPIRequestHandler:  request => {
@@ -2987,7 +2987,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.PUT,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PutLocationRequest,
                 OCPIResponseLogger:  PutLocationResponse,
                 OCPIRequestHandler:  async request => {
@@ -3136,7 +3136,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.PATCH,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PatchLocationRequest,
                 OCPIResponseLogger:  PatchLocationResponse,
                 OCPIRequestHandler:  async request => {
@@ -3249,7 +3249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   DeleteLocationRequest,
                 OCPIResponseLogger:  DeleteLocationResponse,
                 OCPIRequestHandler:  async request => {
@@ -3361,7 +3361,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetEVSERequest,
                 OCPIResponseLogger:  GetEVSEResponse,
                 OCPIRequestHandler:  request => {
@@ -3437,7 +3437,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.PUT,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PutEVSERequest,
                 OCPIResponseLogger:  PutEVSEResponse,
                 OCPIRequestHandler:  async request => {
@@ -3566,7 +3566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.PATCH,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PatchEVSERequest,
                 OCPIResponseLogger:  PatchEVSEResponse,
                 OCPIRequestHandler:  async request => {
@@ -3665,7 +3665,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   DeleteEVSERequest,
                 OCPIResponseLogger:  DeleteEVSEResponse,
                 OCPIRequestHandler:  async request => {
@@ -3771,7 +3771,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetConnectorRequest,
                 OCPIResponseLogger:  GetConnectorResponse,
                 OCPIRequestHandler:  request => {
@@ -3842,7 +3842,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.PUT,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PutConnectorRequest,
                 OCPIResponseLogger:  PutConnectorResponse,
                 OCPIRequestHandler:  async request => {
@@ -3961,7 +3961,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.PATCH,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PatchConnectorRequest,
                 OCPIResponseLogger:  PatchConnectorResponse,
                 OCPIRequestHandler:  async request => {
@@ -4055,7 +4055,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   DeleteConnectorRequest,
                 OCPIResponseLogger:  DeleteConnectorResponse,
                 OCPIRequestHandler:  async request => {
@@ -4155,7 +4155,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.POST,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/status",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PutEVSERequest,
                 OCPIResponseLogger:  PutEVSEResponse,
                 OCPIRequestHandler:  async request => {
@@ -4276,7 +4276,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tariffs/{country_code}/{party_id}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetTariffsRequest,
                 OCPIResponseLogger:  GetTariffsResponse,
                 OCPIRequestHandler:  request => {
@@ -4365,7 +4365,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "tariffs/{country_code}/{party_id}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   DeleteTariffsRequest,
                 OCPIResponseLogger:  DeleteTariffsResponse,
                 OCPIRequestHandler:  async request => {
@@ -4453,7 +4453,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetTariffRequest,
                 OCPIResponseLogger:  GetTariffResponse,
                 OCPIRequestHandler:  request => {
@@ -4529,7 +4529,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.PUT,
                 URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PutTariffRequest,
                 OCPIResponseLogger:  PutTariffResponse,
                 OCPIRequestHandler:  async request => {
@@ -4666,7 +4666,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.PATCH,
                 URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PatchTariffRequest,
                 OCPIResponseLogger:  PatchTariffResponse,
                 OCPIRequestHandler:  async request => {
@@ -4761,7 +4761,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   DeleteTariffRequest,
                 OCPIResponseLogger:  DeleteTariffResponse,
                 OCPIRequestHandler:  async request => {
@@ -4896,7 +4896,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.GET,
                 URLPathPrefix + "sessions",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetSessionsRequest,
                 OCPIResponseLogger:  GetSessionsResponse,
                 OCPIRequestHandler:  request => {
@@ -4972,7 +4972,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.GET,
                 URLPathPrefix + "sessions/{country_code}/{party_id}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetSessionsRequest,
                 OCPIResponseLogger:  GetSessionsResponse,
                 OCPIRequestHandler:  request => {
@@ -5055,7 +5055,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "sessions",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   DeleteSessionsRequest,
                 OCPIResponseLogger:  DeleteSessionsResponse,
                 OCPIRequestHandler:  async request => {
@@ -5117,7 +5117,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "sessions/{country_code}/{party_id}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   DeleteSessionsRequest,
                 OCPIResponseLogger:  DeleteSessionsResponse,
                 OCPIRequestHandler:  async request => {
@@ -5205,7 +5205,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.GET,
                 URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetSessionRequest,
                 OCPIResponseLogger:  GetSessionResponse,
                 OCPIRequestHandler:  request => {
@@ -5275,7 +5275,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.PUT,
                 URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PutSessionRequest,
                 OCPIResponseLogger:  PutSessionResponse,
                 OCPIRequestHandler:  async request => {
@@ -5395,7 +5395,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.PATCH,
                 URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PatchSessionRequest,
                 OCPIResponseLogger:  PatchSessionResponse,
                 OCPIRequestHandler:  async request => {
@@ -5492,7 +5492,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   DeleteSessionRequest,
                 OCPIResponseLogger:  DeleteSessionResponse,
                 OCPIRequestHandler:  async request => {
@@ -5592,7 +5592,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.GET,
                 URLPathPrefix + "cdrs",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetCDRsRequest,
                 OCPIResponseLogger:  GetCDRsResponse,
                 OCPIRequestHandler:  request => {
@@ -5690,7 +5690,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.GET,
                 URLPathPrefix + "cdrs/{country_code}/{party_id}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetCDRsRequest,
                 OCPIResponseLogger:  GetCDRsResponse,
                 OCPIRequestHandler:  request => {
@@ -5787,7 +5787,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.POST,
                 URLPathPrefix + "cdrs",///{country_code}/{party_id}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PostCDRRequest,
                 OCPIResponseLogger:  PostCDRResponse,
                 OCPIRequestHandler:  async request => {
@@ -5906,7 +5906,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "cdrs",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   DeleteCDRsRequest,
                 OCPIResponseLogger:  DeleteCDRsResponse,
                 OCPIRequestHandler:  async request => {
@@ -5957,7 +5957,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "cdrs/{country_code}/{party_id}",
-                HTTPContentType.Application.JSON_UTF8,
+                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   DeleteCDRsRequest,
                 OCPIResponseLogger:  DeleteCDRsResponse,
                 OCPIRequestHandler:  async request => {
@@ -6045,7 +6045,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.GET,
                 URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
-                HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetCDRRequest,
                 OCPIResponseLogger:  GetCDRResponse,
                 OCPIRequestHandler:  request => {
@@ -6128,7 +6127,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
-                HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   DeleteCDRRequest,
                 OCPIResponseLogger:  DeleteCDRResponse,
                 OCPIRequestHandler:  async request => {
@@ -6220,7 +6218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "tokens",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -6244,8 +6242,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tokens",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request => {
+                OCPIRequestLogger:   GetTokensRequest,
+                OCPIResponseLogger:  GetTokensResponse,
+                OCPIRequestHandler:  request => {
 
                     #region Check access token
 
@@ -6312,7 +6311,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "tokens/{token_id}/authorize",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -6337,7 +6336,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.POST,
                 URLPathPrefix + "tokens/{token_id}/authorize",
-                HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PostTokenRequest,
                 OCPIResponseLogger:  PostTokenResponse,
                 OCPIRequestHandler:  async request => {
@@ -6816,7 +6814,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "commands/RESERVE_NOW/{command_id}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -6837,7 +6835,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/RESERVE_NOW/{command_id}",
-                HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   ReserveNowCallbackRequest,
                 OCPIResponseLogger:  ReserveNowCallbackResponse,
                 OCPIRequestHandler:  request => {
@@ -6925,7 +6922,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "commands/CANCEL_RESERVATION/{command_id}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -6946,7 +6943,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/CANCEL_RESERVATION/{command_id}",
-                HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   CancelReservationCallbackRequest,
                 OCPIResponseLogger:  CancelReservationCallbackResponse,
                 OCPIRequestHandler:  request => {
@@ -7034,7 +7030,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "commands/START_SESSION/{command_id}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -7055,7 +7051,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/START_SESSION/{command_id}",
-                HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   StartSessionCallbackRequest,
                 OCPIResponseLogger:  StartSessionCallbackResponse,
                 OCPIRequestHandler:  request => {
@@ -7143,7 +7138,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "commands/STOP_SESSION/{command_id}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -7164,7 +7159,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/STOP_SESSION/{command_id}",
-                HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   StopSessionCallbackRequest,
                 OCPIResponseLogger:  StopSessionCallbackResponse,
                 OCPIRequestHandler:  request => {
@@ -7252,7 +7246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "commands/UNLOCK_CONNECTOR/{command_id}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -7273,7 +7267,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/UNLOCK_CONNECTOR/{command_id}",
-                HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   UnlockConnectorCallbackRequest,
                 OCPIResponseLogger:  UnlockConnectorCallbackResponse,
                 OCPIRequestHandler:  request => {
