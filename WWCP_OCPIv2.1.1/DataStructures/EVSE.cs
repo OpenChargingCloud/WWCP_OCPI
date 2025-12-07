@@ -399,7 +399,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          EVSEUIdURL,
                          CustomEVSEParser))
             {
-                return evse!;
+                return evse;
             }
 
             throw new ArgumentException("The given JSON representation of an EVSE is invalid: " + errorResponse,
@@ -1157,8 +1157,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="ConnectorId">A connector identification.</param>
         /// <param name="Connector">The connector having the given connector identification.</param>
-        public Boolean TryGetConnector(Connector_Id    ConnectorId,
-                                       out Connector?  Connector)
+        public Boolean TryGetConnector(Connector_Id                        ConnectorId,
+                                       [NotNullWhen(true)] out Connector?  Connector)
         {
 
             lock (Connectors)

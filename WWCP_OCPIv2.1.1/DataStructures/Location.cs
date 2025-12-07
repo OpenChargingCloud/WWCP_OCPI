@@ -626,7 +626,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          LocationIdURL,
                          CustomLocationParser))
             {
-                return location!;
+                return location;
             }
 
             throw new ArgumentException("The given JSON representation of a location is invalid: " + errorResponse,
@@ -1599,7 +1599,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             if (evsesById.TryGetValue(EVSEId, out var evse))
-                return evse!;
+                return evse;
 
             return default;
 
@@ -1614,8 +1614,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="EVSEId">An EVSE identification.</param>
         /// <param name="EVSE">The EVSE having the given EVSE identification.</param>
-        public Boolean TryGetEVSE(EVSE_Id    EVSEId,
-                                  out EVSE?  EVSE)
+        public Boolean TryGetEVSE(EVSE_Id                        EVSEId,
+                                  [NotNullWhen(true)] out EVSE?  EVSE)
 
             => evsesById.TryGetValue(EVSEId, out EVSE);
 

@@ -82,9 +82,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Parse the given HTTP request and return the party identification
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
+        /// <param name="Request">An OCPI request.</param>
         /// <param name="PartyId">The parsed party identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParsePartyId(this OCPIRequest                                Request,
                                            CommonAPI                                       CommonAPI,
                                            [NotNullWhen(true)]  out Party_Idv3?            PartyId,
@@ -165,13 +165,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="Location">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseMandatoryLocation(this OCPIRequest                                Request,
                                                      CommonAPI                                       CommonAPI,
                                                      [NotNullWhen(true)]  out CountryCode?           CountryCode,
@@ -283,13 +283,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="Location">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseOptionalLocation(this OCPIRequest                                 Request,
                                                     CommonAPI                                        CommonAPI,
                                                     [NotNullWhen(true)]   out CountryCode?           CountryCode,
@@ -380,25 +380,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseLocation                       (this Request, CommonAPI, out LocationId, out Location,                                                        out HTTPResponse)
+        #region ParseMandatoryLocation              (this Request, CommonAPI, CountryCodesWithPartyIds,     out LocationId, out Location,                                                        out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="Location">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        public static Boolean ParseLocation(this OCPIRequest                           Request,
-                                            CommonAPI                                  CommonAPI,
-                                            IEnumerable<Tuple<CountryCode, Party_Id>>  CountryCodesWithPartyIds,
-                                            out Location_Id?                           LocationId,
-                                            out Location?                              Location,
-                                            out OCPIResponse.Builder?                  OCPIResponseBuilder,
-                                            Boolean                                    FailOnMissingLocation = true)
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
+        public static Boolean ParseMandatoryLocation(this OCPIRequest                                Request,
+                                                     CommonAPI                                       CommonAPI,
+                                                     IEnumerable<Tuple<CountryCode, Party_Id>>       CountryCodesWithPartyIds,
+                                                     [NotNullWhen(true)]  out Location_Id?           LocationId,
+                                                     [NotNullWhen(true)]  out Location?              Location,
+                                                     [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             LocationId           =  default;
@@ -425,30 +424,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             LocationId = locationId;
 
 
-            if (!CommonAPI.TryGetLocation(
-                CommonAPI.DefaultPartyId,
-                locationId,
-                out Location))
+            if (!CommonAPI.TryGetLocation(CommonAPI.DefaultPartyId,
+                                          locationId,
+                                          out Location))
             {
 
-                if (FailOnMissingLocation)
-                {
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2003,
+                    StatusMessage        = "Unknown location!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.NotFound,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
 
-                    OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                        StatusCode           = 2003,
-                        StatusMessage        = "Unknown location!",
-                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                            HTTPStatusCode             = HTTPStatusCode.NotFound,
-                            //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                            AccessControlAllowHeaders  = [ "Authorization" ]
-                        }
-                    };
-
-                    return false;
-
-                }
-
-                return true;
+                return false;
 
             }
 
@@ -469,14 +460,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
             OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                StatusCode           = 2001,
-                StatusMessage        = "Unknown location!",
-                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-                    //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                    AccessControlAllowHeaders  = [ "Authorization" ]
-                }
-            };
+                                      StatusCode           = 2001,
+                                      StatusMessage        = "Unknown location!",
+                                      HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                          HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                          //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                                          AccessControlAllowHeaders  = [ "Authorization" ]
+                                      }
+                                  };
 
             return false;
 
@@ -492,15 +483,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="Location">The resolved user.</param>
+        /// <param name="Location">The resolved location.</param>
         /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
         /// <param name="EVSE">The resolved EVSE.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseMandatoryLocationEVSE(this OCPIRequest                                Request,
                                                          CommonAPI                                       CommonAPI,
                                                          [NotNullWhen(true)]  out CountryCode?           CountryCode,
@@ -540,7 +531,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CountryCode = countryCode;
 
 
-            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>   ("party_id",     Party_Id.        TryParse, out var partyId))
+            if (!Request.HTTPRequest.TryParseURLParameter<Party_Id>("party_id", Party_Id.TryParse, out var partyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -560,7 +551,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             PartyId     = partyId;
 
 
-            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("locationId",   Location_Id.     TryParse, out var locationId))
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("locationId", Location_Id.TryParse, out var locationId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -580,7 +571,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             LocationId  = locationId;
 
 
-            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>   ("evseUId",      EVSE_UId.        TryParse, out var evseUId))
+            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>("evseUId", EVSE_UId.TryParse, out var evseUId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -653,21 +644,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="Location">The resolved user.</param>
         /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
         /// <param name="EVSE">The resolved EVSE.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseOptionalLocationEVSE(this OCPIRequest                                 Request,
                                                         CommonAPI                                        CommonAPI,
                                                         [NotNullWhen(true)]   out CountryCode?           CountryCode,
                                                         [NotNullWhen(true)]   out Party_Id?              PartyId,
                                                         [NotNullWhen(true)]   out Location_Id?           LocationId,
-                                                        [MaybeNullWhen(true)] out Location?              Location,
+                                                        [NotNullWhen(true)]   out Location?              Location,
                                                         [NotNullWhen(true)]   out EVSE_UId?              EVSEUId,
                                                         [MaybeNullWhen(true)] out EVSE?                  EVSE,
                                                         [NotNullWhen(false)]  out OCPIResponse.Builder?  OCPIResponseBuilder)
@@ -781,28 +772,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseLocationEVSE                   (this Request, CommonAPI, out LocationId, out Location, out EVSEUId, out EVSE,                                 out HTTPResponse)
+        #region ParseMandatoryLocationEVSE          (this Request, CommonAPI, CountryCodesWithPartyIds,     out LocationId, out Location, out EVSEUId, out EVSE,                                 out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="Location">The resolved user.</param>
         /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
         /// <param name="EVSE">The resolved EVSE.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        public static Boolean ParseLocationEVSE(this OCPIRequest                           Request,
-                                                CommonAPI                                  CommonAPI,
-                                                IEnumerable<Tuple<CountryCode, Party_Id>>  CountryCodesWithPartyIds,
-                                                out Location_Id?                           LocationId,
-                                                out Location?                              Location,
-                                                out EVSE_UId?                              EVSEUId,
-                                                out EVSE?                                  EVSE,
-                                                out OCPIResponse.Builder?                  OCPIResponseBuilder)
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
+        public static Boolean ParseMandatoryLocationEVSE(this OCPIRequest                                Request,
+                                                         CommonAPI                                       CommonAPI,
+                                                         IEnumerable<Tuple<CountryCode, Party_Id>>       CountryCodesWithPartyIds,
+                                                         [NotNullWhen(true)]  out Location_Id?           LocationId,
+                                                         [NotNullWhen(true)]  out Location?              Location,
+                                                         [NotNullWhen(true)]  out EVSE_UId?              EVSEUId,
+                                                         [NotNullWhen(true)]  out EVSE?                  EVSE,
+                                                         [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             LocationId           = default;
@@ -885,14 +876,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
             OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                StatusCode           = 2001,
-                StatusMessage        = "Unknown location!",
-                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-                    //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                    AccessControlAllowHeaders  = [ "Authorization" ]
-                }
-            };
+                                      StatusCode           = 2001,
+                                      StatusMessage        = "Unknown location!",
+                                      HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                          HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                          //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                                          AccessControlAllowHeaders  = [ "Authorization" ]
+                                      }
+                                  };
 
             return false;
 
@@ -908,8 +899,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
@@ -918,7 +909,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="EVSE">The resolved EVSE.</param>
         /// <param name="ConnectorId">The parsed unique connector identification.</param>
         /// <param name="Connector">The resolved connector.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseMandatoryLocationEVSEConnector(this OCPIRequest                                Request,
                                                                   CommonAPI                                       CommonAPI,
                                                                   [NotNullWhen(true)]  out CountryCode?           CountryCode,
@@ -1112,8 +1103,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
@@ -1122,7 +1113,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="EVSE">The resolved EVSE.</param>
         /// <param name="ConnectorId">The parsed unique connector identification.</param>
         /// <param name="Connector">The resolved connector.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseOptionalLocationEVSEConnector(this OCPIRequest                                 Request,
                                                                  CommonAPI                                        CommonAPI,
                                                                  [NotNullWhen(true)]   out CountryCode?           CountryCode,
@@ -1295,32 +1286,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseLocationEVSEConnector          (this Request, CommonAPI, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out HTTPResponse)
+        #region ParseMandatoryLocationEVSEConnector (this Request, CommonAPI, CountryCodesWithPartyIds,     out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="Location">The resolved user.</param>
         /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
         /// <param name="EVSE">The resolved EVSE.</param>
         /// <param name="ConnectorId">The parsed unique connector identification.</param>
         /// <param name="Connector">The resolved connector.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        public static Boolean ParseLocationEVSEConnector(this OCPIRequest                           Request,
-                                                         CommonAPI                                  CommonAPI,
-                                                         IEnumerable<Tuple<CountryCode, Party_Id>>  CountryCodesWithPartyIds,
-                                                         out Location_Id?                           LocationId,
-                                                         out Location?                              Location,
-                                                         out EVSE_UId?                              EVSEUId,
-                                                         out EVSE?                                  EVSE,
-                                                         out Connector_Id?                          ConnectorId,
-                                                         out Connector?                             Connector,
-                                                         out OCPIResponse.Builder?                  OCPIResponseBuilder)
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
+        public static Boolean ParseMandatoryLocationEVSEConnector(this OCPIRequest                                Request,
+                                                                  CommonAPI                                       CommonAPI,
+                                                                  IEnumerable<Tuple<CountryCode, Party_Id>>       CountryCodesWithPartyIds,
+                                                                  [NotNullWhen(true)]  out Location_Id?           LocationId,
+                                                                  [NotNullWhen(true)]  out Location?              Location,
+                                                                  [NotNullWhen(true)]  out EVSE_UId?              EVSEUId,
+                                                                  [NotNullWhen(true)]  out EVSE?                  EVSE,
+                                                                  [NotNullWhen(true)]  out Connector_Id?          ConnectorId,
+                                                                  [NotNullWhen(true)]  out Connector?             Connector,
+                                                                  [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             LocationId           = default;
@@ -1331,25 +1322,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             Connector            = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3) {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing location, EVSE and/or connector identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!LocationId.HasValue) {
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id> ("locationId",   Location_Id. TryParse, out var locationId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -1365,9 +1339,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
+            LocationId  = locationId;
 
-            if (!EVSEUId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>    ("evseId",       EVSE_UId.    TryParse, out var evseUId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1384,9 +1359,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             }
 
-            ConnectorId = Connector_Id.TryParse(Request.ParsedURLParameters[2]);
+            EVSEUId     = evseUId;
 
-            if (!ConnectorId.HasValue)
+
+            if (!Request.HTTPRequest.TryParseURLParameter<Connector_Id>("connectorId",  Connector_Id.TryParse, out var connectorId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1402,6 +1378,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 return false;
 
             }
+
+            ConnectorId = connectorId;
 
 
             foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
@@ -1455,14 +1433,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
             OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                StatusCode           = 2001,
-                StatusMessage        = "Unknown location!",
-                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-                    //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                    AccessControlAllowHeaders  = [ "Authorization" ]
-                }
-            };
+                                      StatusCode           = 2001,
+                                      StatusMessage        = "Unknown location!",
+                                      HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                          HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                          //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                                          AccessControlAllowHeaders  = [ "Authorization" ]
+                                      }
+                                  };
 
             return false;
 
@@ -1471,20 +1449,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region ParseMandatoryTariff                (this Request, CommonAPI, out CountryCode, out PartyId, out TariffId,  out Tariff,   out OCPIResponseBuilder)
+        #region ParseMandatoryTariff                (this Request, CommonAPI, out CountryCode, out PartyId, out TariffId,   out Tariff,   out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="TariffId">The parsed unique tariff identification.</param>
         /// <param name="Tariff">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseMandatoryTariff(this OCPIRequest                                Request,
                                                    CommonAPI                                       CommonAPI,
                                                    [NotNullWhen(true)]  out CountryCode?           CountryCode,
@@ -1589,20 +1567,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseOptionalTariff                 (this Request, CommonAPI, out CountryCode, out PartyId, out TariffId,  out Tariff,   out OCPIResponseBuilder)
+        #region ParseOptionalTariff                 (this Request, CommonAPI, out CountryCode, out PartyId, out TariffId,   out Tariff,   out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="TariffId">The parsed unique tariff identification.</param>
         /// <param name="Tariff">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseOptionalTariff(this OCPIRequest                                  Request,
                                                   CommonAPI                                         CommonAPI,
                                                   [NotNullWhen  (true)]  out CountryCode?           CountryCode,
@@ -1693,24 +1671,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseTariff                         (this Request, CommonAPI, out TariffId, out Tariff,                                                            out HTTPResponse)
+        #region ParseMandatoryTariff                (this Request, CommonAPI, CountryCodesWithPartyIds,     out TariffId,   out Tariff,   out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="TariffId">The parsed unique tariff identification.</param>
         /// <param name="Tariff">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        public static Boolean ParseTariff(this OCPIRequest                           Request,
-                                          CommonAPI                                  CommonAPI,
-                                          IEnumerable<Tuple<CountryCode, Party_Id>>  CountryCodesWithPartyIds,
-                                          out Tariff_Id?                             TariffId,
-                                          out Tariff?                                Tariff,
-                                          out OCPIResponse.Builder?                  OCPIResponseBuilder)
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
+        public static Boolean ParseMandatoryTariff(this OCPIRequest                                Request,
+                                                   CommonAPI                                       CommonAPI,
+                                                   IEnumerable<Tuple<CountryCode, Party_Id>>       CountryCodesWithPartyIds,
+                                                   [NotNullWhen(true)]  out Tariff_Id?             TariffId,
+                                                   [NotNullWhen(true)]  out Tariff?                Tariff,
+                                                   [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             TariffId             =  default;
@@ -1753,14 +1731,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
             OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                StatusCode           = 2003,
-                StatusMessage        = "Unknown tariff!",
-                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-                    //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                    AccessControlAllowHeaders  = [ "Authorization" ]
-                }
-            };
+                                      StatusCode           = 2003,
+                                      StatusMessage        = "Unknown tariff!",
+                                      HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                          HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                          //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                                          AccessControlAllowHeaders  = [ "Authorization" ]
+                                      }
+                                  };
 
             return false;
 
@@ -1769,19 +1747,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region ParseSessionId                      (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId,               out OCPIResponseBuilder)
+        #region ParseSessionId                      (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId,                out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="SessionId">The parsed unique session identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseSessionId(this OCPIRequest                                  Request,
                                              CommonAPI                                         CommonAPI,
                                              [NotNullWhen  (true)]  out CountryCode?           CountryCode,
@@ -1860,20 +1838,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseMandatorySession               (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId, out Session,  out OCPIResponseBuilder)
+        #region ParseMandatorySession               (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId,  out Session,  out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="SessionId">The parsed unique session identification.</param>
         /// <param name="Session">The resolved session.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseMandatorySession(this OCPIRequest                                Request,
                                                     CommonAPI                                       CommonAPI,
                                                     [NotNullWhen(true)]  out CountryCode?           CountryCode,
@@ -1972,20 +1950,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseOptionalSession                (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId, out Session,  out OCPIResponseBuilder)
+        #region ParseOptionalSession                (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId,  out Session,  out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="SessionId">The parsed unique session identification.</param>
         /// <param name="Session">The resolved session.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseOptionalSession(this OCPIRequest                                  Request,
                                                    CommonAPI                                         CommonAPI,
                                                    [NotNullWhen  (true)]  out CountryCode?           CountryCode,
@@ -2076,24 +2054,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseSession                        (this Request, CommonAPI, out SessionId, out Session,                                                          out HTTPResponse)
+        #region ParseMandatorySession               (this Request, CommonAPI, CountryCodesWithPartyIds,     out SessionId,  out Session,                                                          out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="SessionId">The parsed unique session identification.</param>
-        /// <param name="Session">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        public static Boolean ParseSession(this OCPIRequest                           Request,
-                                           CommonAPI                                  CommonAPI,
-                                           IEnumerable<Tuple<CountryCode, Party_Id>>  CountryCodesWithPartyIds,
-                                           out Session_Id?                            SessionId,
-                                           out Session?                               Session,
-                                           out OCPIResponse.Builder?                  OCPIResponseBuilder)
+        /// <param name="Session">The resolved session.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
+        public static Boolean ParseMandatorySession(this OCPIRequest                                Request,
+                                                    CommonAPI                                       CommonAPI,
+                                                    IEnumerable<Tuple<CountryCode, Party_Id>>       CountryCodesWithPartyIds,
+                                                    [NotNullWhen(true)]  out Session_Id?            SessionId,
+                                                    [NotNullWhen(true)]  out Session?               Session,
+                                                    [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             SessionId            =  default;
@@ -2136,14 +2114,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
             OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                StatusCode           = 2003,
-                StatusMessage        = "Unknown session!",
-                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-                    //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                    AccessControlAllowHeaders  = [ "Authorization" ]
-                }
-            };
+                                      StatusCode           = 2003,
+                                      StatusMessage        = "Unknown session!",
+                                      HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                          HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                          //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                                          AccessControlAllowHeaders  = [ "Authorization" ]
+                                      }
+                                  };
 
             return false;
 
@@ -2152,19 +2130,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region ParseMandatoryCDR                   (this Request, CommonAPI, out CountryCode, out PartyId, out CDRId,     out CDR,      out OCPIResponseBuilder)
+        #region ParseMandatoryCDR                   (this Request, CommonAPI, out CountryCode, out PartyId, out CDRId,      out CDR,      out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the charge detail record identification
         /// for the given HTTP hostname and HTTP query parameter or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="CDRId">The parsed unique charge detail record identification.</param>
         /// <param name="CDR">The resolved charge detail record.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseMandatoryCDR(this OCPIRequest                                Request,
                                                 CommonAPI                                       CommonAPI,
                                                 [NotNullWhen(true)]  out CountryCode?           CountryCode,
@@ -2269,19 +2247,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseOptionalCDR                    (this Request, CommonAPI, out CountryCode, out PartyId, out CDRId,     out CDR,      out OCPIResponseBuilder)
+        #region ParseOptionalCDR                    (this Request, CommonAPI, out CountryCode, out PartyId, out CDRId,      out CDR,      out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the charge detail record identification
         /// for the given HTTP hostname and HTTP query parameter or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="CDRId">The parsed unique charge detail record identification.</param>
         /// <param name="CDR">The resolved charge detail record.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseOptionalCDR(this OCPIRequest                                  Request,
                                                CommonAPI                                         CommonAPI,
                                                [NotNullWhen  (true)]  out CountryCode?           CountryCode,
@@ -2372,24 +2350,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseCDR                            (this Request, CommonAPI, out CDRId, out CDR,                                                                  out HTTPResponse)
+        #region ParseMandatoryCDR                   (this Request, CommonAPI, CountryCodesWithPartyIds,     out CDRId,      out CDR,                                                              out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the CDR identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="CDRId">The parsed unique CDR identification.</param>
         /// <param name="CDR">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        public static Boolean ParseCDR(this OCPIRequest                                Request,
-                                       CommonAPI                                       CommonAPI,
-                                       IEnumerable<Tuple<CountryCode, Party_Id>>       CountryCodesWithPartyIds,
-                                       [NotNullWhen(true)]  out CDR_Id?                CDRId,
-                                       [NotNullWhen(true)]  out CDR?                   CDR,
-                                       [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
+        public static Boolean ParseMandatoryCDR(this OCPIRequest                                Request,
+                                                CommonAPI                                       CommonAPI,
+                                                IEnumerable<Tuple<CountryCode, Party_Id>>       CountryCodesWithPartyIds,
+                                                [NotNullWhen(true)]  out CDR_Id?                CDRId,
+                                                [NotNullWhen(true)]  out CDR?                   CDR,
+                                                [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             CDRId                =  default;
@@ -2455,12 +2433,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
         /// <param name="TokenId">The parsed unique token identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseTokenId(this OCPIRequest                                Request,
-                                           CommonAPI                                       CommonAPI,
                                            [NotNullWhen(true)]  out Token_Id?              TokenId,
                                            [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
@@ -2500,14 +2476,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="TokenId">The parsed unique tariff identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseTokenId(this OCPIRequest                                Request,
-                                           CommonAPI                                       CommonAPI,
                                            [NotNullWhen(true)]  out CountryCode?           CountryCode,
                                            [NotNullWhen(true)]  out Party_Id?              PartyId,
                                            [NotNullWhen(true)]  out Token_Id?              TokenId,
@@ -2591,11 +2565,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="TokenId">The parsed unique token identification.</param>
         /// <param name="TokenStatus">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseMandatoryToken(this OCPIRequest                                Request,
                                                   CommonAPI                                       CommonAPI,
                                                   [NotNullWhen(true)]  out Token_Id?              TokenId,
@@ -2680,11 +2654,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="TokenId">The parsed unique token identification.</param>
         /// <param name="TokenStatus">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseOptionalToken(this OCPIRequest                                  Request,
                                                  CommonAPI                                         CommonAPI,
                                                  [NotNullWhen  (true)]  out Token_Id?              TokenId,
@@ -2754,13 +2728,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="TokenId">The parsed unique tariff identification.</param>
         /// <param name="TokenStatus">The resolved tariff with status.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseMandatoryToken(this OCPIRequest                                Request,
                                                   CommonAPI                                       CommonAPI,
                                                   IEnumerable<Tuple<CountryCode, Party_Id>>       CountryCodesWithPartyIds,
@@ -2909,14 +2883,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="PartyIds">The allowed party identifications.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="TokenId">The parsed unique tariff identification.</param>
         /// <param name="TokenStatus">The resolved tariff with status.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseMandatoryToken(this OCPIRequest                                Request,
                                                   CommonAPI                                       CommonAPI,
                                                   IEnumerable<Party_Idv3>                         PartyIds,
@@ -3062,13 +3036,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="TokenId">The parsed unique tariff identification.</param>
         /// <param name="TokenStatus">The resolved tariff with status.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseOptionalToken(this OCPIRequest                                  Request,
                                                  CommonAPI                                         CommonAPI,
                                                  IEnumerable<Tuple<CountryCode, Party_Id>>         CountryCodesWithPartyIds,
@@ -3207,10 +3181,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="Request">A HTTP request.</param>
+        /// <param name="Request">An OCPI request.</param>
         /// <param name="CommonAPI">The EMSP API.</param>
         /// <param name="CommandId">The parsed unique command identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
         public static Boolean ParseCommandId(this OCPIRequest                                Request,
                                              CommonAPI                                       CommonAPI,
                                              [NotNullWhen(true)]  out Command_Id?            CommandId,
@@ -3709,6 +3683,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?    CustomTransparencySoftwareStatusSerializer    { get; set; }
         public CustomJObjectSerializerDelegate<TransparencySoftware>?          CustomTransparencySoftwareSerializer          { get; set; }
         public CustomJObjectSerializerDelegate<DisplayText>?                   CustomDisplayTextSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<Credentials>?                   CustomCredentialsSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<CredentialsRole>?               CustomCredentialsRoleSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<BusinessDetails>?               CustomBusinessDetailsSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<Hours>?                         CustomHoursSerializer                         { get; set; }
         public CustomJObjectSerializerDelegate<Image>?                         CustomImageSerializer                         { get; set; }
@@ -3921,10 +3897,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.GET,
                 URLPathPrefix + $"versions/{Version.Id}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   GetVersionRequest,
-                OCPIResponseLogger:  GetVersionResponse,
-                OCPIRequestHandler:  request => {
+                GetVersionRequest,
+                GetVersionResponse,
+                request => {
 
                     #region Check access token
 
@@ -4218,7 +4193,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + $"{Version.String}/credentials",
-                OCPIRequestHandler: request => {
+                request => {
 
                     #region Defaults
 
@@ -4292,10 +4267,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.GET,
                 URLPathPrefix + $"{Version.String}/credentials",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   GetCredentialsRequest,
-                OCPIResponseLogger:  GetCredentialsResponse,
-                OCPIRequestHandler:  request => {
+                GetCredentialsRequest,
+                GetCredentialsResponse,
+                request => {
 
                     #region Check access token
 
@@ -4334,7 +4308,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                               request.LocalAccessInfo?.AccessToken ?? AccessToken.Parse("<any>"),
                                                               BaseAPI.OurVersionsURL,
                                                               parties.Values.Select(partyData => partyData.ToCredentialsRole())
-                                                          ).ToJSON(),
+                                                          ).ToJSON(
+                                                                CustomCredentialsSerializer,
+                                                                CustomCredentialsRoleSerializer,
+                                                                CustomBusinessDetailsSerializer
+                                                            ),
                                    HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                        Server                     = HTTPServiceName,
@@ -4364,10 +4342,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.POST,
                 URLPathPrefix + $"{Version.String}/credentials",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   PostCredentialsRequest,
-                OCPIResponseLogger:  PostCredentialsResponse,
-                OCPIRequestHandler:  async request => {
+                PostCredentialsRequest,
+                PostCredentialsResponse,
+                async request => {
 
                     if (request.LocalAccessInfo?.Status == AccessStatus.ALLOWED)
                     {
@@ -4412,10 +4389,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.PUT,
                 URLPathPrefix + $"{Version.String}/credentials",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   PutCredentialsRequest,
-                OCPIResponseLogger:  PutCredentialsResponse,
-                OCPIRequestHandler:  async request => {
+                PutCredentialsRequest,
+                PutCredentialsResponse,
+                async request => {
 
                     #region The access token is known...
 
@@ -4489,10 +4465,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + $"{Version.String}/credentials",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   DeleteCredentialsRequest,
-                OCPIResponseLogger:  DeleteCredentialsResponse,
-                OCPIRequestHandler:  async request => {
+                DeleteCredentialsRequest,
+                DeleteCredentialsResponse,
+                async request => {
 
                     if (request.LocalAccessInfo?.Status == AccessStatus.ALLOWED)
                     {
@@ -8375,7 +8350,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                             //        {
                             //            try
                             //            {
-                            //                await OnEVSEChangedLocal(existingLocation.GetEVSE(evseUId)!);
+                            //                await OnEVSEChangedLocal(existingLocation.GetEVSE(evseUId));
                             //            }
                             //            catch (Exception e)
                             //            {
@@ -8392,7 +8367,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                             //        {
                             //            try
                             //            {
-                            //                await OnEVSEAddedLocal(existingLocation.GetEVSE(evseUId)!);
+                            //                await OnEVSEAddedLocal(existingLocation.GetEVSE(evseUId));
                             //            }
                             //            catch (Exception e)
                             //            {
@@ -8409,7 +8384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                             //        {
                             //            try
                             //            {
-                            //                await OnEVSERemovedLocal(existingLocation.GetEVSE(evseUId)!);
+                            //                await OnEVSERemovedLocal(existingLocation.GetEVSE(evseUId));
                             //            }
                             //            catch (Exception e)
                             //            {
@@ -9383,7 +9358,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region AddOrUpdateEVSE       (Location, newOrUpdatedEVSE, AllowDowngrades = false)
+        #region AddOrUpdateEVSE        (Location, newOrUpdatedEVSE, AllowDowngrades = false)
 
         public async Task<AddOrUpdateResult<EVSE>>
 
@@ -9550,7 +9525,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region TryPatchEVSE          (Location, EVSE, EVSEPatch,  AllowDowngrades = false)
+        #region TryPatchEVSE           (Location, EVSE, EVSEPatch,  AllowDowngrades = false)
 
         public async Task<PatchResult<EVSE>>
 

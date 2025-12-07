@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -109,7 +111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          out var errorResponse,
                          CustomCommandResponseParser))
             {
-                return commandResponse!;
+                return commandResponse;
             }
 
             throw new ArgumentException("The given JSON representation of a command response is invalid: " + errorResponse,
@@ -130,10 +132,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CommandResponse">The parsed command response.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(IOCPICommand          Command,
-                                       JObject               JSON,
-                                       out CommandResponse?  CommandResponse,
-                                       out String?           ErrorResponse)
+        public static Boolean TryParse(IOCPICommand                               Command,
+                                       JObject                                    JSON,
+                                       [NotNullWhen(true)]  out CommandResponse?  CommandResponse,
+                                       [NotNullWhen(false)] out String?           ErrorResponse)
 
             => TryParse(Command,
                         JSON,
@@ -152,8 +154,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomCommandResponseParser">A delegate to parse custom command response JSON objects.</param>
         public static Boolean TryParse(IOCPICommand                                   Command,
                                        JObject                                        JSON,
-                                       out CommandResponse?                           CommandResponse,
-                                       out String?                                    ErrorResponse,
+                                       [NotNullWhen(true)]  out CommandResponse?      CommandResponse,
+                                       [NotNullWhen(false)] out String?               ErrorResponse,
                                        CustomJObjectParserDelegate<CommandResponse>?  CustomCommandResponseParser   = null)
         {
 

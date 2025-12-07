@@ -246,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          TokenIdURL,
                          CustomTokenParser))
             {
-                return token!;
+                return token;
             }
 
             throw new ArgumentException("The given JSON representation of a token is invalid: " + errorResponse,

@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -124,7 +126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          out var errorResponse,
                          CustomAuthorizationInfoParser))
             {
-                return authorizationInfo!;
+                return authorizationInfo;
             }
 
             throw new ArgumentException("The given JSON representation of an authorization information is invalid: " + errorResponse,
@@ -144,9 +146,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="AuthorizationInfo">The parsed authorization information.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                 JSON,
-                                       out AuthorizationInfo?  AuthorizationInfo,
-                                       out String?             ErrorResponse)
+        public static Boolean TryParse(JObject                                      JSON,
+                                       [NotNullWhen(true)]  out AuthorizationInfo?  AuthorizationInfo,
+                                       [NotNullWhen(false)] out String?             ErrorResponse)
 
             => TryParse(JSON,
                         out AuthorizationInfo,
@@ -162,8 +164,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomAuthorizationInfoParser">A delegate to parse custom authorization information JSON objects.</param>
         public static Boolean TryParse(JObject                                          JSON,
-                                       out AuthorizationInfo?                           AuthorizationInfo,
-                                       out String?                                      ErrorResponse,
+                                       [NotNullWhen(true)]  out AuthorizationInfo?      AuthorizationInfo,
+                                       [NotNullWhen(false)] out String?                 ErrorResponse,
                                        CustomJObjectParserDelegate<AuthorizationInfo>?  CustomAuthorizationInfoParser   = null)
         {
 

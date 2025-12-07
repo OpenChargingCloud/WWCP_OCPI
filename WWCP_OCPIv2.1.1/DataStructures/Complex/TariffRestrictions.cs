@@ -189,7 +189,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          out var errorResponse,
                          CustomTariffRestrictionsParser))
             {
-                return tariffRestrictions!;
+                return tariffRestrictions;
             }
 
             throw new ArgumentException("The given JSON representation of tariff restrictions is invalid: " + errorResponse,
@@ -209,9 +209,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="TariffRestrictions">The parsed tariff restrictions.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                  JSON,
-                                       out TariffRestrictions?  TariffRestrictions,
-                                       out String?              ErrorResponse)
+        public static Boolean TryParse(JObject                                       JSON,
+                                       [NotNullWhen(true)]  out TariffRestrictions?  TariffRestrictions,
+                                       [NotNullWhen(false)] out String?              ErrorResponse)
 
             => TryParse(JSON,
                         out TariffRestrictions,
@@ -227,8 +227,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomTariffRestrictionsParser">A delegate to parse custom tariff restrictions JSON objects.</param>
         public static Boolean TryParse(JObject                                            JSON,
-                                       out TariffRestrictions?                            TariffRestrictions,
-                                       out String?                                        ErrorResponse,
+                                       [NotNullWhen(true)]  out TariffRestrictions?       TariffRestrictions,
+                                       [NotNullWhen(false)] out String?                   ErrorResponse,
                                        CustomJObjectParserDelegate<TariffRestrictions?>?  CustomTariffRestrictionsParser   = null)
         {
 

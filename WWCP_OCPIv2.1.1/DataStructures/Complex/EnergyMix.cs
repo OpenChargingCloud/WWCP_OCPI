@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -111,7 +113,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          out var errorResponse,
                          CustomEnergyMixParser))
             {
-                return energyMix!;
+                return energyMix;
             }
 
             throw new ArgumentException("The given JSON representation of an energy mix is invalid: " + errorResponse,
@@ -131,9 +133,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="EnergyMix">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject         JSON,
-                                       out EnergyMix?  EnergyMix,
-                                       out String?     ErrorResponse)
+        public static Boolean TryParse(JObject                              JSON,
+                                       [NotNullWhen(true)]  out EnergyMix?  EnergyMix,
+                                       [NotNullWhen(false)] out String?     ErrorResponse)
 
             => TryParse(JSON,
                         out EnergyMix,
@@ -149,8 +151,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomEnergyMixParser">A delegate to parse custom energy mix JSON objects.</param>
         public static Boolean TryParse(JObject                                  JSON,
-                                       out EnergyMix?                           EnergyMix,
-                                       out String?                              ErrorResponse,
+                                       [NotNullWhen(true)]  out EnergyMix?      EnergyMix,
+                                       [NotNullWhen(false)] out String?         ErrorResponse,
                                        CustomJObjectParserDelegate<EnergyMix>?  CustomEnergyMixParser)
         {
 

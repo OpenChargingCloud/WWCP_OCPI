@@ -146,7 +146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                );
 
-        #region AddOCPIMethod(CommonAPI, HTTPMethod, URLTemplate,  HTTPContentType = null, HTTPDelegate = null, ...)
+        #region AddOCPIMethod(CommonAPI, HTTPMethod, URLTemplate, HTTPContentType, OCPIRequestHandler, HTTPContentType, ...)
 
         /// <summary>
         /// Add a method callback for the given URL template.

@@ -17,12 +17,12 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Styx;
 using org.GraphDefined.Vanaheimr.Illias;
-
-using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
@@ -91,7 +91,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          out var errorResponse,
                          CustomVersionDetailParser))
             {
-                return versionDetail!;
+                return versionDetail;
             }
 
             throw new ArgumentException("The given JSON representation of a version detail is invalid: " + errorResponse,
@@ -111,9 +111,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="VersionDetail">The parsed version detail.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject             JSON,
-                                       out VersionDetail?  VersionDetail,
-                                       out String?         ErrorResponse)
+        public static Boolean TryParse(JObject                                  JSON,
+                                       [NotNullWhen(true)]  out VersionDetail?  VersionDetail,
+                                       [NotNullWhen(false)] out String?         ErrorResponse)
 
             => TryParse(JSON,
                         out VersionDetail,
@@ -129,8 +129,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomVersionDetailParser">A delegate to parse custom version JSON objects.</param>
         public static Boolean TryParse(JObject                                      JSON,
-                                       out VersionDetail?                           VersionDetail,
-                                       out String?                                  ErrorResponse,
+                                       [NotNullWhen(true)]  out VersionDetail?      VersionDetail,
+                                       [NotNullWhen(false)] out String?             ErrorResponse,
                                        CustomJObjectParserDelegate<VersionDetail>?  CustomVersionDetailParser)
         {
 
@@ -172,8 +172,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                VersionDetail = new VersionDetail(VersionId,
-                                                  Endpoints);
+                VersionDetail = new VersionDetail(
+                                    VersionId,
+                                    Endpoints
+                                );
 
 
                 if (CustomVersionDetailParser is not null)

@@ -826,7 +826,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          CDRIdURL,
                          CustomCDRParser))
             {
-                return CDR!;
+                return CDR;
             }
 
             throw new ArgumentException("The given JSON representation of a charge detail record is invalid: " + errorResponse, nameof(JSON));

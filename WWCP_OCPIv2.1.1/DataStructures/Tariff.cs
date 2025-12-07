@@ -346,11 +346,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          out var tariff,
                          out var errorResponse,
                          CountryCodeURL,
-                         PartyIdURL, 
+                         PartyIdURL,
                          TariffIdURL,
                          CustomTariffParser))
             {
-                return tariff!;
+                return tariff;
             }
 
             throw new ArgumentException("The given JSON representation of a charging tariff is invalid: " + errorResponse,

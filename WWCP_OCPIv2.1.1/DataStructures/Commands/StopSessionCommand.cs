@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -92,7 +94,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          out var errorResponse,
                          CustomStopSessionCommandParser))
             {
-                return stopSessionCommand!;
+                return stopSessionCommand;
             }
 
             throw new ArgumentException("The given JSON representation of a 'stop session' command is invalid: " + errorResponse,
@@ -112,9 +114,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="StopSessionCommand">The parsed 'stop session' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                  JSON,
-                                       out StopSessionCommand?  StopSessionCommand,
-                                       out String?              ErrorResponse)
+        public static Boolean TryParse(JObject                                       JSON,
+                                       [NotNullWhen(true)]  out StopSessionCommand?  StopSessionCommand,
+                                       [NotNullWhen(false)] out String?              ErrorResponse)
 
             => TryParse(JSON,
                         out StopSessionCommand,
@@ -130,8 +132,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomStopSessionCommandParser">A delegate to parse custom 'stop session' command JSON objects.</param>
         public static Boolean TryParse(JObject                                           JSON,
-                                       out StopSessionCommand?                           StopSessionCommand,
-                                       out String?                                       ErrorResponse,
+                                       [NotNullWhen(true)]  out StopSessionCommand?      StopSessionCommand,
+                                       [NotNullWhen(false)] out String?                  ErrorResponse,
                                        CustomJObjectParserDelegate<StopSessionCommand>?  CustomStopSessionCommandParser   = null)
         {
 

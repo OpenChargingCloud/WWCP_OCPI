@@ -53,6 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
     }
 
+
     /// <summary>
     /// The common generic interface for all OCPI commands.
     /// </summary>
@@ -63,6 +64,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     {
 
     }
+
 
     /// <summary>
     /// An abstract OCPI command.

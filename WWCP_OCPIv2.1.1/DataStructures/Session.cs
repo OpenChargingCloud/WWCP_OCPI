@@ -337,7 +337,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          SessionIdURL,
                          CustomSessionParser))
             {
-                return session!;
+                return session;
             }
 
             throw new ArgumentException("The given JSON representation of a charging session is invalid: " + errorResponse,

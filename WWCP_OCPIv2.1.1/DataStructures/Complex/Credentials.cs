@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -115,7 +117,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          out var errorResponse,
                          CustomCredentialsParser))
             {
-                return credentials!;
+                return credentials;
             }
 
             throw new ArgumentException("The given JSON representation of a credentials is invalid: " + errorResponse,
@@ -135,9 +137,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Credentials">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject           JSON,
-                                       out Credentials?  Credentials,
-                                       out String?       ErrorResponse)
+        public static Boolean TryParse(JObject                                JSON,
+                                       [NotNullWhen(true)]  out Credentials?  Credentials,
+                                       [NotNullWhen(false)] out String?       ErrorResponse)
 
             => TryParse(JSON,
                         out Credentials,
@@ -153,8 +155,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCredentialsParser">A delegate to parse custom credentials JSON objects.</param>
         public static Boolean TryParse(JObject                                    JSON,
-                                       out Credentials?                           Credentials,
-                                       out String?                                ErrorResponse,
+                                       [NotNullWhen(true)]  out Credentials?      Credentials,
+                                       [NotNullWhen(false)] out String?           ErrorResponse,
                                        CustomJObjectParserDelegate<Credentials>?  CustomCredentialsParser)
         {
 
