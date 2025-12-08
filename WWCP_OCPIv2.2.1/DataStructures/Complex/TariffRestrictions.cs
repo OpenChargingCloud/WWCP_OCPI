@@ -52,13 +52,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The start date, for example: 2015-12-24, valid from this day until that day (excluding that day).
         /// </summary>
         [Optional]
-        public DateTime?                 StartDate           { get; }
+        public DateTimeOffset?           StartDate           { get; }
 
         /// <summary>
         /// The end date, for example: 2015-12-24, valid from this day until that day (excluding that day).
         /// </summary>
         [Optional]
-        public DateTime?                 EndDate             { get; }
+        public DateTimeOffset?           EndDate             { get; }
 
         /// <summary>
         /// The minimum consumed energy in kWh, for example 20, valid from this amount of energy
@@ -177,8 +177,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Reservation"> When this field is present, the tariff element describes reservation costs.</param>
         public TariffRestrictions(Time?                     StartTime     = null,
                                   Time?                     EndTime       = null,
-                                  DateTime?                 StartDate     = null,
-                                  DateTime?                 EndDate       = null,
+                                  DateTimeOffset?           StartDate     = null,
+                                  DateTimeOffset?           EndDate       = null,
                                   Decimal?                  MinkWh        = null,
                                   Decimal?                  MaxkWh        = null,
                                   Decimal?                  MinCurrent    = null,
@@ -313,7 +313,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (JSON.ParseOptional("start_date",
                                        "start date",
-                                       out DateTime? StartDate,
+                                       out DateTimeOffset? StartDate,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -326,7 +326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (JSON.ParseOptional("end_date",
                                        "end date",
-                                       out DateTime? EndDate,
+                                       out DateTimeOffset? EndDate,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)

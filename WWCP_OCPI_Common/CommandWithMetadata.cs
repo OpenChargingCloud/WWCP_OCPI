@@ -72,7 +72,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// The timestamp of the command.
         /// </summary>
-        public DateTime          Timestamp          { get; }
+        public DateTimeOffset    Timestamp          { get; }
 
         /// <summary>
         /// The unique event tracking identification for correlating this request with other events.
@@ -100,7 +100,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="UserId">An optional user identification initiating this command/request.</param>
         public CommandWithMetadata(String            CommandName,
                                    String?           Message,
-                                   DateTime          Timestamp,
+                                   DateTimeOffset    Timestamp,
                                    EventTracking_Id  EventTrackingId,
                                    User_Id?          UserId   = null)
         {
@@ -127,7 +127,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="UserId">An optional user identification initiating this command/request.</param>
         public CommandWithMetadata(String            CommandName,
                                    JObject?          JSONObject,
-                                   DateTime          Timestamp,
+                                   DateTimeOffset    Timestamp,
                                    EventTracking_Id  EventTrackingId,
                                    User_Id?          UserId   = null)
         {
@@ -154,7 +154,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="UserId">An optional user identification initiating this command/request.</param>
         public CommandWithMetadata(String            CommandName,
                                    JArray?           JSONArray,
-                                   DateTime          Timestamp,
+                                   DateTimeOffset    Timestamp,
                                    EventTracking_Id  EventTrackingId,
                                    User_Id?          UserId   = null)
         {
@@ -181,7 +181,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="UserId">An optional user identification initiating this command/request.</param>
         public CommandWithMetadata(String            CommandName,
                                    Int64?            Boolean,
-                                   DateTime          Timestamp,
+                                   DateTimeOffset    Timestamp,
                                    EventTracking_Id  EventTrackingId,
                                    User_Id?          UserId   = null)
         {
@@ -208,7 +208,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="UserId">An optional user identification initiating this command/request.</param>
         public CommandWithMetadata(String            CommandName,
                                    Single?           Single,
-                                   DateTime          Timestamp,
+                                   DateTimeOffset    Timestamp,
                                    EventTracking_Id  EventTrackingId,
                                    User_Id?          UserId   = null)
         {
@@ -235,7 +235,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="UserId">An optional user identification initiating this command/request.</param>
         public CommandWithMetadata(String            CommandName,
                                    Boolean?          Boolean,
-                                   DateTime          Timestamp,
+                                   DateTimeOffset    Timestamp,
                                    EventTracking_Id  EventTrackingId,
                                    User_Id?          UserId   = null)
         {

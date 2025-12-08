@@ -29,7 +29,7 @@ namespace cloud.charging.open.protocols.OCPI
     /// <summary>
     /// A remote party serving multiple CPOs and/or EMSPs.
     /// </summary>
-    public abstract class ARemotePartyV2x : ARemoteParty
+    public abstract class ARemotePartyV2x : RemoteParty
     {
 
         #region Properties
@@ -198,7 +198,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         //        if (JSON.ParseOptional("created",
         //                               "created",
-        //                               out DateTime? created,
+        //                               out DateTimeOffset? created,
         //                               out ErrorResponse))
         //        {
         //            if (ErrorResponse is not null)
@@ -211,7 +211,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         //        if (!JSON.ParseMandatory("last_updated",
         //                                 "last updated",
-        //                                 out DateTime lastUpdated,
+        //                                 out DateTimeOffset lastUpdated,
         //                                 out ErrorResponse))
         //        {
         //            return false;

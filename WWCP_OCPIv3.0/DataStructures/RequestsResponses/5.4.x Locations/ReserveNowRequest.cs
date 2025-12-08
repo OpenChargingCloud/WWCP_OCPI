@@ -60,7 +60,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The point in time at which this reservation ends.
         /// </summary>
         [Mandatory]
-        public DateTime                 ExpiryDate                { get; }
+        public DateTimeOffset           ExpiryDate                { get; }
 
         /// <summary>
         /// An identifier for this reservation.
@@ -108,7 +108,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public ReserveNowRequest(String                   CallbackId,
 
                                  Token                    Token,
-                                 DateTime                 ExpiryDate,
+                                 DateTimeOffset           ExpiryDate,
                                  Reservation_Id           ReservationId,
                                  Location_Id              LocationId,
                                  EVSE_UId?                EVSEUId                  = null,
@@ -242,7 +242,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatory("expiry_date",
                                          "expiry date",
-                                         out DateTime ExpiryDate,
+                                         out DateTimeOffset ExpiryDate,
                                          out ErrorResponse))
                 {
                     return false;

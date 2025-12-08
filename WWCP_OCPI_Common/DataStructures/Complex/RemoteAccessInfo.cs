@@ -252,7 +252,7 @@ namespace cloud.charging.open.protocols.OCPI
                                                                                certificateChain,
                                                                                tlsClient,
                                                                                policyErrors) => {
-                                                                                    return (false, [ $"The default behavior within {nameof(ARemoteParty)} is to reject all remote TLS server certificates!" ] );
+                                                                                    return (false, [ $"The default behavior within {nameof(RemoteParty)} is to reject all remote TLS server certificates!" ] );
                                                                                });
             this.LocalCertificateSelector    = LocalCertificateSelector;
             this.ClientCertificates          = ClientCertificates         ?? [];
@@ -535,7 +535,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (JSON.ParseOptional("notBefore",
                                        "not before",
-                                       out DateTime? NotBefore,
+                                       out DateTimeOffset? NotBefore,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -548,7 +548,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (JSON.ParseOptional("notAfter",
                                        "not after",
-                                       out DateTime? NotAfter,
+                                       out DateTimeOffset? NotAfter,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)

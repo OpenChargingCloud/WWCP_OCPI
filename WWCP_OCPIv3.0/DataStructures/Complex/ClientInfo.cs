@@ -224,10 +224,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="ClientInfo">The parsed energy contract.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomClientInfoParser">A delegate to parse custom energy contract JSON objects.</param>
-        public static Boolean TryParse(JObject                                  JSON,
-                                       out ClientInfo                           ClientInfo,
-                                       out String                               ErrorResponse,
-                                       CustomJObjectParserDelegate<ClientInfo>  CustomClientInfoParser   = null)
+        public static Boolean TryParse(JObject                                   JSON,
+                                       out ClientInfo                            ClientInfo,
+                                       out String                                ErrorResponse,
+                                       CustomJObjectParserDelegate<ClientInfo>?  CustomClientInfoParser   = null)
         {
 
             try
@@ -296,7 +296,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
-                                         out DateTime LastUpdated,
+                                         out DateTimeOffset LastUpdated,
                                          out ErrorResponse))
                 {
                     return false;

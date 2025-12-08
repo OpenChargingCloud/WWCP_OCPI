@@ -265,7 +265,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// <summary>
     /// An OCPI HTTP request.
     /// </summary>
-    public class OCPIRequest // : HTTPRequest
+    public class OCPIRequest
     {
 
         #region DateAndPaginationFilters
@@ -528,9 +528,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.HTTPRequest.SubprotocolRequest = this;
 
+
+            if (RemoteParty?.IN?.RequestModifier is not null)
+                this.HTTPRequest = RemoteParty.IN.RequestModifier(this.HTTPRequest);
+
         }
 
 
+        public static OCPIRequest Parse(HTTPRequest  HTTPRequest,
+                                        CommonAPI    CommonAPI)
+
+            => new (HTTPRequest,
+                    CommonAPI);
+
+
+
+        #region TryParseJObjectRequestBody (out JSON, out OCPIResponseBuilder, ...)
 
         public Boolean TryParseJObjectRequestBody([NotNullWhen(true)]  out JObject?               JSON,
                                                   [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder,
@@ -538,13 +551,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                   String?                                         JSONLDContext        = null)
         {
 
-            var result = HTTPRequest.TryParseJSONObjectRequestBody(out JSON,
-                                                                   out var httpResponseBuilder,
-                                                                   AllowEmptyHTTPBody,
-                                                                   JSONLDContext);
+            var result = HTTPRequest.TryParseJSONObjectRequestBody(
+                             out JSON,
+                             out var httpResponseBuilder,
+                             AllowEmptyHTTPBody,
+                             JSONLDContext
+                         );
 
-            httpResponseBuilder?.Set("X-Request-ID",      RequestId?.    ToString() ?? String.Empty).
-                                 Set("X-Correlation-ID",  CorrelationId?.ToString() ?? String.Empty);
+            if (httpResponseBuilder is not null)
+            {
+
+                if (RequestId.    HasValue)
+                    httpResponseBuilder.Set("X-Request-ID",      RequestId.    Value);
+
+                if (CorrelationId.HasValue)
+                    httpResponseBuilder.Set("X-Correlation-ID",  CorrelationId.Value);
+
+            }
 
             OCPIResponseBuilder = new OCPIResponse.Builder(this) {
                 StatusCode           = result ? 1000 : 2001,
@@ -556,39 +579,45 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         }
 
+        #endregion
+
+        #region TryParseJArrayRequestBody  (out JSON, out OCPIResponseBuilder, ...)
+
         public Boolean TryParseJArrayRequestBody([NotNullWhen(true)]  out JArray?               JSON,
                                                  [NotNullWhen(false)] out OCPIResponse.Builder  OCPIResponseBuilder,
                                                  Boolean                                        AllowEmptyHTTPBody   = false,
                                                  String?                                        JSONLDContext        = null)
         {
 
-            var result = HTTPRequest.TryParseJSONArrayRequestBody(out JSON,
-                                                                  out var HTTPResponseBuilder,
-                                                                  AllowEmptyHTTPBody,
-                                                                  JSONLDContext);
+            var result = HTTPRequest.TryParseJSONArrayRequestBody(
+                             out JSON,
+                             out var httpResponseBuilder,
+                             AllowEmptyHTTPBody,
+                             JSONLDContext
+                         );
 
-            if (HTTPResponseBuilder is not null)
+            if (httpResponseBuilder is not null)
             {
-                HTTPResponseBuilder.Set("X-Request-ID",      RequestId).
-                                    Set("X-Correlation-ID",  CorrelationId);
+
+                if (RequestId.    HasValue)
+                    httpResponseBuilder.Set("X-Request-ID",      RequestId.    Value);
+
+                if (CorrelationId.HasValue)
+                    httpResponseBuilder.Set("X-Correlation-ID",  CorrelationId.Value);
+
             }
 
             OCPIResponseBuilder = new OCPIResponse.Builder(this) {
                 StatusCode           = result ? 1000 : 2001,
                 StatusMessage        = result ? ""   : "Could not parse JSON array in HTTP request body!",
-                HTTPResponseBuilder  = HTTPResponseBuilder
+                HTTPResponseBuilder  = httpResponseBuilder
             };
 
             return result;
 
         }
 
-
-        public static OCPIRequest Parse(HTTPRequest  HTTPRequest,
-                                        CommonAPI    CommonAPI)
-
-            => new (HTTPRequest,
-                    CommonAPI);
+        #endregion
 
 
     }

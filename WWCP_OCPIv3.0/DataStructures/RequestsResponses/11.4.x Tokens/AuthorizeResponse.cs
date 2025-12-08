@@ -76,7 +76,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// authorization reference for a Session that started before this timestamp.
         /// </summary>
         [Mandatory]
-        public DateTime                 AuthorizationTimestamp    { get; }
+        public DateTimeOffset           AuthorizationTimestamp    { get; }
 
         /// <summary>
         /// The time until which the Token is authorized to charge at the location given
@@ -84,7 +84,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// authorization reference for a session that started at or after this timestamp.
         /// </summary>
         [Mandatory]
-        public DateTime                 AuthorizedUntil           { get; }
+        public DateTimeOffset           AuthorizedUntil           { get; }
 
         /// <summary>
         /// If given, this is the maximum amount of energy that the eMSP is authorizing
@@ -153,8 +153,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                  AllowedType              Allowed,
                                  Token                    Token,
-                                 DateTime                 AuthorizationTimestamp,
-                                 DateTime                 AuthorizedUntil,
+                                 DateTimeOffset           AuthorizationTimestamp,
+                                 DateTimeOffset           AuthorizedUntil,
 
                                  AuthorizationReference?  AuthorizationReference   = null,
                                  WattHour?                MaxEnergy                = null,
@@ -342,7 +342,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!error.ParseMandatory("authorization_timestamp",
                                           "authorization_timestamp",
-                                          out DateTime AuthorizationTimestamp,
+                                          out DateTimeOffset AuthorizationTimestamp,
                                           out ErrorResponse))
                 {
                     return false;
@@ -354,7 +354,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!error.ParseMandatory("authorized_until",
                                           "authorized until",
-                                          out DateTime AuthorizedUntil,
+                                          out DateTimeOffset AuthorizedUntil,
                                           out ErrorResponse))
                 {
                     return false;

@@ -811,8 +811,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Location>>>
 
-            GetLocations(DateTime?          From                = null,
-                         DateTime?          To                  = null,
+            GetLocations(DateTimeOffset?    From                = null,
+                         DateTimeOffset?    To                  = null,
                          UInt64?            Offset              = null,
                          UInt64?            Limit               = null,
 
@@ -1829,8 +1829,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Session>>>
 
-            GetSessions(DateTime?          From                = null,
-                        DateTime?          To                  = null,
+            GetSessions(DateTimeOffset?    From                = null,
+                        DateTimeOffset?    To                  = null,
                         UInt64?            Offset              = null,
                         UInt64?            Limit               = null,
 
@@ -2181,8 +2181,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<CDR>>>
 
-            GetCDRs(DateTime?          From                = null,
-                    DateTime?          To                  = null,
+            GetCDRs(DateTimeOffset?    From                = null,
+                    DateTimeOffset?    To                  = null,
                     UInt64?            Offset              = null,
                     UInt64?            Limit               = null,
 
@@ -2867,7 +2867,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                        Request_Id?         RequestId           = null,
                        Correlation_Id?     CorrelationId       = null,
 
-                       DateTime?           RequestTimestamp    = null,
+                       DateTimeOffset?     RequestTimestamp    = null,
                        EventTracking_Id?   EventTrackingId     = null,
                        TimeSpan?           RequestTimeout      = null,
                        CancellationToken   CancellationToken   = default)
@@ -3044,8 +3044,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Booking>>>
 
-            GetBookings(DateTime?           From                = null,
-                        DateTime?           To                  = null,
+            GetBookings(DateTimeOffset?     From                = null,
+                        DateTimeOffset?     To                  = null,
                         UInt64?             Offset              = null,
                         UInt64?             Limit               = null,
 
@@ -3053,7 +3053,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                         Request_Id?         RequestId           = null,
                         Correlation_Id?     CorrelationId       = null,
 
-                        DateTime?           RequestTimestamp    = null,
+                        DateTimeOffset?     RequestTimestamp    = null,
                         EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null,
                         CancellationToken   CancellationToken   = default)
@@ -3206,7 +3206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                         Correlation_Id?     CorrelationId       = null,
                         Version_Id?         VersionId           = null,
 
-                        DateTime?           RequestTimestamp    = null,
+                        DateTimeOffset?     RequestTimestamp    = null,
                         EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null,
                         CancellationToken   CancellationToken   = default)
@@ -3361,7 +3361,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         public async Task<OCPIResponse<ReserveNowCommand, CommandResponse>>
 
             ReserveNow(Token                    Token,
-                       DateTime                 ExpirationTimestamp,
+                       DateTimeOffset           ExpirationTimestamp,
                        Reservation_Id           ReservationId,
                        Location_Id              LocationId,
                        EVSE_UId?                EVSEUId                  = null,
@@ -3372,7 +3372,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                        Correlation_Id?          CorrelationId            = null,
                        Version_Id?              VersionId                = null,
 
-                       DateTime?                RequestTimestamp         = null,
+                       DateTimeOffset?          RequestTimestamp         = null,
                        EventTracking_Id?        EventTrackingId          = null,
                        TimeSpan?                RequestTimeout           = null,
                        CancellationToken        CancellationToken        = default)
@@ -3570,7 +3570,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                               Correlation_Id?     CorrelationId       = null,
                               Version_Id?         VersionId           = null,
 
-                              DateTime?           RequestTimestamp    = null,
+                              DateTimeOffset?     RequestTimestamp    = null,
                               EventTracking_Id?   EventTrackingId     = null,
                               TimeSpan?           RequestTimeout      = null,
                               CancellationToken   CancellationToken   = default)
@@ -3757,7 +3757,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                          Correlation_Id?          CorrelationId            = null,
                          Version_Id?              VersionId                = null,
 
-                         DateTime?                RequestTimestamp         = null,
+                         DateTimeOffset?          RequestTimestamp         = null,
                          EventTracking_Id?        EventTrackingId          = null,
                          TimeSpan?                RequestTimeout           = null,
                          CancellationToken        CancellationToken        = default)

@@ -751,7 +751,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Get versions.
         /// </summary>
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
@@ -760,7 +760,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             GetVersions(Request_Id?        RequestId           = null,
                         Correlation_Id?    CorrelationId       = null,
 
-                        DateTime?          Timestamp           = null,
+                        DateTimeOffset?    RequestTimestamp    = null,
                         EventTracking_Id?  EventTrackingId     = null,
                         TimeSpan?          RequestTimeout      = null,
                         CancellationToken  CancellationToken   = default)
@@ -769,14 +769,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Init
 
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
 
-            var timestamp        = Timestamp       ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? base.RequestTimeout;
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? base.RequestTimeout;
 
-            var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime         = Timestamp.Now;
 
             Counters.GetVersions.IncRequests_OK();
 
@@ -791,7 +791,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     await Task.WhenAll(OnGetVersionsRequest.GetInvocationList().
                                        Cast<OnGetVersionsRequestDelegate>().
                                        Select(e => e(startTime,
-                                                     timestamp,
+                                                     requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
                                                      eventTrackingId,
@@ -928,7 +928,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnGetVersionsResponse event
 
-            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = Timestamp.Now;
 
             try
             {
@@ -944,7 +944,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     await Task.WhenAll(OnGetVersionsResponse.GetInvocationList().
                                        Cast<OnGetVersionsResponseDelegate>().
                                        Select(e => e(endtime,
-                                                     timestamp,
+                                                     requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
                                                      eventTrackingId,
@@ -978,7 +978,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         /// <param name="VersionId">The requested version.</param>
         /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
@@ -989,7 +989,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               Request_Id?        RequestId             = null,
                               Correlation_Id?    CorrelationId         = null,
 
-                              DateTime?          Timestamp             = null,
+                              DateTimeOffset?    RequestTimestamp      = null,
                               EventTracking_Id?  EventTrackingId       = null,
                               TimeSpan?          RequestTimeout        = null,
                               CancellationToken  CancellationToken     = default)
@@ -998,15 +998,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Init
 
-            var versionId        = VersionId       ?? SelectedOCPIVersionId;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var versionId         = VersionId        ?? SelectedOCPIVersionId;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
 
-            var timestamp        = Timestamp       ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? base.RequestTimeout;
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? base.RequestTimeout;
 
-            var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime         = Timestamp.Now;
 
             Counters.GetVersionDetails.IncRequests_OK();
 
@@ -1021,7 +1021,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     await Task.WhenAll(OnGetVersionDetailsRequest.GetInvocationList().
                                        Cast<OnGetVersionDetailsRequestDelegate>().
                                        Select(e => e(startTime,
-                                                     timestamp,
+                                                     requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
                                                      eventTrackingId,
@@ -1225,7 +1225,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnGetVersionDetailsResponse event
 
-            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = Timestamp.Now;
 
             try
             {
@@ -1240,7 +1240,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     await Task.WhenAll(OnGetVersionDetailsResponse.GetInvocationList().
                                        Cast<OnGetVersionDetailsResponseDelegate>().
                                        Select(e => e(endtime,
-                                                     timestamp,
+                                                     requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
                                                      eventTrackingId,
@@ -1338,7 +1338,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
@@ -1348,7 +1348,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Request_Id?        RequestId           = null,
                            Correlation_Id?    CorrelationId       = null,
 
-                           DateTime?          Timestamp           = null,
+                           DateTimeOffset?    RequestTimestamp    = null,
                            EventTracking_Id?  EventTrackingId     = null,
                            TimeSpan?          RequestTimeout      = null,
                            CancellationToken  CancellationToken   = default)
@@ -1357,15 +1357,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Init
 
-            var versionId        = VersionId       ?? SelectedOCPIVersionId;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var versionId         = VersionId        ?? SelectedOCPIVersionId;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
 
-            var timestamp        = Timestamp       ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? base.RequestTimeout;
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? base.RequestTimeout;
 
-            var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime         = Timestamp.Now;
 
             Counters.GetCredentials.IncRequests_OK();
 
@@ -1380,7 +1380,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     await Task.WhenAll(OnGetCredentialsRequest.GetInvocationList().
                                        Cast<OnGetCredentialsRequestDelegate>().
                                        Select(e => e(startTime,
-                                                     timestamp,
+                                                     requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
                                                      eventTrackingId,
@@ -1497,7 +1497,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnGetCredentialsHTTPResponse event
 
-            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = Timestamp.Now;
 
             try
             {
@@ -1513,7 +1513,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     await Task.WhenAll(OnGetCredentialsResponse.GetInvocationList().
                                        Cast<OnGetCredentialsResponseDelegate>().
                                        Select(e => e(endtime,
-                                                     timestamp,
+                                                     requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
                                                      eventTrackingId,
@@ -1553,7 +1553,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
@@ -1565,7 +1565,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             Request_Id?        RequestId           = null,
                             Correlation_Id?    CorrelationId       = null,
 
-                            DateTime?          Timestamp           = null,
+                            DateTimeOffset?    RequestTimestamp    = null,
                             EventTracking_Id?  EventTrackingId     = null,
                             TimeSpan?          RequestTimeout      = null,
                             CancellationToken  CancellationToken   = default)
@@ -1574,15 +1574,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Init
 
-            var versionId        = VersionId       ?? SelectedOCPIVersionId;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var versionId         = VersionId        ?? SelectedOCPIVersionId;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
 
-            var timestamp        = Timestamp       ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? base.RequestTimeout;
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? base.RequestTimeout;
 
-            var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime         = Timestamp.Now;
 
             Counters.PostCredentials.IncRequests_OK();
 
@@ -1597,7 +1597,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     await Task.WhenAll(OnPostCredentialsRequest.GetInvocationList().
                                        Cast<OnPostCredentialsRequestDelegate>().
                                        Select(e => e(startTime,
-                                                     timestamp,
+                                                     requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
                                                      eventTrackingId,
@@ -1717,7 +1717,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnPostCredentialsHTTPResponse event
 
-            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = Timestamp.Now;
 
             try
             {
@@ -1733,7 +1733,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     await Task.WhenAll(OnPostCredentialsResponse.GetInvocationList().
                                        Cast<OnPostCredentialsResponseDelegate>().
                                        Select(e => e(endtime,
-                                                     timestamp,
+                                                     requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
                                                      eventTrackingId,
@@ -1774,7 +1774,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
@@ -1786,7 +1786,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Request_Id?        RequestId           = null,
                            Correlation_Id?    CorrelationId       = null,
 
-                           DateTime?          Timestamp           = null,
+                           DateTimeOffset?    RequestTimestamp    = null,
                            EventTracking_Id?  EventTrackingId     = null,
                            TimeSpan?          RequestTimeout      = null,
                            CancellationToken  CancellationToken   = default)
@@ -1795,15 +1795,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Init
 
-            var versionId        = VersionId       ?? SelectedOCPIVersionId;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var versionId         = VersionId        ?? SelectedOCPIVersionId;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
 
-            var timestamp        = Timestamp       ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? base.RequestTimeout;
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? base.RequestTimeout;
 
-            var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime         = Timestamp.Now;
 
             Counters.PutCredentials.IncRequests_OK();
 
@@ -1818,7 +1818,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     await Task.WhenAll(OnPutCredentialsRequest.GetInvocationList().
                                        Cast<OnPutCredentialsRequestDelegate>().
                                        Select(e => e(startTime,
-                                                     timestamp,
+                                                     requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
                                                      eventTrackingId,
@@ -2003,7 +2003,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnPutCredentialsHTTPResponse event
 
-            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = Timestamp.Now;
 
             try
             {
@@ -2019,7 +2019,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     await Task.WhenAll(OnPutCredentialsResponse.GetInvocationList().
                                        Cast<OnPutCredentialsResponseDelegate>().
                                        Select(e => e(endtime,
-                                                     timestamp,
+                                                     requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
                                                      eventTrackingId,
@@ -2058,7 +2058,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
@@ -2068,7 +2068,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               Request_Id?        RequestId           = null,
                               Correlation_Id?    CorrelationId       = null,
 
-                              DateTime?          Timestamp           = null,
+                              DateTimeOffset?    RequestTimestamp    = null,
                               EventTracking_Id?  EventTrackingId     = null,
                               TimeSpan?          RequestTimeout      = null,
                               CancellationToken  CancellationToken   = default)
@@ -2077,15 +2077,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Init
 
-            var versionId        = VersionId       ?? SelectedOCPIVersionId;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var versionId         = VersionId        ?? SelectedOCPIVersionId;
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
 
-            var timestamp        = Timestamp       ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? base.RequestTimeout;
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? base.RequestTimeout;
 
-            var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime         = Timestamp.Now;
 
             Counters.DeleteCredentials.IncRequests_OK();
 
@@ -2100,7 +2100,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     await Task.WhenAll(OnDeleteCredentialsRequest.GetInvocationList().
                                        Cast<OnDeleteCredentialsRequestDelegate>().
                                        Select(e => e(startTime,
-                                                     timestamp,
+                                                     requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
                                                      eventTrackingId,
@@ -2217,7 +2217,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnDeleteCredentialsHTTPResponse event
 
-            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = Timestamp.Now;
 
             try
             {
@@ -2233,7 +2233,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     await Task.WhenAll(OnDeleteCredentialsResponse.GetInvocationList().
                                        Cast<OnDeleteCredentialsResponseDelegate>().
                                        Select(e => e(endtime,
-                                                     timestamp,
+                                                     requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
                                                      eventTrackingId,
@@ -2289,7 +2289,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Post the given credentials.
         /// </summary>
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
@@ -2302,7 +2302,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                      Request_Id?        RequestId             = null,
                      Correlation_Id?    CorrelationId         = null,
 
-                     DateTime?          RequestTimestamp      = null,
+                     DateTimeOffset?    RequestTimestamp      = null,
                      EventTracking_Id?  EventTrackingId       = null,
                      TimeSpan?          RequestTimeout        = null,
                      CancellationToken  CancellationToken     = default)
@@ -2576,7 +2576,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnRegisterResponse event
 
-            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = Timestamp.Now;
 
             try
             {

@@ -567,7 +567,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatory("valid_from",
                                          "valid from",
-                                         out DateTime ValidFrom,
+                                         out DateTimeOffset ValidFrom,
                                          out ErrorResponse))
                 {
                     return false;
@@ -579,7 +579,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptionalEnum("valid_until",
                                            "valid until",
-                                           out DateTime? ValidUntil,
+                                           out DateTimeOffset? ValidUntil,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -659,7 +659,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("created",
                                        "created",
-                                       out DateTime? Created,
+                                       out DateTimeOffset? Created,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -672,7 +672,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
-                                         out DateTime LastUpdated,
+                                         out DateTimeOffset LastUpdated,
                                          out ErrorResponse))
                 {
                     return false;

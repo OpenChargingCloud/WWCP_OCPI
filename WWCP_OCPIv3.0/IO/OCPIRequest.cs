@@ -331,22 +331,22 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// <summary>
             /// The optional 'from' timestamp (inclusive).
             /// </summary>
-            public DateTime?  From      { get; }
+            public DateTimeOffset?  From      { get; }
 
             /// <summary>
             /// The optional 'to' timestamp (exclusive).
             /// </summary>
-            public DateTime?  To        { get; }
+            public DateTimeOffset?  To        { get; }
 
             /// <summary>
             /// The optional 'offset' within the result set.
             /// </summary>
-            public UInt64?    Offset    { get; }
+            public UInt64?          Offset    { get; }
 
             /// <summary>
             /// The optional 'limit' of the result set.
             /// </summary>
-            public UInt64?    Limit     { get; }
+            public UInt64?          Limit     { get; }
 
             #endregion
 
@@ -359,10 +359,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// <param name="To">An optional 'to' timestamp (exclusive).</param>
             /// <param name="Offset">An optional 'offset' within the result set.</param>
             /// <param name="Limit">An optional 'limit' of the result set.</param>
-            public DateAndPaginationFilters(DateTime?  From,
-                                            DateTime?  To,
-                                            UInt64?    Offset,
-                                            UInt64?    Limit)
+            public DateAndPaginationFilters(DateTimeOffset?  From,
+                                            DateTimeOffset?  To,
+                                            UInt64?          Offset,
+                                            UInt64?          Limit)
             {
 
                 this.From    = From;

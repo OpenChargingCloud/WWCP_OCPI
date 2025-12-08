@@ -162,7 +162,7 @@ namespace cloud.charging.open.protocols.OCPI
         ///// The timestamp when this energy meter was created.
         ///// </summary>
         //[Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        //public   DateTime                               Created                       { get; }
+        //public   DateTimeOffset                         Created                       { get; }
 
         /// <summary>
         /// The timestamp when this energy meter was last updated (or created).
@@ -450,7 +450,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (JSON.ParseOptional("created",
                                        "created",
-                                       out DateTime? Created,
+                                       out DateTimeOffset? Created,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -463,7 +463,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
-                                         out DateTime LastUpdated,
+                                         out DateTimeOffset LastUpdated,
                                          out ErrorResponse))
                 {
                     return false;

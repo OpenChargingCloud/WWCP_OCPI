@@ -61,6 +61,16 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         IEnumerable<RemoteAccessInfo>  RemoteAccessInfos    { get; }
 
+        /// <summary>
+        /// Optional incoming request and response modifiers.
+        /// </summary>
+        RemoteParty.IOModifiers?      IN                   { get; set; }
+
+        /// <summary>
+        /// Optional outgoing request and response modifiers.
+        /// </summary>
+        RemoteParty.IOModifiers?      OUT                  { get; set; }
+
     }
 
 }

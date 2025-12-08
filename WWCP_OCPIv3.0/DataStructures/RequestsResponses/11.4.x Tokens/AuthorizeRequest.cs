@@ -71,7 +71,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// the authorization request from the Charging Station.
         /// </summary>
         [Mandatory]
-        public DateTime               PresentationTimestamp    { get; }
+        public DateTimeOffset         PresentationTimestamp    { get; }
 
         /// <summary>
         /// The ID of the Location on which the CPO is starting the Charge Session that it is
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public AuthorizeRequest(String                  CallbackId,
 
                                 Token_Id                TokenUId,
-                                DateTime                PresentationTimestamp,
+                                DateTimeOffset          PresentationTimestamp,
                                 Location_Id             LocationId,
                                 TokenType?              Type       = null,
                                 IEnumerable<EVSE_UId>?  EVSEUIds   = null)
@@ -241,7 +241,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatory("presentation_timestamp",
                                          "presentation timestamp",
-                                         out DateTime PresentationTimestamp,
+                                         out DateTimeOffset PresentationTimestamp,
                                          out ErrorResponse))
                 {
                     return false;

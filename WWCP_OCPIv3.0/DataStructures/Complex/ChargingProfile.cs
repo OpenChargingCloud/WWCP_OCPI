@@ -56,7 +56,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// Starting point of an absolute profile. If absent the profile will be relative to start of charging.
         /// </summary>
         [Optional]
-        public DateTime?                           Start                      { get; }
+        public DateTimeOffset?                     Start                      { get; }
 
         /// <summary>
         /// Duration of the charging profile in seconds. If the duration is left empty, the last period will
@@ -94,7 +94,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="ChargingProfilePeriods">Duration of the charging profile in seconds. If the duration is left empty, the last period will continue indefinitely or until end of the transaction in case startProfile is absent.</param>
         public ChargingProfile(ChargingProfile_Id                   Id,
                                ChargingRateUnits                    ChargingRateUnit,
-                               DateTime?                            Start                    = null,
+                               DateTimeOffset?                      Start                    = null,
                                TimeSpan?                            Duration                 = null,
                                Decimal?                             MinChargingRate          = null,
                                IEnumerable<ChargingProfilePeriod>?  ChargingProfilePeriods   = null)
@@ -223,7 +223,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("start_date_time",
                                        "start timestamp",
-                                       out DateTime? Start,
+                                       out DateTimeOffset? Start,
                                        out ErrorResponse))
                 {
 
@@ -267,7 +267,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("charging_profile_period",
                                        "charging profile period",
-                                       out DateTime? ChargingProfilePeriod,
+                                       out DateTimeOffset? ChargingProfilePeriod,
                                        out ErrorResponse))
                 {
 

@@ -1120,11 +1120,11 @@ namespace cloud.charging.open.protocols.OCPI
                 certGen.SetSubjectDN(subject);
 
                 // Set validity period (e.g., 1 year)
-                DateTime notBefore = DateTime.UtcNow.AddDays(-1); // Slight backdating to avoid clock skew issues
-                DateTime notAfter = notBefore.AddYears(1);
+                var notBefore  = Timestamp.Now.AddDays(-1); // Slight backdating to avoid clock skew issues
+                var notAfter   = notBefore.AddYears(1);
 
-                certGen.SetNotBefore(notBefore);
-                certGen.SetNotAfter(notAfter);
+                certGen.SetNotBefore(notBefore.DateTime);
+                certGen.SetNotAfter (notAfter. DateTime);
 
                 // Set serial number and public key
                 certGen.SetSerialNumber(serialNumber);

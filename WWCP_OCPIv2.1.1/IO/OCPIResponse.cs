@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -25,7 +27,6 @@ using Hermod = org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1;
-using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -321,7 +322,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public static OCPIResponse Error(String           StatusMessage,
                                          String?          AdditionalInformation   = null,
-                                         DateTime?        Timestamp               = null,
+                                         DateTimeOffset?  Timestamp               = null,
 
                                          HTTPResponse?    HTTPResponse            = null,
                                          Request_Id?      RequestId               = null,
@@ -339,7 +340,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static OCPIResponse Error(Int32            StatusCode,
                                          String           StatusMessage,
                                          String?          AdditionalInformation   = null,
-                                         DateTime?        Timestamp               = null,
+                                         DateTimeOffset?  Timestamp               = null,
 
                                          HTTPResponse?    HTTPResponse            = null,
                                          Request_Id?      RequestId               = null,
@@ -355,7 +356,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    CorrelationId);
 
         public static OCPIResponse Exception(Exception        Exception,
-                                             DateTime?        Timestamp       = null,
+                                             DateTimeOffset?  Timestamp       = null,
 
                                              HTTPResponse?    HTTPResponse    = null,
                                              Request_Id?      RequestId       = null,
@@ -400,7 +401,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Int32?           StatusCode              = null,
                            String?          StatusMessage           = null,
                            String?          AdditionalInformation   = null,
-                           DateTime?        Timestamp               = null,
+                           DateTimeOffset?  Timestamp               = null,
 
                            Request_Id?      RequestId               = null,
                            Correlation_Id?  CorrelationId           = null,

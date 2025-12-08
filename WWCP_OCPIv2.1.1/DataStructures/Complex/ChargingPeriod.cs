@@ -522,7 +522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("start_date_time",
                                          "start timestamp",
-                                         out DateTime StartTimestamp,
+                                         out DateTimeOffset StartTimestamp,
                                          out ErrorResponse))
                 {
                     return false;

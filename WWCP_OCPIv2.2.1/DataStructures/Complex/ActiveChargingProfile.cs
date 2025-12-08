@@ -42,7 +42,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// All time measurements within the profile are relative to this timestamp.
         /// </summary>
         [Mandatory]
-        public DateTime         Start              { get; }
+        public DateTimeOffset   Start              { get; }
 
         /// <summary>
         /// The active charging profile including an enumeration of charging periods.
@@ -59,7 +59,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         /// <param name="Start">Date and time at which the charge point has calculated this active charging profile. All time measurements within the profile are relative to this timestamp.</param>
         /// <param name="ChargingProfile">The active charging profile including an enumeration of charging periods.</param>
-        public ActiveChargingProfile(DateTime         Start,
+        public ActiveChargingProfile(DateTimeOffset   Start,
                                      ChargingProfile  ChargingProfile)
         {
 
@@ -170,7 +170,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("start",
                                          "start timestamp",
-                                         out DateTime Start,
+                                         out DateTimeOffset Start,
                                          out ErrorResponse))
                 {
                     return false;

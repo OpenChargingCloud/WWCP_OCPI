@@ -2290,8 +2290,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             Data                 = new VersionDetail(
                                                        versionId,
                                                        endpoints
-                                                   ).ToJSON(CustomVersionDetailSerializer,
-                                                            CustomVersionEndpointSerializer),
+                                                   ).ToJSON(
+                                                         CustomVersionDetailSerializer,
+                                                         CustomVersionEndpointSerializer
+                                                     ),
                             HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                 HTTPStatusCode             = HTTPStatusCode.OK,
                                 AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -7361,7 +7363,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         public event OnEVSEChangedDelegate? OnEVSEChanged;
 
-        public delegate Task OnEVSEStatusChangedDelegate(DateTime Timestamp, EVSE EVSE, StatusType OldEVSEStatus, StatusType NewEVSEStatus);
+        public delegate Task OnEVSEStatusChangedDelegate(DateTimeOffset Timestamp, EVSE EVSE, StatusType OldEVSEStatus, StatusType NewEVSEStatus);
 
         public event OnEVSEStatusChangedDelegate? OnEVSEStatusChanged;
 

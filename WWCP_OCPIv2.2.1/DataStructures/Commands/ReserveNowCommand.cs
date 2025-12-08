@@ -48,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// The timestamp when this reservation ends.
         /// </summary>
-        public DateTime                 ExpiryDate                { get; }
+        public DateTimeOffset           ExpiryDate                { get; }
 
         /// <summary>
         /// Reservation identification. If the receiver (typically a charge point operator)
@@ -97,7 +97,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="RequestId">An optional unique request identification.</param>
         /// <param name="CorrelationId">An optional unique request correlation identification.</param>
         public ReserveNowCommand(Token                    Token,
-                                 DateTime                 ExpiryDate,
+                                 DateTimeOffset           ExpiryDate,
                                  Reservation_Id           ReservationId,
                                  Location_Id              LocationId,
                                  URL                      ResponseURL,
@@ -218,8 +218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("expiry_date",
                                          "expiry date",
-                                         DateTime.TryParse,
-                                         out DateTime ExpiryDate,
+                                         out DateTimeOffset ExpiryDate,
                                          out ErrorResponse))
                 {
                     return false;
@@ -334,18 +333,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
 
-                ReserveNowCommand = new ReserveNowCommand(Token,
-                                                          ExpiryDate,
-                                                          ReservationId,
-                                                          LocationId,
-                                                          ResponseURL,
+                ReserveNowCommand = new ReserveNowCommand(
+                                        Token,
+                                        ExpiryDate,
+                                        ReservationId,
+                                        LocationId,
+                                        ResponseURL,
 
-                                                          EVSEUId,
-                                                          AuthorizationReference,
+                                        EVSEUId,
+                                        AuthorizationReference,
 
-                                                          CommandId,
-                                                          RequestId,
-                                                          CorrelationId);
+                                        CommandId,
+                                        RequestId,
+                                        CorrelationId
+                                    );
 
                 if (CustomReserveNowCommandParser is not null)
                     ReserveNowCommand = CustomReserveNowCommandParser(JSON,

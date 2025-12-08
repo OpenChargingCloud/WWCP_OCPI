@@ -69,13 +69,13 @@ namespace cloud.charging.open.protocols.OCPI
         /// The timestamp when the certificate becomes valid.
         /// </summary>
         [Optional]
-        public DateTime?             NotBefore               { get; }
+        public DateTimeOffset?       NotBefore               { get; }
 
         /// <summary>
         /// The timestamp when the certificate becomes invalid.
         /// </summary>
         [Optional]
-        public DateTime?             NotAfter                { get; }
+        public DateTimeOffset?       NotAfter                { get; }
 
         #endregion
 
@@ -94,8 +94,8 @@ namespace cloud.charging.open.protocols.OCPI
                                           LegalStatus           LegalStatus,
                                           String?               Certificate         = null,
                                           String?               CertificateIssuer   = null,
-                                          DateTime?             NotBefore           = null,
-                                          DateTime?             NotAfter            = null)
+                                          DateTimeOffset?       NotBefore           = null,
+                                          DateTimeOffset?       NotAfter            = null)
         {
 
             this.TransparencySoftware  = TransparencySoftware;
@@ -222,7 +222,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (JSON.ParseOptional("not_before",
                                        "not before",
-                                       out DateTime? NotBefore,
+                                       out DateTimeOffset? NotBefore,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -235,7 +235,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (JSON.ParseOptional("not_after",
                                        "not after",
-                                       out DateTime? NotAfter,
+                                       out DateTimeOffset? NotAfter,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)

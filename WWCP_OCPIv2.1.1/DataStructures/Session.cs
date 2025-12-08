@@ -480,7 +480,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("start_datetime",
                                          "start timestamp",
-                                         out DateTime Start,
+                                         out DateTimeOffset Start,
                                          out ErrorResponse))
                 {
                     return false;
@@ -492,7 +492,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (JSON.ParseOptional("end_datetime",
                                        "end timestamp",
-                                       out DateTime? End,
+                                       out DateTimeOffset? End,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -640,7 +640,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (JSON.ParseOptional("created",
                                        "created",
-                                       out DateTime? Created,
+                                       out DateTimeOffset? Created,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -653,7 +653,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
-                                         out DateTime LastUpdated,
+                                         out DateTimeOffset LastUpdated,
                                          out ErrorResponse))
                 {
                     return false;

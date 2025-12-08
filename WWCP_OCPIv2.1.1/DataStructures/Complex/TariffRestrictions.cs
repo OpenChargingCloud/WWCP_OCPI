@@ -275,7 +275,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (JSON.ParseOptional("start_date",
                                        "start date",
-                                       out DateTime? StartDate,
+                                       out DateTimeOffset? StartDate,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -288,7 +288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (JSON.ParseOptional("end_date",
                                        "end date",
-                                       out DateTime? EndDate,
+                                       out DateTimeOffset? EndDate,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)

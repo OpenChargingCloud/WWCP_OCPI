@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The time at which all the measurements were taken.
         /// </summary>
         [Mandatory]
-        public DateTime                   Timestamp            { get; }
+        public DateTimeOffset             Timestamp            { get; }
 
         /// <summary>
         /// The UID of the EVSE to which these measurements apply, if any.
@@ -82,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="EVSEUId">The UID of the EVSE to which these measurements apply, if any.</param>
         /// <param name="SessionId">The ID of the Charging Session to which these measurements apply, if any.</param>
         /// <param name="ChargingProfileId">The Charging Profile for which these measurements are sent.</param>
-        public MeterSample(DateTime                   Timestamp,
+        public MeterSample(DateTimeOffset             Timestamp,
                            IEnumerable<MeterReading>  Readings,
                            EVSE_UId?                  EVSEUId             = null,
                            Session_Id?                SessionId           = null,
@@ -188,7 +188,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatory("timestamp",
                                          "measurement(s) timestamp",
-                                         out DateTime Timestamp,
+                                         out DateTimeOffset Timestamp,
                                          out ErrorResponse))
                 {
                     return false;

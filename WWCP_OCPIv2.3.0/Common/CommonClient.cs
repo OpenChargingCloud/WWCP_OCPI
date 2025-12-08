@@ -804,7 +804,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                               Request_Id?        RequestId             = null,
                               Correlation_Id?    CorrelationId         = null,
 
-                              DateTime?          RequestTimestamp      = null,
+                              DateTimeOffset?    RequestTimestamp      = null,
                               EventTracking_Id?  EventTrackingId       = null,
                               TimeSpan?          RequestTimeout        = null,
                               CancellationToken  CancellationToken     = default)
@@ -2057,7 +2057,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                      Request_Id?        RequestId             = null,
                      Correlation_Id?    CorrelationId         = null,
 
-                     DateTime?          RequestTimestamp      = null,
+                     DateTimeOffset?    RequestTimestamp      = null,
                      EventTracking_Id?  EventTrackingId       = null,
                      TimeSpan?          RequestTimeout        = null,
                      CancellationToken  CancellationToken     = default)

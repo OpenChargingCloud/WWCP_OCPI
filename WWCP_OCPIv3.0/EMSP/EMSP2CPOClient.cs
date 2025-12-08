@@ -870,8 +870,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Location>>>
 
-            GetLocations(DateTime?           From                = null,
-                         DateTime?           To                  = null,
+            GetLocations(DateTimeOffset?     From                = null,
+                         DateTimeOffset?     To                  = null,
                          UInt64?             Offset              = null,
                          UInt64?             Limit               = null,
 
@@ -1667,8 +1667,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Tariff>>>
 
-            GetTariffs(DateTime?           From                = null,
-                       DateTime?           To                  = null,
+            GetTariffs(DateTimeOffset?     From                = null,
+                       DateTimeOffset?     To                  = null,
                        UInt64?             Offset              = null,
                        UInt64?             Limit               = null,
 
@@ -2062,8 +2062,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Session>>>
 
-            GetSessions(DateTime?           From                = null,
-                        DateTime?           To                  = null,
+            GetSessions(DateTimeOffset?     From                = null,
+                        DateTimeOffset?     To                  = null,
                         UInt64?             Offset              = null,
                         UInt64?             Limit               = null,
 
@@ -2475,8 +2475,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<CDR>>>
 
-            GetCDRs(DateTime?           From                = null,
-                    DateTime?           To                  = null,
+            GetCDRs(DateTimeOffset?     From                = null,
+                    DateTimeOffset?     To                  = null,
                     UInt64?             Offset              = null,
                     UInt64?             Limit               = null,
 
@@ -3466,7 +3466,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         public async Task<OCPIResponse<ReserveNowCommand, CommandResponse>>
 
             ReserveNow(Token                    Token,
-                       DateTime                 ExpirationTimestamp,
+                       DateTimeOffset           ExpirationTimestamp,
                        Reservation_Id           ReservationId,
                        Location_Id              LocationId,
                        EVSE_UId?                EVSEUId                  = null,

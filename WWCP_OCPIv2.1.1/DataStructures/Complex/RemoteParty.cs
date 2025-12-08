@@ -109,36 +109,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// A remote party.
     /// In OCPI v2.1.x this is a single CPO or EMSP.
     /// </summary>
-    public class RemoteParty : ARemoteParty,
+    public class RemoteParty : OCPI.RemoteParty,
                                IEquatable<RemoteParty>,
                                IComparable<RemoteParty>
     {
-
-        #region (class) IOModifiers
-
-        /// <summary>
-        /// Incoming and outgoing HTTP request/response modifiers.
-        /// </summary>
-        /// <param name="RequestModifier">An optional HTTP request modifier.</param>
-        /// <param name="ResponseModifier">An optional HTTP response modifier.</param>
-        public sealed class IOModifiers(Func<HTTPRequest,  HTTPRequest>?   RequestModifier    = null,
-                                        Func<HTTPResponse, HTTPResponse>?  ResponseModifier   = null)
-        {
-
-            /// <summary>
-            /// A delegate to modify HTTP requests.
-            /// </summary>
-            public Func<HTTPRequest, HTTPRequest>?    RequestModifier     { get; set; } = RequestModifier;
-
-            /// <summary>
-            /// A delegate to modify HTTP responses.
-            /// </summary>
-            public Func<HTTPResponse, HTTPResponse>?  ResponseModifier    { get; set; } = ResponseModifier;
-
-        }
-
-        #endregion
-
 
         #region Data
 
@@ -185,16 +159,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// An optional persistent EMSP to CPO client.
         /// </summary>
         public EMSP2CPOClient?  EMSP2CPOClient     { get; set; }
-
-        /// <summary>
-        /// Optional incoming request and response modifiers.
-        /// </summary>
-        public IOModifiers?     IN                 { get; set; }
-
-        /// <summary>
-        /// Optional outgoing request and response modifiers.
-        /// </summary>
-        public IOModifiers?     OUT                { get; set; }
 
         #endregion
 
@@ -652,7 +616,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (JSON.ParseOptional("created",
                                        "created",
-                                       out DateTime? created,
+                                       out DateTimeOffset? created,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -665,7 +629,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
-                                         out DateTime lastUpdated,
+                                         out DateTimeOffset lastUpdated,
                                          out ErrorResponse))
                 {
                     return false;

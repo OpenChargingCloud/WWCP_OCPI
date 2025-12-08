@@ -42,13 +42,13 @@ namespace cloud.charging.open.protocols.OCPI
         /// Begin of the opening or access hours exception.
         /// </summary>
         [Mandatory]
-        public DateTime  Begin    { get; }
+        public DateTimeOffset  Begin    { get; }
 
         /// <summary>
         /// End of the opening or access hours exception.
         /// </summary>
         [Mandatory]
-        public DateTime  End      { get; }
+        public DateTimeOffset  End      { get; }
 
         #endregion
 
@@ -59,8 +59,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         /// <param name="Begin">Begin of the opening or access hours exception.</param>
         /// <param name="End">End of the opening or access hours exception.</param>
-        public ExceptionalPeriod(DateTime  Begin,
-                                 DateTime  End)
+        public ExceptionalPeriod(DateTimeOffset  Begin,
+                                 DateTimeOffset  End)
         {
 
             this.Begin  = Begin;
@@ -145,7 +145,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (!JSON.ParseMandatory("period_begin",
                                          "period begin",
-                                         out DateTime PeriodBegin,
+                                         out DateTimeOffset PeriodBegin,
                                          out ErrorResponse))
                 {
                     return false;
@@ -157,7 +157,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (!JSON.ParseMandatory("period_end",
                                          "period end",
-                                         out DateTime PeriodEnd,
+                                         out DateTimeOffset PeriodEnd,
                                          out ErrorResponse))
                 {
                     return false;

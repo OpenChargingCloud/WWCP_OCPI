@@ -118,7 +118,7 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) From    (CountryCode, PartyId)
+        #region (static) From     (CountryCode, PartyId)
 
         /// <summary>
         /// Parse the given country code and party identification as a party identification.
@@ -145,7 +145,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) Parse   (Text)
+        #region (static) Parse    (Text)
 
         /// <summary>
         /// Parse the given text as a party identification.
@@ -164,7 +164,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text)
+        #region (static) TryParse (Text)
 
         /// <summary>
         /// Try to parse the given text as a party identification.
@@ -182,7 +182,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text, out PartyId)
+        #region (static) TryParse (Text, out PartyId)
 
         /// <summary>
         /// Try to parse the given text as a party identification.

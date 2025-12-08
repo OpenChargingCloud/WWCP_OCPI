@@ -73,7 +73,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The timestamp for the last calendar change has been made.
         /// </summary>
         [Mandatory]
-        public DateTime               LastUpdated           { get; }
+        public DateTimeOffset         LastUpdated           { get; }
 
         #endregion
 
@@ -92,7 +92,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         DateTimeOffset         BeginFrom,
                         DateTimeOffset         EndBefore,
                         IEnumerable<TimeSlot>  AvailableTimeSlots,
-                        DateTime               LastUpdated,
+                        DateTimeOffset         LastUpdated,
                         UInt32?                StepSize   = null)
         {
 
@@ -244,7 +244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (!JSON.ParseMandatory("end_before",
                                          "end before",
-                                         out DateTime lastUpdated,
+                                         out DateTimeOffset lastUpdated,
                                          out ErrorResponse))
                 {
                     return false;

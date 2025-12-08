@@ -200,7 +200,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseOptional("timestamp",
                                         "timestamp",
-                                        out DateTime? Timestamp,
+                                        out DateTimeOffset? Timestamp,
                                         out ErrorResponse))
                 {
                     return false;

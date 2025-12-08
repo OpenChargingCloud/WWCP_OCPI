@@ -72,13 +72,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// This local access information should not be used before this timestamp.
         /// </summary>
         [Optional]
-        public DateTime?                     NotBefore                     { get; }
+        public DateTimeOffset?               NotBefore                     { get; }
 
         /// <summary>
         /// This local access information should not be used after this timestamp.
         /// </summary>
         [Optional]
-        public DateTime?                     NotAfter                      { get; }
+        public DateTimeOffset?               NotAfter                      { get; }
 
         /// <summary>
         /// The credential roles.
@@ -129,8 +129,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public LocalAccessInfo2(AccessToken                    AccessToken,
                                AccessStatus                   Status,
                                IEnumerable<CredentialsRole>?  Roles                        = null,
-                               DateTime?                      NotBefore                    = null,
-                               DateTime?                      NotAfter                     = null,
+                               DateTimeOffset?                NotBefore                    = null,
+                               DateTimeOffset?                NotAfter                     = null,
                                URL?                           VersionsURL                  = null,
                                Boolean?                       AccessTokenIsBase64Encoded   = false,
                                Boolean?                       AllowDowngrades              = false)
@@ -138,7 +138,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             this.AccessToken                 = AccessToken;
             this.Status                      = Status;
-            this.Roles                       = Roles?.Distinct()          ?? Array.Empty<CredentialsRole>();
+            this.Roles                       = Roles?.Distinct()          ?? [];
             this.NotBefore                   = NotBefore;
             this.NotAfter                    = NotAfter;
             this.VersionsURL                 = VersionsURL;
@@ -276,7 +276,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("notBefore",
                                        "not before",
-                                       out DateTime? NotBefore,
+                                       out DateTimeOffset? NotBefore,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -289,7 +289,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("notAfter",
                                        "not after",
-                                       out DateTime? NotAfter,
+                                       out DateTimeOffset? NotAfter,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)

@@ -313,7 +313,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptional("created",
                                        "created",
-                                       out DateTime? created,
+                                       out DateTimeOffset? created,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -326,7 +326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
-                                         out DateTime lastUpdated,
+                                         out DateTimeOffset lastUpdated,
                                          out ErrorResponse))
                 {
                     return false;

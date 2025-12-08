@@ -138,19 +138,19 @@ namespace cloud.charging.open.protocols.OCPI
 
             #region Versions
 
-            RegisterEvent2("GetVersionsRequest",
-                          handler => CommonHTTPAPI.OnGetVersionsRequest += handler,
-                          handler => CommonHTTPAPI.OnGetVersionsRequest -= handler,
-                          "GetVersions", "Request",  "all").
-                RegisterDefaultConsoleLogTargetX(this).
-                RegisterDefaultDiscLogTargetX(this);
+            //RegisterEvent2("GetVersionsRequest",
+            //              handler => CommonHTTPAPI.OnGetVersionsRequest += handler,
+            //              handler => CommonHTTPAPI.OnGetVersionsRequest -= handler,
+            //              "GetVersions", "Request",  "all").
+            //    RegisterDefaultConsoleLogTargetX(this).
+            //    RegisterDefaultDiscLogTargetX(this);
 
-            RegisterEvent2("GetVersionsResponse",
-                          handler => CommonHTTPAPI.OnGetVersionsResponse += handler,
-                          handler => CommonHTTPAPI.OnGetVersionsResponse -= handler,
-                          "GetVersions", "Response", "all").
-                RegisterDefaultConsoleLogTargetX(this).
-                RegisterDefaultDiscLogTargetX(this);
+            //RegisterEvent2("GetVersionsResponse",
+            //              handler => CommonHTTPAPI.OnGetVersionsResponse += handler,
+            //              handler => CommonHTTPAPI.OnGetVersionsResponse -= handler,
+            //              "GetVersions", "Response", "all").
+            //    RegisterDefaultConsoleLogTargetX(this).
+            //    RegisterDefaultDiscLogTargetX(this);
 
             #endregion
 

@@ -139,7 +139,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         // When no OCPIRequestLogger was used!
                         httpRequest.SubprotocolRequest ??= OCPIRequest.Parse(
-                                                               httpRequest, 
+                                                               httpRequest,
                                                                CommonAPI
                                                            );
 
@@ -236,13 +236,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    ocpiRequest,
                                    (httpResponse.SubprotocolResponse as OCPIResponse)
                                        ?? new OCPIResponse(
-                                                  ocpiRequest,
-                                                  2000,
-                                                  "OCPIResponse is null!",
-                                                  httpResponse.HTTPBodyAsUTF8String,
-                                                  httpResponse.Timestamp,
-                                                  httpResponse
-                                              ),
+                                              ocpiRequest,
+                                              2000,
+                                              "OCPIResponse is null!",
+                                              httpResponse.HTTPBodyAsUTF8String,
+                                              httpResponse.Timestamp,
+                                              httpResponse
+                                          ),
                                    ct
                                ) ?? Task.CompletedTask;
 
@@ -570,6 +570,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             this.HTTPRequest.SubprotocolRequest = this;
 
+            if (RemoteParty?.IN?.RequestModifier is not null)
+            {
+                this.HTTPRequest = RemoteParty.IN.RequestModifier(this.HTTPRequest);
+            }
+
         }
 
 
@@ -600,10 +605,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             {
 
                 if (RequestId.    HasValue)
-                    httpResponseBuilder.Set("X-Request-ID",      RequestId);
+                    httpResponseBuilder.Set("X-Request-ID",      RequestId.    Value);
 
                 if (CorrelationId.HasValue)
-                    httpResponseBuilder.Set("X-Correlation-ID",  CorrelationId);
+                    httpResponseBuilder.Set("X-Correlation-ID",  CorrelationId.Value);
 
             }
 

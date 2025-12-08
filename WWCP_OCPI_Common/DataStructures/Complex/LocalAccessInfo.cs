@@ -249,7 +249,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (JSON.ParseOptional("notBefore",
                                        "not before",
-                                       out DateTime? NotBefore,
+                                       out DateTimeOffset? NotBefore,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -262,7 +262,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (JSON.ParseOptional("notAfter",
                                        "not after",
-                                       out DateTime? NotAfter,
+                                       out DateTimeOffset? NotAfter,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)

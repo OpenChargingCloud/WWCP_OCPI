@@ -42,19 +42,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The begin of the scheduled period.
         /// </summary>
         [Mandatory]
-        public DateTime    Begin     { get; }
+        public DateTimeOffset   Begin     { get; }
 
         /// <summary>
         /// The optional end of the scheduled period.
         /// </summary>
         [Optional]
-        public DateTime?   End       { get; }
+        public DateTimeOffset?  End       { get; }
 
         /// <summary>
         /// The EVSE status value during the scheduled period.
         /// </summary>
         [Mandatory]
-        public StatusType  Status    { get; }
+        public StatusType       Status    { get; }
 
         #endregion
 
@@ -66,9 +66,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Status">An EVSE status value during the scheduled period.</param>
         /// <param name="Begin">The begin of the scheduled period.</param>
         /// <param name="End">An optional end of the scheduled period.</param>
-        public StatusSchedule(StatusType  Status,
-                              DateTime    Begin,
-                              DateTime?   End   = null)
+        public StatusSchedule(StatusType       Status,
+                              DateTimeOffset   Begin,
+                              DateTimeOffset?  End   = null)
         {
 
             this.Status  = Status;
@@ -167,7 +167,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatory("period_begin",
                                          "period begin",
-                                         out DateTime Begin,
+                                         out DateTimeOffset Begin,
                                          out ErrorResponse))
                 {
                     return false;
@@ -179,7 +179,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("period_end",
                                        "period end",
-                                       out DateTime? End,
+                                       out DateTimeOffset? End,
                                        out ErrorResponse))
                 {
 
