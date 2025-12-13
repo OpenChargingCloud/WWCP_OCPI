@@ -112,7 +112,7 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) Parse   (JSON, CustomBusinessDetailsParser = null)
+        #region (static) Parse    (JSON, CustomBusinessDetailsParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of business details.
@@ -138,7 +138,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(JSON, out BusinessDetails, out ErrorResponse, CustomBusinessDetailsParser = null)
+        #region (static) TryParse (JSON, out BusinessDetails, out ErrorResponse, CustomBusinessDetailsParser = null)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
@@ -268,9 +268,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details.</param>
-        /// <param name="CustomImageSerializer">A delegate to serialize custom images.</param>
-        /// <param name="CustomPointOfContactSerializer">A delegate to serialize custom point of contacts.</param>
+        /// <param name="CustomBusinessDetailsSerializer">A custom business details JSON serializer.</param>
+        /// <param name="CustomImageSerializer">A custom image JSON serializer.</param>
+        /// <param name="CustomPointOfContactSerializer">A custom point of contacts JSON serializer.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<BusinessDetails>?  CustomBusinessDetailsSerializer   = null,
                               CustomJObjectSerializerDelegate<Image>?            CustomImageSerializer             = null,
                               CustomJObjectSerializerDelegate<PointOfContact>?   CustomPointOfContactSerializer    = null)

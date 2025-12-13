@@ -312,7 +312,7 @@ namespace cloud.charging.open.protocols.OCPI
                               CustomJObjectSerializerDelegate<ExceptionalPeriod>?  CustomExceptionalPeriodSerializer   = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                                  new JProperty("twentyfourseven",       IsTwentyFourSevenOpen),
 
@@ -331,8 +331,8 @@ namespace cloud.charging.open.protocols.OCPI
                        );
 
             return CustomHoursSerializer is not null
-                       ? CustomHoursSerializer(this, JSON)
-                       : JSON;
+                       ? CustomHoursSerializer(this, json)
+                       : json;
 
         }
 
