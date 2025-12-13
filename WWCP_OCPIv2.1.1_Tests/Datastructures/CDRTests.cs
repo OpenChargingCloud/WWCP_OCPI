@@ -568,8 +568,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             var wwcpCDR = new ChargeDetailRecord(
 
-                              Id: ChargeDetailRecord_Id.NewRandom(),
-                              SessionId: ChargingSession_Id.   NewRandom(),
+                              Id:                             ChargeDetailRecord_Id.NewRandom(),
+                              SessionId:                      ChargingSession_Id.   NewRandom(),
                               SessionTime:                    new StartEndDateTime(
                                                                   startTime,
                                                                   startTime + TimeSpan.FromHours(2)
@@ -586,21 +586,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                               //ChargingStationOperator       // automagic!
                               //ChargingStationOperatorId     // automagic!
 
-                              ChargingProduct: ChargingProduct.AC3,
-                              ChargingPrice: Price.EURO(
+                              ChargingProduct:                ChargingProduct.AC3,
+                              ChargingPrice:                  Price.EURO(
                                                                   20.00M,
                                                                    0.50M
                                                               ),
 
-                              AuthenticationStart: LocalAuthentication.FromAuthToken(AuthenticationToken.NewRandom7Bytes),
+                              AuthenticationStart:            LocalAuthentication.FromAuthToken(
+                                                                  AuthenticationToken.NewRandom7Bytes,
+                                                                  AuthMethod.AUTH_REQUEST
+                                                              ),
                               //AuthenticationStop
-                              AuthMethodStart: AuthMethod.AUTH_REQUEST,
-                              //AuthMethodStop
-                              ProviderIdStart: EMobilityProvider_Id. Parse("DE-GDF"),
+
+                              ProviderIdStart:                EMobilityProvider_Id. Parse("DE-GDF"),
                               //ProviderIdStop
 
                               //EMPRoamingProvider
-                              CSORoamingProviderIdStart: CSORoamingProvider_Id.Parse("Hubject"),
+                              CSORoamingProviderIdStart:      CSORoamingProvider_Id.Parse("Hubject"),
 
                               //Reservation
                               //ReservationId
@@ -612,7 +614,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                               //ParkingFee
 
                               //EnergyMeterId:                // automagic!
-                              EnergyMeter:                    new WWCP.EnergyMeter(
+                              EnergyMeter:                    new EnergyMeter(
                                                                   WWCP.EnergyMeter_Id.Parse("12345678")
                                                               ),
                               EnergyMeteringValues:           [
@@ -689,7 +691,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             ClassicAssert.AreEqual (wwcpCDR.SessionTime.StartTime,              ocpiCDR!.Start);
             ClassicAssert.AreEqual (wwcpCDR.SessionTime.EndTime!.Value,         ocpiCDR!.Stop);
             //AuthId
-            ClassicAssert.AreEqual (wwcpCDR.AuthMethodStart.ToOCPI(),           ocpiCDR!.AuthMethod);
+            ClassicAssert.AreEqual (wwcpCDR.AuthenticationStart?.AuthMethod.ToOCPI(),    ocpiCDR!.AuthMethod);
 
             ClassicAssert.IsNotNull(ocpiCDR.Location);
             ClassicAssert.IsNotNull(ocpiCDR.Location.EVSEs);

@@ -1832,14 +1832,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     return null;
                 }
 
-                if (!ChargeDetailRecord.AuthMethodStart.HasValue)
+                if (ChargeDetailRecord.AuthenticationStart?.AuthMethod.HasValue == false)
                 {
                     Warnings.Add("The authentication (verification) method used for starting of the given charge detail record must not be null!".ToWarning());
                     return null;
                 }
 
-                var authMethod = ChargeDetailRecord.AuthMethodStart.ToOCPI();
-
+                var authMethod = ChargeDetailRecord.AuthenticationStart?.AuthMethod.ToOCPI();
                 if (!authMethod.HasValue)
                 {
                     Warnings.Add("The authentication (verification) method used for starting of the given charge detail record is invalid!".ToWarning());

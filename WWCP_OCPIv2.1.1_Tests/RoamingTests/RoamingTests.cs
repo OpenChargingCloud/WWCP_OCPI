@@ -2117,10 +2117,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                       ChargingProduct:              ChargingProduct.FromId(ChargingProduct_Id.Parse("AC1")),
                                                       ChargingPrice:                null,
 
-                                                      AuthenticationStart:          LocalAuthentication.FromAuthToken(AuthenticationToken.NewRandom7Bytes),
-                                                      AuthenticationStop:           LocalAuthentication.FromAuthToken(AuthenticationToken.NewRandom7Bytes),
-                                                      AuthMethodStart:              AuthMethod.AUTH_REQUEST,
-                                                      AuthMethodStop:               AuthMethod.WHITELIST,
+                                                      AuthenticationStart:          LocalAuthentication.FromAuthToken(
+                                                                                        AuthenticationToken.NewRandom7Bytes,
+                                                                                        AuthMethod.AUTH_REQUEST
+                                                                                    ),
+                                                      AuthenticationStop:           LocalAuthentication.FromAuthToken(
+                                                                                        AuthenticationToken.NewRandom7Bytes,
+                                                                                        AuthMethod.WHITELIST
+                                                                                    ),
+
                                                       ProviderIdStart:              EMobilityProvider_Id.Parse("DE-GDF"),
                                                       ProviderIdStop:               EMobilityProvider_Id.Parse("DE-GD2"),
 
@@ -2388,13 +2393,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                              ChargingPrice:               new Price(
                                                                                               1.23M,
                                                                                               VAT:       0.34M,
-                                                                                              Currency:  org.GraphDefined.Vanaheimr.Illias.Currency.EUR
+                                                                                              Currency:  Currency.EUR
                                                                                           ),
 
-                                                             AuthenticationStart:         LocalAuthentication.FromAuthToken(authTokenStart),
-                                                             AuthenticationStop:          LocalAuthentication.FromAuthToken(authTokenStop),
-                                                             AuthMethodStart:             AuthMethod.AUTH_REQUEST,
-                                                             AuthMethodStop:              AuthMethod.AUTH_REQUEST,
+                                                             AuthenticationStart:         LocalAuthentication.FromAuthToken(
+                                                                                              authTokenStart,
+                                                                                              AuthMethod.AUTH_REQUEST
+                                                                                          ),
+                                                             AuthenticationStop:          LocalAuthentication.FromAuthToken(
+                                                                                              authTokenStop,
+                                                                                              AuthMethod.AUTH_REQUEST
+                                                                                          ),
+
                                                              ProviderIdStart:             authStartResult.ProviderId,
                                                              ProviderIdStop:              authStopResult. ProviderId,
 
@@ -2599,9 +2609,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                     evse1.Operator        is not null)
                 {
 
-                    var authenticationStart  = RemoteAuthentication.FromRemoteIdentification(EMobilityAccount_Id. Parse("DE-GDF-C12345678-X"));
-                    var smartPhoneSessionId  = ChargingSession_Id.  NewRandom               (EMobilityProvider_Id.Parse("DE-GDF"));
-                    var chargingProduct      = ChargingProduct.     FromId                  (ChargingProduct_Id.  Parse("AC1"));
+                    var authenticationStart  = RemoteAuthentication.FromRemoteIdentification(
+                                                   EMobilityAccount_Id. Parse("DE-GDF-C12345678-X"),
+                                                   AuthMethod.AUTH_REQUEST
+                                               );
+
+                    var smartPhoneSessionId  = ChargingSession_Id.  NewRandom(
+                                                   EMobilityProvider_Id.Parse("DE-GDF")
+                                               );
+
+                    var chargingProduct      = ChargingProduct.     FromId(
+                                                   ChargingProduct_Id.  Parse("AC1")
+                                               );
 
                     var remoteStartResult    = await ahzfPhone.RemoteStart(new WWCP.MobilityProvider.RemoteStartRequest(
                                                          ChargingLocation:       ChargingLocation.FromEVSEId(evse1.Id),
@@ -2635,7 +2654,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                         Timestamp.TravelForwardInTime(TimeSpan.FromMinutes(5));
 
                         var providerIdStop      = EMobilityProvider_Id.Parse("DE-GDF");
-                        var authenticationStop  = RemoteAuthentication.FromRemoteIdentification(EMobilityAccount_Id.Parse("DE-GDF-C56781234-X"));
+                        var authenticationStop  = RemoteAuthentication.FromRemoteIdentification(
+                                                      EMobilityAccount_Id.Parse("DE-GDF-C56781234-X"),
+                                                      AuthMethod.REMOTESTART
+                                                  );
 
                         var remoteStopResult    = await emp1RoamingNetwork.RemoteStop(
                                                             SessionId:              remoteStartResult.ChargingSession.Id,
@@ -2674,13 +2696,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                              ChargingPrice:               new Price(
                                                                                               1.23M,
                                                                                               VAT:       0.34M,
-                                                                                              Currency:  org.GraphDefined.Vanaheimr.Illias.Currency.EUR
+                                                                                              Currency:  Currency.EUR
                                                                                           ),
 
                                                              AuthenticationStart:         authenticationStart,
                                                              AuthenticationStop:          authenticationStop,
-                                                             AuthMethodStart:             AuthMethod.AUTH_REQUEST,
-                                                             AuthMethodStop:              AuthMethod.AUTH_REQUEST,
+                                                             //AuthMethodStart:             AuthMethod.AUTH_REQUEST,
+                                                             //AuthMethodStop:              AuthMethod.AUTH_REQUEST,
+
                                                              ProviderIdStart:             graphDefinedEMP1Local.Id,
                                                              ProviderIdStop:              providerIdStop,
 
