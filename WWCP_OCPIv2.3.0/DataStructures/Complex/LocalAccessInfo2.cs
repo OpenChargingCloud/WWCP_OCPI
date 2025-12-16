@@ -140,7 +140,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             this.AccessToken                 = AccessToken;
             this.Status                      = Status;
-            this.Roles                       = Roles?.Distinct()          ?? Array.Empty<CredentialsRole>();
+            this.Roles                       = Roles?.Distinct()          ?? [];
             this.NotBefore                   = NotBefore;
             this.NotAfter                    = NotAfter;
             this.VersionsURL                 = VersionsURL;

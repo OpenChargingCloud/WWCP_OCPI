@@ -415,7 +415,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CommonAPI    CommonAPI)
         {
 
-            this.HTTPRequest      = Request ?? throw new ArgumentNullException(nameof(HTTPRequest), "The given HTTP request must not be null!");
+            this.HTTPRequest      = Request ?? throw new ArgumentNullException(nameof(Request), "The given HTTP request must not be null!");
             this.CommonAPI        = CommonAPI;
 
             this.RequestId        = Request.TryParseHeaderField<Request_Id>    ("X-Request-ID",     Request_Id.    TryParse) ?? Request_Id.    NewRandom(IsLocal: true);
@@ -423,7 +423,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             var  totp             = Request.GetHeaderField     <String>        ("TOTP");
 
             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
-               // TokenAuth.Token.TryBase64Decode_UTF8(out String DecodedToken)   &&
                 OCPI.AccessToken.TryParse(TokenAuth.Token, out var accessToken))
             {
                 this.AccessToken = accessToken;
@@ -432,7 +431,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             else if (Request.Authorization is HTTPBasicAuthentication BasicAuth &&
                 OCPI.AccessToken.TryParse(BasicAuth.Username, out accessToken))
             {
-                this.AccessToken = accessToken;
+                this.AccessToken  = accessToken;
+                totp              = BasicAuth.Password;
             }
 
             if (this.AccessToken.HasValue)

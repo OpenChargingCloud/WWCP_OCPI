@@ -123,8 +123,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("GetVersionDetailsResponse",
-                              handler => CommonClient.OnGetVersionDetailsHTTPRequest += handler,
-                              handler => CommonClient.OnGetVersionDetailsHTTPRequest -= handler,
+                              handler => CommonClient.OnGetVersionDetailsHTTPResponse += handler,
+                              handler => CommonClient.OnGetVersionDetailsHTTPResponse -= handler,
                               "GetVersionDetails", "versions", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);

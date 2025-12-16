@@ -45,14 +45,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             /// <summary>
             /// The default context for this logger.
             /// </summary>
-            public new const String  DefaultContext   = $"OCPI{Version.String}_EMSP2CPOClient";
+            public new const String  DefaultContext   = $"OCPI{Version.String}_EMSP-2-CPOClient";
 
             #endregion
 
             #region Properties
 
             /// <summary>
-            /// The attached EMSP2CPO client.
+            /// The attached EMSP-2-CPO client.
             /// </summary>
             public EMSP2CPOClient  EMSP2CPOClient    { get; }
 
@@ -61,13 +61,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             #region Constructor(s)
 
             /// <summary>
-            /// Create a new EMSP2CPO client logger using the default logging delegates.
+            /// Create a new EMSP-2-CPO client logger using the default logging delegates.
             /// </summary>
-            /// <param name="EMSP2CPOClient">A EMSP2CPO client.</param>
+            /// <param name="EMSP2CPOClient">An EMSP-2-CPO client.</param>
             /// <param name="LoggingPath">The logging path.</param>
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public Logger(EMSP2CPOClient                   EMSP2CPOClient,
+            public Logger(EMSP2CPOClient               EMSP2CPOClient,
                           String?                      LoggingPath,
                           String?                      Context          = DefaultContext,
                           OCPILogfileCreatorDelegate?  LogfileCreator   = null)
@@ -79,7 +79,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             {
 
-                this.EMSP2CPOClient = EMSP2CPOClient ?? throw new ArgumentNullException(nameof(EMSP2CPOClient), "The given EMSP2CPO client must not be null!");
+                this.EMSP2CPOClient = EMSP2CPOClient ?? throw new ArgumentNullException(nameof(EMSP2CPOClient), "The given EMSP-2-CPO client must not be null!");
 
                 #region Locations
 

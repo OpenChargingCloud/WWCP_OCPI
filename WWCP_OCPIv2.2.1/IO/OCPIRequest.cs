@@ -434,146 +434,127 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.ToPartyId        = Request.TryParseHeaderField<Party_Id>      ("OCPI-to-party-id",       Party_Id.      TryParse);
             this.FromCountryCode  = Request.TryParseHeaderField<CountryCode>   ("OCPI-from-country-code", CountryCode.   TryParse);
             this.FromPartyId      = Request.TryParseHeaderField<Party_Id>      ("OCPI-from-party-id",     Party_Id.      TryParse);
-            var  totp             = Request.GetHeaderField     <String>        ("TOTP");
 
+            AccessToken?     accessTokenRAW     = null;
+            AccessToken?     accessTokenBASE64  = null;
+            String?          totp               = null;
+            LocalAccessInfo? localAccessInfo    = null;
 
-            if (Request.Authorization is HTTPTokenAuthentication tokenAuth &&
-                tokenAuth.Token.TryParseBASE64_UTF8(out var decodedToken, out var errorResponse) &&
-                OCPI.AccessToken.TryParse(decodedToken, out var accessToken))
+            if (Request.Authorization is HTTPTokenAuthentication tokenAuth)
             {
-                this.AccessToken = accessToken;
+
+                if (OCPI.AccessToken.TryParse          (tokenAuth.Token, out var parsedAccessToken))
+                    accessTokenRAW     = parsedAccessToken;
+
+                if (OCPI.AccessToken.TryParseFromBASE64(tokenAuth.Token, out var decodedAccessToken))
+                    accessTokenBASE64  = decodedAccessToken;
+
+                totp                   = Request.GetHeaderField<String>("TOTP");
+
             }
 
-            else if (Request.Authorization is HTTPBasicAuthentication BasicAuth &&
-                OCPI.AccessToken.TryParse(BasicAuth.Username, out accessToken))
+            else if (Request.Authorization is HTTPBasicAuthentication basicAuth)
             {
-                this.AccessToken = accessToken;
+
+                if (OCPI.AccessToken.TryParse          (basicAuth.Username, out var parsedAccessToken))
+                    accessTokenRAW     = parsedAccessToken;
+
+                if (OCPI.AccessToken.TryParseFromBASE64(basicAuth.Username, out var decodedAccessToken))
+                    accessTokenBASE64  = decodedAccessToken;
+
+                totp                   = basicAuth.Password;
+
             }
 
-            if (this.AccessToken.HasValue)
+            if (accessTokenRAW.HasValue &&
+                CommonAPI.TryGetRemoteParties(accessTokenRAW.Value,
+                                              totp,
+                                              out var partiesAccessInfosRAW))
+            {
+                var tuple = partiesAccessInfosRAW.FirstOrDefault();
+                if (tuple is not null)
+                {
+                    if (!tuple.Item2.AccessTokenIsBase64Encoded)
+                    {
+                        AccessToken      = accessTokenRAW;
+                        RemoteParty      = tuple.Item1;
+                        localAccessInfo  = tuple.Item2;
+                    }
+                }
+            }
+
+            if (accessTokenBASE64.HasValue &&
+                CommonAPI.TryGetRemoteParties(accessTokenBASE64.Value,
+                                              totp,
+                                              out var partiesAccessInfosBASE64))
+            {
+                var tuple = partiesAccessInfosBASE64.FirstOrDefault();
+                if (tuple is not null)
+                {
+                    if (tuple.Item2.AccessTokenIsBase64Encoded)
+                    {
+                        AccessToken      = accessTokenBASE64;
+                        RemoteParty      = tuple.Item1;
+                        localAccessInfo  = tuple.Item2;
+                    }
+                }
+            }
+
+            if (AccessToken.HasValue &&
+                RemoteParty     is not null &&
+                localAccessInfo is not null)
             {
 
-                if (CommonAPI.TryGetRemoteParties(AccessToken.Value,
-                                                  totp,
-                                                  out var partiesAccessInfos))
+                LocalAccessInfo  = new LocalAccessInfo2(
+                                       AccessToken.    Value,
+                                       localAccessInfo.Status,
+                                       RemoteParty.    Roles,
+                                       null,
+                                       null,
+                                       RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
+                                   );
+
+                CPOIds           = [.. RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.CPO).
+                                                         Select(credentialsRole => CPO_Id. Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}*{LocalAccessInfo.Roles.First().PartyId.Party}")).
+                                                         Distinct()];
+
+                EMSPIds          = [.. RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.EMSP).
+                                                         Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}-{LocalAccessInfo.Roles.First().PartyId.Party}")).
+                                                         Distinct()];
+
+                if (FromCountryCode.HasValue &&
+                    FromPartyId.    HasValue)
                 {
 
-                    if (partiesAccessInfos.Count() == 1)
-                    {
+                    CPOId   = CPO_Id. Parse($"{FromCountryCode}*{FromPartyId}");
+                    EMSPId  = EMSP_Id.Parse($"{FromCountryCode}-{FromPartyId}");
 
-                        RemoteParty      = partiesAccessInfos.First().Item1;
+                    if (CPOId. HasValue && !CPOIds. Contains(CPOId. Value))
+                        CPOId   = null;
 
-                        LocalAccessInfo  = new LocalAccessInfo2(
-                                               AccessToken.Value,
-                                               //RemoteParty.LocalAccessInfos.First(localAccessInfo => localAccessInfo.AccessToken == AccessToken).Status,
-                                               partiesAccessInfos.First().Item2.Status,
-                                               RemoteParty.Roles,
-                                               null,
-                                               null,
-                                               RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
-                                           );
-
-                        CPOIds           = RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.CPO).
-                                                             Select(credentialsRole => CPO_Id. Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}*{LocalAccessInfo.Roles.First().PartyId.Party}")).
-                                                             Distinct().
-                                                             ToArray();
-
-                        EMSPIds          = RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.EMSP).
-                                                             Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}-{LocalAccessInfo.Roles.First().PartyId.Party}")).
-                                                             Distinct().
-                                                             ToArray();
-
-                        if (FromCountryCode.HasValue &&
-                            FromPartyId.    HasValue)
-                        {
-
-                            CPOId            = CPO_Id. Parse($"{FromCountryCode}*{FromPartyId}");
-                            EMSPId           = EMSP_Id.Parse($"{FromCountryCode}-{FromPartyId}");
-
-                            if (CPOId. HasValue && !CPOIds. Contains(CPOId. Value))
-                                CPOId   = null;
-
-                            if (EMSPId.HasValue && !EMSPIds.Contains(EMSPId.Value))
-                                EMSPId  = null;
-
-                        }
-
-                        if (!FromCountryCode.HasValue &&
-                            !FromPartyId.    HasValue)
-                        {
-
-                            if (CPOIds. Any())
-                                CPOId  = CPOIds. First();
-
-                            if (EMSPIds.Any())
-                                EMSPId = EMSPIds.First();
-
-                        }
-
-                    }
-
-                    else if (partiesAccessInfos.Count() > 1 &&
-                             FromCountryCode.HasValue       &&
-                             FromPartyId.    HasValue)
-                    {
-
-                        var filteredParties = partiesAccessInfos.Where(party => party.Item1.Roles.Any(credentialsRole => credentialsRole.PartyId.CountryCode == FromCountryCode.Value) &&
-                                                                                party.Item1.Roles.Any(credentialsRole => credentialsRole.PartyId.Party       == FromPartyId.    Value)).
-                                                                 ToArray();
-
-                        if (filteredParties.Length == 1)
-                        {
-
-                            this.LocalAccessInfo  = new LocalAccessInfo2(
-                                                        AccessToken.Value,
-                                                        //filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken).Status
-                                                        filteredParties.First().Item2.Status
-                                                    );
-
-                            //this.AccessInfo2      = filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken);
-
-                            this.RemoteParty      = filteredParties.First().Item1;
-
-                        }
-
-                    }
+                    if (EMSPId.HasValue && !EMSPIds.Contains(EMSPId.Value))
+                        EMSPId  = null;
 
                 }
 
+                if (!FromCountryCode.HasValue &&
+                    !FromPartyId.    HasValue)
+                {
 
-            //    if (CommonAPI.TryGetAccessInfo(this.AccessToken.Value, out AccessInfo accessInfo))
-            //    {
+                    if (CPOIds. Any())
+                        CPOId   = CPOIds. First();
 
-            //        this.AccessInfo = accessInfo;
+                    if (EMSPIds.Any())
+                        EMSPId  = EMSPIds.First();
 
-            ////        var allTheirCPORoles = this.AccessInfo.Value.Roles.Where(role => role.Role == Role.CPO).ToArray();
+                }
 
-            ////        if (!FromCountryCode.HasValue && allTheirCPORoles.Length == 1)
-            ////            this.FromCountryCode = allTheirCPORoles[0].CountryCode;
-
-            ////        if (!FromPartyId.    HasValue && allTheirCPORoles.Length == 1)
-            ////            this.FromPartyId     = allTheirCPORoles[0].PartyId;
-
-            //    }
+                if (RemoteParty.IN?.RequestModifier is not null)
+                    HTTPRequest = RemoteParty.IN.RequestModifier(HTTPRequest);
 
             }
 
-
-            //var allMyCPORoles = this.AccessInfo.Value.Roles.Where(role => role.Role == Role.CPO).ToArray();
-
-            //if (!ToCountryCode.HasValue && allMyCPORoles.Length == 1)
-            //    this.ToCountryCode = allMyCPORoles[1].CountryCode;
-
-            //if (!ToPartyId.HasValue && allMyCPORoles.Length == 1)
-            //    this.ToPartyId = allMyCPORoles[1].PartyId;
-
-
-            this.HTTPRequest.SubprotocolRequest = this;
-
-            if (RemoteParty?.IN?.RequestModifier is not null)
-            {
-                this.HTTPRequest = RemoteParty.IN.RequestModifier(this.HTTPRequest);
-            }
+            HTTPRequest.SubprotocolRequest = this;
 
         }
 

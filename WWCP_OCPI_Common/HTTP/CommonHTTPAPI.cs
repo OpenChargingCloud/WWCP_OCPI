@@ -2638,17 +2638,15 @@ namespace cloud.charging.open.protocols.OCPI
                                            out IEnumerable<Tuple<RemoteParty, LocalAccessInfo>>  RemoteParties)
         {
 
-            var _remoteParties = new List<Tuple<RemoteParty, LocalAccessInfo>>();
+            var remoteParties = new List<Tuple<RemoteParty, LocalAccessInfo>>();
 
-            foreach (var remoteParty in remoteParties.Values)
+            foreach (var remoteParty in this.remoteParties.Values)
             {
                 foreach (var localAccessInfo in remoteParty.LocalAccessInfos)
                 {
 
                     if (localAccessInfo.TOTPConfig is not null)
                     {
-
-                        //var accessToken  = AccessToken.ToString();
 
                         var (previous,
                              current,
@@ -2662,22 +2660,32 @@ namespace cloud.charging.open.protocols.OCPI
                                   );
 
                         if (TOTP == current || TOTP == previous || TOTP == next)
-                            _remoteParties.Add(new Tuple<RemoteParty, LocalAccessInfo>(remoteParty, localAccessInfo));
+                            remoteParties.Add(
+                                new Tuple<RemoteParty, LocalAccessInfo>(
+                                    remoteParty,
+                                    localAccessInfo
+                                )
+                            );
 
                     }
 
                     else
                     {
                         if (localAccessInfo.AccessToken == AccessToken)
-                            _remoteParties.Add(new Tuple<RemoteParty, LocalAccessInfo>(remoteParty, localAccessInfo));
+                            remoteParties.Add(
+                                new Tuple<RemoteParty, LocalAccessInfo>(
+                                    remoteParty,
+                                    localAccessInfo
+                                )
+                            );
                     }
 
                 }
             }
 
-            RemoteParties = _remoteParties;
+            RemoteParties = remoteParties;
 
-            return _remoteParties.Count > 0;
+            return remoteParties.Count > 0;
 
         }
 
