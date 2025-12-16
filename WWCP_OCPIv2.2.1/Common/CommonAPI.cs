@@ -4907,10 +4907,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region LogRemoteParty        (Command, Number,      ...)
 
-        public ValueTask Log(String            Command,
-                             Int64             Number,
-                             EventTracking_Id  EventTrackingId,
-                             User_Id?          CurrentUserId   = null)
+        public ValueTask LogRemoteParty(String            Command,
+                                        Int64             Number,
+                                        EventTracking_Id  EventTrackingId,
+                                        User_Id?          CurrentUserId   = null)
 
             => BaseAPI.WriteToDatabase(
                    RemotePartyDBFileName,
@@ -5456,7 +5456,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public async Task AddAccessToken(String        Token,
                                          AccessStatus  Status)
         {
-            if (AccessToken.TryParseBASE64(Token, out var token))
+            if (AccessToken.TryParseAsBASE64(Token, out var token))
             {
                 await BaseAPI.AddAccessToken(
                     token,
@@ -7664,17 +7664,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                            out IEnumerable<Tuple<RemoteParty, LocalAccessInfo>>  RemoteParties)
         {
 
-            var _remoteParties = new List<Tuple<RemoteParty, LocalAccessInfo>>();
+            var remoteParties = new List<Tuple<RemoteParty, LocalAccessInfo>>();
 
-            foreach (var remoteParty in remoteParties.Values)
+            foreach (var remoteParty in this.remoteParties.Values)
             {
                 foreach (var localAccessInfo in remoteParty.LocalAccessInfos)
                 {
 
                     if (localAccessInfo.TOTPConfig is not null)
                     {
-
-                        //var accessToken  = AccessToken.ToString();
 
                         var (previous,
                              current,
@@ -7688,22 +7686,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   );
 
                         if (TOTP == current || TOTP == previous || TOTP == next)
-                            _remoteParties.Add(new Tuple<RemoteParty, LocalAccessInfo>(remoteParty, localAccessInfo));
+                            remoteParties.Add(
+                                new Tuple<RemoteParty, LocalAccessInfo>(
+                                    remoteParty,
+                                    localAccessInfo
+                                )
+                            );
 
                     }
 
                     else
                     {
                         if (localAccessInfo.AccessToken == AccessToken)
-                            _remoteParties.Add(new Tuple<RemoteParty, LocalAccessInfo>(remoteParty, localAccessInfo));
+                            remoteParties.Add(
+                                new Tuple<RemoteParty, LocalAccessInfo>(
+                                    remoteParty,
+                                    localAccessInfo
+                                )
+                            );
                     }
 
                 }
             }
 
-            RemoteParties = _remoteParties;
+            RemoteParties = remoteParties;
 
-            return _remoteParties.Count > 0;
+            return remoteParties.Count > 0;
 
         }
 
@@ -13980,6 +13988,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
+
+
+        public Task LogException(Exception e)
+        {
+            return Task.CompletedTask;
+        }
 
     }
 

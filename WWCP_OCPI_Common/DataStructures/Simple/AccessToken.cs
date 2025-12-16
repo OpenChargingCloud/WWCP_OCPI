@@ -98,7 +98,7 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) NewRandom      (Length = 50)
+        #region (static) NewRandom          (Length = 50)
 
         /// <summary>
         /// Create a new random access token.
@@ -111,7 +111,7 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) Parse          (Text)
+        #region (static) Parse              (Text)
 
         /// <summary>
         /// Parse the given text as an access token.
@@ -130,7 +130,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse       (Text)
+        #region (static) TryParse           (Text)
 
         /// <summary>
         /// Try to parse the given text as an access token.
@@ -148,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse       (Text, out AccessToken)
+        #region (static) TryParse           (Text, out AccessToken)
 
         /// <summary>
         /// Try to parse the given text as an access token.
@@ -179,16 +179,16 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) ParseBASE64    (Text)
+        #region (static) ParseAsBASE64      (Text)
 
         /// <summary>
         /// Parse the given text as a BASE64-encoded access token.
         /// </summary>
         /// <param name="Text">A text representation of an access token.</param>
-        public static AccessToken ParseBASE64(String Text)
+        public static AccessToken ParseAsBASE64(String Text)
         {
 
-            if (TryParseBASE64(Text, out var accessToken))
+            if (TryParseAsBASE64(Text, out var accessToken))
                 return accessToken;
 
             throw new ArgumentException($"Invalid text representation of an access token: '{Text}'!",
@@ -198,16 +198,16 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParseBASE64 (Text)
+        #region (static) TryParseAsBASE64   (Text)
 
         /// <summary>
         /// Try to parse the given text as a BASE64-encoded access token.
         /// </summary>
         /// <param name="Text">A text representation of an access token.</param>
-        public static AccessToken? TryParseBASE64(String Text)
+        public static AccessToken? TryParseAsBASE64(String Text)
         {
 
-            if (TryParseBASE64(Text, out var accessToken))
+            if (TryParseAsBASE64(Text, out var accessToken))
                 return accessToken;
 
             return null;
@@ -216,14 +216,14 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParseBASE64 (Text, out AccessToken)
+        #region (static) TryParseAsBASE64   (Text, out AccessToken)
 
         /// <summary>
         /// Try to parse the given text as a BASE64-encoded access token.
         /// </summary>
         /// <param name="Text">A text representation of an access token.</param>
         /// <param name="AccessToken">The parsed access token.</param>
-        public static Boolean TryParseBASE64(String Text, out AccessToken AccessToken)
+        public static Boolean TryParseAsBASE64(String Text, out AccessToken AccessToken)
         {
 
             Text = Text.Trim();
@@ -233,6 +233,74 @@ namespace cloud.charging.open.protocols.OCPI
                 try
                 {
                     AccessToken = new AccessToken(Text.ToBase64());
+                    return true;
+                }
+                catch
+                { }
+            }
+
+            AccessToken = default;
+            return false;
+
+        }
+
+        #endregion
+
+
+        #region (static) ParseFromBASE64    (Text)
+
+        /// <summary>
+        /// Parse the given text from a BASE64-encoded access token.
+        /// </summary>
+        /// <param name="Text">A text representation of an access token.</param>
+        public static AccessToken ParseFromBASE64(String Text)
+        {
+
+            if (TryParseFromBASE64(Text, out var accessToken))
+                return accessToken;
+
+            throw new ArgumentException($"Invalid text representation of an access token: '{Text}'!",
+                                        nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParseFromBASE64 (Text)
+
+        /// <summary>
+        /// Try to parse the given text from a BASE64-encoded access token.
+        /// </summary>
+        /// <param name="Text">A text representation of an access token.</param>
+        public static AccessToken? TryParseFromBASE64(String Text)
+        {
+
+            if (TryParseFromBASE64(Text, out var accessToken))
+                return accessToken;
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region (static) TryParseFromBASE64 (Text, out AccessToken)
+
+        /// <summary>
+        /// Try to parse the given text from a BASE64-encoded access token.
+        /// </summary>
+        /// <param name="Text">A text representation of an access token.</param>
+        /// <param name="AccessToken">The parsed access token.</param>
+        public static Boolean TryParseFromBASE64(String Text, out AccessToken AccessToken)
+        {
+
+            Text = Text.Trim();
+
+            if (Text.IsNotNullOrEmpty() && Text.TryParseBASE64_UTF8(out var vvv, out _))
+            {
+                try
+                {
+                    AccessToken = new AccessToken(vvv);
                     return true;
                 }
                 catch

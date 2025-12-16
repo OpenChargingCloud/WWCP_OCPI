@@ -20,49 +20,11 @@
 using NUnit.Framework;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
 namespace cloud.charging.open.protocols.OCPI.UnitTests
 {
-
-    public class OCPIRewritePipeline(OCPIv2_2_1.CommonAPI CommonAPI) : AHTTPPipeline()
-    {
-
-        public OCPIv2_2_1.CommonAPI CommonAPI { get; } = CommonAPI;
-
-
-        #region (override) ProcessHTTPRequest(Request, Stream, CancellationToken = default)
-
-        public override async Task<(HTTPRequest, HTTPResponse?)>
-
-            ProcessHTTPRequest(HTTPRequest        Request,
-                               CancellationToken  CancellationToken   = default)
-
-        {
-
-            var auth = Request.Authorization as HTTPTokenAuthentication;
-            if (auth is not null)
-            {
-
-                var remoteParty     = CommonAPI.GetRemoteParties(rp => rp.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == auth.Token.FromBASE64_UTF8())).FirstOrDefault();
-                var requestModifier = remoteParty?.IN?.RequestModifier;
-
-                if (requestModifier is not null)
-                    return (requestModifier(Request), null);
-
-            }
-
-            return (Request, null);
-
-        }
-
-        #endregion
-
-    }
-
 
     /// <summary>
     /// Testing the OCPI GetVersionDetails method(s) using HTTP Request Modifiers.
@@ -200,7 +162,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
             cpo1CommonHTTPAPI.HTTPBaseAPI.HTTPServer.AddPipeline(
-                new OCPIRewritePipeline(cpo1CommonAPI_v2_2_1)
+                new OCPIv2_2_1.OCPIRewritePipeline(cpo1CommonAPI_v2_2_1)
             );
 
 

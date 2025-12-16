@@ -400,25 +400,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                LocalAccessInfo2 = new LocalAccessInfo2(AccessToken,
-                                                      Status,
+                LocalAccessInfo2 = new LocalAccessInfo2(
 
-                                                      CountryCode,
-                                                      PartyId,
-                                                      Role,
-                                                      BusinessDetails,
+                                       AccessToken,
+                                       Status,
 
-                                                      NotBefore,
-                                                      NotAfter,
+                                       CountryCode,
+                                       PartyId,
+                                       Role,
+                                       BusinessDetails,
 
-                                                      VersionsURL,
-                                                      AccessTokenIsBase64Encoded,
-                                                      AllowDowngrades);
+                                       NotBefore,
+                                       NotAfter,
+
+                                       VersionsURL,
+                                       AccessTokenIsBase64Encoded,
+                                       AllowDowngrades
+
+                                   );
 
 
                 if (CustomLocalAccessInfo2Parser is not null)
                     LocalAccessInfo2 = CustomLocalAccessInfo2Parser(JSON,
-                                                                  LocalAccessInfo2);
+                                                                    LocalAccessInfo2);
 
                 return true;
 
