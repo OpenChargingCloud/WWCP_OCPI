@@ -4335,18 +4335,24 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     var endpoints = new List<VersionEndpoint>() {
 
-                                         new (
-                                             Module_Id.Credentials,
-                                             InterfaceRoles.SENDER,
-                                             URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                 (request.Host + (prefix + "credentials")))
-                                         ),
+                                         //Note: OCPI seems to only require one role here.
+                                         //      The specification is quite unclear about this.
+
+                                         //new (
+                                         //    Module_Id.Credentials,
+                                         //    InterfaceRoles.SENDER,
+                                         //    URL.Parse(
+                                         //        BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                         //            (request.Host + (prefix + "credentials")).Replace("//", "/")
+                                         //),
 
                                          new (
                                              Module_Id.Credentials,
                                              InterfaceRoles.RECEIVER,
-                                             URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
-                                                 (request.Host + (prefix + "credentials")))
+                                             URL.Parse(
+                                                 BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                                     (request.Host + (prefix + "credentials")).Replace("//", "/")
+                                             )
                                          )
 
                                     };
@@ -4543,8 +4549,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                             Data                 = new VersionDetail(
                                                        Version.Id,
                                                        endpoints
-                                                   ).ToJSON(CustomVersionDetailSerializer,
-                                                            CustomVersionEndpointSerializer),
+                                                   ).ToJSON(
+                                                         CustomVersionDetailSerializer,
+                                                         CustomVersionEndpointSerializer
+                                                     ),
                             HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                 HTTPStatusCode             = HTTPStatusCode.OK,
                                 Server                     = HTTPServiceName,
