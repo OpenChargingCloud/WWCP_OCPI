@@ -4579,8 +4579,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             if (!Credentials.TryParse(JSON,
                                       out var receivedCredentials,
-                                      out errorResponse) ||
-                receivedCredentials is null)
+                                      out errorResponse))
             {
 
                 return new OCPIResponse.Builder(Request) {
@@ -4785,6 +4784,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                       CREDENTIALS_TOKEN_A.Value
                   );
 
+
+            var oldRemotePartyRemoteAccessInfos = oldRemoteParty.RemoteAccessInfos.FirstOrDefault();
+
             // Store credential of the other side!
             await AddOrUpdateRemoteParty(
 
@@ -4794,30 +4796,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                       CREDENTIALS_TOKEN_C,                                      // LocalAccessToken
                       receivedCredentials.URL,                                  // RemoteVersionsURL
                       receivedCredentials.Token,                                // RemoteAccessToken
-                      oldRemoteParty.RemoteAccessInfos.First().AccessTokenIsBase64Encoded,
-                      oldRemoteParty.RemoteAccessInfos.First().TOTPConfig,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.AccessTokenIsBase64Encoded,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.TOTPConfig,
 
-                      oldRemoteParty.RemoteAccessInfos.First().PreferIPv4,
-                      oldRemoteParty.RemoteAccessInfos.First().RemoteCertificateValidator,
-                      oldRemoteParty.RemoteAccessInfos.First().LocalCertificateSelector,
-                      oldRemoteParty.RemoteAccessInfos.First().ClientCertificates,
-                      oldRemoteParty.RemoteAccessInfos.First().ClientCertificateContext,
-                      oldRemoteParty.RemoteAccessInfos.First().ClientCertificateChain,
-                      oldRemoteParty.RemoteAccessInfos.First().TLSProtocols,
-                      oldRemoteParty.RemoteAccessInfos.First().ContentType,
-                      oldRemoteParty.RemoteAccessInfos.First().Accept,
-                      oldRemoteParty.RemoteAccessInfos.First().HTTPUserAgent,
-                      oldRemoteParty.RemoteAccessInfos.First().RequestTimeout,
-                      oldRemoteParty.RemoteAccessInfos.First().TransmissionRetryDelay,
-                      oldRemoteParty.RemoteAccessInfos.First().MaxNumberOfRetries,
-                      oldRemoteParty.RemoteAccessInfos.First().InternalBufferSize,
-                      oldRemoteParty.RemoteAccessInfos.First().UseHTTPPipelining,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.PreferIPv4,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.RemoteCertificateValidator,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.LocalCertificateSelector,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.ClientCertificates,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.ClientCertificateContext,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.ClientCertificateChain,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.TLSProtocols,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.ContentType,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.Accept,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.HTTPUserAgent,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.RequestTimeout,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.TransmissionRetryDelay,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.MaxNumberOfRetries,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.InternalBufferSize,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.UseHTTPPipelining,
 
                       RemoteAccessStatus.ONLINE,                                // RemoteStatus
                       otherVersions.Data?.Select(version => version.Id) ?? [],  // RemoteVersionIds
                       Version.Id,                                               // SelectedVersionId
-                      oldRemoteParty.RemoteAccessInfos.First().NotBefore,
-                      oldRemoteParty.RemoteAccessInfos.First().NotAfter,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.NotBefore,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.NotAfter,
                       null,                                                     // RemoteAllowDowngrades
 
                       null,                                                     // LocalAccessTokenBase64Encoding
@@ -4827,7 +4829,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                       null,                                                     // LocalAllowDowngrades
                       AccessStatus.ALLOWED,                                     // LocalAccessStatus
 
-                      null,                                      // PartyStatus
+                      null,                                                     // PartyStatus
 
                       oldRemoteParty.Created,
                       Timestamp.Now,                                            // LastUpdated
@@ -5600,7 +5602,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Data
 
-        private readonly ConcurrentDictionary<RemoteParty_Id, RemoteParty> remoteParties = new ();
+        private readonly ConcurrentDictionary<RemoteParty_Id, RemoteParty> remoteParties = new();
 
         /// <summary>
         /// Return an enumeration of all remote parties.

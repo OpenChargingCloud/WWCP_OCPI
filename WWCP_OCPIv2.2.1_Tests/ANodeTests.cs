@@ -512,7 +512,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Add Remote Parties
 
-            await cpoCommonAPI.AddRemoteParty  (Id:                                RemoteParty_Id.Parse(
+            await cpoCommonAPI.AddRemoteParty  (Id:                                RemoteParty_Id.From(
                                                                                        emsp1CommonAPI.Parties.First().Id.CountryCode,
                                                                                        emsp1CommonAPI.Parties.First().Id.Party,
                                                                                        emsp1CommonAPI.Parties.First().Role
@@ -538,7 +538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                                                 Status:                            PartyStatus.ENABLED);
 
-            await cpoCommonAPI.AddRemoteParty  (Id:                                RemoteParty_Id.Parse(
+            await cpoCommonAPI.AddRemoteParty  (Id:                                RemoteParty_Id.From(
                                                                                        emsp2CommonAPI.Parties.First().Id.CountryCode,
                                                                                        emsp2CommonAPI.Parties.First().Id.Party,
                                                                                        emsp2CommonAPI.Parties.First().Role
@@ -564,7 +564,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
 
 
-            await emsp1CommonAPI.AddRemoteParty(Id:                                RemoteParty_Id.Parse(
+            await emsp1CommonAPI.AddRemoteParty(Id:                                RemoteParty_Id.From(
                                                                                        cpoCommonAPI.Parties.First().Id.CountryCode,
                                                                                        cpoCommonAPI.Parties.First().Id.Party,
                                                                                        cpoCommonAPI.Parties.First().Role
@@ -591,7 +591,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                 Status:                            PartyStatus.ENABLED);
 
 
-            await emsp2CommonAPI.AddRemoteParty(Id:                                RemoteParty_Id.Parse(
+            await emsp2CommonAPI.AddRemoteParty(Id:                                RemoteParty_Id.From(
                                                                                        cpoCommonAPI.Parties.First().Id.CountryCode,
                                                                                        cpoCommonAPI.Parties.First().Id.Party,
                                                                                        cpoCommonAPI.Parties.First().Role

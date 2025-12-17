@@ -46,31 +46,34 @@ namespace cloud.charging.open.protocols.OCPI
         #region Properties
 
         /// <summary>
-        /// The versions URL of the remote party.
+        /// The remote access status.
         /// </summary>
         [Mandatory]
-        public URL?                     VersionsURL                   { get; }
+        public RemoteAccessStatus                                         Status                        { get; }
+
+        /// <summary>
+        /// The optional versions URL of the remote party, when alread known.
+        /// </summary>
+        [Optional]
+        public URL?                                                       VersionsURL                   { get; }
 
         /// <summary>
         /// The access token for accessing the remote party.
         /// Null, when remote data is publicly accessible as Open Data.
         /// </summary>
         [Optional]
-        public AccessToken?             AccessToken                   { get; }
+        public AccessToken?                                               AccessToken                   { get; }
 
         /// <summary>
         /// Whether the access token is base64 encoded or not.
         /// </summary>
         [Optional]
-        public Boolean?                 AccessTokenIsBase64Encoded    { get; }
+        public Boolean?                                                   AccessTokenIsBase64Encoded    { get; }
 
         /// <summary>
         /// Configuration of the Time-Based One-Time Password (TOTP) 2nd factor authentication.
         /// </summary>
-        public TOTPConfig?              TOTPConfig                    { get; }
-
-
-
+        public TOTPConfig?                                                TOTPConfig                    { get; }
 
 
 
@@ -85,19 +88,19 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// The remote TLS certificate validator.
         /// </summary>
-        public RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator    { get; protected set; }
+        public RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator    { get; private set; }
 
         /// <summary>
         /// A delegate to select a TLS client certificate.
         /// </summary>
-        public LocalCertificateSelectionHandler?                          LocalCertificateSelector      { get; }
+        public LocalCertificateSelectionHandler?                          LocalCertificateSelector      { get; private set; }
 
         /// <summary>
         /// The TLS client certificates with private key to use for HTTP authentication.
         /// </summary>
         public IEnumerable<X509Certificate2>                              ClientCertificates            { get; }
 
-        public SslStreamCertificateContext?                               ClientCertificateContext      { get; }
+        public SslStreamCertificateContext?                               ClientCertificateContext      { get; private set; }
 
         public IEnumerable<X509Certificate2>                              ClientCertificateChain        { get; }
 
@@ -152,45 +155,36 @@ namespace cloud.charging.open.protocols.OCPI
         public Boolean?                                                   UseHTTPPipelining             { get; }
 
 
-
-
-        /// <summary>
-        /// The remote access status.
-        /// </summary>
-        [Mandatory]
-        public RemoteAccessStatus       Status                        { get; }
-
-
         /// <summary>
         /// All available OCPI versions of the remote party.
         /// </summary>
         [Optional]
-        public IEnumerable<Version_Id>  VersionIds                    { get; }
+        public IEnumerable<Version_Id>                                    VersionIds                    { get; }
 
         /// <summary>
         /// The selected OCPI version at the remote party.
         /// </summary>
         [Optional]
-        public Version_Id?              SelectedVersionId             { get; }
+        public Version_Id?                                                SelectedVersionId             { get; }
 
         /// <summary>
         /// This remote access information should not be used before this timestamp.
         /// </summary>
         [Optional]
-        public DateTimeOffset?          NotBefore                     { get; }
+        public DateTimeOffset?                                            NotBefore                     { get; }
 
         /// <summary>
         /// This remote access information should not be used after this timestamp.
         /// </summary>
         [Optional]
-        public DateTimeOffset?          NotAfter                      { get; }
+        public DateTimeOffset?                                            NotAfter                      { get; }
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI does not define any behaviour for this.
         /// </summary>
-        [Mandatory]
-        public Boolean                  AllowDowngrades               { get; }
+        [Optional]
+        public Boolean?                                                   AllowDowngrades               { get; }
 
         #endregion
 
@@ -199,18 +193,24 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Create new remote access information.
         /// </summary>
-        /// <param name="VersionsURL">An OCPI versions URL.</param>
-        /// <param name="AccessToken">A remote access token.</param>
+        /// <param name="Status">The optional remote access status.</param>
         /// 
-        /// <param name="Status">A remote access status.</param>
+        /// <param name="VersionsURL">The optional remote OCPI versions URL.</param>
+        /// <param name="AccessToken">The optional remote access token.</param>
+        /// <param name="AccessTokenIsBase64Encoded">Whether the access token is base64 encoded or not.</param>
         /// <param name="TOTPConfig">An optional configuration of the Time-Based One-Time Password (TOTP) 2nd factor authentication.</param>
+        /// 
+        /// 
+        /// 
         /// <param name="VersionIds">An optional enumeration of version identifications.</param>
         /// <param name="SelectedVersionId">A optional selected version identification.</param>
         /// <param name="NotBefore">This remote access information should not be used before this timestamp.</param>
         /// <param name="NotAfter">This remote access information should not be used after this timestamp.</param>
-        /// <param name="AccessTokenIsBase64Encoded">Whether the access token is base64 encoded or not.</param>
+        /// 
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        public RemoteAccessInfo(URL?                                                       VersionsURL                  = null,
+        public RemoteAccessInfo(RemoteAccessStatus?                                        Status                       = RemoteAccessStatus.ONLINE,
+
+                                URL?                                                       VersionsURL                  = null,
                                 AccessToken?                                               AccessToken                  = null,
                                 Boolean?                                                   AccessTokenIsBase64Encoded   = null,
                                 TOTPConfig?                                                TOTPConfig                   = null,
@@ -232,14 +232,16 @@ namespace cloud.charging.open.protocols.OCPI
                                 UInt32?                                                    InternalBufferSize           = null,
                                 Boolean?                                                   UseHTTPPipelining            = null,
 
-                                RemoteAccessStatus?                                        Status                       = RemoteAccessStatus.ONLINE,
-
                                 IEnumerable<Version_Id>?                                   VersionIds                   = null,
                                 Version_Id?                                                SelectedVersionId            = null,
                                 DateTimeOffset?                                            NotBefore                    = null,
                                 DateTimeOffset?                                            NotAfter                     = null,
                                 Boolean?                                                   AllowDowngrades              = false)
         {
+
+            this.Status                      = Status                     ?? (VersionsURL.HasValue
+                                                                                  ? RemoteAccessStatus.ONLINE
+                                                                                  : RemoteAccessStatus.PRE_REMOTE_REGISTRATION);
 
             this.VersionsURL                 = VersionsURL;
             this.AccessToken                 = AccessToken;
@@ -268,10 +270,6 @@ namespace cloud.charging.open.protocols.OCPI
             this.InternalBufferSize          = InternalBufferSize;
             this.UseHTTPPipelining           = UseHTTPPipelining;
 
-            this.Status                      = Status                     ?? (VersionsURL.HasValue
-                                                                                  ? RemoteAccessStatus.ONLINE
-                                                                                  : RemoteAccessStatus.PRE_REMOTE_REGISTRATION);
-
             this.VersionIds                  = VersionIds?.Distinct()     ?? [];
             this.SelectedVersionId           = SelectedVersionId;
             this.NotBefore                   = NotBefore;
@@ -281,18 +279,20 @@ namespace cloud.charging.open.protocols.OCPI
             unchecked
             {
 
-                this.hashCode = (this.VersionsURL?.               GetHashCode() ?? 0) * 29 ^
-                                (this.AccessToken?.               GetHashCode() ?? 0) * 23 ^
-                                (this.AccessTokenIsBase64Encoded?.GetHashCode() ?? 0) * 19 ^
-                                (this.TOTPConfig?.                GetHashCode() ?? 0) * 17 ^
+                this.hashCode = this.Status.                     GetHashCode()       * 31 ^
 
-                                 this.Status.                     GetHashCode()       * 13 ^
+                               (this.VersionsURL?.               GetHashCode() ?? 0) * 29 ^
+                               (this.AccessToken?.               GetHashCode() ?? 0) * 27 ^
+                               (this.AccessTokenIsBase64Encoded?.GetHashCode() ?? 0) * 19 ^
+                               (this.TOTPConfig?.                GetHashCode() ?? 0) * 17 ^
 
-                                 this.VersionIds.                 CalcHashCode()      * 11 ^
-                                (this.SelectedVersionId?.         GetHashCode() ?? 0) *  7 ^
-                                (this.NotBefore?.                 GetHashCode() ?? 0) *  5 ^
-                                (this.NotAfter?.                  GetHashCode() ?? 0) *  3 ^
-                                 this.AllowDowngrades.            GetHashCode();
+                               (this.PreferIPv4?.                GetHashCode() ?? 0) * 13 ^
+
+                                this.VersionIds.                 CalcHashCode()      * 11 ^
+                               (this.SelectedVersionId?.         GetHashCode() ?? 0) *  7 ^
+                               (this.NotBefore?.                 GetHashCode() ?? 0) *  5 ^
+                               (this.NotAfter?.                  GetHashCode() ?? 0) *  3 ^
+                                this.AllowDowngrades.            GetHashCode();
 
             }
 
@@ -370,15 +370,37 @@ namespace cloud.charging.open.protocols.OCPI
                     return false;
                 }
 
-                #region Parse VersionsURL                   [mandatory]
+                // {
+                //   "clientCertificates": [
+                //     "-----BEGIN CERTIFICATE-----\n...\n-----END PRIVATE KEY-----"
+                //   ],
+                //   "status": "PRE_REMOTE_REGISTRATION",
+                //   "allowDowngrades": false
+                // }
 
-                if (!JSON.ParseMandatory("versionsURL",
-                                         "versions URL",
-                                         URL.TryParse,
-                                         out URL VersionsURL,
+                #region Parse Status                        [mandatory]
+
+                if (!JSON.ParseMandatory("status",
+                                         "remote access status",
+                                         RemoteAccessStatusExtensions.TryParse,
+                                         out RemoteAccessStatus status,
                                          out ErrorResponse))
                 {
                     return false;
+                }
+
+                #endregion
+
+                #region Parse VersionsURL                   [optional]
+
+                if (!JSON.ParseOptional("versionsURL",
+                                        "versions URL",
+                                        URL.TryParse,
+                                        out URL? versionsURL,
+                                        out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -388,7 +410,7 @@ namespace cloud.charging.open.protocols.OCPI
                 if (JSON.ParseOptional("accessToken",
                                        "access token",
                                        OCPI.AccessToken.TryParse,
-                                       out AccessToken? AccessToken,
+                                       out AccessToken? accessToken,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -401,7 +423,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (JSON.ParseOptional("accessTokenIsBase64Encoded",
                                        "access token is base64 encoded",
-                                       out Boolean? AccessTokenIsBase64Encoded,
+                                       out Boolean? accessTokenIsBase64Encoded,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -502,27 +524,12 @@ namespace cloud.charging.open.protocols.OCPI
 
                 // ...
 
-
-                #region Parse Status                        [mandatory]
-
-                if (!JSON.ParseMandatory("status",
-                                         "remote access status",
-                                         RemoteAccessStatusExtensions.TryParse,
-                                         out RemoteAccessStatus Status,
-                                         out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
-
                 #region Parse SelectedVersionId             [optional]
 
                 if (JSON.ParseOptional("selectedVersionId",
                                        "selected version identification",
                                        Version_Id.TryParse,
-                                       out Version_Id? SelectedVersionId,
+                                       out Version_Id? selectedVersionId,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -535,7 +542,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (JSON.ParseOptional("notBefore",
                                        "not before",
-                                       out DateTimeOffset? NotBefore,
+                                       out DateTimeOffset? notBefore,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -548,7 +555,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (JSON.ParseOptional("notAfter",
                                        "not after",
-                                       out DateTimeOffset? NotAfter,
+                                       out DateTimeOffset? notAfter,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -557,14 +564,15 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #endregion
 
-                #region Parse AllowDowngrades               [mandatory]
+                #region Parse AllowDowngrades               [optional]
 
-                if (!JSON.ParseMandatory("allowDowngrades",
-                                         "allow downgrades",
-                                         out Boolean AllowDowngrades,
-                                         out ErrorResponse))
+                if (!JSON.ParseOptional("allowDowngrades",
+                                        "allow downgrades",
+                                        out Boolean? allowDowngrades,
+                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -572,34 +580,34 @@ namespace cloud.charging.open.protocols.OCPI
 
                 RemoteAccessInfo = new RemoteAccessInfo(
 
-                                       VersionsURL,
-                                       AccessToken,
-                                       AccessTokenIsBase64Encoded,
+                                       status,
+
+                                       versionsURL,
+                                       accessToken,
+                                       accessTokenIsBase64Encoded,
                                        totpConfig,
 
-                                       null, //preferIPv4,
-                                       null, //remoteCertificateValidator,
-                                       null, //LocalCertificateSelector,
+                                       null, //preferIPv4
+                                       null, //remoteCertificateValidator
+                                       null, //localCertificateSelector
                                        clientCertificates,
-                                       null, //ClientCertificateContext,
+                                       null, //clientCertificateContext
                                        clientCertificateChain,
-                                       null, //TLSProtocols,
-                                       null, //ContentType,
-                                       null, //Accept,
+                                       null, //tlsProtocols
+                                       null, //contentType
+                                       null, //accept
                                        httpUserAgent,
-                                       null, //RequestTimeout,
-                                       null, //TransmissionRetryDelay,
-                                       null, //MaxNumberOfRetries,
-                                       null, //InternalBufferSize,
-                                       null, //UseHTTPPipelining,
-
-                                       Status,
+                                       null, //requestTimeout
+                                       null, //transmissionRetryDelay
+                                       null, //maxNumberOfRetries
+                                       null, //internalBufferSize
+                                       null, //useHTTPPipelining
 
                                        null, // VersionIds
-                                       SelectedVersionId,
-                                       NotBefore,
-                                       NotAfter,
-                                       AllowDowngrades
+                                       selectedVersionId,
+                                       notBefore,
+                                       notAfter,
+                                       allowDowngrades
 
                                    );
 
@@ -651,12 +659,14 @@ namespace cloud.charging.open.protocols.OCPI
 
             var json = JSONObject.Create(
 
+                                 new JProperty("status",                       Status.                          AsText()),
+
                            VersionsURL.HasValue
-                               ? new JProperty("versionsURL",                  VersionsURL.      Value.ToString())
+                               ? new JProperty("versionsURL",                  VersionsURL.               Value.ToString())
                                : null,
 
                            AccessToken.HasValue
-                               ? new JProperty("accessToken",                  AccessToken.            ToString())
+                               ? new JProperty("accessToken",                  AccessToken.                    ToString())
                                : null,
 
                            AccessTokenIsBase64Encoded.HasValue
@@ -664,36 +674,32 @@ namespace cloud.charging.open.protocols.OCPI
                                : null,
 
                            TOTPConfig is not null
-                               ? new JProperty("totpConfig",                   TOTPConfig.             ToJSON())
+                               ? new JProperty("totpConfig",                   TOTPConfig.                     ToJSON())
                                : null,
 
 
                            PreferIPv4.HasValue
-                               ? new JProperty("preferIPv4",                   PreferIPv4.       Value)
+                               ? new JProperty("preferIPv4",                   PreferIPv4.                Value)
                                : null,
 
                            ClientCertificates.Any()
                                ? new JProperty("clientCertificates",           new JArray(ClientCertificates.    Select(clientCertificate => clientCertificate.ExportCertificateAndPrivateKeyPEM())))
                                : null,
 
-                           //clientPrivateKeys.Count > 0
-                           //    ? new JProperty("clientPrivateKeys",            new JArray(clientPrivateKeys.     Select(clientPrivateKey  => clientPrivateKey. ExportPkcs8PrivateKeyPem())))
-                           //    : null,
-
                            ClientCertificateChain.Any()
                                ? new JProperty("clientCertificateChain",       new JArray(ClientCertificateChain.Select(certificate       => certificate.      ExportCertificatePem())))
                                : null,
 
                            TLSProtocols.HasValue
-                               ? new JProperty("tlsProtocols",                 TLSProtocols.     Value.ToString())
+                               ? new JProperty("tlsProtocols",                 TLSProtocols.              Value.ToString())
                                : null,
 
                            ContentType is not null
-                               ? new JProperty("contentType",                  ContentType.            ToString())
+                               ? new JProperty("contentType",                  ContentType.                     ToString())
                                : null,
 
                            Accept is not null
-                               ? new JProperty("accept",                       Accept.                 ToString())
+                               ? new JProperty("accept",                       Accept.                          ToString())
                                : null,
 
                            HTTPUserAgent.IsNotNullOrEmpty()
@@ -701,35 +707,32 @@ namespace cloud.charging.open.protocols.OCPI
                                : null,
 
                            RequestTimeout.HasValue
-                               ? new JProperty("requestTimeout",               (Int32) RequestTimeout.   Value.TotalMilliseconds)
+                               ? new JProperty("requestTimeout",               (Int32) RequestTimeout.    Value.TotalMilliseconds)
                                : null,
 
                            MaxNumberOfRetries.HasValue
-                               ? new JProperty("maxNumberOfRetries",           MaxNumberOfRetries.       Value)
+                               ? new JProperty("maxNumberOfRetries",           MaxNumberOfRetries.        Value)
                                : null,
-
-                           // ...
-
-                                 new JProperty("status",                       Status.           AsText()),
-
 
                            VersionIds.IsNeitherNullNorEmpty()
                                ? new JProperty("versionIds",                   new JArray(VersionIds.Select(versionId => versionId.ToString())))
                                : null,
 
                            SelectedVersionId.HasValue
-                               ? new JProperty("selectedVersionId",            SelectedVersionId.ToString())
+                               ? new JProperty("selectedVersionId",            SelectedVersionId.               ToString())
                                : null,
 
                            NotBefore.HasValue
-                               ? new JProperty("notBefore",                    NotBefore.Value.ToISO8601())
+                               ? new JProperty("notBefore",                    NotBefore.                 Value.ToISO8601())
                                : null,
 
                            NotAfter.HasValue
-                               ? new JProperty("notAfter",                     NotAfter. Value.ToISO8601())
+                               ? new JProperty("notAfter",                     NotAfter.                  Value.ToISO8601())
                                : null,
 
-                                 new JProperty("allowDowngrades",              AllowDowngrades)
+                           AllowDowngrades.HasValue
+                               ? new JProperty("allowDowngrades",              AllowDowngrades.           Value)
+                               : null
 
                        );
 
@@ -749,6 +752,8 @@ namespace cloud.charging.open.protocols.OCPI
         public RemoteAccessInfo Clone()
 
             => new (
+
+                   Status,
 
                    VersionsURL?.Clone(),
                    AccessToken?.Clone(),
@@ -771,8 +776,6 @@ namespace cloud.charging.open.protocols.OCPI
                    InternalBufferSize,
                    UseHTTPPipelining,
 
-                   Status,
-
                    VersionIds.Select(versionId => versionId.Clone()),
                    SelectedVersionId,
                    NotBefore,
@@ -787,6 +790,11 @@ namespace cloud.charging.open.protocols.OCPI
         public void SetRemoteCertificateValidator(RemoteTLSServerCertificateValidationHandler<IHTTPClient> RemoteCertificateValidator)
         {
             this.RemoteCertificateValidator = RemoteCertificateValidator;
+        }
+
+        public void SetClientCertificateContext(SslStreamCertificateContext ClientCertificateContext)
+        {
+            this.ClientCertificateContext = ClientCertificateContext;
         }
 
 
@@ -926,13 +934,13 @@ namespace cloud.charging.open.protocols.OCPI
             if (RemoteAccessInfo is null)
                 throw new ArgumentNullException(nameof(RemoteAccessInfo), "The given remote access information must not be null!");
 
-            var c = 0;
+            var c = Status.                          CompareTo(RemoteAccessInfo.Status);
 
             if (c == 0 && VersionsURL.               HasValue && RemoteAccessInfo.VersionsURL.               HasValue)
-                c = VersionsURL.Value.               CompareTo(RemoteAccessInfo.VersionsURL.Value);
+                c = VersionsURL.Value.               CompareTo(RemoteAccessInfo.VersionsURL.               Value);
 
             if (c == 0 && AccessToken.               HasValue && RemoteAccessInfo.AccessToken.               HasValue)
-                c = AccessToken.Value.               CompareTo(RemoteAccessInfo.AccessToken.Value);
+                c = AccessToken.Value.               CompareTo(RemoteAccessInfo.AccessToken.               Value);
 
             if (c == 0 && AccessTokenIsBase64Encoded.HasValue && RemoteAccessInfo.AccessTokenIsBase64Encoded.HasValue)
                 c = AccessTokenIsBase64Encoded.Value.CompareTo(RemoteAccessInfo.AccessTokenIsBase64Encoded.Value);
@@ -940,22 +948,17 @@ namespace cloud.charging.open.protocols.OCPI
             if (c == 0 && TOTPConfig    is not null && RemoteAccessInfo.TOTPConfig is not null)
                 c = TOTPConfig.                      CompareTo(RemoteAccessInfo.TOTPConfig);
 
+            if (c == 0 && AllowDowngrades.           HasValue && RemoteAccessInfo.AllowDowngrades.           HasValue)
+                c = AllowDowngrades.  Value.         CompareTo(RemoteAccessInfo.AllowDowngrades.           Value);
 
-            if (c == 0)
-                c = Status.                          CompareTo(RemoteAccessInfo.Status);
+            if (c == 0 && NotBefore.                 HasValue && RemoteAccessInfo.NotBefore.                 HasValue)
+                c = NotBefore.        Value.         CompareTo(RemoteAccessInfo.NotBefore.                 Value);
 
+            if (c == 0 && NotAfter.                  HasValue && RemoteAccessInfo.NotAfter.                  HasValue)
+                c = NotAfter.         Value.         CompareTo(RemoteAccessInfo.NotAfter.                  Value);
 
-            if (c == 0)
-                c = AllowDowngrades.                 CompareTo(RemoteAccessInfo.AllowDowngrades);
-
-            if (c == 0 && NotBefore.HasValue && RemoteAccessInfo.NotBefore.HasValue)
-                c = NotBefore.        Value.         CompareTo(RemoteAccessInfo.NotBefore.        Value);
-
-            if (c == 0 && NotAfter. HasValue && RemoteAccessInfo.NotAfter. HasValue)
-                c = NotAfter.         Value.         CompareTo(RemoteAccessInfo.NotAfter.         Value);
-
-            if (c == 0 && SelectedVersionId.HasValue && RemoteAccessInfo.SelectedVersionId.HasValue)
-                c = SelectedVersionId.Value.         CompareTo(RemoteAccessInfo.SelectedVersionId.Value);
+            if (c == 0 && SelectedVersionId.         HasValue && RemoteAccessInfo.SelectedVersionId.         HasValue)
+                c = SelectedVersionId.Value.         CompareTo(RemoteAccessInfo.SelectedVersionId.         Value);
 
             if (c == 0)
                 c = VersionIds.Count().              CompareTo(RemoteAccessInfo.VersionIds.Count());

@@ -257,10 +257,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     RemoteAllowDowngrades           is not null)
                         ? [
                               new RemoteAccessInfo(
+
+                                  RemoteStatus,
+
                                   null,  // We do not know the RemoteVersionsURL yet!
                                   null,  // We do not know the RemoteAccessToken yet!
                                   RemoteAccessTokenBase64Encoding,
                                   RemoteTOTPConfig,
+
                                   PreferIPv4,
                                   RemoteCertificateValidator,
                                   LocalCertificateSelector,
@@ -276,12 +280,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                   MaxNumberOfRetries,
                                   InternalBufferSize,
                                   UseHTTPPipelining,
-                                  RemoteStatus,
                                   null,  // We do not know the RemoteVersionIds yet!
                                   null,  // We do not know the SelectedVersionId yet!
                                   RemoteAccessNotBefore,
                                   RemoteAccessNotAfter,
                                   RemoteAllowDowngrades
+
                               )
                           ]
                         : [],
@@ -380,6 +384,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    [
                        new RemoteAccessInfo(
 
+                           RemoteStatus,
+
                            RemoteVersionsURL,
                            RemoteAccessToken,
                            RemoteAccessTokenBase64Encoding,
@@ -400,8 +406,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            MaxNumberOfRetries,
                            InternalBufferSize,
                            UseHTTPPipelining,
-
-                           RemoteStatus,
 
                            RemoteVersionIds,
                            SelectedVersionId,
@@ -527,6 +531,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    ],
                    [
                        new RemoteAccessInfo(
+
+                           RemoteStatus,
+
                            RemoteVersionsURL,
                            RemoteAccessToken,
                            RemoteAccessTokenBase64Encoding,
@@ -548,13 +555,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            InternalBufferSize,
                            UseHTTPPipelining,
 
-                           RemoteStatus,
-
                            RemoteVersionIds,
                            SelectedVersionId,
                            RemoteAccessNotBefore,
                            RemoteAccessNotAfter,
                            RemoteAllowDowngrades
+
                        )
                    ],
                    Status ?? PartyStatus.ENABLED,

@@ -299,7 +299,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
             await cpoCommonAPI.AddRemoteParty(
 
-                      Id:                                RemoteParty_Id.Parse(
+                      Id:                                RemoteParty_Id.From(
                                                              ptpCommonAPI.Parties.First().Id.CountryCode,
                                                              ptpCommonAPI.Parties.First().Id.Party,
                                                              ptpCommonAPI.Parties.First().Role
@@ -331,7 +331,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
             await ptpCommonAPI.AddRemoteParty(
 
-                      Id:                                RemoteParty_Id.Parse(
+                      Id:                                RemoteParty_Id.From(
                                                              cpoCommonAPI.Parties.First().Id.CountryCode,
                                                              cpoCommonAPI.Parties.First().Id.Party,
                                                              cpoCommonAPI.Parties.First().Role

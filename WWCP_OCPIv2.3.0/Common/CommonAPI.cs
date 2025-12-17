@@ -5977,7 +5977,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region Data
 
-        private readonly ConcurrentDictionary<RemoteParty_Id, RemoteParty> remoteParties = new ();
+        private readonly ConcurrentDictionary<RemoteParty_Id, RemoteParty> remoteParties = new();
 
         /// <summary>
         /// Return an enumeration of all remote parties.

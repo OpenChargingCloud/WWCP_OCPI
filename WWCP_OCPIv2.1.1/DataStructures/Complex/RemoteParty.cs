@@ -267,6 +267,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    [
                        new RemoteAccessInfo(
 
+                           RemoteStatus,
+
                            RemoteVersionsURL,
                            RemoteAccessToken,
                            RemoteAccessTokenBase64Encoding,
@@ -287,8 +289,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            MaxNumberOfRetries,
                            InternalBufferSize,
                            UseHTTPPipelining,
-
-                           RemoteStatus,
 
                            RemoteVersionIds,
                            SelectedVersionId,
@@ -373,6 +373,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    ],
                    [
                        new RemoteAccessInfo(
+
+                           RemoteStatus,
+
                            RemoteVersionsURL,
                            RemoteAccessToken,
                            RemoteAccessTokenBase64Encoding,
@@ -394,13 +397,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            InternalBufferSize,
                            UseHTTPPipelining,
 
-                           RemoteStatus,
-
                            RemoteVersionIds,
                            SelectedVersionId,
                            RemoteAccessNotBefore,
                            RemoteAccessNotAfter,
                            RemoteAllowDowngrades
+
                        )
                    ],
                    Status,

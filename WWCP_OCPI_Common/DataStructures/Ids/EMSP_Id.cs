@@ -118,25 +118,58 @@ namespace cloud.charging.open.protocols.OCPI
 
         }
 
+
+        /// <summary>
+        /// Create a new EMSP identification
+        /// </summary>
+        /// <param name="PartyId">A party identification.</param>
+        private EMSP_Id(Party_Idv3  PartyId)
+        {
+
+            this.CountryCode  = PartyId.CountryCode;
+            this.PartyId      = PartyId.Party;
+
+            unchecked
+            {
+
+                this.hashCode = this.CountryCode.GetHashCode() * 3 ^
+                                this.PartyId.    GetHashCode();
+
+            }
+
+        }
+
         #endregion
 
 
-        #region (static) Parse   (CountryCode, PartyId)
+        #region (static) From     (CountryCode, PartyId)
 
         /// <summary>
         /// Parse the given country code and party identification as an EMSP identification.
         /// </summary>
         /// <param name="CountryCode">A country code.</param>
         /// <param name="PartyId">A party identification.</param>
-        public static EMSP_Id Parse(CountryCode  CountryCode,
-                                    Party_Id     PartyId)
+        public static EMSP_Id From(CountryCode  CountryCode,
+                                   Party_Id     PartyId)
 
             => new (CountryCode,
                     PartyId);
 
         #endregion
 
-        #region (static) TryParse(CountryCode, PartyId)
+        #region (static) From     (             PartyId)
+
+        /// <summary>
+        /// Parse the given party identification as an EMSP identification.
+        /// </summary>
+        /// <param name="PartyId">A party identification.</param>
+        public static EMSP_Id From(Party_Idv3  PartyId)
+
+            => new (PartyId);
+
+        #endregion
+
+        #region (static) TryParse (CountryCode, PartyId)
 
         /// <summary>
         /// Parse the given country code and party identification as an EMSP identification.
@@ -144,18 +177,32 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="CountryCode">A country code.</param>
         /// <param name="PartyId">A party identification.</param>
         public static EMSP_Id? TryParse(CountryCode?  CountryCode,
-                                     Party_Id?     PartyId)
+                                        Party_Id?     PartyId)
 
             => CountryCode.HasValue && PartyId.HasValue
 
-                   ? Parse(CountryCode.Value,
-                           PartyId.    Value)
+                   ? From(CountryCode.Value,
+                          PartyId.    Value)
 
                    : null;
 
         #endregion
 
-        #region (static) From    (RemotePartyId)
+        #region (static) TryParse (             PartyId)
+
+        /// <summary>
+        /// Parse the given party identification as an EMSP identification.
+        /// </summary>
+        /// <param name="PartyId">A party identification.</param>
+        public static EMSP_Id? TryParse(Party_Idv3?  PartyId)
+
+            => PartyId.HasValue
+                   ? From(PartyId.Value)
+                   : null;
+
+        #endregion
+
+        #region (static) From     (RemotePartyId)
 
         /// <summary>
         /// Convert the given remote party identification into an EMSP identification.
@@ -168,7 +215,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) From    (RemoteParty)
+        #region (static) From     (RemoteParty)
 
         ///// <summary>
         ///// Convert the given remote party into an EMSP identification.
@@ -182,7 +229,7 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) Parse   (Text)
+        #region (static) Parse    (Text)
 
         /// <summary>
         /// Parse the given text as an EMSP identification.
@@ -201,7 +248,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text)
+        #region (static) TryParse (Text)
 
         /// <summary>
         /// Try to parse the given text as an EMSP identification.
@@ -219,7 +266,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text, out EMSPId)
+        #region (static) TryParse (Text, out EMSPId)
 
         /// <summary>
         /// Try to parse the given text as an EMSP identification.

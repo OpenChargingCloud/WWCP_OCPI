@@ -1405,7 +1405,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         private Int32? cachedHashCode;
 
-        private readonly Object hashSync = new ();
+        private readonly Object hashSync = new();
 
         /// <summary>
         /// Get the hash code of this object.
@@ -1515,7 +1515,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The enumeration of available connectors attached to this ChargingStation.
             /// </summary>
             [Mandatory]
-            public ConcurrentDictionary<EVSE_UId, EVSE>  EVSEs                 { get; } = new ();
+            public ConcurrentDictionary<EVSE_UId, EVSE>  EVSEs                 { get; } = new();
 
             /// <summary>
             /// The enumeration of connector identifications attached to this ChargingStation.

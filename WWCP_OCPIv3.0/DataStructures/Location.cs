@@ -2208,7 +2208,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// that make up the physical charging infrastructure of this Location.
             /// </summary>
             [Mandatory]
-            public ConcurrentDictionary<ChargingStation_Id, ChargingStation>  ChargingPool    { get; } = new ();
+            public ConcurrentDictionary<ChargingStation_Id, ChargingStation>  ChargingPool    { get; } = new();
 
             /// <summary>
             /// The optional enumeration of human-readable directions on how to reach the location.

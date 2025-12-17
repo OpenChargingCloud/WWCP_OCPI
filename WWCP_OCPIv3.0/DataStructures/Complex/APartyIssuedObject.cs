@@ -43,7 +43,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Data
 
-        protected readonly Lock patchLock = new ();
+        protected readonly Lock patchLock = new();
 
         #endregion
 
@@ -151,7 +151,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Data
 
-        protected readonly Lock patchLock = new ();
+        protected readonly Lock patchLock = new();
 
         #endregion
 
@@ -232,7 +232,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Data
 
-        protected readonly Lock patchLock = new ();
+        protected readonly Lock patchLock = new();
 
         #endregion
 

@@ -82,50 +82,42 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region EMSP #1 -> CPO #1
 
-            Assert.That(
-                    await cpo1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                              Id:                                RemoteParty_Id.Parse(
-                                                                     emsp1CommonAPI_v2_2_1.DefaultPartyId,
-                                                                     Role.EMSP
-                                                                 ),
-                              CredentialsRoles:                  [
-                                                                     emsp1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                                 ],
+            var addResult1     = await cpo1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
+                                           Id:                                RemoteParty_Id.From(
+                                                                                  emsp1CommonAPI_v2_2_1.DefaultPartyId,
+                                                                                  Role.EMSP
+                                                                              ),
+                                           CredentialsRoles:                  [
+                                                                                  emsp1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                                              ],
 
-                              LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo1__token),
-                              LocalAccessStatus:                 AccessStatus.ALLOWED,
-                              //LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
-                              LocalAccessTokenBase64Encoding:    true,
+                                           LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo1__token),
+                                           LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                           //LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
+                                           LocalAccessTokenBase64Encoding:    true,
 
-                              //RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
-                              //RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
-                              //RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
-                              //RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
-                              //SelectedVersionId:                 OCPIv2_2_1.Version.Id,
-                              //RemoteAccessTokenBase64Encoding:   true,
-                              //RemoteStatus:                      RemoteAccessStatus.ONLINE,
+                                           //RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
+                                           //RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
+                                           //RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
+                                           //RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                           //SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                           //RemoteAccessTokenBase64Encoding:   true,
+                                           //RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                              //ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
-                              //                                       ? null
-                              //                                       : null,
+                                           //ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
+                                           //                                       ? null
+                                           //                                       : null,
 
-                              Status:                            PartyStatus.ENABLED
-                          ),
-                    Is.True
-                );
+                                           Status:                            PartyStatus.ENABLED
+                                       );
+
+            Assert.That(addResult1.IsSuccess,  Is.True);
 
             #endregion
 
+            var addResult2     = await emsp1CommonAPI_v2_2_1.AddRemoteParty(
 
-
-           // var remotePartyId  = 
-           //                      
-           //                      
-           //                      
-
-            var addResult      = await emsp1CommonAPI_v2_2_1.AddRemoteParty(
-
-                                           RemoteParty_Id.Parse(
+                                           RemoteParty_Id.From(
                                                cpo1CommonAPI_v2_2_1.DefaultPartyId,
                                                Role.CPO
                                            ),
@@ -165,7 +157,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                        );
 
-            Assert.That(addResult.IsSuccess,  Is.True);
+            Assert.That(addResult2.IsSuccess,  Is.True);
 
             //     var commonClient = new OCPIv2_2_1.CommonClient(
             //
@@ -205,15 +197,15 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             //
             //                        );
 
-            var remoteParty   = addResult.Data;
-            Assert.That(remoteParty,   Is.Not.Null);
+            var remoteParty2   = addResult2.Data;
+            Assert.That(remoteParty2,   Is.Not.Null);
 
-            var commonClient  = emsp1EMSPAPI_v2_2_1?.GetCPOClient(remoteParty!.Id);
-            Assert.That(commonClient,  Is.Not.Null);
+            var commonClient2  = emsp1EMSPAPI_v2_2_1?.GetCPOClient(remoteParty2!.Id);
+            Assert.That(commonClient2,  Is.Not.Null);
 
-            var response      = await commonClient!.Register(
-                                          VersionId:  OCPIv2_2_1.Version.Id
-                                      );
+            var response       = await commonClient2!.Register(
+                                           VersionId:  OCPIv2_2_1.Version.Id
+                                       );
 
             Assert.That(response,                                                       Is.Not.Null);
             Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String);

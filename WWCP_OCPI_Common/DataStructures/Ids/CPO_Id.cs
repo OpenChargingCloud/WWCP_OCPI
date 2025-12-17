@@ -118,25 +118,58 @@ namespace cloud.charging.open.protocols.OCPI
 
         }
 
+
+        /// <summary>
+        /// Create a new CPO identification
+        /// </summary>
+        /// <param name="PartyId">A party identification.</param>
+        private CPO_Id(Party_Idv3  PartyId)
+        {
+
+            this.CountryCode  = PartyId.CountryCode;
+            this.PartyId      = PartyId.Party;
+
+            unchecked
+            {
+
+                this.hashCode = this.CountryCode.GetHashCode() * 3 ^
+                                this.PartyId.    GetHashCode();
+
+            }
+
+        }
+
         #endregion
 
 
-        #region (static) Parse   (CountryCode, PartyId)
+        #region (static) From     (CountryCode, PartyId)
 
         /// <summary>
         /// Parse the given country code and party identification as a CPO identification.
         /// </summary>
         /// <param name="CountryCode">A country code.</param>
         /// <param name="PartyId">A party identification.</param>
-        public static CPO_Id Parse(CountryCode  CountryCode,
-                                   Party_Id     PartyId)
+        public static CPO_Id From(CountryCode  CountryCode,
+                                  Party_Id     PartyId)
 
             => new (CountryCode,
                     PartyId);
 
         #endregion
 
-        #region (static) TryParse(CountryCode, PartyId)
+        #region (static) From     (             PartyId)
+
+        /// <summary>
+        /// Parse the given party identification as a CPO identification.
+        /// </summary>
+        /// <param name="PartyId">A party identification.</param>
+        public static CPO_Id From(Party_Idv3  PartyId)
+
+            => new (PartyId);
+
+        #endregion
+
+        #region (static) TryParse (CountryCode, PartyId)
 
         /// <summary>
         /// Parse the given country code and party identification as a CPO identification.
@@ -148,14 +181,28 @@ namespace cloud.charging.open.protocols.OCPI
 
             => CountryCode.HasValue && PartyId.HasValue
 
-                   ? Parse(CountryCode.Value,
-                           PartyId.    Value)
+                   ? From(CountryCode.Value,
+                          PartyId.    Value)
 
                    : null;
 
         #endregion
 
-        #region (static) From    (RemotePartyId)
+        #region (static) TryParse (             PartyId)
+
+        /// <summary>
+        /// Parse the given party identification as a CPO identification.
+        /// </summary>
+        /// <param name="PartyId">A party identification.</param>
+        public static CPO_Id? TryParse(Party_Idv3?  PartyId)
+
+            => PartyId.HasValue
+                   ? From(PartyId.Value)
+                   : null;
+
+        #endregion
+
+        #region (static) From     (RemotePartyId)
 
         /// <summary>
         /// Convert the given remote party identification into a CPO identification.
@@ -168,7 +215,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) From    (RemoteParty)
+        #region (static) From     (RemoteParty)
 
         ///// <summary>
         ///// Convert the given remote party into a CPO identification.
@@ -182,7 +229,7 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) Parse   (Text)
+        #region (static) Parse    (Text)
 
         /// <summary>
         /// Parse the given text as a CPO identification.
@@ -201,7 +248,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text)
+        #region (static) TryParse (Text)
 
         /// <summary>
         /// Try to parse the given text as a CPO identification.
@@ -219,7 +266,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text, out CPOId)
+        #region (static) TryParse (Text, out CPOId)
 
         /// <summary>
         /// Try to parse the given text as a CPO identification.

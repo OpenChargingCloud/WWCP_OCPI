@@ -304,9 +304,9 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         #region Data
 
-        private   readonly DNSClient    DNSClient           = new (SearchForIPv6DNSServers: false);
+        protected readonly DNSClient    DNSClient           = new (SearchForIPv6DNSServers: false);
 
-        private   readonly TimeSpan?    TOTPValidityTime    = TOTPValidityTime;
+        protected readonly TimeSpan?    TOTPValidityTime    = TOTPValidityTime;
 
         protected const    String       UnknownToken        = "UnknownUnknownUnknownToken";
 
@@ -1511,8 +1511,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             cpo1CommonHTTPAPI  = new CommonHTTPAPI(
 
                                      HTTPAPI:                     cpo1HTTPAPI,
-                                     OurBaseURL:                  URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi"),
-                                     OurVersionsURL:              URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                                     OurBaseURL:                  URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo1HTTPServer.TCPPort}/ocpi"),
+                                     OurVersionsURL:              URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
 
                                      Hostnames:                   null,
                                      RootPath:                    HTTPPath.Parse("/ocpi"),
@@ -1560,8 +1560,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             cpo2CommonHTTPAPI  = new CommonHTTPAPI(
 
                                      HTTPAPI:                   cpo2HTTPAPI,
-                                     OurBaseURL:                URL.Parse("http://localhost:3202/ocpi"),
-                                     OurVersionsURL:            URL.Parse("http://localhost:3202/ocpi/versions"),
+                                     OurBaseURL:                URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:3202/ocpi"),
+                                     OurVersionsURL:            URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:3202/ocpi/versions"),
 
                                      Hostnames:                 null,
                                      RootPath:                  HTTPPath.Parse("/ocpi"),
@@ -1609,8 +1609,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             emsp1CommonHTTPAPI = new CommonHTTPAPI(
 
                                      HTTPAPI:                   emsp1HTTPAPI,
-                                     OurBaseURL:                URL.Parse("http://localhost:3401/ocpi"),
-                                     OurVersionsURL:            URL.Parse("http://localhost:3401/ocpi/versions"),
+                                     OurBaseURL:                URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:3401/ocpi"),
+                                     OurVersionsURL:            URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:3401/ocpi/versions"),
 
                                      Hostnames:                 null,
                                      RootPath:                  HTTPPath.Parse("/ocpi"),
@@ -1658,8 +1658,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             emsp2CommonHTTPAPI = new CommonHTTPAPI(
 
                                      HTTPAPI:                   emsp2HTTPAPI,
-                                     OurBaseURL:                URL.Parse("http://localhost:3402/ocpi"),
-                                     OurVersionsURL:            URL.Parse("http://localhost:3402/ocpi/versions"),
+                                     OurBaseURL:                URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:3402/ocpi"),
+                                     OurVersionsURL:            URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:3402/ocpi/versions"),
 
                                      Hostnames:                 null,
                                      RootPath:                  HTTPPath.Parse("/ocpi"),
@@ -3047,7 +3047,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 #region CPO #1 -> EMSP #1
 
                 var cpo1_2_emsp1        = await cpo1CommonHTTPAPI.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            emsp1CommonAPI_v2_2_1.DefaultPartyId,
                                                                                            Role.EMSP
                                                                                        ),
@@ -3153,7 +3153,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 var cpo1_2_emsp1_v2_2_1 = await cpo1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            emsp1CommonAPI_v2_2_1.DefaultPartyId,
                                                                                            Role.EMSP
                                                                                        ),
@@ -3209,7 +3209,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 var cpo1_2_emsp1_v2_3_0 = await cpo1CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            emsp1CommonAPI_v2_3_0.DefaultPartyId,
                                                                                            Role.EMSP
                                                                                        ),
@@ -3321,7 +3321,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 var cpo1_2_emsp2_v2_2_1 = await cpo1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            emsp2CommonAPI_v2_2_1.DefaultPartyId,
                                                                                            Role.EMSP
                                                                                        ),
@@ -3377,7 +3377,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 var cpo1_2_emsp2_v2_3_0 = await cpo1CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            emsp2CommonAPI_v2_3_0.DefaultPartyId,
                                                                                            Role.EMSP
                                                                                        ),
@@ -3490,7 +3490,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 var cpo2_2_emsp1_v2_2_1 = await cpo2CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            emsp1CommonAPI_v2_2_1.DefaultPartyId,
                                                                                            Role.EMSP
                                                                                        ),
@@ -3546,7 +3546,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 var cpo2_2_emsp1_v2_3_0 = await cpo2CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            emsp1CommonAPI_v2_3_0.DefaultPartyId,
                                                                                            Role.EMSP
                                                                                        ),
@@ -3658,7 +3658,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 var cpo2_2_emsp2_v2_2_1 = await cpo2CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            emsp2CommonAPI_v2_2_1.DefaultPartyId,
                                                                                            Role.EMSP
                                                                                        ),
@@ -3714,7 +3714,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 var cpo2_2_emsp2_v2_3_0 = await cpo2CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            emsp2CommonAPI_v2_3_0.DefaultPartyId,
                                                                                            Role.EMSP
                                                                                        ),
@@ -3827,7 +3827,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 var emsp1_2_cpo1_v2_2_1 = await emsp1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            cpo1CommonAPI_v2_2_1.DefaultPartyId,
                                                                                            Role.CPO
                                                                                        ),
@@ -3882,7 +3882,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 var emsp1_2_cpo1_v2_3_0 = await emsp1CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            cpo1CommonAPI_v2_3_0.DefaultPartyId,
                                                                                            Role.CPO
                                                                                        ),
@@ -3993,7 +3993,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 var emsp1_2_cpo2_v2_2_1 = await emsp1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            cpo2CommonAPI_v2_2_1.DefaultPartyId,
                                                                                            Role.CPO
                                                                                        ),
@@ -4048,7 +4048,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 var emsp1_2_cpo2_v2_3_0 = await emsp1CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            cpo2CommonAPI_v2_3_0.DefaultPartyId,
                                                                                            Role.CPO
                                                                                        ),
@@ -4160,7 +4160,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 var emsp2_2_cpo1_v2_2_1 = await emsp2CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            cpo1CommonAPI_v2_2_1.DefaultPartyId,
                                                                                            Role.CPO
                                                                                        ),
@@ -4215,7 +4215,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 var emsp2_2_cpo1_v2_3_0 = await emsp2CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            cpo1CommonAPI_v2_3_0.DefaultPartyId,
                                                                                            Role.CPO
                                                                                        ),
@@ -4326,7 +4326,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 var emsp2_2_cpo2_v2_2_1 = await emsp2CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            cpo2CommonAPI_v2_2_1.DefaultPartyId,
                                                                                            Role.CPO
                                                                                        ),
@@ -4381,7 +4381,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 var emsp2_2_cpo2_v2_3_0 = await emsp2CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.Parse(
+                                                    Id:                                RemoteParty_Id.From(
                                                                                            cpo2CommonAPI_v2_3_0.DefaultPartyId,
                                                                                            Role.CPO
                                                                                        ),

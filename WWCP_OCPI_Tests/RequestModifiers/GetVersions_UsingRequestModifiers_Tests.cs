@@ -167,7 +167,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
             var emsp1RemoteParty_AtCPO1         = cpo1CommonHTTPAPI.GetRemoteParty(
-                                                      RemoteParty_Id.Parse(
+                                                      RemoteParty_Id.From(
                                                           emsp1CommonAPI_v2_2_1.DefaultPartyId,
                                                           Role.EMSP
                                                       )
@@ -190,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
             var emsp1RemoteParty_AtCPO1_v2_2_1  = cpo1CommonAPI_v2_2_1.GetRemoteParty(
-                                                      RemoteParty_Id.Parse(
+                                                      RemoteParty_Id.From(
                                                           emsp1CommonAPI_v2_2_1.DefaultPartyId,
                                                           Role.EMSP
                                                       )

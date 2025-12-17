@@ -3823,7 +3823,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     // The EMSP Id of the CDR might be different from the remote party identification,
                     // e.g. when the remote party is a hub!
-                    var realEMSPId    = EMSP_Id.Parse(
+                    var realEMSPId    = EMSP_Id.From(
                                             CDR.CountryCode,
                                             CDR.PartyId
                                         );

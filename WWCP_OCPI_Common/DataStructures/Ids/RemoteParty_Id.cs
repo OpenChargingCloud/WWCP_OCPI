@@ -143,23 +143,7 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) Parse   (PartyIdv3,            Role)
-
-        /// <summary>
-        /// Parse the given party identification and role as a remote party identification.
-        /// </summary>
-        /// <param name="PartyIdv3">A party identification.</param>
-        /// <param name="Role">A party role.</param>
-        public static RemoteParty_Id Parse(Party_Idv3  PartyIdv3,
-                                           Role        Role)
-
-            => new (PartyIdv3.CountryCode,
-                    PartyIdv3.Party,
-                    Role);
-
-        #endregion
-
-        #region (static) Parse   (CountryCode, PartyId, Role)
+        #region (static) From (CountryCode, PartyId,   Role)
 
         /// <summary>
         /// Parse the given country code, party identification and role as a remote party identification.
@@ -167,9 +151,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="CountryCode">A country code.</param>
         /// <param name="PartyId">A party identification.</param>
         /// <param name="Role">A party role.</param>
-        public static RemoteParty_Id Parse(CountryCode  CountryCode,
-                                           Party_Id     PartyId,
-                                           Role         Role)
+        public static RemoteParty_Id From(CountryCode  CountryCode,
+                                          Party_Id     PartyId,
+                                          Role         Role)
 
             => new (CountryCode,
                     PartyId,
@@ -177,7 +161,23 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) From    (CPOId)
+        #region (static) From (             PartyIdv3, Role)
+
+        /// <summary>
+        /// Parse the given party identification and role as a remote party identification.
+        /// </summary>
+        /// <param name="PartyIdv3">A party identification.</param>
+        /// <param name="Role">A party role.</param>
+        public static RemoteParty_Id From(Party_Idv3  PartyIdv3,
+                                          Role        Role)
+
+            => new (PartyIdv3.CountryCode,
+                    PartyIdv3.Party,
+                    Role);
+
+        #endregion
+
+        #region (static) From (CPOId)
 
         /// <summary>
         /// Convert the given CPO identification into a remote party identification.
@@ -191,7 +191,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) From    (EMSPId)
+        #region (static) From (EMSPId)
 
         /// <summary>
         /// Convert the given EMSP identification into a remote party identification.
@@ -205,7 +205,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) From    (PTPId)
+        #region (static) From (PTPId)
 
         /// <summary>
         /// Convert the given PTP identification into a remote party identification.
@@ -234,7 +234,7 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) Parse   (Text)
+        #region (static) Parse    (Text)
 
         /// <summary>
         /// Parse the given text as a remote party identification.
@@ -253,7 +253,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text)
+        #region (static) TryParse (Text)
 
         /// <summary>
         /// Try to parse the given text as a remote party identification.
@@ -271,7 +271,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text, out RemotePartyId)
+        #region (static) TryParse (Text, out RemotePartyId)
 
         /// <summary>
         /// Try to parse the given text as a remote party identification.
@@ -330,9 +330,6 @@ namespace cloud.charging.open.protocols.OCPI
                );
 
         #endregion
-
-
-        
 
 
         #region Operator overloading
