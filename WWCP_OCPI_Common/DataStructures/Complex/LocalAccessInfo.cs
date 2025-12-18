@@ -334,7 +334,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomLocalAccessInfoSerializer">A delegate to serialize custom local access information JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<LocalAccessInfo>? CustomLocalAccessInfoSerializer = null)
+        /// <param name="CustomTOTPConfigSerializerDelegate">A delegate to serialize custom TOTP configuration JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<LocalAccessInfo>?  CustomLocalAccessInfoSerializer      = null,
+                              CustomJObjectSerializerDelegate<TOTPConfig>?       CustomTOTPConfigSerializerDelegate   = null)
         {
 
             var json = JSONObject.Create(
@@ -343,7 +345,7 @@ namespace cloud.charging.open.protocols.OCPI
                                  new JProperty("status",                       Status.         AsText()),
 
                            TOTPConfig is not null
-                               ? new JProperty("totpConfig",                   TOTPConfig.     ToJSON())
+                               ? new JProperty("totpConfig",                   TOTPConfig.     ToJSON(CustomTOTPConfigSerializerDelegate))
                                : null,
 
                            NotBefore.HasValue

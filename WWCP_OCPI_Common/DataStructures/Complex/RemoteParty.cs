@@ -607,7 +607,7 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) Parse   (JSON, CustomRemotePartyParser = null)
+        #region (static) Parse    (JSON, CustomRemotePartyParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of a remote party.
@@ -633,7 +633,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(JSON, out RemoteParty, out ErrorResponse, CustomRemotePartyParser = null)
+        #region (static) TryParse (JSON, out RemoteParty, out ErrorResponse, CustomRemotePartyParser = null)
 
         /// <summary>
         /// Try to parse the given JSON representation of a remote party.
@@ -805,9 +805,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="JSONLDContext">Whether to add a JSON-LD @context property, e.g. when this data is embedded into another data structure.</param>
         /// <param name="CustomLocalAccessInfoSerializer">A delegate to serialize custom local access information JSON objects.</param>
         /// <param name="CustomRemoteAccessInfoSerializer">A delegate to serialize custom remote access information JSON objects.</param>
+        /// <param name="CustomTOTPConfigSerializerDelegate">A delegate to serialize custom TOTP configuration JSON objects.</param>
         public JObject ToJSON(JSONLDContext?                                      JSONLDContext,
                               CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer,
-                              CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer)
+                              CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer,
+                              CustomJObjectSerializerDelegate<TOTPConfig>?        CustomTOTPConfigSerializerDelegate   = null)
         {
 
             var json = JSONObject.Create(
@@ -821,11 +823,17 @@ namespace cloud.charging.open.protocols.OCPI
                                  new JProperty("partyStatus",         Status.       AsText()),
 
                            localAccessInfos. Count != 0
-                               ? new JProperty("localAccessInfos",    new JArray(localAccessInfos.  Select(localAccessInfo   => localAccessInfo.  ToJSON(CustomLocalAccessInfoSerializer))))
+                               ? new JProperty("localAccessInfos",    new JArray(localAccessInfos.  Select(localAccessInfo   => localAccessInfo.  ToJSON(
+                                                                                                                                    CustomLocalAccessInfoSerializer,
+                                                                                                                                    CustomTOTPConfigSerializerDelegate
+                                                                                                                                ))))
                                : null,
 
                            remoteAccessInfos.Count != 0
-                               ? new JProperty("remoteAccessInfos",   new JArray(remoteAccessInfos. Select(remoteAccessInfo  => remoteAccessInfo. ToJSON(CustomRemoteAccessInfoSerializer))))
+                               ? new JProperty("remoteAccessInfos",   new JArray(remoteAccessInfos. Select(remoteAccessInfo  => remoteAccessInfo. ToJSON(
+                                                                                                                                    CustomRemoteAccessInfoSerializer,
+                                                                                                                                    CustomTOTPConfigSerializerDelegate
+                                                                                                                                ))))
                                : null,
 
                                  new JProperty("created",             Created.      ToISO8601()),

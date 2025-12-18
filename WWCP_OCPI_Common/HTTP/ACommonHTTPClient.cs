@@ -102,19 +102,25 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         /// <param name="VersionsURL">The remote URL of the OCPI versions endpoint to connect to.</param>
         /// <param name="AccessToken">The optional OCPI access token.</param>
+        /// <param name="AccessTokenIsBase64Encoded">Whether the access token is Base64 encoded.</param>
         /// <param name="TOTPConfig">An optional TOTP configuration for 2nd factor authentication.</param>
         /// 
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this client.</param>
+        /// <param name="MaxNumberOfPooledClients">An optional maximum number of pooled HTTP clients.</param>
         /// <param name="PreferIPv4">Prefer IPv4 instead of IPv6.</param>
         /// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
         /// <param name="LocalCertificateSelector">A delegate to select a TLS client certificate.</param>
         /// <param name="ClientCertificates">An optional enumeration of TLS client certificates to use for HTTP authentication.</param>
+        /// <param name="ClientCertificateContext">An optional TLS client certificate context.</param>
+        /// <param name="ClientCertificateChain">An optional TLS client certificate chain.</param>
         /// <param name="TLSProtocols">The TLS protocol to use.</param>
-        /// <param name="ContentType">An optional HTTP content type.</param>
-        /// <param name="Accept">The optional HTTP accept header.</param>
+        /// 
         /// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
+        /// <param name="Accept">The optional HTTP accept header.</param>
+        /// <param name="ContentType">An optional HTTP content type.</param>
         /// <param name="Connection">The optional HTTP connection type.</param>
+        /// 
         /// <param name="RequestTimeout">An optional request timeout.</param>
         /// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
         /// <param name="MaxNumberOfRetries">An optional maximum number of transmission retries for HTTP request.</param>
@@ -122,9 +128,6 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="UseHTTPPipelining">Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.</param>
         /// <param name="DisableLogging">Whether to disable all logging.</param>
         /// <param name="HTTPLogger">An optional delegate to log HTTP(S) requests and responses.</param>
-        /// <param name="LoggingPath">An optional path for logging.</param>
-        /// <param name="LoggingContext">An optional context for logging.</param>
-        /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
         public ACommonHTTPClient(URL                                                        VersionsURL,
                                  AccessToken?                                               AccessToken                  = null,
@@ -193,112 +196,110 @@ namespace cloud.charging.open.protocols.OCPI
 
             this.newHTTPClient      = new HTTPTestClient(
 
-                                          URL:                              RemoteURL,
-                                          Description:                      Description,
+                                          URL:                                   this.RemoteURL,
+                                          Description:                           this.Description,
 
-                                          HTTPUserAgent:                    HTTPUserAgent,
-                                          Accept:                           ocpiAcceptTypes,
-                                          ContentType:                      ocpiContentType,
-                                          Connection:                       Connection ?? ConnectionType.KeepAlive,
-                                          DefaultRequestBuilder:            () => new HTTPRequest.Builder(this, CancellationToken.None) {
-                                                                                      Host         = RemoteURL.Hostname,
-                                                                                      Accept       = ocpiAcceptTypes,
-                                                                                      ContentType  = ocpiContentType,
-                                                                                      UserAgent    = this.HTTPUserAgent ?? DefaultHTTPUserAgent,
-                                                                                      Connection   = Connection ?? ConnectionType.KeepAlive
-                                                                                  },
+                                          HTTPUserAgent:                         this.HTTPUserAgent,
+                                          Accept:                                ocpiAcceptTypes,
+                                          ContentType:                           ocpiContentType,
+                                          Connection:                            this.Connection ?? ConnectionType.KeepAlive,
+                                          DefaultRequestBuilder:                 () => new HTTPRequest.Builder(this, CancellationToken.None) {
+                                                                                           Host         = this.RemoteURL.Hostname,
+                                                                                           Accept       = ocpiAcceptTypes,
+                                                                                           ContentType  = ocpiContentType,
+                                                                                           UserAgent    = this.HTTPUserAgent ?? DefaultHTTPUserAgent,
+                                                                                           Connection   = this.Connection    ?? ConnectionType.KeepAlive
+                                                                                       },
 
-                                          RemoteCertificateValidator:       RemoteCertificateValidator is not null
-                                                                                ? (sender,
-                                                                                   certificate,
-                                                                                   certificateChain,
-                                                                                   httpTestClient,
-                                                                                   policyErrors) => RemoteCertificateValidator.Invoke(
-                                                                                                        sender,
-                                                                                                        certificate,
-                                                                                                        certificateChain,
-                                                                                                        this,
-                                                                                                        policyErrors
-                                                                                                    )
-                                                                                :  null,
-                                          LocalCertificateSelector:         LocalCertificateSelector,
-                                          ClientCertificates:               ClientCertificates,
-                                          ClientCertificateContext:         ClientCertificateContext,
-                                          ClientCertificateChain:           ClientCertificateChain,
-                                          TLSProtocols:                     TLSProtocols,
-                                          CertificateRevocationCheckMode:   X509RevocationMode.NoCheck,
-                                          ApplicationProtocols:             null,
-                                          AllowRenegotiation:               null,
-                                          AllowTLSResume:                   null,
-                                          //TOTPConfig:                       TOTPConfig,
+                                          RemoteCertificateValidator:            this.RemoteCertificateValidator is not null
+                                                                                     ? (sender,
+                                                                                        certificate,
+                                                                                        certificateChain,
+                                                                                        httpTestClient,
+                                                                                        policyErrors) => this.RemoteCertificateValidator.Invoke(
+                                                                                                             sender,
+                                                                                                             certificate,
+                                                                                                             certificateChain,
+                                                                                                             this,
+                                                                                                             policyErrors
+                                                                                                         )
+                                                                                     :  null,
+                                          LocalCertificateSelector:              this.LocalCertificateSelector,
+                                          ClientCertificates:                    this.ClientCertificates,
+                                          ClientCertificateContext:              this.ClientCertificateContext,
+                                          ClientCertificateChain:                this.ClientCertificateChain,
+                                          TLSProtocols:                          this.TLSProtocols,
+                                          CertificateRevocationCheckMode:        X509RevocationMode.NoCheck,
+                                          ApplicationProtocols:                  null,
+                                          AllowRenegotiation:                    null,
+                                          AllowTLSResume:                        null,
+                                          //TOTPConfig:                            TOTPConfig,
 
-                                          ConsumeRequestChunkedTEImmediately:   true,
-                                          ConsumeResponseChunkedTEImmediately:  true,
+                                          ConsumeRequestChunkedTEImmediately:    true,
+                                          ConsumeResponseChunkedTEImmediately:   true,
 
-                                          PreferIPv4:                       PreferIPv4,
-                                          ConnectTimeout:                   null,
-                                          ReceiveTimeout:                   null,
-                                          SendTimeout:                      null,
-                                          BufferSize:                       null,
+                                          PreferIPv4:                            this.PreferIPv4,
+                                          ConnectTimeout:                        null,
+                                          ReceiveTimeout:                        null,
+                                          SendTimeout:                           null,
+                                          BufferSize:                            null,
 
-                                          DNSClient:                        DNSClient
+                                          DNSClient:                             this.DNSClient
 
                                       );
 
             this.httpClientPool     = new HTTPClientPool(
 
-                                          URL:                              RemoteURL,
-                                          Description:                      Description,
+                                          URL:                                   this.RemoteURL,
+                                          Description:                           this.Description,
 
-                                          HTTPUserAgent:                    HTTPUserAgent,
-                                          Accept:                           ocpiAcceptTypes,
-                                          ContentType:                      ocpiContentType,
-                                          Connection:                       Connection ?? ConnectionType.KeepAlive,
-                                          DefaultRequestBuilder:            () => new HTTPRequest.Builder(this, CancellationToken.None) {
-                                                                                      Host         = RemoteURL.Hostname,
-                                                                                      Accept       = ocpiAcceptTypes,
-                                                                                      ContentType  = ocpiContentType,
-                                                                                      UserAgent    = this.HTTPUserAgent ?? DefaultHTTPUserAgent,
-                                                                                      Connection   = Connection ?? ConnectionType.KeepAlive
-                                                                                  },
+                                          HTTPUserAgent:                         this.HTTPUserAgent,
+                                          Accept:                                ocpiAcceptTypes,
+                                          ContentType:                           ocpiContentType,
+                                          Connection:                            this.Connection ?? ConnectionType.KeepAlive,
+                                          DefaultRequestBuilder:                 () => new HTTPRequest.Builder(this, CancellationToken.None) {
+                                                                                           Host         = this.RemoteURL.Hostname,
+                                                                                           Accept       = ocpiAcceptTypes,
+                                                                                           ContentType  = ocpiContentType,
+                                                                                           UserAgent    = this.HTTPUserAgent ?? DefaultHTTPUserAgent,
+                                                                                           Connection   = this.Connection    ?? ConnectionType.KeepAlive
+                                                                                       },
 
-                                          RemoteCertificateValidator:       RemoteCertificateValidator is not null
-                                                                                ? (sender,
-                                                                                   certificate,
-                                                                                   certificateChain,
-                                                                                   httpTestClient,
-                                                                                   policyErrors) => RemoteCertificateValidator.Invoke(
-                                                                                                        sender,
-                                                                                                        certificate,
-                                                                                                        certificateChain,
-                                                                                                        this,
-                                                                                                        policyErrors
-                                                                                                    )
-                                                                                :  null,
-                                          LocalCertificateSelector:         LocalCertificateSelector,
-                                          ClientCertificates:               ClientCertificates,
-                                          ClientCertificateContext:         ClientCertificateContext,
-                                          ClientCertificateChain:           ClientCertificateChain,
-                                          TLSProtocols:                     TLSProtocols,
-                                          CertificateRevocationCheckMode:   X509RevocationMode.NoCheck,
-                                          ApplicationProtocols:             null,
-                                          AllowRenegotiation:               null,
-                                          AllowTLSResume:                   null,
-                                          //TOTPConfig:                       TOTPConfig,
+                                          RemoteCertificateValidator:            this.RemoteCertificateValidator is not null
+                                                                                     ? (sender,
+                                                                                        certificate,
+                                                                                        certificateChain,
+                                                                                        httpTestClient,
+                                                                                        policyErrors) => this.RemoteCertificateValidator.Invoke(
+                                                                                                             sender,
+                                                                                                             certificate,
+                                                                                                             certificateChain,
+                                                                                                             this,
+                                                                                                             policyErrors
+                                                                                                         )
+                                                                                     :  null,
+                                          LocalCertificateSelector:              this.LocalCertificateSelector,
+                                          ClientCertificates:                    this.ClientCertificates,
+                                          ClientCertificateContext:              this.ClientCertificateContext,
+                                          ClientCertificateChain:                this.ClientCertificateChain,
+                                          TLSProtocols:                          this.TLSProtocols,
+                                          CertificateRevocationCheckMode:        X509RevocationMode.NoCheck,
+                                          ApplicationProtocols:                  null,
+                                          AllowRenegotiation:                    null,
+                                          AllowTLSResume:                        null,
+                                          //TOTPConfig:                            TOTPConfig,
 
-                                          MaxNumberOfClients:               MaxNumberOfPooledClients ?? 6,
+                                          MaxNumberOfClients:                    MaxNumberOfPooledClients ?? 6,
 
-                                          PreferIPv4:                       PreferIPv4,
-                                          ConnectTimeout:                   null,
-                                          ReceiveTimeout:                   null,
-                                          SendTimeout:                      null,
-                                          BufferSize:                       null,
+                                          PreferIPv4:                            this.PreferIPv4,
+                                          ConnectTimeout:                        null,
+                                          ReceiveTimeout:                        null,
+                                          SendTimeout:                           null,
+                                          BufferSize:                            null,
 
-                                          DNSClient:                        DNSClient
+                                          DNSClient:                             this.DNSClient
 
                                       );
-
-
 
         }
 

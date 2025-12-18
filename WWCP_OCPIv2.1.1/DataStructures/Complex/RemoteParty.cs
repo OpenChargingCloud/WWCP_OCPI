@@ -686,12 +686,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomLocalAccessInfoSerializer">A delegate to serialize custom local access information JSON objects.</param>
         /// <param name="CustomRemoteAccessInfoSerializer">A delegate to serialize custom remote access information JSON objects.</param>
+        /// <param name="CustomTOTPConfigSerializerDelegate">A delegate to serialize custom TOTP configuration JSON objects.</param>
         public JObject ToJSON(Boolean                                             Embedded,
-                              CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer        = null,
-                              CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
-                              CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
-                              CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
-                              CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null)
+                              CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer          = null,
+                              CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer      = null,
+                              CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer                = null,
+                              CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer      = null,
+                              CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer     = null,
+                              CustomJObjectSerializerDelegate<TOTPConfig>?        CustomTOTPConfigSerializerDelegate   = null)
         {
 
             var json = JSONObject.Create(
@@ -708,16 +710,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                  new JProperty("partyStatus",         Status.              ToString()),
 
                            BusinessDetails is not null
-                               ? new JProperty("businessDetails",     BusinessDetails.     ToJSON(CustomBusinessDetailsSerializer,
-                                                                                                  CustomImageSerializer))
+                               ? new JProperty("businessDetails",     BusinessDetails.     ToJSON(
+                                                                                               CustomBusinessDetailsSerializer,
+                                                                                               CustomImageSerializer
+                                                                                           ))
                                : null,
 
                            localAccessInfos. Count != 0
-                               ? new JProperty("localAccessInfos",    new JArray(localAccessInfos. Select(localAccessInfo  => localAccessInfo. ToJSON(CustomLocalAccessInfoSerializer))))
+                               ? new JProperty("localAccessInfos",    new JArray(localAccessInfos. Select(localAccessInfo  => localAccessInfo. ToJSON(
+                                                                                                                                  CustomLocalAccessInfoSerializer,
+                                                                                                                                  CustomTOTPConfigSerializerDelegate
+                                                                                                                              ))))
                                : null,
 
                            remoteAccessInfos.Count != 0
-                               ? new JProperty("remoteAccessInfos",   new JArray(remoteAccessInfos.Select(remoteAccessInfo => remoteAccessInfo.ToJSON(CustomRemoteAccessInfoSerializer))))
+                               ? new JProperty("remoteAccessInfos",   new JArray(remoteAccessInfos.Select(remoteAccessInfo => remoteAccessInfo.ToJSON(
+                                                                                                                                  CustomRemoteAccessInfoSerializer,
+                                                                                                                                  CustomTOTPConfigSerializerDelegate
+                                                                                                                              ))))
                                : null,
 
                                  new JProperty("created",             Created.             ToISO8601()),

@@ -454,7 +454,7 @@ namespace cloud.charging.open.protocols.OCPI
                 var clientCertificates = new List<X509Certificate2>();
 
                 if (JSON.ParseOptionalTexts("clientCertificates",
-                                            "remote TLS client certificates with private keys (PEM)",
+                                            "TLS client certificates with private keys (PEM)",
                                             out IEnumerable<String> clientCertificatesPEM,
                                             out ErrorResponse))
                 {
@@ -464,14 +464,19 @@ namespace cloud.charging.open.protocols.OCPI
 
                     try
                     {
-                        foreach (var clientCertPEM in clientCertificatesPEM)
+                        foreach (var clientCertificatePEM in clientCertificatesPEM)
                         {
-                            clientCertificates.Add(X509CertificateLoader.LoadCertificate(clientCertPEM.ToUTF8Bytes()));
+                            clientCertificates.Add(
+                                X509Certificate2.CreateFromPem(
+                                    clientCertificatePEM,
+                                    clientCertificatePEM
+                                )
+                            );
                         }
                     }
                     catch (Exception e)
                     {
-                        ErrorResponse = "The given remote TLS client certificate chain is invalid: " + e.Message;
+                        ErrorResponse = "The given remote TLS client certificate is invalid: " + e.Message;
                         return false;
                     }
 
@@ -484,7 +489,7 @@ namespace cloud.charging.open.protocols.OCPI
                 var clientCertificateChain = new List<X509Certificate2>();
 
                 if (JSON.ParseOptionalTexts("clientCertificateChain",
-                                            "remote TLS client certificate chain (PEM)",
+                                            "TLS client certificate chain (PEM)",
                                             out IEnumerable<String> clientCertificateChainPEM,
                                             out ErrorResponse))
                 {
@@ -496,7 +501,11 @@ namespace cloud.charging.open.protocols.OCPI
                     {
                         foreach (var certificatePEM in clientCertificateChainPEM)
                         {
-                            clientCertificateChain.Add(X509CertificateLoader.LoadCertificate(certificatePEM.ToUTF8Bytes()));
+                            clientCertificateChain.Add(
+                                X509CertificateLoader.LoadCertificate(
+                                    certificatePEM.ToUTF8Bytes()
+                                )
+                            );
                         }
                     }
                     catch (Exception e)
@@ -505,6 +514,20 @@ namespace cloud.charging.open.protocols.OCPI
                         return false;
                     }
 
+                }
+
+                #endregion
+
+                #region Parse TLSProtocols                  [optional]
+
+                if (JSON.ParseOptionalJSONArray("tlsProtocols",
+                                                "TLS protocols",
+                                                TLSProtocolsExtensions.TryParseJSON,
+                                                out SslProtocols? tlsProtocols,
+                                                out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -593,7 +616,7 @@ namespace cloud.charging.open.protocols.OCPI
                                        clientCertificates,
                                        null, //clientCertificateContext
                                        clientCertificateChain,
-                                       null, //tlsProtocols
+                                       tlsProtocols,
                                        null, //contentType
                                        null, //accept
                                        httpUserAgent,
@@ -630,13 +653,15 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region ToJSON(CustomBusinessDetailsSerializer = null)
+        #region ToJSON(CustomBusinessDetailsSerializer = null, CustomTOTPConfigSerializerDelegate = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomRemoteAccessInfoSerializer">A delegate to serialize custom remote access information JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null)
+        /// <param name="CustomTOTPConfigSerializerDelegate">A delegate to serialize custom TOTP configuration JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer     = null,
+                              CustomJObjectSerializerDelegate<TOTPConfig>?        CustomTOTPConfigSerializerDelegate   = null)
         {
 
             var clientPrivateKeys = new List<AsymmetricAlgorithm>();
@@ -674,7 +699,7 @@ namespace cloud.charging.open.protocols.OCPI
                                : null,
 
                            TOTPConfig is not null
-                               ? new JProperty("totpConfig",                   TOTPConfig.                     ToJSON())
+                               ? new JProperty("totpConfig",                   TOTPConfig.                     ToJSON(CustomTOTPConfigSerializerDelegate))
                                : null,
 
 
@@ -691,7 +716,7 @@ namespace cloud.charging.open.protocols.OCPI
                                : null,
 
                            TLSProtocols.HasValue
-                               ? new JProperty("tlsProtocols",                 TLSProtocols.              Value.ToString())
+                               ? new JProperty("tlsProtocols",                 TLSProtocols.              Value.ToJSON())
                                : null,
 
                            ContentType is not null

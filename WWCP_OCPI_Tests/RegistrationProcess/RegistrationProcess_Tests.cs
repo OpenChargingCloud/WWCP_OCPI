@@ -17,11 +17,18 @@
 
 #region Usings
 
+using Newtonsoft.Json.Linq;
+
 using NUnit.Framework;
 
 using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Hermod;
+using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
+using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1;
 using cloud.charging.open.protocols.OCPIv2_2_1;
 using cloud.charging.open.protocols.OCPIv2_3_0;
@@ -43,11 +50,9 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         public RegistrationProcess_Tests()
 
-            : base(AutoWireRemoteParties:  false)
+            : base(AutoWireRemoteParties:   false)
 
-        {
-
-        }
+        { }
 
         #endregion
 
@@ -55,11 +60,13 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #region RegistrationProcess_Test1()
 
         /// <summary>
-        /// CPO #1 asking EMSP #1 for its OCPI version details via OCPI v2.1.1!
+        /// EMSP #1 starting a registration process with CPO #1 via OCPI v2.2.1!
         /// </summary>
         [Test]
         public async Task RegistrationProcess_v2_2_1_Test1()
         {
+
+            #region Setup
 
             if (cpo1CommonAPI_v2_2_1 is null)
             {
@@ -67,306 +74,136 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 return;
             }
 
+            if (cpo1CPOAPI_v2_2_1    is null)
+            {
+                Assert.Fail("CPO #1 CPO API v2.2.1 not initialized!");
+                return;
+            }
+
+            if (cpo1HTTPServer        is null)
+            {
+                Assert.Fail("CPO #1 HTTP server not initialized!");
+                return;
+            }
+
+            await cpo1CommonAPI_v2_2_1. RemoveAllRemoteParties();
+            await cpo1CPOAPI_v2_2_1.    CloseAllClients();
+
+
             if (emsp1CommonAPI_v2_2_1 is null)
             {
                 Assert.Fail("EMSP #1 CommonAPI v2.2.1 not initialized!");
                 return;
             }
 
-            if (cpo1HTTPServer is null)
+            if (emsp1EMSPAPI_v2_2_1   is null)
             {
-                Assert.Fail("CPO #1 HTTP server not initialized!");
+                Assert.Fail("EMSP #1 EMSP API v2.2.1 not initialized!");
                 return;
             }
 
-
-            #region EMSP #1 -> CPO #1
-
-            var addResult1     = await cpo1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                           Id:                                RemoteParty_Id.From(
-                                                                                  emsp1CommonAPI_v2_2_1.DefaultPartyId,
-                                                                                  Role.EMSP
-                                                                              ),
-                                           CredentialsRoles:                  [
-                                                                                  emsp1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                                              ],
-
-                                           LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo1__token),
-                                           LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                           //LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
-                                           LocalAccessTokenBase64Encoding:    true,
-
-                                           //RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
-                                           //RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
-                                           //RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
-                                           //RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
-                                           //SelectedVersionId:                 OCPIv2_2_1.Version.Id,
-                                           //RemoteAccessTokenBase64Encoding:   true,
-                                           //RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                           //ClientCertificate:                 cpo1emsp1TLSClientKeyPair is not null
-                                           //                                       ? null
-                                           //                                       : null,
-
-                                           Status:                            PartyStatus.ENABLED
-                                       );
-
-            Assert.That(addResult1.IsSuccess,  Is.True);
+            await emsp1CommonAPI_v2_2_1.RemoveAllRemoteParties();
+            await emsp1EMSPAPI_v2_2_1.  CloseAllClients();
 
             #endregion
 
-            var addResult2     = await emsp1CommonAPI_v2_2_1.AddRemoteParty(
+            #region CPO #1  -> EMSP #1
 
-                                           RemoteParty_Id.From(
-                                               cpo1CommonAPI_v2_2_1.DefaultPartyId,
-                                               Role.CPO
-                                           ),
-                                           [],
+            var cpo1_2_emsp1_v2_2_1 = await cpo1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
+                                                Id:                                RemoteParty_Id.From(
+                                                                                       emsp1CommonAPI_v2_2_1.DefaultPartyId,
+                                                                                       Role.EMSP
+                                                                                   ),
+                                                CredentialsRoles:                  [
+                                                                                       emsp1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                                                   ],
 
-                                           RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
-                                           RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
-                                           Status:                            PartyStatus.PRE_REMOTE_REGISTRATION,
+                                                LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo1__token),
+                                                LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
+                                                LocalAccessTokenBase64Encoding:    true,
 
-                                           RemoteAccessTokenBase64Encoding:   null,
-                                           RemoteTOTPConfig:                  null,
-                                           RemoteAccessNotBefore:             null,
-                                           RemoteAccessNotAfter:              null,
-                                           RemoteStatus:                      null,
-                                           RemoteVersionIds:                  null,
-                                           SelectedVersionId:                 null,
-                                           RemoteAllowDowngrades:             null,
+                                                //RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
+                                                //RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
+                                                //RemoteVersionsURL:                 URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
+                                                //RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                                //SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                                //RemoteAccessTokenBase64Encoding:   true,
+                                                //RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-                                           PreferIPv4:                        null,
-                                           RemoteCertificateValidator:        null,
-                                           LocalCertificateSelector:          null,
-                                           ClientCertificates:                null,
-                                           ClientCertificateContext:          null,
-                                           ClientCertificateChain:            null,
-                                           TLSProtocols:                      null,
-                                           ContentType:                       null,
-                                           Accept:                            null,
-                                           HTTPUserAgent:                     null,
-                                           RequestTimeout:                    null,
-                                           TransmissionRetryDelay:            null,
-                                           MaxNumberOfRetries:                null,
-                                           InternalBufferSize:                null,
-                                           UseHTTPPipelining:                 null,
+                                                Status:                            PartyStatus.ENABLED
+                                            );
 
-                                           Created:                           null,
-                                           LastUpdated:                       null
+            Assert.That(cpo1_2_emsp1_v2_2_1.IsSuccess,  Is.True);
+            Assert.That(cpo1_2_emsp1_v2_2_1.Data,       Is.Not.Null);
 
-                                       );
+            #endregion
 
-            Assert.That(addResult2.IsSuccess,  Is.True);
+            #region EMSP #1 -> CPO #1
 
-            //     var commonClient = new OCPIv2_2_1.CommonClient(
-            //
-            //                            emsp1CommonAPI_v2_2_1,
-            //                            RemoteParty_Id.Parse(
-            //                                cpo1CommonAPI_v2_2_1.DefaultPartyId,
-            //                                Role.CPO
-            //                            ),
-            //
-            //                            RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
-            //                            RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
-            //                            RemoteAccessTokenBase64Encoding:   true,
-            //                            TOTPConfig:                        null,
-            //
-            //                            VirtualHostname:                   null,
-            //                            Description:                       null,
-            //                            PreferIPv4:                        null,
-            //                            RemoteCertificateValidator:        null,
-            //                            LocalCertificateSelector:          null,
-            //                            ClientCertificate:                 null,
-            //                            TLSProtocols:                      null,
-            //                            ContentType:                       null,
-            //                            Accept:                            null,
-            //                            HTTPUserAgent:                     null,
-            //                            RequestTimeout:                    null,
-            //                            TransmissionRetryDelay:            null,
-            //                            MaxNumberOfRetries:                null,
-            //                            InternalBufferSize:                null,
-            //                            UseHTTPPipelining:                 null,
-            //                            HTTPLogger:                        null,
-            //
-            //                            DisableLogging:                    null,
-            //                            LoggingPath:                       null,
-            //                            LoggingContext:                    null,
-            //                            LogfileCreator:                    null,
-            //                            DNSClient:                         null
-            //
-            //                        );
+            var emsp1_2_cpo1_v2_2_1 = await emsp1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
+                                                Id:                                RemoteParty_Id.From(
+                                                                                       cpo1CommonAPI_v2_2_1.DefaultPartyId,
+                                                                                       Role.CPO
+                                                                                   ),
+                                                CredentialsRoles:                  [
+                                                                                        cpo1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                                                   ],
+                                                //LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp1__token),
+                                                //LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                //LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
+                                                //LocalAccessTokenBase64Encoding:    true,
 
-            var remoteParty2   = addResult2.Data;
-            Assert.That(remoteParty2,   Is.Not.Null);
+                                                RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
+                                                RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
+                                                RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                                                RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                                SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                                RemoteAccessTokenBase64Encoding:   true,
+                                                RemoteStatus:                      RemoteAccessStatus.ONLINE,
 
-            var commonClient2  = emsp1EMSPAPI_v2_2_1?.GetCPOClient(remoteParty2!.Id);
-            Assert.That(commonClient2,  Is.Not.Null);
+                                                Status:                            PartyStatus.ENABLED
+                                            );
 
-            var response       = await commonClient2!.Register(
-                                           VersionId:  OCPIv2_2_1.Version.Id
-                                       );
+            Assert.That(emsp1_2_cpo1_v2_2_1.IsSuccess,  Is.True);
+            Assert.That(emsp1_2_cpo1_v2_2_1.Data,       Is.Not.Null);
 
-            Assert.That(response,                                                       Is.Not.Null);
-            Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String);
-            Assert.That(response.StatusCode,                                            Is.EqualTo(1000));
-            Assert.That(response.StatusMessage,                                         Is.EqualTo("Hello world!"));
-            Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True);
+            #endregion
 
-            if (response.Data is not null)
+
+            var cpoClient = emsp1EMSPAPI_v2_2_1?.GetCPOClient(
+                                cpo1CommonAPI_v2_2_1.DefaultPartyId.CountryCode,
+                                cpo1CommonAPI_v2_2_1.DefaultPartyId.Party
+                            );
+
+            Assert.That(cpoClient, Is.Not.Null);
+
+            if (cpoClient is not null)
             {
 
-                //Assert.That(response.Data.VersionId,                                        Is.EqualTo(OCPIv2_1_1.Version.Id));
+                var response = await cpoClient.Register(
+                                         VersionId:  OCPIv2_2_1.Version.Id
+                                     );
 
-                //var endpoints = response.Data.Endpoints.ToDictionary(endpoint => endpoint.Identifier);
+                Assert.That(response,                                                       Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String);
+                Assert.That(response.StatusCode,                                            Is.EqualTo(1000));
+                Assert.That(response.StatusMessage,                                         Is.EqualTo("Hello world!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True, "The response was too slow!");
 
-                //Assert.That(endpoints,                                                      Is.Not.Null);
-                //Assert.That(endpoints.Count,                                                Is.EqualTo(7));
-
-                //Assert.That(endpoints[OCPIv2_1_1.Module_Id.Credentials].URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/credentials")));
-                //Assert.That(endpoints[OCPIv2_1_1.Module_Id.Locations].  URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/locations")));
-                //Assert.That(endpoints[OCPIv2_1_1.Module_Id.Tariffs].    URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/tariffs")));
-                //Assert.That(endpoints[OCPIv2_1_1.Module_Id.Sessions].   URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/sessions")));
-                //Assert.That(endpoints[OCPIv2_1_1.Module_Id.CDRs].       URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/cdrs")));
-                //Assert.That(endpoints[OCPIv2_1_1.Module_Id.Commands].   URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/commands")));
-                //Assert.That(endpoints[OCPIv2_1_1.Module_Id.Tokens].     URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/tokens")));
+                Assert.That(response.Data,                                                  Is.Not.Null);
+                if (response.Data is not null)
+                {
+                    //Assert.That(response.Data.Roles,                                        Is.EqualTo(OCPIv2_1_1.Version.Id));
+                    Assert.That(response.Data.URL.  ToString(),                             Is.EqualTo($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"));
+                    //Assert.That(response.Data.Token.ToString(),                             Is.EqualTo(OCPIv2_1_1.Version.Id));
+                }
 
             }
-
-
-
-
-
-
-
-
-
-                //,
-                //new RemoteParty(
-                //    RemoteParty_Id.Parse(""),
-                //    [
-                //        new CredentialsRole(
-                //            cpo1CommonAPI_v2_2_1.DefaultPartyId.CountryCode,
-                //            cpo1CommonAPI_v2_2_1.DefaultPartyId.Party,
-                //            //CountryCode.Parse("DE"),
-                //            //Party_Id.   Parse("GEF"),
-                //            Role.CPO,
-                //            emsp1CommonAPI_v2_2_1.Parties.First().BusinessDetails
-                //        )
-                //    ],
-                //    new LocalAccessInfo[0],
-                //    new RemoteAccessInfo[0],
-
-
-                //    )
-
-
-
-            //var graphDefinedEMSP1 = cpo1CPOAPI_v2_2_1?.GetEMSPClient(
-            //                            CountryCode: CountryCode.Parse("DE"),
-            //                            PartyId:     Party_Id.   Parse("GDF")
-            //                        );
-
-            //Assert.That(graphDefinedEMSP1, Is.Not.Null);
-
-            //if (graphDefinedEMSP1 is not null)
-            //{
-
-            //    var response = await graphDefinedEMSP1.GetVersionDetails(OCPIv2_2_1.Version.Id);
-
-            //    // GET /ocpi/versions/2.1.1 HTTP/1.1
-            //    // Accept:                        application/json; charset=utf-8; q=1
-            //    // Host:                          localhost:3401
-            //    // User-Agent:                    GraphDefined OCPI v2.1.1 CommonClient
-            //    // Authorization:                 Token cpo1_accessing_emsp1++token
-            //    // Connection:                    close
-            //    // X-Request-ID:                  S1Q64pQ9nf24C3tA64xjhvWnz983jt
-            //    // X-Correlation-ID:              945f2bEj63npK7fMSU48UdfnCt8722
-
-            //    // HTTP/1.1 200 OK
-            //    // Date:                          Fri, 10 Jan 2025 06:01:52 GMT
-            //    // Server:                        GraphDefined OCPI v2.1.1 Common HTTP API
-            //    // Access-Control-Allow-Origin:   *
-            //    // Access-Control-Allow-Methods:  OPTIONS, GET
-            //    // Access-Control-Allow-Headers:  Authorization
-            //    // Allow:                         OPTIONS, GET
-            //    // Vary:                          Accept
-            //    // Content-Type:                  application/json; charset=utf-8
-            //    // Content-Length:                695
-            //    // X-Request-ID:                  S1Q64pQ9nf24C3tA64xjhvWnz983jt
-            //    // X-Correlation-ID:              945f2bEj63npK7fMSU48UdfnCt8722
-            //    // 
-            //    // {
-            //    //     "data": {
-            //    //         "version": "2.1.1",
-            //    //         "endpoints": [
-            //    //             {
-            //    //                 "identifier": "credentials",
-            //    //                 "url":        "http://localhost:3401/ocpi/v2.1.1/credentials"
-            //    //             },
-            //    //             {
-            //    //                 "identifier": "locations",
-            //    //                 "url":        "http://localhost:3401/ocpi/v2.1.1/emsp/locations"
-            //    //             },
-            //    //             {
-            //    //                 "identifier": "tariffs",
-            //    //                 "url":        "http://localhost:3401/ocpi/v2.1.1/emsp/tariffs"
-            //    //             },
-            //    //             {
-            //    //                 "identifier": "sessions",
-            //    //                 "url":        "http://localhost:3401/ocpi/v2.1.1/emsp/sessions"
-            //    //             },
-            //    //             {
-            //    //                 "identifier": "cdrs",
-            //    //                 "url":        "http://localhost:3401/ocpi/v2.1.1/emsp/cdrs"
-            //    //             },
-            //    //             {
-            //    //                 "identifier": "commands",
-            //    //                 "url":        "http://localhost:3401/ocpi/v2.1.1/emsp/commands"
-            //    //             },
-            //    //             {
-            //    //                 "identifier": "tokens",
-            //    //                 "url":        "http://localhost:3401/ocpi/v2.1.1/emsp/tokens"
-            //    //             }
-            //    //         ]
-            //    //     },
-            //    //     "status_code":     1000,
-            //    //     "status_message": "Hello world!",
-            //    //     "timestamp":      "2025-01-10T06:01:52.727Z"
-            //    // }
-
-            //    Assert.That(response,                                                       Is.Not.Null);
-            //    Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String);
-            //    Assert.That(response.StatusCode,                                            Is.EqualTo(1000));
-            //    Assert.That(response.StatusMessage,                                         Is.EqualTo("Hello world!"));
-            //    Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True);
-
-            //    if (response.Data is not null)
-            //    {
-
-            //        Assert.That(response.Data.VersionId,                                        Is.EqualTo(OCPIv2_1_1.Version.Id));
-
-            //        var endpoints = response.Data.Endpoints.ToDictionary(endpoint => endpoint.Identifier);
-
-            //        //Assert.That(endpoints,                                                      Is.Not.Null);
-            //        //Assert.That(endpoints.Count,                                                Is.EqualTo(7));
-
-            //        //Assert.That(endpoints[OCPIv2_1_1.Module_Id.Credentials].URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/credentials")));
-            //        //Assert.That(endpoints[OCPIv2_1_1.Module_Id.Locations].  URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/locations")));
-            //        //Assert.That(endpoints[OCPIv2_1_1.Module_Id.Tariffs].    URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/tariffs")));
-            //        //Assert.That(endpoints[OCPIv2_1_1.Module_Id.Sessions].   URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/sessions")));
-            //        //Assert.That(endpoints[OCPIv2_1_1.Module_Id.CDRs].       URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/cdrs")));
-            //        //Assert.That(endpoints[OCPIv2_1_1.Module_Id.Commands].   URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/commands")));
-            //        //Assert.That(endpoints[OCPIv2_1_1.Module_Id.Tokens].     URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/tokens")));
-
-            //    }
-
-            //}
 
         }
 
         #endregion
-
 
     }
 

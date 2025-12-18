@@ -1715,6 +1715,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
+
+        public Task CloseAllClients()
+        {
+
+            foreach (var client in cpo2emspClients.Values)
+            {
+                client.Close();
+            }
+
+            cpo2emspClients.Clear();
+
+            return Task.CompletedTask;
+
+        }
+
         #endregion
 
 

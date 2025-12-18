@@ -18,7 +18,7 @@
 #region Usings
 
 using Newtonsoft.Json.Linq;
-
+using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -276,18 +276,21 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         /// <param name="CustomLocalAccessInfoSerializer">A delegate to serialize custom local access information JSON objects.</param>
         /// <param name="CustomRemoteAccessInfoSerializer">A delegate to serialize custom remote access information JSON objects.</param>
+        /// <param name="CustomTOTPConfigSerializerDelegate">A delegate to serialize custom TOTP configuration JSON objects.</param>
         protected JObject ToJSON(JSONLDContext?                                      JSONLDContext,
                                  CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer,
                                  CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer,
                                  CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer,
                                  CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer,
-                                 CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer)
+                                 CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer,
+                                 CustomJObjectSerializerDelegate<TOTPConfig>?        CustomTOTPConfigSerializerDelegate)
         {
 
             var json = base.ToJSON(
                            JSONLDContext,
                            CustomLocalAccessInfoSerializer,
-                           CustomRemoteAccessInfoSerializer
+                           CustomRemoteAccessInfoSerializer,
+                           CustomTOTPConfigSerializerDelegate
                        );
 
             json.Property("partyStatus")?.AddAfterSelf(

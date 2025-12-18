@@ -316,9 +316,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Custom JSON parsers
 
-        public CustomJObjectParserDelegate<VersionInformation>?  CustomVersionInformationParser    { get; set; }
-        public CustomJObjectParserDelegate<VersionDetail>?       CustomVersionDetailParser         { get; set; }
-        public CustomJObjectParserDelegate<Credentials>?         CustomCredentialsParser           { get; set; }
+        public CustomJObjectParserDelegate<VersionInformation>?   CustomVersionInformationParser     { get; set; }
+        public CustomJObjectParserDelegate<VersionDetail>?        CustomVersionDetailParser          { get; set; }
+        public CustomJObjectParserDelegate<Credentials>?          CustomCredentialsParser            { get; set; }
+
+        #endregion
+
+        #region Custom JSON serializers
+
+        public CustomJObjectSerializerDelegate<Credentials>?      CustomCredentialsSerializer        { get; set; }
+        public CustomJObjectSerializerDelegate<CredentialsRole>?  CustomCredentialsRoleSerializer    { get; set; }
+        public CustomJObjectSerializerDelegate<BusinessDetails>?  CustomBusinessDetailsSerializer    { get; set; }
+
+
+        public CustomJObjectSerializerDelegate<VersionDetail>?    CustomVersionDetailSerializer      { get; set; }
+        public CustomJObjectSerializerDelegate<VersionEndpoint>?  CustomVersionEndpointSerializer    { get; set; }
 
         #endregion
 
@@ -551,38 +563,47 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             return JSONObject.Create(
 
-                       //new JProperty("countryCode",              CountryCode.ToString()),
-                       //new JProperty("partyId",                  PartyId.    ToString()),
-                       //new JProperty("role",                     Role.       ToString()),
+                             //new JProperty("countryCode",          CountryCode.ToString()),
+                             //new JProperty("partyId",              PartyId.    ToString()),
+                             //new JProperty("role",                 Role.       ToString()),
 
-                       new JProperty("type",                     ClientType),
+                             new JProperty("type",                 ClientType),
 
                        Description.IsNotNullOrEmpty()
-                           ? new JProperty("description",        Description)
+                           ? new JProperty("description",          Description)
                            : null,
 
-                       new JProperty("remoteVersionsURL",        RemoteVersionsURL.    ToString()),
-                       new JProperty("accessToken",              RemoteAccessToken.          ToString()),
+                             new JProperty("remoteVersionsURL",    RemoteVersionsURL.    ToString()),
+                             new JProperty("accessToken",          RemoteAccessToken.    ToString()),
 
                        VirtualHostname.HasValue
-                           ? new JProperty("virtualHostname",    VirtualHostname.Value.ToString())
+                           ? new JProperty("virtualHostname",      VirtualHostname.Value.ToString())
                            : null,
 
-                       new JProperty("requestTimeout",           RequestTimeout.TotalSeconds),
+                             new JProperty("requestTimeout",       RequestTimeout.TotalSeconds),
 
-                       new JProperty("maxNumberOfRetries",       MaxNumberOfRetries),
+                             new JProperty("maxNumberOfRetries",   MaxNumberOfRetries),
 
                        versions.SafeAny()
-                           ? new JProperty("versions",           new JObject(versions.Select(version => new JProperty(version.Key.  ToString(),
-                                                                                                                      version.Value.ToString()))))
+                           ? new JProperty("versions",             new JObject(
+                                                                       versions.Select(version => new JProperty(
+                                                                                                      version.Key.  ToString(),
+                                                                                                      version.Value.ToString()
+                                                                                                  ))
+                                                                   ))
                            : null,
 
                        SelectedOCPIVersionId.HasValue
-                           ? new JProperty("selectedVersionId",  SelectedOCPIVersionId.ToString())
+                           ? new JProperty("selectedVersionId",    SelectedOCPIVersionId.ToString())
                            : null,
 
                        versionDetails.SafeAny()
-                           ? new JProperty("versionDetails",     new JArray(versionDetails.Values.Select(versionDetail => versionDetail.ToJSON())))
+                           ? new JProperty("versionDetails",       new JArray(
+                                                                       versionDetails.Values.Select(versionDetail => versionDetail.ToJSON(
+                                                                                                                         CustomVersionDetailSerializer,
+                                                                                                                         CustomVersionEndpointSerializer
+                                                                                                                     ))
+                                                                   ))
                            : null
 
                    );
@@ -592,7 +613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region GetVersions       (...)
+        #region GetVersions         (...)
 
         /// <summary>
         /// Get versions.
@@ -780,7 +801,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region GetVersionDetails (VersionId, ...)
+        #region GetVersionDetails   (VersionId, ...)
 
         /// <summary>
         /// Get versions.
@@ -1208,7 +1229,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region GetCredentials    (...)
+        #region GetCredentials      (...)
 
         /// <summary>
         /// Get our credentials from the remote API.
@@ -1388,7 +1409,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region PostCredentials   (Credentials, ...)
+        #region PostCredentials     (Credentials, ...)
 
         /// <summary>
         /// Post our credentials onto the remote API.
@@ -1492,7 +1513,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         var httpResponse = await newHTTPClient.POST(
                                                      Path:                  remoteURL.Value.Path,
-                                                     Content:               Credentials.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                     Content:               Credentials.ToJSON(
+                                                                                CustomCredentialsSerializer,
+                                                                                CustomCredentialsRoleSerializer,
+                                                                                CustomBusinessDetailsSerializer
+                                                                            ).ToUTF8Bytes(JSONFormatting),
                                                      Authentication:        TokenAuth,
                                                      Connection:            ConnectionType.Close,
                                                      RequestBuilder:        requestBuilder => {
@@ -1576,7 +1601,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region PutCredentials    (Credentials, ...)
+        #region PutCredentials      (Credentials, ...)
 
         /// <summary>
         /// Put our credentials onto the remote API.
@@ -1680,7 +1705,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         var httpResponse = await newHTTPClient.PUT(
                                                      Path:                  remoteURL.Value.Path,
-                                                     Content:               Credentials.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                     Content:               Credentials.ToJSON(
+                                                                                CustomCredentialsSerializer,
+                                                                                CustomCredentialsRoleSerializer,
+                                                                                CustomBusinessDetailsSerializer
+                                                                            ).ToUTF8Bytes(JSONFormatting),
                                                      Authentication:        TokenAuth,
                                                      RequestBuilder:        requestBuilder => {
                                                                                 requestBuilder.Set("X-Request-ID",     requestId);
@@ -1828,7 +1857,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region DeleteCredentials (Credentials, ...)
+        #region DeleteCredentials   (Credentials, ...)
 
         /// <summary>
         /// Remove our credentials from the remote API.
@@ -2004,7 +2033,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region Register          (VersionId, ...)
+        #region Register            (VersionId, ...)
 
         //  1. We create <CREDENTIALS_TOKEN_A> and associate it with <CountryCode> + <PartyId>.
         //  2. We send <CREDENTIALS_TOKEN_A> and <VERSIONS endpoint> to the other party... e.g. via e-mail.
@@ -2140,7 +2169,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         var httpResponse = await newHTTPClient.POST(
                                                      Path:                  remoteURL.Value.Path,
-                                                     Content:               credentials.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                     Content:               credentials.ToJSON(
+                                                                                CustomCredentialsSerializer,
+                                                                                CustomCredentialsRoleSerializer,
+                                                                                CustomBusinessDetailsSerializer
+                                                                            ).ToUTF8Bytes(JSONFormatting),
                                                      ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                      Accept:                ocpiAcceptTypes,
                                                      Authentication:        TokenAuth,

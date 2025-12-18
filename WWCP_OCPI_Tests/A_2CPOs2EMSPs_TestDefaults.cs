@@ -40,11 +40,11 @@ using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPI.WebAPI;
-
 using cloud.charging.open.protocols.OCPIv2_1_1;
 using cloud.charging.open.protocols.OCPIv2_2_1;
 using cloud.charging.open.protocols.OCPIv2_3_0;
 using cloud.charging.open.protocols.OCPIv3_0;
+using System.Security.Authentication;
 
 #endregion
 
@@ -289,16 +289,18 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
     public abstract class A_2CPOs2EMSPs_TestDefaults(
 
         // This will enable additional TOTP authentication!
-        TimeSpan?  TOTPValidityTime                         = null,
+        TimeSpan?      TOTPValidityTime                         = null,
+
+        SslProtocols?  AllowedTLSProtocols                      = null,
 
         // One of those will enable client certificates for TLS authentication!
-        UInt16?    RSASize                                  = null,
-        String?    ECCAlgorithm                             = null,
-        String?    MLDSAAlgorithm                           = null,
-        Boolean?   EnforceClientCertificateAuthentication   = false,
-        Boolean?   UseClientCertificateChains               = false,
+        UInt16?        RSASize                                  = null,
+        String?        ECCAlgorithm                             = null,
+        String?        MLDSAAlgorithm                           = null,
+        Boolean?       EnforceClientCertificateAuthentication   = false,
+        Boolean?       UseClientCertificateChains               = false,
 
-        Boolean?   AutoWireRemoteParties                    = true)
+        Boolean?       AutoWireRemoteParties                    = true)
 
     {
 
@@ -542,25 +544,29 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         #region Properties
 
-        public UInt16?  RSASize                                   { get; } = RSASize;
-        public String?  ECCAlgorithm                              { get; } = ECCAlgorithm;
-        public String?  MLDSAAlgorithm                            { get; } = MLDSAAlgorithm;
+        public UInt16?        RSASize                                   { get; } = RSASize;
+        public String?        ECCAlgorithm                              { get; } = ECCAlgorithm;
+        public String?        MLDSAAlgorithm                            { get; } = MLDSAAlgorithm;
 
+        /// <summary>
+        /// The optional allowed TLS protocols.
+        /// </summary>
+        public SslProtocols?  AllowedTLSProtocols                       { get; } = AllowedTLSProtocols;
 
         /// <summary>
         /// Enforce client certificate authentication for TLS connections.
         /// </summary>
-        public Boolean  EnforceClientCertificateAuthentication    { get; } = EnforceClientCertificateAuthentication ?? false;
+        public Boolean        EnforceClientCertificateAuthentication    { get; } = EnforceClientCertificateAuthentication ?? false;
 
         /// <summary>
         /// Use client certificate chains for TLS authentication.
         /// </summary>
-        public Boolean  UseClientCertificateChains                { get; } = UseClientCertificateChains             ?? false;
+        public Boolean        UseClientCertificateChains                { get; } = UseClientCertificateChains             ?? false;
 
         /// <summary>
         /// Auto-wire remote parties when setting up OCPI endpoints.
         /// </summary>
-        public Boolean  AutoWireRemoteParties                     { get; } = AutoWireRemoteParties                  ?? true;
+        public Boolean        AutoWireRemoteParties                     { get; } = AutoWireRemoteParties                  ?? true;
 
         #endregion
 
@@ -1301,6 +1307,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                     return cpo2TLSServerCertificate!;
                                                                                }
                                                                              : null,
+                                           AllowedTLSProtocols:          AllowedTLSProtocols,
                                            AutoStart:                    true
                                        );
 
@@ -1353,6 +1360,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                     return cpo2TLSServerCertificate!;
                                                                                }
                                                                              : null,
+                                           AllowedTLSProtocols:          AllowedTLSProtocols,
                                            AutoStart:                    true
                                        );
 
@@ -1401,6 +1409,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                           acceptableIssuers) => {
                                                                               return emsp1TLSServerCertificate!;
                                                                          },
+                                           AllowedTLSProtocols:          AllowedTLSProtocols,
                                            AutoStart:                    true
                                        );
 
@@ -1446,6 +1455,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                           acceptableIssuers) => {
                                                                               return emsp2TLSServerCertificate!;
                                                                          },
+                                           AllowedTLSProtocols:          AllowedTLSProtocols,
                                            AutoStart:                    true
                                        );
 

@@ -814,12 +814,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomLocalAccessInfoSerializer">A delegate to serialize custom local access information JSON objects.</param>
         /// <param name="CustomRemoteAccessInfoSerializer">A delegate to serialize custom remote access information JSON objects.</param>
         public JObject ToJSON(Boolean                                             Embedded,
-                              CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer        = null,
-                              CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer    = null,
-                              CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
-                              CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
-                              CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
-                              CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null)
+                              CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer          = null,
+                              CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer      = null,
+                              CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer      = null,
+                              CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer                = null,
+                              CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer      = null,
+                              CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer     = null,
+                              CustomJObjectSerializerDelegate<TOTPConfig>?        CustomTOTPConfigSerializerDelegate   = null)
         {
 
             var json = base.ToJSON(
@@ -832,7 +833,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            CustomBusinessDetailsSerializer,
                            CustomImageSerializer,
                            CustomLocalAccessInfoSerializer,
-                           CustomRemoteAccessInfoSerializer
+                           CustomRemoteAccessInfoSerializer,
+                           CustomTOTPConfigSerializerDelegate
 
                        );
 
