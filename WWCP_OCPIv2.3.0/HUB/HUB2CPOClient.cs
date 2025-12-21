@@ -28,16 +28,17 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using cloud.charging.open.protocols.OCPIv2_3_0.HUB2CPO.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB.HTTP
 {
 
     /// <summary>
-    /// The EMSP2CPO client is used by an EMSP to talk to CPO.
+    /// The HUB2CPO client is used by an HUB to talk to CPO.
     /// </summary>
-    public partial class EMSP2CPOClient : CommonClient
+    public partial class HUB2CPOClient : CommonClient
     {
 
         #region (class) APICounters
@@ -191,12 +192,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         /// <summary>
         /// The default HTTP user agent.
         /// </summary>
-        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(EMSP2CPOClient)}";
+        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(HUB2CPOClient)}";
 
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public new const String  DefaultLoggingContext   = nameof(EMSP2CPOClient);
+        public new const String  DefaultLoggingContext   = nameof(HUB2CPOClient);
 
         #endregion
 
@@ -208,17 +209,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         public CPO_Id           RemoteCPOId    { get; }
 
         /// <summary>
-        /// Our EMSP API.
+        /// Our HUB API.
         /// </summary>
-        public EMSPAPI          EMSPAPI        { get; }
+        public HUBAPI           HUBAPI         { get; }
 
         /// <summary>
-        /// EMSP client event counters.
+        /// HUB client event counters.
         /// </summary>
         public new APICounters  Counters       { get; }
 
         /// <summary>
-        /// The EMSP client (HTTP client) logger.
+        /// The HUB client (HTTP client) logger.
         /// </summary>
         public new Logger       HTTPLogger
         {
@@ -680,9 +681,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new EMSP2CPO client.
+        /// Create a new HUB2CPO client.
         /// </summary>
-        /// <param name="EMSPAPI">The EMSP API.</param>
+        /// <param name="HUBAPI">The HUB API.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
         /// <param name="DisableLogging">Disable all logging.</param>
@@ -690,19 +691,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public EMSP2CPOClient(EMSPAPI                      EMSPAPI,
-                              RemoteParty                  RemoteParty,
-                              HTTPHostname?                VirtualHostname   = null,
-                              I18NString?                  Description       = null,
-                              HTTPClientLogger?            HTTPLogger        = null,
+        public HUB2CPOClient(HUBAPI                       HUBAPI,
+                             RemoteParty                  RemoteParty,
+                             HTTPHostname?                VirtualHostname   = null,
+                             I18NString?                  Description       = null,
+                             HTTPClientLogger?            HTTPLogger        = null,
 
-                              Boolean?                     DisableLogging    = false,
-                              String?                      LoggingPath       = null,
-                              String?                      LoggingContext    = null,
-                              OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                              IDNSClient?                  DNSClient         = null)
+                             Boolean?                     DisableLogging    = false,
+                             String?                      LoggingPath       = null,
+                             String?                      LoggingContext    = null,
+                             OCPILogfileCreatorDelegate?  LogfileCreator    = null,
+                             IDNSClient?                  DNSClient         = null)
 
-            : base(EMSPAPI.CommonAPI,
+            : base(HUBAPI.CommonAPI,
                    RemoteParty,
                    VirtualHostname,
                    Description,
@@ -717,7 +718,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         {
 
             this.RemoteCPOId  = RemoteParty.Id.AsCPOId;
-            this.EMSPAPI      = EMSPAPI;
+            this.HUBAPI       = HUBAPI;
             this.Counters     = new APICounters();
 
             base.HTTPLogger   = this.DisableLogging == false
@@ -3881,7 +3882,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             where TDelegate : Delegate
 
             => LogEvent(
-                   nameof(EMSP2CPOClient),
+                   nameof(HUB2CPOClient),
                    Logger,
                    LogHandler,
                    EventName,
@@ -3894,7 +3895,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         #region ToJSON()
 
         public override JObject ToJSON()
-            => base.ToJSON(nameof(EMSP2CPOClient));
+            => base.ToJSON(nameof(HUB2CPOClient));
 
         #endregion
 

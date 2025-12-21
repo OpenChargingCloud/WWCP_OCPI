@@ -146,7 +146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET locations request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetLocationsRequest(DateTimeOffset     Timestamp,
                                                     HTTPAPIX           API,
@@ -173,7 +173,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET locations response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetLocationsResponse(DateTimeOffset     Timestamp,
@@ -204,7 +204,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET location request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetLocationRequest(DateTimeOffset     Timestamp,
                                                    HTTPAPIX           API,
@@ -231,7 +231,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET location response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetLocationResponse(DateTimeOffset     Timestamp,
@@ -265,7 +265,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET EVSE request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetEVSERequest(DateTimeOffset     Timestamp,
                                                HTTPAPIX           API,
@@ -292,7 +292,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET EVSE response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetEVSEResponse(DateTimeOffset     Timestamp,
@@ -326,7 +326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET connector request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetConnectorRequest(DateTimeOffset     Timestamp,
                                                     HTTPAPIX           API,
@@ -353,7 +353,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET connector response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetConnectorResponse(DateTimeOffset     Timestamp,
@@ -387,7 +387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET tariffs request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetTariffsRequest(DateTimeOffset     Timestamp,
                                                   HTTPAPIX           API,
@@ -414,7 +414,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET tariffs response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetTariffsResponse(DateTimeOffset     Timestamp,
@@ -445,7 +445,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET tariff request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetTariffRequest(DateTimeOffset     Timestamp,
                                                  HTTPAPIX           API,
@@ -472,7 +472,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET tariff response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetTariffResponse(DateTimeOffset     Timestamp,
@@ -506,7 +506,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET sessions request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetSessionsRequest(DateTimeOffset     Timestamp,
                                                    HTTPAPIX           API,
@@ -533,7 +533,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET sessions response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetSessionsResponse(DateTimeOffset     Timestamp,
@@ -564,7 +564,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET session request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetSessionRequest(DateTimeOffset     Timestamp,
                                                   HTTPAPIX           API,
@@ -591,7 +591,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET session response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetSessionResponse(DateTimeOffset     Timestamp,
@@ -625,7 +625,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET CDRs request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetCDRsRequest(DateTimeOffset     Timestamp,
                                                HTTPAPIX           API,
@@ -652,7 +652,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET CDRs response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetCDRsResponse(DateTimeOffset     Timestamp,
@@ -683,7 +683,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET CDR request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetCDRRequest(DateTimeOffset     Timestamp,
                                               HTTPAPIX           API,
@@ -710,7 +710,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET CDR response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetCDRResponse(DateTimeOffset     Timestamp,
@@ -744,7 +744,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET Tokens request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetTokensRequest(DateTimeOffset     Timestamp,
                                                  HTTPAPIX           API,
@@ -771,7 +771,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET Tokens response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetTokensResponse(DateTimeOffset     Timestamp,
@@ -802,7 +802,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a DELETE Tokens request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task DeleteTokensRequest(DateTimeOffset     Timestamp,
                                                     HTTPAPIX           API,
@@ -829,7 +829,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a DELETE Tokens response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task DeleteTokensResponse(DateTimeOffset     Timestamp,
@@ -862,7 +862,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET Token request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetTokenRequest(DateTimeOffset     Timestamp,
                                                 HTTPAPIX           API,
@@ -889,7 +889,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a GET Token response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetTokenResponse(DateTimeOffset     Timestamp,
@@ -920,7 +920,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a POST token request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PostTokenRequest(DateTimeOffset     Timestamp,
                                                  HTTPAPIX           API,
@@ -947,7 +947,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a POST token response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PostTokenResponse(DateTimeOffset     Timestamp,
@@ -978,7 +978,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a put token request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PutTokenRequest(DateTimeOffset     Timestamp,
                                                 HTTPAPIX           API,
@@ -1005,7 +1005,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a put token response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PutTokenResponse(DateTimeOffset     Timestamp,
@@ -1036,7 +1036,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a patch token request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PatchTokenRequest(DateTimeOffset     Timestamp,
                                                   HTTPAPIX           API,
@@ -1063,7 +1063,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a patch token response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PatchTokenResponse(DateTimeOffset     Timestamp,
@@ -1094,7 +1094,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a delete token request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task DeleteTokenRequest(DateTimeOffset     Timestamp,
                                                    HTTPAPIX           API,
@@ -1121,7 +1121,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a delete token response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task DeleteTokenResponse(DateTimeOffset     Timestamp,
@@ -1156,7 +1156,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a reserve now command was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task ReserveNowRequest(DateTimeOffset     Timestamp,
                                                   HTTPAPIX           API,
@@ -1192,7 +1192,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a reserve now command response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task ReserveNowResponse(DateTimeOffset     Timestamp,
@@ -1223,7 +1223,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a cancel reservation command was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task CancelReservationRequest(DateTimeOffset     Timestamp,
                                                          HTTPAPIX           API,
@@ -1259,7 +1259,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a cancel reservation command response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task CancelReservationResponse(DateTimeOffset     Timestamp,
@@ -1290,7 +1290,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a start session command was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task StartSessionRequest(DateTimeOffset     Timestamp,
                                                     HTTPAPIX           API,
@@ -1326,7 +1326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a start session command response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task StartSessionResponse(DateTimeOffset     Timestamp,
@@ -1357,7 +1357,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a stop session command was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task StopSessionRequest(DateTimeOffset     Timestamp,
                                                    HTTPAPIX           API,
@@ -1393,7 +1393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a stop session command response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task StopSessionResponse(DateTimeOffset     Timestamp,
@@ -1424,7 +1424,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a unlock connector command was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task UnlockConnectorRequest(DateTimeOffset     Timestamp,
                                                        HTTPAPIX           API,
@@ -1460,7 +1460,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// An event sent whenever a unlock connector command response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task UnlockConnectorResponse(DateTimeOffset     Timestamp,
@@ -3187,8 +3187,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                   OrderBy       (token => token.Created).
                                                                   SkipTakeFilter(filters.Offset,
                                                                                  filters.Limit).
-                                                                  Select        (token => token.ToJSON(CustomTokenSerializer,
-                                                                                                       CustomEnergyContractSerializer))
+                                                                  Select        (token => token.ToJSON(
+                                                                                              CustomTokenSerializer,
+                                                                                              CustomEnergyContractSerializer
+                                                                                          ))
                                                           )
                                }
                            );

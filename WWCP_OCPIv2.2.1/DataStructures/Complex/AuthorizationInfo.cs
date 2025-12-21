@@ -125,12 +125,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.EMSPId                  = EMSPId;
             this.Runtime                 = Runtime ?? TimeSpan.Zero;
 
+            unchecked
+            {
+
+                hashCode = Allowed.                GetHashCode()       * 19 ^
+                          (Token?.                 GetHashCode() ?? 0) * 17 ^
+                          (Location?.              GetHashCode() ?? 0) * 13 ^
+                          (AuthorizationReference?.GetHashCode() ?? 0) * 11 ^
+                          (Info?.                  GetHashCode() ?? 0) *  7 ^
+                          (RemoteParty?.           GetHashCode() ?? 0) *  5 ^
+                          (EMSPId?.                GetHashCode() ?? 0) *  3 ^
+                           Runtime.                GetHashCode();
+
+            }
+
         }
 
         #endregion
 
 
-        #region (static) Parse   (JSON, CustomAuthorizationInfoParser = null)
+        #region (static) Parse   (JSON,                                           RemoteParty = null, EMSPId = null, ...)
 
         /// <summary>
         /// Parse the given JSON representation of an authorization information.
@@ -160,7 +174,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region (static) TryParse(JSON, out AuthorizationInfo, out ErrorResponse, CustomAuthorizationInfoParser = null)
+        #region (static) TryParse(JSON, out AuthorizationInfo, out ErrorResponse, RemoteParty = null, EMSPId = null, ...)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
@@ -278,13 +292,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                AuthorizationInfo = new AuthorizationInfo(Allowed,
-                                                          Token,
-                                                          LocationReference,
-                                                          AuthorizationReference,
-                                                          Info,
-                                                          RemoteParty,
-                                                          EMSPId);
+                AuthorizationInfo = new AuthorizationInfo(
+                                        Allowed,
+                                        Token,
+                                        LocationReference,
+                                        AuthorizationReference,
+                                        Info,
+                                        RemoteParty,
+                                        EMSPId
+                                    );
 
 
                 if (CustomAuthorizationInfoParser is not null)
@@ -459,23 +475,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
-        /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return Allowed.                GetHashCode()       * 11 ^
-                      (Token?.                 GetHashCode() ?? 0) *  7 ^
-                      (Location?.              GetHashCode() ?? 0) *  5 ^
-                      (AuthorizationReference?.GetHashCode() ?? 0) *  3^
-                       Info?.                  GetHashCode() ?? 0;
-
-            }
-        }
+            => hashCode;
 
         #endregion
 

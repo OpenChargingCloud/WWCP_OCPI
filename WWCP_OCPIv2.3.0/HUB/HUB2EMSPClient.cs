@@ -28,16 +28,17 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using cloud.charging.open.protocols.OCPIv2_3_0.HUB2EMSP.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB.HTTP
 {
 
     /// <summary>
-    /// The CPO2EMSP client is used by a CPO to talk to EMSPs (and SCSPs).
+    /// The HUB2X client is used by a HUB to talk to EMSPs (and SCSPs).
     /// </summary>
-    public partial class CPO2EMSPClient : CommonClient
+    public partial class HUB2EMSPClient : CommonClient
     {
 
         #region (class) APICounters
@@ -207,12 +208,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         /// <summary>
         /// The default HTTP user agent.
         /// </summary>
-        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(CPO2EMSPClient)}";
+        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(HUB2EMSPClient)}";
 
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public new const String  DefaultLoggingContext   = nameof(CPO2EMSPClient);
+        public new const String  DefaultLoggingContext   = nameof(HUB2EMSPClient);
 
         #endregion
 
@@ -221,17 +222,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         /// <summary>
         /// The identification of the remote E-Mobility Service Provider.
         /// </summary>
-        public EMSP_Id          RemoteEMSPId    { get; }
+        public EMSP_Id          EMSPId      { get; }
 
         /// <summary>
-        /// Our CPO API.
+        /// Our HUB API.
         /// </summary>
-        public CPOAPI           CPOAPI          { get; }
+        public HUBAPI           HUBAPI      { get; }
 
         /// <summary>
-        /// CPO client event counters.
+        /// HUB client event counters.
         /// </summary>
-        public new APICounters  Counters        { get; }
+        public new APICounters  Counters    { get; }
 
         /// <summary>
         /// The attached HTTP client logger.
@@ -265,6 +266,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         public CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer    { get; set; }
         public CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer          { get; set; }
+        public CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                       { get; set; }
+        public CustomJObjectSerializerDelegate<EVSEParking>?                 CustomEVSEParkingSerializer                   { get; set; }
         public CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                   { get; set; }
         public CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                         { get; set; }
@@ -273,10 +276,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         public CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                  { get; set; }
         public CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer           { get; set; }
         public CustomJObjectSerializerDelegate<Tariff>?                      CustomTariffSerializer                        { get; set; }
+        public CustomJObjectSerializerDelegate<PriceLimit>?                  CustomPriceLimitSerializer                    { get; set; }
         public CustomJObjectSerializerDelegate<Price>?                       CustomPriceSerializer                         { get; set; }
         public CustomJObjectSerializerDelegate<TariffElement>?               CustomTariffElementSerializer                 { get; set; }
         public CustomJObjectSerializerDelegate<PriceComponent>?              CustomPriceComponentSerializer                { get; set; }
         public CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer            { get; set; }
+        public CustomJObjectSerializerDelegate<TaxAmount>?                   CustomTaxAmountSerializer                     { get; set; }
         public CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                       { get; set; }
         public CustomJObjectSerializerDelegate<CDRToken>?                    CustomCDRTokenSerializer                      { get; set; }
         public CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer                { get; set; }
@@ -838,18 +843,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new CPO2EMSP client.
+        /// Create a new HUB2X client.
         /// </summary>
-        /// <param name="CPOAPI">The CPO API.</param>
+        /// <param name="HUBAPI">The HUB API.</param>
         /// <param name="RemoteParty">The remote party.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
-        /// <param name="Description">An optional description of this CPO client.</param>
+        /// <param name="Description">An optional description of this HUB client.</param>
         /// <param name="DisableLogging">Disable all logging.</param>
         /// <param name="LoggingPath">The logging path.</param>
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPO2EMSPClient(CPOAPI                       CPOAPI,
+        public HUB2EMSPClient(HUBAPI                       HUBAPI,
                               RemoteParty                  RemoteParty,
                               HTTPHostname?                VirtualHostname   = null,
                               I18NString?                  Description       = null,
@@ -861,7 +866,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                               OCPILogfileCreatorDelegate?  LogfileCreator    = null,
                               IDNSClient?                  DNSClient         = null)
 
-            : base(CPOAPI.CommonAPI,
+            : base(HUBAPI.CommonAPI,
                    RemoteParty,
                    VirtualHostname,
                    Description,
@@ -875,23 +880,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         {
 
-            this.RemoteEMSPId  = RemoteParty.Id.AsEMSPId;
-            this.CPOAPI        = CPOAPI;
-            this.Counters      = new APICounters();
+            this.EMSPId         = RemoteParty.Id.AsEMSPId;
+            this.HUBAPI         = HUBAPI;
+            this.Counters       = new APICounters();
 
-            base.HTTPLogger    = this.DisableLogging == false
-                                     ? new Logger(
-                                           this,
-                                           LoggingPath,
-                                           LoggingContext,
-                                           LogfileCreator
-                                       )
-                                     : null;
+            base.HTTPLogger     = this.DisableLogging == false
+                                      ? new Logger(
+                                            this,
+                                            LoggingPath,
+                                            LoggingContext,
+                                            LogfileCreator
+                                        )
+                                      : null;
 
         }
 
         #endregion
-
 
 
         #region GetLocation        (CountryCode, PartyId, LocationId, ...)
@@ -1153,9 +1157,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                                             CustomEVSEEnergyMeterSerializer,
                                                                             CustomTransparencySoftwareStatusSerializer,
                                                                             CustomTransparencySoftwareSerializer,
+                                                                            CustomParkingSerializer,
                                                                             CustomDisplayTextSerializer,
                                                                             CustomBusinessDetailsSerializer,
                                                                             CustomHoursSerializer,
+                                                                            CustomEVSEParkingSerializer,
                                                                             CustomImageSerializer,
                                                                             CustomEnergyMixSerializer,
                                                                             CustomEnergySourceSerializer,
@@ -1713,6 +1719,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                                                                     LocationId. ToString() +
                                                                                                     EVSE.UId.   ToString(),
                                                  Content:               EVSE.ToJSON(
+                                                                            false,
+                                                                            false,
+                                                                            false,
                                                                             EMSPId,
                                                                             CustomEVSESerializer,
                                                                             CustomStatusScheduleSerializer,
@@ -1721,6 +1730,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                                             CustomTransparencySoftwareStatusSerializer,
                                                                             CustomTransparencySoftwareSerializer,
                                                                             CustomDisplayTextSerializer,
+                                                                            CustomEVSEParkingSerializer,
                                                                             CustomImageSerializer
                                                                         ).ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
@@ -2246,6 +2256,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                                                                     Connector.ParentEVSE.               UId.        ToString() +
                                                                                                     Connector.                          Id.         ToString(),
                                                  Content:               Connector.ToJSON(
+                                                                            false,
+                                                                            false,
                                                                             EMSPId,
                                                                             CustomConnectorSerializer
                                                                         ).ToUTF8Bytes(JSONFormatting),
@@ -2749,7 +2761,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                                             true,
                                                                             CustomTariffSerializer,
                                                                             CustomDisplayTextSerializer,
-                                                                            CustomPriceSerializer,
+                                                                            CustomPriceLimitSerializer,
                                                                             CustomTariffElementSerializer,
                                                                             CustomPriceComponentSerializer,
                                                                             CustomTariffRestrictionsSerializer,
@@ -3924,8 +3936,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                                              CustomTariffSerializer,
                                                                              CustomDisplayTextSerializer,
                                                                              CustomPriceSerializer,
+                                                                             CustomPriceLimitSerializer,
                                                                              CustomTariffElementSerializer,
                                                                              CustomPriceComponentSerializer,
+                                                                             CustomTaxAmountSerializer,
                                                                              CustomTariffRestrictionsSerializer,
                                                                              CustomEnergyMixSerializer,
                                                                              CustomEnergySourceSerializer,
@@ -4493,7 +4507,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                    json => AuthorizationInfo.Parse(
                                                json,
                                                RemoteParty,
-                                               RemoteEMSPId
+                                               EMSPId
                                            )
                                );
 
@@ -4556,7 +4570,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         // Commands
 
-        // A CPO wants to send an update towards a EMSP or SCSP: https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/mod_charging_profiles.asciidoc
+        // A HUB wants to send an update towards a EMSP or SCSP: https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/mod_charging_profiles.asciidoc
 
         #region SetChargingProfile (Token, ExpiryDate, ReservationId, LocationId, EVSEUId, AuthorizationReference, ...)
 
@@ -4738,7 +4752,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             where TDelegate : Delegate
 
             => LogEvent(
-                   nameof(CPO2EMSPClient),
+                   nameof(HUB2EMSPClient),
                    Logger,
                    LogHandler,
                    EventName,
@@ -4751,7 +4765,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         #region ToJSON()
 
         public override JObject ToJSON()
-            => base.ToJSON(nameof(CPO2EMSPClient));
+            => base.ToJSON(nameof(HUB2EMSPClient));
 
         #endregion
 

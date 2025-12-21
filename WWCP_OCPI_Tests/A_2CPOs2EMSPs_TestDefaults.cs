@@ -19,6 +19,7 @@
 
 using System.Net.Security;
 using System.Collections.Concurrent;
+using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
@@ -44,7 +45,6 @@ using cloud.charging.open.protocols.OCPIv2_1_1;
 using cloud.charging.open.protocols.OCPIv2_2_1;
 using cloud.charging.open.protocols.OCPIv2_3_0;
 using cloud.charging.open.protocols.OCPIv3_0;
-using System.Security.Authentication;
 
 #endregion
 
@@ -300,6 +300,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         Boolean?       EnforceClientCertificateAuthentication   = false,
         Boolean?       UseClientCertificateChains               = false,
 
+        Boolean?       UseHUBCommunication                      = false,
         Boolean?       AutoWireRemoteParties                    = true)
 
     {
@@ -341,12 +342,15 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public          HTTPTestServerX?                                               cpo1HTTPServer;
         protected       HTTPExtAPIX?                                                   cpo1HTTPAPI;
         protected       AsymmetricCipherKeyPair?                                       cpo1TLSServerKeyPair;
+        protected       AsymmetricCipherKeyPair?                                       cpo1hub1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       cpo1emsp1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       cpo1emsp2TLSClientKeyPair;
         protected       Pkcs10CertificationRequest?                                    cpo1TLSServerCSR;
+        protected       Pkcs10CertificationRequest?                                    cpo1hub1TLSClientCSR;
         protected       Pkcs10CertificationRequest?                                    cpo1emsp1TLSClientCSR;
         protected       Pkcs10CertificationRequest?                                    cpo1emsp2TLSClientCSR;
         protected       X509Certificate2?                                              cpo1TLSServerCertificate;
+        protected       X509Certificate2?                                              cpo1hub1TLSClientCertificate;
         protected       X509Certificate2?                                              cpo1emsp1TLSClientCertificate;
         protected       X509Certificate2?                                              cpo1emsp2TLSClientCertificate;
 
@@ -382,6 +386,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     cpo1APIRequestLogs_v3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    cpo1APIResponseLogs_v3_0 = [];
 
+        protected const String                                                         cpo1_accessing_hub1__token    = "cpo1_accessing_hub1++token";
         protected const String                                                         cpo1_accessing_emsp1__token   = "cpo1_accessing_emsp1++token";
         protected const String                                                         cpo1_accessing_emsp2__token   = "cpo1_accessing_emsp2++token";
 
@@ -392,12 +397,15 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public          HTTPTestServerX?                                               cpo2HTTPServer;
         protected       HTTPExtAPIX?                                                   cpo2HTTPAPI;
         protected       AsymmetricCipherKeyPair?                                       cpo2TLSServerKeyPair;
+        protected       AsymmetricCipherKeyPair?                                       cpo2hub1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       cpo2emsp1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       cpo2emsp2TLSClientKeyPair;
         protected       Pkcs10CertificationRequest?                                    cpo2TLSServerCSR;
+        protected       Pkcs10CertificationRequest?                                    cpo2hub1TLSClientCSR;
         protected       Pkcs10CertificationRequest?                                    cpo2emsp1TLSClientCSR;
         protected       Pkcs10CertificationRequest?                                    cpo2emsp2TLSClientCSR;
         protected       X509Certificate2?                                              cpo2TLSServerCertificate;
+        protected       X509Certificate2?                                              cpo2hub1TLSClientCertificate;
         protected       X509Certificate2?                                              cpo2emsp1TLSClientCertificate;
         protected       X509Certificate2?                                              cpo2emsp2TLSClientCertificate;
 
@@ -433,8 +441,68 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     cpo2APIRequestLogs_v3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    cpo2APIResponseLogs_v3_0 = [];
 
+        protected const String                                                         cpo2_accessing_hub1__token    = "cpo2_accessing_hub1++token";
         protected const String                                                         cpo2_accessing_emsp1__token   = "cpo2_accessing_emsp1++token";
         protected const String                                                         cpo2_accessing_emsp2__token   = "cpo2_accessing_emsp2++token";
+
+        #endregion
+
+        #region HUB #1
+
+        public          HTTPTestServerX?                                               hub1HTTPServer;
+        protected       HTTPExtAPIX?                                                   hub1HTTPAPI;
+        protected       AsymmetricCipherKeyPair?                                       hub1TLSServerKeyPair;
+        protected       AsymmetricCipherKeyPair?                                       hub1cpo1TLSClientKeyPair;
+        protected       AsymmetricCipherKeyPair?                                       hub1cpo2TLSClientKeyPair;
+        protected       AsymmetricCipherKeyPair?                                       hub1emsp1TLSClientKeyPair;
+        protected       AsymmetricCipherKeyPair?                                       hub1emsp2TLSClientKeyPair;
+        protected       Pkcs10CertificationRequest?                                    hub1TLSServerCSR;
+        protected       Pkcs10CertificationRequest?                                    hub1cpo1TLSClientCSR;
+        protected       Pkcs10CertificationRequest?                                    hub1cpo2TLSClientCSR;
+        protected       Pkcs10CertificationRequest?                                    hub1emsp1TLSClientCSR;
+        protected       Pkcs10CertificationRequest?                                    hub1emsp2TLSClientCSR;
+        protected       X509Certificate2?                                              hub1TLSServerCertificate;
+        protected       X509Certificate2?                                              hub1cpo1TLSClientCertificate;
+        protected       X509Certificate2?                                              hub1cpo2TLSClientCertificate;
+        protected       X509Certificate2?                                              hub1emsp1TLSClientCertificate;
+        protected       X509Certificate2?                                              hub1emsp2TLSClientCertificate;
+
+        public          URL?                                                           hub1VersionsAPIURL;
+        protected       CommonHTTPAPI?                                                 hub1CommonHTTPAPI;
+        protected       CommonWebAPI?                                                  hub1CommonWebAPI;
+
+        //protected       OCPIv2_1_1.CommonAPI?                                          hub1CommonAPI_v2_1_1;
+        //protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                  hub1WebAPI_v2_1_1;
+        //protected       OCPIv2_1_1.HUBAPI?                                             hub1HUBAPI_v2_1_1;
+        //protected       OCPIv2_1_1.OCPICSOAdapter?                                     hub1Adapter_v2_1_1;
+        //protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIRequest>   hub1APIRequestLogs_v2_1_1  = [];
+        //protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIResponse>  hub1APIResponseLogs_v2_1_1 = [];
+
+        protected       OCPIv2_2_1.CommonAPI?                                          hub1CommonAPI_v2_2_1;
+        protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                  hub1WebAPI_v2_2_1;
+        protected       OCPIv2_2_1.HUBAPI?                                             hub1HUBAPI_v2_2_1;
+        //protected       OCPIv2_2_1.OCPICSOAdapter?                                     hub1Adapter_v2_2_1;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIRequest>   hub1APIRequestLogs_v2_2_1  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIResponse>  hub1APIResponseLogs_v2_2_1 = [];
+
+        protected       OCPIv2_3_0.CommonAPI?                                          hub1CommonAPI_v2_3_0;
+        protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                  hub1WebAPI_v2_3_0;
+        protected       OCPIv2_3_0.HUBAPI?                                             hub1HUBAPI_v2_3_0;
+        //protected       OCPIv2_3_0.OCPICSOAdapter?                                     hub1Adapter_v2_3_0;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   hub1APIRequestLogs_v2_3_0  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  hub1APIResponseLogs_v2_3_0 = [];
+
+        protected       OCPIv3_0.CommonAPI?                                            hub1CommonAPI_v3_0;
+        protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                    hub1WebAPI_v3_0;
+        //protected       OCPIv3_0.HUBAPI?                                               hub1HUBAPI_v3_0;
+        //protected       OCPIv3_0.OCPICSOAdapter?                                       hub1Adapter_v3_0;
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     hub1APIRequestLogs_v3_0  = [];
+        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    hub1APIResponseLogs_v3_0 = [];
+
+        protected const String                                                         hub1_accessing_cpo1__token    = "hub1_accessing_cpo1++token";
+        protected const String                                                         hub1_accessing_cpo2__token    = "hub1_accessing_cpo2++token";
+        protected const String                                                         hub1_accessing_emsp1__token   = "hub1_accessing_emsp1++token";
+        protected const String                                                         hub1_accessing_emsp2__token   = "hub1_accessing_emsp2++token";
 
         #endregion
 
@@ -443,12 +511,15 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public          HTTPTestServerX?                                               emsp1HTTPServer;
         protected       HTTPExtAPIX?                                                   emsp1HTTPAPI;
         protected       AsymmetricCipherKeyPair?                                       emsp1TLSServerKeyPair;
+        protected       AsymmetricCipherKeyPair?                                       emsp1hub1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       emsp1cpo1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       emsp1cpo2TLSClientKeyPair;
         protected       Pkcs10CertificationRequest?                                    emsp1TLSServerCSR;
+        protected       Pkcs10CertificationRequest?                                    emsp1hub1TLSClientCSR;
         protected       Pkcs10CertificationRequest?                                    emsp1cpo1TLSClientCSR;
         protected       Pkcs10CertificationRequest?                                    emsp1cpo2TLSClientCSR;
         protected       X509Certificate2?                                              emsp1TLSServerCertificate;
+        protected       X509Certificate2?                                              emsp1hub1TLSClientCertificate;
         protected       X509Certificate2?                                              emsp1cpo1TLSClientCertificate;
         protected       X509Certificate2?                                              emsp1cpo2TLSClientCertificate;
 
@@ -484,6 +555,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     emsp1APIRequestLogs_v3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    emsp1APIResponseLogs_v3_0 = [];
 
+        protected const String                                                         emsp1_accessing_hub1__token   = "hub1_accessing_cpo1++token";
         protected const String                                                         emsp1_accessing_cpo1__token   = "emsp1_accessing_cpo1++token";
         protected const String                                                         emsp2_accessing_cpo1__token   = "emsp2_accessing_cpo2++token";
 
@@ -494,12 +566,15 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public          HTTPTestServerX?                                               emsp2HTTPServer;
         protected       HTTPExtAPIX?                                                   emsp2HTTPAPI;
         protected       AsymmetricCipherKeyPair?                                       emsp2TLSServerKeyPair;
+        protected       AsymmetricCipherKeyPair?                                       emsp2hub1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       emsp2cpo1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       emsp2cpo2TLSClientKeyPair;
         protected       Pkcs10CertificationRequest?                                    emsp2TLSServerCSR;
+        protected       Pkcs10CertificationRequest?                                    emsp2hub1TLSClientCSR;
         protected       Pkcs10CertificationRequest?                                    emsp2cpo1TLSClientCSR;
         protected       Pkcs10CertificationRequest?                                    emsp2cpo2TLSClientCSR;
         protected       X509Certificate2?                                              emsp2TLSServerCertificate;
+        protected       X509Certificate2?                                              emsp2hub1TLSClientCertificate;
         protected       X509Certificate2?                                              emsp2cpo1TLSClientCertificate;
         protected       X509Certificate2?                                              emsp2cpo2TLSClientCertificate;
 
@@ -535,6 +610,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     emsp2APIRequestLogs_v3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    emsp2APIResponseLogs_v3_0 = [];
 
+        protected const String                                                         emsp1_accessing_hub2__token   = "emsp1_accessing_hub1++token";
         protected const String                                                         emsp1_accessing_cpo2__token   = "emsp1_accessing_cpo1++token";
         protected const String                                                         emsp2_accessing_cpo2__token   = "emsp2_accessing_cpo2++token";
 
@@ -562,6 +638,11 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         /// Use client certificate chains for TLS authentication.
         /// </summary>
         public Boolean        UseClientCertificateChains                { get; } = UseClientCertificateChains             ?? false;
+
+        /// <summary>
+        /// Whether to use HUB communication or direct CPO<->EMSP communication.
+        /// </summary>
+        public Boolean        UseHUBCommunication                       { get; } = UseHUBCommunication                    ?? true;
 
         /// <summary>
         /// Auto-wire remote parties when setting up OCPI endpoints.
@@ -705,7 +786,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 #endregion
 
 
-                #region Generate CPO and EMSP TLS KeyPairs
+                #region Generate HUB, HUB and EMSP TLS KeyPairs
 
                 #region CPO #1
 
@@ -753,6 +834,37 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     cpo2TLSServerKeyPair       = PKI.GenerateMLDSAKeyPair(MLDSAAlgorithm);
                     cpo2emsp1TLSClientKeyPair  = PKI.GenerateMLDSAKeyPair(MLDSAAlgorithm);
                     cpo2emsp2TLSClientKeyPair  = PKI.GenerateMLDSAKeyPair(MLDSAAlgorithm);
+                }
+
+                #endregion
+
+                #region HUB #1
+
+                if      (RSASize        is not null)
+                {
+                    hub1TLSServerKeyPair       = PKI.GenerateRSAKeyPair(RSASize);
+                    hub1cpo1TLSClientKeyPair   = PKI.GenerateRSAKeyPair(RSASize);
+                    hub1cpo2TLSClientKeyPair   = PKI.GenerateRSAKeyPair(RSASize);
+                    hub1emsp1TLSClientKeyPair  = PKI.GenerateRSAKeyPair(RSASize);
+                    hub1emsp2TLSClientKeyPair  = PKI.GenerateRSAKeyPair(RSASize);
+                }
+
+                else if (ECCAlgorithm   is not null)
+                {
+                    hub1TLSServerKeyPair       = PKI.GenerateECCKeyPair(ECCAlgorithm);
+                    hub1cpo1TLSClientKeyPair   = PKI.GenerateECCKeyPair(ECCAlgorithm);
+                    hub1cpo2TLSClientKeyPair   = PKI.GenerateECCKeyPair(ECCAlgorithm);
+                    hub1emsp1TLSClientKeyPair  = PKI.GenerateECCKeyPair(ECCAlgorithm);
+                    hub1emsp2TLSClientKeyPair  = PKI.GenerateECCKeyPair(ECCAlgorithm);
+                }
+
+                else if (MLDSAAlgorithm is not null)
+                {
+                    hub1TLSServerKeyPair       = PKI.GenerateMLDSAKeyPair(MLDSAAlgorithm);
+                    hub1cpo1TLSClientKeyPair   = PKI.GenerateMLDSAKeyPair(MLDSAAlgorithm);
+                    hub1cpo2TLSClientKeyPair   = PKI.GenerateMLDSAKeyPair(MLDSAAlgorithm);
+                    hub1emsp1TLSClientKeyPair  = PKI.GenerateMLDSAKeyPair(MLDSAAlgorithm);
+                    hub1emsp2TLSClientKeyPair  = PKI.GenerateMLDSAKeyPair(MLDSAAlgorithm);
                 }
 
                 #endregion
@@ -809,7 +921,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 #endregion
 
-                #region Generate CPO and EMSP TLS Certificate Signing Requests
+                #region Generate HUB, HUB and EMSP TLS Certificate Signing Requests
 
                 #region CPO #1
 
@@ -832,6 +944,29 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                    Description:         $"Main CPO #1 OCPI CSR..."
                                                ).ToCSR(cpo1TLSServerKeyPair)
                                              : null;
+
+
+                // Towards CPO #1 Client CSR
+                cpo1hub1TLSClientCSR   = cpo1hub1TLSClientKeyPair is not null
+                                             ? PKI.GenerateClientCSR(
+                                                   PublicKey:            cpo1hub1TLSClientKeyPair.Public,
+                                                   KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                   PartyIds:             [ "DEGEF" ],
+                                                   SubCPOIds:            [ "DE*GEF" ],
+                                                   NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                   NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
+                                                   CommonName:          $"GraphDefined OCPI CPO #1 to CPO #1",
+                                                   Organization:         "GraphDefined GmbH",
+                                                   OrganizationalUnit:   "CPO Services",
+                                                   EMailAddress:         "roaming-cpo@charging.cloud",
+                                                   TelephoneNumber:      "+49 1234 56789012",
+                                                   PostalCode:           "07749",
+                                                   Locality:             "Jena",
+                                                   Country:              "DE",
+                                                   Description:         $"Main CPO #1 to CPO #1 OCPI CSR..."
+                                               ).ToCSR(cpo1hub1TLSClientKeyPair)
+                                             : null;
+
 
                 // Towards EMSP #1 Client CSR
                 cpo1emsp1TLSClientCSR  = cpo1emsp1TLSClientKeyPair is not null
@@ -899,7 +1034,30 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                ).ToCSR(cpo2TLSServerKeyPair)
                                              : null;
 
-                // Towards EMSP #2 Client CSR
+
+                // Towards CPO #1 Client CSR
+                cpo2hub1TLSClientCSR  = cpo2hub1TLSClientKeyPair is not null
+                                             ? PKI.GenerateClientCSR(
+                                                   PublicKey:            cpo2hub1TLSClientKeyPair.Public,
+                                                   KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                   PartyIds:             [ "DEGEF" ],
+                                                   SubCPOIds:            [ "DE*GEF" ],
+                                                   NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                   NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
+                                                   CommonName:          $"GraphDefined OCPI CPO #2 to CPO #1",
+                                                   Organization:         "GraphDefined GmbH",
+                                                   OrganizationalUnit:   "CPO Services",
+                                                   EMailAddress:         "roaming-cpo@charging.cloud",
+                                                   TelephoneNumber:      "+49 1234 56789012",
+                                                   PostalCode:           "07749",
+                                                   Locality:             "Jena",
+                                                   Country:              "DE",
+                                                   Description:         $"Main CPO #2 to CPO #1 OCPI CSR..."
+                                               ).ToCSR(cpo2hub1TLSClientKeyPair)
+                                             : null;
+
+
+                // Towards EMSP #1 Client CSR
                 cpo2emsp1TLSClientCSR  = cpo2emsp1TLSClientKeyPair is not null
                                              ? PKI.GenerateClientCSR(
                                                    PublicKey:            cpo2emsp1TLSClientKeyPair.Public,
@@ -908,7 +1066,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                    SubCPOIds:            [ "DE*GEF" ],
                                                    NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
                                                    NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
-                                                   CommonName:          $"GraphDefined OCPI CPO #2 to EMSP #2",
+                                                   CommonName:          $"GraphDefined OCPI CPO #2 to EMSP #1",
                                                    Organization:         "GraphDefined GmbH",
                                                    OrganizationalUnit:   "CPO Services",
                                                    EMailAddress:         "roaming-cpo@charging.cloud",
@@ -916,7 +1074,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                    PostalCode:           "07749",
                                                    Locality:             "Jena",
                                                    Country:              "DE",
-                                                   Description:         $"Main CPO #2 to EMSP #2 OCPI CSR..."
+                                                   Description:         $"Main CPO #2 to EMSP #1 OCPI CSR..."
                                                ).ToCSR(cpo2emsp1TLSClientKeyPair)
                                              : null;
 
@@ -943,141 +1101,297 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 #endregion
 
+                #region HUB #1
+
+                hub1TLSServerCSR       = hub1TLSServerKeyPair is not null
+                                             ? PKI.GenerateServerCSR(
+                                                   PublicKey:            hub1TLSServerKeyPair.Public,
+                                                   KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                   PartyIds:             [ "DEHUB" ],
+                                                   SubCPOIds:            [ "DE*HUB" ],
+                                                   NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                   NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
+                                                   CommonName:          $"GraphDefined OCPI HUB #1",
+                                                   Organization:         "GraphDefined GmbH",
+                                                   OrganizationalUnit:   "HUB Services",
+                                                   EMailAddress:         "roaming-hub@charging.cloud",
+                                                   TelephoneNumber:      "+49 1234 56789012",
+                                                   PostalCode:           "07749",
+                                                   Locality:             "Jena",
+                                                   Country:              "DE",
+                                                   Description:         $"Main HUB #1 OCPI CSR..."
+                                               ).ToCSR(hub1TLSServerKeyPair)
+                                             : null;
+
+
+                // Towards HUB #1 Client CSR
+                hub1cpo1TLSClientCSR  = hub1cpo1TLSClientKeyPair is not null
+                                             ? PKI.GenerateClientCSR(
+                                                   PublicKey:            hub1cpo1TLSClientKeyPair.Public,
+                                                   KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                   PartyIds:             [ "DEHUB" ],
+                                                   SubCPOIds:            [ "DE*HUB" ],
+                                                   NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                   NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
+                                                   CommonName:          $"GraphDefined OCPI HUB #1 to HUB #1",
+                                                   Organization:         "GraphDefined GmbH",
+                                                   OrganizationalUnit:   "HUB Services",
+                                                   EMailAddress:         "roaming-hub@charging.cloud",
+                                                   TelephoneNumber:      "+49 1234 56789012",
+                                                   PostalCode:           "07749",
+                                                   Locality:             "Jena",
+                                                   Country:              "DE",
+                                                   Description:         $"Main HUB #1 to HUB #1 OCPI CSR..."
+                                               ).ToCSR(hub1cpo1TLSClientKeyPair)
+                                             : null;
+
+                // Towards HUB #2 Client CSR
+                hub1cpo2TLSClientCSR  = hub1cpo2TLSClientKeyPair is not null
+                                             ? PKI.GenerateClientCSR(
+                                                   PublicKey:            hub1cpo2TLSClientKeyPair.Public,
+                                                   KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                   PartyIds:             [ "DEHUB" ],
+                                                   SubCPOIds:            [ "DE*HUB" ],
+                                                   NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                   NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
+                                                   CommonName:          $"GraphDefined OCPI HUB #1 to HUB #2",
+                                                   Organization:         "GraphDefined GmbH",
+                                                   OrganizationalUnit:   "HUB Services",
+                                                   EMailAddress:         "roaming-hub@charging.cloud",
+                                                   TelephoneNumber:      "+49 1234 56789012",
+                                                   PostalCode:           "07749",
+                                                   Locality:             "Jena",
+                                                   Country:              "DE",
+                                                   Description:         $"Main HUB #1 to HUB #2 OCPI CSR..."
+                                               ).ToCSR(hub1cpo2TLSClientKeyPair)
+                                             : null;
+
+
+                // Towards EMSP #1 Client CSR
+                hub1emsp1TLSClientCSR  = hub1emsp1TLSClientKeyPair is not null
+                                             ? PKI.GenerateClientCSR(
+                                                   PublicKey:            hub1emsp1TLSClientKeyPair.Public,
+                                                   KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                   PartyIds:             [ "DEHUB" ],
+                                                   SubCPOIds:            [ "DE*HUB" ],
+                                                   NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                   NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
+                                                   CommonName:          $"GraphDefined OCPI HUB #1 to EMSP #1",
+                                                   Organization:         "GraphDefined GmbH",
+                                                   OrganizationalUnit:   "HUB Services",
+                                                   EMailAddress:         "roaming-hub@charging.cloud",
+                                                   TelephoneNumber:      "+49 1234 56789012",
+                                                   PostalCode:           "07749",
+                                                   Locality:             "Jena",
+                                                   Country:              "DE",
+                                                   Description:         $"Main HUB #1 to EMSP #1 OCPI CSR..."
+                                               ).ToCSR(hub1emsp1TLSClientKeyPair)
+                                             : null;
+
+                // Towards EMSP #2 Client CSR
+                hub1emsp2TLSClientCSR  = hub1emsp2TLSClientKeyPair is not null
+                                             ? PKI.GenerateClientCSR(
+                                                   PublicKey:            hub1emsp2TLSClientKeyPair.Public,
+                                                   KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                   PartyIds:             [ "DEHUB" ],
+                                                   SubCPOIds:            [ "DE*HUB" ],
+                                                   NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                   NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
+                                                   CommonName:          $"GraphDefined OCPI HUB #1 to EMSP #2",
+                                                   Organization:         "GraphDefined GmbH",
+                                                   OrganizationalUnit:   "HUB Services",
+                                                   EMailAddress:         "roaming-hub@charging.cloud",
+                                                   TelephoneNumber:      "+49 1234 56789012",
+                                                   PostalCode:           "07749",
+                                                   Locality:             "Jena",
+                                                   Country:              "DE",
+                                                   Description:         $"Main HUB #1 to EMSP #2 OCPI CSR..."
+                                               ).ToCSR(hub1emsp2TLSClientKeyPair)
+                                             : null;
+
+                #endregion
+
                 #region EMSP #1
 
                 emsp1TLSServerCSR      = emsp1TLSServerKeyPair is not null
-                                                       ? PKI.GenerateServerCSR(
-                                                             PublicKey:            emsp1TLSServerKeyPair.Public,
-                                                             KeySerialNumber:      UUIDv7.Generate().ToString(),
-                                                             PartyIds:             [ "DEGDF" ],
-                                                             SubEMSPIds:           [ "DE*GDF" ],
-                                                             NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
-                                                             NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
-                                                             CommonName:          $"GraphDefined OCPI EMSP #1",
-                                                             Organization:         "GraphDefined GmbH",
-                                                             OrganizationalUnit:   "EMSP Services",
-                                                             EMailAddress:         "roaming-emsp@charging.cloud",
-                                                             TelephoneNumber:      "+49 1234 56789012",
-                                                             PostalCode:           "07749",
-                                                             Locality:             "Jena",
-                                                             Country:              "DE",
-                                                             Description:         $"Main EMSP #1 OCPI CSR..."
-                                                         ).ToCSR(emsp1TLSServerKeyPair)
-                                                       : null;
+                                             ? PKI.GenerateServerCSR(
+                                                   PublicKey:            emsp1TLSServerKeyPair.Public,
+                                                   KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                   PartyIds:             [ "DEGDF" ],
+                                                   SubEMSPIds:           [ "DE*GDF" ],
+                                                   NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                   NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
+                                                   CommonName:          $"GraphDefined OCPI EMSP #1",
+                                                   Organization:         "GraphDefined GmbH",
+                                                   OrganizationalUnit:   "EMSP Services",
+                                                   EMailAddress:         "roaming-emsp@charging.cloud",
+                                                   TelephoneNumber:      "+49 1234 56789012",
+                                                   PostalCode:           "07749",
+                                                   Locality:             "Jena",
+                                                   Country:              "DE",
+                                                   Description:         $"Main EMSP #1 OCPI CSR..."
+                                               ).ToCSR(emsp1TLSServerKeyPair)
+                                             : null;
 
-                // Towards CPO #1 Client CSRs
+
+                // Towards HUB #1 Client CSRs
+                emsp1hub1TLSClientCSR  = emsp1hub1TLSClientKeyPair is not null
+                                             ? PKI.GenerateClientCSR(
+                                                   PublicKey:            emsp1hub1TLSClientKeyPair.Public,
+                                                   KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                   PartyIds:             [ "DEGEF" ],
+                                                   SubCPOIds:            [ "DE*GEF" ],
+                                                   NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                   NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
+                                                   CommonName:          $"GraphDefined OCPI EMSP #1 to HUB #1",
+                                                   Organization:         "GraphDefined GmbH",
+                                                   OrganizationalUnit:   "EMSP Services",
+                                                   EMailAddress:         "roaming-emsp@charging.cloud",
+                                                   TelephoneNumber:      "+49 1234 56789012",
+                                                   PostalCode:           "07749",
+                                                   Locality:             "Jena",
+                                                   Country:              "DE",
+                                                   Description:         $"Main EMSP #1 to HUB #1 OCPI CSR..."
+                                               ).ToCSR(emsp1hub1TLSClientKeyPair)
+                                             : null;
+
+
+                // Towards HUB #1 Client CSRs
                 emsp1cpo1TLSClientCSR  = emsp1cpo1TLSClientKeyPair is not null
-                                                        ? PKI.GenerateClientCSR(
-                                                              PublicKey:            emsp1cpo1TLSClientKeyPair.Public,
-                                                              KeySerialNumber:      UUIDv7.Generate().ToString(),
-                                                              PartyIds:             [ "DEGEF" ],
-                                                              SubCPOIds:            [ "DE*GEF" ],
-                                                              NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
-                                                              NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
-                                                              CommonName:          $"GraphDefined OCPI {OCPIv2_1_1.Version.String} EMSP #1 to CPO #1",
-                                                              Organization:         "GraphDefined GmbH",
-                                                              OrganizationalUnit:   "EMSP Services",
-                                                              EMailAddress:         "roaming-emsp@charging.cloud",
-                                                              TelephoneNumber:      "+49 1234 56789012",
-                                                              PostalCode:           "07749",
-                                                              Locality:             "Jena",
-                                                              Country:              "DE",
-                                                              Description:         $"Main EMSP #1 to CPO #1 OCPI {OCPIv2_1_1.Version.String} CSR..."
-                                                          ).ToCSR(emsp1cpo1TLSClientKeyPair)
-                                                        : null;
+                                             ? PKI.GenerateClientCSR(
+                                                   PublicKey:            emsp1cpo1TLSClientKeyPair.Public,
+                                                   KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                   PartyIds:             [ "DEGEF" ],
+                                                   SubCPOIds:            [ "DE*GEF" ],
+                                                   NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                   NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
+                                                   CommonName:          $"GraphDefined OCPI EMSP #1 to HUB #1",
+                                                   Organization:         "GraphDefined GmbH",
+                                                   OrganizationalUnit:   "EMSP Services",
+                                                   EMailAddress:         "roaming-emsp@charging.cloud",
+                                                   TelephoneNumber:      "+49 1234 56789012",
+                                                   PostalCode:           "07749",
+                                                   Locality:             "Jena",
+                                                   Country:              "DE",
+                                                   Description:         $"Main EMSP #1 to HUB #1 OCPI CSR..."
+                                               ).ToCSR(emsp1cpo1TLSClientKeyPair)
+                                             : null;
 
-                // Towards CPO #2 Client CSRs
+                // Towards HUB #2 Client CSRs
                 emsp1cpo2TLSClientCSR  = emsp1cpo2TLSClientKeyPair is not null
-                                                        ? PKI.GenerateClientCSR(
-                                                              PublicKey:            emsp1cpo2TLSClientKeyPair.Public,
-                                                              KeySerialNumber:      UUIDv7.Generate().ToString(),
-                                                              PartyIds:             [ "DEGEF" ],
-                                                              SubCPOIds:            [ "DE*GEF" ],
-                                                              NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
-                                                              NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
-                                                              CommonName:          $"GraphDefined OCPI {OCPIv2_1_1.Version.String} EMSP #1 to CPO #2",
-                                                              Organization:         "GraphDefined GmbH",
-                                                              OrganizationalUnit:   "EMSP Services",
-                                                              EMailAddress:         "roaming-emsp@charging.cloud",
-                                                              TelephoneNumber:      "+49 1234 56789012",
-                                                              PostalCode:           "07749",
-                                                              Locality:             "Jena",
-                                                              Country:              "DE",
-                                                              Description:         $"Main EMSP #1 to CPO #2 OCPI {OCPIv2_1_1.Version.String} CSR..."
-                                                          ).ToCSR(emsp1cpo2TLSClientKeyPair)
-                                                        : null;
+                                             ? PKI.GenerateClientCSR(
+                                                   PublicKey:            emsp1cpo2TLSClientKeyPair.Public,
+                                                   KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                   PartyIds:             [ "DEGEF" ],
+                                                   SubCPOIds:            [ "DE*GEF" ],
+                                                   NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                   NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
+                                                   CommonName:          $"GraphDefined OCPI EMSP #1 to HUB #2",
+                                                   Organization:         "GraphDefined GmbH",
+                                                   OrganizationalUnit:   "EMSP Services",
+                                                   EMailAddress:         "roaming-emsp@charging.cloud",
+                                                   TelephoneNumber:      "+49 1234 56789012",
+                                                   PostalCode:           "07749",
+                                                   Locality:             "Jena",
+                                                   Country:              "DE",
+                                                   Description:         $"Main EMSP #1 to HUB #2 OCPI CSR..."
+                                               ).ToCSR(emsp1cpo2TLSClientKeyPair)
+                                             : null;
 
                 #endregion
 
                 #region EMSP #2
 
                 emsp2TLSServerCSR      = emsp2TLSServerKeyPair is not null
-                                                       ? PKI.GenerateServerCSR(
-                                                             PublicKey:            emsp2TLSServerKeyPair.Public,
-                                                             KeySerialNumber:      UUIDv7.Generate().ToString(),
-                                                             PartyIds:             [ "DEGDF" ],
-                                                             SubEMSPIds:           [ "DE*GDF" ],
-                                                             NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
-                                                             NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
-                                                             CommonName:          $"GraphDefined OCPI EMSP #2",
-                                                             Organization:         "GraphDefined GmbH",
-                                                             OrganizationalUnit:   "EMSP Services",
-                                                             EMailAddress:         "roaming-emsp@charging.cloud",
-                                                             TelephoneNumber:      "+49 1234 56789012",
-                                                             PostalCode:           "07749",
-                                                             Locality:             "Jena",
-                                                             Country:              "DE",
-                                                             Description:         $"Main EMSP #2 OCPI CSR..."
-                                                         ).ToCSR(emsp2TLSServerKeyPair)
-                                                       : null;
+                                             ? PKI.GenerateServerCSR(
+                                                   PublicKey:            emsp2TLSServerKeyPair.Public,
+                                                   KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                   PartyIds:             [ "DEGDF" ],
+                                                   SubEMSPIds:           [ "DE*GDF" ],
+                                                   NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                   NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
+                                                   CommonName:          $"GraphDefined OCPI EMSP #2",
+                                                   Organization:         "GraphDefined GmbH",
+                                                   OrganizationalUnit:   "EMSP Services",
+                                                   EMailAddress:         "roaming-emsp@charging.cloud",
+                                                   TelephoneNumber:      "+49 1234 56789012",
+                                                   PostalCode:           "07749",
+                                                   Locality:             "Jena",
+                                                   Country:              "DE",
+                                                   Description:         $"Main EMSP #2 OCPI CSR..."
+                                               ).ToCSR(emsp2TLSServerKeyPair)
+                                             : null;
 
-                // Towards CPO #1 Client CSRs
+
+                // Towards HUB #1 Client CSRs
+                emsp2hub1TLSClientCSR  = emsp2hub1TLSClientKeyPair is not null
+                                             ? PKI.GenerateClientCSR(
+                                                   PublicKey:            emsp2hub1TLSClientKeyPair.Public,
+                                                   KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                   PartyIds:             [ "DEGEF" ],
+                                                   SubCPOIds:            [ "DE*GEF" ],
+                                                   NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                   NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
+                                                   CommonName:          $"GraphDefined OCPI EMSP #2 to HUB #1",
+                                                   Organization:         "GraphDefined GmbH",
+                                                   OrganizationalUnit:   "EMSP Services",
+                                                   EMailAddress:         "roaming-emsp@charging.cloud",
+                                                   TelephoneNumber:      "+49 1234 56789012",
+                                                   PostalCode:           "07749",
+                                                   Locality:             "Jena",
+                                                   Country:              "DE",
+                                                   Description:         $"Main EMSP #2 to HUB #1 OCPI CSR..."
+                                               ).ToCSR(emsp2hub1TLSClientKeyPair)
+                                             : null;
+
+
+                // Towards HUB #1 Client CSRs
                 emsp2cpo1TLSClientCSR  = emsp2cpo1TLSClientKeyPair is not null
-                                                        ? PKI.GenerateClientCSR(
-                                                              PublicKey:            emsp2cpo1TLSClientKeyPair.Public,
-                                                              KeySerialNumber:      UUIDv7.Generate().ToString(),
-                                                              PartyIds:             [ "DEGEF" ],
-                                                              SubCPOIds:            [ "DE*GEF" ],
-                                                              NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
-                                                              NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
-                                                              CommonName:          $"GraphDefined OCPI {OCPIv2_1_1.Version.String} EMSP #2 to CPO #1",
-                                                              Organization:         "GraphDefined GmbH",
-                                                              OrganizationalUnit:   "EMSP Services",
-                                                              EMailAddress:         "roaming-emsp@charging.cloud",
-                                                              TelephoneNumber:      "+49 1234 56789012",
-                                                              PostalCode:           "07749",
-                                                              Locality:             "Jena",
-                                                              Country:              "DE",
-                                                              Description:         $"Main EMSP #2 to CPO #1 OCPI {OCPIv2_1_1.Version.String} CSR..."
-                                                          ).ToCSR(emsp2cpo1TLSClientKeyPair)
-                                                        : null;
+                                             ? PKI.GenerateClientCSR(
+                                                   PublicKey:            emsp2cpo1TLSClientKeyPair.Public,
+                                                   KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                   PartyIds:             [ "DEGEF" ],
+                                                   SubCPOIds:            [ "DE*GEF" ],
+                                                   NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                   NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
+                                                   CommonName:          $"GraphDefined OCPI EMSP #2 to HUB #1",
+                                                   Organization:         "GraphDefined GmbH",
+                                                   OrganizationalUnit:   "EMSP Services",
+                                                   EMailAddress:         "roaming-emsp@charging.cloud",
+                                                   TelephoneNumber:      "+49 1234 56789012",
+                                                   PostalCode:           "07749",
+                                                   Locality:             "Jena",
+                                                   Country:              "DE",
+                                                   Description:         $"Main EMSP #2 to HUB #1 OCPI CSR..."
+                                               ).ToCSR(emsp2cpo1TLSClientKeyPair)
+                                             : null;
 
-                // Towards CPO #2 Client CSRs
+                // Towards HUB #2 Client CSRs
                 emsp2cpo2TLSClientCSR  = emsp2cpo2TLSClientKeyPair is not null
-                                                        ? PKI.GenerateClientCSR(
-                                                              PublicKey:            emsp2cpo2TLSClientKeyPair.Public,
-                                                              KeySerialNumber:      UUIDv7.Generate().ToString(),
-                                                              PartyIds:             [ "DEGEF" ],
-                                                              SubCPOIds:            [ "DE*GEF" ],
-                                                              NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
-                                                              NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
-                                                              CommonName:          $"GraphDefined OCPI {OCPIv2_1_1.Version.String} EMSP #2 to CPO #2",
-                                                              Organization:         "GraphDefined GmbH",
-                                                              OrganizationalUnit:   "EMSP Services",
-                                                              EMailAddress:         "roaming-emsp@charging.cloud",
-                                                              TelephoneNumber:      "+49 1234 56789012",
-                                                              PostalCode:           "07749",
-                                                              Locality:             "Jena",
-                                                              Country:              "DE",
-                                                              Description:         $"Main EMSP #2 to CPO #2 OCPI {OCPIv2_1_1.Version.String} CSR..."
-                                                          ).ToCSR(emsp2cpo2TLSClientKeyPair)
-                                                        : null;
+                                             ? PKI.GenerateClientCSR(
+                                                   PublicKey:            emsp2cpo2TLSClientKeyPair.Public,
+                                                   KeySerialNumber:      UUIDv7.Generate().ToString(),
+                                                   PartyIds:             [ "DEGEF" ],
+                                                   SubCPOIds:            [ "DE*GEF" ],
+                                                   NotBefore:            Timestamp.Now - TimeSpan.FromDays(1),
+                                                   NotAfter:             Timestamp.Now + TimeSpan.FromDays(2),
+                                                   CommonName:          $"GraphDefined OCPI EMSP #2 to HUB #2",
+                                                   Organization:         "GraphDefined GmbH",
+                                                   OrganizationalUnit:   "EMSP Services",
+                                                   EMailAddress:         "roaming-emsp@charging.cloud",
+                                                   TelephoneNumber:      "+49 1234 56789012",
+                                                   PostalCode:           "07749",
+                                                   Locality:             "Jena",
+                                                   Country:              "DE",
+                                                   Description:         $"Main EMSP #2 to HUB #2 OCPI CSR..."
+                                               ).ToCSR(emsp2cpo2TLSClientKeyPair)
+                                             : null;
 
                 #endregion
 
                 #endregion
 
-                #region Generate CPO and EMSP TLS Certificates
+                #region Generate HUB and EMSP TLS Certificates
 
                 var serverCertificateIssuerName  = serverCACertificate?.SubjectDN;
                 var serverCAPrivateKey           = serverCAKeyPair?.    Private;
@@ -1103,6 +1417,20 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                            )?.ToDotNet2(cpo1TLSServerKeyPair.Private)
 
                                                          : null;
+
+
+                    // Towards CPO #1 Client Certificates
+                    cpo1hub1TLSClientCertificate   = cpo1hub1TLSClientCSR              is not null &&
+                                                     cpo1hub1TLSClientKeyPair?.Private is not null
+
+                                                         ? PKI.SignClientCertificate(
+                                                               cpo1hub1TLSClientCSR,
+                                                               clientCertificateIssuerName,
+                                                               clientCAPrivateKey
+                                                           )?.ToDotNet2(cpo1hub1TLSClientKeyPair.Private)
+
+                                                         : null;
+
 
                     // Towards EMSP #1 Client Certificates
                     cpo1emsp1TLSClientCertificate  = cpo1emsp1TLSClientCSR              is not null &&
@@ -1143,6 +1471,20 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                                          : null;
 
+
+                    // Towards CPO #1 Client Certificates
+                    cpo2hub1TLSClientCertificate   = cpo2hub1TLSClientCSR              is not null &&
+                                                     cpo2hub1TLSClientKeyPair?.Private is not null
+
+                                                         ? PKI.SignClientCertificate(
+                                                               cpo2hub1TLSClientCSR,
+                                                               clientCertificateIssuerName,
+                                                               clientCAPrivateKey
+                                                           )?.ToDotNet2(cpo2hub1TLSClientKeyPair.Private)
+
+                                                         : null;
+
+
                     // Towards EMSP #2 Client Certificates
                     cpo2emsp1TLSClientCertificate  = cpo2emsp1TLSClientCSR              is not null &&
                                                      cpo2emsp1TLSClientKeyPair?.Private is not null
@@ -1169,6 +1511,70 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                     #endregion
 
+                    #region HUB #1
+
+                    hub1TLSServerCertificate       = hub1TLSServerCSR              is not null &&
+                                                     hub1TLSServerKeyPair?.Private is not null
+
+                                                         ? PKI.SignServerCertificate(
+                                                               hub1TLSServerCSR,
+                                                               serverCertificateIssuerName,
+                                                               serverCAPrivateKey
+                                                           )?.ToDotNet2(hub1TLSServerKeyPair.Private)
+
+                                                         : null;
+
+                    // Towards HUB #1 Client Certificates
+                    hub1cpo1TLSClientCertificate   = hub1cpo1TLSClientCSR              is not null &&
+                                                     hub1cpo1TLSClientKeyPair?.Private is not null
+
+                                                         ? PKI.SignClientCertificate(
+                                                               hub1cpo1TLSClientCSR,
+                                                               clientCertificateIssuerName,
+                                                               clientCAPrivateKey
+                                                           )?.ToDotNet2(hub1cpo1TLSClientKeyPair.Private)
+
+                                                         : null;
+
+                    // Towards HUB #2 Client Certificates
+                    hub1cpo2TLSClientCertificate   = hub1cpo2TLSClientCSR              is not null &&
+                                                     hub1cpo2TLSClientKeyPair?.Private is not null
+
+                                                         ? PKI.SignClientCertificate(
+                                                               hub1cpo2TLSClientCSR,
+                                                               clientCertificateIssuerName,
+                                                               clientCAPrivateKey
+                                                           )?.ToDotNet2(hub1cpo2TLSClientKeyPair.Private)
+
+                                                         : null;
+
+
+                    // Towards EMSP #1 Client Certificates
+                    hub1emsp1TLSClientCertificate  = hub1emsp1TLSClientCSR              is not null &&
+                                                     hub1emsp1TLSClientKeyPair?.Private is not null
+
+                                                         ? PKI.SignClientCertificate(
+                                                               hub1emsp1TLSClientCSR,
+                                                               clientCertificateIssuerName,
+                                                               clientCAPrivateKey
+                                                           )?.ToDotNet2(hub1emsp1TLSClientKeyPair.Private)
+
+                                                         : null;
+
+                    // Towards EMSP #2 Client Certificates
+                    hub1emsp2TLSClientCertificate  = hub1emsp2TLSClientCSR              is not null &&
+                                                     hub1emsp2TLSClientKeyPair?.Private is not null
+
+                                                         ? PKI.SignClientCertificate(
+                                                               hub1emsp2TLSClientCSR,
+                                                               clientCertificateIssuerName,
+                                                               clientCAPrivateKey
+                                                           )?.ToDotNet2(hub1emsp2TLSClientKeyPair.Private)
+
+                                                         : null;
+
+                    #endregion
+
                     #region EMSP #1
 
                     emsp1TLSServerCertificate      = emsp1TLSServerCSR              is not null &&
@@ -1182,7 +1588,21 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                                          : null;
 
-                    // Towards EMSP #1 Client Certificates
+
+                    // Towards HUB #1 Client Certificates
+                    emsp1hub1TLSClientCertificate  = emsp1hub1TLSClientCSR              is not null &&
+                                                     emsp1hub1TLSClientKeyPair?.Private is not null
+
+                                                         ? PKI.SignClientCertificate(
+                                                               emsp1hub1TLSClientCSR,
+                                                               clientCertificateIssuerName,
+                                                               clientCAPrivateKey
+                                                           )?.ToDotNet2(emsp1hub1TLSClientKeyPair.Private)
+
+                                                         : null;
+
+
+                    // Towards CPO #1 Client Certificates
                     emsp1cpo1TLSClientCertificate  = emsp1cpo1TLSClientCSR              is not null &&
                                                      emsp1cpo1TLSClientKeyPair?.Private is not null
 
@@ -1194,7 +1614,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                                          : null;
 
-                    // Towards EMSP #2 Client Certificates
+                    // Towards CPO #2 Client Certificates
                     emsp1cpo2TLSClientCertificate  = emsp1cpo2TLSClientCSR              is not null &&
                                                      emsp1cpo2TLSClientKeyPair?.Private is not null
 
@@ -1221,7 +1641,21 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                                          : null;
 
-                    // Towards EMSP #2 Client Certificates
+
+                    // Towards HUB #1 Client Certificates
+                    emsp2hub1TLSClientCertificate  = emsp2hub1TLSClientCSR              is not null &&
+                                                     emsp2hub1TLSClientKeyPair?.Private is not null
+
+                                                         ? PKI.SignClientCertificate(
+                                                               emsp2hub1TLSClientCSR,
+                                                               clientCertificateIssuerName,
+                                                               clientCAPrivateKey
+                                                           )?.ToDotNet2(emsp2hub1TLSClientKeyPair.Private)
+
+                                                         : null;
+
+
+                    // Towards CPO #2 Client Certificates
                     emsp2cpo1TLSClientCertificate  = emsp2cpo1TLSClientCSR              is not null &&
                                                      emsp2cpo1TLSClientKeyPair?.Private is not null
 
@@ -1233,7 +1667,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                                          : null;
 
-                    // Towards EMSP #2 Client Certificates
+                    // Towards CPO #2 Client Certificates
                     emsp2cpo2TLSClientCertificate  = emsp2cpo2TLSClientCSR              is not null &&
                                                      emsp2cpo2TLSClientKeyPair?.Private is not null
 
@@ -1256,7 +1690,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             #endregion
 
 
-            #region Create cpo1/cpo2/emsp1/emsp2 HTTP Servers
+            #region Create cpo1/cpo2/hub1/emsp1/emsp2 HTTP Servers
 
             cpo1HTTPServer           = new HTTPTestServerX(
                                            TCPPort:                      IPPort.Parse(3301),
@@ -1269,32 +1703,32 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                            ClientCertificateValidator:   emsp1cpo1TLSClientCertificate is not null &&
                                                                          emsp2cpo1TLSClientCertificate is not null
                                                                              ? (sender,
-                                                                               clientCertificate,
-                                                                               clientCertificateChain,
-                                                                               tlsServer,
-                                                                               policyErrors) => {
+                                                                                clientCertificate,
+                                                                                clientCertificateChain,
+                                                                                tlsServer,
+                                                                                policyErrors) => {
 
-                                                                                   if (clientCertificate is null)
-                                                                                       return EnforceClientCertificateAuthentication
-                                                                                           ? (false, [ "TLS client certificate authentication is required!" ])
-                                                                                           : (true,  [ "The client certificate is null, anyway we proceed... :)" ]);
+                                                                                    if (clientCertificate is null)
+                                                                                        return EnforceClientCertificateAuthentication
+                                                                                                   ? (false, [ "TLS client certificate authentication is required!" ])
+                                                                                                   : (true,  [ "The client certificate is null, anyway we proceed... :)" ]);
 
-                                                                                   var chainReport = UseClientCertificateChains && clientCertificateChain is not null
+                                                                                    var chainReport = UseClientCertificateChains && clientCertificateChain is not null
 
-                                                                                                         ? PKIFactory.ValidateClientChain(
-                                                                                                               clientCertificate,
-                                                                                                               clientCertificateChain,
-                                                                                                               rootCACertificate2!
-                                                                                                           )
+                                                                                                          ? PKIFactory.ValidateClientChain(
+                                                                                                                clientCertificate,
+                                                                                                                clientCertificateChain,
+                                                                                                                rootCACertificate2!
+                                                                                                            )
 
-                                                                                                         : PKIFactory.ValidateClientChain(
-                                                                                                               clientCertificate,
-                                                                                                               clientCACertificate2!,
-                                                                                                               rootCACertificate2!
-                                                                                                           );
+                                                                                                          : PKIFactory.ValidateClientChain(
+                                                                                                                clientCertificate,
+                                                                                                                clientCACertificate2!,
+                                                                                                                rootCACertificate2!
+                                                                                                            );
 
-                                                                                   return (chainReport.IsValid,
-                                                                                           chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+                                                                                    return (chainReport.IsValid,
+                                                                                            chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
 
                                                                                }
                                                                              : null,
@@ -1322,32 +1756,32 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                            ClientCertificateValidator:   emsp1cpo2TLSClientCertificate is not null &&
                                                                          emsp2cpo2TLSClientCertificate is not null
                                                                              ? (sender,
-                                                                               clientCertificate,
-                                                                               clientCertificateChain,
-                                                                               tlsServer,
-                                                                               policyErrors) => {
+                                                                                clientCertificate,
+                                                                                clientCertificateChain,
+                                                                                tlsServer,
+                                                                                policyErrors) => {
 
-                                                                                   if (clientCertificate is null)
-                                                                                       return EnforceClientCertificateAuthentication
-                                                                                           ? (false, [ "TLS client certificate authentication is required!" ])
-                                                                                           : (true,  [ "The client certificate is null, anyway we proceed... :)" ]);
+                                                                                    if (clientCertificate is null)
+                                                                                        return EnforceClientCertificateAuthentication
+                                                                                                   ? (false, [ "TLS client certificate authentication is required!" ])
+                                                                                                   : (true,  [ "The client certificate is null, anyway we proceed... :)" ]);
 
-                                                                                   var chainReport = UseClientCertificateChains && clientCertificateChain is not null
+                                                                                    var chainReport = UseClientCertificateChains && clientCertificateChain is not null
 
-                                                                                                         ? PKIFactory.ValidateClientChain(
-                                                                                                               clientCertificate,
-                                                                                                               clientCertificateChain,
-                                                                                                               rootCACertificate2!
-                                                                                                           )
+                                                                                                          ? PKIFactory.ValidateClientChain(
+                                                                                                                clientCertificate,
+                                                                                                                clientCertificateChain,
+                                                                                                                rootCACertificate2!
+                                                                                                            )
 
-                                                                                                         : PKIFactory.ValidateClientChain(
-                                                                                                               clientCertificate,
-                                                                                                               clientCACertificate2!,
-                                                                                                               rootCACertificate2!
-                                                                                                           );
+                                                                                                          : PKIFactory.ValidateClientChain(
+                                                                                                                clientCertificate,
+                                                                                                                clientCACertificate2!,
+                                                                                                                rootCACertificate2!
+                                                                                                            );
 
-                                                                                   return (chainReport.IsValid,
-                                                                                           chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+                                                                                    return (chainReport.IsValid,
+                                                                                            chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
 
                                                                                }
                                                                              : null,
@@ -1364,14 +1798,19 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                            AutoStart:                    true
                                        );
 
-            emsp1HTTPServer          = new HTTPTestServerX(
+
+            hub1HTTPServer           = new HTTPTestServerX(
                                            TCPPort:                      IPPort.Parse(3401),
                                            DNSClient:                    DNSClient,
-                                           ServerCertificateSelector:    (tcpServer, tcpClient) => {
-                                                                             return emsp1TLSServerCertificate!;
-                                                                         },
-                                           ClientCertificateValidator:   emsp1cpo1TLSClientCertificate is not null &&
-                                                                         emsp2cpo1TLSClientCertificate is not null
+                                           ServerCertificateSelector:    hub1TLSServerCertificate is not null
+                                                                             ? (tcpServer, tcpClient) => {
+                                                                                   return hub1TLSServerCertificate!;
+                                                                               }
+                                                                             : null,
+                                           ClientCertificateValidator:   cpo1hub1TLSClientCertificate  is not null &&
+                                                                         cpo2hub1TLSClientCertificate  is not null &&
+                                                                         emsp1hub1TLSClientCertificate is not null &&
+                                                                         emsp2hub1TLSClientCertificate is not null
                                                                              ? (sender,
                                                                                 clientCertificate,
                                                                                 clientCertificateChain,
@@ -1379,28 +1818,79 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                 policyErrors) => {
 
                                                                                     if (clientCertificate is null)
-                                                                                       return EnforceClientCertificateAuthentication
-                                                                                           ? (false, [ "TLS client certificate authentication is required!" ])
-                                                                                           : (true,  [ "The client certificate is null, anyway we proceed... :)" ]);
+                                                                                        return EnforceClientCertificateAuthentication
+                                                                                                   ? (false, [ "TLS client certificate authentication is required!" ])
+                                                                                                   : (true,  [ "The client certificate is null, anyway we proceed... :)" ]);
 
                                                                                     var chainReport = UseClientCertificateChains && clientCertificateChain is not null
 
-                                                                                                         ? PKIFactory.ValidateClientChain(
-                                                                                                               clientCertificate,
-                                                                                                               clientCertificateChain,
-                                                                                                               rootCACertificate2!
-                                                                                                           )
+                                                                                                          ? PKIFactory.ValidateClientChain(
+                                                                                                                clientCertificate,
+                                                                                                                clientCertificateChain,
+                                                                                                                rootCACertificate2!
+                                                                                                            )
 
-                                                                                                         : PKIFactory.ValidateClientChain(
-                                                                                                               clientCertificate,
-                                                                                                               clientCACertificate2!,
-                                                                                                               rootCACertificate2!
-                                                                                                           );
+                                                                                                          : PKIFactory.ValidateClientChain(
+                                                                                                                clientCertificate,
+                                                                                                                clientCACertificate2!,
+                                                                                                                rootCACertificate2!
+                                                                                                            );
 
                                                                                     return (chainReport.IsValid,
                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
 
+                                                                                }
+                                                                             : null,
+                                           LocalCertificateSelector:     hub1TLSServerCertificate is not null
+                                                                             ? (sender,
+                                                                                targetHost,
+                                                                                localCertificates,
+                                                                                remoteCertificate,
+                                                                                acceptableIssuers) => {
+                                                                                    return hub1TLSServerCertificate!;
                                                                                }
+                                                                             : null,
+                                           AllowedTLSProtocols:          AllowedTLSProtocols,
+                                           AutoStart:                    true
+                                       );
+
+            emsp1HTTPServer          = new HTTPTestServerX(
+                                           TCPPort:                      IPPort.Parse(3501),
+                                           DNSClient:                    DNSClient,
+                                           ServerCertificateSelector:    (tcpServer, tcpClient) => {
+                                                                             return emsp1TLSServerCertificate!;
+                                                                         },
+                                           ClientCertificateValidator:   cpo1emsp1TLSClientCertificate is not null &&
+                                                                         cpo2emsp1TLSClientCertificate is not null
+                                                                             ? (sender,
+                                                                                clientCertificate,
+                                                                                clientCertificateChain,
+                                                                                tlsServer,
+                                                                                policyErrors) => {
+
+                                                                                    if (clientCertificate is null)
+                                                                                        return EnforceClientCertificateAuthentication
+                                                                                                   ? (false, [ "TLS client certificate authentication is required!" ])
+                                                                                                   : (true,  [ "The client certificate is null, anyway we proceed... :)" ]);
+
+                                                                                    var chainReport = UseClientCertificateChains && clientCertificateChain is not null
+
+                                                                                                          ? PKIFactory.ValidateClientChain(
+                                                                                                                clientCertificate,
+                                                                                                                clientCertificateChain,
+                                                                                                                rootCACertificate2!
+                                                                                                            )
+
+                                                                                                          : PKIFactory.ValidateClientChain(
+                                                                                                                clientCertificate,
+                                                                                                                clientCACertificate2!,
+                                                                                                                rootCACertificate2!
+                                                                                                            );
+
+                                                                                    return (chainReport.IsValid,
+                                                                                            chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                }
                                                                              : null,
                                            LocalCertificateSelector:     (sender,
                                                                           targetHost,
@@ -1414,40 +1904,43 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                        );
 
             emsp2HTTPServer          = new HTTPTestServerX(
-                                           TCPPort:                      IPPort.Parse(3402),
+                                           TCPPort:                      IPPort.Parse(3502),
                                            DNSClient:                    DNSClient,
                                            ServerCertificateSelector:    (tcpServer, tcpClient) => {
                                                                              return emsp2TLSServerCertificate!;
                                                                          },
-                                           ClientCertificateValidator:   (sender,
-                                                                          clientCertificate,
-                                                                          clientCertificateChain,
-                                                                          tlsServer,
-                                                                          policyErrors) => {
+                                           ClientCertificateValidator:   cpo1emsp2TLSClientCertificate is not null &&
+                                                                         cpo2emsp2TLSClientCertificate is not null
+                                                                             ? (sender,
+                                                                                clientCertificate,
+                                                                                clientCertificateChain,
+                                                                                tlsServer,
+                                                                                policyErrors) => {
 
-                                                                              if (clientCertificate is null)
-                                                                                       return EnforceClientCertificateAuthentication
-                                                                                           ? (false, [ "TLS client certificate authentication is required!" ])
-                                                                                           : (true,  [ "The client certificate is null, anyway we proceed... :)" ]);
+                                                                                    if (clientCertificate is null)
+                                                                                        return EnforceClientCertificateAuthentication
+                                                                                                   ? (false, [ "TLS client certificate authentication is required!" ])
+                                                                                                   : (true,  [ "The client certificate is null, anyway we proceed... :)" ]);
 
-                                                                              var chainReport = UseClientCertificateChains && clientCertificateChain is not null
+                                                                                    var chainReport = UseClientCertificateChains && clientCertificateChain is not null
 
-                                                                                                         ? PKIFactory.ValidateClientChain(
-                                                                                                               clientCertificate,
-                                                                                                               clientCertificateChain,
-                                                                                                               rootCACertificate2!
-                                                                                                           )
+                                                                                                          ? PKIFactory.ValidateClientChain(
+                                                                                                                clientCertificate,
+                                                                                                                clientCertificateChain,
+                                                                                                                rootCACertificate2!
+                                                                                                            )
 
-                                                                                                         : PKIFactory.ValidateClientChain(
-                                                                                                               clientCertificate,
-                                                                                                               clientCACertificate2!,
-                                                                                                               rootCACertificate2!
-                                                                                                           );
+                                                                                                          : PKIFactory.ValidateClientChain(
+                                                                                                                clientCertificate,
+                                                                                                                clientCACertificate2!,
+                                                                                                                rootCACertificate2!
+                                                                                                            );
 
-                                                                              return (chainReport.IsValid,
-                                                                                      chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+                                                                                    return (chainReport.IsValid,
+                                                                                            chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
 
-                                                                         },
+                                                                                }
+                                                                             : null,
                                            LocalCertificateSelector:     (sender,
                                                                           targetHost,
                                                                           localCertificates,
@@ -1467,7 +1960,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #endregion
 
-            #region Create cpo1/cpo2/emsp1/emsp2 HTTP APIs
+            #region Create cpo1/cpo2/hub1/emsp1/emsp2 HTTP APIs
 
             cpo1HTTPAPI          = new HTTPExtAPIX(
                                        HTTPServer:  cpo1HTTPServer
@@ -1475,6 +1968,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             cpo2HTTPAPI          = new HTTPExtAPIX(
                                        HTTPServer:  cpo2HTTPServer
+                                   );
+
+            hub1HTTPAPI          = new HTTPExtAPIX(
+                                       HTTPServer:  hub1HTTPServer
                                    );
 
             emsp1HTTPAPI         = new HTTPExtAPIX(
@@ -1487,13 +1984,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             Assert.That(cpo1HTTPAPI,   Is.Not.Null);
             Assert.That(cpo2HTTPAPI,   Is.Not.Null);
+            Assert.That(hub1HTTPAPI,   Is.Not.Null);
             Assert.That(emsp1HTTPAPI,  Is.Not.Null);
             Assert.That(emsp2HTTPAPI,  Is.Not.Null);
 
             #endregion
 
 
-            #region Create cpo1/cpo2/emsp1/emsp2 OCPI Common HTTP APIs
+            #region Create cpo1/cpo2/hub1/emsp1/emsp2 OCPI Common HTTP APIs
 
             var loggingPath = Path.Combine(AppContext.BaseDirectory, "default", "OCPI");
 
@@ -1614,6 +2112,55 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #endregion
 
+            #region HUB #1
+
+            hub1CommonHTTPAPI  = new CommonHTTPAPI(
+
+                                     HTTPAPI:                     hub1HTTPAPI,
+                                     OurBaseURL:                  URL.Parse($"http{(hub1TLSServerCertificate is not null ? "s" : "")}://localhost:{hub1HTTPServer.TCPPort}/ocpi"),
+                                     OurVersionsURL:              URL.Parse($"http{(hub1TLSServerCertificate is not null ? "s" : "")}://localhost:{hub1HTTPServer.TCPPort}/ocpi/versions"),
+
+                                     Hostnames:                   null,
+                                     RootPath:                    HTTPPath.Parse("/ocpi"),
+                                     HTTPContentTypes:            null,
+                                     Description:                 null,
+
+                                     BasePath:                    null,
+
+                                     ExternalDNSName:             null,
+                                     HTTPServerName:              null,
+                                     HTTPServiceName:             null,
+
+                                     APIVersionHash:              null,
+                                     APIVersionHashes:            null,
+
+                                     APIRobotEMailAddress:        null,
+                                     APIRobotGPGPassphrase:       null,
+                                     SMTPClient:                  null,
+
+                                     AdditionalURLPathPrefix:     null,
+                                     LocationsAsOpenData:         true,
+                                     TariffsAsOpenData:           true,
+                                     AllowDowngrades:             null,
+
+                                     IsDevelopment:               null,
+                                     DevelopmentServers:          null,
+                                     //SkipURLTemplates:            null,
+                                     DatabaseFileName:            null,
+                                     DisableNotifications:        null,
+
+                                     DisableLogging:              false,
+                                     LoggingContext:              "CommonHTTPAPI",
+                                     LoggingPath:                 Path.Combine(loggingPath, "hub1"),
+                                     LogfileName:                 null,
+                                     LogfileCreator:              logfileCreator
+
+                                 );
+
+            hub1CommonHTTPAPI.Logger?.Debug("all", LogTargets.Debug);
+
+            #endregion
+
             #region EMSP #1
 
             emsp1CommonHTTPAPI = new CommonHTTPAPI(
@@ -1714,12 +2261,13 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             Assert.That(cpo1CommonHTTPAPI,   Is.Not.Null);
             Assert.That(cpo2CommonHTTPAPI,   Is.Not.Null);
+            Assert.That(hub1CommonHTTPAPI,   Is.Not.Null);
             Assert.That(emsp1CommonHTTPAPI,  Is.Not.Null);
             Assert.That(emsp2CommonHTTPAPI,  Is.Not.Null);
 
             #endregion
 
-            #region Create cpo1/cpo2/emsp1/emsp2 OCPI Common APIs
+            #region Create cpo1/cpo2/hub1/emsp1/emsp2 OCPI Common APIs
 
             // Clean up log and database directories...
             foreach (var filePath in Directory.GetFiles(
@@ -1869,7 +2417,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             cpo1CommonAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
 
-
             #endregion
 
             #region CPO #2
@@ -2008,6 +2555,143 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                     );
 
             cpo1CommonAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
+
+            #endregion
+
+            #region HUB #1
+
+            //hub1CommonAPI_v2_1_1  = new OCPIv2_1_1.CommonAPI(
+
+            //                            OurBusinessDetails:                  new BusinessDetails(
+            //                                                                     $"GraphDefined OCPI {OCPIv2_1_1.Version.String} HUB #1 Services",
+            //                                                                     URL.Parse("https://www.graphdefined.com/hub1")
+            //                                                                 ),
+            //                            OurCountryCode:                      CountryCode.Parse("DE"),
+            //                            OurPartyId:                          Party_Id.   Parse("HUB"),
+            //                            OurRole:                             Role.       HUB,
+
+            //                            BaseAPI:                             hub1CommonHTTPAPI,
+
+            //                            AdditionalURLPathPrefix:             null,
+            //                            KeepRemovedEVSEs:                    null,
+
+            //                            ExternalDNSName:                     null,
+            //                            HTTPServiceName:                     null,
+            //                            BasePath:                            null,
+
+            //                            URLPathPrefix:                       null,
+            //                            APIVersionHashes:                    null,
+
+            //                            DatabaseFilePath:                    null,
+            //                            RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_RemoteParties_HUB1.log",
+            //                            AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_Assets_HUB1.log",
+
+            //                            IsDevelopment:                       null,
+            //                            DevelopmentServers:                  null,
+            //                            DisableLogging:                      false,
+            //                            LoggingPath:                         Path.Combine(loggingPath, "hub1"),
+            //                            LogfileName:                         $"GraphDefined_OCPI{OCPIv2_1_1.Version.String}_HUB1.log",
+            //                            LogfileCreator:                      null
+
+            //                        );
+
+            //hub1CommonAPI_v2_1_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            hub1CommonAPI_v2_2_1  = new OCPIv2_2_1.CommonAPI(
+
+                                        OurPartyData:                        [
+                                                                                 new OCPIv2_2_1.PartyData(
+                                                                                     Party_Idv3.From(
+                                                                                         CountryCode.Parse("DE"),
+                                                                                         Party_Id.   Parse("HUB")
+                                                                                     ),
+                                                                                     Role.HUB,
+                                                                                     new BusinessDetails(
+                                                                                         $"GraphDefined OCPI {OCPIv2_2_1.Version.String} HUB #1 Services",
+                                                                                         URL.Parse("https://www.graphdefined.com/hub1")
+                                                                                     )
+                                                                                 )
+                                                                             ],
+                                        DefaultPartyId:                      Party_Idv3.From(
+                                                                                 CountryCode.Parse("DE"),
+                                                                                 Party_Id.   Parse("HUB")
+                                                                             ),
+
+                                        BaseAPI:                             hub1CommonHTTPAPI,
+
+                                        AdditionalURLPathPrefix:             null,
+                                        KeepRemovedEVSEs:                    null,
+
+                                        ExternalDNSName:                     null,
+                                        HTTPServiceName:                     null,
+                                        BasePath:                            null,
+
+                                        URLPathPrefix:                       null,
+                                        APIVersionHashes:                    null,
+
+                                        DatabaseFilePath:                    null,
+                                        RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_RemoteParties_HUB1.log",
+                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_Assets_HUB1.log",
+
+                                        IsDevelopment:                       null,
+                                        DevelopmentServers:                  null,
+                                        DisableLogging:                      false,
+                                        LoggingPath:                         Path.Combine(loggingPath, "hub1"),
+                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_2_1.Version.String}_HUB1.log",
+                                        LogfileCreator:                      null
+
+                                    );
+
+            hub1CommonAPI_v2_2_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            hub1CommonAPI_v2_3_0  = new OCPIv2_3_0.CommonAPI(
+
+                                        OurPartyData:                        [
+                                                                                 new OCPIv2_3_0.PartyData(
+                                                                                     Party_Idv3.From(
+                                                                                         CountryCode.Parse("DE"),
+                                                                                         Party_Id.   Parse("HUB")
+                                                                                     ),
+                                                                                     Role.HUB,
+                                                                                     new BusinessDetails(
+                                                                                         $"GraphDefined OCPI {OCPIv2_2_1.Version.String} HUB #1 Services",
+                                                                                         URL.Parse("https://www.graphdefined.com/hub1")
+                                                                                     )
+                                                                                 )
+                                                                             ],
+                                        DefaultPartyId:                      Party_Idv3.From(
+                                                                                 CountryCode.Parse("DE"),
+                                                                                 Party_Id.   Parse("HUB")
+                                                                             ),
+
+                                        BaseAPI:                             hub1CommonHTTPAPI,
+
+                                        AdditionalURLPathPrefix:             null,
+                                        KeepRemovedEVSEs:                    null,
+
+                                        ExternalDNSName:                     null,
+                                        HTTPServiceName:                     null,
+                                        BasePath:                            null,
+
+                                        URLPathPrefix:                       null,
+                                        APIVersionHashes:                    null,
+
+                                        DatabaseFilePath:                    null,
+                                        RemotePartyDBFileName:               $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_RemoteParties_HUB1.log",
+                                        AssetsDBFileName:                    $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_Assets_HUB1.log",
+
+                                        IsDevelopment:                       null,
+                                        DevelopmentServers:                  null,
+                                        DisableLogging:                      false,
+                                        LoggingPath:                         Path.Combine(loggingPath, "hub1"),
+                                        LogfileName:                         $"GraphDefined_OCPI{OCPIv2_3_0.Version.String}_HUB1.log",
+                                        LogfileCreator:                      null
+
+                                    );
+
+            hub1CommonAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
 
             #endregion
 
@@ -2297,6 +2981,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             Assert.That(cpo2CommonAPI_v2_2_1,   Is.Not.Null);
             Assert.That(cpo2CommonAPI_v2_3_0,   Is.Not.Null);
 
+            //Assert.That(hub1CommonAPI_v2_1_1,   Is.Not.Null);
+            Assert.That(hub1CommonAPI_v2_2_1,   Is.Not.Null);
+            Assert.That(hub1CommonAPI_v2_3_0,   Is.Not.Null);
+
             Assert.That(emsp1CommonAPI_v2_1_1,  Is.Not.Null);
             Assert.That(emsp1CommonAPI_v2_2_1,  Is.Not.Null);
             Assert.That(emsp1CommonAPI_v2_3_0,  Is.Not.Null);
@@ -2531,6 +3219,117 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #endregion
 
+            #region HUB #1
+
+            //hub1HUBAPI_v2_1_1    = new OCPIv2_1_1.HUBAPI(
+
+            //                           CommonAPI:                           hub1CommonAPI_v2_1_1,
+            //                           AllowDowngrades:                     null,
+
+            //                           ExternalDNSName:                     null,
+            //                           HTTPServiceName:                     null,
+            //                           BasePath:                            null,
+
+            //                           URLPathPrefix:                       null,
+            //                           APIVersionHashes:                    null,
+
+            //                           IsDevelopment:                       null,
+            //                           DevelopmentServers:                  null,
+            //                           DisableLogging:                      null,
+            //                           LoggingPath:                         null,
+            //                           LogfileName:                         null,
+            //                           LogfileCreator:                      null
+
+            //                       );
+
+            //hub1HUBAPI_v2_1_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+            //                                            (loggingPath, context, logEventName, request) => {
+            //                                                hub1APIRequestLogs_v2_1_1. TryAdd(Timestamp.Now, request);
+            //                                                return Task.CompletedTask;
+            //                                            });
+
+            //hub1HUBAPI_v2_1_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+            //                                            (loggingPath, context, logEventName, request, response) => {
+            //                                                hub1APIResponseLogs_v2_1_1.TryAdd(Timestamp.Now, response);
+            //                                                return Task.CompletedTask;
+            //                                            });
+
+            //hub1HUBAPI_v2_1_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            hub1HUBAPI_v2_2_1    = new OCPIv2_2_1.HUBAPI(
+
+                                       CommonAPI:                           hub1CommonAPI_v2_2_1,
+                                       AllowDowngrades:                     null,
+
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       null,
+                                       APIVersionHashes:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null
+
+                                   );
+
+            hub1HUBAPI_v2_2_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                        (loggingPath, context, logEventName, request) => {
+                                                            hub1APIRequestLogs_v2_2_1. TryAdd(Timestamp.Now, request);
+                                                            return Task.CompletedTask;
+                                                        });
+
+            hub1HUBAPI_v2_2_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                        (loggingPath, context, logEventName, request, response) => {
+                                                            hub1APIResponseLogs_v2_2_1.TryAdd(Timestamp.Now, response);
+                                                            return Task.CompletedTask;
+                                                        });
+
+            hub1HUBAPI_v2_2_1.Logger?.Debug("all", LogTargets.Debug);
+
+
+            hub1HUBAPI_v2_3_0    = new OCPIv2_3_0.HUBAPI(
+
+                                       CommonAPI:                           hub1CommonAPI_v2_3_0,
+                                       AllowDowngrades:                     null,
+
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       null,
+                                       APIVersionHashes:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null
+
+                                   );
+
+            hub1HUBAPI_v2_3_0.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                        (loggingPath, context, logEventName, request) => {
+                                                            hub1APIRequestLogs_v2_3_0. TryAdd(Timestamp.Now, request);
+                                                            return Task.CompletedTask;
+                                                        });
+
+            hub1HUBAPI_v2_3_0.Logger?.RegisterLogTarget(LogTargets.Debug,
+                                                        (loggingPath, context, logEventName, request, response) => {
+                                                            hub1APIResponseLogs_v2_3_0.TryAdd(Timestamp.Now, response);
+                                                            return Task.CompletedTask;
+                                                        });
+
+            hub1HUBAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
+
+            #endregion
+
             #region EMSP #1
 
             emsp1EMSPAPI_v2_1_1 = new OCPIv2_1_1.EMSPAPI(
@@ -2725,6 +3524,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             Assert.That(cpo2CPOAPI_v2_2_1,    Is.Not.Null);
             Assert.That(cpo2CPOAPI_v2_3_0,    Is.Not.Null);
 
+            // HUB #1
+
             Assert.That(emsp1EMSPAPI_v2_1_1,  Is.Not.Null);
             Assert.That(emsp1EMSPAPI_v2_2_1,  Is.Not.Null);
             Assert.That(emsp1EMSPAPI_v2_3_0,  Is.Not.Null);
@@ -2738,7 +3539,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region Create cpo1/cpo2/emsp1/emsp2 OCPI (Common) Web APIs
 
-            #region CPO #1
+            #region HUB #1
 
             cpo1CommonWebAPI   = new CommonWebAPI(
 
@@ -2751,7 +3552,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                      Description:           null,
 
-                                     HTTPRealm:             "GraphDefined OCPI CPO #1 WebAPI",
+                                     HTTPRealm:             "GraphDefined OCPI HUB #1 WebAPI",
                                      HTTPLogins:            [
                                                                 new KeyValuePair<String, String>("a", "b")
                                                             ],
@@ -2807,7 +3608,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #endregion
 
-            #region CPO #2
+            #region HUB #2
 
             cpo2CommonWebAPI   = new CommonWebAPI(
 
@@ -2820,7 +3621,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                      Description:           null,
 
-                                     HTTPRealm:             "GraphDefined OCPI CPO #2 WebAPI",
+                                     HTTPRealm:             "GraphDefined OCPI HUB #2 WebAPI",
                                      HTTPLogins:            [
                                                                 new KeyValuePair<String, String>("a", "b")
                                                             ],
@@ -3039,9 +3840,9 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region Define Client Configurations
 
-            //cpo1CommonAPI. BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"CPO #1 Client for {remotePartyId}");
+            //cpo1CommonAPI. BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"HUB #1 Client for {remotePartyId}");
 
-            //cpo2CommonAPI. BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"CPO #2 Client for {remotePartyId}");
+            //cpo2CommonAPI. BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"HUB #2 Client for {remotePartyId}");
 
             //emsp1CommonAPI.BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"EMSP #1 Client for {remotePartyId}");
 
@@ -3054,1493 +3855,1505 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             if (AutoWireRemoteParties)
             {
 
-                #region CPO #1 -> EMSP #1
-
-                var cpo1_2_emsp1        = await cpo1CommonHTTPAPI.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           emsp1CommonAPI_v2_2_1.DefaultPartyId,
-                                                                                           Role.EMSP
-                                                                                       ),
-
-                                                    LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo1__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    false,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_1_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_1_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   false,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                cpo1emsp1TLSClientCertificate is not null
-                                                                                           ? [ cpo1emsp1TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          cpo1emsp1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 cpo1emsp1TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        emsp1TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(cpo1_2_emsp1.IsSuccess,  Is.True);
-                Assert.That(cpo1_2_emsp1.Data,       Is.Not.Null);
-
-
-                var cpo1_2_emsp1_v2_1_1 = await cpo1CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
-                                                    CountryCode:                       emsp1CommonAPI_v2_1_1.OurCountryCode,
-                                                    PartyId:                           emsp1CommonAPI_v2_1_1.OurPartyId,
-                                                    Role:                              Role.EMSP,
-                                                    BusinessDetails:                   emsp1CommonAPI_v2_1_1.OurBusinessDetails,
-
-                                                    LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo1__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    false,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_1_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_1_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   false,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                cpo1emsp1TLSClientCertificate is not null
-                                                                                           ? [ cpo1emsp1TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          cpo1emsp1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 cpo1emsp1TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        emsp1TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(cpo1_2_emsp1_v2_1_1.IsSuccess,  Is.True);
-                Assert.That(cpo1_2_emsp1_v2_1_1.Data,       Is.Not.Null);
-
-
-                var cpo1_2_emsp1_v2_2_1 = await cpo1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           emsp1CommonAPI_v2_2_1.DefaultPartyId,
-                                                                                           Role.EMSP
-                                                                                       ),
-                                                    CredentialsRoles:                  [
-                                                                                           emsp1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                                                       ],
-
-                                                    LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo1__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    true,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_2_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   true,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                cpo1emsp1TLSClientCertificate is not null
-                                                                                           ? [ cpo1emsp1TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          cpo1emsp1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 cpo1emsp1TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        emsp1TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(cpo1_2_emsp1_v2_2_1.IsSuccess,  Is.True);
-                Assert.That(cpo1_2_emsp1_v2_2_1.Data,       Is.Not.Null);
-
-
-                var cpo1_2_emsp1_v2_3_0 = await cpo1CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           emsp1CommonAPI_v2_3_0.DefaultPartyId,
-                                                                                           Role.EMSP
-                                                                                       ),
-                                                    CredentialsRoles:                  [
-                                                                                           emsp1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
-                                                                                       ],
-                                                    LocalAccessTokenBase64Encoding:    true,
-
-                                                    LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo1__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_3_0.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   true,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                cpo1emsp1TLSClientCertificate is not null
-                                                                                           ? [ cpo1emsp1TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          cpo1emsp1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 cpo1emsp1TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        emsp1TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(cpo1_2_emsp1_v2_3_0.IsSuccess,  Is.True);
-                Assert.That(cpo1_2_emsp1_v2_3_0.Data,       Is.Not.Null);
-
-                #endregion
-
-                #region CPO #1 -> EMSP #2
-
-                var cpo1_2_emsp2_v2_1_1 = await cpo1CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
-                                                    CountryCode:                       emsp2CommonAPI_v2_1_1.OurCountryCode,
-                                                    PartyId:                           emsp2CommonAPI_v2_1_1.OurPartyId,
-                                                    Role:                              Role.EMSP,
-                                                    BusinessDetails:                   emsp2CommonAPI_v2_1_1.OurBusinessDetails,
-
-                                                    LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo1__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    false,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(emsp2TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_1_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_1_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   false,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                cpo1emsp2TLSClientCertificate is not null
-                                                                                           ? [ cpo1emsp2TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          cpo1emsp2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 cpo1emsp2TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(cpo1_2_emsp2_v2_1_1.IsSuccess,  Is.True);
-                Assert.That(cpo1_2_emsp2_v2_1_1.Data,       Is.Not.Null);
-
-
-                var cpo1_2_emsp2_v2_2_1 = await cpo1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           emsp2CommonAPI_v2_2_1.DefaultPartyId,
-                                                                                           Role.EMSP
-                                                                                       ),
-                                                    CredentialsRoles:                  [
-                                                                                           emsp2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                                                       ],
-
-                                                    LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo1__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    true,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(emsp2TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_2_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   true,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                cpo1emsp2TLSClientCertificate is not null
-                                                                                           ? [ cpo1emsp2TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          cpo1emsp2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 cpo1emsp2TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(cpo1_2_emsp2_v2_2_1.IsSuccess,  Is.True);
-                Assert.That(cpo1_2_emsp2_v2_2_1.Data,       Is.Not.Null);
-
-
-                var cpo1_2_emsp2_v2_3_0 = await cpo1CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           emsp2CommonAPI_v2_3_0.DefaultPartyId,
-                                                                                           Role.EMSP
-                                                                                       ),
-                                                    CredentialsRoles:                  [
-                                                                                           emsp2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
-                                                                                       ],
-
-                                                    LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo1__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    true,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(emsp2TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_3_0.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   true,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                cpo1emsp2TLSClientCertificate is not null
-                                                                                           ? [ cpo1emsp2TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          cpo1emsp2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 cpo1emsp2TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(cpo1_2_emsp2_v2_3_0.IsSuccess,  Is.True);
-                Assert.That(cpo1_2_emsp2_v2_3_0.Data,       Is.Not.Null);
-
-                #endregion
-
-
-                #region CPO #2 -> EMSP #1
-
-                var cpo2_2_emsp1_v2_1_1 = await cpo2CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
-                                                    CountryCode:                       emsp1CommonAPI_v2_1_1.OurCountryCode,
-                                                    PartyId:                           emsp1CommonAPI_v2_1_1.OurPartyId,
-                                                    Role:                              Role.EMSP,
-                                                    BusinessDetails:                   emsp1CommonAPI_v2_1_1.OurBusinessDetails,
-
-                                                    LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo2__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    false,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_1_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_1_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   false,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                cpo2emsp1TLSClientCertificate is not null
-                                                                                           ? [ cpo2emsp1TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          cpo2emsp1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 cpo2emsp1TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(cpo2_2_emsp1_v2_1_1.IsSuccess,  Is.True);
-                Assert.That(cpo2_2_emsp1_v2_1_1.Data,       Is.Not.Null);
-
-
-                var cpo2_2_emsp1_v2_2_1 = await cpo2CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           emsp1CommonAPI_v2_2_1.DefaultPartyId,
-                                                                                           Role.EMSP
-                                                                                       ),
-                                                    CredentialsRoles:                  [
-                                                                                           emsp1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                                                       ],
-
-                                                    LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo2__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    true,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_2_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   true,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                cpo2emsp1TLSClientCertificate is not null
-                                                                                           ? [ cpo2emsp1TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          cpo2emsp1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 cpo2emsp1TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(cpo2_2_emsp1_v2_2_1.IsSuccess,  Is.True);
-                Assert.That(cpo2_2_emsp1_v2_2_1.Data,       Is.Not.Null);
-
-
-                var cpo2_2_emsp1_v2_3_0 = await cpo2CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           emsp1CommonAPI_v2_3_0.DefaultPartyId,
-                                                                                           Role.EMSP
-                                                                                       ),
-                                                    CredentialsRoles:                  [
-                                                                                           emsp1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
-                                                                                       ],
-
-                                                    LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo2__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    true,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_3_0.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   true,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                cpo2emsp1TLSClientCertificate is not null
-                                                                                           ? [ cpo2emsp1TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          cpo2emsp1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 cpo2emsp1TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(cpo2_2_emsp1_v2_3_0.IsSuccess,  Is.True);
-                Assert.That(cpo2_2_emsp1_v2_3_0.Data,       Is.Not.Null);
-
-                #endregion
-
-                #region CPO #2 -> EMSP #2
-
-                var cpo2_2_emsp2_v2_1_1 = await cpo2CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
-                                                    CountryCode:                       emsp2CommonAPI_v2_1_1.OurCountryCode,
-                                                    PartyId:                           emsp2CommonAPI_v2_1_1.OurPartyId,
-                                                    Role:                              Role.EMSP,
-                                                    BusinessDetails:                   emsp2CommonAPI_v2_1_1.OurBusinessDetails,
-
-                                                    LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo2__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    false,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(emsp2TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_1_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_1_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   false,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                cpo2emsp2TLSClientCertificate is not null
-                                                                                           ? [ cpo2emsp2TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          cpo2emsp2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 cpo2emsp2TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(cpo2_2_emsp2_v2_1_1.IsSuccess,  Is.True);
-                Assert.That(cpo2_2_emsp2_v2_1_1.Data,       Is.Not.Null);
-
-
-                var cpo2_2_emsp2_v2_2_1 = await cpo2CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           emsp2CommonAPI_v2_2_1.DefaultPartyId,
-                                                                                           Role.EMSP
-                                                                                       ),
-                                                    CredentialsRoles:                  [
-                                                                                           emsp2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                                                       ],
-
-                                                    LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo2__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    true,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(emsp2TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_2_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   true,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                cpo2emsp2TLSClientCertificate is not null
-                                                                                           ? [ cpo2emsp2TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          cpo2emsp2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 cpo2emsp2TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(cpo2_2_emsp2_v2_2_1.IsSuccess,  Is.True);
-                Assert.That(cpo2_2_emsp2_v2_2_1.Data,       Is.Not.Null);
-
-
-                var cpo2_2_emsp2_v2_3_0 = await cpo2CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           emsp2CommonAPI_v2_3_0.DefaultPartyId,
-                                                                                           Role.EMSP
-                                                                                       ),
-                                                    CredentialsRoles:                  [
-                                                                                           emsp2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
-                                                                                       ],
-
-                                                    LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo2__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    true,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(emsp2TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_3_0.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   true,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                cpo2emsp2TLSClientCertificate is not null
-                                                                                           ? [ cpo2emsp2TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          cpo2emsp2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 cpo2emsp2TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(cpo2_2_emsp2_v2_3_0.IsSuccess,  Is.True);
-                Assert.That(cpo2_2_emsp2_v2_3_0.Data,       Is.Not.Null);
-
-                #endregion
-
-
-                #region EMSP #1 -> CPO #1
-
-                var emsp1_2_cpo1_v2_1_1 = await emsp1CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
-                                                    CountryCode:                       cpo1CommonAPI_v2_1_1.OurCountryCode,
-                                                    PartyId:                           cpo1CommonAPI_v2_1_1.OurPartyId,
-                                                    Role:                              Role.CPO,
-                                                    BusinessDetails:                   cpo1CommonAPI_v2_1_1.OurBusinessDetails,
-
-                                                    LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp1__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    false,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_2_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   false,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                emsp1cpo1TLSClientCertificate is not null
-                                                                                           ? [ emsp1cpo1TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          emsp1cpo1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 emsp1cpo1TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        cpo1TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(emsp1_2_cpo1_v2_1_1.IsSuccess,  Is.True);
-                Assert.That(emsp1_2_cpo1_v2_1_1.Data,       Is.Not.Null);
-
-
-                var emsp1_2_cpo1_v2_2_1 = await emsp1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           cpo1CommonAPI_v2_2_1.DefaultPartyId,
-                                                                                           Role.CPO
-                                                                                       ),
-                                                    CredentialsRoles:                  [
-                                                                                           cpo1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                                                       ],
-                                                    LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp1__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    true,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_2_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   true,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                emsp1cpo1TLSClientCertificate is not null
-                                                                                           ? [ emsp1cpo1TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          emsp1cpo1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 emsp1cpo1TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        cpo1TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(emsp1_2_cpo1_v2_2_1.IsSuccess,  Is.True);
-                Assert.That(emsp1_2_cpo1_v2_2_1.Data,       Is.Not.Null);
-
-
-                var emsp1_2_cpo1_v2_3_0 = await emsp1CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           cpo1CommonAPI_v2_3_0.DefaultPartyId,
-                                                                                           Role.CPO
-                                                                                       ),
-                                                    CredentialsRoles:                  [
-                                                                                           cpo1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
-                                                                                       ],
-                                                    LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp1__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    true,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_3_0.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   true,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                emsp1cpo1TLSClientCertificate is not null
-                                                                                           ? [ emsp1cpo1TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          emsp1cpo1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 emsp1cpo1TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        cpo1TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(emsp1_2_cpo1_v2_3_0.IsSuccess,  Is.True);
-                Assert.That(emsp1_2_cpo1_v2_3_0.Data,       Is.Not.Null);
-
-                #endregion
-
-                #region EMSP #1 -> CPO #2
-
-                var emsp1_2_cpo2_v2_1_1 = await emsp1CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
-                                                    CountryCode:                       cpo2CommonAPI_v2_1_1.OurCountryCode,
-                                                    PartyId:                           cpo2CommonAPI_v2_1_1.OurPartyId,
-                                                    Role:                              Role.CPO,
-                                                    BusinessDetails:                   cpo2CommonAPI_v2_1_1.OurBusinessDetails,
-
-                                                    LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp1__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    false,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(cpo2TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_2_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   false,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                emsp1cpo2TLSClientCertificate is not null
-                                                                                           ? [ emsp1cpo2TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          emsp1cpo2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 emsp1cpo2TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        cpo2TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(emsp1_2_cpo2_v2_1_1.IsSuccess,  Is.True);
-                Assert.That(emsp1_2_cpo2_v2_1_1.Data,       Is.Not.Null);
-
-
-                var emsp1_2_cpo2_v2_2_1 = await emsp1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           cpo2CommonAPI_v2_2_1.DefaultPartyId,
-                                                                                           Role.CPO
-                                                                                       ),
-                                                    CredentialsRoles:                  [
-                                                                                           cpo2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                                                       ],
-                                                    LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp1__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    true,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(cpo2TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_2_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   true,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                emsp1cpo2TLSClientCertificate is not null
-                                                                                           ? [ emsp1cpo2TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          emsp1cpo2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 emsp1cpo2TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        cpo2TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(emsp1_2_cpo2_v2_2_1.IsSuccess,  Is.True);
-                Assert.That(emsp1_2_cpo2_v2_2_1.Data,       Is.Not.Null);
-
-
-                var emsp1_2_cpo2_v2_3_0 = await emsp1CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           cpo2CommonAPI_v2_3_0.DefaultPartyId,
-                                                                                           Role.CPO
-                                                                                       ),
-                                                    CredentialsRoles:                  [
-                                                                                           cpo2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
-                                                                                       ],
-                                                    LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp1__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    true,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(cpo2TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_3_0.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   true,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                emsp1cpo2TLSClientCertificate is not null
-                                                                                           ? [ emsp1cpo2TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          emsp1cpo2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 emsp1cpo2TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        cpo2TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(emsp1_2_cpo2_v2_3_0.IsSuccess,  Is.True);
-                Assert.That(emsp1_2_cpo2_v2_3_0.Data,       Is.Not.Null);
-
-                #endregion
-
-
-                #region EMSP #2 -> CPO #1
-
-                var emsp2_2_cpo1_v2_1_1 = await emsp2CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
-                                                    CountryCode:                       cpo1CommonAPI_v2_1_1.OurCountryCode,
-                                                    PartyId:                           cpo1CommonAPI_v2_1_1.OurPartyId,
-                                                    Role:                              Role.CPO,
-                                                    BusinessDetails:                   cpo1CommonAPI_v2_1_1.OurBusinessDetails,
-
-                                                    LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp2__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    false,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_2_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   false,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                emsp2cpo1TLSClientCertificate is not null
-                                                                                           ? [ emsp2cpo1TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          emsp2cpo1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 emsp2cpo1TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        cpo1TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(emsp2_2_cpo1_v2_1_1.IsSuccess,  Is.True);
-                Assert.That(emsp2_2_cpo1_v2_1_1.Data,       Is.Not.Null);
-
-
-                var emsp2_2_cpo1_v2_2_1 = await emsp2CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           cpo1CommonAPI_v2_2_1.DefaultPartyId,
-                                                                                           Role.CPO
-                                                                                       ),
-                                                    CredentialsRoles:                  [
-                                                                                           cpo1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                                                       ],
-                                                    LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp2__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    true,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_2_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   true,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                emsp2cpo1TLSClientCertificate is not null
-                                                                                           ? [ emsp2cpo1TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          emsp2cpo1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 emsp2cpo1TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        cpo1TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(emsp2_2_cpo1_v2_2_1.IsSuccess,  Is.True);
-                Assert.That(emsp2_2_cpo1_v2_2_1.Data,       Is.Not.Null);
-
-
-                var emsp2_2_cpo1_v2_3_0 = await emsp2CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           cpo1CommonAPI_v2_3_0.DefaultPartyId,
-                                                                                           Role.CPO
-                                                                                       ),
-                                                    CredentialsRoles:                  [
-                                                                                           cpo1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
-                                                                                       ],
-                                                    LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp2__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    true,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_3_0.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   true,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                emsp2cpo1TLSClientCertificate is not null
-                                                                                           ? [ emsp2cpo1TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          emsp2cpo1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 emsp2cpo1TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        cpo1TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(emsp2_2_cpo1_v2_3_0.IsSuccess,  Is.True);
-                Assert.That(emsp2_2_cpo1_v2_3_0.Data,       Is.Not.Null);
-
-                #endregion
-
-                #region EMSP #2 -> CPO #2
-
-                var emsp2_2_cpo2_v2_1_1 = await emsp2CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
-                                                    CountryCode:                       cpo2CommonAPI_v2_1_1.OurCountryCode,
-                                                    PartyId:                           cpo2CommonAPI_v2_1_1.OurPartyId,
-                                                    Role:                              Role.CPO,
-                                                    BusinessDetails:                   cpo2CommonAPI_v2_1_1.OurBusinessDetails,
-
-                                                    LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp2__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    false,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(cpo2TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_2_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   false,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                emsp2cpo2TLSClientCertificate is not null
-                                                                                           ? [ emsp2cpo2TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          emsp2cpo2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 emsp2cpo2TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        cpo2TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(emsp2_2_cpo2_v2_1_1.IsSuccess,  Is.True);
-                Assert.That(emsp2_2_cpo2_v2_1_1.Data,       Is.Not.Null);
-
-
-                var emsp2_2_cpo2_v2_2_1 = await emsp2CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           cpo2CommonAPI_v2_2_1.DefaultPartyId,
-                                                                                           Role.CPO
-                                                                                       ),
-                                                    CredentialsRoles:                  [
-                                                                                           cpo2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
-                                                                                       ],
-                                                    LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp2__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    true,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(cpo2TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_2_1.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   true,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                emsp2cpo2TLSClientCertificate is not null
-                                                                                           ? [ emsp2cpo2TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          emsp2cpo2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 emsp2cpo2TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        cpo2TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(emsp2_2_cpo2_v2_2_1.IsSuccess,  Is.True);
-                Assert.That(emsp2_2_cpo2_v2_2_1.Data,       Is.Not.Null);
-
-
-                var emsp2_2_cpo2_v2_3_0 = await emsp2CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
-                                                    Id:                                RemoteParty_Id.From(
-                                                                                           cpo2CommonAPI_v2_3_0.DefaultPartyId,
-                                                                                           Role.CPO
-                                                                                       ),
-                                                    CredentialsRoles:                  [
-                                                                                           cpo2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
-                                                                                       ],
-                                                    LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp2__token),
-                                                    LocalAccessStatus:                 AccessStatus.ALLOWED,
-                                                    LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
-                                                    LocalAccessTokenBase64Encoding:    true,
-
-                                                    RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),
-                                                    RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
-                                                    RemoteVersionsURL:                 URL.Parse($"http{(cpo2TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
-                                                    RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
-                                                    SelectedVersionId:                 OCPIv2_3_0.Version.Id,
-                                                    RemoteAccessTokenBase64Encoding:   true,
-                                                    RemoteStatus:                      RemoteAccessStatus.ONLINE,
-
-                                                    ClientCertificates:                emsp2cpo2TLSClientCertificate is not null
-                                                                                           ? [ emsp2cpo2TLSClientCertificate ]
-                                                                                           : null,
-                                                    ClientCertificateContext:          emsp2cpo2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
-                                                                                           ? SslStreamCertificateContext.Create(
-                                                                                                 emsp2cpo2TLSClientCertificate,
-                                                                                                 new X509Certificate2Collection(clientCACertificate2)
-                                                                                             )
-                                                                                           : null,
-                                                    RemoteCertificateValidator:        cpo2TLSServerCertificate is not null
-                                                                                           ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
-
-                                                                                                 if (serverCertificate is null)
-                                                                                                     return (false, [ "The server certificate is null!" ]);
-
-                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
-                                                                                                                       serverCertificate,
-                                                                                                                       serverCACertificate2!,
-                                                                                                                       rootCACertificate2!
-                                                                                                                   );
-
-                                                                                                 return (chainReport.IsValid,
-                                                                                                         chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
-
-                                                                                           }
-                                                                                           : null,
-
-                                                    Status:                            PartyStatus.ENABLED
-                                                );
-
-                Assert.That(emsp2_2_cpo2_v2_3_0.IsSuccess,  Is.True);
-                Assert.That(emsp2_2_cpo2_v2_3_0.Data,       Is.Not.Null);
-
-                #endregion
-
-
-
-                #region Validate Remote Parties
-
-                Assert.That(cpo1CommonAPI_v2_1_1. RemoteParties.Count(),  Is.EqualTo(2));
-                Assert.That(cpo1CommonAPI_v2_2_1. RemoteParties.Count(),  Is.EqualTo(2));
-                Assert.That(cpo1CommonAPI_v2_3_0. RemoteParties.Count(),  Is.EqualTo(2));
-
-                Assert.That(cpo2CommonAPI_v2_1_1. RemoteParties.Count(),  Is.EqualTo(2));
-                Assert.That(cpo2CommonAPI_v2_2_1. RemoteParties.Count(),  Is.EqualTo(2));
-                Assert.That(cpo2CommonAPI_v2_3_0. RemoteParties.Count(),  Is.EqualTo(2));
-
-                Assert.That(emsp1CommonAPI_v2_1_1.RemoteParties.Count(),  Is.EqualTo(2));
-                Assert.That(emsp1CommonAPI_v2_2_1.RemoteParties.Count(),  Is.EqualTo(2));
-                Assert.That(emsp1CommonAPI_v2_3_0.RemoteParties.Count(),  Is.EqualTo(2));
-
-                Assert.That(emsp2CommonAPI_v2_1_1.RemoteParties.Count(),  Is.EqualTo(2));
-                Assert.That(emsp2CommonAPI_v2_2_1.RemoteParties.Count(),  Is.EqualTo(2));
-                Assert.That(emsp2CommonAPI_v2_3_0.RemoteParties.Count(),  Is.EqualTo(2));
-
-                #endregion
-
-                #region Check the RemoteParty database files
-
-                Assert.That(await CheckFile(cpo1CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
-                Assert.That(await CheckFile(cpo1CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
-                Assert.That(await CheckFile(cpo1CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
-
-                Assert.That(await CheckFile(cpo2CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
-                Assert.That(await CheckFile(cpo2CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
-                Assert.That(await CheckFile(cpo2CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
-
-                Assert.That(await CheckFile(emsp1CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
-                Assert.That(await CheckFile(emsp1CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
-                Assert.That(await CheckFile(emsp1CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
-
-                Assert.That(await CheckFile(emsp2CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
-                Assert.That(await CheckFile(emsp2CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
-                Assert.That(await CheckFile(emsp2CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
-
-                #endregion
-
-
-                #region Define blocked Remote Parties
-
-                await cpo1CommonAPI_v2_1_1.AddRemoteParty(
-                            CountryCode:         CountryCode.Parse("XX"),
-                            PartyId:             Party_Id.   Parse("BLE"),
-                            Role:                Role.EMSP,
-                            BusinessDetails:     new BusinessDetails(
-                                                    "Blocked EMSP"
-                                                ),
-                            LocalAccessToken:    BlockedEMSPToken,
-                            LocalAccessStatus:   AccessStatus.BLOCKED,
-                            Status:              PartyStatus. ENABLED
-                        );
-
-
-                await emsp1CommonAPI_v2_1_1.AddRemoteParty(
-                            CountryCode:         CountryCode.Parse("XX"),
-                            PartyId:             Party_Id.   Parse("BLC"),
-                            Role:                Role.EMSP,
-                            BusinessDetails:     new BusinessDetails(
-                                                    "Blocked CPO"
-                                                ),
-                            LocalAccessToken:    BlockedCPOToken,
-                            LocalAccessStatus:   AccessStatus.BLOCKED,
-                            Status:              PartyStatus. ENABLED
-                        );
-
-                #endregion
-
-                #region Define blocked Access Tokens
-
-                await cpo1CommonAPI_v2_1_1.AddAccessToken(
-                          BlockedToken,
-                          AccessStatus.BLOCKED
-                      );
-
-                await cpo2CommonAPI_v2_1_1.AddAccessToken(
-                          BlockedToken,
-                          AccessStatus.BLOCKED
-                      );
-
-                await emsp1CommonAPI_v2_1_1.AddAccessToken(
-                          BlockedToken,
-                          AccessStatus.BLOCKED
-                      );
-
-                await emsp2CommonAPI_v2_1_1.AddAccessToken(
-                          BlockedToken,
-                          AccessStatus.BLOCKED
-                      );
-
-                #endregion
+                if (UseHUBCommunication)
+                {
+
+                    
+
+                }
+
+                else
+                {
+
+                    #region HUB #1 -> EMSP #1
+
+                    var cpo1_2_emsp1        = await cpo1CommonHTTPAPI.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               emsp1CommonAPI_v2_2_1.DefaultPartyId,
+                                                                                               Role.EMSP
+                                                                                           ),
+
+                                                        LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo1__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    false,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_1_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_1_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   false,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                cpo1emsp1TLSClientCertificate is not null
+                                                                                               ? [ cpo1emsp1TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          cpo1emsp1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     cpo1emsp1TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        emsp1TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(cpo1_2_emsp1.IsSuccess,  Is.True);
+                    Assert.That(cpo1_2_emsp1.Data,       Is.Not.Null);
+
+
+                    var cpo1_2_emsp1_v2_1_1 = await cpo1CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
+                                                        CountryCode:                       emsp1CommonAPI_v2_1_1.OurCountryCode,
+                                                        PartyId:                           emsp1CommonAPI_v2_1_1.OurPartyId,
+                                                        Role:                              Role.EMSP,
+                                                        BusinessDetails:                   emsp1CommonAPI_v2_1_1.OurBusinessDetails,
+
+                                                        LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo1__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    false,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_1_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_1_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   false,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                cpo1emsp1TLSClientCertificate is not null
+                                                                                               ? [ cpo1emsp1TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          cpo1emsp1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     cpo1emsp1TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        emsp1TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(cpo1_2_emsp1_v2_1_1.IsSuccess,  Is.True);
+                    Assert.That(cpo1_2_emsp1_v2_1_1.Data,       Is.Not.Null);
+
+
+                    var cpo1_2_emsp1_v2_2_1 = await cpo1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               emsp1CommonAPI_v2_2_1.DefaultPartyId,
+                                                                                               Role.EMSP
+                                                                                           ),
+                                                        CredentialsRoles:                  [
+                                                                                               emsp1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                                                           ],
+
+                                                        LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo1__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    true,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   true,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                cpo1emsp1TLSClientCertificate is not null
+                                                                                               ? [ cpo1emsp1TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          cpo1emsp1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     cpo1emsp1TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        emsp1TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(cpo1_2_emsp1_v2_2_1.IsSuccess,  Is.True);
+                    Assert.That(cpo1_2_emsp1_v2_2_1.Data,       Is.Not.Null);
+
+
+                    var cpo1_2_emsp1_v2_3_0 = await cpo1CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               emsp1CommonAPI_v2_3_0.DefaultPartyId,
+                                                                                               Role.EMSP
+                                                                                           ),
+                                                        CredentialsRoles:                  [
+                                                                                               emsp1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
+                                                                                           ],
+                                                        LocalAccessTokenBase64Encoding:    true,
+
+                                                        LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo1__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp1__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_3_0.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   true,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                cpo1emsp1TLSClientCertificate is not null
+                                                                                               ? [ cpo1emsp1TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          cpo1emsp1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     cpo1emsp1TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        emsp1TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(cpo1_2_emsp1_v2_3_0.IsSuccess,  Is.True);
+                    Assert.That(cpo1_2_emsp1_v2_3_0.Data,       Is.Not.Null);
+
+                    #endregion
+
+                    #region HUB #1 -> EMSP #2
+
+                    var cpo1_2_emsp2_v2_1_1 = await cpo1CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
+                                                        CountryCode:                       emsp2CommonAPI_v2_1_1.OurCountryCode,
+                                                        PartyId:                           emsp2CommonAPI_v2_1_1.OurPartyId,
+                                                        Role:                              Role.EMSP,
+                                                        BusinessDetails:                   emsp2CommonAPI_v2_1_1.OurBusinessDetails,
+
+                                                        LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo1__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    false,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(emsp2TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_1_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_1_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   false,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                cpo1emsp2TLSClientCertificate is not null
+                                                                                               ? [ cpo1emsp2TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          cpo1emsp2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     cpo1emsp2TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(cpo1_2_emsp2_v2_1_1.IsSuccess,  Is.True);
+                    Assert.That(cpo1_2_emsp2_v2_1_1.Data,       Is.Not.Null);
+
+
+                    var cpo1_2_emsp2_v2_2_1 = await cpo1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               emsp2CommonAPI_v2_2_1.DefaultPartyId,
+                                                                                               Role.EMSP
+                                                                                           ),
+                                                        CredentialsRoles:                  [
+                                                                                               emsp2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                                                           ],
+
+                                                        LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo1__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    true,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(emsp2TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   true,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                cpo1emsp2TLSClientCertificate is not null
+                                                                                               ? [ cpo1emsp2TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          cpo1emsp2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     cpo1emsp2TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(cpo1_2_emsp2_v2_2_1.IsSuccess,  Is.True);
+                    Assert.That(cpo1_2_emsp2_v2_2_1.Data,       Is.Not.Null);
+
+
+                    var cpo1_2_emsp2_v2_3_0 = await cpo1CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               emsp2CommonAPI_v2_3_0.DefaultPartyId,
+                                                                                               Role.EMSP
+                                                                                           ),
+                                                        CredentialsRoles:                  [
+                                                                                               emsp2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
+                                                                                           ],
+
+                                                        LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo1__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    true,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_emsp2__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(emsp2TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_3_0.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   true,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                cpo1emsp2TLSClientCertificate is not null
+                                                                                               ? [ cpo1emsp2TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          cpo1emsp2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     cpo1emsp2TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(cpo1_2_emsp2_v2_3_0.IsSuccess,  Is.True);
+                    Assert.That(cpo1_2_emsp2_v2_3_0.Data,       Is.Not.Null);
+
+                    #endregion
+
+
+                    #region HUB #2 -> EMSP #1
+
+                    var cpo2_2_emsp1_v2_1_1 = await cpo2CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
+                                                        CountryCode:                       emsp1CommonAPI_v2_1_1.OurCountryCode,
+                                                        PartyId:                           emsp1CommonAPI_v2_1_1.OurPartyId,
+                                                        Role:                              Role.EMSP,
+                                                        BusinessDetails:                   emsp1CommonAPI_v2_1_1.OurBusinessDetails,
+
+                                                        LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo2__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    false,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_1_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_1_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   false,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                cpo2emsp1TLSClientCertificate is not null
+                                                                                               ? [ cpo2emsp1TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          cpo2emsp1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     cpo2emsp1TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(cpo2_2_emsp1_v2_1_1.IsSuccess,  Is.True);
+                    Assert.That(cpo2_2_emsp1_v2_1_1.Data,       Is.Not.Null);
+
+
+                    var cpo2_2_emsp1_v2_2_1 = await cpo2CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               emsp1CommonAPI_v2_2_1.DefaultPartyId,
+                                                                                               Role.EMSP
+                                                                                           ),
+                                                        CredentialsRoles:                  [
+                                                                                               emsp1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                                                           ],
+
+                                                        LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo2__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    true,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   true,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                cpo2emsp1TLSClientCertificate is not null
+                                                                                               ? [ cpo2emsp1TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          cpo2emsp1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     cpo2emsp1TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(cpo2_2_emsp1_v2_2_1.IsSuccess,  Is.True);
+                    Assert.That(cpo2_2_emsp1_v2_2_1.Data,       Is.Not.Null);
+
+
+                    var cpo2_2_emsp1_v2_3_0 = await cpo2CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               emsp1CommonAPI_v2_3_0.DefaultPartyId,
+                                                                                               Role.EMSP
+                                                                                           ),
+                                                        CredentialsRoles:                  [
+                                                                                               emsp1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
+                                                                                           ],
+
+                                                        LocalAccessToken:                  AccessToken.Parse(emsp1_accessing_cpo2__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    true,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp1__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_3_0.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   true,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                cpo2emsp1TLSClientCertificate is not null
+                                                                                               ? [ cpo2emsp1TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          cpo2emsp1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     cpo2emsp1TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(cpo2_2_emsp1_v2_3_0.IsSuccess,  Is.True);
+                    Assert.That(cpo2_2_emsp1_v2_3_0.Data,       Is.Not.Null);
+
+                    #endregion
+
+                    #region HUB #2 -> EMSP #2
+
+                    var cpo2_2_emsp2_v2_1_1 = await cpo2CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
+                                                        CountryCode:                       emsp2CommonAPI_v2_1_1.OurCountryCode,
+                                                        PartyId:                           emsp2CommonAPI_v2_1_1.OurPartyId,
+                                                        Role:                              Role.EMSP,
+                                                        BusinessDetails:                   emsp2CommonAPI_v2_1_1.OurBusinessDetails,
+
+                                                        LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo2__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    false,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(emsp2TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_1_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_1_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   false,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                cpo2emsp2TLSClientCertificate is not null
+                                                                                               ? [ cpo2emsp2TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          cpo2emsp2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     cpo2emsp2TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(cpo2_2_emsp2_v2_1_1.IsSuccess,  Is.True);
+                    Assert.That(cpo2_2_emsp2_v2_1_1.Data,       Is.Not.Null);
+
+
+                    var cpo2_2_emsp2_v2_2_1 = await cpo2CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               emsp2CommonAPI_v2_2_1.DefaultPartyId,
+                                                                                               Role.EMSP
+                                                                                           ),
+                                                        CredentialsRoles:                  [
+                                                                                               emsp2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                                                           ],
+
+                                                        LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo2__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    true,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(emsp2TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   true,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                cpo2emsp2TLSClientCertificate is not null
+                                                                                               ? [ cpo2emsp2TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          cpo2emsp2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     cpo2emsp2TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(cpo2_2_emsp2_v2_2_1.IsSuccess,  Is.True);
+                    Assert.That(cpo2_2_emsp2_v2_2_1.Data,       Is.Not.Null);
+
+
+                    var cpo2_2_emsp2_v2_3_0 = await cpo2CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               emsp2CommonAPI_v2_3_0.DefaultPartyId,
+                                                                                               Role.EMSP
+                                                                                           ),
+                                                        CredentialsRoles:                  [
+                                                                                               emsp2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
+                                                                                           ],
+
+                                                        LocalAccessToken:                  AccessToken.Parse(emsp2_accessing_cpo2__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    true,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(cpo2_accessing_emsp2__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(emsp2TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_3_0.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   true,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                cpo2emsp2TLSClientCertificate is not null
+                                                                                               ? [ cpo2emsp2TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          cpo2emsp2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     cpo2emsp2TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        emsp2TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(cpo2_2_emsp2_v2_3_0.IsSuccess,  Is.True);
+                    Assert.That(cpo2_2_emsp2_v2_3_0.Data,       Is.Not.Null);
+
+                    #endregion
+
+
+                    #region EMSP #1 -> HUB #1
+
+                    var emsp1_2_cpo1_v2_1_1 = await emsp1CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
+                                                        CountryCode:                       cpo1CommonAPI_v2_1_1.OurCountryCode,
+                                                        PartyId:                           cpo1CommonAPI_v2_1_1.OurPartyId,
+                                                        Role:                              Role.HUB,
+                                                        BusinessDetails:                   cpo1CommonAPI_v2_1_1.OurBusinessDetails,
+
+                                                        LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp1__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    false,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   false,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                emsp1cpo1TLSClientCertificate is not null
+                                                                                               ? [ emsp1cpo1TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          emsp1cpo1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     emsp1cpo1TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        cpo1TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(emsp1_2_cpo1_v2_1_1.IsSuccess,  Is.True);
+                    Assert.That(emsp1_2_cpo1_v2_1_1.Data,       Is.Not.Null);
+
+
+                    var emsp1_2_cpo1_v2_2_1 = await emsp1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               cpo1CommonAPI_v2_2_1.DefaultPartyId,
+                                                                                               Role.HUB
+                                                                                           ),
+                                                        CredentialsRoles:                  [
+                                                                                               cpo1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                                                           ],
+                                                        LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp1__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    true,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   true,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                emsp1cpo1TLSClientCertificate is not null
+                                                                                               ? [ emsp1cpo1TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          emsp1cpo1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     emsp1cpo1TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        cpo1TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(emsp1_2_cpo1_v2_2_1.IsSuccess,  Is.True);
+                    Assert.That(emsp1_2_cpo1_v2_2_1.Data,       Is.Not.Null);
+
+
+                    var emsp1_2_cpo1_v2_3_0 = await emsp1CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               cpo1CommonAPI_v2_3_0.DefaultPartyId,
+                                                                                               Role.HUB
+                                                                                           ),
+                                                        CredentialsRoles:                  [
+                                                                                               cpo1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
+                                                                                           ],
+                                                        LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp1__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp1__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    true,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo1__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo1__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_3_0.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   true,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                emsp1cpo1TLSClientCertificate is not null
+                                                                                               ? [ emsp1cpo1TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          emsp1cpo1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     emsp1cpo1TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        cpo1TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(emsp1_2_cpo1_v2_3_0.IsSuccess,  Is.True);
+                    Assert.That(emsp1_2_cpo1_v2_3_0.Data,       Is.Not.Null);
+
+                    #endregion
+
+                    #region EMSP #1 -> HUB #2
+
+                    var emsp1_2_cpo2_v2_1_1 = await emsp1CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
+                                                        CountryCode:                       cpo2CommonAPI_v2_1_1.OurCountryCode,
+                                                        PartyId:                           cpo2CommonAPI_v2_1_1.OurPartyId,
+                                                        Role:                              Role.HUB,
+                                                        BusinessDetails:                   cpo2CommonAPI_v2_1_1.OurBusinessDetails,
+
+                                                        LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp1__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    false,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(cpo2TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   false,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                emsp1cpo2TLSClientCertificate is not null
+                                                                                               ? [ emsp1cpo2TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          emsp1cpo2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     emsp1cpo2TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        cpo2TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(emsp1_2_cpo2_v2_1_1.IsSuccess,  Is.True);
+                    Assert.That(emsp1_2_cpo2_v2_1_1.Data,       Is.Not.Null);
+
+
+                    var emsp1_2_cpo2_v2_2_1 = await emsp1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               cpo2CommonAPI_v2_2_1.DefaultPartyId,
+                                                                                               Role.HUB
+                                                                                           ),
+                                                        CredentialsRoles:                  [
+                                                                                               cpo2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                                                           ],
+                                                        LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp1__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    true,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(cpo2TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   true,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                emsp1cpo2TLSClientCertificate is not null
+                                                                                               ? [ emsp1cpo2TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          emsp1cpo2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     emsp1cpo2TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        cpo2TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(emsp1_2_cpo2_v2_2_1.IsSuccess,  Is.True);
+                    Assert.That(emsp1_2_cpo2_v2_2_1.Data,       Is.Not.Null);
+
+
+                    var emsp1_2_cpo2_v2_3_0 = await emsp1CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               cpo2CommonAPI_v2_3_0.DefaultPartyId,
+                                                                                               Role.HUB
+                                                                                           ),
+                                                        CredentialsRoles:                  [
+                                                                                               cpo2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
+                                                                                           ],
+                                                        LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp1__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp1__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    true,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(emsp1_accessing_cpo2__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp1_accessing_cpo2__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(cpo2TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_3_0.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   true,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                emsp1cpo2TLSClientCertificate is not null
+                                                                                               ? [ emsp1cpo2TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          emsp1cpo2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     emsp1cpo2TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        cpo2TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(emsp1_2_cpo2_v2_3_0.IsSuccess,  Is.True);
+                    Assert.That(emsp1_2_cpo2_v2_3_0.Data,       Is.Not.Null);
+
+                    #endregion
+
+
+                    #region EMSP #2 -> HUB #1
+
+                    var emsp2_2_cpo1_v2_1_1 = await emsp2CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
+                                                        CountryCode:                       cpo1CommonAPI_v2_1_1.OurCountryCode,
+                                                        PartyId:                           cpo1CommonAPI_v2_1_1.OurPartyId,
+                                                        Role:                              Role.HUB,
+                                                        BusinessDetails:                   cpo1CommonAPI_v2_1_1.OurBusinessDetails,
+
+                                                        LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp2__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    false,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   false,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                emsp2cpo1TLSClientCertificate is not null
+                                                                                               ? [ emsp2cpo1TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          emsp2cpo1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     emsp2cpo1TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        cpo1TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(emsp2_2_cpo1_v2_1_1.IsSuccess,  Is.True);
+                    Assert.That(emsp2_2_cpo1_v2_1_1.Data,       Is.Not.Null);
+
+
+                    var emsp2_2_cpo1_v2_2_1 = await emsp2CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               cpo1CommonAPI_v2_2_1.DefaultPartyId,
+                                                                                               Role.HUB
+                                                                                           ),
+                                                        CredentialsRoles:                  [
+                                                                                               cpo1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                                                           ],
+                                                        LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp2__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    true,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   true,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                emsp2cpo1TLSClientCertificate is not null
+                                                                                               ? [ emsp2cpo1TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          emsp2cpo1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     emsp2cpo1TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        cpo1TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(emsp2_2_cpo1_v2_2_1.IsSuccess,  Is.True);
+                    Assert.That(emsp2_2_cpo1_v2_2_1.Data,       Is.Not.Null);
+
+
+                    var emsp2_2_cpo1_v2_3_0 = await emsp2CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               cpo1CommonAPI_v2_3_0.DefaultPartyId,
+                                                                                               Role.HUB
+                                                                                           ),
+                                                        CredentialsRoles:                  [
+                                                                                               cpo1CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
+                                                                                           ],
+                                                        LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_emsp2__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_emsp2__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    true,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo1__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo1__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_3_0.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   true,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                emsp2cpo1TLSClientCertificate is not null
+                                                                                               ? [ emsp2cpo1TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          emsp2cpo1TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     emsp2cpo1TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        cpo1TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(emsp2_2_cpo1_v2_3_0.IsSuccess,  Is.True);
+                    Assert.That(emsp2_2_cpo1_v2_3_0.Data,       Is.Not.Null);
+
+                    #endregion
+
+                    #region EMSP #2 -> HUB #2
+
+                    var emsp2_2_cpo2_v2_1_1 = await emsp2CommonAPI_v2_1_1.AddRemotePartyIfNotExists(
+                                                        CountryCode:                       cpo2CommonAPI_v2_1_1.OurCountryCode,
+                                                        PartyId:                           cpo2CommonAPI_v2_1_1.OurPartyId,
+                                                        Role:                              Role.HUB,
+                                                        BusinessDetails:                   cpo2CommonAPI_v2_1_1.OurBusinessDetails,
+
+                                                        LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp2__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    false,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(cpo2TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   false,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                emsp2cpo2TLSClientCertificate is not null
+                                                                                               ? [ emsp2cpo2TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          emsp2cpo2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     emsp2cpo2TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        cpo2TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(emsp2_2_cpo2_v2_1_1.IsSuccess,  Is.True);
+                    Assert.That(emsp2_2_cpo2_v2_1_1.Data,       Is.Not.Null);
+
+
+                    var emsp2_2_cpo2_v2_2_1 = await emsp2CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               cpo2CommonAPI_v2_2_1.DefaultPartyId,
+                                                                                               Role.HUB
+                                                                                           ),
+                                                        CredentialsRoles:                  [
+                                                                                               cpo2CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                                                           ],
+                                                        LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp2__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    true,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(cpo2TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   true,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                emsp2cpo2TLSClientCertificate is not null
+                                                                                               ? [ emsp2cpo2TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          emsp2cpo2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     emsp2cpo2TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        cpo2TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(emsp2_2_cpo2_v2_2_1.IsSuccess,  Is.True);
+                    Assert.That(emsp2_2_cpo2_v2_2_1.Data,       Is.Not.Null);
+
+
+                    var emsp2_2_cpo2_v2_3_0 = await emsp2CommonAPI_v2_3_0.AddRemotePartyIfNotExists(
+                                                        Id:                                RemoteParty_Id.From(
+                                                                                               cpo2CommonAPI_v2_3_0.DefaultPartyId,
+                                                                                               Role.HUB
+                                                                                           ),
+                                                        CredentialsRoles:                  [
+                                                                                               cpo2CommonAPI_v2_3_0.Parties.First().ToCredentialsRole()
+                                                                                           ],
+                                                        LocalAccessToken:                  AccessToken.Parse(cpo2_accessing_emsp2__token),
+                                                        LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                        LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo2_accessing_emsp2__token, TOTPValidityTime) : null,
+                                                        LocalAccessTokenBase64Encoding:    true,
+
+                                                        RemoteAccessToken:                 AccessToken.Parse(emsp2_accessing_cpo2__token),
+                                                        RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(emsp2_accessing_cpo2__token, TOTPValidityTime) : null,
+                                                        RemoteVersionsURL:                 URL.Parse($"http{(cpo2TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
+                                                        RemoteVersionIds:                  [ OCPIv2_3_0.Version.Id ],
+                                                        SelectedVersionId:                 OCPIv2_3_0.Version.Id,
+                                                        RemoteAccessTokenBase64Encoding:   true,
+                                                        RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                        ClientCertificates:                emsp2cpo2TLSClientCertificate is not null
+                                                                                               ? [ emsp2cpo2TLSClientCertificate ]
+                                                                                               : null,
+                                                        ClientCertificateContext:          emsp2cpo2TLSClientCertificate is not null && clientCACertificate2 is not null && UseClientCertificateChains
+                                                                                               ? SslStreamCertificateContext.Create(
+                                                                                                     emsp2cpo2TLSClientCertificate,
+                                                                                                     new X509Certificate2Collection(clientCACertificate2)
+                                                                                                 )
+                                                                                               : null,
+                                                        RemoteCertificateValidator:        cpo2TLSServerCertificate is not null
+                                                                                               ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
+
+                                                                                                     if (serverCertificate is null)
+                                                                                                         return (false, [ "The server certificate is null!" ]);
+
+                                                                                                     var chainReport = PKIFactory.ValidateServerChain(
+                                                                                                                           serverCertificate,
+                                                                                                                           serverCACertificate2!,
+                                                                                                                           rootCACertificate2!
+                                                                                                                       );
+
+                                                                                                     return (chainReport.IsValid,
+                                                                                                             chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+
+                                                                                               }
+                                                                                               : null,
+
+                                                        Status:                            PartyStatus.ENABLED
+                                                    );
+
+                    Assert.That(emsp2_2_cpo2_v2_3_0.IsSuccess,  Is.True);
+                    Assert.That(emsp2_2_cpo2_v2_3_0.Data,       Is.Not.Null);
+
+                    #endregion
+
+
+
+                    #region Validate Remote Parties
+
+                    Assert.That(cpo1CommonAPI_v2_1_1. RemoteParties.Count(),  Is.EqualTo(2));
+                    Assert.That(cpo1CommonAPI_v2_2_1. RemoteParties.Count(),  Is.EqualTo(2));
+                    Assert.That(cpo1CommonAPI_v2_3_0. RemoteParties.Count(),  Is.EqualTo(2));
+
+                    Assert.That(cpo2CommonAPI_v2_1_1. RemoteParties.Count(),  Is.EqualTo(2));
+                    Assert.That(cpo2CommonAPI_v2_2_1. RemoteParties.Count(),  Is.EqualTo(2));
+                    Assert.That(cpo2CommonAPI_v2_3_0. RemoteParties.Count(),  Is.EqualTo(2));
+
+                    Assert.That(emsp1CommonAPI_v2_1_1.RemoteParties.Count(),  Is.EqualTo(2));
+                    Assert.That(emsp1CommonAPI_v2_2_1.RemoteParties.Count(),  Is.EqualTo(2));
+                    Assert.That(emsp1CommonAPI_v2_3_0.RemoteParties.Count(),  Is.EqualTo(2));
+
+                    Assert.That(emsp2CommonAPI_v2_1_1.RemoteParties.Count(),  Is.EqualTo(2));
+                    Assert.That(emsp2CommonAPI_v2_2_1.RemoteParties.Count(),  Is.EqualTo(2));
+                    Assert.That(emsp2CommonAPI_v2_3_0.RemoteParties.Count(),  Is.EqualTo(2));
+
+                    #endregion
+
+                    #region Check the RemoteParty database files
+
+                    Assert.That(await CheckFile(cpo1CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+                    Assert.That(await CheckFile(cpo1CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+                    Assert.That(await CheckFile(cpo1CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+
+                    Assert.That(await CheckFile(cpo2CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+                    Assert.That(await CheckFile(cpo2CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+                    Assert.That(await CheckFile(cpo2CommonAPI_v2_1_1. RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+
+                    Assert.That(await CheckFile(emsp1CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+                    Assert.That(await CheckFile(emsp1CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+                    Assert.That(await CheckFile(emsp1CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+
+                    Assert.That(await CheckFile(emsp2CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+                    Assert.That(await CheckFile(emsp2CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+                    Assert.That(await CheckFile(emsp2CommonAPI_v2_1_1.RemotePartyDBFileName, lines => lines.Length == 2), Is.True);
+
+                    #endregion
+
+
+                    #region Define blocked Remote Parties
+
+                    await cpo1CommonAPI_v2_1_1.AddRemoteParty(
+                                CountryCode:         CountryCode.Parse("XX"),
+                                PartyId:             Party_Id.   Parse("BLE"),
+                                Role:                Role.EMSP,
+                                BusinessDetails:     new BusinessDetails(
+                                                        "Blocked EMSP"
+                                                    ),
+                                LocalAccessToken:    BlockedEMSPToken,
+                                LocalAccessStatus:   AccessStatus.BLOCKED,
+                                Status:              PartyStatus. ENABLED
+                            );
+
+
+                    await emsp1CommonAPI_v2_1_1.AddRemoteParty(
+                                CountryCode:         CountryCode.Parse("XX"),
+                                PartyId:             Party_Id.   Parse("BLC"),
+                                Role:                Role.EMSP,
+                                BusinessDetails:     new BusinessDetails(
+                                                        "Blocked CPO"
+                                                    ),
+                                LocalAccessToken:    BlockedCPOToken,
+                                LocalAccessStatus:   AccessStatus.BLOCKED,
+                                Status:              PartyStatus. ENABLED
+                            );
+
+                    #endregion
+
+                    #region Define blocked Access Tokens
+
+                    await cpo1CommonAPI_v2_1_1.AddAccessToken(
+                              BlockedToken,
+                              AccessStatus.BLOCKED
+                          );
+
+                    await cpo2CommonAPI_v2_1_1.AddAccessToken(
+                              BlockedToken,
+                              AccessStatus.BLOCKED
+                          );
+
+                    await emsp1CommonAPI_v2_1_1.AddAccessToken(
+                              BlockedToken,
+                              AccessStatus.BLOCKED
+                          );
+
+                    await emsp2CommonAPI_v2_1_1.AddAccessToken(
+                              BlockedToken,
+                              AccessStatus.BLOCKED
+                          );
+
+                    #endregion
+
+                }
 
             }
 
@@ -4583,7 +5396,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             #region CPO #1
 
             if (cpo1HTTPServer is not null)
-                await cpo1HTTPServer. Stop();
+                await cpo1HTTPServer.Stop();
 
 
             if (cpo1CommonAPI_v2_1_1 is not null)
@@ -4603,7 +5416,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             #region CPO #2
 
             if (cpo2HTTPServer is not null)
-                await cpo2HTTPServer. Stop();
+                await cpo2HTTPServer.Stop();
 
 
             if (cpo2CommonAPI_v2_1_1 is not null)
@@ -4617,6 +5430,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             if (cpo2CommonAPI_v3_0   is not null)
                 File.Delete(cpo2CommonAPI_v3_0.  RemotePartyDBFileName);
+
+            #endregion
+
+            #region HUB #1
+
+            if (hub1HTTPServer is not null)
+                await hub1HTTPServer.Stop();
+
+
+            //if (hub1CommonAPI_v2_1_1 is not null)
+            //    File.Delete(hub1CommonAPI_v2_1_1.RemotePartyDBFileName);
+
+            if (hub1CommonAPI_v2_2_1 is not null)
+                File.Delete(hub1CommonAPI_v2_2_1.RemotePartyDBFileName);
+
+            if (hub1CommonAPI_v2_3_0 is not null)
+                File.Delete(hub1CommonAPI_v2_3_0.RemotePartyDBFileName);
+
+            if (hub1CommonAPI_v3_0   is not null)
+                File.Delete(hub1CommonAPI_v3_0.  RemotePartyDBFileName);
 
             #endregion
 

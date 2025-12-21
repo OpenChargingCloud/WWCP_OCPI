@@ -133,6 +133,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public CustomJObjectSerializerDelegate<Token>?                       CustomTokenSerializer                         { get; set; }
         public CustomJObjectSerializerDelegate<EnergyContract>?              CustomEnergyContractSerializer                { get; set; }
 
+
+        public CustomJObjectSerializerDelegate<Booking>?                     CustomBookingSerializer                       { get; set; }
+
         #endregion
 
         #region Events
@@ -150,7 +153,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET locations request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetLocationsRequest(DateTimeOffset     Timestamp,
                                                     HTTPAPIX           API,
@@ -177,7 +180,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET locations response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetLocationsResponse(DateTimeOffset     Timestamp,
@@ -208,7 +211,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET location request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetLocationRequest(DateTimeOffset     Timestamp,
                                                    HTTPAPIX           API,
@@ -235,7 +238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET location response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetLocationResponse(DateTimeOffset     Timestamp,
@@ -269,7 +272,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET EVSE request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetEVSERequest(DateTimeOffset     Timestamp,
                                                HTTPAPIX           API,
@@ -296,7 +299,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET EVSE response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetEVSEResponse(DateTimeOffset     Timestamp,
@@ -330,7 +333,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET connector request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetConnectorRequest(DateTimeOffset     Timestamp,
                                                     HTTPAPIX           API,
@@ -357,7 +360,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET connector response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetConnectorResponse(DateTimeOffset     Timestamp,
@@ -391,7 +394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET tariffs request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetTariffsRequest(DateTimeOffset     Timestamp,
                                                   HTTPAPIX           API,
@@ -418,7 +421,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET tariffs response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetTariffsResponse(DateTimeOffset     Timestamp,
@@ -449,7 +452,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET tariff request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetTariffRequest(DateTimeOffset     Timestamp,
                                                  HTTPAPIX           API,
@@ -476,7 +479,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET tariff response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetTariffResponse(DateTimeOffset     Timestamp,
@@ -510,7 +513,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET sessions request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetSessionsRequest(DateTimeOffset     Timestamp,
                                                    HTTPAPIX           API,
@@ -537,7 +540,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET sessions response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetSessionsResponse(DateTimeOffset     Timestamp,
@@ -568,7 +571,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET session request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetSessionRequest(DateTimeOffset     Timestamp,
                                                   HTTPAPIX           API,
@@ -595,7 +598,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET session response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetSessionResponse(DateTimeOffset     Timestamp,
@@ -629,7 +632,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET CDRs request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetCDRsRequest(DateTimeOffset     Timestamp,
                                                HTTPAPIX           API,
@@ -656,7 +659,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET CDRs response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetCDRsResponse(DateTimeOffset     Timestamp,
@@ -687,7 +690,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET CDR request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetCDRRequest(DateTimeOffset     Timestamp,
                                               HTTPAPIX           API,
@@ -714,7 +717,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET CDR response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetCDRResponse(DateTimeOffset     Timestamp,
@@ -748,7 +751,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET Tokens request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetTokensRequest(DateTimeOffset     Timestamp,
                                                  HTTPAPIX           API,
@@ -775,7 +778,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET Tokens response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetTokensResponse(DateTimeOffset     Timestamp,
@@ -806,7 +809,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a DELETE Tokens request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task DeleteTokensRequest(DateTimeOffset     Timestamp,
                                                     HTTPAPIX           API,
@@ -833,7 +836,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a DELETE Tokens response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task DeleteTokensResponse(DateTimeOffset     Timestamp,
@@ -866,7 +869,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET Token request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetTokenRequest(DateTimeOffset     Timestamp,
                                                 HTTPAPIX           API,
@@ -893,7 +896,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a GET Token response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetTokenResponse(DateTimeOffset     Timestamp,
@@ -924,7 +927,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a POST token request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PostTokenRequest(DateTimeOffset     Timestamp,
                                                  HTTPAPIX           API,
@@ -951,7 +954,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a POST token response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PostTokenResponse(DateTimeOffset     Timestamp,
@@ -982,7 +985,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a put token request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PutTokenRequest(DateTimeOffset     Timestamp,
                                                 HTTPAPIX           API,
@@ -1009,7 +1012,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a put token response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PutTokenResponse(DateTimeOffset     Timestamp,
@@ -1040,7 +1043,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a patch token request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PatchTokenRequest(DateTimeOffset     Timestamp,
                                                   HTTPAPIX           API,
@@ -1067,7 +1070,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a patch token response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PatchTokenResponse(DateTimeOffset     Timestamp,
@@ -1098,7 +1101,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a delete token request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task DeleteTokenRequest(DateTimeOffset     Timestamp,
                                                    HTTPAPIX           API,
@@ -1125,7 +1128,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a delete token response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task DeleteTokenResponse(DateTimeOffset     Timestamp,
@@ -1135,6 +1138,125 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                     CancellationToken  CancellationToken)
 
             => OnDeleteTokenResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
+
+        #endregion
+
+        #endregion
+
+        #region Booking(s)
+
+        #region (protected internal) GetBookingsRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET Bookings request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetBookingsRequest = new();
+
+        /// <summary>
+        /// An event sent whenever a GET Bookings request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The CPO HTTP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetBookingsRequest(DateTimeOffset     Timestamp,
+                                                   HTTPAPIX           API,
+                                                   OCPIRequest        Request,
+                                                   CancellationToken  CancellationToken)
+
+            => OnGetBookingsRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
+
+        #endregion
+
+        #region (protected internal) GetBookingsResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a GET Bookings response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetBookingsResponse = new();
+
+        /// <summary>
+        /// An event sent whenever a GET Bookings response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The CPO HTTP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetBookingsResponse(DateTimeOffset     Timestamp,
+                                                    HTTPAPIX           API,
+                                                    OCPIRequest        Request,
+                                                    OCPIResponse       Response,
+                                                    CancellationToken  CancellationToken)
+
+            => OnGetBookingsResponse.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   Response,
+                   CancellationToken
+               );
+
+        #endregion
+
+
+        #region (protected internal) PostBookingRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a POST Booking request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPostBookingRequest = new();
+
+        /// <summary>
+        /// An event sent whenever a POST Booking request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The CPO HTTP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PostBookingRequest(DateTimeOffset     Timestamp,
+                                                   HTTPAPIX           API,
+                                                   OCPIRequest        Request,
+                                                   CancellationToken  CancellationToken)
+
+            => OnPostBookingRequest.WhenAll(
+                   Timestamp,
+                   API,
+                   Request,
+                   CancellationToken
+               );
+
+        #endregion
+
+        #region (protected internal) PostBookingResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a POST Booking response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPostBookingResponse = new();
+
+        /// <summary>
+        /// An event sent whenever a POST Booking response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The CPO HTTP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PostBookingResponse(DateTimeOffset     Timestamp,
+                                                    HTTPAPIX           API,
+                                                    OCPIRequest        Request,
+                                                    OCPIResponse       Response,
+                                                    CancellationToken  CancellationToken)
+
+            => OnPostBookingResponse.WhenAll(
                    Timestamp,
                    API,
                    Request,
@@ -1279,7 +1401,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a reserve now command was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task ReserveNowRequest(DateTimeOffset     Timestamp,
                                                   HTTPAPIX           API,
@@ -1315,7 +1437,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a reserve now command response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task ReserveNowResponse(DateTimeOffset     Timestamp,
@@ -1346,7 +1468,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a cancel reservation command was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task CancelReservationRequest(DateTimeOffset     Timestamp,
                                                          HTTPAPIX           API,
@@ -1382,7 +1504,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a cancel reservation command response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task CancelReservationResponse(DateTimeOffset     Timestamp,
@@ -1413,7 +1535,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a start session command was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task StartSessionRequest(DateTimeOffset     Timestamp,
                                                     HTTPAPIX           API,
@@ -1449,7 +1571,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a start session command response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task StartSessionResponse(DateTimeOffset     Timestamp,
@@ -1480,7 +1602,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a stop session command was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task StopSessionRequest(DateTimeOffset     Timestamp,
                                                    HTTPAPIX           API,
@@ -1516,7 +1638,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a stop session command response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task StopSessionResponse(DateTimeOffset     Timestamp,
@@ -1547,7 +1669,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a unlock connector command was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command request.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task UnlockConnectorRequest(DateTimeOffset     Timestamp,
                                                        HTTPAPIX           API,
@@ -1583,7 +1705,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// An event sent whenever a unlock connector command response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the command response.</param>
-        /// <param name="API">The EMSP API.</param>
+        /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task UnlockConnectorResponse(DateTimeOffset     Timestamp,
@@ -2024,7 +2146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "locations",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -2048,10 +2170,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   GetLocationsRequest,
-                OCPIResponseLogger:  GetLocationsResponse,
-                OCPIRequestHandler:  request => {
+                GetLocationsRequest,
+                GetLocationsResponse,
+                request => {
 
                     #region Check access token
 
@@ -2173,26 +2294,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                   OrderBy       (location => location.Created).
                                                                   SkipTakeFilter(filters.Offset,
                                                                                  filters.Limit).
-                                                                  Select        (location => location.ToJSON(request.EMSPId,
-                                                                                                             CustomLocationSerializer,
-                                                                                                             CustomPublishTokenSerializer,
-                                                                                                             CustomAdditionalGeoLocationSerializer,
-                                                                                                             CustomEVSESerializer,
-                                                                                                             CustomStatusScheduleSerializer,
-                                                                                                             CustomConnectorSerializer,
-                                                                                                             CustomLocationEnergyMeterSerializer,
-                                                                                                             CustomEVSEEnergyMeterSerializer,
-                                                                                                             CustomTransparencySoftwareStatusSerializer,
-                                                                                                             CustomTransparencySoftwareSerializer,
-                                                                                                             CustomParkingSerializer,
-                                                                                                             CustomDisplayTextSerializer,
-                                                                                                             CustomBusinessDetailsSerializer,
-                                                                                                             CustomHoursSerializer,
-                                                                                                             CustomEVSEParkingSerializer,
-                                                                                                             CustomImageSerializer,
-                                                                                                             CustomEnergyMixSerializer,
-                                                                                                             CustomEnergySourceSerializer,
-                                                                                                             CustomEnvironmentalImpactSerializer))
+                                                                  Select        (location => location.ToJSON(
+                                                                                                 request.EMSPId,
+                                                                                                 CustomLocationSerializer,
+                                                                                                 CustomPublishTokenSerializer,
+                                                                                                 CustomAdditionalGeoLocationSerializer,
+                                                                                                 CustomEVSESerializer,
+                                                                                                 CustomStatusScheduleSerializer,
+                                                                                                 CustomConnectorSerializer,
+                                                                                                 CustomLocationEnergyMeterSerializer,
+                                                                                                 CustomEVSEEnergyMeterSerializer,
+                                                                                                 CustomTransparencySoftwareStatusSerializer,
+                                                                                                 CustomTransparencySoftwareSerializer,
+                                                                                                 CustomParkingSerializer,
+                                                                                                 CustomDisplayTextSerializer,
+                                                                                                 CustomBusinessDetailsSerializer,
+                                                                                                 CustomHoursSerializer,
+                                                                                                 CustomEVSEParkingSerializer,
+                                                                                                 CustomImageSerializer,
+                                                                                                 CustomEnergyMixSerializer,
+                                                                                                 CustomEnergySourceSerializer,
+                                                                                                 CustomEnvironmentalImpactSerializer
+                                                                                             ))
                                                           )
                                }
                            );
@@ -2211,7 +2334,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "locations/{locationId}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -2233,10 +2356,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{locationId}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   GetLocationRequest,
-                OCPIResponseLogger:  GetLocationResponse,
-                OCPIRequestHandler:  request => {
+                GetLocationRequest,
+                GetLocationResponse,
+                request => {
 
                     #region Check access token
 
@@ -2261,14 +2383,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check location
 
-                    if (!request.ParseLocation(CommonAPI,
-                                               //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                               CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
-                                               out var locationId,
-                                               out var location,
-                                               out var ocpiResponseBuilder,
-                                               FailOnMissingLocation: true) ||
-                         location is null)
+                    if (!request.ParseMandatoryLocation(CommonAPI,
+                                                        //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+                                                        CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
+                                                        out var locationId,
+                                                        out var location,
+                                                        out var ocpiResponseBuilder))
                     {
                         return Task.FromResult(ocpiResponseBuilder!);
                     }
@@ -2280,26 +2400,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
-                               Data                 = location.ToJSON(request.EMSPId,
-                                                                      CustomLocationSerializer,
-                                                                      CustomPublishTokenSerializer,
-                                                                      CustomAdditionalGeoLocationSerializer,
-                                                                      CustomEVSESerializer,
-                                                                      CustomStatusScheduleSerializer,
-                                                                      CustomConnectorSerializer,
-                                                                      CustomLocationEnergyMeterSerializer,
-                                                                      CustomEVSEEnergyMeterSerializer,
-                                                                      CustomTransparencySoftwareStatusSerializer,
-                                                                      CustomTransparencySoftwareSerializer,
-                                                                      CustomParkingSerializer,
-                                                                      CustomDisplayTextSerializer,
-                                                                      CustomBusinessDetailsSerializer,
-                                                                      CustomHoursSerializer,
-                                                                      CustomEVSEParkingSerializer,
-                                                                      CustomImageSerializer,
-                                                                      CustomEnergyMixSerializer,
-                                                                      CustomEnergySourceSerializer,
-                                                                      CustomEnvironmentalImpactSerializer),
+                               Data                 = location.ToJSON(
+                                                          request.EMSPId,
+                                                          CustomLocationSerializer,
+                                                          CustomPublishTokenSerializer,
+                                                          CustomAdditionalGeoLocationSerializer,
+                                                          CustomEVSESerializer,
+                                                          CustomStatusScheduleSerializer,
+                                                          CustomConnectorSerializer,
+                                                          CustomLocationEnergyMeterSerializer,
+                                                          CustomEVSEEnergyMeterSerializer,
+                                                          CustomTransparencySoftwareStatusSerializer,
+                                                          CustomTransparencySoftwareSerializer,
+                                                          CustomParkingSerializer,
+                                                          CustomDisplayTextSerializer,
+                                                          CustomBusinessDetailsSerializer,
+                                                          CustomHoursSerializer,
+                                                          CustomEVSEParkingSerializer,
+                                                          CustomImageSerializer,
+                                                          CustomEnergyMixSerializer,
+                                                          CustomEnergySourceSerializer,
+                                                          CustomEnvironmentalImpactSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -2323,7 +2445,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "locations/{locationId}/{evseId}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -2345,8 +2467,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{locationId}/{evseId}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request => {
+                GetEVSERequest,
+                GetEVSEResponse,
+                request => {
 
                     #region Check access token
 
@@ -2371,15 +2494,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check EVSE
 
-                    if (!request.ParseLocationEVSE(CommonAPI,
-                                                   //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                                   CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
-                                                   out var locationId,
-                                                   out var location,
-                                                   out var evseId,
-                                                   out var evse,
-                                                   out var ocpiResponseBuilder) ||
-                         evse is null)
+                    if (!request.ParseMandatoryLocationEVSE(CommonAPI,
+                                                            //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+                                                            CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
+                                                            out var locationId,
+                                                            out var location,
+                                                            out var evseId,
+                                                            out var evse,
+                                                            out var ocpiResponseBuilder))
                     {
                         return Task.FromResult(ocpiResponseBuilder!);
                     }
@@ -2391,19 +2513,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
-                               Data                 = evse.ToJSON(true,
-                                                                  true,
-                                                                  true,
-                                                                  request.EMSPId,
-                                                                  CustomEVSESerializer,
-                                                                  CustomStatusScheduleSerializer,
-                                                                  CustomConnectorSerializer,
-                                                                  CustomEVSEEnergyMeterSerializer,
-                                                                  CustomTransparencySoftwareStatusSerializer,
-                                                                  CustomTransparencySoftwareSerializer,
-                                                                  CustomDisplayTextSerializer,
-                                                                  CustomEVSEParkingSerializer,
-                                                                  CustomImageSerializer),
+                               Data                 = evse.ToJSON(
+                                                          true,
+                                                          true,
+                                                          true,
+                                                          request.EMSPId,
+                                                          CustomEVSESerializer,
+                                                          CustomStatusScheduleSerializer,
+                                                          CustomConnectorSerializer,
+                                                          CustomEVSEEnergyMeterSerializer,
+                                                          CustomTransparencySoftwareStatusSerializer,
+                                                          CustomTransparencySoftwareSerializer,
+                                                          CustomDisplayTextSerializer,
+                                                          CustomEVSEParkingSerializer,
+                                                          CustomImageSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -2427,7 +2551,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -2449,8 +2573,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request => {
+                GetConnectorRequest,
+                GetConnectorResponse,
+                request => {
 
                     #region Check access token
 
@@ -2475,17 +2600,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check connector
 
-                    if (!request.ParseLocationEVSEConnector(CommonAPI,
-                                                            //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                                            CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
-                                                            out var locationId,
-                                                            out var location,
-                                                            out var evseId,
-                                                            out var evse,
-                                                            out var connectorId,
-                                                            out var connector,
-                                                            out var ocpiResponseBuilder) ||
-                         connector is null)
+                    if (!request.ParseMandatoryLocationEVSEConnector(CommonAPI,
+                                                                     //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+                                                                     CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
+                                                                     out var locationId,
+                                                                     out var location,
+                                                                     out var evseId,
+                                                                     out var evse,
+                                                                     out var connectorId,
+                                                                     out var connector,
+                                                                     out var ocpiResponseBuilder))
                     {
                         return Task.FromResult(ocpiResponseBuilder!);
                     }
@@ -2497,10 +2621,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
-                               Data                 = connector.ToJSON(true,
-                                                                       true,
-                                                                       request.EMSPId,
-                                                                       CustomConnectorSerializer),
+                               Data                 = connector.ToJSON(
+                                                          true,
+                                                          true,
+                                                          request.EMSPId,
+                                                          CustomConnectorSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -2525,7 +2651,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "tariffs",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -2549,8 +2675,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tariffs",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request => {
+                GetTariffsRequest,
+                GetTariffsResponse,
+                request => {
 
                     #region Check access token
 
@@ -2640,17 +2767,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                               OrderBy       (tariff => tariff.Created).
                                                               SkipTakeFilter(filters.Offset,
                                                                              filters.Limit).
-                                                              Select        (tariff => tariff.ToJSON(true,
-                                                                                                     true,
-                                                                                                     CustomTariffSerializer,
-                                                                                                     CustomDisplayTextSerializer,
-                                                                                                     CustomPriceLimitSerializer,
-                                                                                                     CustomTariffElementSerializer,
-                                                                                                     CustomPriceComponentSerializer,
-                                                                                                     CustomTariffRestrictionsSerializer,
-                                                                                                     CustomEnergyMixSerializer,
-                                                                                                     CustomEnergySourceSerializer,
-                                                                                                     CustomEnvironmentalImpactSerializer))
+                                                              Select        (tariff => tariff.ToJSON(
+                                                                                           true,
+                                                                                           true,
+                                                                                           CustomTariffSerializer,
+                                                                                           CustomDisplayTextSerializer,
+                                                                                           CustomPriceLimitSerializer,
+                                                                                           CustomTariffElementSerializer,
+                                                                                           CustomPriceComponentSerializer,
+                                                                                           CustomTariffRestrictionsSerializer,
+                                                                                           CustomEnergyMixSerializer,
+                                                                                           CustomEnergySourceSerializer,
+                                                                                           CustomEnvironmentalImpactSerializer
+                                                                                       ))
                                                           )
                                }
                            );
@@ -2669,7 +2798,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "tariffs/{tariffId}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -2691,8 +2820,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tariffs/{tariffId}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request => {
+                GetTariffRequest,
+                GetTariffResponse,
+                request => {
 
                     #region Check access token
 
@@ -2717,13 +2847,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check tariff
 
-                    if (!request.ParseTariff(CommonAPI,
-                                             //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                             CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
-                                             out var tariffId,
-                                             out var tariff,
-                                             out var ocpiResponseBuilder) ||
-                         tariff is null)
+                    if (!request.ParseMandatoryTariff(CommonAPI,
+                                                      //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+                                                      CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
+                                                      out var tariffId,
+                                                      out var tariff,
+                                                      out var ocpiResponseBuilder))
                     {
                         return Task.FromResult(ocpiResponseBuilder!);
                     }
@@ -2735,7 +2864,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
-                               Data                 = tariff.ToJSON(),
+                               Data                 = tariff.ToJSON(
+                                                          false, //IncludeOwnerInformation
+                                                          false, //IncludeExtensions
+                                                          CustomTariffSerializer,
+                                                          CustomDisplayTextSerializer,
+                                                          CustomPriceLimitSerializer,
+                                                          CustomTariffElementSerializer,
+                                                          CustomPriceComponentSerializer,
+                                                          CustomTariffRestrictionsSerializer,
+                                                          CustomEnergyMixSerializer,
+                                                          CustomEnergySourceSerializer,
+                                                          CustomEnvironmentalImpactSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -2760,7 +2901,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "sessions",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -2784,8 +2925,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "sessions",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request => {
+                GetSessionRequest,
+                GetSessionResponse,
+                request => {
 
                     #region Check access token
 
@@ -2898,7 +3040,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "sessions/{sessionId}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -2920,8 +3062,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "sessions/{sessionId}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request => {
+                GetSessionRequest,
+                GetSessionResponse,
+                request => {
 
                     #region Check access token
 
@@ -2946,13 +3089,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check session
 
-                    if (!request.ParseSession(CommonAPI,
-                                              //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                              CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
-                                              out var sessionId,
-                                              out var session,
-                                              out var ocpiResponseBuilder) ||
-                         session is null)
+                    if (!request.ParseMandatorySession(CommonAPI,
+                                                       //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+                                                       CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
+                                                       out var sessionId,
+                                                       out var session,
+                                                       out var ocpiResponseBuilder))
                     {
                         return Task.FromResult(ocpiResponseBuilder!);
                     }
@@ -2964,11 +3106,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
-                               Data                 = session.ToJSON(CustomSessionSerializer,
-                                                                     CustomCDRTokenSerializer,
-                                                                     CustomChargingPeriodSerializer,
-                                                                     CustomCDRDimensionSerializer,
-                                                                     CustomPriceSerializer),
+                               Data                 = session.ToJSON(
+                                                          CustomSessionSerializer,
+                                                          CustomCDRTokenSerializer,
+                                                          CustomChargingPeriodSerializer,
+                                                          CustomCDRDimensionSerializer,
+                                                          CustomPriceSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -3037,7 +3181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "cdrs",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -3061,8 +3205,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "cdrs",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request => {
+                GetCDRsRequest,
+                GetCDRsResponse,
+                request => {
 
                     #region Check access token
 
@@ -3152,26 +3297,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                               OrderBy       (cdr => cdr.Created).
                                                               SkipTakeFilter(filters.Offset,
                                                                              filters.Limit).
-                                                              Select        (cdr => cdr.ToJSON(CustomCDRSerializer,
-                                                                                               CustomCDRTokenSerializer,
-                                                                                               CustomCDRLocationSerializer,
-                                                                                               CustomEVSEEnergyMeterSerializer,
-                                                                                               CustomTransparencySoftwareSerializer,
-                                                                                               CustomTariffSerializer,
-                                                                                               CustomDisplayTextSerializer,
-                                                                                               CustomPriceSerializer,
-                                                                                               CustomPriceLimitSerializer,
-                                                                                               CustomTariffElementSerializer,
-                                                                                               CustomPriceComponentSerializer,
-                                                                                               CustomTaxAmountSerializer,
-                                                                                               CustomTariffRestrictionsSerializer,
-                                                                                               CustomEnergyMixSerializer,
-                                                                                               CustomEnergySourceSerializer,
-                                                                                               CustomEnvironmentalImpactSerializer,
-                                                                                               CustomChargingPeriodSerializer,
-                                                                                               CustomCDRDimensionSerializer,
-                                                                                               CustomSignedDataSerializer,
-                                                                                               CustomSignedValueSerializer))
+                                                              Select        (cdr => cdr.ToJSON(
+                                                                                        CustomCDRSerializer,
+                                                                                        CustomCDRTokenSerializer,
+                                                                                        CustomCDRLocationSerializer,
+                                                                                        CustomEVSEEnergyMeterSerializer,
+                                                                                        CustomTransparencySoftwareSerializer,
+                                                                                        CustomTariffSerializer,
+                                                                                        CustomDisplayTextSerializer,
+                                                                                        CustomPriceSerializer,
+                                                                                        CustomPriceLimitSerializer,
+                                                                                        CustomTariffElementSerializer,
+                                                                                        CustomPriceComponentSerializer,
+                                                                                        CustomTaxAmountSerializer,
+                                                                                        CustomTariffRestrictionsSerializer,
+                                                                                        CustomEnergyMixSerializer,
+                                                                                        CustomEnergySourceSerializer,
+                                                                                        CustomEnvironmentalImpactSerializer,
+                                                                                        CustomChargingPeriodSerializer,
+                                                                                        CustomCDRDimensionSerializer,
+                                                                                        CustomSignedDataSerializer,
+                                                                                        CustomSignedValueSerializer
+                                                                                    ))
                                                           )
                                }
                            );
@@ -3190,7 +3337,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "cdrs/{CDRId}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -3212,8 +3359,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "cdrs/{CDRId}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request => {
+                GetCDRRequest,
+                GetCDRResponse,
+                request => {
 
                     #region Check access token
 
@@ -3238,13 +3386,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check CDR
 
-                    if (!request.ParseCDR(CommonAPI,
-                                          //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                          CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
-                                          out var cdrId,
-                                          out var cdr,
-                                          out var ocpiResponseBuilder) ||
-                         cdr is null)
+                    if (!request.ParseMandatoryCDR(CommonAPI,
+                                                   //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+                                                   CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
+                                                   out var cdrId,
+                                                   out var cdr,
+                                                   out var ocpiResponseBuilder))
                     {
                         return Task.FromResult(ocpiResponseBuilder!);
                     }
@@ -3256,26 +3403,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
-                               Data                 = cdr.ToJSON(CustomCDRSerializer,
-                                                                 CustomCDRTokenSerializer,
-                                                                 CustomCDRLocationSerializer,
-                                                                 CustomEVSEEnergyMeterSerializer,
-                                                                 CustomTransparencySoftwareSerializer,
-                                                                 CustomTariffSerializer,
-                                                                 CustomDisplayTextSerializer,
-                                                                 CustomPriceSerializer,
-                                                                 CustomPriceLimitSerializer,
-                                                                 CustomTariffElementSerializer,
-                                                                 CustomPriceComponentSerializer,
-                                                                 CustomTaxAmountSerializer,
-                                                                 CustomTariffRestrictionsSerializer,
-                                                                 CustomEnergyMixSerializer,
-                                                                 CustomEnergySourceSerializer,
-                                                                 CustomEnvironmentalImpactSerializer,
-                                                                 CustomChargingPeriodSerializer,
-                                                                 CustomCDRDimensionSerializer,
-                                                                 CustomSignedDataSerializer,
-                                                                 CustomSignedValueSerializer),
+                               Data                 = cdr.ToJSON(
+                                                          CustomCDRSerializer,
+                                                          CustomCDRTokenSerializer,
+                                                          CustomCDRLocationSerializer,
+                                                          CustomEVSEEnergyMeterSerializer,
+                                                          CustomTransparencySoftwareSerializer,
+                                                          CustomTariffSerializer,
+                                                          CustomDisplayTextSerializer,
+                                                          CustomPriceSerializer,
+                                                          CustomPriceLimitSerializer,
+                                                          CustomTariffElementSerializer,
+                                                          CustomPriceComponentSerializer,
+                                                          CustomTaxAmountSerializer,
+                                                          CustomTariffRestrictionsSerializer,
+                                                          CustomEnergyMixSerializer,
+                                                          CustomEnergySourceSerializer,
+                                                          CustomEnvironmentalImpactSerializer,
+                                                          CustomChargingPeriodSerializer,
+                                                          CustomCDRDimensionSerializer,
+                                                          CustomSignedDataSerializer,
+                                                          CustomSignedValueSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
@@ -3300,7 +3449,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "tokens/{country_code}/{party_id}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -3323,8 +3472,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tokens/{country_code}/{party_id}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request => {
+                GetTokensRequest,
+                GetTokensResponse,
+                request => {
 
                     #region Check access token
 
@@ -3422,8 +3572,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                   OrderBy       (token => token.Created).
                                                                   SkipTakeFilter(filters.Offset,
                                                                                  filters.Limit).
-                                                                  Select        (token => token.ToJSON(CustomTokenSerializer,
-                                                                                                       CustomEnergyContractSerializer))
+                                                                  Select        (token => token.ToJSON(
+                                                                                              CustomTokenSerializer,
+                                                                                              CustomEnergyContractSerializer
+                                                                                          ))
                                                           )
                                }
                            );
@@ -3438,8 +3590,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "tokens/{country_code}/{party_id}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: async request => {
+                DeleteTokensRequest,
+                DeleteTokensResponse,
+                async request => {
 
                     #region Check access token
 
@@ -3500,7 +3653,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -3523,10 +3676,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   GetTokenRequest,
-                OCPIResponseLogger:  GetTokenResponse,
-                OCPIRequestHandler:  request => {
+                GetTokenRequest,
+                GetTokenResponse,
+                request => {
 
                     #region Check access token
 
@@ -3595,10 +3747,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PUT,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   PutTokenRequest,
-                OCPIResponseLogger:  PutTokenResponse,
-                OCPIRequestHandler:  async request => {
+                PutTokenRequest,
+                PutTokenResponse,
+                async request => {
 
                     #region Check access token
 
@@ -3623,13 +3774,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check token
 
-                    if (!request.ParseTokenId(CommonAPI,
-                                              out var countryCode,
+                    if (!request.ParseTokenId(out var countryCode,
                                               out var partyId,
                                               out var tokenId,
                                               out var ocpiResponseBuilder))
                     {
-                        return ocpiResponseBuilder!;
+                        return ocpiResponseBuilder;
                     }
 
                     #endregion
@@ -3678,8 +3828,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
-                                   Data                 = data.Token.ToJSON(CustomTokenSerializer,
-                                                                            CustomEnergyContractSerializer),
+                                   Data                 = data.Token.ToJSON(
+                                                              CustomTokenSerializer,
+                                                              CustomEnergyContractSerializer
+                                                          ),
                             HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                         ? HTTPStatusCode.Created
@@ -3696,8 +3848,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 2000,
                                StatusMessage        = addOrUpdateResult.ErrorResponse,
-                               Data                 = newOrUpdatedToken.ToJSON(CustomTokenSerializer,
-                                                                               CustomEnergyContractSerializer),
+                               Data                 = newOrUpdatedToken.ToJSON(
+                                                          CustomTokenSerializer,
+                                                          CustomEnergyContractSerializer
+                                                      ),
                         HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
@@ -3717,10 +3871,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PATCH,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   PatchTokenRequest,
-                OCPIResponseLogger:  PatchTokenResponse,
-                OCPIRequestHandler:  async request => {
+                PatchTokenRequest,
+                PatchTokenResponse,
+                async request => {
 
                     #region Check access token
 
@@ -3786,8 +3939,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         return new OCPIResponse.Builder(request) {
                                        StatusCode           = 1000,
                                        StatusMessage        = "Hello world!",
-                                       Data                 = data.ToJSON(CustomTokenSerializer,
-                                                                          CustomEnergyContractSerializer),
+                                       Data                 = data.ToJSON(
+                                                                  CustomTokenSerializer,
+                                                                  CustomEnergyContractSerializer
+                                                              ),
                             HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                            AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
@@ -3817,10 +3972,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   DeleteTokenRequest,
-                OCPIResponseLogger:  DeleteTokenResponse,
-                OCPIRequestHandler:   async request => {
+                DeleteTokenRequest,
+                DeleteTokenResponse,
+                async request => {
 
                     #region Check access token
 
@@ -3867,8 +4021,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
-                                   Data                 = data.ToJSON(CustomTokenSerializer,
-                                                                      CustomEnergyContractSerializer),
+                                   Data                 = data.ToJSON(
+                                                              CustomTokenSerializer,
+                                                              CustomEnergyContractSerializer
+                                                          ),
                             HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
@@ -3881,8 +4037,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 2000,
                                    StatusMessage        = "Hello world!",
-                                   Data                 = existingTokenStatus.Token.ToJSON(CustomTokenSerializer,
-                                                                                           CustomEnergyContractSerializer),
+                                   Data                 = existingTokenStatus.Token.ToJSON(
+                                                              CustomTokenSerializer,
+                                                              CustomEnergyContractSerializer
+                                                          ),
                                    HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
@@ -3906,7 +4064,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "bookings",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -3930,8 +4088,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "bookings",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request => {
+                GetBookingsRequest,
+                GetBookingsResponse,
+                request => {
 
                     #region Check access token
 
@@ -4022,27 +4181,27 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                               SkipTakeFilter(filters.Offset,
                                                                              filters.Limit).
                                                               Select        (booking => booking.ToJSON(
-                                                                                               //CustombookingSerializer,
-                                                                                               //CustombookingTokenSerializer,
-                                                                                               //CustombookingLocationSerializer,
-                                                                                               //CustomEVSEEnergyMeterSerializer,
-                                                                                               //CustomTransparencySoftwareSerializer,
-                                                                                               //CustomTariffSerializer,
-                                                                                               //CustomDisplayTextSerializer,
-                                                                                               //CustomPriceSerializer,
-                                                                                               //CustomPriceLimitSerializer,
-                                                                                               //CustomTariffElementSerializer,
-                                                                                               //CustomPriceComponentSerializer,
-                                                                                               //CustomTaxAmountSerializer,
-                                                                                               //CustomTariffRestrictionsSerializer,
-                                                                                               //CustomEnergyMixSerializer,
-                                                                                               //CustomEnergySourceSerializer,
-                                                                                               //CustomEnvironmentalImpactSerializer,
-                                                                                               //CustomChargingPeriodSerializer,
-                                                                                               //CustombookingDimensionSerializer,
-                                                                                               //CustomSignedDataSerializer,
-                                                                                               //CustomSignedValueSerializer
-                                                                                               ))
+                                                                                            CustomBookingSerializer
+                                                                                            //CustombookingTokenSerializer,
+                                                                                            //CustombookingLocationSerializer,
+                                                                                            //CustomEVSEEnergyMeterSerializer,
+                                                                                            //CustomTransparencySoftwareSerializer,
+                                                                                            //CustomTariffSerializer,
+                                                                                            //CustomDisplayTextSerializer,
+                                                                                            //CustomPriceSerializer,
+                                                                                            //CustomPriceLimitSerializer,
+                                                                                            //CustomTariffElementSerializer,
+                                                                                            //CustomPriceComponentSerializer,
+                                                                                            //CustomTaxAmountSerializer,
+                                                                                            //CustomTariffRestrictionsSerializer,
+                                                                                            //CustomEnergyMixSerializer,
+                                                                                            //CustomEnergySourceSerializer,
+                                                                                            //CustomEnvironmentalImpactSerializer,
+                                                                                            //CustomChargingPeriodSerializer,
+                                                                                            //CustombookingDimensionSerializer,
+                                                                                            //CustomSignedDataSerializer,
+                                                                                            //CustomSignedValueSerializer
+                                                                                        ))
                                                           )
                                }
                            );
@@ -4057,8 +4216,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "bookings",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request => {
+                GetBookingsRequest,
+                GetBookingsResponse,
+                request => {
 
                     #region Check access token
 
@@ -4140,8 +4300,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "commands/RESERVE_NOW",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -4163,10 +4322,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/RESERVE_NOW",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   ReserveNowRequest,
-                OCPIResponseLogger:  ReserveNowResponse,
-                OCPIRequestHandler:  async request => {
+                ReserveNowRequest,
+                ReserveNowResponse,
+                async request => {
 
                     #region Check access token
 
@@ -4195,8 +4353,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     if (!ReserveNowCommand.TryParse(reserveNowJSON,
                                                     out var reserveNowCommand,
-                                                    out var errorResponse) ||
-                         reserveNowCommand is null)
+                                                    out var errorResponse))
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4217,8 +4374,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     CommandResponse? commandResponse = null;
 
                     if (OnReserveNowCommand is not null)
-                        commandResponse = await OnReserveNowCommand.Invoke(EMSP_Id.From(request.RemoteParty.Id),
-                                                                           reserveNowCommand);
+                        commandResponse = await OnReserveNowCommand.Invoke(
+                                                    EMSP_Id.From(request.RemoteParty.Id),
+                                                    reserveNowCommand
+                                                );
 
                     commandResponse ??= new CommandResponse(
                                             reserveNowCommand,
@@ -4253,8 +4412,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "commands/CANCEL_RESERVATION",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -4276,10 +4434,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/CANCEL_RESERVATION",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   CancelReservationRequest,
-                OCPIResponseLogger:  CancelReservationResponse,
-                OCPIRequestHandler:  async request => {
+                CancelReservationRequest,
+                CancelReservationResponse,
+                async request => {
 
                     #region Check access token
 
@@ -4308,8 +4465,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     if (!CancelReservationCommand.TryParse(cancelReservationJSON,
                                                            out var cancelReservationCommand,
-                                                           out var errorResponse) ||
-                         cancelReservationCommand is null)
+                                                           out var errorResponse))
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4330,8 +4486,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     CommandResponse? commandResponse = null;
 
                     if (OnCancelReservationCommand is not null)
-                        commandResponse = await OnCancelReservationCommand.Invoke(EMSP_Id.From(request.RemoteParty.Id),
-                                                                                  cancelReservationCommand);
+                        commandResponse = await OnCancelReservationCommand.Invoke(
+                                                    EMSP_Id.From(request.RemoteParty.Id),
+                                                    cancelReservationCommand
+                                                );
 
                     commandResponse ??= new CommandResponse(
                                             cancelReservationCommand,
@@ -4366,8 +4524,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "commands/START_SESSION",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -4389,10 +4546,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/START_SESSION",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   StartSessionRequest,
-                OCPIResponseLogger:  StartSessionResponse,
-                OCPIRequestHandler:  async request => {
+                StartSessionRequest,
+                StartSessionResponse,
+                async request => {
 
                     #region Check access token
 
@@ -4421,8 +4577,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     if (!StartSessionCommand.TryParse(startSessionJSON,
                                                       out var startSessionCommand,
-                                                      out var errorResponse) ||
-                         startSessionCommand is null)
+                                                      out var errorResponse))
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4443,8 +4598,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     CommandResponse? commandResponse = null;
 
                     if (OnStartSessionCommand is not null)
-                        commandResponse = await OnStartSessionCommand.Invoke(EMSP_Id.From(request.RemoteParty.Id),
-                                                                             startSessionCommand);
+                        commandResponse = await OnStartSessionCommand.Invoke(
+                                                    EMSP_Id.From(request.RemoteParty.Id),
+                                                    startSessionCommand
+                                                );
 
                     commandResponse ??= new CommandResponse(
                                             startSessionCommand,
@@ -4479,8 +4636,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "commands/STOP_SESSION",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -4502,10 +4658,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/STOP_SESSION",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   StopSessionRequest,
-                OCPIResponseLogger:  StopSessionResponse,
-                OCPIRequestHandler:  async request => {
+                StopSessionRequest,
+                StopSessionResponse,
+                async request => {
 
                     #region Check access token
 
@@ -4534,8 +4689,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     if (!StopSessionCommand.TryParse(stopSessionJSON,
                                                       out var stopSessionCommand,
-                                                      out var errorResponse) ||
-                         stopSessionCommand is null)
+                                                      out var errorResponse))
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4556,8 +4710,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     CommandResponse? commandResponse = null;
 
                     if (OnStopSessionCommand is not null)
-                        commandResponse = await OnStopSessionCommand.Invoke(EMSP_Id.From(request.RemoteParty.Id),
-                                                                            stopSessionCommand);
+                        commandResponse = await OnStopSessionCommand.Invoke(
+                                                    EMSP_Id.From(request.RemoteParty.Id),
+                                                    stopSessionCommand
+                                                );
 
                     commandResponse ??= new CommandResponse(
                                             stopSessionCommand,
@@ -4593,7 +4749,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "commands/UNLOCK_CONNECTOR",
                 HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -4615,10 +4771,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/UNLOCK_CONNECTOR",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   UnlockConnectorRequest,
-                OCPIResponseLogger:  UnlockConnectorResponse,
-                OCPIRequestHandler:  async request => {
+                UnlockConnectorRequest,
+                UnlockConnectorResponse,
+                async request => {
 
                     #region Check access token
 
@@ -4647,8 +4802,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     if (!UnlockConnectorCommand.TryParse(unlockConnectorJSON,
                                                          out var unlockConnectorCommand,
-                                                         out var errorResponse) ||
-                         unlockConnectorCommand is null)
+                                                         out var errorResponse))
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4669,8 +4823,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     CommandResponse? commandResponse = null;
 
                     if (OnUnlockConnectorCommand is not null)
-                        commandResponse = await OnUnlockConnectorCommand.Invoke(EMSP_Id.From(request.RemoteParty.Id),
-                                                                                unlockConnectorCommand);
+                        commandResponse = await OnUnlockConnectorCommand.Invoke(
+                                                    EMSP_Id.From(request.RemoteParty.Id),
+                                                    unlockConnectorCommand
+                                                );
 
                     commandResponse ??= new CommandResponse(
                                             unlockConnectorCommand,
@@ -4709,7 +4865,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "payments/terminals/{terminalId}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -4731,10 +4887,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "payments/terminals/{terminalId}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   GetTerminalRequest,
-                OCPIResponseLogger:  GetTerminalResponse,
-                OCPIRequestHandler:  request => {
+                GetTerminalRequest,
+                GetTerminalResponse,
+                request => {
 
                     #region Check access token
 
@@ -4760,13 +4915,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     #region Check terminal
 
                     if (!request.ParsePaymentTerminal(CommonAPI,
-                                               //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                               CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
-                                               out var terminalId,
-                                               out var terminal,
-                                               out var ocpiResponseBuilder,
-                                               FailOnMissingTerminal: true) ||
-                         terminal is null)
+                                                      //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+                                                      CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
+                                                      out var terminalId,
+                                                      out var terminal,
+                                                      out var ocpiResponseBuilder,
+                                                      FailOnMissingTerminal: true))
                     {
                         return Task.FromResult(ocpiResponseBuilder!);
                     }
@@ -4802,21 +4956,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "payments/terminals/{terminalId}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   PostTerminalRequest,
-                OCPIResponseLogger:  PostTerminalResponse,
-                OCPIRequestHandler:  async Request => {
+                PostTerminalRequest,
+                PostTerminalResponse,
+                async request => {
 
                     #region Check access token
 
-                    if (Request.LocalAccessInfo.IsNot(Role.CPO) ||
-                        Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
-                        return new OCPIResponse.Builder(Request) {
+                        return new OCPIResponse.Builder(request) {
                                    StatusCode           = 2000,
                                    StatusMessage        = "Invalid or blocked access token!",
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PATCH" ],
                                        AccessControlAllowHeaders  = [ "Authorization" ]
@@ -4829,11 +4982,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check existing location
 
-                    if (!Request.ParsePaymentTerminal(CommonAPI,
-                                               out var terminalId,
-                                               out var existingTerminal,
-                                               out var ocpiResponseBuilder,
-                                               FailOnMissingTerminal: false))
+                    if (!request.ParsePaymentTerminal(CommonAPI,
+                                                      out var terminalId,
+                                                      out var existingTerminal,
+                                                      out var ocpiResponseBuilder,
+                                                      FailOnMissingTerminal: false))
                     {
                         return ocpiResponseBuilder;
                     }
@@ -4842,7 +4995,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Parse new or updated location JSON
 
-                    if (!Request.TryParseJObjectRequestBody(out var locationJSON, out ocpiResponseBuilder))
+                    if (!request.TryParseJObjectRequestBody(out var locationJSON, out ocpiResponseBuilder))
                         return ocpiResponseBuilder;
 
                     if (!Terminal.TryParse(locationJSON,
@@ -4851,10 +5004,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                            terminalId))
                     {
 
-                        return new OCPIResponse.Builder(Request) {
+                        return new OCPIResponse.Builder(request) {
                                    StatusCode           = 2001,
                                    StatusMessage        = "Could not parse the given location JSON: " + errorResponse,
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PATCH" ],
                                        AccessControlAllowHeaders  = [ "Authorization" ]
@@ -4868,9 +5021,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     var addOrUpdateResult = await CommonAPI.AddOrUpdatePaymentTerminal(
                                                       newOrUpdatedTerminal,
-                                                      AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"),
+                                                      AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade"),
                                                       false, //SkipNotifications
-                                                      Request.HTTPRequest.EventTrackingId,
+                                                      request.HTTPRequest.EventTrackingId,
                                                       CurrentUserId: null
                                                   );
 
@@ -4878,15 +5031,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         addOrUpdateResult.Data is not null)
                     {
 
-                        return new OCPIResponse.Builder(Request) {
+                        return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
-                                   Data                 = addOrUpdateResult.Data.ToJSON(true,
-                                                                                        true,
-                                                                                        CustomTerminalSerializer,
-                                                                                        CustomDisplayTextSerializer,
-                                                                                        CustomImageSerializer),
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                   Data                 = addOrUpdateResult.Data.ToJSON(
+                                                              true,
+                                                              true,
+                                                              CustomTerminalSerializer,
+                                                              CustomDisplayTextSerializer,
+                                                              CustomImageSerializer
+                                                          ),
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                         ? HTTPStatusCode.Created
                                                                         : HTTPStatusCode.OK,
@@ -4899,15 +5054,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     }
 
-                    return new OCPIResponse.Builder(Request) {
+                    return new OCPIResponse.Builder(request) {
                                StatusCode           = 2000,
                                StatusMessage        = addOrUpdateResult.ErrorResponse,
-                               Data                 = newOrUpdatedTerminal.ToJSON(true,
-                                                                                  true,
-                                                                                  CustomTerminalSerializer,
-                                                                                  CustomDisplayTextSerializer,
-                                                                                  CustomImageSerializer),
-                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                               Data                 = newOrUpdatedTerminal.ToJSON(
+                                                          true,
+                                                          true,
+                                                          CustomTerminalSerializer,
+                                                          CustomDisplayTextSerializer,
+                                                          CustomImageSerializer
+                                                      ),
+                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PATCH" ],
                                    AccessControlAllowHeaders  = [ "Authorization" ]
@@ -4930,7 +5087,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "payments/financial-advice-confirmations",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -4961,7 +5118,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "payments/financial-advice-confirmations/{financial_advice_confirmation_id}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {

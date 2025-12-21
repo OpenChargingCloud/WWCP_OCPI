@@ -132,6 +132,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public CustomJObjectSerializerDelegate<Token>?                       CustomTokenSerializer                         { get; set; }
         public CustomJObjectSerializerDelegate<EnergyContract>?              CustomEnergyContractSerializer                { get; set; }
 
+        public CustomJObjectSerializerDelegate<AuthorizationInfo>?           CustomAuthorizationInfoSerializer             { get; set; }
+        public CustomJObjectSerializerDelegate<LocationReference>?           CustomLocationReferenceSerializer             { get; set; }
+
         #endregion
 
         #region Events
@@ -2674,6 +2677,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
+        #endregion
+
+        #region CloseAllClients()
 
         public Task CloseAllClients()
         {
@@ -6808,8 +6814,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                           authorizationInfo.Info                   ?? new DisplayText(
                                                                                                           authorizationInfo.Token?.UILanguage ?? Languages.en,
                                                                                                           responseText
-                                                                                                      )
-                                                      ).ToJSON(),
+                                                                                                      ),
+                                                          authorizationInfo.RemoteParty,
+                                                          authorizationInfo.EMSPId,
+                                                          authorizationInfo.Runtime
+                                                      ).ToJSON(
+                                                            CustomAuthorizationInfoSerializer,
+                                                            CustomTokenSerializer,
+                                                            CustomLocationReferenceSerializer,
+                                                            CustomDisplayTextSerializer
+                                                        ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST" ],
