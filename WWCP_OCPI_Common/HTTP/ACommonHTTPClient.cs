@@ -233,7 +233,7 @@ namespace cloud.charging.open.protocols.OCPI
                                           ApplicationProtocols:                  null,
                                           AllowRenegotiation:                    null,
                                           AllowTLSResume:                        null,
-                                          //TOTPConfig:                            TOTPConfig,
+                                          TOTPConfig:                            TOTPConfig,
 
                                           ConsumeRequestChunkedTEImmediately:    true,
                                           ConsumeResponseChunkedTEImmediately:   true,

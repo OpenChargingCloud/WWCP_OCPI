@@ -30,19 +30,16 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
     /// Testing the OCPI GetVersionDetails method(s) using registered OCPI tokens.
     /// </summary>
     [TestFixture]
-    public class GetVersions_RegisteredTokens_TOTP_Tests : A_2CPOs2EMSPs_TestDefaults
+    public class GetVersions_RegisteredTokens_TOTP_Tests()
+
+        : A_2CPOs2EMSPs_TestDefaults(
+
+              // This will enable additional TOTP authentication!
+              TOTPValidityTime:   TimeSpan.FromSeconds(30)
+
+          )
+
     {
-
-        #region Constructor(s)
-
-        public GetVersions_RegisteredTokens_TOTP_Tests()
-            : base(TimeSpan.FromSeconds(30))
-        {
-
-        }
-
-        #endregion
-
 
         #region CPO1_GetVersions_fromEMSP1_viaOCPIv2_1_1__RegisteredToken_Test1()
 
@@ -67,7 +64,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // GET /ocpi/versions HTTP/1.1
                 // Accept:                        application/json; charset=utf-8; q=1
-                // Host:                          localhost:3401
+                // Host:                          localhost:3501
                 // User-Agent:                    GraphDefined OCPI v2.1.1 CommonClient
                 // Authorization:                 Token cpo1_accessing_emsp1++token
                 // Connection:                    close
@@ -93,15 +90,15 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 //     "data": [
                 //         {
                 //             "version": "2.1.1",
-                //             "url": "http://localhost:3401/ocpi/versions/2.1.1"
+                //             "url": "http://localhost:3501/ocpi/versions/2.1.1"
                 //         },
                 //         {
                 //             "version": "2.2.1",
-                //             "url": "http://localhost:3401/ocpi/versions/2.2.1"
+                //             "url": "http://localhost:3501/ocpi/versions/2.2.1"
                 //         },
                 //         {
                 //             "version": "2.3.0",
-                //             "url": "http://localhost:3401/ocpi/versions/2.3.0"
+                //             "url": "http://localhost:3501/ocpi/versions/2.3.0"
                 //         }
                 //     ]
                 // }
@@ -118,15 +115,15 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 var version2_1_1 = versions?.ElementAt(0);
                 Assert.That(version2_1_1?.Id == OCPIv2_1_1.Version.Id, Is.True);
-                Assert.That(version2_1_1?.URL.ToString(), Is.EqualTo("http://localhost:3401/ocpi/versions/2.1.1"));
+                Assert.That(version2_1_1?.URL.ToString(), Is.EqualTo("http://localhost:3501/ocpi/versions/2.1.1"));
 
                 var version2_2_1 = versions?.ElementAt(1);
                 Assert.That(version2_2_1?.Id == OCPIv2_2_1.Version.Id, Is.True);
-                Assert.That(version2_2_1?.URL.ToString(), Is.EqualTo("http://localhost:3401/ocpi/versions/2.2.1"));
+                Assert.That(version2_2_1?.URL.ToString(), Is.EqualTo("http://localhost:3501/ocpi/versions/2.2.1"));
 
                 var version2_3_0 = versions?.ElementAt(2);
                 Assert.That(version2_3_0?.Id == OCPIv2_3_0.Version.Id, Is.True);
-                Assert.That(version2_3_0?.URL.ToString(), Is.EqualTo("http://localhost:3401/ocpi/versions/2.3.0"));
+                Assert.That(version2_3_0?.URL.ToString(), Is.EqualTo("http://localhost:3501/ocpi/versions/2.3.0"));
 
 
                 //Assert.That(response.Request, Is.Not.Null);
@@ -161,15 +158,18 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // GET /ocpi/versions HTTP/1.1
                 // Accept:                        application/json; charset=utf-8; q=1
-                // Host:                          localhost:3401
-                // User-Agent:                    GraphDefined OCPI v2.1.1 CommonClient
-                // Authorization:                 Token cpo1_accessing_emsp1++token
-                // Connection:                    close
+                // Host:                          localhost:3501
+                // User-Agent:                    GraphDefined OCPI v2.2.1 Common Client
+                // Authorization:                 Token Y3BvMV9hY2Nlc3NpbmdfZW1zcDErK3Rva2Vu
+                // TOTP:                          0mH6hZff0XyUqjjKjqvdzZiPcFax3ncT
+                // Content-Type:                  application/json; charset=utf-8
+                // Content-Length:                0
+                // Connection:                    keep-alive
                 // X-Request-ID:                  v42pQKn544dEbSE94nh4hhSCjWjWn6
                 // X-Correlation-ID:              Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
 
                 // HTTP/1.1 200 OK
-                // Date:                          Wed, 08 Jan 2025 03:26:44 GMT
+                // Date:                          Thu, 15 Jan 2026 00:35:30 GMT
                 // Server:                        GraphDefined OCPI v2.2.1 Common HTTP API
                 // Access-Control-Allow-Origin:   *
                 // Access-Control-Allow-Methods:  OPTIONS, GET
@@ -177,25 +177,26 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 // Allow:                         OPTIONS, GET
                 // Vary:                          Accept
                 // Content-Type:                  application/json; charset=utf-8
-                // Content-Length:                271
+                // Content-Length:                310
                 // X-Request-ID:                  v42pQKn544dEbSE94nh4hhSCjWjWn6
                 // X-Correlation-ID:              Mx3G3355W6bQKM98M5W5Gz9SdUG5Cj
                 // 
                 // {
                 //     "status_code":      1000,
                 //     "status_message":  "Hello world!",
+                //     "timestamp":       "2026-01-15T00:35:30.747Z",
                 //     "data": [
                 //         {
                 //             "version": "2.1.1",
-                //             "url": "http://localhost:3401/ocpi/versions/2.1.1"
+                //             "url": "http://localhost:3501/ocpi/versions/2.1.1"
                 //         },
                 //         {
                 //             "version": "2.2.1",
-                //             "url": "http://localhost:3401/ocpi/versions/2.2.1"
+                //             "url": "http://localhost:3501/ocpi/versions/2.2.1"
                 //         },
                 //         {
                 //             "version": "2.3.0",
-                //             "url": "http://localhost:3401/ocpi/versions/2.3.0"
+                //             "url": "http://localhost:3501/ocpi/versions/2.3.0"
                 //         }
                 //     ]
                 // }
@@ -212,19 +213,23 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 var version2_1_1 = versions?.ElementAt(0);
                 Assert.That(version2_1_1?.Id == OCPIv2_1_1.Version.Id, Is.True);
-                Assert.That(version2_1_1?.URL.ToString(), Is.EqualTo("http://localhost:3401/ocpi/versions/2.1.1"));
+                Assert.That(version2_1_1?.URL.ToString(), Is.EqualTo("http://localhost:3501/ocpi/versions/2.1.1"));
 
                 var version2_2_1 = versions?.ElementAt(1);
                 Assert.That(version2_2_1?.Id == OCPIv2_2_1.Version.Id, Is.True);
-                Assert.That(version2_2_1?.URL.ToString(), Is.EqualTo("http://localhost:3401/ocpi/versions/2.2.1"));
+                Assert.That(version2_2_1?.URL.ToString(), Is.EqualTo("http://localhost:3501/ocpi/versions/2.2.1"));
 
                 var version2_3_0 = versions?.ElementAt(2);
                 Assert.That(version2_3_0?.Id == OCPIv2_3_0.Version.Id, Is.True);
-                Assert.That(version2_3_0?.URL.ToString(), Is.EqualTo("http://localhost:3401/ocpi/versions/2.3.0"));
+                Assert.That(version2_3_0?.URL.ToString(), Is.EqualTo("http://localhost:3501/ocpi/versions/2.3.0"));
 
 
                 //Assert.That(response.Request, Is.Not.Null);
 
+
+                Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP,                       Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP?.Length,               Is.EqualTo(TOTPLength));
+                Assert.That(response.HTTPResponse?.HTTPRequest?.ToString(),                 Contains.Substring($"TOTP: {response.HTTPResponse?.HTTPRequest?.TOTP}"));
 
             }
 
@@ -255,7 +260,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // GET /ocpi/versions HTTP/1.1
                 // Accept:                        application/json; charset=utf-8; q=1
-                // Host:                          localhost:3401
+                // Host:                          localhost:3501
                 // User-Agent:                    GraphDefined OCPI v2.1.1 CommonClient
                 // Authorization:                 Token cpo1_accessing_emsp1++token
                 // Connection:                    close
@@ -281,15 +286,15 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 //     "data": [
                 //         {
                 //             "version": "2.1.1",
-                //             "url": "http://localhost:3401/ocpi/versions/2.1.1"
+                //             "url": "http://localhost:3501/ocpi/versions/2.1.1"
                 //         },
                 //         {
                 //             "version": "2.2.1",
-                //             "url": "http://localhost:3401/ocpi/versions/2.2.1"
+                //             "url": "http://localhost:3501/ocpi/versions/2.2.1"
                 //         },
                 //         {
                 //             "version": "2.3.0",
-                //             "url": "http://localhost:3401/ocpi/versions/2.3.0"
+                //             "url": "http://localhost:3501/ocpi/versions/2.3.0"
                 //         }
                 //     ]
                 // }
@@ -306,19 +311,22 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 var version2_1_1 = versions?.ElementAt(0);
                 Assert.That(version2_1_1?.Id == OCPIv2_1_1.Version.Id, Is.True);
-                Assert.That(version2_1_1?.URL.ToString(), Is.EqualTo("http://localhost:3401/ocpi/versions/2.1.1"));
+                Assert.That(version2_1_1?.URL.ToString(), Is.EqualTo("http://localhost:3501/ocpi/versions/2.1.1"));
 
                 var version2_2_1 = versions?.ElementAt(1);
                 Assert.That(version2_2_1?.Id == OCPIv2_2_1.Version.Id, Is.True);
-                Assert.That(version2_2_1?.URL.ToString(), Is.EqualTo("http://localhost:3401/ocpi/versions/2.2.1"));
+                Assert.That(version2_2_1?.URL.ToString(), Is.EqualTo("http://localhost:3501/ocpi/versions/2.2.1"));
 
                 var version2_3_0 = versions?.ElementAt(2);
                 Assert.That(version2_3_0?.Id == OCPIv2_3_0.Version.Id, Is.True);
-                Assert.That(version2_3_0?.URL.ToString(), Is.EqualTo("http://localhost:3401/ocpi/versions/2.3.0"));
+                Assert.That(version2_3_0?.URL.ToString(), Is.EqualTo("http://localhost:3501/ocpi/versions/2.3.0"));
 
 
                 //Assert.That(response.Request, Is.Not.Null);
 
+                Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP,                       Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP?.Length,               Is.EqualTo(TOTPLength));
+                Assert.That(response.HTTPResponse?.HTTPRequest?.ToString(),                 Contains.Substring($"TOTP: {response.HTTPResponse?.HTTPRequest?.TOTP}"));
 
             }
 
@@ -596,7 +604,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         }
 
         #endregion
-
 
     }
 

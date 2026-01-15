@@ -57,7 +57,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // GET /ocpi/versions/2.1.1 HTTP/1.1
                 // Accept:                        application/json; charset=utf-8; q=1
-                // Host:                          localhost:3401
+                // Host:                          localhost:3501
                 // User-Agent:                    GraphDefined OCPI v2.1.1 CommonClient
                 // Authorization:                 Token cpo1_accessing_emsp1++token
                 // Connection:                    close
@@ -83,31 +83,31 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 //         "endpoints": [
                 //             {
                 //                 "identifier": "credentials",
-                //                 "url":        "http://localhost:3401/ocpi/v2.1.1/credentials"
+                //                 "url":        "http://localhost:3501/ocpi/v2.1.1/credentials"
                 //             },
                 //             {
                 //                 "identifier": "locations",
-                //                 "url":        "http://localhost:3401/ocpi/v2.1.1/emsp/locations"
+                //                 "url":        "http://localhost:3501/ocpi/v2.1.1/emsp/locations"
                 //             },
                 //             {
                 //                 "identifier": "tariffs",
-                //                 "url":        "http://localhost:3401/ocpi/v2.1.1/emsp/tariffs"
+                //                 "url":        "http://localhost:3501/ocpi/v2.1.1/emsp/tariffs"
                 //             },
                 //             {
                 //                 "identifier": "sessions",
-                //                 "url":        "http://localhost:3401/ocpi/v2.1.1/emsp/sessions"
+                //                 "url":        "http://localhost:3501/ocpi/v2.1.1/emsp/sessions"
                 //             },
                 //             {
                 //                 "identifier": "cdrs",
-                //                 "url":        "http://localhost:3401/ocpi/v2.1.1/emsp/cdrs"
+                //                 "url":        "http://localhost:3501/ocpi/v2.1.1/emsp/cdrs"
                 //             },
                 //             {
                 //                 "identifier": "commands",
-                //                 "url":        "http://localhost:3401/ocpi/v2.1.1/emsp/commands"
+                //                 "url":        "http://localhost:3501/ocpi/v2.1.1/emsp/commands"
                 //             },
                 //             {
                 //                 "identifier": "tokens",
-                //                 "url":        "http://localhost:3401/ocpi/v2.1.1/emsp/tokens"
+                //                 "url":        "http://localhost:3501/ocpi/v2.1.1/emsp/tokens"
                 //             }
                 //         ]
                 //     },
@@ -132,13 +132,13 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints,                                                      Is.Not.Null);
                     Assert.That(endpoints.Count,                                                Is.EqualTo(7));
 
-                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.Credentials].URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/credentials")));
-                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.Locations].  URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/locations")));
-                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.Tariffs].    URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/tariffs")));
-                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.Sessions].   URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/sessions")));
-                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.CDRs].       URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/cdrs")));
-                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.Commands].   URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/commands")));
-                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.Tokens].     URL,                Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.1.1/emsp/tokens")));
+                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.Credentials].URL,                Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.1.1/credentials")));
+                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.Locations].  URL,                Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.1.1/emsp/locations")));
+                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.Tariffs].    URL,                Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.1.1/emsp/tariffs")));
+                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.Sessions].   URL,                Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.1.1/emsp/sessions")));
+                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.CDRs].       URL,                Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.1.1/emsp/cdrs")));
+                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.Commands].   URL,                Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.1.1/emsp/commands")));
+                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.Tokens].     URL,                Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.1.1/emsp/tokens")));
 
                 }
 
@@ -171,7 +171,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // GET /ocpi/versions/2.2.1 HTTP/1.1
                 // Accept:                        application/json; charset=utf-8; q=1
-                // Host:                          localhost:3401
+                // Host:                          localhost:3501
                 // User-Agent:                    GraphDefined OCPI v2.2.1 Common Client
                 // Authorization:                 Token Y3BvMV9hY2Nlc3NpbmdfZW1zcDErK3Rva2Vu
                 // Connection:                    close
@@ -198,47 +198,47 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 //             {
                 //                 "identifier": "credentials",
                 //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/credentials"
+                //                 "url":        "http://localhost:3501/ocpi/v2.2.1/credentials"
                 //             },
                 //             {
                 //                 "identifier": "credentials",
                 //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/credentials"
+                //                 "url":        "http://localhost:3501/ocpi/v2.2.1/credentials"
                 //             },
                 //             {
                 //                 "identifier": "locations",
                 //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/emsp/locations"
+                //                 "url":        "http://localhost:3501/ocpi/v2.2.1/emsp/locations"
                 //             },
                 //             {
                 //                 "identifier": "tariffs",
                 //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/emsp/tariffs"
+                //                 "url":        "http://localhost:3501/ocpi/v2.2.1/emsp/tariffs"
                 //             },
                 //             {
                 //                 "identifier": "sessions",
                 //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/emsp/sessions"
+                //                 "url":        "http://localhost:3501/ocpi/v2.2.1/emsp/sessions"
                 //             },
                 //             {
                 //                 "identifier": "chargingprofiles",
                 //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/emsp/chargingprofiles"
+                //                 "url":        "http://localhost:3501/ocpi/v2.2.1/emsp/chargingprofiles"
                 //             },
                 //             {
                 //                 "identifier": "cdrs",
                 //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/emsp/cdrs"
+                //                 "url":        "http://localhost:3501/ocpi/v2.2.1/emsp/cdrs"
                 //             },
                 //             {
                 //                 "identifier": "commands",
                 //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/emsp/commands"
+                //                 "url":        "http://localhost:3501/ocpi/v2.2.1/emsp/commands"
                 //             },
                 //             {
                 //                 "identifier": "tokens",
                 //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.2.1/emsp/tokens"
+                //                 "url":        "http://localhost:3501/ocpi/v2.2.1/emsp/tokens"
                 //             }
                 //         ]
                 //     },
@@ -266,18 +266,16 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints,                                                      Is.Not.Null);
                     Assert.That(endpoints.Count,                                                Is.EqualTo(8));
 
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Credentials].     First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.2.1/credentials")));
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.2.1/emsp/locations")));
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.2.1/emsp/tariffs")));
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.2.1/emsp/sessions")));
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.2.1/emsp/chargingProfiles")));
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.2.1/emsp/cdrs")));
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.2.1/emsp/commands")));
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.2.1/emsp/tokens")));
+                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Credentials].     First().URL,   Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.2.1/credentials")));
+                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.2.1/emsp/locations")));
+                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.2.1/emsp/tariffs")));
+                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.2.1/emsp/sessions")));
+                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.2.1/emsp/chargingProfiles")));
+                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.2.1/emsp/cdrs")));
+                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.2.1/emsp/commands")));
+                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.2.1/emsp/tokens")));
 
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_2_1.InterfaceRoles.SENDER),    Is.True);
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_2_1.InterfaceRoles.RECEIVER),  Is.True);
-
+                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Credentials].     First().Role,  Is.EqualTo(OCPIv2_2_1.InterfaceRoles.RECEIVER));
                     Assert.That(endpoints[OCPIv2_2_1.Module_Id.Locations].       First().Role,  Is.EqualTo(OCPIv2_2_1.InterfaceRoles.RECEIVER));
                     Assert.That(endpoints[OCPIv2_2_1.Module_Id.Tariffs].         First().Role,  Is.EqualTo(OCPIv2_2_1.InterfaceRoles.RECEIVER));
                     Assert.That(endpoints[OCPIv2_2_1.Module_Id.Sessions].        First().Role,  Is.EqualTo(OCPIv2_2_1.InterfaceRoles.RECEIVER));
@@ -317,7 +315,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 // GET /ocpi/versions/2.3.0 HTTP/1.1
                 // Accept:                        application/json; charset=utf-8; q=1
-                // Host:                          localhost:3401
+                // Host:                          localhost:3501
                 // User-Agent:                    GraphDefined OCPI v2.3.0 Common Client
                 // Authorization:                 Token Y3BvMV9hY2Nlc3NpbmdfZW1zcDErK3Rva2Vu
                 // Connection:                    close
@@ -344,47 +342,47 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                 //             {
                 //                 "identifier": "credentials",
                 //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/credentials"
+                //                 "url":        "http://localhost:3501/ocpi/v2.3.0/credentials"
                 //             },
                 //             {
                 //                 "identifier": "credentials",
                 //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/credentials"
+                //                 "url":        "http://localhost:3501/ocpi/v2.3.0/credentials"
                 //             },
                 //             {
                 //                 "identifier": "locations",
                 //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/emsp/locations"
+                //                 "url":        "http://localhost:3501/ocpi/v2.3.0/emsp/locations"
                 //             },
                 //             {
                 //                 "identifier": "tariffs",
                 //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/emsp/tariffs"
+                //                 "url":        "http://localhost:3501/ocpi/v2.3.0/emsp/tariffs"
                 //             },
                 //             {
                 //                 "identifier": "sessions",
                 //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/emsp/sessions"
+                //                 "url":        "http://localhost:3501/ocpi/v2.3.0/emsp/sessions"
                 //             },
                 //             {
                 //                 "identifier": "chargingprofiles",
                 //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/emsp/chargingprofiles"
+                //                 "url":        "http://localhost:3501/ocpi/v2.3.0/emsp/chargingprofiles"
                 //             },
                 //             {
                 //                 "identifier": "cdrs",
                 //                 "role":       "RECEIVER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/emsp/cdrs"
+                //                 "url":        "http://localhost:3501/ocpi/v2.3.0/emsp/cdrs"
                 //             },
                 //             {
                 //                 "identifier": "commands",
                 //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/emsp/commands"
+                //                 "url":        "http://localhost:3501/ocpi/v2.3.0/emsp/commands"
                 //             },
                 //             {
                 //                 "identifier": "tokens",
                 //                 "role":       "SENDER",
-                //                 "url":        "http://localhost:3401/ocpi/v2.3.0/emsp/tokens"
+                //                 "url":        "http://localhost:3501/ocpi/v2.3.0/emsp/tokens"
                 //             }
                 //         ]
                 //     },
@@ -412,18 +410,16 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints,                                                      Is.Not.Null);
                     Assert.That(endpoints.Count,                                                Is.EqualTo(8));
 
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3.0/credentials")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3.0/emsp/locations")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3.0/emsp/tariffs")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3.0/emsp/sessions")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3.0/emsp/chargingProfiles")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3.0/emsp/cdrs")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3.0/emsp/commands")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("http://localhost:3401/ocpi/v2.3.0/emsp/tokens")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     First().URL,   Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.3.0/credentials")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.3.0/emsp/locations")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.3.0/emsp/tariffs")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.3.0/emsp/sessions")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.3.0/emsp/chargingProfiles")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.3.0/emsp/cdrs")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.3.0/emsp/commands")));
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("http://localhost:3501/ocpi/v2.3.0/emsp/tokens")));
 
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_3_0.InterfaceRoles.SENDER),    Is.True);
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_3_0.InterfaceRoles.RECEIVER),  Is.True);
-
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.RECEIVER));
                     Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].       First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.RECEIVER));
                     Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].         First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.RECEIVER));
                     Assert.That(endpoints[OCPIv2_3_0.Module_Id.Sessions].        First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.RECEIVER));
@@ -687,9 +683,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints[OCPIv2_2_1.Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.2.1/cpo/commands")));
                     Assert.That(endpoints[OCPIv2_2_1.Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.2.1/cpo/tokens")));
 
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_2_1.InterfaceRoles.SENDER),    Is.True);
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_2_1.InterfaceRoles.RECEIVER),  Is.True);
-
+                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Credentials].     First().Role,  Is.EqualTo(OCPIv2_2_1.InterfaceRoles.RECEIVER));
                     Assert.That(endpoints[OCPIv2_2_1.Module_Id.Locations].       First().Role,  Is.EqualTo(OCPIv2_2_1.InterfaceRoles.SENDER));
                     Assert.That(endpoints[OCPIv2_2_1.Module_Id.Tariffs].         First().Role,  Is.EqualTo(OCPIv2_2_1.InterfaceRoles.SENDER));
                     Assert.That(endpoints[OCPIv2_2_1.Module_Id.Sessions].        First().Role,  Is.EqualTo(OCPIv2_2_1.InterfaceRoles.SENDER));
@@ -837,9 +831,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints[OCPIv2_3_0.Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3.0/cpo/commands")));
                     Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3.0/cpo/tokens")));
 
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_3_0.InterfaceRoles.SENDER),    Is.True);
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     Any(endpoint => endpoint.Role == OCPIv2_3_0.InterfaceRoles.RECEIVER),  Is.True);
-
+                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].     First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.RECEIVER));
                     Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].       First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
                     Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].         First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
                     Assert.That(endpoints[OCPIv2_3_0.Module_Id.Sessions].        First().Role,  Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
@@ -859,7 +851,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         }
 
         #endregion
-
 
     }
 

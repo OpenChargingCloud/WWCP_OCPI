@@ -47,21 +47,17 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
     /// Testing the OCPI Registration Process.
     /// </summary>
     [TestFixture]
-    public class RegistrationProcessClientCertificates_Tests : A_2CPOs2EMSPs_TestDefaults
-    {
+    public class RegistrationProcessClientCertificates_Tests()
 
-        #region Constructor(s)
-
-        public RegistrationProcessClientCertificates_Tests()
+        : A_2CPOs2EMSPs_TestDefaults(
 
               // This will enable client certificates for TLS authentication!
-            : base(ECCAlgorithm:           "secp256r1",
-                   AutoWireRemoteParties:   false)
+              ECCAlgorithm:           "secp256r1",
+              AutoWireRemoteParties:   false
 
-        { }
+          )
 
-        #endregion
-
+    {
 
         #region RegistrationProcess_Test1()
 
@@ -264,7 +260,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         }
 
         #endregion
-
 
     }
 

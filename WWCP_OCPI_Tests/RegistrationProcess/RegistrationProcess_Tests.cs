@@ -57,13 +57,13 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #endregion
 
 
-        #region RegistrationProcess_Test1()
+        #region RegisterEMSPatCPO_v2_2_1_Test1()
 
         /// <summary>
         /// EMSP #1 starting a registration process with CPO #1 via OCPI v2.2.1!
         /// </summary>
         [Test]
-        public async Task RegistrationProcess_v2_2_1_Test1()
+        public async Task RegisterEMSPatCPO_v2_2_1_Test1()
         {
 
             #region Setup
@@ -172,6 +172,159 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
             var cpoClient = emsp1EMSPAPI_v2_2_1?.GetCPOClient(
+                                cpo1CommonAPI_v2_2_1.DefaultPartyId.CountryCode,
+                                cpo1CommonAPI_v2_2_1.DefaultPartyId.Party
+                            );
+
+            Assert.That(cpoClient, Is.Not.Null);
+
+            if (cpoClient is not null)
+            {
+
+                var response = await cpoClient.Register(
+                                         VersionId:  OCPIv2_2_1.Version.Id
+                                     );
+
+                Assert.That(response,                                                       Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200), response.HTTPResponse?.HTTPBodyAsUTF8String);
+                Assert.That(response.StatusCode,                                            Is.EqualTo(1000));
+                Assert.That(response.StatusMessage,                                         Is.EqualTo("Hello world!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True, "The response was too slow!");
+
+                Assert.That(response.Data,                                                  Is.Not.Null);
+                if (response.Data is not null)
+                {
+                    //Assert.That(response.Data.Roles,                                        Is.EqualTo(OCPIv2_1_1.Version.Id));
+                    Assert.That(response.Data.URL.  ToString(),                             Is.EqualTo($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"));
+                    //Assert.That(response.Data.Token.ToString(),                             Is.EqualTo(OCPIv2_1_1.Version.Id));
+                }
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region RegisterHUBatCPO_v2_2_1_Test1()
+
+        /// <summary>
+        /// HUB #1 starting a registration process with CPO #1 via OCPI v2.2.1!
+        /// </summary>
+        [Test]
+        public async Task RegisterHUBatCPO_v2_2_1_Test1()
+        {
+
+            #region Setup
+
+            if (cpo1CommonAPI_v2_2_1 is null)
+            {
+                Assert.Fail("CPO #1 CommonAPI v2.2.1 not initialized!");
+                return;
+            }
+
+            if (cpo1CPOAPI_v2_2_1    is null)
+            {
+                Assert.Fail("CPO #1 CPO API v2.2.1 not initialized!");
+                return;
+            }
+
+            if (cpo1HTTPServer        is null)
+            {
+                Assert.Fail("CPO #1 HTTP server not initialized!");
+                return;
+            }
+
+            await cpo1CommonAPI_v2_2_1. RemoveAllRemoteParties();
+            await cpo1CPOAPI_v2_2_1.    CloseAllClients();
+
+
+            if (hub1CommonAPI_v2_2_1 is null)
+            {
+                Assert.Fail("HUB #1 CommonAPI v2.2.1 not initialized!");
+                return;
+            }
+
+            if (hub1HUBAPI_v2_2_1   is null)
+            {
+                Assert.Fail("HUB #1 HUB API v2.2.1 not initialized!");
+                return;
+            }
+
+            await hub1CommonAPI_v2_2_1.RemoveAllRemoteParties();
+            await hub1HUBAPI_v2_2_1.   CloseAllClients();
+
+            #endregion
+
+            #region CPO #1 -> HUB #1
+
+            var cpo1_2_hub1_v2_2_1  = await cpo1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
+                                                Id:                                RemoteParty_Id.From(
+                                                                                       hub1CommonAPI_v2_2_1.DefaultPartyId,
+                                                                                       Role.HUB
+                                                                                   ),
+                                                CredentialsRoles:                  [
+                                                                                       hub1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                                                   ],
+
+                                                LocalAccessToken:                  AccessToken.Parse(hub1_accessing_cpo1__token),
+                                                LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                LocalTOTPConfig:                   TOTPValidityTime.HasValue
+                                                                                       ? new TOTPConfig(hub1_accessing_cpo1__token, TOTPValidityTime)
+                                                                                       : null,
+                                                LocalAccessTokenBase64Encoding:    true,
+
+                                                //RemoteAccessToken:                 AccessToken.Parse(cpo1_accessing_hub1__token),
+                                                //RemoteTOTPConfig:                  TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_hub1__token, TOTPValidityTime) : null,
+                                                //RemoteVersionsURL:                 URL.Parse($"http{(hub1TLSServerCertificate is not null ? "s" : "")}://localhost:{hub1HTTPServer.TCPPort}/ocpi/versions"),
+                                                //RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                                //SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                                //RemoteAccessTokenBase64Encoding:   true,
+                                                //RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                Status:                            PartyStatus.ENABLED
+                                            );
+
+            Assert.That(cpo1_2_hub1_v2_2_1.IsSuccess,  Is.True);
+            Assert.That(cpo1_2_hub1_v2_2_1.Data,       Is.Not.Null);
+
+            #endregion
+
+            #region HUB #1 -> CPO #1
+
+            var hub1_2_cpo1_v2_2_1 = await hub1CommonAPI_v2_2_1.AddRemotePartyIfNotExists(
+                                                Id:                                RemoteParty_Id.From(
+                                                                                       cpo1CommonAPI_v2_2_1.DefaultPartyId,
+                                                                                       Role.CPO
+                                                                                   ),
+                                                CredentialsRoles:                  [
+                                                                                        cpo1CommonAPI_v2_2_1.Parties.First().ToCredentialsRole()
+                                                                                   ],
+                                                //LocalAccessToken:                  AccessToken.Parse(cpo1_accessing_hub1__token),
+                                                //LocalAccessStatus:                 AccessStatus.ALLOWED,
+                                                //LocalTOTPConfig:                   TOTPValidityTime.HasValue ? new TOTPConfig(cpo1_accessing_hub1__token, TOTPValidityTime) : null,
+                                                //LocalAccessTokenBase64Encoding:    true,
+
+                                                RemoteAccessToken:                 AccessToken.Parse(hub1_accessing_cpo1__token),
+                                                RemoteTOTPConfig:                  TOTPValidityTime.HasValue
+                                                                                       ? new TOTPConfig(hub1_accessing_cpo1__token, TOTPValidityTime)
+                                                                                       : null,
+                                                RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpo1HTTPServer.TCPPort}/ocpi/versions"),
+                                                RemoteVersionIds:                  [ OCPIv2_2_1.Version.Id ],
+                                                SelectedVersionId:                 OCPIv2_2_1.Version.Id,
+                                                RemoteAccessTokenBase64Encoding:   true,
+                                                RemoteStatus:                      RemoteAccessStatus.ONLINE,
+
+                                                Status:                            PartyStatus.ENABLED
+                                            );
+
+            Assert.That(hub1_2_cpo1_v2_2_1.IsSuccess,  Is.True);
+            Assert.That(hub1_2_cpo1_v2_2_1.Data,       Is.Not.Null);
+
+            #endregion
+
+
+            var cpoClient = hub1HUBAPI_v2_2_1?.GetCPOClient(
                                 cpo1CommonAPI_v2_2_1.DefaultPartyId.CountryCode,
                                 cpo1CommonAPI_v2_2_1.DefaultPartyId.Party
                             );
