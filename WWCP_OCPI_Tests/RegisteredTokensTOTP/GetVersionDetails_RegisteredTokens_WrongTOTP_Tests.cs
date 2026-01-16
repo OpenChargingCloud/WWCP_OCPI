@@ -719,6 +719,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         #endregion
 
+
         #region EMSP1_GetVersionDetails_v2_3_0_fromCPO1_viaOCPIv2_3_0__RegisteredToken_Test2()
 
         /// <summary>
