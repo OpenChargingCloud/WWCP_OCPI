@@ -662,7 +662,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
+                    var httpResponse = await NewHTTPClient.GET(
                                                  Path:                  RemoteVersionsURL.Path,
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -856,7 +856,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     await GetVersions(
                               EventTrackingId:    eventTrackingId,
                               CancellationToken:  CancellationToken
-                          );
+                          ).ConfigureAwait(false);
 
                 if (!versions.TryGetValue(versionId.Value, out var versionURL))
                     response = OCPIResponse<Version_Id, VersionDetail>.Error("Unknown version identification!");
@@ -874,7 +874,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             #region Upstream HTTP request...
 
-                            var httpResponse = await newHTTPClient.GET(
+                            var httpResponse = await NewHTTPClient.GET(
                                                          Path:                  versionURL.Path,
                                                          Authentication:        TokenAuth,
                                                          RequestBuilder:        requestBuilder => {
@@ -1132,9 +1132,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 HTTPTestClient? httpClient = null;
 
-                if (remoteURL.Value.Hostname.ToString() == newHTTPClient.DomainName?.ToString())
+                if (remoteURL.Value.Hostname.ToString() == NewHTTPClient.DomainName?.ToString())
                 {
-                    httpClient = newHTTPClient;
+                    httpClient = NewHTTPClient;
                 }
 
                 else
@@ -1143,41 +1143,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     httpClient = new HTTPTestClient(
 
                                      remoteURL.Value,
-                                     Description:                           newHTTPClient.Description,
-                                     HTTPUserAgent:                         newHTTPClient.HTTPUserAgent,
-                                     Accept:                                newHTTPClient.Accept,
-                                     ContentType:                           newHTTPClient.ContentType,
-                                     Connection:                            newHTTPClient.Connection,
-                                     DefaultRequestBuilder:                 newHTTPClient.DefaultRequestBuilder,
+                                     Description:                           NewHTTPClient.Description,
+                                     HTTPUserAgent:                         NewHTTPClient.HTTPUserAgent,
+                                     Accept:                                NewHTTPClient.Accept,
+                                     ContentType:                           NewHTTPClient.ContentType,
+                                     Connection:                            NewHTTPClient.Connection,
+                                     DefaultRequestBuilder:                 NewHTTPClient.DefaultRequestBuilder,
 
                                      RemoteCertificateValidator:            (sender, certificate, chain, httpTestClient, policyErrors) => {
-                                                                                var x = newHTTPClient.RemoteCertificateValidator?.Invoke(sender, certificate, chain, httpTestClient, policyErrors);
+                                                                                var x = NewHTTPClient.RemoteCertificateValidator?.Invoke(sender, certificate, chain, httpTestClient, policyErrors);
                                                                                 return x ?? (false,[]);
                                                                             },
-                                     LocalCertificateSelector:              newHTTPClient.LocalCertificateSelector,
-                                     ClientCertificates:                    newHTTPClient.ClientCertificates,
-                                     ClientCertificateContext:              newHTTPClient.ClientCertificateContext,
-                                     ClientCertificateChain:                newHTTPClient.ClientCertificateChain,
-                                     TLSProtocols:                          newHTTPClient.TLSProtocols,
-                                     CipherSuitesPolicy:                    newHTTPClient.CipherSuitesPolicy,
-                                     CertificateChainPolicy:                newHTTPClient.CertificateChainPolicy,
-                                     CertificateRevocationCheckMode:        newHTTPClient.CertificateRevocationCheckMode,
-                                     ApplicationProtocols:                  newHTTPClient.ApplicationProtocols,
-                                     AllowRenegotiation:                    newHTTPClient.AllowRenegotiation,
-                                     AllowTLSResume:                        newHTTPClient.AllowTLSResume,
+                                     LocalCertificateSelector:              NewHTTPClient.LocalCertificateSelector,
+                                     ClientCertificates:                    NewHTTPClient.ClientCertificates,
+                                     ClientCertificateContext:              NewHTTPClient.ClientCertificateContext,
+                                     ClientCertificateChain:                NewHTTPClient.ClientCertificateChain,
+                                     TLSProtocols:                          NewHTTPClient.TLSProtocols,
+                                     CipherSuitesPolicy:                    NewHTTPClient.CipherSuitesPolicy,
+                                     CertificateChainPolicy:                NewHTTPClient.CertificateChainPolicy,
+                                     CertificateRevocationCheckMode:        NewHTTPClient.CertificateRevocationCheckMode,
+                                     ApplicationProtocols:                  NewHTTPClient.ApplicationProtocols,
+                                     AllowRenegotiation:                    NewHTTPClient.AllowRenegotiation,
+                                     AllowTLSResume:                        NewHTTPClient.AllowTLSResume,
 
-                                     PreferIPv4:                            newHTTPClient.PreferIPv4,
-                                     ConnectTimeout:                        newHTTPClient.ConnectTimeout,
-                                     ReceiveTimeout:                        newHTTPClient.ReceiveTimeout,
-                                     SendTimeout:                           newHTTPClient.SendTimeout,
-                                     TransmissionRetryDelay:                newHTTPClient.TransmissionRetryDelay,
-                                     MaxNumberOfRetries:                    newHTTPClient.MaxNumberOfRetries,
-                                     BufferSize:                            newHTTPClient.BufferSize,
+                                     PreferIPv4:                            NewHTTPClient.PreferIPv4,
+                                     ConnectTimeout:                        NewHTTPClient.ConnectTimeout,
+                                     ReceiveTimeout:                        NewHTTPClient.ReceiveTimeout,
+                                     SendTimeout:                           NewHTTPClient.SendTimeout,
+                                     TransmissionRetryDelay:                NewHTTPClient.TransmissionRetryDelay,
+                                     MaxNumberOfRetries:                    NewHTTPClient.MaxNumberOfRetries,
+                                     BufferSize:                            NewHTTPClient.BufferSize,
 
-                                     ConsumeRequestChunkedTEImmediately:    newHTTPClient.ConsumeRequestChunkedTEImmediately,
-                                     ConsumeResponseChunkedTEImmediately:   newHTTPClient.ConsumeResponseChunkedTEImmediately,
+                                     ConsumeRequestChunkedTEImmediately:    NewHTTPClient.ConsumeRequestChunkedTEImmediately,
+                                     ConsumeResponseChunkedTEImmediately:   NewHTTPClient.ConsumeResponseChunkedTEImmediately,
 
-                                     DNSClient:                             newHTTPClient.DNSClient
+                                     DNSClient:                             NewHTTPClient.DNSClient
 
                                  );
 
@@ -1290,7 +1290,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         #region Upstream HTTP request...
 
-                        var httpResponse = await newHTTPClient.GET(
+                        var httpResponse = await NewHTTPClient.GET(
                                                      Path:                  remoteURL.Value.Path,
                                                      Authentication:        TokenAuth,
                                                      RequestBuilder:        requestBuilder => {
@@ -1474,7 +1474,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         #region Upstream HTTP request...
 
-                        var httpResponse = await newHTTPClient.POST(
+                        var httpResponse = await NewHTTPClient.POST(
                                                      Path:                  remoteURL.Value.Path,
                                                      Content:               Credentials.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                      Authentication:        TokenAuth,
@@ -1662,7 +1662,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         #region Upstream HTTP request...
 
-                        var httpResponse = await newHTTPClient.PUT(
+                        var httpResponse = await NewHTTPClient.PUT(
                                                      Path:                  remoteURL.Value.Path,
                                                      Content:               Credentials.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                      Authentication:        TokenAuth,
@@ -1874,7 +1874,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         #region Upstream HTTP request...
 
-                        var httpResponse = await newHTTPClient.DELETE(
+                        var httpResponse = await NewHTTPClient.DELETE(
                                                      Path:                  remoteURL.Value.Path,
                                                      Authentication:        TokenAuth,
                                                      RequestBuilder:        requestBuilder => {
@@ -2084,7 +2084,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     #region Upstream HTTP request... meanwhile the other side will access our 'versions endpoint'!
 
-                    var httpResponse = await newHTTPClient.POST(
+                    var httpResponse = await NewHTTPClient.POST(
                                                  Path:                  remoteURL.Value.Path,
                                                  Content:               credentials.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,

@@ -887,7 +887,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                                         Limit
                                                     );
 
-                    var httpResponse              = await newHTTPClient.GET(
+                    var httpResponse              = await NewHTTPClient.GET(
                                                               Path:                  httpClient.RemoteURL.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
                                                               Authentication:        TokenAuth,
@@ -1047,7 +1047,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
+                    var httpResponse = await NewHTTPClient.GET(
                                                  Path:                  httpClient.RemoteURL.Path + LocationId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -1212,7 +1212,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
+                    var httpResponse = await NewHTTPClient.GET(
                                                  Path:                  httpClient.RemoteURL.Path + LocationId.ToString() +
                                                                                                     EVSEUId.   ToString(),
                                                  Accept:                ocpiAcceptTypes,
@@ -1382,7 +1382,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
+                    var httpResponse = await NewHTTPClient.GET(
                                                  Path:                  httpClient.RemoteURL.Path + LocationId.ToString() + EVSEUId.ToString() + ConnectorId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -1560,7 +1560,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                                         Limit
                                                     );
 
-                    var httpResponse              = await newHTTPClient.GET(
+                    var httpResponse              = await NewHTTPClient.GET(
                                                               Path:                  httpClient.RemoteURL.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
                                                               Authentication:        TokenAuth,
@@ -1729,7 +1729,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
+                    var httpResponse = await NewHTTPClient.GET(
                                                  Path:                  httpClient.RemoteURL.Path + TariffId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -1905,7 +1905,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                                         Limit
                                                     );
 
-                    var httpResponse              = await newHTTPClient.GET(
+                    var httpResponse              = await NewHTTPClient.GET(
                                                               Path:                  httpClient.RemoteURL.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Accept:                ocpiAcceptTypes,
                                                               Authentication:        TokenAuth,
@@ -2081,7 +2081,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
+                    var httpResponse = await NewHTTPClient.GET(
                                                  Path:                  httpClient.RemoteURL.Path + SessionId.ToString(),
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -2766,7 +2766,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.PUT(
+                    var httpResponse = await NewHTTPClient.PUT(
                                                  Path:                  remoteURL.Value.Path + Token.CountryCode.ToString() +
                                                                                                Token.PartyId.    ToString() +
                                                                                                Token.Id.         ToString(),
@@ -2939,7 +2939,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.PATCH(
+                    var httpResponse = await NewHTTPClient.PATCH(
                                                  Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
                                                                                                     PartyId.    ToString() +
                                                                                                     TokenId.    ToString(),
@@ -3268,7 +3268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.PATCH(
+                    var httpResponse = await NewHTTPClient.PATCH(
                                                  Path:                  httpClient.RemoteURL.Path,
                                                  Content:               BookingRequest.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
@@ -3463,7 +3463,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.POST(
+                    var httpResponse = await NewHTTPClient.POST(
                                                  Path:                  httpClient.RemoteURL.Path + "RESERVE_NOW",
                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
@@ -3651,7 +3651,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.POST(
+                    var httpResponse = await NewHTTPClient.POST(
                                                  Path:                  httpClient.RemoteURL.Path + "CANCEL_RESERVATION",
                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
@@ -4033,7 +4033,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.POST(
+                    var httpResponse = await NewHTTPClient.POST(
                                                  Path:                  httpClient.RemoteURL.Path + "STOP_SESSION",
                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
@@ -4218,7 +4218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.POST(
+                    var httpResponse = await NewHTTPClient.POST(
                                                  Path:                  httpClient.RemoteURL.Path + "UNLOCK_CONNECTOR",
                                                  Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,

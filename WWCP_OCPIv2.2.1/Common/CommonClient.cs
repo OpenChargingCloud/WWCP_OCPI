@@ -682,7 +682,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await newHTTPClient.GET(
+                    var httpResponse = await NewHTTPClient.GET(
                                                  Path:                  RemoteURL.Path,
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -866,7 +866,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #endregion
 
 
-            OCPIResponse<Version_Id, VersionDetail> response;
+            OCPIResponse<Version_Id, VersionDetail>? response = null;
 
             if (!versionId.HasValue)
                 response = OCPIResponse<Version_Id, VersionDetail>.Error("No version identification available!");
@@ -875,143 +875,165 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             {
 
                 if (!versions.ContainsKey(versionId.Value))
-                    await GetVersions(EventTrackingId:    eventTrackingId,
-                                      CancellationToken:  CancellationToken);
-
-                if (!versions.TryGetValue(versionId.Value, out var versionURL))
-                    response = OCPIResponse<Version_Id, VersionDetail>.Error("Unknown version identification!");
-
-                else
                 {
 
-                    Byte transmissionRetry = 0;
+                    var getVersionsResponse = await GetVersions(
+                                                        EventTrackingId:    eventTrackingId,
+                                                        CancellationToken:  CancellationToken
+                                                    ).ConfigureAwait(false);
 
-                    do
+                    if (getVersionsResponse.StatusCode != 1000)
+                        response = OCPIResponse<Version_Id, VersionDetail>.Error(
+                                       getVersionsResponse.StatusCode,
+                                       getVersionsResponse.StatusMessage,
+                                       getVersionsResponse.AdditionalInformation,
+                                       getVersionsResponse.Timestamp,
+                                       getVersionsResponse.HTTPResponse,
+                                       getVersionsResponse.RequestId,
+                                       getVersionsResponse.CorrelationId
+                                   );
+
+                }
+
+                if (response is null)
+                {
+
+                    if (!versions.TryGetValue(versionId.Value, out var versionURL))
+                        response = OCPIResponse<Version_Id, VersionDetail>.Error("Unknown version identification!");
+
+                    else
                     {
 
-                        try
+                        Byte transmissionRetry = 0;
+
+                        do
                         {
 
-                            #region Upstream HTTP request...
-
-                            var httpResponse = await newHTTPClient.GET(
-                                                         Path:                  versionURL.Path,
-                                                         Accept:                ocpiAcceptTypes,
-                                                         Authentication:        TokenAuth,
-                                                         Connection:            ConnectionType.KeepAlive,
-                                                         RequestBuilder:        requestBuilder => {
-                                                                                    requestBuilder.Set("X-Request-ID",     requestId);
-                                                                                    requestBuilder.Set("X-Correlation-ID", correlationId);
-                                                                                },
-                                                         RequestLogDelegate:    OnGetVersionDetailsHTTPRequest,
-                                                         ResponseLogDelegate:   OnGetVersionDetailsHTTPResponse,
-                                                         EventTrackingId:       eventTrackingId,
-                                                         NumberOfRetry:         transmissionRetry,
-                                                         RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
-                                                         CancellationToken:     CancellationToken).
-
-                                                     ConfigureAwait(false);
-
-                            #endregion
-
-                            #region Documentation
-
-                            // {
-                            //   "data": {
-                            //     "version": "2.2",
-                            //     "endpoints": [
-                            //       {
-                            //         "identifier": "sessions",
-                            //         "role":       "SENDER",
-                            //         "url":        "https://example.com/ocpi/cpo/2.2/sessions/"
-                            //       },
-                            //       {
-                            //         "identifier": "tariffs",
-                            //         "role":       "SENDER",
-                            //         "url":        "https://example.com/ocpi/cpo/2.2/tariffs/"
-                            //       },
-                            //       {
-                            //         "identifier": "hubclientinfo",
-                            //         "role":       "RECEIVER",
-                            //         "url":        "https://example.com/ocpi/cpo/2.2/hubclientinfo/"
-                            //       },
-                            //       {
-                            //         "identifier": "locations",
-                            //         "role":       "SENDER",
-                            //         "url":        "https://example.com/ocpi/cpo/2.2/locations/"
-                            //       },
-                            //       {
-                            //         "identifier": "tokens",
-                            //         "role":       "RECEIVER",
-                            //         "url":        "https://example.com/ocpi/cpo/2.2/tokens/"
-                            //       },
-                            //       {
-                            //         "identifier": "commands",
-                            //         "role":       "RECEIVER",
-                            //         "url":        "https://example.com/ocpi/cpo/2.2/commands/"
-                            //       },
-                            //       {
-                            //         "identifier": "credentials",
-                            //         "role":       "RECEIVER",
-                            //         "url":        "https://example.com/ocpi/2.2/credentials/"
-                            //       },
-                            //       {
-                            //         "identifier": "credentials",
-                            //         "role":       "SENDER",
-                            //         "url":        "https://example.com/ocpi/2.2/credentials/"
-                            //       }
-                            //     ]
-                            //   },
-                            //   "status_code": 1000
-                            // }
-
-                            #endregion
-
-                            response = OCPIResponse<Version_Id, VersionDetail>.ParseJObject(
-                                           versionId.Value,
-                                           httpResponse,
-                                           requestId,
-                                           correlationId,
-                                           json => VersionDetail.Parse(
-                                                       json,
-                                                       CustomVersionDetailParser
-                                                   )
-                                       );
-
-                            switch (response.StatusCode)
+                            try
                             {
 
-                                case 1000:
+                                #region Upstream HTTP request...
 
-                                    if (response.Data is not null)
-                                    {
+                                var httpResponse = await NewHTTPClient.GET(
+                                                             Path:                  versionURL.Path,
+                                                             Accept:                ocpiAcceptTypes,
+                                                             Authentication:        TokenAuth,
+                                                             Connection:            ConnectionType.KeepAlive,
+                                                             RequestBuilder:        requestBuilder => {
+                                                                                        requestBuilder.Set("X-Request-ID",     requestId);
+                                                                                        requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                                    },
+                                                             RequestLogDelegate:    OnGetVersionDetailsHTTPRequest,
+                                                             ResponseLogDelegate:   OnGetVersionDetailsHTTPResponse,
+                                                             EventTrackingId:       eventTrackingId,
+                                                             NumberOfRetry:         transmissionRetry,
+                                                             RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                             CancellationToken:     CancellationToken).
 
-                                        versionDetails.TryRemove(versionId.Value, out _);
+                                                         ConfigureAwait(false);
 
-                                        versionDetails.TryAdd(
-                                            versionId.Value,
-                                            response.Data
-                                        );
+                                #endregion
 
-                                        if (SetAsDefaultVersion)
-                                            SelectedOCPIVersionId = VersionId;
+                                #region Documentation
 
-                                    }
+                                // {
+                                //   "data": {
+                                //     "version": "2.2",
+                                //     "endpoints": [
+                                //       {
+                                //         "identifier": "sessions",
+                                //         "role":       "SENDER",
+                                //         "url":        "https://example.com/ocpi/cpo/2.2/sessions/"
+                                //       },
+                                //       {
+                                //         "identifier": "tariffs",
+                                //         "role":       "SENDER",
+                                //         "url":        "https://example.com/ocpi/cpo/2.2/tariffs/"
+                                //       },
+                                //       {
+                                //         "identifier": "hubclientinfo",
+                                //         "role":       "RECEIVER",
+                                //         "url":        "https://example.com/ocpi/cpo/2.2/hubclientinfo/"
+                                //       },
+                                //       {
+                                //         "identifier": "locations",
+                                //         "role":       "SENDER",
+                                //         "url":        "https://example.com/ocpi/cpo/2.2/locations/"
+                                //       },
+                                //       {
+                                //         "identifier": "tokens",
+                                //         "role":       "RECEIVER",
+                                //         "url":        "https://example.com/ocpi/cpo/2.2/tokens/"
+                                //       },
+                                //       {
+                                //         "identifier": "commands",
+                                //         "role":       "RECEIVER",
+                                //         "url":        "https://example.com/ocpi/cpo/2.2/commands/"
+                                //       },
+                                //       {
+                                //         "identifier": "credentials",
+                                //         "role":       "RECEIVER",
+                                //         "url":        "https://example.com/ocpi/2.2/credentials/"
+                                //       },
+                                //       {
+                                //         "identifier": "credentials",
+                                //         "role":       "SENDER",
+                                //         "url":        "https://example.com/ocpi/2.2/credentials/"
+                                //       }
+                                //     ]
+                                //   },
+                                //   "status_code": 1000
+                                // }
 
-                                    break;
+                                #endregion
+
+                                response = OCPIResponse<Version_Id, VersionDetail>.ParseJObject(
+                                               versionId.Value,
+                                               httpResponse,
+                                               requestId,
+                                               correlationId,
+                                               json => VersionDetail.Parse(
+                                                           json,
+                                                           CustomVersionDetailParser
+                                                       )
+                                           );
+
+                                switch (response.StatusCode)
+                                {
+
+                                    case 1000:
+
+                                        if (response.Data is not null)
+                                        {
+
+                                            versionDetails.TryRemove(versionId.Value, out _);
+
+                                            versionDetails.TryAdd(
+                                                versionId.Value,
+                                                response.Data
+                                            );
+
+                                            if (SetAsDefaultVersion)
+                                                SelectedOCPIVersionId = VersionId;
+
+                                        }
+
+                                        break;
+
+                                }
 
                             }
 
-                        }
+                            catch (Exception e)
+                            {
+                                response = OCPIResponse<Version_Id, VersionDetail>.Exception(e);
+                            }
 
-                        catch (Exception e)
-                        {
-                            response = OCPIResponse<Version_Id, VersionDetail>.Exception(e);
                         }
+                        while (transmissionRetry++ < MaxNumberOfRetries &&
+                               response.HTTPResponse?.HTTPStatusCode.IsReasonForRetransmission == true);
 
                     }
-                    while (transmissionRetry++ < MaxNumberOfRetries &&
-                           response.HTTPResponse?.HTTPStatusCode.IsReasonForRetransmission == true);
 
                 }
 
@@ -1167,9 +1189,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPTestClient? httpClient = null;
 
-                if (remoteURL.Value.Hostname.ToString() == newHTTPClient.DomainName?.ToString())
+                if (remoteURL.Value.Hostname.ToString() == NewHTTPClient.DomainName?.ToString())
                 {
-                    httpClient = newHTTPClient;
+                    httpClient = NewHTTPClient;
                 }
 
                 else
@@ -1178,41 +1200,41 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     httpClient = new HTTPTestClient(
 
                                      remoteURL.Value,
-                                     Description:                           newHTTPClient.Description,
-                                     HTTPUserAgent:                         newHTTPClient.HTTPUserAgent,
-                                     Accept:                                newHTTPClient.Accept,
-                                     ContentType:                           newHTTPClient.ContentType,
-                                     Connection:                            newHTTPClient.Connection,
-                                     DefaultRequestBuilder:                 newHTTPClient.DefaultRequestBuilder,
+                                     Description:                           NewHTTPClient.Description,
+                                     HTTPUserAgent:                         NewHTTPClient.HTTPUserAgent,
+                                     Accept:                                NewHTTPClient.Accept,
+                                     ContentType:                           NewHTTPClient.ContentType,
+                                     Connection:                            NewHTTPClient.Connection,
+                                     DefaultRequestBuilder:                 NewHTTPClient.DefaultRequestBuilder,
 
                                      RemoteCertificateValidator:            (sender, certificate, chain, httpTestClient, policyErrors) => {
-                                                                                var x = newHTTPClient.RemoteCertificateValidator?.Invoke(sender, certificate, chain, httpTestClient, policyErrors);
+                                                                                var x = NewHTTPClient.RemoteCertificateValidator?.Invoke(sender, certificate, chain, httpTestClient, policyErrors);
                                                                                 return x ?? (false,[]);
                                                                             },
-                                     LocalCertificateSelector:              newHTTPClient.LocalCertificateSelector,
-                                     ClientCertificates:                    newHTTPClient.ClientCertificates,
-                                     ClientCertificateContext:              newHTTPClient.ClientCertificateContext,
-                                     ClientCertificateChain:                newHTTPClient.ClientCertificateChain,
-                                     TLSProtocols:                          newHTTPClient.TLSProtocols,
-                                     CipherSuitesPolicy:                    newHTTPClient.CipherSuitesPolicy,
-                                     CertificateChainPolicy:                newHTTPClient.CertificateChainPolicy,
-                                     CertificateRevocationCheckMode:        newHTTPClient.CertificateRevocationCheckMode,
-                                     ApplicationProtocols:                  newHTTPClient.ApplicationProtocols,
-                                     AllowRenegotiation:                    newHTTPClient.AllowRenegotiation,
-                                     AllowTLSResume:                        newHTTPClient.AllowTLSResume,
+                                     LocalCertificateSelector:              NewHTTPClient.LocalCertificateSelector,
+                                     ClientCertificates:                    NewHTTPClient.ClientCertificates,
+                                     ClientCertificateContext:              NewHTTPClient.ClientCertificateContext,
+                                     ClientCertificateChain:                NewHTTPClient.ClientCertificateChain,
+                                     TLSProtocols:                          NewHTTPClient.TLSProtocols,
+                                     CipherSuitesPolicy:                    NewHTTPClient.CipherSuitesPolicy,
+                                     CertificateChainPolicy:                NewHTTPClient.CertificateChainPolicy,
+                                     CertificateRevocationCheckMode:        NewHTTPClient.CertificateRevocationCheckMode,
+                                     ApplicationProtocols:                  NewHTTPClient.ApplicationProtocols,
+                                     AllowRenegotiation:                    NewHTTPClient.AllowRenegotiation,
+                                     AllowTLSResume:                        NewHTTPClient.AllowTLSResume,
 
-                                     PreferIPv4:                            newHTTPClient.PreferIPv4,
-                                     ConnectTimeout:                        newHTTPClient.ConnectTimeout,
-                                     ReceiveTimeout:                        newHTTPClient.ReceiveTimeout,
-                                     SendTimeout:                           newHTTPClient.SendTimeout,
-                                     TransmissionRetryDelay:                newHTTPClient.TransmissionRetryDelay,
-                                     MaxNumberOfRetries:                    newHTTPClient.MaxNumberOfRetries,
-                                     BufferSize:                            newHTTPClient.BufferSize,
+                                     PreferIPv4:                            NewHTTPClient.PreferIPv4,
+                                     ConnectTimeout:                        NewHTTPClient.ConnectTimeout,
+                                     ReceiveTimeout:                        NewHTTPClient.ReceiveTimeout,
+                                     SendTimeout:                           NewHTTPClient.SendTimeout,
+                                     TransmissionRetryDelay:                NewHTTPClient.TransmissionRetryDelay,
+                                     MaxNumberOfRetries:                    NewHTTPClient.MaxNumberOfRetries,
+                                     BufferSize:                            NewHTTPClient.BufferSize,
 
-                                     ConsumeRequestChunkedTEImmediately:    newHTTPClient.ConsumeRequestChunkedTEImmediately,
-                                     ConsumeResponseChunkedTEImmediately:   newHTTPClient.ConsumeResponseChunkedTEImmediately,
+                                     ConsumeRequestChunkedTEImmediately:    NewHTTPClient.ConsumeRequestChunkedTEImmediately,
+                                     ConsumeResponseChunkedTEImmediately:   NewHTTPClient.ConsumeResponseChunkedTEImmediately,
 
-                                     DNSClient:                             newHTTPClient.DNSClient
+                                     DNSClient:                             NewHTTPClient.DNSClient
 
                                  );
 
@@ -1326,7 +1348,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         #region Upstream HTTP request...
 
-                        var httpResponse = await newHTTPClient.GET(
+                        var httpResponse = await NewHTTPClient.GET(
                                                      Path:                  remoteURL.Value.Path,
                                                      Authentication:        TokenAuth,
                                                      RequestBuilder:        requestBuilder => {
@@ -1511,7 +1533,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         #region Upstream HTTP request...
 
-                        var httpResponse = await newHTTPClient.POST(
+                        var httpResponse = await NewHTTPClient.POST(
                                                      Path:                  remoteURL.Value.Path,
                                                      Content:               Credentials.ToJSON(
                                                                                 CustomCredentialsSerializer,
@@ -1703,7 +1725,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         #region Upstream HTTP request...
 
-                        var httpResponse = await newHTTPClient.PUT(
+                        var httpResponse = await NewHTTPClient.PUT(
                                                      Path:                  remoteURL.Value.Path,
                                                      Content:               Credentials.ToJSON(
                                                                                 CustomCredentialsSerializer,
@@ -1954,7 +1976,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         #region Upstream HTTP request...
 
-                        var httpResponse = await newHTTPClient.DELETE(
+                        var httpResponse = await NewHTTPClient.DELETE(
                                                      Path:                  remoteURL.Value.Path,
                                                      Authentication:        TokenAuth,
                                                      RequestBuilder:        requestBuilder => {
@@ -2167,7 +2189,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         #region Upstream HTTP request...
 
-                        var httpResponse = await newHTTPClient.POST(
+                        var httpResponse = await NewHTTPClient.POST(
                                                      Path:                  remoteURL.Value.Path,
                                                      Content:               credentials.ToJSON(
                                                                                 CustomCredentialsSerializer,

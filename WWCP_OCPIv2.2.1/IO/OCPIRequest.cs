@@ -373,31 +373,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Properties
 
-        public CommonAPI             CommonAPI           { get; }
+        public CommonAPI             CommonAPI                   { get; }
 
-        public HTTPRequest           HTTPRequest         { get; }
+        public HTTPRequest           HTTPRequest                 { get; }
 
-        public Request_Id?           RequestId           { get; }
-        public Correlation_Id?       CorrelationId       { get; }
+        public Request_Id?           RequestId                   { get; }
+        public Correlation_Id?       CorrelationId               { get; }
 
-        public CountryCode?          ToCountryCode       { get; }
-        public Party_Id?             ToPartyId           { get; }
-        public CountryCode?          FromCountryCode     { get; }
-        public Party_Id?             FromPartyId         { get; }
+        public CountryCode?          ToCountryCode               { get; }
+        public Party_Id?             ToPartyId                   { get; }
+        public CountryCode?          FromCountryCode             { get; }
+        public Party_Id?             FromPartyId                 { get; }
 
-        public AccessToken?          AccessToken         { get; }
+        public AccessToken?          AccessToken                 { get; }
 
-        public LocalAccessInfo2?     LocalAccessInfo     { get; }
+        public IEnumerable<String>   AccessTokenErrorMessages    { get; }
 
-        public RemoteParty?          RemoteParty         { get; }
+        public LocalAccessInfo2?     LocalAccessInfo             { get; }
 
-        public IEnumerable<EMSP_Id>  EMSPIds             { get; } = [];
+        public RemoteParty?          RemoteParty                 { get; }
 
-        public IEnumerable<CPO_Id>   CPOIds              { get; } = [];
+        public IEnumerable<EMSP_Id>  EMSPIds                     { get; } = [];
 
-        public EMSP_Id?              EMSPId              { get; }
+        public IEnumerable<CPO_Id>   CPOIds                      { get; } = [];
 
-        public CPO_Id?               CPOId               { get; }
+        public EMSP_Id?              EMSPId                      { get; }
+
+        public CPO_Id?               CPOId                       { get; }
 
 
         /// <summary>
@@ -434,11 +436,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.ToPartyId        = Request.TryParseHeaderField<Party_Id>      ("OCPI-to-party-id",       Party_Id.      TryParse);
             this.FromCountryCode  = Request.TryParseHeaderField<CountryCode>   ("OCPI-from-country-code", CountryCode.   TryParse);
             this.FromPartyId      = Request.TryParseHeaderField<Party_Id>      ("OCPI-from-party-id",     Party_Id.      TryParse);
+            var  totp             = Request.GetHeaderField     <String>        ("TOTP");
 
-            AccessToken?     accessTokenRAW     = null;
-            AccessToken?     accessTokenBASE64  = null;
-            String?          totp               = null;
-            LocalAccessInfo? localAccessInfo    = null;
+            AccessToken?      accessTokenRAW                  = null;
+            String?           accessTokenErrorMessageRAW      = null;
+            AccessToken?      accessTokenBASE64               = null;
+            String?           accessTokenErrorMessageBASE64   = null;
+            LocalAccessInfo?  localAccessInfo                 = null;
+
+            var accessTokenErrorMessages   = new HashSet<String>();
+            this.AccessTokenErrorMessages  = accessTokenErrorMessages;
 
             if (Request.Authorization is HTTPTokenAuthentication tokenAuth)
             {
@@ -466,10 +473,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             }
 
+            // RAW AcccessToken
             if (accessTokenRAW.HasValue &&
                 CommonAPI.TryGetRemoteParties(accessTokenRAW.Value,
                                               totp,
-                                              out var partiesAccessInfosRAW))
+                                              out var partiesAccessInfosRAW,
+                                              out     accessTokenErrorMessageRAW))
             {
                 var tuple = partiesAccessInfosRAW.FirstOrDefault();
                 if (tuple is not null)
@@ -483,10 +492,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 }
             }
 
+            // BASE64-encoded Acccess Token
             if (accessTokenBASE64.HasValue &&
                 CommonAPI.TryGetRemoteParties(accessTokenBASE64.Value,
                                               totp,
-                                              out var partiesAccessInfosBASE64))
+                                              out var partiesAccessInfosBASE64,
+                                              out     accessTokenErrorMessageBASE64))
             {
                 var tuple = partiesAccessInfosBASE64.FirstOrDefault();
                 if (tuple is not null)
@@ -509,8 +520,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                        AccessToken.    Value,
                                        localAccessInfo.Status,
                                        RemoteParty.    Roles,
-                                       null,
-                                       null,
+                                       RemoteParty.LocalAccessInfos. FirstOrDefault()?.NotBefore,
+                                       RemoteParty.LocalAccessInfos. FirstOrDefault()?.NotAfter,
                                        RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
                                    );
 
@@ -551,6 +562,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (RemoteParty.IN?.RequestModifier is not null)
                     HTTPRequest = RemoteParty.IN.RequestModifier(HTTPRequest);
+
+            }
+
+            if (RemoteParty is null)
+            {
+
+                if (accessTokenErrorMessageRAW is not null)
+                    accessTokenErrorMessages.Add(accessTokenErrorMessageRAW);
+
+                if (accessTokenErrorMessageBASE64 is not null)
+                    accessTokenErrorMessages.Add(accessTokenErrorMessageBASE64);
+
+                if (accessTokenErrorMessages.Count > 1 &&
+                    accessTokenErrorMessages.Contains("Unknown access token!"))
+                {
+                    accessTokenErrorMessages.Remove("Unknown access token!");
+                }
+
+                if (CommonAPI.BaseAPI.LocationsAsOpenData && accessTokenErrorMessages.Contains("Unknown access token!"))
+                    accessTokenErrorMessages.Remove("Unknown access token!");
 
             }
 

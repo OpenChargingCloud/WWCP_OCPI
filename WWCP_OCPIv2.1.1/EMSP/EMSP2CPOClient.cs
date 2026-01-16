@@ -2198,7 +2198,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                         Limit
                                                     );
 
-                    var httpResponse              = await newHTTPClient.GET(
+                    var httpResponse              = await NewHTTPClient.GET(
                                                               Path:                  httpClient.RemoteURL.Path,
                                                               Authentication:        TokenAuth,
                                                               RequestBuilder:        requestBuilder => {

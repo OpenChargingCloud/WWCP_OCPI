@@ -93,7 +93,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (accessTokenRAW.HasValue &&
                     CommonAPI.TryGetRemoteParties(accessTokenRAW.Value,
                                                   totp,
-                                                  out var partiesAccessInfosRAW))
+                                                  out var partiesAccessInfosRAW,
+                                                  out var errorMessageRAW))
                 {
                     var tuple = partiesAccessInfosRAW.FirstOrDefault();
                     if (tuple is not null)
@@ -106,7 +107,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (accessTokenBASE64.HasValue &&
                     CommonAPI.TryGetRemoteParties(accessTokenBASE64.Value,
                                                   totp,
-                                                  out var partiesAccessInfosBASE64))
+                                                  out var partiesAccessInfosBASE64,
+                                                  out var errorMessageBASE64))
                 {
                     var tuple = partiesAccessInfosBASE64.FirstOrDefault();
                     if (tuple is not null)

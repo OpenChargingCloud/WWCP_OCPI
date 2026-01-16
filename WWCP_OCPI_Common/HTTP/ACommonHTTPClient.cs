@@ -86,12 +86,12 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// The HTTP client.
         /// </summary>
-        protected  HTTPTestClient            newHTTPClient;
+        public     HTTPTestClient            NewHTTPClient;
 
         /// <summary>
         /// A HTTP client pool for low-latency HTTP requests.
         /// </summary>
-        protected  HTTPClientPool            httpClientPool;
+        public     HTTPClientPool            NewHTTPClientPool;
 
         #endregion
 
@@ -194,7 +194,7 @@ namespace cloud.charging.open.protocols.OCPI
             this.RemoteAccessToken  = AccessToken;
             this.TokenAuth          = HTTPAuthentication as HTTPTokenAuthentication;
 
-            this.newHTTPClient      = new HTTPTestClient(
+            this.NewHTTPClient      = new HTTPTestClient(
 
                                           URL:                                   this.RemoteURL,
                                           Description:                           this.Description,
@@ -248,7 +248,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                                       );
 
-            this.httpClientPool     = new HTTPClientPool(
+            this.NewHTTPClientPool     = new HTTPClientPool(
 
                                           URL:                                   this.RemoteURL,
                                           Description:                           this.Description,
