@@ -3905,16 +3905,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     // The EMSP Id of the CDR might be different from the remote party identification,
-                    // e.g. when the remote party is a hub!
+                    // e.g. when the remote party is a hub!  POST /ocpi/v2.2.1/emsp/cdrs/DE/GEF/CDR0001
                     var realEMSPId    = EMSP_Id.From(
                                             CDR.CountryCode,
                                             CDR.PartyId
                                         );
 
                     var httpResponse  = await httpClient.POST(
-                                                  Path:                  httpClient.RemoteURL.Path + CDR.CountryCode.ToString() +    // <= Unclear if this URL is correct!
-                                                                                                     CDR.PartyId.    ToString() +
-                                                                                                     CDR.Id.         ToString(),
+                                                  Path:                  httpClient.RemoteURL.Path,//+ CDR.CountryCode.ToString() +    // <= Unclear if this URL is correct!
+                                                                                                   //  CDR.PartyId.    ToString() +
+                                                                                                   //  CDR.Id.         ToString(),
                                                   Content:               CDR.ToJSON(
                                                                              CustomCDRSerializer,
                                                                              CustomCDRTokenSerializer,

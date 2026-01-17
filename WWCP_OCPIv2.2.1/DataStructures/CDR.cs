@@ -774,9 +774,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return false;
                 }
 
-                if (Location is null)
-                    return false;
-
                 #endregion
 
                 #region Parse EnergyMeterId               [optional]

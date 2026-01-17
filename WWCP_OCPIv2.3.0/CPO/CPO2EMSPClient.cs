@@ -4004,9 +4004,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                         );
 
                     var httpResponse  = await httpClient.POST(
-                                                  Path:                  httpClient.RemoteURL.Path + CDR.CountryCode.ToString() +    // <= Unclear if this URL is correct!
-                                                                                                     CDR.PartyId.    ToString() +
-                                                                                                     CDR.Id.         ToString(),
+                                                  Path:                  httpClient.RemoteURL.Path, //+ CDR.CountryCode.ToString() +    // <= Unclear if this URL is correct!
+                                                                                                    //  CDR.PartyId.    ToString() +
+                                                                                                    //  CDR.Id.         ToString(),
                                                   Content:               CDR.ToJSON(
                                                                              CustomCDRSerializer,
                                                                              CustomCDRTokenSerializer,

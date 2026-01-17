@@ -50,7 +50,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// The default HTTP URL path prefix.
         /// </summary>
-        public     static readonly HTTPPath  DefaultURLPathPrefix     = HTTPPath.Parse($"{Version.String}/cpo/");
+        public     static readonly HTTPPath  DefaultURLPathPrefix     = HTTPPath.Parse($"{Version.String}/emsp/");
 
         /// <summary>
         /// The default EMSP API logfile name.
@@ -5848,7 +5848,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + "cdrs/{country_code}/{party_id}",
+                URLPathPrefix + "cdrs",///{country_code}/{party_id}",
                 PostCDRRequest,
                 PostCDRResponse,
                 async request => {
@@ -5875,25 +5875,26 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check party identification
 
-                    if (!request.ParsePartyId(CommonAPI,
-                                              out var partyId,
-                                              out var ocpiResponseBuilder))
-                    {
-                        return ocpiResponseBuilder;
-                    }
+                    //if (!request.ParsePartyId(CommonAPI,
+                    //                          out var partyId,
+                    //                          out var ocpiResponseBuilder))
+                    //{
+                    //    return ocpiResponseBuilder;
+                    //}
 
                     #endregion
 
                     #region Parse newCDR JSON
 
-                    if (!request.TryParseJObjectRequestBody(out var jsonCDR, out ocpiResponseBuilder))
+                    if (!request.TryParseJObjectRequestBody(out var jsonCDR, out var ocpiResponseBuilder))
                         return ocpiResponseBuilder;
 
                     if (!CDR.TryParse(jsonCDR,
                                       out var newCDR,
-                                      out var errorResponse,
-                                      partyId.Value.CountryCode,
-                                      partyId.Value.Party))
+                                      out var errorResponse
+                                      //partyId.Value.CountryCode,
+                                      //partyId.Value.Party
+                                      ))
                     {
 
                         return new OCPIResponse.Builder(request) {

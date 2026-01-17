@@ -50,7 +50,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The default HTTP URL path prefix.
         /// </summary>
-        public     static readonly HTTPPath  DefaultURLPathPrefix     = HTTPPath.Parse($"{Version.String}/cpo/");
+        public     static readonly HTTPPath  DefaultURLPathPrefix     = HTTPPath.Parse($"{Version.String}/emsp/");
 
         /// <summary>
         /// The default EMSP API logfile name.

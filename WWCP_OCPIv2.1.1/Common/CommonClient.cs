@@ -358,6 +358,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                   "The given remote party must have at least one remote access info with a remote versions URL defined! Maybe it did not yet complete the registration process!",
                                                                                   nameof(RemoteParty)
                                                                               ),
+                   Version.Id,
                    RemoteParty.RemoteAccessInfos.First().AccessToken,
                    RemoteParty.RemoteAccessInfos.First().AccessTokenIsBase64Encoded,
                    RemoteParty.RemoteAccessInfos.First().TOTPConfig,
@@ -1083,16 +1084,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             }
 
-            if (versionId.     HasValue &&
-                versionDetails.TryGetValue(versionId.Value, out var currentVersionDetails))
+            if (versionId.     HasValue)
             {
-                foreach (var endpoint in currentVersionDetails.Endpoints)
+
+                if (!versionDetails.ContainsKey(versionId.Value))
+                    await GetVersionDetails(
+                              versionId.Value,
+                              EventTrackingId:    eventTrackingId,
+                              CancellationToken:  CancellationToken
+                          );
+
+                if (versionDetails.TryGetValue(versionId.Value, out var currentVersionDetails))
                 {
-                    if (endpoint.Identifier == ModuleId)
+                    foreach (var endpoint in currentVersionDetails.Endpoints)
                     {
-                        return endpoint.URL;
+                        if (endpoint.Identifier == ModuleId)
+                            return endpoint.URL;
                     }
                 }
+
             }
 
             return new URL?();

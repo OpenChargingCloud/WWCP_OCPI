@@ -370,6 +370,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                   "The given remote party must have at least one remote access info with a remote versions URL defined! Maybe it did not yet complete the registration process!",
                                                                                   nameof(RemoteParty)
                                                                               ),
+                   Version.Id,
                    RemoteParty.RemoteAccessInfos.First().AccessToken,
                    RemoteParty.RemoteAccessInfos.First().AccessTokenIsBase64Encoded,
                    RemoteParty.RemoteAccessInfos.First().TOTPConfig,

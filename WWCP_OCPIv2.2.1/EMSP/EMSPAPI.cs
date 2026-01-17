@@ -50,7 +50,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// The default HTTP URL path prefix.
         /// </summary>
-        public     static readonly HTTPPath  DefaultURLPathPrefix     = HTTPPath.Parse($"{Version.String}/cpo/");
+        public     static readonly HTTPPath  DefaultURLPathPrefix     = HTTPPath.Parse($"{Version.String}/emsp/");
 
         /// <summary>
         /// The default EMSP API logfile name.
@@ -5806,9 +5806,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region POST     ~/cdrs               ///{country_code}/{party_id}       <= Unclear if this URL is correct!
 
             CommonAPI.AddOCPIMethod(
-
+                    //POST /ocpi/v2.2.1/emsp/cdrs/DE/GEF/CDR0001
                 HTTPMethod.POST,
-                URLPathPrefix + "cdrs",///{country_code}/{party_id}",
+                URLPathPrefix + "cdrs",//{country_code}/{party_id}",
                 PostCDRRequest,
                 PostCDRResponse,
                 async request => {

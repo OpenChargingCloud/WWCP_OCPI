@@ -783,9 +783,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     return false;
                 }
 
-                if (Location is null)
-                    return false;
-
                 #endregion
 
                 #region Parse MeterId                     [optional]
@@ -889,7 +886,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (!JSON.ParseMandatoryJSON("total_cost",
                                              "total costs",
                                              Price.TryParse,
-                                             out Price TotalCosts,
+                                             out Price? TotalCosts,
                                              out ErrorResponse))
                 {
                     return false;
@@ -1271,7 +1268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                                                                      CustomTaxAmountSerializer))
                                : null,
 
-                                 new JProperty("total_energy",                 TotalEnergy),
+                                 new JProperty("total_energy",                 TotalEnergy.Value),
 
                            TotalEnergyCost is not null
                                ? new JProperty("total_energy_cost",            TotalEnergyCost.               ToJSON(CustomPriceSerializer,
