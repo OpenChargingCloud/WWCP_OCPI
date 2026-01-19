@@ -1739,127 +1739,132 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 var remoteParties = new PriorityList<RemoteParty>();
 
-                foreach (var remote in CommonAPI.GetRemoteParties(Role.EMSP).
+                foreach (var remote in CommonAPI.GetRemoteParties(Role.EMSP, Role.HUB).
                                            Where(remoteParty => remoteParty.Status == PartyStatus.ENABLED))
                 {
                     remoteParties.Add(remote);
                 }
 
-                var authorizationInfo = await remoteParties.WhenFirst(Work: async remoteParty => {
+                var authorizationInfo = await remoteParties.WhenFirst(
 
-                                                  #region Initial checks
+                                                  Work: async (remoteParty, ct) => {
 
-                                                  var authToken        = LocalAuthentication.AuthToken?.ToString();
+                                                      #region Initial checks
 
-                                                  if (authToken is null)
-                                                      return new AuthorizationInfo(
-                                                                 Allowed:      AllowedType.NOT_ALLOWED,
-                                                                 Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                 Info:         new DisplayText(Languages.en, $"The local authentication must not be null!"),
-                                                                 RemoteParty:  remoteParty
-                                                             );
+                                                      var authToken        = LocalAuthentication.AuthToken?.ToString();
 
-
-                                                  var tokenId = Token_Id.TryParse(authToken);
-
-                                                  if (!tokenId.HasValue)
-                                                      return new AuthorizationInfo(
-                                                                 Allowed:      AllowedType.NOT_ALLOWED,
-                                                                 Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                 Info:         new DisplayText(Languages.en, $"The token identification is invalid!"),
-                                                                 RemoteParty:  remoteParty
-                                                             );
+                                                      if (authToken is null)
+                                                          return new AuthorizationInfo(
+                                                                     Allowed:      AllowedType.NOT_ALLOWED,
+                                                                     Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                     Info:         new DisplayText(Languages.en, $"The local authentication must not be null!"),
+                                                                     RemoteParty:  remoteParty
+                                                                 );
 
 
-                                                  var remoteAccessInfo  = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == RemoteAccessStatus.ONLINE);
+                                                      var tokenId = Token_Id.TryParse(authToken);
 
-                                                  if (remoteAccessInfo is null)
-                                                      return new AuthorizationInfo(
-                                                                 Allowed:      AllowedType.NOT_ALLOWED,
-                                                                 Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                 Info:         new DisplayText(Languages.en, $"No remote access information for '{remoteParty.Id})'"),
-                                                                 RemoteParty:  remoteParty
-                                                             );
-
-
-                                                  remoteParty.CPO2EMSPClient ??= new CPO.HTTP.CPO2EMSPClient(
-
-                                                                                     CPOAPI,
-                                                                                     remoteParty,
-                                                                                     null, // VirtualHostname
-                                                                                     null, // Description
-                                                                                     null, // HTTPLogger
-
-                                                                                     DisableLogging,
-                                                                                     ClientsLoggingPath ?? DefaultHTTPAPI_LoggingPath,
-                                                                                     ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                     ClientsLogfileCreator,
-                                                                                     DNSClient
-
-                                                                                 );
-
-                                                  if (remoteParty.CPO2EMSPClient is null)
-                                                      return new AuthorizationInfo(
-                                                                 Allowed:      AllowedType.NOT_ALLOWED,
-                                                                 Token:        null,
-                                                                 Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
-                                                                 RemoteParty:  remoteParty
-                                                             );
+                                                      if (!tokenId.HasValue)
+                                                          return new AuthorizationInfo(
+                                                                     Allowed:      AllowedType.NOT_ALLOWED,
+                                                                     Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                     Info:         new DisplayText(Languages.en, $"The token identification is invalid!"),
+                                                                     RemoteParty:  remoteParty
+                                                                 );
 
 
-                                                  var cpoClientLogger = new CPO.HTTP.CPO2EMSPClient.Logger(
-                                                                            remoteParty.CPO2EMSPClient,
-                                                                            ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                            ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                            ClientsLogfileCreator
-                                                                        );
+                                                      var remoteAccessInfo  = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == RemoteAccessStatus.ONLINE);
 
-                                                  #endregion
+                                                      if (remoteAccessInfo is null)
+                                                          return new AuthorizationInfo(
+                                                                     Allowed:      AllowedType.NOT_ALLOWED,
+                                                                     Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                     Info:         new DisplayText(Languages.en, $"No remote access information for '{remoteParty.Id})'"),
+                                                                     RemoteParty:  remoteParty
+                                                                 );
 
-                                                  var authorizationInfo = await remoteParty.CPO2EMSPClient.PostToken(
-                                                                                    TokenId:            tokenId.Value,
-                                                                                    TokenType:          TokenType.RFID,
-                                                                                    LocationReference:  null
-                                                                                );
 
-                                                  return authorizationInfo.Data is not null
+                                                      remoteParty.CPO2EMSPClient ??= new CPO.HTTP.CPO2EMSPClient(
 
-                                                             ? new AuthorizationInfo(
-                                                                   authorizationInfo.Data.Allowed,
-                                                                   authorizationInfo.Data.Token,
-                                                                   authorizationInfo.Data.Location,
-                                                                   null, // AuthReference
-                                                                   authorizationInfo.Data.Info,
-                                                                   remoteParty,
-                                                                   EMSP_Id.TryParse(
-                                                                       authorizationInfo.FromCountryCode,
-                                                                       authorizationInfo.FromPartyId
-                                                                   ),
-                                                                   authorizationInfo.Data.Runtime
-                                                               )
+                                                                                         CPOAPI,
+                                                                                         remoteParty,
+                                                                                         null, // VirtualHostname
+                                                                                         null, // Description
+                                                                                         null, // HTTPLogger
 
-                                                             : new AuthorizationInfo(
-                                                                   Allowed:      AllowedType.NOT_ALLOWED,
-                                                                   Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                   Info:         new DisplayText(Languages.en, authorizationInfo.StatusMessage ?? $"No valid response from '{remoteParty.Id})'"),
-                                                                   RemoteParty:  remoteParty
-                                                               );
+                                                                                         DisableLogging,
+                                                                                         ClientsLoggingPath ?? DefaultHTTPAPI_LoggingPath,
+                                                                                         ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                         ClientsLogfileCreator,
+                                                                                         DNSClient
+
+                                                                                     );
+
+                                                      if (remoteParty.CPO2EMSPClient is null)
+                                                          return new AuthorizationInfo(
+                                                                     Allowed:      AllowedType.NOT_ALLOWED,
+                                                                     Token:        null,
+                                                                     Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
+                                                                     RemoteParty:  remoteParty
+                                                                 );
+
+
+                                                      var cpoClientLogger = new CPO.HTTP.CPO2EMSPClient.Logger(
+                                                                                remoteParty.CPO2EMSPClient,
+                                                                                ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                ClientsLogfileCreator
+                                                                            );
+
+                                                      #endregion
+
+                                                      var authorizationInfo = await remoteParty.CPO2EMSPClient.PostToken(
+                                                                                        TokenId:            tokenId.Value,
+                                                                                        TokenType:          TokenType.RFID,
+                                                                                        LocationReference:  null,
+                                                                                        CancellationToken:  ct
+                                                                                    );
+
+                                                      return authorizationInfo.Data is not null
+
+                                                                 ? new AuthorizationInfo(
+                                                                       authorizationInfo.Data.Allowed,
+                                                                       authorizationInfo.Data.Token,
+                                                                       authorizationInfo.Data.Location,
+                                                                       null, // AuthReference
+                                                                       authorizationInfo.Data.Info,
+                                                                       remoteParty,
+                                                                       EMSP_Id.TryParse(
+                                                                           authorizationInfo.FromCountryCode,
+                                                                           authorizationInfo.FromPartyId
+                                                                       ),
+                                                                       authorizationInfo.Data.Runtime
+                                                                   )
+
+                                                                 : new AuthorizationInfo(
+                                                                       Allowed:      AllowedType.NOT_ALLOWED,
+                                                                       Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                       Info:         new DisplayText(Languages.en, authorizationInfo.StatusMessage ?? $"No valid response from '{remoteParty.Id})'"),
+                                                                       RemoteParty:  remoteParty
+                                                                   );
 
                                                   },
 
-                                                  VerifyResult:    result  => result.Allowed == AllowedType.ALLOWED,
+                                                  VerifyResult:           result  => result.Allowed == AllowedType.ALLOWED,
 
-                                                  Timeout:         RequestTimeout ?? TimeSpan.FromSeconds(10),
+                                                  Timeout:                RequestTimeout ?? TimeSpan.FromSeconds(10),
 
-                                                  OnException:     null,
+                                                  ExceptionHandler:            null,
 
-                                                  DefaultResult:   runtime  => new AuthorizationInfo(
-                                                                                   Allowed:   AllowedType.NOT_ALLOWED,
-                                                                                   Token:     null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                   Location:  null,
-                                                                                   Info:      new DisplayText(Languages.en, "No authorization service returned a positive result!"),
-                                                                                   Runtime:   runtime
-                                                                               )
+                                                  DefaultResult:          runtime  => new AuthorizationInfo(
+                                                                                          Allowed:   AllowedType.NOT_ALLOWED,
+                                                                                          Token:     null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                                          Location:  null,
+                                                                                          Info:      new DisplayText(Languages.en, "No authorization service returned a positive result!"),
+                                                                                          Runtime:   runtime
+                                                                                      ),
+
+                                                  ExternalCancellation:   CancellationToken
 
                                               );
 

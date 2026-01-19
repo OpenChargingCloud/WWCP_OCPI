@@ -4592,7 +4592,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region AddRemoteParty(...)
+        #region AddRemoteParty            (...)
 
         public async Task<AddResult<RemoteParty>>
 
@@ -4721,7 +4721,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region AddRemoteParty(...)
+        #region AddRemoteParty            (...)
 
         /// <summary>
         /// Create a new Remote Party with local access only.
@@ -4819,7 +4819,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region AddRemoteParty(...)
+        #region AddRemoteParty            (...)
 
         public async Task<AddResult<RemoteParty>>
 
@@ -4934,7 +4934,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region AddRemoteParty(...)
+        #region AddRemoteParty            (...)
 
         public async Task<AddResult<RemoteParty>>
 
@@ -5000,7 +5000,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region AddRemotePartyIfNotExists(...)
+        #region AddRemotePartyIfNotExists (...)
 
         public async Task<AddResult<RemoteParty>>
 
@@ -5136,7 +5136,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region AddRemotePartyIfNotExists(...)
+        #region AddRemotePartyIfNotExists (...)
 
         /// <summary>
         /// Create a new Remote Party with local access only, if it does not already exist.
@@ -5244,7 +5244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region AddRemotePartyIfNotExists(...)
+        #region AddRemotePartyIfNotExists (...)
 
         public async Task<AddResult<RemoteParty>>
 
@@ -5366,7 +5366,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region AddRemotePartyIfNotExists(...)
+        #region AddRemotePartyIfNotExists (...)
 
         public async Task<AddResult<RemoteParty>>
 
@@ -5439,7 +5439,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region AddOrUpdateRemoteParty(...)
+        #region AddOrUpdateRemoteParty    (...)
 
         public async Task<AddOrUpdateResult<RemoteParty>>
 
@@ -5578,7 +5578,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region AddOrUpdateRemoteParty(...)
+        #region AddOrUpdateRemoteParty    (...)
 
         public async Task<AddOrUpdateResult<RemoteParty>>
 
@@ -5664,7 +5664,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region AddOrUpdateRemoteParty(...)
+        #region AddOrUpdateRemoteParty    (...)
 
         public async Task<AddOrUpdateResult<RemoteParty>>
 
@@ -5789,7 +5789,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region AddOrUpdateRemoteParty(...)
+        #region AddOrUpdateRemoteParty    (...)
 
         public async Task<AddOrUpdateResult<RemoteParty>>
 
@@ -5863,7 +5863,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region UpdateRemoteParty(...)
+        #region UpdateRemoteParty         (...)
 
         public async Task<UpdateResult<RemoteParty>>
 
@@ -5991,7 +5991,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region UpdateRemoteParty(...)
+        #region UpdateRemoteParty         (...)
 
         public async Task<UpdateResult<RemoteParty>>
 
@@ -6066,7 +6066,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region UpdateRemoteParty(...)
+        #region UpdateRemoteParty         (...)
 
         public async Task<UpdateResult<RemoteParty>>
 
@@ -6179,7 +6179,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region UpdateRemoteParty(...)
+        #region UpdateRemoteParty         (...)
 
         public async Task<UpdateResult<RemoteParty>>
 
@@ -6244,7 +6244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region ContainsRemoteParty(RemotePartyId)
+        #region ContainsRemoteParty       (RemotePartyId)
 
         /// <summary>
         /// Whether this API contains a remote party having the given unique identification.
@@ -6256,7 +6256,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region GetRemoteParty     (RemotePartyId)
+        #region GetRemoteParty            (RemotePartyId)
 
         /// <summary>
         /// Get the remote party having the given unique identification.
@@ -6274,7 +6274,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region TryGetRemoteParty  (RemotePartyId, out RemoteParty)
+        #region TryGetRemoteParty         (RemotePartyId, out RemoteParty)
 
         /// <summary>
         /// Try to get the remote party having the given unique identification.
@@ -6291,7 +6291,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region GetRemoteParties   (IncludeFilter = null)
+        #region GetRemoteParties          (IncludeFilter = null)
 
         /// <summary>
         /// Get all remote parties machting the given optional filter.
@@ -6306,7 +6306,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region GetRemoteParties   (CountryCode, PartyId)
+        #region GetRemoteParties          (CountryCode, PartyId)
 
         /// <summary>
         /// Get all remote parties having the given country code and party identification.
@@ -6322,7 +6322,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region GetRemoteParties   (CountryCode, PartyId, Role)
+        #region GetRemoteParties          (CountryCode, PartyId, Role)
 
         /// <summary>
         /// Get all remote parties having the given country code, party identification and role.
@@ -6341,20 +6341,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region GetRemoteParties   (Role)
+        #region GetRemoteParties          (Roles)
 
         /// <summary>
-        /// Get all remote parties having the given role.
+        /// Get all remote parties having one of the given roles.
         /// </summary>
-        /// <param name="Role">The role of the remote parties.</param>
-        public IEnumerable<RemoteParty> GetRemoteParties(Role Role)
+        /// <param name="Roles">An optional list of roles.</param>
+        public IEnumerable<RemoteParty> GetRemoteParties(params Role[] Roles)
 
             => remoteParties.Values.
-                             Where(remoteParty => remoteParty.Role == Role);
+                             Where(remoteParty => Roles.Contains(remoteParty.Role));
 
         #endregion
 
-        #region GetRemoteParties   (AccessToken)
+        #region GetRemoteParties          (AccessToken)
 
         public IEnumerable<RemoteParty> GetRemoteParties(AccessToken AccessToken)
 
@@ -6363,7 +6363,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region GetRemoteParties   (AccessToken, AccessStatus)
+        #region GetRemoteParties          (AccessToken, AccessStatus)
 
         public IEnumerable<RemoteParty> GetRemoteParties(AccessToken   AccessToken,
                                                          AccessStatus  AccessStatus)
@@ -6374,7 +6374,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region GetRemoteParties   (AccessToken, TOTP, out RemoteParties)
+        #region GetRemoteParties          (AccessToken, TOTP, out RemoteParties)
 
         public Boolean TryGetRemoteParties(AccessToken                                           AccessToken,
                                            String?                                               TOTP,
@@ -6427,7 +6427,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region RemoveRemoteParty(RemoteParty)
+        #region RemoveRemoteParty         (RemoteParty)
 
         public async Task<Boolean> RemoveRemoteParty(RemoteParty        RemoteParty,
                                                      EventTracking_Id?  EventTrackingId   = null,
@@ -6454,7 +6454,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region RemoveRemoteParty(RemotePartyId)
+        #region RemoveRemoteParty         (RemotePartyId)
 
         public async Task<Boolean> RemoveRemoteParty(RemoteParty_Id     RemotePartyId,
                                                      EventTracking_Id?  EventTrackingId   = null,
@@ -6481,7 +6481,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region RemoveRemoteParty(CountryCode, PartyId, Role)
+        #region RemoveRemoteParty         (CountryCode, PartyId, Role)
 
         public async Task<Boolean> RemoveRemoteParty(CountryCode        CountryCode,
                                                      Party_Id           PartyId,
@@ -6512,7 +6512,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region RemoveRemoteParty(CountryCode, PartyId, AccessToken)
+        #region RemoveRemoteParty         (CountryCode, PartyId, AccessToken)
 
         public async Task<Boolean> RemoveRemoteParty(CountryCode        CountryCode,
                                                      Party_Id           PartyId,
@@ -6543,7 +6543,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region RemoveAllRemoteParties()
+        #region RemoveAllRemoteParties    ()
 
         public async Task RemoveAllRemoteParties(EventTracking_Id?  EventTrackingId   = null,
                                                  User_Id?           CurrentUserId     = null)

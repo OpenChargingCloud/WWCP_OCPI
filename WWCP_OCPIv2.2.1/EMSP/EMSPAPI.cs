@@ -6492,14 +6492,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         #endregion
 
                         authorizationInfo = new AuthorizationInfo(
-                                                  _tokenStatus.Status,
-                                                  _tokenStatus.Token,
-                                                  _tokenStatus.LocationReference,
-                                                  AuthorizationReference.NewRandom()
-                                                  //new DisplayText(
-                                                  //    _tokenStatus.Token.UILanguage ?? Languages.en,
-                                                  //    responseText
-                                                  //)
+                                                _tokenStatus.Status,
+                                                _tokenStatus.Token,
+                                                _tokenStatus.LocationReference,
+                                                AuthorizationReference.NewRandom()
+                                                //new DisplayText(
+                                                //    _tokenStatus.Token.UILanguage ?? Languages.en,
+                                                //    responseText
+                                                //)
                                             );
 
                         #region Parse optional LocationReference JSON

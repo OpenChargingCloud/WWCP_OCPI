@@ -110,6 +110,40 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
+        #region (static) NewRandom4
+
+        /// <summary>
+        /// Create a new random 4-byte RFID card (user) identification.
+        /// </summary>
+        public static Token_Id NewRandom4
+
+            => Parse(RandomExtensions.RandomHexString(8));
+
+        #endregion
+
+        #region (static) NewRandom7
+
+        /// <summary>
+        /// Create a new random 7-byte RFID card (user) identification.
+        /// </summary>
+        public static Token_Id NewRandom7
+
+            => Parse(RandomExtensions.RandomHexString(14));
+
+        #endregion
+
+        #region (static) NewRandom10
+
+        /// <summary>
+        /// Create a new random 10-byte RFID card (user) identification.
+        /// </summary>
+        public static Token_Id NewRandom10
+
+            => Parse(RandomExtensions.RandomHexString(20));
+
+        #endregion
+
+
         #region (static) Parse   (Text)
 
         /// <summary>

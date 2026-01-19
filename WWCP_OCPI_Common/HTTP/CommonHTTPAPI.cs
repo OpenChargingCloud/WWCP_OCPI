@@ -2598,19 +2598,6 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region GetRemoteParties          (Role)
-
-        ///// <summary>
-        ///// Get all remote parties having the given role.
-        ///// </summary>
-        ///// <param name="Role">The role of the remote parties.</param>
-        //public IEnumerable<RemoteParty> GetRemoteParties(Role Role)
-
-        //    => remoteParties.Values.
-        //                     Where(remoteParty => remoteParty.Roles.Any(credentialsRole => credentialsRole.Role == Role));
-
-        #endregion
-
         #region GetRemoteParties          (AccessToken)
 
         public IEnumerable<RemoteParty> GetRemoteParties(AccessToken AccessToken)

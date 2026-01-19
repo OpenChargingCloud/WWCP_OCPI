@@ -1938,121 +1938,128 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             foreach (var remote in CommonAPI.GetRemoteParties(OCPI.Role.EMSP))
                 remotes.Add(remote);
 
-            var authorizationInfo = await remotes.WhenFirst(Work:            async remoteParty => {
+            var authorizationInfo = await remotes.WhenFirst(
 
-                                                                                       #region Initial checks
+                                              Work:                   async (remoteParty, ct) => {
 
-                                                                                       var authToken        = LocalAuthentication.AuthToken?.ToString();
+                                                                          #region Initial checks
 
-                                                                                       if (authToken is null)
-                                                                                           return new AuthorizationInfo(
-                                                                                                      Allowed:      OCPI.AllowedType.NOT_ALLOWED,
-                                                                                                      Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                                      Info:         new OCPI.DisplayText(Languages.en, $"The local authentication must not be null!"),
-                                                                                                      RemoteParty:  remoteParty
-                                                                                                  );
+                                                                          var authToken        = LocalAuthentication.AuthToken?.ToString();
 
-
-                                                                                       var tokenId = OCPI.Token_Id.TryParse(authToken);
-
-                                                                                       if (!tokenId.HasValue)
-                                                                                           return new AuthorizationInfo(
-                                                                                                      Allowed:      OCPI.AllowedType.NOT_ALLOWED,
-                                                                                                      Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                                      Info:         new OCPI.DisplayText(Languages.en, $"The token identification is invalid!"),
-                                                                                                      RemoteParty:  remoteParty
-                                                                                                  );
+                                                                          if (authToken is null)
+                                                                              return new AuthorizationInfo(
+                                                                                         Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                         Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                                         Info:         new OCPI.DisplayText(Languages.en, $"The local authentication must not be null!"),
+                                                                                         RemoteParty:  remoteParty
+                                                                                     );
 
 
-                                                                                       var remoteAccessInfo  = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == OCPI.RemoteAccessStatus.ONLINE);
+                                                                          var tokenId = OCPI.Token_Id.TryParse(authToken);
 
-                                                                                       if (remoteAccessInfo is null)
-                                                                                           return new AuthorizationInfo(
-                                                                                                      Allowed:      OCPI.AllowedType.NOT_ALLOWED,
-                                                                                                      Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                                      Info:         new OCPI.DisplayText(Languages.en, $"No remote access information for '{remoteParty.Id})'"),
-                                                                                                      RemoteParty:  remoteParty
-                                                                                                  );
-
-
-                                                                                       var cpoClient = new CPO.HTTP.CPO2EMSPClient(
-
-                                                                                                           CPOAPI,
-                                                                                                           remoteParty,
-                                                                                                           null, // VirtualHostname
-                                                                                                           null, // Description
-                                                                                                           null, // HTTPLogger
-
-                                                                                                           DisableLogging,
-                                                                                                           ClientsLoggingPath ?? DefaultHTTPAPI_LoggingPath,
-                                                                                                           ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                                           ClientsLogfileCreator,
-                                                                                                           DNSClient
-
-                                                                                                       );
-
-                                                                                       if (cpoClient is null)
-                                                                                           return new AuthorizationInfo(
-                                                                                                      Allowed:      OCPI.AllowedType.NOT_ALLOWED,
-                                                                                                      Token:        null,
-                                                                                                      Info:         new OCPI.DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
-                                                                                                      RemoteParty:  remoteParty
-                                                                                                  );
+                                                                          if (!tokenId.HasValue)
+                                                                              return new AuthorizationInfo(
+                                                                                         Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                         Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                                         Info:         new OCPI.DisplayText(Languages.en, $"The token identification is invalid!"),
+                                                                                         RemoteParty:  remoteParty
+                                                                                     );
 
 
-                                                                                       var cpoClientLogger = new CPO.HTTP.CPO2EMSPClient.Logger(
-                                                                                                                 cpoClient,
-                                                                                                                 ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                                                                 ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                                                 ClientsLogfileCreator
-                                                                                                             );
+                                                                          var remoteAccessInfo  = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == OCPI.RemoteAccessStatus.ONLINE);
 
-                                                                                       #endregion
+                                                                          if (remoteAccessInfo is null)
+                                                                              return new AuthorizationInfo(
+                                                                                         Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                         Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                                         Info:         new OCPI.DisplayText(Languages.en, $"No remote access information for '{remoteParty.Id})'"),
+                                                                                         RemoteParty:  remoteParty
+                                                                                     );
 
-                                                                                       var authorizationInfo = await cpoClient.PostToken(
-                                                                                                                         TokenId:            tokenId.Value,
-                                                                                                                         TokenType:          TokenType.RFID,
-                                                                                                                         LocationReference:  null
-                                                                                                                     );
 
-                                                                                       return authorizationInfo.Data is not null
+                                                                          var cpoClient = new CPO.HTTP.CPO2EMSPClient(
 
-                                                                                                  ? new AuthorizationInfo(
-                                                                                                        authorizationInfo.Data.Allowed,
-                                                                                                        authorizationInfo.Data.Token,
-                                                                                                        authorizationInfo.Data.Location,
-                                                                                                        null, // AuthReference
-                                                                                                        authorizationInfo.Data.Info,
-                                                                                                        remoteParty,
-                                                                                                        OCPI.EMSP_Id.TryParse(
-                                                                                                            //authorizationInfo.FromCountryCode,
-                                                                                                            authorizationInfo.FromPartyId.ToString()
-                                                                                                        ),
-                                                                                                        authorizationInfo.Data.Runtime
-                                                                                                    )
+                                                                                              CPOAPI,
+                                                                                              remoteParty,
+                                                                                              null, // VirtualHostname
+                                                                                              null, // Description
+                                                                                              null, // HTTPLogger
 
-                                                                                                  : new AuthorizationInfo(
-                                                                                                        Allowed:      OCPI.AllowedType.NOT_ALLOWED,
-                                                                                                        Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                                        Info:         new OCPI.DisplayText(Languages.en, authorizationInfo.StatusMessage ?? $"No valid response from '{remoteParty.Id})'"),
-                                                                                                        RemoteParty:  remoteParty
-                                                                                                    );
+                                                                                              DisableLogging,
+                                                                                              ClientsLoggingPath ?? DefaultHTTPAPI_LoggingPath,
+                                                                                              ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                              ClientsLogfileCreator,
+                                                                                              DNSClient
 
-                                                                                   },
+                                                                                          );
 
-                                                            VerifyResult:    result  => result.Allowed == OCPI.AllowedType.ALLOWED,
+                                                                          if (cpoClient is null)
+                                                                              return new AuthorizationInfo(
+                                                                                         Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                         Token:        null,
+                                                                                         Info:         new OCPI.DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
+                                                                                         RemoteParty:  remoteParty
+                                                                                     );
 
-                                                            Timeout:         RequestTimeout ?? TimeSpan.FromSeconds(10),
 
-                                                            OnException:     null,
+                                                                          var cpoClientLogger = new CPO.HTTP.CPO2EMSPClient.Logger(
+                                                                                                    cpoClient,
+                                                                                                    ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                                    ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                                    ClientsLogfileCreator
+                                                                                                );
 
-                                                            DefaultResult:   runtime  => new AuthorizationInfo(
-                                                                                             Allowed:   OCPI.AllowedType.NOT_ALLOWED,
-                                                                                             Token:     null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                             Location:  null,
-                                                                                             Info:      new OCPI.DisplayText(Languages.en, "No authorization service returned a positiv result!"),
-                                                                                             Runtime:   runtime
-                                                                                         ));
+                                                                          #endregion
+
+                                                                          var authorizationInfo = await cpoClient.PostToken(
+                                                                                                            TokenId:            tokenId.Value,
+                                                                                                            TokenType:          TokenType.RFID,
+                                                                                                            LocationReference:  null,
+                                                                                                            CancellationToken:  ct
+                                                                                                        );
+
+                                                                          return authorizationInfo.Data is not null
+
+                                                                                     ? new AuthorizationInfo(
+                                                                                           authorizationInfo.Data.Allowed,
+                                                                                           authorizationInfo.Data.Token,
+                                                                                           authorizationInfo.Data.Location,
+                                                                                           null, // AuthReference
+                                                                                           authorizationInfo.Data.Info,
+                                                                                           remoteParty,
+                                                                                           EMSP_Id.TryParse(
+                                                                                               //authorizationInfo.FromCountryCode,
+                                                                                               authorizationInfo.FromPartyId.ToString()
+                                                                                           ),
+                                                                                           authorizationInfo.Data.Runtime
+                                                                                       )
+
+                                                                                     : new AuthorizationInfo(
+                                                                                           Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                           Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                                           Info:         new DisplayText(Languages.en, authorizationInfo.StatusMessage ?? $"No valid response from '{remoteParty.Id})'"),
+                                                                                           RemoteParty:  remoteParty
+                                                                                       );
+
+                                                                      },
+
+                                              VerifyResult:           result  => result.Allowed == AllowedType.ALLOWED,
+
+                                              Timeout:                RequestTimeout ?? TimeSpan.FromSeconds(10),
+
+                                              ExceptionHandler:            null,
+
+                                              DefaultResult:          runtime  => new AuthorizationInfo(
+                                                                                      Allowed:   AllowedType.NOT_ALLOWED,
+                                                                                      Token:     null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                                      Location:  null,
+                                                                                      Info:      new DisplayText(Languages.en, "No authorization service returned a positiv result!"),
+                                                                                      Runtime:   runtime
+                                                                                  ),
+
+                                              ExternalCancellation:   CancellationToken
+
+                                          ).ConfigureAwait(false);
 
 
             DateTimeOffset         endtime;
@@ -2063,7 +2070,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (authorizationInfo is null)
                 authStartResult = WWCP.AuthStartResult.CommunicationTimeout(Id, this, SessionId);
 
-            else if (authorizationInfo.Allowed == OCPI.AllowedType.ALLOWED)
+            else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
                 authStartResult = WWCP.AuthStartResult.Authorized(
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,
@@ -2085,7 +2092,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Runtime:                   null
                        );
 
-            else if (authorizationInfo.Allowed == OCPI.AllowedType.BLOCKED)
+            else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
                 authStartResult = WWCP.AuthStartResult.Blocked(
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,
@@ -2097,7 +2104,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Runtime:                   null
                        );
 
-            else if (authorizationInfo.Allowed == OCPI.AllowedType.EXPIRED)
+            else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
                 authStartResult = WWCP.AuthStartResult.Expired(
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,
@@ -2109,7 +2116,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Runtime:                   null
                        );
 
-            else if (authorizationInfo.Allowed == OCPI.AllowedType.NO_CREDIT)
+            else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
                 authStartResult = WWCP.AuthStartResult.NoCredit(
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,
@@ -2121,7 +2128,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Runtime:                   null
                        );
 
-            else if (authorizationInfo.Allowed == OCPI.AllowedType.NOT_ALLOWED)
+            else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
                 authStartResult = WWCP.AuthStartResult.NotAuthorized(
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,

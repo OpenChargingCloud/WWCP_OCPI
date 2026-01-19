@@ -2227,7 +2227,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 var authorizationInfo = await remoteParties.WhenFirst(
 
-                                                  Work:           async remoteParty => {
+                                                  Work:  async (remoteParty, ct) => {
 
                                                       #region Initial checks
 
@@ -2270,7 +2270,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                       var authorizationInfo = await cpo2EMSPClient.PostToken(
                                                                                         TokenId:            tokenId,
                                                                                         TokenType:          TokenType.RFID,
-                                                                                        LocationReference:  null
+                                                                                        LocationReference:  null,
+                                                                                        CancellationToken:  ct
                                                                                     ).ConfigureAwait(false);
 
                                                       return authorizationInfo.Data is not null
@@ -2295,18 +2296,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                   },
 
-                                                  VerifyResult:   result  => result.Allowed == AllowedType.ALLOWED,
-                                                  Timeout:        RequestTimeout ?? TimeSpan.FromSeconds(10),
-                                                  OnException:    null,
-                                                  DefaultResult:  runtime => new AuthorizationInfo(
-                                                                                 Allowed:   AllowedType.NOT_ALLOWED,
-                                                                                 Location:  null,
-                                                                                 Info:      new DisplayText(
-                                                                                                Languages.en,
-                                                                                                "No authorization service returned a positive result!"
-                                                                                            ),
-                                                                                 Runtime:   runtime
-                                                                             )
+                                                  VerifyResult:           result  => result.Allowed == AllowedType.ALLOWED, Timeout:        RequestTimeout ?? TimeSpan.FromSeconds(10), ExceptionHandler:    null, DefaultResult:  runtime => new AuthorizationInfo(
+                                                                                         Allowed:   AllowedType.NOT_ALLOWED,
+                                                                                         Location:  null,
+                                                                                         Info:      new DisplayText(
+                                                                                                        Languages.en,
+                                                                                                        "No authorization service returned a positive result!"
+                                                                                                    ),
+                                                                                         Runtime:   runtime
+                                                                                     ),
+
+                                                  ExternalCancellation:   CancellationToken
 
                                               ).ConfigureAwait(false);
 
@@ -2544,7 +2544,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 var authorizationInfo = await remoteParties.WhenFirst(
 
-                                                  Work:           async remoteParty => {
+                                                  Work:  async (remoteParty, ct) => {
 
                                                       #region Initial checks
 
@@ -2587,7 +2587,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                       var authorizationInfo = await cpo2EMSPClient.PostToken(
                                                                                         TokenId:            tokenId,
                                                                                         TokenType:          TokenType.RFID,
-                                                                                        LocationReference:  null
+                                                                                        LocationReference:  null,
+                                                                                        CancellationToken:  ct
                                                                                     ).ConfigureAwait(false);
 
                                                       return authorizationInfo.Data is not null
@@ -2612,18 +2613,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                   },
 
-                                                  VerifyResult:   result  => result.Allowed == AllowedType.ALLOWED,
-                                                  Timeout:        RequestTimeout ?? TimeSpan.FromSeconds(10),
-                                                  OnException:    null,
-                                                  DefaultResult:  runtime => new AuthorizationInfo(
-                                                                                 Allowed:   AllowedType.NOT_ALLOWED,
-                                                                                 Location:  null,
-                                                                                 Info:      new DisplayText(
-                                                                                                Languages.en,
-                                                                                                "No authorization service returned a positive result!"
-                                                                                            ),
-                                                                                 Runtime:   runtime
-                                                                             )
+                                                  VerifyResult:           result  => result.Allowed == AllowedType.ALLOWED,
+
+                                                  Timeout:                RequestTimeout ?? TimeSpan.FromSeconds(10),
+                                                  ExceptionHandler:            null,
+                                                  DefaultResult:          runtime => new AuthorizationInfo(
+                                                                                         Allowed:        AllowedType.NOT_ALLOWED,
+                                                                                         Location:       null,
+                                                                                         Info:           new DisplayText(
+                                                                                                             Languages.en,
+                                                                                                             "No authorization service returned a positive result!"
+                                                                                                         ),
+                                                                                         Runtime:        runtime
+                                                                                     ),
+
+                                                  ExternalCancellation:   CancellationToken
 
                                               ).ConfigureAwait(false);
 
