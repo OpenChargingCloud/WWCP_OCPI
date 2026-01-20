@@ -231,7 +231,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The optional enumeration of facilities this location directly belongs to.
         /// </summary>
         [Optional]
-        public IEnumerable<Facilities>             Facilities               { get; }
+        public IEnumerable<Facility>             Facilities               { get; }
 
         /// <summary>
         /// One of IANA tzdata’s TZ-values representing the time zone of the location (http://www.iana.org/time-zones).
@@ -385,7 +385,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         BusinessDetails?                                              Operator                                     = null,
                         BusinessDetails?                                              SubOperator                                  = null,
                         BusinessDetails?                                              Owner                                        = null,
-                        IEnumerable<Facilities>?                                      Facilities                                   = null,
+                        IEnumerable<Facility>?                                      Facilities                                   = null,
                         Hours?                                                        OpeningTimes                                 = null,
                         Boolean?                                                      ChargingWhenClosed                           = null,
                         IEnumerable<Image>?                                           Images                                       = null,
@@ -939,8 +939,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptionalHashSet("facilities",
                                               "facilities",
-                                              OCPIv2_3_0.Facilities.TryParse,
-                                              out HashSet<Facilities> Facilities,
+                                              OCPIv2_3_0.Facility.TryParse,
+                                              out HashSet<Facility> Facilities,
                                               out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -1325,7 +1325,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    Operator?.       Clone(),
                    SubOperator?.    Clone(),
                    Owner?.          Clone(),
-                   Facilities.      Select(facility        => facility.       Clone()),
+                   [.. Facilities],
                    OpeningTimes?.   Clone(),
                    ChargingWhenClosed,
                    Images.          Select(image           => image.          Clone()),
@@ -2305,7 +2305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// The optional enumeration of facilities this location directly belongs to.
             /// </summary>
             [Optional]
-            public HashSet<Facilities>                 Facilities               { get; }
+            public HashSet<Facility>                 Facilities               { get; }
 
             /// <summary>
             /// One of IANA tzdata’s TZ-values representing the time zone of the location (http://www.iana.org/time-zones).
@@ -2439,7 +2439,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            BusinessDetails?                     Operator             = null,
                            BusinessDetails?                     SubOperator          = null,
                            BusinessDetails?                     Owner                = null,
-                           IEnumerable<Facilities>?             Facilities           = null,
+                           IEnumerable<Facility>?             Facilities           = null,
                            Hours?                               OpeningTimes         = null,
                            Boolean?                             ChargingWhenClosed   = null,
                            IEnumerable<Image>?                  Images               = null,

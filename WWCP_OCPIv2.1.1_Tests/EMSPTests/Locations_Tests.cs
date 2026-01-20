@@ -230,7 +230,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                       URL.Parse("http://ahzf.de/logo_small.gif")
                                   )
                               ),
-                              [ Facilities.CAFE ],
+                              [ Facility.CAFE ],
                               "Europe/Berlin",
                               new Hours(
                                   [
@@ -815,7 +815,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                       URL.Parse("http://ahzf.de/logo_small.gif")
                                   )
                               ),
-                              [ Facilities.CAFE ],
+                              [ Facility.CAFE ],
                               "Europe/Berlin",
                               new Hours(
                                   [
@@ -1171,7 +1171,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                       URL.Parse("http://ahzf.de/logo_small.gif")
                                   )
                               ),
-                              [ Facilities.CAFE ],
+                              [ Facility.CAFE ],
                               "Europe/Berlin",
                               new Hours(
                                   [
@@ -1581,7 +1581,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                       URL.Parse("http://ahzf.de/logo_small.gif")
                                   )
                               ),
-                              [ Facilities.CAFE ],
+                              [ Facility.CAFE ],
                               "Europe/Berlin",
                               new Hours(
                                   [
@@ -1918,7 +1918,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                       URL.Parse("http://ahzf.de/logo_small.gif")
                                   )
                               ),
-                              [ Facilities.CAFE ],
+                              [ Facility.CAFE ],
                               "Europe/Berlin",
                               new Hours(
                                   [
@@ -2274,7 +2274,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                       URL.Parse("http://ahzf.de/logo_small.gif")
                                   )
                               ),
-                              [ Facilities.CAFE ],
+                              [ Facility.CAFE ],
                               "Europe/Berlin",
                               new Hours(
                                   [
@@ -2690,7 +2690,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                        )
                                                    ),
                                                    new[] {
-                                                       Facilities.CAFE
+                                                       Facility.CAFE
                                                    },
                                                    "Europe/Berlin",
                                                    new Hours(
@@ -3014,7 +3014,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                        )
                                                    ),
                                                    new[] {
-                                                       Facilities.CAFE
+                                                       Facility.CAFE
                                                    },
                                                    "Europe/Berlin",
                                                    new Hours(
@@ -3337,7 +3337,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                        )
                                                    ),
                                                    new[] {
-                                                       Facilities.CAFE
+                                                       Facility.CAFE
                                                    },
                                                    "Europe/Berlin",
                                                    new Hours(
@@ -3660,7 +3660,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                        )
                                                    ),
                                                    new[] {
-                                                       Facilities.CAFE
+                                                       Facility.CAFE
                                                    },
                                                    "Europe/Berlin",
                                                    new Hours(

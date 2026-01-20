@@ -221,7 +221,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                        )
                    ),
                    [
-                       OCPIv2_1_1.Facilities.CAFE
+                       OCPIv2_1_1.Facility.CAFE
                    ],
                    "Europe/Berlin",
                    new Hours(
@@ -445,7 +445,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                        )
                    ),
                    [
-                       OCPIv2_2_1.Facilities.CAFE
+                       OCPIv2_2_1.Facility.CAFE
                    ],
                    new Hours(
                        [
@@ -701,7 +701,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                        )
                    ),
 
-                   [ OCPIv2_3_0.Facilities.CAFE ],
+                   [ OCPIv2_3_0.Facility.CAFE ],
                    new Hours(
                        [
                            new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),

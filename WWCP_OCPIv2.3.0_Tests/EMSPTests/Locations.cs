@@ -243,7 +243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       URL.Parse("http://ahzf.de/logo_small.gif")
                                   )
                               ),
-                              [ Facilities.CAFE ],
+                              [ Facility.CAFE ],
                               new Hours(
                                   [
                                       new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -571,7 +571,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       URL.Parse("http://ahzf.de/logo_small.gif")
                                   )
                               ),
-                              [ Facilities.CAFE ],
+                              [ Facility.CAFE ],
                               new Hours(
                                   [
                                       new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -909,7 +909,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       URL.Parse("http://ahzf.de/logo_small.gif")
                                   )
                               ),
-                              [ Facilities.CAFE ],
+                              [ Facility.CAFE ],
                               new Hours(
                                   [
                                       new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -1238,7 +1238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       URL.Parse("http://ahzf.de/logo_small.gif")
                                   )
                               ),
-                              [ Facilities.CAFE ],
+                              [ Facility.CAFE ],
                               new Hours(
                                   [
                                       new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -1566,7 +1566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       URL.Parse("http://ahzf.de/logo_small.gif")
                                   )
                               ),
-                              [ Facilities.CAFE ],
+                              [ Facility.CAFE ],
                               new Hours(
                                   [
                                       new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -1895,7 +1895,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       URL.Parse("http://ahzf.de/logo_small.gif")
                                   )
                               ),
-                              [ Facilities.CAFE ],
+                              [ Facility.CAFE ],
                               new Hours(
                                   [
                                       new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -2226,7 +2226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       URL.Parse("http://ahzf.de/logo_small.gif")
                                   )
                               ),
-                              [ Facilities.CAFE ],
+                              [ Facility.CAFE ],
                               new Hours(
                                   [
                                       new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -2556,7 +2556,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       URL.Parse("http://ahzf.de/logo_small.gif")
                                   )
                               ),
-                              [ Facilities.CAFE ],
+                              [ Facility.CAFE ],
                               new Hours(
                                   [
                                       new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -2886,7 +2886,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       URL.Parse("http://ahzf.de/logo_small.gif")
                                   )
                               ),
-                              [ Facilities.CAFE ],
+                              [ Facility.CAFE ],
                               new Hours(
                                   [
                                       new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),

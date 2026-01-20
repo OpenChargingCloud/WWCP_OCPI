@@ -158,7 +158,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The optional enumeration of facilities this location directly belongs to.
         /// </summary>
         [Optional]
-        public IEnumerable<Facilities>             Facilities               { get; }
+        public IEnumerable<Facility>               Facilities               { get; }
 
         /// <summary>
         /// The optional times when the EVSEs at the location can be accessed for charging.
@@ -304,7 +304,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                         BusinessDetails?                                                SubOperator                                  = null,
                         BusinessDetails?                                                Owner                                        = null,
                         IEnumerable<LocationService>?                                   Services                                     = null,
-                        IEnumerable<Facilities>?                                        Facilities                                   = null,
+                        IEnumerable<Facility>?                                          Facilities                                   = null,
                         Hours?                                                          OpeningTimes                                 = null,
                         Boolean?                                                        ChargingWhenClosed                           = null,
                         IEnumerable<Image>?                                             Images                                       = null,
@@ -476,7 +476,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                           BusinessDetails?                                                SubOperator                                  = null,
                           BusinessDetails?                                                Owner                                        = null,
                           IEnumerable<LocationService>?                                   Services                                     = null,
-                          IEnumerable<Facilities>?                                        Facilities                                   = null,
+                          IEnumerable<Facility>?                                          Facilities                                   = null,
                           Hours?                                                          OpeningTimes                                 = null,
                           Boolean?                                                        ChargingWhenClosed                           = null,
                           IEnumerable<Image>?                                             Images                                       = null,
@@ -976,8 +976,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptionalHashSet("facilities",
                                               "facilities",
-                                              OCPIv3_0.Facilities.TryParse,
-                                              out HashSet<Facilities> Facilities,
+                                              OCPIv3_0.Facility.TryParse,
+                                              out HashSet<Facility> Facilities,
                                               out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -1384,7 +1384,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    SubOperator?.    Clone(),
                    Owner?.          Clone(),
                    Services.        Select(service         => service.        Clone()),
-                   Facilities.      Select(facility        => facility.       Clone()),
+                   [.. Facilities],
                    OpeningTimes?.   Clone(),
                    ChargingWhenClosed,
                    Images.          Select(image           => image.          Clone()),
@@ -2245,7 +2245,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The optional enumeration of facilities this location directly belongs to.
             /// </summary>
             [Optional]
-            public HashSet<Facilities>             Facilities               { get; } = [];
+            public HashSet<Facility>               Facilities               { get; } = [];
 
             /// <summary>
             /// The optional times when the EVSEs at the location can be accessed for charging.
@@ -2365,7 +2365,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            BusinessDetails?                     SubOperator          = null,
                            BusinessDetails?                     Owner                = null,
                            IEnumerable<LocationService>?        Services             = null,
-                           IEnumerable<Facilities>?             Facilities           = null,
+                           IEnumerable<Facility>?               Facilities           = null,
                            Hours?                               OpeningTimes         = null,
                            Boolean?                             ChargingWhenClosed   = null,
                            IEnumerable<Image>?                  Images               = null,
@@ -2390,22 +2390,22 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 this.Publish             = Publish;
                 this.Timezone            = Timezone;
 
-                this.PublishAllowedTo    = PublishAllowedTo is not null ? new HashSet<PublishToken>         (PublishAllowedTo) : [];
+                this.PublishAllowedTo    = PublishAllowedTo is not null ? [.. PublishAllowedTo] : [];
                 this.Name                = Name;
                 this.Address             = Address;
-                this.RelatedLocations    = RelatedLocations is not null ? new HashSet<AdditionalGeoLocation>(RelatedLocations) : [];
+                this.RelatedLocations    = RelatedLocations is not null ? [.. RelatedLocations] : [];
                 this.ParkingType         = ParkingType;
-                this.Directions          = Directions       is not null ? new HashSet<DisplayText>          (Directions)       : [];
+                this.Directions          = Directions       is not null ? [.. Directions]       : [];
                 this.Operator            = Operator;
                 this.SubOperator         = SubOperator;
                 this.Owner               = Owner;
-                this.Services            = Services         is not null ? new HashSet<LocationService>      (Services)         : [];
-                this.Facilities          = Facilities       is not null ? new HashSet<Facilities>           (Facilities)       : [];
+                this.Services            = Services         is not null ? [.. Services]         : [];
+                this.Facilities          = Facilities       is not null ? [.. Facilities]       : [];
                 this.OpeningTimes        = OpeningTimes;
                 this.ChargingWhenClosed  = ChargingWhenClosed;
-                this.Images              = Images           is not null ? new HashSet<Image>                (Images)           : [];
+                this.Images              = Images           is not null ? [.. Images]           : [];
                 this.EnergyMix           = EnergyMix;
-                this.EnergyMeters        = EnergyMeters     is not null ? new HashSet<EnergyMeter<Location>>(EnergyMeters)     : [];
+                this.EnergyMeters        = EnergyMeters     is not null ? [.. EnergyMeters]     : [];
                 this.MaxPower            = MaxPower;
                 this.HelpPhone           = HelpPhone;
 

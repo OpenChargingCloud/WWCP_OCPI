@@ -212,7 +212,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                                   )
                               ),
                               new[] {
-                                  Facilities.CAFE
+                                  Facility.CAFE
                               },
                               new Hours(
                                   new[] {
@@ -510,7 +510,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                                   )
                               ),
                               new[] {
-                                  Facilities.CAFE
+                                  Facility.CAFE
                               },
                               new Hours(
                                   new[] {
@@ -818,7 +818,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                                   )
                               ),
                               new[] {
-                                  Facilities.CAFE
+                                  Facility.CAFE
                               },
                               new Hours(
                                   new[] {
@@ -1117,7 +1117,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                                   )
                               ),
                               new[] {
-                                  Facilities.CAFE
+                                  Facility.CAFE
                               },
                               new Hours(
                                   new[] {
@@ -1415,7 +1415,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                                   )
                               ),
                               new[] {
-                                  Facilities.CAFE
+                                  Facility.CAFE
                               },
                               new Hours(
                                   new[] {
@@ -1714,7 +1714,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                                   )
                               ),
                               [
-                                  Facilities.CAFE
+                                  Facility.CAFE
                               ],
                               new Hours(
                                   [
@@ -2015,7 +2015,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                                   )
                               ),
                               [
-                                  Facilities.CAFE
+                                  Facility.CAFE
                               ],
                               new Hours(
                                   [
@@ -2315,7 +2315,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                                   )
                               ),
                               [
-                                  Facilities.CAFE
+                                  Facility.CAFE
                               ],
                               new Hours(
                                   [
@@ -2615,7 +2615,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                                   )
                               ),
                               [
-                                  Facilities.CAFE
+                                  Facility.CAFE
                               ],
                               new Hours(
                                   [

@@ -229,7 +229,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         URL.Parse("http://ahzf.de/logo_small.gif")
                                     )
                                 ),
-                                [ Facilities.CAFE ],
+                                [ Facility.CAFE ],
                                 "Europe/Berlin",
                                 new Hours(
                                     [
@@ -533,7 +533,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     )
                                 ),
                                 new[] {
-                                    Facilities.CAFE
+                                    Facility.CAFE
                                 },
                                 "Europe/Berlin",
                                 new Hours(
@@ -802,7 +802,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     )
                                 ),
                                 new[] {
-                                    Facilities.CAFE
+                                    Facility.CAFE
                                 },
                                 "Europe/Berlin",
                                 new Hours(
@@ -1071,7 +1071,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     )
                                 ),
                                 new[] {
-                                    Facilities.CAFE
+                                    Facility.CAFE
                                 },
                                 "Europe/Berlin",
                                 new Hours(
@@ -1340,7 +1340,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     )
                                 ),
                                 new[] {
-                                    Facilities.CAFE
+                                    Facility.CAFE
                                 },
                                 "Europe/Berlin",
                                 new Hours(
@@ -1608,7 +1608,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     )
                                 ),
                                 new[] {
-                                    Facilities.CAFE
+                                    Facility.CAFE
                                 },
                                 "Europe/Berlin",
                                 new Hours(
@@ -1879,7 +1879,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     )
                                 ),
                                 new[] {
-                                    Facilities.CAFE
+                                    Facility.CAFE
                                 },
                                 "Europe/Berlin",
                                 new Hours(
@@ -2153,7 +2153,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     )
                                 ),
                                 new[] {
-                                    Facilities.CAFE
+                                    Facility.CAFE
                                 },
                                 "Europe/Berlin",
                                 new Hours(
@@ -2423,7 +2423,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     )
                                 ),
                                 new[] {
-                                    Facilities.CAFE
+                                    Facility.CAFE
                                 },
                                 "Europe/Berlin",
                                 new Hours(
@@ -2498,8 +2498,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),  patchResult.PatchedData.Id);
                 ClassicAssert.AreEqual ("Location 0001",               patchResult.PatchedData.Name);
                 ClassicAssert.AreEqual (2,                             patchResult.PatchedData.Facilities.        Count());
-                ClassicAssert.AreEqual (Facilities.Parse("CAFE"),      patchResult.PatchedData.Facilities.        First());
-                ClassicAssert.AreEqual (Facilities.Parse("AIRPORT"),   patchResult.PatchedData.Facilities.Skip(1).First());
+                ClassicAssert.AreEqual (Facility.Parse("CAFE"),      patchResult.PatchedData.Facilities.        First());
+                ClassicAssert.AreEqual (Facility.Parse("AIRPORT"),   patchResult.PatchedData.Facilities.Skip(1).First());
                 ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToISO8601());
             }
 
@@ -2696,7 +2696,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     )
                                 ),
                                 new[] {
-                                    Facilities.CAFE
+                                    Facility.CAFE
                                 },
                                 "Europe/Berlin",
                                 new Hours(
@@ -2967,7 +2967,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     )
                                 ),
                                 new[] {
-                                    Facilities.CAFE
+                                    Facility.CAFE
                                 },
                                 "Europe/Berlin",
                                 new Hours(
@@ -3237,7 +3237,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     )
                                 ),
                                 new[] {
-                                    Facilities.CAFE
+                                    Facility.CAFE
                                 },
                                 "Europe/Berlin",
                                 new Hours(
@@ -3506,7 +3506,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     )
                                 ),
                                 new[] {
-                                    Facilities.CAFE
+                                    Facility.CAFE
                                 },
                                 "Europe/Berlin",
                                 new Hours(

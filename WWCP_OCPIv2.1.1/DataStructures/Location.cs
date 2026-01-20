@@ -186,7 +186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The optional enumeration of facilities this charging location directly belongs to.
         /// </summary>
         [Optional]
-        public    IEnumerable<Facilities>             Facilities               { get; }
+        public    IEnumerable<Facility>             Facilities               { get; }
 
         /// <summary>
         /// One of IANA tzdata’s TZ-values representing the time zone of the charging location (http://www.iana.org/time-zones).
@@ -316,7 +316,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         BusinessDetails?                                              Operator                                     = null,
                         BusinessDetails?                                              SubOperator                                  = null,
                         BusinessDetails?                                              Owner                                        = null,
-                        IEnumerable<Facilities>?                                      Facilities                                   = null,
+                        IEnumerable<Facility>?                                      Facilities                                   = null,
                         String?                                                       Timezone                                     = null,
                         Hours?                                                        OpeningTimes                                 = null,
                         Boolean?                                                      ChargingWhenClosed                           = null,
@@ -463,7 +463,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         BusinessDetails?                                              Operator                                     = null,
                         BusinessDetails?                                              SubOperator                                  = null,
                         BusinessDetails?                                              Owner                                        = null,
-                        IEnumerable<Facilities>?                                      Facilities                                   = null,
+                        IEnumerable<Facility>?                                      Facilities                                   = null,
                         String?                                                       Timezone                                     = null,
                         Hours?                                                        OpeningTimes                                 = null,
                         Boolean?                                                      ChargingWhenClosed                           = null,
@@ -514,7 +514,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.Operator             = Operator;
             this.SubOperator          = SubOperator;
             this.Owner                = Owner;
-            this.Facilities           = Facilities?.      Distinct() ?? Array.Empty<Facilities>();
+            this.Facilities           = Facilities?.      Distinct() ?? Array.Empty<Facility>();
             this.Timezone             = Timezone;
             this.OpeningTimes         = OpeningTimes;
             this.ChargingWhenClosed   = ChargingWhenClosed;
@@ -934,8 +934,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (JSON.ParseOptionalHashSet("facilities",
                                               "facilities",
-                                              OCPIv2_1_1.Facilities.TryParse,
-                                              out HashSet<Facilities> Facilities,
+                                              OCPIv2_1_1.Facility.TryParse,
+                                              out HashSet<Facility> Facilities,
                                               out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -1283,7 +1283,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    Operator?.       Clone(),
                    SubOperator?.    Clone(),
                    Owner?.          Clone(),
-                   Facilities.      Select(facility        => facility.       Clone()),
+                   [.. Facilities],
                    Timezone?.       CloneString(),
                    OpeningTimes?.   Clone(),
                    ChargingWhenClosed,
@@ -2160,7 +2160,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             /// The optional enumeration of facilities this charging location directly belongs to.
             /// </summary>
             [Optional]
-            public HashSet<Facilities>                 Facilities               { get; }
+            public HashSet<Facility>                 Facilities               { get; }
 
             /// <summary>
             /// One of IANA tzdata’s TZ-values representing the time zone of the charging location (http://www.iana.org/time-zones).
@@ -2271,7 +2271,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            BusinessDetails?                     Operator             = null,
                            BusinessDetails?                     SubOperator          = null,
                            BusinessDetails?                     Owner                = null,
-                           IEnumerable<Facilities>?             Facilities           = null,
+                           IEnumerable<Facility>?             Facilities           = null,
                            String?                              Timezone             = null,
                            Hours?                               OpeningTimes         = null,
                            Boolean?                             ChargingWhenClosed   = null,

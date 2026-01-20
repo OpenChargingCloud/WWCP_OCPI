@@ -370,10 +370,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region ToOCPI             (this Facilities)
 
-        public static IEnumerable<Facilities> ToOCPI(this IEnumerable<WWCP.Facilities> Facilities)
+        public static IEnumerable<Facility> ToOCPI(this IEnumerable<WWCP.Facility> Facilities)
         {
 
-            var facilities = new HashSet<Facilities>();
+            var facilities = new HashSet<Facility>();
 
             foreach (var facility in Facilities)
             {
@@ -381,26 +381,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 switch (facility.ToString())
                 {
 
-                    case "HOTEL":           facilities.Add(OCPIv2_2_1.Facilities.HOTEL);            break;
-                    case "RESTAURANT":      facilities.Add(OCPIv2_2_1.Facilities.RESTAURANT);       break;
-                    case "CAFE":            facilities.Add(OCPIv2_2_1.Facilities.CAFE);             break;
-                    case "MALL":            facilities.Add(OCPIv2_2_1.Facilities.MALL);             break;
-                    case "SUPERMARKET":     facilities.Add(OCPIv2_2_1.Facilities.SUPERMARKET);      break;
-                    case "SPORT":           facilities.Add(OCPIv2_2_1.Facilities.SPORT);            break;
-                    case "RECREATION_AREA": facilities.Add(OCPIv2_2_1.Facilities.RECREATION_AREA);  break;
-                    case "NATURE":          facilities.Add(OCPIv2_2_1.Facilities.NATURE);           break;
-                    case "MUSEUM":          facilities.Add(OCPIv2_2_1.Facilities.MUSEUM);           break;
-                    case "BIKE_SHARING":    facilities.Add(OCPIv2_2_1.Facilities.BIKE_SHARING);     break;
-                    case "BUS_STOP":        facilities.Add(OCPIv2_2_1.Facilities.BUS_STOP);         break;
-                    case "TAXI_STAND":      facilities.Add(OCPIv2_2_1.Facilities.TAXI_STAND);       break;
-                    case "TRAM_STOP":       facilities.Add(OCPIv2_2_1.Facilities.TRAM_STOP);        break;
-                    case "METRO_STATION":   facilities.Add(OCPIv2_2_1.Facilities.METRO_STATION);    break;
-                    case "TRAIN_STATION":   facilities.Add(OCPIv2_2_1.Facilities.TRAIN_STATION);    break;
-                    case "AIRPORT":         facilities.Add(OCPIv2_2_1.Facilities.AIRPORT);          break;
-                    case "PARKING_LOT":     facilities.Add(OCPIv2_2_1.Facilities.PARKING_LOT);      break;
-                    case "CARPOOL_PARKING": facilities.Add(OCPIv2_2_1.Facilities.CARPOOL_PARKING);  break;
-                    case "FUEL_STATION":    facilities.Add(OCPIv2_2_1.Facilities.FUEL_STATION);     break;
-                    case "WIFI":            facilities.Add(OCPIv2_2_1.Facilities.WIFI);             break;
+                    case "HOTEL":           facilities.Add(OCPIv2_2_1.Facility.HOTEL);            break;
+                    case "RESTAURANT":      facilities.Add(OCPIv2_2_1.Facility.RESTAURANT);       break;
+                    case "CAFE":            facilities.Add(OCPIv2_2_1.Facility.CAFE);             break;
+                    case "MALL":            facilities.Add(OCPIv2_2_1.Facility.MALL);             break;
+                    case "SUPERMARKET":     facilities.Add(OCPIv2_2_1.Facility.SUPERMARKET);      break;
+                    case "SPORT":           facilities.Add(OCPIv2_2_1.Facility.SPORT);            break;
+                    case "RECREATION_AREA": facilities.Add(OCPIv2_2_1.Facility.RECREATION_AREA);  break;
+                    case "NATURE":          facilities.Add(OCPIv2_2_1.Facility.NATURE);           break;
+                    case "MUSEUM":          facilities.Add(OCPIv2_2_1.Facility.MUSEUM);           break;
+                    case "BIKE_SHARING":    facilities.Add(OCPIv2_2_1.Facility.BIKE_SHARING);     break;
+                    case "BUS_STOP":        facilities.Add(OCPIv2_2_1.Facility.BUS_STOP);         break;
+                    case "TAXI_STAND":      facilities.Add(OCPIv2_2_1.Facility.TAXI_STAND);       break;
+                    case "TRAM_STOP":       facilities.Add(OCPIv2_2_1.Facility.TRAM_STOP);        break;
+                    case "METRO_STATION":   facilities.Add(OCPIv2_2_1.Facility.METRO_STATION);    break;
+                    case "TRAIN_STATION":   facilities.Add(OCPIv2_2_1.Facility.TRAIN_STATION);    break;
+                    case "AIRPORT":         facilities.Add(OCPIv2_2_1.Facility.AIRPORT);          break;
+                    case "PARKING_LOT":     facilities.Add(OCPIv2_2_1.Facility.PARKING_LOT);      break;
+                    case "CARPOOL_PARKING": facilities.Add(OCPIv2_2_1.Facility.CARPOOL_PARKING);  break;
+                    case "FUEL_STATION":    facilities.Add(OCPIv2_2_1.Facility.FUEL_STATION);     break;
+                    case "WIFI":            facilities.Add(OCPIv2_2_1.Facility.WIFI);             break;
 
                 }
 
