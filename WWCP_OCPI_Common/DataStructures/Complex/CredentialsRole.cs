@@ -340,7 +340,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             => new (
                    PartyId.        Clone(),
-                   Role.           Clone(),
+                   Role,
                    BusinessDetails.Clone(),
                    AllowDowngrades
                );

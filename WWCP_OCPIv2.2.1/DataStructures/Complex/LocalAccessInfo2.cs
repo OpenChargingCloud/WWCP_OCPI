@@ -35,15 +35,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     {
 
         public static Boolean Is(this LocalAccessInfo2?  AccessInfo,
-                                 Role                    Role)
+                                 params Role[]           Roles)
 
-            => AccessInfo?.Is2(Role) == true;
+            => AccessInfo?.Is2(Roles) == true;
 
         public static Boolean IsNot(this LocalAccessInfo2?  AccessInfo,
-                                    Role                    Role)
+                                    params Role[]           Roles)
 
             => AccessInfo is null ||
-               AccessInfo.IsNot2(Role);
+               AccessInfo.IsNot2(Roles);
 
     }
 
@@ -108,11 +108,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public Boolean                       AllowDowngrades               { get; }
 
 
-        public Boolean Is2(Role Role)
-            =>  Roles.Any(role => role.Role == Role);
+        public Boolean Is2(params Role[] GivenRoles)
+            => GivenRoles.Length > 0 &&
+               Roles.Any(role => GivenRoles.Contains(role.Role));
 
-        public Boolean IsNot2(Role Role)
-            => !Roles.Any(role => role.Role == Role);
+        public Boolean IsNot2(params Role[] GivenRoles)
+            => !Is2(GivenRoles);
 
         #endregion
 

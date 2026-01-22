@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Collections.Concurrent;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -44,6 +46,49 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean IsNotNullOrEmpty(this Role? Role)
             => Role.HasValue && Role.Value.IsNotNullOrEmpty;
 
+
+        #region Matches(Facilities, Text)
+
+        /// <summary>
+        /// Checks whether the given enumeration of facilities matches the given text.
+        /// </summary>
+        /// <param name="Facilities">An enumeration of facilities.</param>
+        /// <param name="Text">A text to match.</param>
+        public static Boolean Matches(this IEnumerable<Role>  Facilities,
+                                      String                  Text)
+
+            => Facilities.Any(facilitiy => facilitiy.Value.Contains(Text, StringComparison.OrdinalIgnoreCase));
+
+        #endregion
+
+
+    }
+
+
+    /// <summary>
+    /// A role comparer.
+    /// </summary>
+    public sealed class RoleComparer : IComparer<Role>
+    {
+
+        /// <summary>
+        /// The default role comparer.
+        /// </summary>
+        public static readonly RoleComparer OrdinalIgnoreCase = new();
+
+        /// <summary>
+        /// Compares two facilities.
+        /// </summary>
+        /// <param name="Role1">A role to compare with.</param>
+        /// <param name="Role2">A role to compare with.</param>
+        public Int32 Compare(Role Role1,
+                             Role Role2)
+
+            => StringComparer.OrdinalIgnoreCase.Compare(
+                   Role1.Value,
+                   Role2.Value
+               );
+
     }
 
 
@@ -53,65 +98,65 @@ namespace cloud.charging.open.protocols.OCPI
     public readonly struct Role : IId<Role>
     {
 
-        #region Data
+        #region Static Lookup
+
+        private readonly static ConcurrentDictionary<String, Role> lookup = new (StringComparer.OrdinalIgnoreCase);
+
+        private static Role Register(String Text)
+
+            => lookup.GetOrAdd(
+                   Text,
+                   static text => new Role(text)
+               );
 
         /// <summary>
-        /// The internal identification.
+        /// All registered roles.
         /// </summary>
-        private readonly String InternalId;
+        public static IEnumerable<Role> All
+            => lookup.Values;
 
         #endregion
 
         #region Properties
 
         /// <summary>
+        /// The text representation of the role.
+        /// </summary>
+        public String   Value    { get; }
+
+        /// <summary>
         /// Indicates whether this role is null or empty.
         /// </summary>
-        public Boolean IsNullOrEmpty
-            => InternalId.IsNullOrEmpty();
+        public Boolean  IsNullOrEmpty
+            => Value.IsNullOrEmpty();
 
         /// <summary>
         /// Indicates whether this role is NOT null or empty.
         /// </summary>
-        public Boolean IsNotNullOrEmpty
-            => InternalId.IsNotNullOrEmpty();
+        public Boolean  IsNotNullOrEmpty
+            => Value.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the role.
         /// </summary>
-        public UInt64 Length
-            => (UInt64) (InternalId?.Length ?? 0);
+        public UInt64   Length
+            => (UInt64) (Value?.Length ?? 0);
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new role based on the given text.
+        /// Create a new role based on the given text representation.
         /// </summary>
         /// <param name="Text">The text representation of a role.</param>
         private Role(String Text)
         {
-            this.InternalId = Text;
+            this.Value = Text;
         }
 
         #endregion
 
-
-        #region (static) NewRandom(Length = 30, IsLocal = false)
-
-        /// <summary>
-        /// Create a new random role.
-        /// </summary>
-        /// <param name="Length">The expected length of the role.</param>
-        /// <param name="IsLocal">The role was generated locally and not received via network.</param>
-        public static Role NewRandom(Byte      Length    = 30,
-                                           Boolean?  IsLocal   = false)
-
-            => new ((IsLocal == true ? "Local:" : "") +
-                    RandomExtensions.RandomString(Length));
-
-        #endregion
 
         #region (static) Parse    (Text)
 
@@ -122,8 +167,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static Role Parse(String Text)
         {
 
-            if (TryParse(Text, out var requestId))
-                return requestId;
+            if (TryParse(Text, out var role))
+                return role;
 
             throw new ArgumentException($"Invalid text representation of a role: '{Text}'!",
                                         nameof(Text));
@@ -141,8 +186,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static Role? TryParse(String Text)
         {
 
-            if (TryParse(Text, out var requestId))
-                return requestId;
+            if (TryParse(Text, out var role))
+                return role;
 
             return null;
 
@@ -166,7 +211,7 @@ namespace cloud.charging.open.protocols.OCPI
             {
                 try
                 {
-                    Role = new Role(Text);
+                    Role = Register(Text);
                     return true;
                 }
                 catch
@@ -180,19 +225,6 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region Clone()
-
-        /// <summary>
-        /// Clone this role.
-        /// </summary>
-        public Role Clone()
-
-            => new (
-                   InternalId.CloneString()
-               );
-
-        #endregion
-
 
         #region Static definitions
 
@@ -200,61 +232,61 @@ namespace cloud.charging.open.protocols.OCPI
         /// Unknown
         /// </summary>
         public static Role  Unknown     { get; }
-            = new ("Unknown");
+            = Register("Unknown");
 
         /// <summary>
         /// OpenData
         /// </summary>
         public static Role  OpenData    { get; }
-            = new ("OpenData");
+            = Register("OpenData");
 
         /// <summary>
         /// A charge point operator operates a network of charging stations.
         /// </summary>
         public static Role  CPO         { get; }
-            = new ("CPO");
+            = Register("CPO");
 
         /// <summary>
         /// An E-Mobility Service Provider gives electric vehicle drivers access to charging services.
         /// </summary>
         public static Role  EMSP        { get; }
-            = new ("EMSP");
+            = Register("EMSP");
 
         /// <summary>
         /// A payment terminal provider.
         /// </summary>
         public static Role  PTP         { get; }
-            = new ("PTP");
+            = Register("PTP");
 
         /// <summary>
         /// A roaming hub can connect multiple CPOs to multiple eMSPs.
         /// </summary>
         public static Role  HUB         { get; }
-            = new ("HUB");
+            = Register("HUB");
 
         /// <summary>
         /// National Access Point: National database with all location information of a country.
         /// </summary>
         public static Role  NAP         { get; }
-            = new ("NAP");
+            = Register("NAP");
 
         /// <summary>
         /// Navigation Service Provider: Like an eMSP, but probably only interested in location information.
         /// </summary>
         public static Role  NSP         { get; }
-            = new ("NSP");
+            = Register("NSP");
 
         /// <summary>
         /// Smart Charging Service Provider
         /// </summary>
         public static Role  SCSP        { get; }
-            = new ("SCSP");
+            = Register("SCSP");
 
         /// <summary>
         /// Other
         /// </summary>
         public static Role  OTHER       { get; }
-            = new ("OTHER");
+            = Register("OTHER");
 
         #endregion
 
@@ -363,8 +395,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Object">A role to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
-            => Object is Role requestId
-                   ? CompareTo(requestId)
+            => Object is Role role
+                   ? CompareTo(role)
                    : throw new ArgumentException("The given object is not a role!",
                                                  nameof(Object));
 
@@ -378,8 +410,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Role">A role to compare with.</param>
         public Int32 CompareTo(Role Role)
 
-            => String.Compare(InternalId,
-                              Role.InternalId,
+            => String.Compare(Value,
+                              Role.Value,
                               StringComparison.OrdinalIgnoreCase);
 
         #endregion
@@ -396,8 +428,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Object">A role to compare with.</param>
         public override Boolean Equals(Object? Object)
 
-            => Object is Role requestId &&
-                   Equals(requestId);
+            => Object is Role role &&
+                   Equals(role);
 
         #endregion
 
@@ -409,8 +441,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Role">A role to compare with.</param>
         public Boolean Equals(Role Role)
 
-            => String.Equals(InternalId,
-                             Role.InternalId,
+            => String.Equals(Value,
+                             Role.Value,
                              StringComparison.OrdinalIgnoreCase);
 
         #endregion
@@ -425,7 +457,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
 
-            => InternalId?.ToLower().GetHashCode() ?? 0;
+            => Value is not null
+                   ? StringComparer.OrdinalIgnoreCase.GetHashCode(Value) 
+                   : 0;
 
         #endregion
 
@@ -436,7 +470,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public override String ToString()
 
-            => InternalId ?? "";
+            => Value ?? "";
 
         #endregion
 

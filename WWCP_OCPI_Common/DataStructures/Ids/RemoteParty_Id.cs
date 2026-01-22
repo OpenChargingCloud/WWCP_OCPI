@@ -326,7 +326,7 @@ namespace cloud.charging.open.protocols.OCPI
             => new (
                    CountryCode.Clone(),
                    PartyId.    Clone(),
-                   Role.       Clone()
+                   Role
                );
 
         #endregion

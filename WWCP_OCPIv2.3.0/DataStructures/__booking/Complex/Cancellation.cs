@@ -233,7 +233,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             => new (
                    CancellationReason.Clone(),
-                   WhoCanceled.       Clone()
+                   WhoCanceled
                );
 
         #endregion
