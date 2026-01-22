@@ -546,15 +546,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             var json       = JSONObject.Create(
 
-                                       new JProperty("id",                     Id.                   ToString()),
-                                       new JProperty("standard",               Standard.             ToString()),
-                                       new JProperty("format",                 Format.               AsText()),
-                                       new JProperty("power_type",             PowerType.            AsText()),
-                                       new JProperty("max_voltage",            MaxVoltage. Value),
-                                       new JProperty("max_amperage",           MaxAmperage.Value),
+                                       new JProperty("id",                     Id.                    ToString()),
+                                       new JProperty("standard",               Standard.              ToString()),
+                                       new JProperty("format",                 Format.                AsText()),
+                                       new JProperty("power_type",             PowerType.             AsText()),
+                                       new JProperty("max_voltage",            MaxVoltage.            IntegerValue),
+                                       new JProperty("max_amperage",           MaxAmperage.           IntegerValue),
 
                                  MaxElectricPower.HasValue
-                                     ? new JProperty("max_electric_power",     MaxElectricPower.Value)
+                                     ? new JProperty("max_electric_power",     MaxElectricPower.Value.IntegerValue)
                                      : null,
 
                                  tariffIds is not null && tariffIds.Any()
@@ -562,7 +562,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      : null,
 
                                  TermsAndConditionsURL.HasValue
-                                     ? new JProperty("terms_and_conditions",   TermsAndConditionsURL.ToString())
+                                     ? new JProperty("terms_and_conditions",   TermsAndConditionsURL. ToString())
                                      : null,
 
                                  Capabilities.Any()
@@ -571,10 +571,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      : null,
 
                                  IncludeCreatedTimestamp
-                               ? new JProperty("created",                      Created.              ToISO8601())
+                               ? new JProperty("created",                      Created.               ToISO8601())
                                : null,
 
-                                 new JProperty("last_updated",                 LastUpdated.          ToISO8601())
+                                 new JProperty("last_updated",                 LastUpdated.           ToISO8601())
 
                              );
 

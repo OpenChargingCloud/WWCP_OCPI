@@ -727,20 +727,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         new JProperty("standard",               Standard.             ToString()),
                                         new JProperty("format",                 Format.               AsText()),
                                         new JProperty("power_type",             PowerType.            AsText()),
-                                        new JProperty("voltage",                (UInt16) Voltage. Value),
-                                        new JProperty("amperage",               (UInt16) Amperage.Value),
+                                        new JProperty("voltage",                Voltage.              IntegerValue),
+                                        new JProperty("amperage",               Amperage.             IntegerValue),
 
                                   tariffId.HasValue
-                                      ? new JProperty("tariff_id",              tariffId.       Value.ToString())
+                                      ? new JProperty("tariff_id",              tariffId.             Value.ToString())
                                       : null,
 
                                   emspTariffIds is not null && !tariffId.HasValue
                                       ? new JProperty("emsp_tariff_ids",        new JObject(
-                                                                                    emspTariffIds.Select(emspTariffId => new JProperty(
-                                                                                                                             emspTariffId.Key.  ToString(),
-                                                                                                                             emspTariffId.Value.ToString()
-                                                                                                                         )
+                                                                                    emspTariffIds.Select(
+                                                                                        emspTariffId => new JProperty(
+                                                                                                            emspTariffId.Key.  ToString(),
+                                                                                                            emspTariffId.Value.ToString()
                                                                                                         )
+                                                                                    )
                                                                                 ))
                                       : null,
 

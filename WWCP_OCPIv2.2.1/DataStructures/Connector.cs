@@ -532,11 +532,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                        new JProperty("standard",               Standard.              ToString()),
                                        new JProperty("format",                 Format.                AsText()),
                                        new JProperty("power_type",             PowerType.             AsText()),
-                                       new JProperty("max_voltage",            MaxVoltage.            Value),
-                                       new JProperty("max_amperage",           MaxAmperage.           Value),
+                                       new JProperty("max_voltage",            MaxVoltage.            IntegerValue),
+                                       new JProperty("max_amperage",           MaxAmperage.           IntegerValue),
 
                                  MaxElectricPower.HasValue
-                                     ? new JProperty("max_electric_power",     MaxElectricPower.Value.Value)
+                                     ? new JProperty("max_electric_power",     MaxElectricPower.Value.IntegerValue)
                                      : null,
 
                                  tariffIds is not null && tariffIds.Any()
