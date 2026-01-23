@@ -61,7 +61,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 OCPI.AccessToken? accessTokenRAW     = null;
                 OCPI.AccessToken? accessTokenBASE64  = null;
-                String?           totp               = null;
+                TOTPHTTPHeader?   totp               = null;
                 RemoteParty?      remoteParty        = null;
 
                 if (Request.Authorization is HTTPTokenAuthentication tokenAuth)
@@ -73,7 +73,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     if (OCPI.AccessToken.TryParseFromBASE64(tokenAuth.Token, out var decodedAccessToken))
                         accessTokenBASE64  = decodedAccessToken;
 
-                    totp                   = Request.GetHeaderField<String>("TOTP");
+                    totp                   = Request.TryParseHeaderField<TOTPHTTPHeader>("TOTP", TOTPHTTPHeader.TryParse);
 
                 }
 
@@ -86,13 +86,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     if (OCPI.AccessToken.TryParseFromBASE64(basicAuth.Username, out var decodedAccessToken))
                         accessTokenBASE64  = decodedAccessToken;
 
-                    totp                   = basicAuth.Password;
+                    totp                   = TOTPHTTPHeader.Parse(basicAuth.Password);
 
                 }
 
                 if (accessTokenRAW.HasValue &&
                     CommonAPI.TryGetRemoteParties(accessTokenRAW.Value,
                                                   totp,
+                                                  null,
                                                   out var partiesAccessInfosRAW,
                                                   out var errorMessageRAW))
                 {
@@ -107,6 +108,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (accessTokenBASE64.HasValue &&
                     CommonAPI.TryGetRemoteParties(accessTokenBASE64.Value,
                                                   totp,
+                                                  null,
                                                   out var partiesAccessInfosBASE64,
                                                   out var errorMessageBASE64))
                 {

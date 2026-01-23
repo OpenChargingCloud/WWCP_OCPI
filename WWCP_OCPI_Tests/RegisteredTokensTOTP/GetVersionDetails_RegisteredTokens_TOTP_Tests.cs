@@ -153,7 +153,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP,                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP?.Length,               Is.EqualTo(TOTPLength));
+                Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP?.Value.Length,         Is.EqualTo(TOTPLength));
                 Assert.That(response.HTTPResponse?.HTTPRequest?.ToString(),                 Contains.Substring($"TOTP: {response.HTTPResponse?.HTTPRequest?.TOTP}"));
 
             }
@@ -302,7 +302,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP,                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP?.Length,               Is.EqualTo(TOTPLength));
+                Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP?.Value.Length,         Is.EqualTo(TOTPLength));
                 Assert.That(response.HTTPResponse?.HTTPRequest?.ToString(),                 Contains.Substring($"TOTP: {response.HTTPResponse?.HTTPRequest?.TOTP}"));
 
             }
@@ -451,7 +451,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP,                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP?.Length,               Is.EqualTo(TOTPLength));
+                Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP?.Value.Length,         Is.EqualTo(TOTPLength));
                 Assert.That(response.HTTPResponse?.HTTPRequest?.ToString(),                 Contains.Substring($"TOTP: {response.HTTPResponse?.HTTPRequest?.TOTP}"));
 
             }
@@ -572,7 +572,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP,                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP?.Length,               Is.EqualTo(TOTPLength));
+                Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP?.Value.Length,         Is.EqualTo(TOTPLength));
                 Assert.That(response.HTTPResponse?.HTTPRequest?.ToString(),                 Contains.Substring($"TOTP: {response.HTTPResponse?.HTTPRequest?.TOTP}"));
 
             }
@@ -721,7 +721,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP,                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP?.Length,               Is.EqualTo(TOTPLength));
+                Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP?.Value.Length,         Is.EqualTo(TOTPLength));
                 Assert.That(response.HTTPResponse?.HTTPRequest?.ToString(),                 Contains.Substring($"TOTP: {response.HTTPResponse?.HTTPRequest?.TOTP}"));
 
             }
@@ -870,7 +870,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
 
                 Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP,                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP?.Length,               Is.EqualTo(TOTPLength));
+                Assert.That(response.HTTPResponse?.HTTPRequest?.TOTP?.Value.Length,         Is.EqualTo(TOTPLength));
                 Assert.That(response.HTTPResponse?.HTTPRequest?.ToString(),                 Contains.Substring($"TOTP: {response.HTTPResponse?.HTTPRequest?.TOTP}"));
 
             }

@@ -25,6 +25,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using org.GraphDefined.Vanaheimr.Hermod;
 
 #endregion
 
@@ -418,9 +419,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.HTTPRequest      = Request ?? throw new ArgumentNullException(nameof(Request), "The given HTTP request must not be null!");
             this.CommonAPI        = CommonAPI;
 
-            this.RequestId        = Request.TryParseHeaderField<Request_Id>    ("X-Request-ID",     Request_Id.    TryParse) ?? Request_Id.    NewRandom(IsLocal: true);
-            this.CorrelationId    = Request.TryParseHeaderField<Correlation_Id>("X-Correlation-ID", Correlation_Id.TryParse) ?? Correlation_Id.NewRandom(IsLocal: true);
-            var  totp             = Request.GetHeaderField     <String>        ("TOTP");
+            this.RequestId        = Request.TryParseHeaderStruct               ("X-Request-ID",     Request_Id.    TryParse, Request_Id.    NewRandom(IsLocal: true));
+            this.CorrelationId    = Request.TryParseHeaderStruct               ("X-Correlation-ID", Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
+            var  totp             = Request.TryParseHeaderField<TOTPHTTPHeader>("TOTP",             TOTPHTTPHeader.TryParse);
 
             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
                 OCPI.AccessToken.TryParse(TokenAuth.Token, out var accessToken))
@@ -432,7 +433,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 OCPI.AccessToken.TryParse(BasicAuth.Username, out accessToken))
             {
                 this.AccessToken  = accessToken;
-                totp              = BasicAuth.Password;
+                totp              = TOTPHTTPHeader.Parse(BasicAuth.Password);
             }
 
             if (this.AccessToken.HasValue)
@@ -440,6 +441,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (CommonAPI.TryGetRemoteParties(AccessToken.Value,
                                                   totp,
+                                                  null,
                                                   out var partiesAccessInfos))
                 {
 

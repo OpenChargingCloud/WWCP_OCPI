@@ -25,6 +25,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using org.GraphDefined.Vanaheimr.Hermod;
 
 #endregion
 
@@ -502,13 +503,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.HTTPRequest      = Request ?? throw new ArgumentNullException(nameof(Request), "The given HTTP request must not be null!");
             this.CommonAPI        = CommonAPI;
 
-            this.RequestId        = Request.TryParseHeaderField<Request_Id>    ("X-Request-ID",           Request_Id.    TryParse) ?? Request_Id.    NewRandom(IsLocal: true);
-            this.CorrelationId    = Request.TryParseHeaderField<Correlation_Id>("X-Correlation-ID",       Correlation_Id.TryParse) ?? Correlation_Id.NewRandom(IsLocal: true);
-            this.ToCountryCode    = Request.TryParseHeaderField<CountryCode>   ("OCPI-to-country-code",   CountryCode.   TryParse);
-            this.ToPartyId        = Request.TryParseHeaderField<Party_Id>      ("OCPI-to-party-id",       Party_Id.      TryParse);
-            this.FromCountryCode  = Request.TryParseHeaderField<CountryCode>   ("OCPI-from-country-code", CountryCode.   TryParse);
-            this.FromPartyId      = Request.TryParseHeaderField<Party_Id>      ("OCPI-from-party-id",     Party_Id.      TryParse);
-            var  totp             = Request.GetHeaderField     <String>        ("TOTP");
+            this.RequestId        = Request.TryParseHeaderStruct               ("X-Request-ID",           Request_Id.    TryParse, Request_Id.    NewRandom(IsLocal: true));
+            this.CorrelationId    = Request.TryParseHeaderStruct               ("X-Correlation-ID",       Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
+            this.ToCountryCode    = Request.TryParseHeaderStruct<CountryCode>  ("OCPI-to-country-code",   CountryCode.   TryParse);
+            this.ToPartyId        = Request.TryParseHeaderStruct<Party_Id>     ("OCPI-to-party-id",       Party_Id.      TryParse);
+            this.FromCountryCode  = Request.TryParseHeaderStruct<CountryCode>  ("OCPI-from-country-code", CountryCode.   TryParse);
+            this.FromPartyId      = Request.TryParseHeaderStruct<Party_Id>     ("OCPI-from-party-id",     Party_Id.      TryParse);
+            var  totp             = Request.TryParseHeaderField<TOTPHTTPHeader>("TOTP",                   TOTPHTTPHeader.TryParse);
 
             AccessToken?      accessTokenRAW                  = null;
             String?           accessTokenErrorMessageRAW      = null;
@@ -539,13 +540,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (OCPI.AccessToken.TryParseFromBASE64(basicAuth.Username, out var decodedAccessToken))
                     accessTokenBASE64  = decodedAccessToken;
 
-                totp                   = basicAuth.Password;
+                totp                   = TOTPHTTPHeader.Parse(basicAuth.Password);
 
             }
 
             if (accessTokenRAW.HasValue &&
                 CommonAPI.TryGetRemoteParties(accessTokenRAW.Value,
                                               totp,
+                                              null,
                                               out var partiesAccessInfosRAW,
                                               out     accessTokenErrorMessageRAW))
             {
@@ -564,6 +566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             if (accessTokenBASE64.HasValue &&
                 CommonAPI.TryGetRemoteParties(accessTokenBASE64.Value,
                                               totp,
+                                              null,
                                               out var partiesAccessInfosBASE64,
                                               out     accessTokenErrorMessageBASE64))
             {

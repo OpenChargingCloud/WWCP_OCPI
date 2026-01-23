@@ -2711,10 +2711,11 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region TryGetRemoteParties       (AccessToken, TOTP, out RemoteParties, out ErrorMessage)
+        #region TryGetRemoteParties       (AccessToken, TOTP, TLSExporterMaterial, out RemoteParties, out ErrorMessage)
 
         public Boolean TryGetRemoteParties(AccessToken                                           AccessToken,
-                                           String?                                               TOTP,
+                                           TOTPHTTPHeader?                                       TOTP,
+                                           Byte[]?                                               TLSExporterMaterial,
                                            out IEnumerable<Tuple<RemoteParty, LocalAccessInfo>>  RemoteParties,
                                            [NotNullWhen(false)] out String?                      ErrorMessage)
         {
@@ -2740,10 +2741,12 @@ namespace cloud.charging.open.protocols.OCPI
                                           localAccessInfo.TOTPConfig.SharedSecret,
                                           localAccessInfo.TOTPConfig.ValidityTime,
                                           localAccessInfo.TOTPConfig.Length,
-                                          localAccessInfo.TOTPConfig.Alphabet
+                                          localAccessInfo.TOTPConfig.Alphabet,
+                                          null,
+                                          TLSExporterMaterial
                                       );
 
-                            if (TOTP == current || TOTP == previous || TOTP == next)
+                            if (TOTP?.Value == current || TOTP?.Value == previous || TOTP?.Value == next)
                                 remoteParties.Add(
                                     new Tuple<RemoteParty, LocalAccessInfo>(
                                         remoteParty,
@@ -3052,12 +3055,12 @@ namespace cloud.charging.open.protocols.OCPI
                 OCPIResponseLogger:  GetVersionsResponse,
                 OCPIRequestHandler:  request => {
 
-                    var requestId        = request.HTTPRequest.TryParseHeaderField<Request_Id>    ("X-Request-ID",           Request_Id.    TryParse) ?? Request_Id.    NewRandom(IsLocal: true);
-                    var correlationId    = request.HTTPRequest.TryParseHeaderField<Correlation_Id>("X-Correlation-ID",       Correlation_Id.TryParse) ?? Correlation_Id.NewRandom(IsLocal: true);
-                    var toCountryCode    = request.HTTPRequest.TryParseHeaderField<CountryCode>   ("OCPI-to-country-code",   CountryCode.   TryParse);
-                    var toPartyId        = request.HTTPRequest.TryParseHeaderField<Party_Id>      ("OCPI-to-party-id",       Party_Id.      TryParse);
-                    var fromCountryCode  = request.HTTPRequest.TryParseHeaderField<CountryCode>   ("OCPI-from-country-code", CountryCode.   TryParse);
-                    var fromPartyId      = request.HTTPRequest.TryParseHeaderField<Party_Id>      ("OCPI-from-party-id",     Party_Id.      TryParse);
+                    var requestId        = request.HTTPRequest.TryParseHeaderStruct            ("X-Request-ID",           Request_Id.    TryParse, Request_Id.    NewRandom(IsLocal: true));
+                    var correlationId    = request.HTTPRequest.TryParseHeaderStruct            ("X-Correlation-ID",       Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
+                    var toCountryCode    = request.HTTPRequest.TryParseHeaderField<CountryCode>("OCPI-to-country-code",   CountryCode.   TryParse);
+                    var toPartyId        = request.HTTPRequest.TryParseHeaderStruct<Party_Id>  ("OCPI-to-party-id",       Party_Id.      TryParse);
+                    var fromCountryCode  = request.HTTPRequest.TryParseHeaderField<CountryCode>("OCPI-from-country-code", CountryCode.   TryParse);
+                    var fromPartyId      = request.HTTPRequest.TryParseHeaderStruct<Party_Id>  ("OCPI-from-party-id",     Party_Id.      TryParse);
 
 
                     #region Check access token

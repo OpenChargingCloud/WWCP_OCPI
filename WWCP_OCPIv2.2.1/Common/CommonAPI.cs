@@ -8635,10 +8635,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region TryGetRemoteParties       (AccessToken, TOTP, out RemoteParties, out ErrorMessage)
+        #region TryGetRemoteParties       (AccessToken, TOTP, TLSExporterMaterial, out RemoteParties, out ErrorMessage)
 
         public Boolean TryGetRemoteParties(AccessToken                                           AccessToken,
-                                           String?                                               TOTP,
+                                           TOTPHTTPHeader?                                       TOTP,
+                                           Byte[]?                                               TLSExporterMaterial,
                                            out IEnumerable<Tuple<RemoteParty, LocalAccessInfo>>  RemoteParties,
                                            [NotNullWhen(false)] out String?                      ErrorMessage)
         {
@@ -8664,10 +8665,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                           localAccessInfo.TOTPConfig.SharedSecret,
                                           localAccessInfo.TOTPConfig.ValidityTime,
                                           localAccessInfo.TOTPConfig.Length,
-                                          localAccessInfo.TOTPConfig.Alphabet
+                                          localAccessInfo.TOTPConfig.Alphabet,
+                                          null,
+                                          TLSExporterMaterial
                                       );
 
-                            if (TOTP == current || TOTP == previous || TOTP == next)
+                            if (TOTP?.Value == current || TOTP?.Value == previous || TOTP?.Value == next)
                                 remoteParties.Add(
                                     new Tuple<RemoteParty, LocalAccessInfo>(
                                         remoteParty,

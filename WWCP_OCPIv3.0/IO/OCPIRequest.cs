@@ -25,6 +25,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using org.GraphDefined.Vanaheimr.Hermod;
 
 #endregion
 
@@ -493,14 +494,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.HTTPRequest    = Request ?? throw new ArgumentNullException(nameof(Request), "The given HTTP request must not be null!");
             this.CommonAPI      = CommonAPI;
 
-            this.RequestId      = Request.TryParseHeaderField<Request_Id>    ("X-Request-ID",       Request_Id.    TryParse) ?? Request_Id.    NewRandom(IsLocal: true);
-            this.CorrelationId  = Request.TryParseHeaderField<Correlation_Id>("X-Correlation-ID",   Correlation_Id.TryParse) ?? Correlation_Id.NewRandom(IsLocal: true);
+            this.RequestId      = Request.TryParseHeaderStruct               ("X-Request-ID",       Request_Id.    TryParse, Request_Id.    NewRandom(IsLocal: true));
+            this.CorrelationId  = Request.TryParseHeaderStruct               ("X-Correlation-ID",   Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
             this.ToPartyId      = Request.TryParseHeaderField<Party_Idv3>    ("OCPI-to-party-id",   Party_Idv3.    TryParse);
             this.FromPartyId    = Request.TryParseHeaderField<Party_Idv3>    ("OCPI-from-party-id", Party_Idv3.    TryParse);
+            var  totp           = Request.TryParseHeaderField<TOTPHTTPHeader>("TOTP",               TOTPHTTPHeader.TryParse);
 
             AccessToken?     accessTokenRAW     = null;
             AccessToken?     accessTokenBASE64  = null;
-            String?          totp               = null;
+
             LocalAccessInfo? localAccessInfo    = null;
 
             if (Request.Authorization is HTTPTokenAuthentication tokenAuth)
@@ -511,8 +513,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (OCPI.AccessToken.TryParseFromBASE64(tokenAuth.Token, out var decodedAccessToken))
                     accessTokenBASE64  = decodedAccessToken;
-
-                totp                   = Request.GetHeaderField<String>("TOTP");
 
             }
 
@@ -525,13 +525,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 if (OCPI.AccessToken.TryParseFromBASE64(basicAuth.Username, out var decodedAccessToken))
                     accessTokenBASE64  = decodedAccessToken;
 
-                totp                   = basicAuth.Password;
+                totp                   = TOTPHTTPHeader.Parse(basicAuth.Password);
 
             }
 
             if (accessTokenRAW.HasValue &&
                 CommonAPI.TryGetRemoteParties(accessTokenRAW.Value,
                                               totp,
+                                              null,
                                               out var partiesAccessInfosRAW))
             {
                 var tuple = partiesAccessInfosRAW.FirstOrDefault();
@@ -549,6 +550,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (accessTokenBASE64.HasValue &&
                 CommonAPI.TryGetRemoteParties(accessTokenBASE64.Value,
                                               totp,
+                                              null,
                                               out var partiesAccessInfosBASE64))
             {
                 var tuple = partiesAccessInfosBASE64.FirstOrDefault();
