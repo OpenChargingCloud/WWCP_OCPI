@@ -1934,14 +1934,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 )
             ).GetAwaiter().GetResult();
 
-
-            if (!this.DisableLogging)
-            {
-                ReadRemotePartyDatabaseFile();
-                ReadAssetsDatabaseFile();
-            }
+            ReadRemotePartyDatabaseFile().GetAwaiter().GetResult();
+            ReadAssetsDatabaseFile().     GetAwaiter().GetResult();
 
             RegisterURLTemplates();
+
+            //foreach (var partyData in OurPartyData)
+            //    parties.TryAdd(partyData.Id, partyData);
 
         }
 
@@ -3090,11 +3089,178 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-        #region ReadRemotePartyDatabaseFile (DatabaseFileName = null)
+        #region ReadRemotePartyDatabaseFile (DatabaseFileName = null, CancellationToken = default)
 
-        public IEnumerable<Command> ReadRemotePartyDatabaseFile(String? DatabaseFileName = null)
+        public async Task ReadRemotePartyDatabaseFile(String?            DatabaseFileName    = null,
+                                                      CancellationToken  CancellationToken   = default)
+        {
 
-            => BaseAPI.LoadCommandsFromDatabaseFile(DatabaseFileName ?? RemotePartyDBFileName);
+            try
+            {
+
+                await foreach (var command in BaseAPI.LoadCommandsFromDatabaseFile(
+                                                  DatabaseFileName ?? RemotePartyDBFileName,
+                                                  CancellationToken
+                                              ))
+                {
+                    ProcessRemotePartyCommand(command);
+                }
+
+            }
+            catch (FileNotFoundException)
+            { }
+            catch (DirectoryNotFoundException)
+            { }
+
+        }
+
+        #endregion
+
+        #region ProcessRemotePartyCommand   (Command)
+
+        public void ProcessRemotePartyCommand(Command command)
+        {
+
+            String?      errorResponse   = null;
+            RemoteParty? remoteParty;
+
+            var errorResponses = new List<Tuple<Command, String>>();
+
+            switch (command.CommandName)
+            {
+
+                #region addRemoteParty
+
+                case CommonHTTPAPI.addRemoteParty:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            RemoteParty.TryParse(command.JSONObject,
+                                                 out remoteParty,
+                                                 out errorResponse))
+                        {
+                            remoteParties.TryAdd(remoteParty.Id, remoteParty);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region addRemotePartyIfNotExists
+
+                case CommonHTTPAPI.addRemotePartyIfNotExists:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            RemoteParty.TryParse(command.JSONObject,
+                                                 out remoteParty,
+                                                 out errorResponse))
+                        {
+                            remoteParties.TryAdd(remoteParty.Id, remoteParty);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region addOrUpdateRemoteParty
+
+                case CommonHTTPAPI.addOrUpdateRemoteParty:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            RemoteParty.TryParse(command.JSONObject,
+                                                 out remoteParty,
+                                                 out errorResponse))
+                        {
+
+                            if (remoteParties.ContainsKey(remoteParty.Id))
+                                remoteParties.Remove(remoteParty.Id, out _);
+
+                            remoteParties.TryAdd(remoteParty.Id, remoteParty);
+
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region updateRemoteParty
+
+                case CommonHTTPAPI.updateRemoteParty:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            RemoteParty.TryParse(command.JSONObject,
+                                                 out remoteParty,
+                                                 out errorResponse))
+                        {
+                            remoteParties.Remove(remoteParty.Id, out _);
+                            remoteParties.TryAdd(remoteParty.Id, remoteParty);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region updateRemoteParty
+
+                case CommonHTTPAPI.removeRemoteParty:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            RemoteParty.TryParse(command.JSONObject,
+                                                 out remoteParty,
+                                                 out errorResponse))
+                        {
+                            remoteParties.Remove(remoteParty.Id, out _);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region removeAllRemoteParties
+
+                case CommonHTTPAPI.removeAllRemoteParties:
+                    remoteParties.Clear();
+                    break;
+
+                #endregion
+
+            }
+
+        }
 
         #endregion
 
@@ -3216,11 +3382,928 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-        #region ReadAssetsDatabaseFile            (DatabaseFileName = null)
+        #region ReadAssetsDatabaseFile (DatabaseFileName = null, CancellationToken = default)
 
-        public IEnumerable<Command> ReadAssetsDatabaseFile(String? DatabaseFileName = null)
+        public async Task ReadAssetsDatabaseFile(String?            DatabaseFileName    = null,
+                                                 CancellationToken  CancellationToken   = default)
+        {
 
-            => BaseAPI.LoadCommandsFromDatabaseFile(DatabaseFileName ?? AssetsDBFileName);
+            try
+            {
+
+                await foreach (var command in BaseAPI.LoadCommandsFromDatabaseFile(
+                                                  DatabaseFileName ?? AssetsDBFileName,
+                                                  CancellationToken
+                                              ))
+                {
+                    ProcessAssetsCommand(command);
+                }
+
+            }
+            catch (FileNotFoundException)
+            { }
+            catch (DirectoryNotFoundException)
+            { }
+
+        }
+
+        #endregion
+
+        #region ProcessAssetsCommand   (Command)
+
+        public void ProcessAssetsCommand(Command command)
+        {
+
+            String?       errorResponse   = null;
+            Location?     location;
+            EVSE?         evse;
+            Tariff?       tariff;
+            Session?      session;
+            TokenStatus?  tokenStatus;
+            CDR?          cdr;
+
+            var errorResponses = new List<Tuple<Command, String>>();
+
+            switch (command.CommandName)
+            {
+
+                #region addLocation
+
+                case CommonHTTPAPI.addLocation:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Location.TryParse(
+                                         command.JSONObject,
+                                         out location,
+                                         out errorResponse
+                                     ) &&
+                            parties. TryGetValue(
+                                         location.PartyId,
+                                         out var party
+                                     ))
+                        {
+                            party.Locations.TryAdd(
+                                location.Id,
+                                location
+                            );
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region addLocationIfNotExists
+
+                case CommonHTTPAPI.addLocationIfNotExists:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Location.TryParse(
+                                         command.JSONObject,
+                                         out location,
+                                         out errorResponse
+                                     ) &&
+                            parties. TryGetValue(
+                                         location.PartyId,
+                                         out var party
+                                     ))
+                        {
+                            party.Locations.TryAdd(
+                                location.Id,
+                                location
+                            );
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region addOrUpdateLocation
+
+                case CommonHTTPAPI.addOrUpdateLocation:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Location.TryParse(
+                                         command.JSONObject,
+                                         out location,
+                                         out errorResponse
+                                     ) &&
+                            parties. TryGetValue(
+                                         location.PartyId,
+                                         out var party
+                                     ))
+                        {
+
+                            if (party.Locations.ContainsKey(location.Id))
+                                party.Locations.Remove(location.Id, out _);
+
+                            party.Locations.TryAdd(location.Id, location);
+
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region updateLocation
+
+                case CommonHTTPAPI.updateLocation:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Location.TryParse(
+                                         command.JSONObject,
+                                         out location,
+                                         out errorResponse
+                                     ) &&
+                            parties. TryGetValue(
+                                         location.PartyId,
+                                         out var party
+                                     ))
+                        {
+                            party.Locations.Remove(location.Id, out _);
+                            party.Locations.TryAdd(location.Id, location);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region updateLocation
+
+                case CommonHTTPAPI.removeLocation:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Location.TryParse(
+                                         command.JSONObject,
+                                         out location,
+                                         out errorResponse
+                                     ) &&
+                            parties. TryGetValue(
+                                         location.PartyId,
+                                         out var party
+                                     ))
+                        {
+                            party.Locations.Remove(location.Id, out _);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region removeAllLocations
+
+                case CommonHTTPAPI.removeAllLocations:
+                    foreach (var party in parties.Values)
+                        party.Locations.Clear();
+                    break;
+
+                #endregion
+
+
+                // Experimental!
+
+                #region addOrUpdateEVSE
+
+                //case CommonHTTPAPI.addOrUpdateEVSE:
+                //    try
+                //    {
+                //        if (command.JSONObject is not null &&
+
+                //            command.JSONObject.TryGetValue("locationId", out var locationId) &&
+                //            locationId.Type == JTokenType.String &&
+                //            Location_Id.TryParse(locationId?.Value<String>() ?? "", out var location_Id) &&
+                //            locations.ContainsKey(location_Id) &&
+
+                //            command.JSONObject.TryGetValue("evse",       out var evseJToken) &&
+                //            evseJToken.Type == JTokenType.Object &&
+                //            evseJToken is JObject &&
+                //            EVSE.TryParse((evseJToken as JObject)!,
+                //                          out evse,
+                //                          out errorResponse))
+
+                //        {
+
+                //            if (locations.TryGetValue(location_Id, out location))
+                //            {
+
+                //                var updatedLocation = location.Update(loc => {
+
+                //                    var newEVSEs = loc.EVSEs.Where(evseX => evseX.UId != evse.UId).ToList();
+                //                    newEVSEs.Add(evse);
+
+                //                    loc.EVSEs.Clear();
+
+                //                    foreach (var newEVSE in newEVSEs)
+                //                        loc.EVSEs.Add(newEVSE);
+
+                //                }, out var warnings);
+
+                //                if (updatedLocation is not null)
+                //                {
+                //                    locations.Remove(location.Id, out _);
+                //                    locations.TryAdd(location.Id, updatedLocation);
+                //                }
+
+                //            }
+
+                //        }
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        errorResponse ??= e.Message;
+                //    }
+                //    if (errorResponse is not null)
+                //        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                //    break;
+
+                #endregion
+
+
+                #region addTariff
+
+                case CommonHTTPAPI.addTariff:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Tariff. TryParse(
+                                        command.JSONObject,
+                                        out tariff,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        tariff.PartyId,
+                                        out var party
+                                    ))
+                        {
+                            party.Tariffs.TryAdd(tariff.Id, tariff);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region addTariffIfNotExists
+
+                case CommonHTTPAPI.addTariffIfNotExists:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Tariff. TryParse(
+                                        command.JSONObject,
+                                        out tariff,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        tariff.PartyId,
+                                        out var party
+                                    ))
+                        {
+                            party.Tariffs.TryAdd(tariff.Id, tariff);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region addOrUpdateTariff
+
+                case CommonHTTPAPI.addOrUpdateTariff:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Tariff. TryParse(
+                                        command.JSONObject,
+                                        out tariff,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        tariff.PartyId,
+                                        out var party
+                                    ))
+                        {
+
+                            if (party.Tariffs.ContainsKey(tariff.Id))
+                                party.Tariffs.TryRemove  (tariff.Id, out _);
+
+                            party.Tariffs.TryAdd(tariff.Id, tariff);
+
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region updateTariff
+
+                case CommonHTTPAPI.updateTariff:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Tariff. TryParse(
+                                        command.JSONObject,
+                                        out tariff,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        tariff.PartyId,
+                                        out var party
+                                    ))
+                        {
+                            party.Tariffs.TryRemove(tariff.Id, out _);
+                            party.Tariffs.TryAdd   (tariff.Id, tariff);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region updateTariff
+
+                case CommonHTTPAPI.removeTariff:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Tariff. TryParse(
+                                        command.JSONObject,
+                                        out tariff,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        tariff.PartyId,
+                                        out var party
+                                    ))
+                        {
+                            party.Tariffs.TryRemove(tariff.Id, out _);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region removeAllTariffs
+
+                case CommonHTTPAPI.removeAllTariffs:
+                    foreach (var party in parties.Values)
+                        party.Tariffs.Clear();
+                    break;
+
+                #endregion
+
+
+                #region addSession
+
+                case CommonHTTPAPI.addSession:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Session.TryParse(
+                                        command.JSONObject,
+                                        out session,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        session.PartyId,
+                                        out var party
+                                    ))
+                        {
+                            party.Sessions.TryAdd(session.Id, session);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region addSessionIfNotExists
+
+                case CommonHTTPAPI.addSessionIfNotExists:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Session.TryParse(
+                                        command.JSONObject,
+                                        out session,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        session.PartyId,
+                                        out var party
+                                    ))
+                        {
+                            party.Sessions.TryAdd(session.Id, session);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region addOrUpdateSession
+
+                case CommonHTTPAPI.addOrUpdateSession:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Session.TryParse(
+                                        command.JSONObject,
+                                        out session,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        session.PartyId,
+                                        out var party
+                                    ))
+                        {
+
+                            if (party.Sessions.ContainsKey(session.Id))
+                                party.Sessions.Remove(session.Id, out _);
+
+                            party.Sessions.TryAdd(session.Id, session);
+
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region updateSession
+
+                case CommonHTTPAPI.updateSession:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Session.TryParse(
+                                        command.JSONObject,
+                                        out session,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        session.PartyId,
+                                        out var party
+                                    ))
+                        {
+                            party.Sessions.Remove(session.Id, out _);
+                            party.Sessions.TryAdd(session.Id, session);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region updateSession
+
+                case CommonHTTPAPI.removeSession:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Session.TryParse(
+                                        command.JSONObject,
+                                        out session,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        session.PartyId,
+                                        out var party
+                                    ))
+                        {
+                            party.Sessions.Remove(session.Id, out _);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region removeAllSessions
+
+                case CommonHTTPAPI.removeAllSessions:
+                    foreach (var party in parties.Values)
+                        party.Sessions.Clear();
+                    break;
+
+                #endregion
+
+
+                #region addToken
+
+                case CommonHTTPAPI.addTokenStatus:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            TokenStatus.TryParse(
+                                            command.JSONObject,
+                                            out tokenStatus,
+                                            out errorResponse
+                                        ) &&
+                            parties.    TryGetValue(
+                                            tokenStatus.Token.PartyId,
+                                            out var party
+                                        ))
+                        {
+                            party.Tokens.TryAdd(tokenStatus.Token.Id, tokenStatus);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region addTokenIfNotExists
+
+                case CommonHTTPAPI.addTokenStatusIfNotExists:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            TokenStatus.TryParse(
+                                            command.JSONObject,
+                                            out tokenStatus,
+                                            out errorResponse
+                                        ) &&
+                            parties.    TryGetValue(
+                                            tokenStatus.Token.PartyId,
+                                            out var party
+                                        ))
+                        {
+                            party.Tokens.TryAdd(tokenStatus.Token.Id, tokenStatus);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region addOrUpdateToken
+
+                case CommonHTTPAPI.addOrUpdateTokenStatus:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            TokenStatus.TryParse(
+                                            command.JSONObject,
+                                            out tokenStatus,
+                                            out errorResponse
+                                        ) &&
+                            parties.    TryGetValue(
+                                            tokenStatus.Token.PartyId,
+                                            out var party
+                                        ))
+                        {
+
+                            if (party.Tokens.ContainsKey(tokenStatus.Token.Id))
+                                party.Tokens.Remove(tokenStatus.Token.Id, out _);
+
+                            party.Tokens.TryAdd(tokenStatus.Token.Id, tokenStatus);
+
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region updateToken
+
+                case CommonHTTPAPI.updateTokenStatus:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            TokenStatus.TryParse(
+                                            command.JSONObject,
+                                            out tokenStatus,
+                                            out errorResponse
+                                        ) &&
+                            parties.    TryGetValue(
+                                            tokenStatus.Token.PartyId,
+                                            out var party
+                                        ))
+                        {
+                            party.Tokens.Remove(tokenStatus.Token.Id, out _);
+                            party.Tokens.TryAdd(tokenStatus.Token.Id, tokenStatus);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region updateToken
+
+                case CommonHTTPAPI.removeToken:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            TokenStatus.TryParse(
+                                            command.JSONObject,
+                                            out tokenStatus,
+                                            out errorResponse
+                                        ) &&
+                            parties.    TryGetValue(
+                                            tokenStatus.Token.PartyId,
+                                            out var party
+                                        ))
+                        {
+                            party.Tokens.Remove(tokenStatus.Token.Id, out _);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region removeAllTokens
+
+                case CommonHTTPAPI.removeAllTokenStatus:
+                    foreach (var party in parties.Values)
+                        party.Tokens.Clear();
+                    break;
+
+                #endregion
+
+
+                #region addChargeDetailRecord
+
+                case CommonHTTPAPI.addChargeDetailRecord:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            CDR.    TryParse(
+                                        command.JSONObject,
+                                        out cdr,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        cdr.PartyId,
+                                        out var party
+                                    ))
+                        {
+                            party.CDRs.TryAdd(cdr.Id, cdr);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region addChargeDetailRecordIfNotExists
+
+                case CommonHTTPAPI.addChargeDetailRecordIfNotExists:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            CDR.    TryParse(
+                                        command.JSONObject,
+                                        out cdr,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        cdr.PartyId,
+                                        out var party
+                                    ))
+                        {
+                            party.CDRs.TryAdd(cdr.Id, cdr);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region addOrUpdateChargeDetailRecord
+
+                case CommonHTTPAPI.addOrUpdateChargeDetailRecord:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            CDR.    TryParse(
+                                        command.JSONObject,
+                                        out cdr,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        cdr.PartyId,
+                                        out var party
+                                    ))
+                        {
+
+                            if (party.CDRs.ContainsKey(cdr.Id))
+                                party.CDRs.Remove(cdr.Id, out _);
+
+                            party.CDRs.TryAdd(cdr.Id, cdr);
+
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region updateChargeDetailRecord
+
+                case CommonHTTPAPI.updateChargeDetailRecord:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            CDR.    TryParse(
+                                        command.JSONObject,
+                                        out cdr,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        cdr.PartyId,
+                                        out var party
+                                    ))
+                        {
+                            party.CDRs.Remove(cdr.Id, out _);
+                            party.CDRs.TryAdd(cdr.Id, cdr);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region updateCDR
+
+                case CommonHTTPAPI.removeChargeDetailRecord:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            CDR.    TryParse(
+                                        command.JSONObject,
+                                        out cdr,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        cdr.PartyId,
+                                        out var party
+                                    ))
+                        {
+                            party.CDRs.Remove(cdr.Id, out _);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region removeAllCDRs
+
+                case CommonHTTPAPI.removeAllChargeDetailRecords:
+                    foreach (var party in parties.Values)
+                        party.CDRs.Clear();
+                    break;
+
+                #endregion
+
+
+                default:
+                    DebugX.Log($"Unknown OCPI {Version.String} command: '{command}'!");
+                    break;
+
+            }
+
+        }
 
         #endregion
 

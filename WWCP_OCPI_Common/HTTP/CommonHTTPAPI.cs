@@ -18,21 +18,22 @@
 #region Usings
 
 using System.Text;
+using System.Net.Security;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
 
+using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Illias.Logging;
 using org.GraphDefined.Vanaheimr.Hermod.Mail;
 using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
-using System.Diagnostics.CodeAnalysis;
-using org.GraphDefined.Vanaheimr.Hermod;
-using System.Security.Cryptography.X509Certificates;
-using System.Net.Security;
-using System.Security.Authentication;
 
 #endregion
 
@@ -496,9 +497,101 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
+        #region Version Informations
 
-        #region AccessTokens
+        private readonly ConcurrentDictionary<Version_Id, VersionInformation> versionInformations = [];
 
+        public IEnumerable<VersionInformation> VersionInformations
+            => versionInformations.Values;
+
+
+        #region AddVersionInformation            (VersionInformation, ...)
+
+        public async Task<AddResult<VersionInformation>>
+
+            AddVersionInformation(VersionInformation  VersionInformation,
+                                  Boolean             SkipNotifications   = false,
+                                  EventTracking_Id?   EventTrackingId     = null,
+                                  User_Id?            CurrentUserId       = null)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (versionInformations.TryAdd(VersionInformation.Id, VersionInformation))
+            {
+
+                //await LogAsset(
+                //          addLocation,
+                //          Location.ToJSON(true,
+                //                          true,
+                //                          true,
+                //                          CustomLocationSerializer,
+                //                          CustomPublishTokenSerializer,
+                //                          CustomAddressSerializer,
+                //                          CustomAdditionalGeoLocationSerializer,
+                //                          CustomChargingStationSerializer,
+                //                          CustomEVSESerializer,
+                //                          CustomStatusScheduleSerializer,
+                //                          CustomConnectorSerializer,
+                //                          CustomEnergyMeterSerializer,
+                //                          CustomTransparencySoftwareStatusSerializer,
+                //                          CustomTransparencySoftwareSerializer,
+                //                          CustomDisplayTextSerializer,
+                //                          CustomBusinessDetailsSerializer,
+                //                          CustomHoursSerializer,
+                //                          CustomImageSerializer,
+                //                          CustomEnergyMixSerializer,
+                //                          CustomEnergySourceSerializer,
+                //                          CustomEnvironmentalImpactSerializer,
+                //                          CustomLocationMaxPowerSerializer),
+                //          EventTrackingId,
+                //          CurrentUserId
+                //      );
+
+                //if (!SkipNotifications)
+                //{
+
+                //    var OnLocationAddedLocal = OnLocationAdded;
+                //    if (OnLocationAddedLocal is not null)
+                //    {
+                //        try
+                //        {
+                //            await OnLocationAddedLocal(Location);
+                //        }
+                //        catch (Exception e)
+                //        {
+                //            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
+                //                        Environment.NewLine, e.Message,
+                //                        Environment.NewLine, e.StackTrace ?? "");
+                //        }
+                //    }
+
+                //}
+
+                return AddResult<VersionInformation>.Success(
+                           EventTrackingId,
+                           VersionInformation
+                       );
+
+            }
+
+            return AddResult<VersionInformation>.Failed(
+                       EventTrackingId,
+                       VersionInformation,
+                       "The given version information already exists!"
+                   );
+
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Access Tokens
+
+        // OCPI Access Tokens are managed via RemoteParties.
+        // Yet, it can happen, that you want e.g. to block a specific access token globally.
         private readonly ConcurrentDictionary<AccessToken, AccessStatus> accessTokens = [];
 
         public AccessStatus DefaultAccessStatus { get; set; } = AccessStatus.ALLOWED;
@@ -563,7 +656,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region RemoteParties
+        #region Remote Parties
 
         #region Data
 
@@ -2831,7 +2924,6 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-
         #region (private) RegisterURLTemplates()
 
         private void RegisterURLTemplates()
@@ -3133,99 +3225,6 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-
-        #region OCPI Version Informations
-
-        private readonly ConcurrentDictionary<Version_Id, VersionInformation>  versionInformations   = [];
-
-        public IEnumerable<VersionInformation> VersionInformations
-            => versionInformations.Values;
-
-
-        #region AddVersionInformation            (VersionInformation, ...)
-
-        public async Task<AddResult<VersionInformation>>
-
-            AddVersionInformation(VersionInformation  VersionInformation,
-                                  Boolean             SkipNotifications   = false,
-                                  EventTracking_Id?   EventTrackingId     = null,
-                                  User_Id?            CurrentUserId       = null)
-
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            if (versionInformations.TryAdd(VersionInformation.Id, VersionInformation))
-            {
-
-                //await LogAsset(
-                //          addLocation,
-                //          Location.ToJSON(true,
-                //                          true,
-                //                          true,
-                //                          CustomLocationSerializer,
-                //                          CustomPublishTokenSerializer,
-                //                          CustomAddressSerializer,
-                //                          CustomAdditionalGeoLocationSerializer,
-                //                          CustomChargingStationSerializer,
-                //                          CustomEVSESerializer,
-                //                          CustomStatusScheduleSerializer,
-                //                          CustomConnectorSerializer,
-                //                          CustomEnergyMeterSerializer,
-                //                          CustomTransparencySoftwareStatusSerializer,
-                //                          CustomTransparencySoftwareSerializer,
-                //                          CustomDisplayTextSerializer,
-                //                          CustomBusinessDetailsSerializer,
-                //                          CustomHoursSerializer,
-                //                          CustomImageSerializer,
-                //                          CustomEnergyMixSerializer,
-                //                          CustomEnergySourceSerializer,
-                //                          CustomEnvironmentalImpactSerializer,
-                //                          CustomLocationMaxPowerSerializer),
-                //          EventTrackingId,
-                //          CurrentUserId
-                //      );
-
-                //if (!SkipNotifications)
-                //{
-
-                //    var OnLocationAddedLocal = OnLocationAdded;
-                //    if (OnLocationAddedLocal is not null)
-                //    {
-                //        try
-                //        {
-                //            await OnLocationAddedLocal(Location);
-                //        }
-                //        catch (Exception e)
-                //        {
-                //            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
-                //                        Environment.NewLine, e.Message,
-                //                        Environment.NewLine, e.StackTrace ?? "");
-                //        }
-                //    }
-
-                //}
-
-                return AddResult<VersionInformation>.Success(
-                           EventTrackingId,
-                           VersionInformation
-                       );
-
-            }
-
-            return AddResult<VersionInformation>.Failed(
-                       EventTrackingId,
-                       VersionInformation,
-                       "The given version information already exists!"
-                   );
-
-        }
-
-        #endregion
-
-        #endregion
-
-
         //ToDo: Wrap the following into a pluggable interface!
 
         #region Log/Read   Remote Parties
@@ -3315,165 +3314,174 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region ReadRemotePartyDatabaseFile (DatabaseFileName = null)
+        #region ReadRemotePartyDatabaseFile (DatabaseFileName = null, CancellationToken = default)
 
-        public void ReadRemotePartyDatabaseFile(String? DatabaseFileName = null)
+        public async Task ReadRemotePartyDatabaseFile(String?            DatabaseFileName    = null,
+                                                      CancellationToken  CancellationToken   = default)
         {
 
-            ProcessRemotePartyCommands(
-                LoadCommandsFromDatabaseFile(DatabaseFileName ?? RemotePartyDBFileName)
-            );
+            try
+            {
+
+                await foreach (var command in LoadCommandsFromDatabaseFile(
+                                                  DatabaseFileName ?? RemotePartyDBFileName,
+                                                  CancellationToken
+                                              ))
+                {
+                    ProcessRemotePartyCommand(command);
+                }
+
+            }
+            catch (FileNotFoundException)
+            { }
+            catch (DirectoryNotFoundException)
+            { }
 
         }
 
         #endregion
 
-        #region ProcessRemotePartyCommands  (Commands)
+        #region ProcessRemotePartyCommand  (Command)
 
-        public void ProcessRemotePartyCommands(IEnumerable<Command> Commands)
+        public void ProcessRemotePartyCommand(Command command)
         {
 
-            foreach (var command in Commands)
+            String?      errorResponse   = null;
+            RemoteParty? remoteParty;
+
+            var errorResponses = new List<Tuple<Command, String>>();
+
+            switch (command.CommandName)
             {
 
-                String?      errorResponse   = null;
-                RemoteParty? remoteParty;
+                #region addRemoteParty
 
-                var errorResponses = new List<Tuple<Command, String>>();
-
-                switch (command.CommandName)
-                {
-
-                    #region addRemoteParty
-
-                    case CommonHTTPAPI.addRemoteParty:
-                        try
+                case CommonHTTPAPI.addRemoteParty:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            RemoteParty.TryParse(command.JSONObject,
+                                                 out remoteParty,
+                                                 out errorResponse))
                         {
-                            if (command.JSONObject is not null &&
-                                RemoteParty.TryParse(command.JSONObject,
-                                                     out remoteParty,
-                                                     out errorResponse))
-                            {
-                                remoteParties.TryAdd(remoteParty.Id, remoteParty);
-                            }
+                            remoteParties.TryAdd(remoteParty.Id, remoteParty);
                         }
-                        catch (Exception e)
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region addRemotePartyIfNotExists
+
+                case CommonHTTPAPI.addRemotePartyIfNotExists:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            RemoteParty.TryParse(command.JSONObject,
+                                                 out remoteParty,
+                                                 out errorResponse))
                         {
-                            errorResponse ??= e.Message;
+                            remoteParties.TryAdd(remoteParty.Id, remoteParty);
                         }
-                        if (errorResponse is not null)
-                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
-                        break;
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
 
-                    #endregion
+                #endregion
 
-                    #region addRemotePartyIfNotExists
+                #region addOrUpdateRemoteParty
 
-                    case CommonHTTPAPI.addRemotePartyIfNotExists:
-                        try
+                case CommonHTTPAPI.addOrUpdateRemoteParty:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            RemoteParty.TryParse(command.JSONObject,
+                                                 out remoteParty,
+                                                 out errorResponse))
                         {
-                            if (command.JSONObject is not null &&
-                                RemoteParty.TryParse(command.JSONObject,
-                                                     out remoteParty,
-                                                     out errorResponse))
-                            {
-                                remoteParties.TryAdd(remoteParty.Id, remoteParty);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            errorResponse ??= e.Message;
-                        }
-                        if (errorResponse is not null)
-                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
-                        break;
 
-                    #endregion
-
-                    #region addOrUpdateRemoteParty
-
-                    case CommonHTTPAPI.addOrUpdateRemoteParty:
-                        try
-                        {
-                            if (command.JSONObject is not null &&
-                                RemoteParty.TryParse(command.JSONObject,
-                                                     out remoteParty,
-                                                     out errorResponse))
-                            {
-
-                                if (remoteParties.ContainsKey(remoteParty.Id))
-                                    remoteParties.Remove(remoteParty.Id, out _);
-
-                                remoteParties.TryAdd(remoteParty.Id, remoteParty);
-
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            errorResponse ??= e.Message;
-                        }
-                        if (errorResponse is not null)
-                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
-                        break;
-
-                    #endregion
-
-                    #region updateRemoteParty
-
-                    case CommonHTTPAPI.updateRemoteParty:
-                        try
-                        {
-                            if (command.JSONObject is not null &&
-                                RemoteParty.TryParse(command.JSONObject,
-                                                     out remoteParty,
-                                                     out errorResponse))
-                            {
+                            if (remoteParties.ContainsKey(remoteParty.Id))
                                 remoteParties.Remove(remoteParty.Id, out _);
-                                remoteParties.TryAdd(remoteParty.Id, remoteParty);
-                            }
+
+                            remoteParties.TryAdd(remoteParty.Id, remoteParty);
+
                         }
-                        catch (Exception e)
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region updateRemoteParty
+
+                case CommonHTTPAPI.updateRemoteParty:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            RemoteParty.TryParse(command.JSONObject,
+                                                 out remoteParty,
+                                                 out errorResponse))
                         {
-                            errorResponse ??= e.Message;
+                            remoteParties.Remove(remoteParty.Id, out _);
+                            remoteParties.TryAdd(remoteParty.Id, remoteParty);
                         }
-                        if (errorResponse is not null)
-                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
-                        break;
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
 
-                    #endregion
+                #endregion
 
-                    #region updateRemoteParty
+                #region updateRemoteParty
 
-                    case CommonHTTPAPI.removeRemoteParty:
-                        try
+                case CommonHTTPAPI.removeRemoteParty:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            RemoteParty.TryParse(command.JSONObject,
+                                                 out remoteParty,
+                                                 out errorResponse))
                         {
-                            if (command.JSONObject is not null &&
-                                RemoteParty.TryParse(command.JSONObject,
-                                                     out remoteParty,
-                                                     out errorResponse))
-                            {
-                                remoteParties.Remove(remoteParty.Id, out _);
-                            }
+                            remoteParties.Remove(remoteParty.Id, out _);
                         }
-                        catch (Exception e)
-                        {
-                            errorResponse ??= e.Message;
-                        }
-                        if (errorResponse is not null)
-                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
-                        break;
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
 
-                    #endregion
+                #endregion
 
-                    #region removeAllRemoteParties
+                #region removeAllRemoteParties
 
-                    case CommonHTTPAPI.removeAllRemoteParties:
-                        remoteParties.Clear();
-                        break;
+                case CommonHTTPAPI.removeAllRemoteParties:
+                    remoteParties.Clear();
+                    break;
 
-                    #endregion
-
-                }
+                #endregion
 
             }
 
@@ -3483,10 +3491,12 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-
         #region Read/Write Database Files
 
-        #region WriteToDatabase                          (FileName, Text,   ...)
+        const String CommentPrefix1  = "//";
+        const String CommentPrefix2  = "#";
+
+        #region WriteToDatabase                                  (FileName, Text,   ...)
 
         public ValueTask WriteToDatabase(String             FileName,
                                          String             Text,
@@ -3500,7 +3510,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region WriteToDatabase                          (FileName, JToken, ...)
+        #region WriteToDatabase                                  (FileName, JToken, ...)
 
         public ValueTask WriteToDatabase(String             FileName,
                                          String             Command,
@@ -3532,7 +3542,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region WriteCommentToDatabase                   (FileName, Text,   ...)
+        #region WriteCommentToDatabase                           (FileName, Text,   ...)
 
         public ValueTask WriteCommentToDatabase(String             FileName,
                                                 String             Text,
@@ -3542,313 +3552,375 @@ namespace cloud.charging.open.protocols.OCPI
 
             => WriteToDatabase(
                    FileName,
-                   $"//{Timestamp.Now.ToISO8601()} {EventTrackingId} {(CurrentUserId is not null ? CurrentUserId : "-")}: {Text}{Environment.NewLine}",
+                   $"{CommentPrefix1}{Timestamp.Now.ToISO8601()} {EventTrackingId} {(CurrentUserId is not null ? CurrentUserId : "-")}: {Text}{Environment.NewLine}",
                    CancellationToken
                );
 
         #endregion
 
 
-        #region LoadCommandsFromDatabaseFile             (DBFileName)
+        #region LoadCommandsFromDatabaseFile                     (DBFileName,                       CancellationToken = default)
 
-        public IEnumerable<Command> LoadCommandsFromDatabaseFile(String DBFileName)
+        public async IAsyncEnumerable<Command> LoadCommandsFromDatabaseFile(String                                      DBFileName,
+                                                                            [EnumeratorCancellation] CancellationToken  CancellationToken = default)
         {
 
-            try
+            await foreach (var line in File.ReadLinesAsync(
+                                           DBFileName,
+                                           Encoding.UTF8,
+                                           CancellationToken
+                                       ))
             {
 
-                return ParseCommands(
-                           File.ReadLines(
-                               DBFileName,
-                               Encoding.UTF8
-                           )
-                       );
+                Command? command = null;
 
-            }
-            catch (FileNotFoundException)
-            { }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, $"OCPI.CommonAPIBase.ReadDatabaseFile({DBFileName})");
-            }
-
-            return [];
-
-        }
-
-        #endregion
-
-        #region ParseCommands                            (Commands)
-
-        public IEnumerable<Command> ParseCommands(IEnumerable<String> Commands)
-        {
-
-            try
-            {
-
-                var commands = new List<Command>();
-
-                foreach (var line in Commands)
+                try
                 {
 
-                    try
+                    var trimmed = line.AsSpan().Trim();
+
+                    if (trimmed.IsEmpty                    ||
+                        trimmed.StartsWith(CommentPrefix1) ||
+                        trimmed.StartsWith(CommentPrefix2))
                     {
-
-                        if (line.StartsWith("//") || line.StartsWith('#'))
-                            continue;
-
-                        var json     = JObject.Parse(line);
-                        var command  = json.Properties().First();
-
-                        if (     command.Value.Type == JTokenType.Object)
-                            commands.Add(
-                                new Command(
-                                    command.Name,
-                                    command.Value as JObject
-                                )
-                            );
-
-                        else if (command.Value.Type == JTokenType.Array)
-                            commands.Add(
-                                new Command(
-                                    command.Name,
-                                    command.Value as JArray
-                                )
-                            );
-
-                        else if (command.Value.Type == JTokenType.String)
-                            commands.Add(
-                                new Command(
-                                    command.Name,
-                                    command.Value<String>()
-                                )
-                            );
-
-                        else if (command.Value.Type == JTokenType.Integer)
-                            commands.Add(
-                                new Command(
-                                    command.Name,
-                                    command.Value<Int64>()
-                                )
-                            );
-
-                        else if (command.Value.Type == JTokenType.Float)
-                            commands.Add(
-                                new Command(
-                                    command.Name,
-                                    command.Value<Single>()
-                                )
-                            );
-
-                        else if (command.Value.Type == JTokenType.Boolean)
-                            commands.Add(
-                                new Command(
-                                    command.Name,
-                                    command.Value<Boolean>()
-                                )
-                            );
-
+                        continue;
                     }
-                    catch (Exception e)
-                    {
-                        DebugX.LogException(e, $"OCPI.CommonAPIBase.ProcessCommands()");
-                    }
+
+                    command = ParseCommand(trimmed);
 
                 }
+                catch (Exception e)
+                {
+                    DebugX.LogException(e, $"{nameof(CommonHTTPAPI)}.{nameof(LoadCommandsFromDatabaseFile)}('{DBFileName}')!");
+                    // Option A: silently skip bad line          → continue;
+                    // Option B: yield some error command        → yield return Command.FromException(ex);
+                    // Option C: stop whole stream               → yield break;
+                    // Option D: rethrow → caller sees exception → throw;
+                    continue;   // ← most common choice in streaming parsers
+                }
 
-                return commands;
+                if (command is not null)
+                    yield return command;
 
-            }
-            catch
-            {
-                return [];
             }
 
         }
 
         #endregion
 
-        #region LoadCommandsWithMetadataFromDatabaseFile (DBFileName)
+        #region LoadCommandsFromDatabaseFileBuffered             (DBFileName, BufferSize = 1048576, CancellationToken = default)
 
-        public IEnumerable<CommandWithMetadata> LoadCommandsWithMetadataFromDatabaseFile(String DBFileName)
+        public async IAsyncEnumerable<Command> LoadCommandsFromDatabaseFileBuffered(String                                      DBFileName,
+                                                                                    UInt32                                      BufferSize          = 1048576,
+                                                                                    [EnumeratorCancellation] CancellationToken  CancellationToken   = default)
+        {
+
+            await using var fileStream = new FileStream(
+                                             DBFileName,
+                                             FileMode.  Open,
+                                             FileAccess.Read,
+                                             FileShare. Read,
+                                             bufferSize: (Int32) BufferSize,
+                                             options: FileOptions.SequentialScan | FileOptions.Asynchronous
+                                         );
+
+            using var reader = new StreamReader(
+                                   fileStream,
+                                   Encoding.UTF8,
+                                   detectEncodingFromByteOrderMarks: false,
+                                   bufferSize: (Int32) BufferSize
+                               );
+
+            String? line;
+
+            while ((line = await reader.ReadLineAsync(CancellationToken).ConfigureAwait(false)) != null)
+            {
+
+                Command? command = null;
+
+                try
+                {
+
+                    var trimmed = line.AsSpan().Trim();
+
+                    if (trimmed.IsEmpty ||
+                        trimmed.StartsWith(CommentPrefix1.AsSpan()) ||
+                        trimmed.StartsWith(CommentPrefix2.AsSpan()))
+                    {
+                        continue;
+                    }
+
+                    command = ParseCommand(trimmed);
+
+                }
+                catch (Exception ex)
+                {
+                    DebugX.LogException(ex, $"{nameof(LoadCommandsFromDatabaseFileBuffered)}('{DBFileName}') failed!");
+                    continue;
+                }
+
+                if (command is not null)
+                    yield return command;
+
+            }
+
+        }
+
+        #endregion
+
+        #region LoadCommandsWithMetadataFromDatabaseFile         (DBFileName,                       CancellationToken = default)
+
+        public async IAsyncEnumerable<CommandWithMetadata> LoadCommandsWithMetadataFromDatabaseFile(String                                      DBFileName,
+                                                                                                    [EnumeratorCancellation] CancellationToken  CancellationToken = default)
+        {
+
+            await foreach (var line in File.ReadLinesAsync(
+                                           DBFileName,
+                                           Encoding.UTF8,
+                                           CancellationToken
+                                       ))
+            {
+
+                CommandWithMetadata? command = null;
+
+                try
+                {
+
+                    var trimmed = line.AsSpan().Trim();
+
+                    if (trimmed.IsEmpty                    ||
+                        trimmed.StartsWith(CommentPrefix1) ||
+                        trimmed.StartsWith(CommentPrefix2))
+                    {
+                        continue;
+                    }
+
+                    command = ParseCommandWithMetadata(trimmed);
+
+                }
+                catch (Exception e)
+                {
+                    DebugX.LogException(e, $"{nameof(CommonHTTPAPI)}.{nameof(LoadCommandsWithMetadataFromDatabaseFile)}('{DBFileName}')!");
+                    // Option A: silently skip bad line          → continue;
+                    // Option B: yield some error command        → yield return Command.FromException(ex);
+                    // Option C: stop whole stream               → yield break;
+                    // Option D: rethrow → caller sees exception → throw;
+                    continue;   // ← most common choice in streaming parsers
+                }
+
+                if (command is not null)
+                    yield return command;
+
+            }
+
+        }
+
+        #endregion
+
+        #region LoadCommandsWithMetadataFromDatabaseFileBuffered (DBFileName, BufferSize = 1048576, CancellationToken = default)
+
+        public async IAsyncEnumerable<CommandWithMetadata> LoadCommandsWithMetadataFromDatabaseFileBuffered(String                                      DBFileName,
+                                                                                                            UInt32                                      BufferSize          = 1048576,
+                                                                                                            [EnumeratorCancellation] CancellationToken  CancellationToken   = default)
+        {
+
+            await using var fileStream = new FileStream(
+                                             DBFileName,
+                                             FileMode.  Open,
+                                             FileAccess.Read,
+                                             FileShare. Read,
+                                             bufferSize: (Int32) BufferSize,
+                                             options: FileOptions.SequentialScan | FileOptions.Asynchronous
+                                         );
+
+            using var reader = new StreamReader(
+                                   fileStream,
+                                   Encoding.UTF8,
+                                   detectEncodingFromByteOrderMarks: false,
+                                   bufferSize: (Int32) BufferSize
+                               );
+
+            String? line;
+
+            while ((line = await reader.ReadLineAsync(CancellationToken).ConfigureAwait(false)) != null)
+            {
+
+                CommandWithMetadata? command = null;
+
+                try
+                {
+
+                    var trimmed = line.AsSpan().Trim();
+
+                    if (trimmed.IsEmpty ||
+                        trimmed.StartsWith(CommentPrefix1.AsSpan()) ||
+                        trimmed.StartsWith(CommentPrefix2.AsSpan()))
+                    {
+                        continue;
+                    }
+
+                    command = ParseCommandWithMetadata(trimmed);
+
+                }
+                catch (Exception ex)
+                {
+                    DebugX.LogException(ex, $"{nameof(LoadCommandsFromDatabaseFileBuffered)}('{DBFileName}') failed!");
+                    continue;
+                }
+
+                if (command is not null)
+                    yield return command;
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region ParseCommand                                     (Command)
+
+        public static Command? ParseCommand(ReadOnlySpan<Char> Command)
         {
 
             try
             {
 
-                return ParseCommandsWithMetadata(
-                           File.ReadLines(
-                               DBFileName,
-                               Encoding.UTF8
-                           )
-                       );
+                if (Command.StartsWith("//") || Command.StartsWith('#'))
+                    return null;
+
+                var json     = JObject.Parse(Command.ToString());
+                var command  = json.Properties().First();
+
+                if (     command.Value.Type == JTokenType.Object)
+                    return new Command(
+                               command.Name,
+                               command.Value as JObject
+                           );
+
+                else if (command.Value.Type == JTokenType.Array)
+                    return new Command(
+                               command.Name,
+                               command.Value as JArray
+                           );
+
+                else if (command.Value.Type == JTokenType.String)
+                    return new Command(
+                               command.Name,
+                               command.Value<String>()
+                           );
+
+                else if (command.Value.Type == JTokenType.Integer)
+                    return new Command(
+                               command.Name,
+                               command.Value<Int64>()
+                           );
+
+                else if (command.Value.Type == JTokenType.Float)
+                    return new Command(
+                               command.Name,
+                               command.Value<Single>()
+                           );
+
+                else if (command.Value.Type == JTokenType.Boolean)
+                    return new Command(
+                               command.Name,
+                               command.Value<Boolean>()
+                           );
 
             }
             catch (Exception e)
             {
-                DebugX.LogException(e, $"OCPI.CommonAPIBase.ReadDatabaseFileWithMetadata({DBFileName})");
+                DebugX.LogException(e, $"{nameof(CommonHTTPAPI)}.ParseCommand()");
             }
 
-            return [];
+            return null;
 
         }
 
         #endregion
 
-        #region ParseCommandsWithMetadata                (Commands)
+        #region ParseCommandWithMetadata                         (Command)
 
-        public IEnumerable<CommandWithMetadata> ParseCommandsWithMetadata(IEnumerable<String> Commands)
+        public static CommandWithMetadata? ParseCommandWithMetadata(ReadOnlySpan<Char> Command)
         {
 
             try
             {
 
-                var commands = new List<CommandWithMetadata>();
+                if (Command.StartsWith("//") || Command.StartsWith('#'))
+                    return null;
 
-                foreach (var command in Commands)
-                {
-
-                    try
-                    {
-
-                        if (command.StartsWith("//"))
-                            continue;
-
-                        var json             = JObject.Parse(command);
-                        var ocpiCommand      = json.Properties().First();
-                        var timestamp        = json["timestamp"]?.      Value<DateTime>();
-                        var eventtrackingid  = json["eventTrackingId"]?.Value<String>();
-                        var eventTrackingId  = eventtrackingid is not null ? EventTracking_Id.Parse(eventtrackingid) : null;
-                        var userid           = json["userId"]?.         Value<String>();
-                        var userId           = userid          is not null ? User_Id.         Parse(userid)          : new User_Id?();
-
-                        if (timestamp.HasValue &&
-                            eventTrackingId is not null)
-                        {
-
-                            if (ocpiCommand.Value.Type == JTokenType.String)
-                                commands.Add(
-                                    new CommandWithMetadata(
-                                        ocpiCommand.Name,
-                                        ocpiCommand.Value<String>(),
-                                        timestamp.Value,
-                                        eventTrackingId,
-                                        userId
-                                    )
-                                );
-
-                            else if (ocpiCommand.Value.Type == JTokenType.Object)
-                                commands.Add(
-                                    new CommandWithMetadata(
-                                        ocpiCommand.Name,
-                                        ocpiCommand.Value as JObject,
-                                        timestamp.Value,
-                                        eventTrackingId,
-                                        userId
-                                    )
-                                );
-
-                            else if (ocpiCommand.Value.Type == JTokenType.Integer)
-                                commands.Add(
-                                    new CommandWithMetadata(
-                                        ocpiCommand.Name,
-                                        ocpiCommand.Value<Int64>(),
-                                        timestamp.Value,
-                                        eventTrackingId,
-                                        userId
-                                    )
-                                );
+                var json                   = JObject.Parse(Command.ToString());
+                var command                = json.Properties().First();
+                var timestamp              = json["timestamp"]?.      Value<DateTime>() ?? Timestamp.Now;
+                var eventTrackingIdString  = json["eventTrackingId"]?.Value<String>();
+                var eventTrackingId        = eventTrackingIdString is not null ? EventTracking_Id.Parse(eventTrackingIdString) : EventTracking_Id.New;
+                var userIdString           = json["userId"]?.         Value<String>();
+                var userId                 = userIdString          is not null ? User_Id.         Parse(userIdString)          : new User_Id?();
 
 
-                            if (     ocpiCommand.Value.Type == JTokenType.Object)
-                                commands.Add(
-                                    new CommandWithMetadata(
-                                        ocpiCommand.Name,
-                                        ocpiCommand.Value as JObject,
-                                        timestamp.Value,
-                                        eventTrackingId,
-                                        userId
-                                    )
-                                );
+                if (     command.Value.Type == JTokenType.Object)
+                    return new CommandWithMetadata(
+                               command.Name,
+                               command.Value as JObject,
+                               timestamp,
+                               eventTrackingId,
+                               userId
+                           );
 
-                            else if (ocpiCommand.Value.Type == JTokenType.Array)
-                                commands.Add(
-                                    new CommandWithMetadata(
-                                        ocpiCommand.Name,
-                                        ocpiCommand.Value as JArray,
-                                        timestamp.Value,
-                                        eventTrackingId,
-                                        userId
-                                    )
-                                );
+                else if (command.Value.Type == JTokenType.Array)
+                    return new CommandWithMetadata(
+                               command.Name,
+                               command.Value as JArray,
+                               timestamp,
+                               eventTrackingId,
+                               userId
+                           );
 
-                            else if (ocpiCommand.Value.Type == JTokenType.String)
-                                commands.Add(
-                                    new CommandWithMetadata(
-                                        ocpiCommand.Name,
-                                        ocpiCommand.Value<String>(),
-                                        timestamp.Value,
-                                        eventTrackingId,
-                                        userId
-                                    )
-                                );
+                else if (command.Value.Type == JTokenType.String)
+                    return new CommandWithMetadata(
+                               command.Name,
+                               command.Value<String>(),
+                               timestamp,
+                               eventTrackingId,
+                               userId
+                           );
 
-                            else if (ocpiCommand.Value.Type == JTokenType.Integer)
-                                commands.Add(
-                                    new CommandWithMetadata(
-                                        ocpiCommand.Name,
-                                        ocpiCommand.Value<Int64>(),
-                                        timestamp.Value,
-                                        eventTrackingId,
-                                        userId
-                                    )
-                                );
+                else if (command.Value.Type == JTokenType.Integer)
+                    return new CommandWithMetadata(
+                               command.Name,
+                               command.Value<Int64>(),
+                               timestamp,
+                               eventTrackingId,
+                               userId
+                           );
 
-                            else if (ocpiCommand.Value.Type == JTokenType.Float)
-                                commands.Add(
-                                    new CommandWithMetadata(
-                                        ocpiCommand.Name,
-                                        ocpiCommand.Value<Single>(),
-                                        timestamp.Value,
-                                        eventTrackingId,
-                                        userId
-                                    )
-                                );
+                else if (command.Value.Type == JTokenType.Float)
+                    return new CommandWithMetadata(
+                               command.Name,
+                               command.Value<Single>(),
+                               timestamp,
+                               eventTrackingId,
+                               userId
+                           );
 
-                            else if (ocpiCommand.Value.Type == JTokenType.Boolean)
-                                commands.Add(
-                                    new CommandWithMetadata(
-                                        ocpiCommand.Name,
-                                        ocpiCommand.Value<Boolean>(),
-                                        timestamp.Value,
-                                        eventTrackingId,
-                                        userId
-                                    )
-                                );
-
-
-                            else
-                                DebugX.Log($"OCPI.CommonAPIBase.ProcessCommandsWithMetadata(): Invalid command: '{command}'!");
-
-                        }
-                        else
-                            DebugX.Log($"OCPI.CommonAPIBase.ProcessCommandsWithMetadata(): Invalid command: '{command}'!");
-
-                    }
-                    catch (Exception e)
-                    {
-                        DebugX.LogException(e, $"OCPI.CommonAPIBase.ProcessCommandsWithMetadata()");
-                    }
-
-                }
-
-                return commands;
+                else if (command.Value.Type == JTokenType.Boolean)
+                    return new CommandWithMetadata(
+                               command.Name,
+                               command.Value<Boolean>(),
+                               timestamp,
+                               eventTrackingId,
+                               userId
+                           );
 
             }
-            catch
+            catch (Exception e)
             {
-                return [];
+                DebugX.LogException(e, $"{nameof(CommonHTTPAPI)}.ParseCommandWithMetadata()");
             }
+
+            return null;
 
         }
 
