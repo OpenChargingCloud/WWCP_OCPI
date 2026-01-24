@@ -21,13 +21,13 @@ Most changes are intended to simplify the daily operations business or to suppor
 
 ## 2nd-Secret Authentication via Time-based One-Time Passwords (TOTPs)
 
-The OCPI security model is fundamentally fragile. In practice it boils down to a single static token plus the legacy CREDENTIALS module, a combination that has been known to be unsafe since OCPI v2.2. This implementation addresses that weakness by introducing a second, independent secret derived from a Time-based One-Time Password (TOTP).
+The OCPI authentication security model is fundamentally fragile. In practice it boils down to a single long-lived static access token plus the infamous *CREDENTIALS* module, a combination that has been known to be *broken-by-design* since the release of OCPI v2.2.
 
-Instead of relying on a long-lived access token alone, an additional HTTP header carries a short-lived TOTP value that rotates (for example) every 30 seconds. The static OCPI token effectively becomes the identifier (similar to a login or username), while the TOTP functions as the ephemeral time-bound secret or password.
+This implementation hardens OCPI by introducing a **second, independent secret** derived from a **Time-based One-Time Password (TOTP)**. Instead of authenticating requests solely with the static OCPI access token, each OCPI request carries an additional HTTP header containing a short-lived TOTP value based on a shared secret and rotating in fixed time slots (e.g. every 30 or 60 seconds). The existing OCPI access token effectively becomes a **stable identifier** comparable to a *login* or *username*, while the TOTP value serves as an **ephemeral time-bound authentication token**.
 
-Together this yields a *two-secret* handshake on every OCPI request, removes the single-secret failure mode, and enables proper replay-protection and token-theft mitigation without breaking OCPI interoperability.
+For deployments where TLS 1.3 is available, this scheme can be further strengthened by binding the TOTP generation to a specific TLS connection **(TLS Channel Binding)** using the *TLS v1.3 Exporter Material* feature. In this mode, the TOTP becomes a ***ephemeral session- and time-bound authentication token***, providing strong replay protection even in the presence of token leakage, stolen or logged tokens, reverse proxies, or partial TLS termination, as this token can no longer be replayed on a different TLS connection, even during the correct time window.
 
-*Note:* This is a *Two-Secret Scheme*, not a real *2nd, Two-Factor (2FA) or Multi-Factor Authentication Scheme (MFA)*, as the TOTP is not based on a different factor class *(“something you know”, “something you have”, “something you are”)*. This TOTP-based two-secret scheme delivers a pragmatic, interoperable, CRA-aligned hardening of OCPI that directly mitigates the most critical weaknesses of the existing token-only model, without waiting for an unlikely consensus on mutual TLS (mTLS) adoption.
+*Note:* As the TOTP value is not based on a different factor class *(“something you know”, “something you have”, “something you are”)*, this is a *Two/Three-Secret Scheme*, not a real *2nd, Two-Factor (2FA) or Multi-Factor Authentication Scheme (MFA)*. Time-based One-Time Passwords deliver a pragmatic, interoperable hardening of OCPI that directly mitigates the most critical weaknesses of the existing OCPI access token-only model without waiting for an unlikely consensus on mutual TLS (mTLS) adoption or the strange mutual certificate signing concepts of OCPI v3.
 
 ### Alignment with EU CRA and EU NIS2
 
