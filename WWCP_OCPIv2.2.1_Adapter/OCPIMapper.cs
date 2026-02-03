@@ -1097,11 +1097,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            //                                   _                      => 0
                            //                               }),
 
-                           MaxVoltage:              (EVSE.MaxVoltage.HasValue && EVSE.MaxVoltage.Value.Value != 0
+                           MaxVoltage:              EVSE.MaxVoltage.HasValue && EVSE.MaxVoltage.Value.Value != 0
                                                         ? powerType.Value switch {
                                                               PowerTypes.AC_1_PHASE  => EVSE.MaxVoltage.Value,
-                                                                                      // 400 V between two conductors => 230 V between conductor and neutral (OCPI design flaw!)
-                                                              PowerTypes.AC_3_PHASE  => Volt.ParseV(EVSE.MaxVoltage.Value.Value / ((Decimal) Math.Sqrt(3))),
+                                                                                        // 400 V between two conductors => 230 V between conductor and neutral (OCPI design flaw!)
+                                                              PowerTypes.AC_3_PHASE  => EVSE.MaxVoltage.Value,//Volt.ParseV(EVSE.MaxVoltage.Value.Value / ((Decimal) Math.Sqrt(3))),
                                                               _                      => EVSE.MaxVoltage.Value
                                                           }
                                                         : powerType.Value switch {
@@ -1109,15 +1109,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                               PowerTypes.AC_3_PHASE  => Volt.ParseV(230),  // Line to neutral for AC_3_PHASE: https://github.com/ocpi/ocpi/blob/master/mod_locations.asciidoc#mod_locations_connector_object
                                                               PowerTypes.DC          => Volt.ParseV(400),
                                                               _                      => Volt.ParseV(0)
-                                                          }),
+                                                          },
 
-                           MaxAmperage:             (EVSE.MaxCurrent     ?? powerType.Value switch {
+                           MaxAmperage:             EVSE.MaxCurrent ?? powerType.Value switch {
                                                         PowerTypes.AC_1_PHASE  => Ampere.ParseA(16),
                                                         PowerTypes.AC_3_PHASE  => Ampere.ParseA(16),
                                                         PowerTypes.DC          => Ampere.ParseA(50),
                                                         _                      => Ampere.ParseA(0)
-                                                    }),
-                           MaxElectricPower:        null,
+                                                    },
+                           MaxElectricPower:        EVSE.MaxPower,
 
                            //TariffId:              Via lookup table!
                            TermsAndConditionsURL:   EVSE.Operator?.TermsAndConditionsURL,

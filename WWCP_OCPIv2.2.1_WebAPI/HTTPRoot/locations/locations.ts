@@ -216,7 +216,7 @@ function StartLocations()
 
                             const connectorInfoDiv            = connectorDiv.appendChild(document.createElement('div')) as HTMLDivElement;
                             connectorInfoDiv.className        = "connectorInfo";
-                            connectorInfoDiv.innerHTML        = connector.id + ". " + connector.standard + ", " + connector.format + ", " + connector.max_amperage + " A, " + connector.max_voltage + " V, " + connector.power_type;
+                            connectorInfoDiv.innerHTML        = connector.id + ". " + connector.standard + ", " + connector.format + ", " + connector.max_amperage + " A, " + connector.max_voltage + " V, " + connector.max_electric_power + " kW, " + connector.power_type;
 
                             const connectorPropertiesDiv      = connectorDiv.appendChild(document.createElement('div')) as HTMLDivElement;
                             connectorPropertiesDiv.className  = "properties";
