@@ -415,7 +415,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             //                                                     EnableLogging:            true,
             //                                                     LogfilePrefix:            LogfilePrefix);
 
-            RegisterURITemplates();
+            RegisterURLTemplates();
 
             //this.RequestTimeout        = RequestTimeout;
 
@@ -513,7 +513,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         /// The following will register HTTP overlays for text/html
         /// showing a html representation of the OCPI Common API!
         /// </summary>
-        private void RegisterURITemplates()
+        private void RegisterURLTemplates()
         {
 
             if (CommonWebAPI.OverlayURLPathPrefix.HasValue)

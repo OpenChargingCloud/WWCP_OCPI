@@ -321,7 +321,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
           //                                                       EnableLogging:            true,
           //                                                       LogfilePrefix:            LogfilePrefix);
 
-            RegisterURITemplates();
+            RegisterURLTemplates();
 
         }
 
@@ -411,7 +411,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         /// The following will register HTTP overlays for text/html
         /// showing a html representation of the OCPI Common API!
         /// </summary>
-        private void RegisterURITemplates()
+        private void RegisterURLTemplates()
         {
 
             #region / (HTTPRoot)
