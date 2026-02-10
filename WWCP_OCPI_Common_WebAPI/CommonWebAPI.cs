@@ -187,7 +187,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
 
         /// <summary>
-        /// Send debug information via HTTP Server Sent Events.
+        /// Debug information via HTTP Server Sent Events.
         /// </summary>
         public HTTPEventSource<JObject>                     DebugLog                { get; }
 

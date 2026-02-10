@@ -17,6 +17,7 @@
 
 #region Usings
 
+using System.Reflection;
 using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
@@ -249,35 +250,26 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
         #endregion
 
         #region Properties
-        public CommonWebAPI             CommonWebAPI    { get; }
 
-        public CommonAPI                CommonAPI
+        public CommonWebAPI              CommonWebAPI        { get; }
+
+        public CommonAPI                 CommonAPI
             => HTTPBaseAPI;
 
         /// <summary>
         /// The HTTP URI prefix.
         /// </summary>
-        public HTTPPath?                                    APIURLPathPrefix        { get; }
+        public HTTPPath?                 APIURLPathPrefix    { get; }
 
         /// <summary>
-        /// Send debug information via HTTP Server Sent Events.
+        /// Debug information via HTTP Server Sent Events.
         /// </summary>
-     //   public HTTPEventSource<JObject>                     DebugLog                { get; }
+        public HTTPEventSource<JObject>  DebugLog            { get; }
 
 
-        public CPOAPI?                                      CPOAPI                  { get; set; }
+        public CPOAPI?                   CPOAPI              { get; set; }
 
-        public CPOAPILogger?                                CPOAPILogger            { get; set; }
-
-
-        public EMSPAPI?                                     EMSPAPI                 { get; set; }
-
-        public EMSPAPILogger?                               EMSPAPILogger           { get; set; }
-
-        /// <summary>
-        /// The default request timeout for new CPO/EMSP clients.
-        /// </summary>
-        //public TimeSpan?                                    RequestTimeout          { get; set; }
+        public EMSPAPI?                  EMSPAPI             { get; set; }
 
         #endregion
 
@@ -322,12 +314,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
         #region Constructor(s)
 
         /// <summary>
-        /// Attach the OCPI+ WebAPI to the given HTTP server.
+        /// Attach the OCPI WebAPI to the given HTTP server.
         /// </summary>
-        /// <param name="HTTPServer">A HTTP server.</param>
+        /// <param name="CommonWebAPI">The OCPI Common WebAPI.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
+        /// <param name="Description">An optional description of this WebAPI.</param>
+        /// 
+        /// <param name="APIURLPathPrefix">An optional prefix for the HTTP URIs.</param>
         /// <param name="WebAPIURLPathPrefix">An optional prefix for the HTTP URIs.</param>
-        /// <param name="HTTPRealm">The HTTP realm, if HTTP Basic Authentication is used.</param>
-        /// <param name="HTTPLogins">An enumeration of logins for an optional HTTP Basic Authentication.</param>
+        /// <param name="BasePath">The base path of the HTTP server.</param>
         public OCPIWebAPI(CommonWebAPI             CommonWebAPI,
                           CommonAPI                CommonAPI,
                           I18NString?              Description            = null,
@@ -375,30 +370,22 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
 
         {
 
-            this.CommonWebAPI          = CommonWebAPI;
+            this.CommonWebAPI      = CommonWebAPI;
 
-            this.APIURLPathPrefix      = APIURLPathPrefix;
+            this.APIURLPathPrefix  = APIURLPathPrefix;
 
-            //this.OverlayURLPathPrefix  = OverlayURLPathPrefix;
-            //this.HTTPRealm             = HTTPRealm.IsNotNullOrEmpty() ? HTTPRealm : DefaultHTTPRealm;
-            //this.HTTPLogins            = HTTPLogins ?? [];
+            this.DebugLog          = CommonAPI.HTTPBaseAPI.AddJSONEventSource(
+                                         EventSourceId:            DebugLogId,
+                                         MaxNumberOfCachedEvents:  1000,
+                                         RetryInterval :           TimeSpan.FromSeconds(5),
+                                         EnableLogging:            true,
+                                         LogfilePrefix:            this.LoggingPath + "HTTPSSEs" + Path.DirectorySeparatorChar
+                                     );
 
-            ////this.cpoClients            = new List<CPOClient>();
-            ////this.emspClients           = new List<EMSPClient>();
-
-            //var LogfilePrefix          = "HTTPSSEs" + Path.DirectorySeparatorChar;
-
-            //this.DebugLog              = this.AddJSONEventSource(EventIdentification:      DebugLogId,
-            //                                                     URLTemplate:              this.URLPathPrefix + "debugLog",
-            //                                                     MaxNumberOfCachedEvents:  10000,
-            //                                                     RetryInterval:            TimeSpan.FromSeconds(5),
-            //                                                     EnableLogging:            true,
-            //                                                     LogfilePrefix:            LogfilePrefix);
+            //this.cpoClients        = new List<CPOClient>();
+            //this.emspClients       = new List<EMSPClient>();
 
             RegisterURLTemplates();
-
-            //this.HTMLTemplate          = HTMLTemplate ?? GetResourceString("template.html");
-            //this.RequestTimeout        = RequestTimeout;
 
         }
 
@@ -409,15 +396,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
 
         #region Manage HTTP Resources
 
+        private readonly Tuple<String, Assembly>[] resourceAssemblies = [
+            new Tuple<String, Assembly>(OCPIWebAPI.  HTTPRoot, typeof(OCPIWebAPI).  Assembly),
+            new Tuple<String, Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
+            new Tuple<String, Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
+        ];
+
         #region (protected override) GetResourceStream      (ResourceName)
 
         protected override Stream? GetResourceStream(String ResourceName)
 
             => GetResourceStream(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.  HTTPRoot, typeof(OCPIWebAPI).  Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
+                   resourceAssemblies
                );
 
         #endregion
@@ -428,9 +419,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
 
             => GetResourceMemoryStream(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.  HTTPRoot, typeof(OCPIWebAPI).  Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
+                   resourceAssemblies
                );
 
         #endregion
@@ -441,9 +430,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
 
             => GetResourceString(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.  HTTPRoot, typeof(OCPIWebAPI).  Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
+                   resourceAssemblies
                );
 
         #endregion
@@ -454,9 +441,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
 
             => GetResourceBytes(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.  HTTPRoot, typeof(OCPIWebAPI).  Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
+                   resourceAssemblies
                );
 
         #endregion
@@ -467,9 +452,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
 
             => MixWithHTMLTemplate(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.  HTTPRoot, typeof(OCPIWebAPI).  Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
+                   resourceAssemblies
                );
 
         #endregion
@@ -481,9 +464,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
             => MixWithHTMLTemplate(
                    ResourceName,
                    HTMLConverter,
-                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.  HTTPRoot, typeof(OCPIWebAPI).  Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
+                   resourceAssemblies
                );
 
         #endregion
@@ -881,6 +862,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
                     });
 
                 #endregion
+
+
+                CommonAPI.HTTPBaseAPI.MapJSONEventSource(
+                    DebugLog,
+                    URLPathPrefix + DebugLogId.ToString()
+                );
 
             }
 
