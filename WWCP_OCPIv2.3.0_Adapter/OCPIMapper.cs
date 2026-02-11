@@ -17,10 +17,11 @@
 
 #region Usings
 
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
-using Newtonsoft.Json.Linq;
 
 #endregion
 
@@ -444,6 +445,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         }
 
+        public static Location_Id ToOCPI(this WWCP.ChargingPool_Id ChargingPoolId)
+            => Location_Id.Parse(ChargingPoolId.Suffix);
+
 
         #region ToOCPI(this ChargingPool,  ref Warnings, IncludeEVSEIds = null)
 
@@ -490,7 +494,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 return null;
             }
 
-            var locationId   = Location_Id.TryParse(ChargingPool.Id.ToString());
+            var locationId   = Location_Id.TryParse("P" + ChargingPool.Id.Suffix);
 
             if (!locationId.HasValue)
             {

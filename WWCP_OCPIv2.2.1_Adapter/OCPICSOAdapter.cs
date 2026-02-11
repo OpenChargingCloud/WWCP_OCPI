@@ -305,16 +305,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 this.CommonAPI.GetTariffIdsDelegate += (cpoCountryCode,
                                                         cpoPartyId,
                                                         locationId,
-                                                        evseId,
+                                                        evseUId,
                                                         connectorId,
-                                                        empId) =>
+                                                        empId) => {
 
-                    this.GetTariffIds(                       WWCP.ChargingStationOperator_Id.Parse($"{cpoCountryCode}*{cpoPartyId}"),
-                                      locationId. HasValue ? WWCP.ChargingPool_Id.           Parse(locationId. Value.ToString()) : null,
-                                      null,
-                                      evseId.     HasValue ? WWCP.EVSE_Id.                   Parse(evseId.     Value.ToString()) : null,
-                                      connectorId.HasValue ? WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()) : null,
-                                      empId.      HasValue ? WWCP.EMobilityProvider_Id.      Parse(empId.      Value.ToString()) : null);
+                    if (locationId. HasValue &&
+                        evseUId.    HasValue &&
+                        connectorId.HasValue &&
+                        CommonAPI.TryGetLocation(Party_Idv3.From(cpoCountryCode, cpoPartyId), locationId.Value, out var location) &&
+                        location. TryGetEVSE    (evseUId.Value, out var evse) &&
+                        evse.EVSEId.HasValue)
+                    {
+
+                        return this.GetTariffIds(
+                                   WWCP.ChargingStationOperator_Id.Parse($"{cpoCountryCode}*{cpoPartyId}"),
+                                   WWCP.ChargingPool_Id.           Parse($"{cpoCountryCode}*{cpoPartyId}{locationId.Value}"),
+                                   null,
+                                   WWCP.EVSE_Id.                   Parse(evse.EVSEId.Value.ToString()),
+                                   WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()),
+                                   empId.HasValue
+                                       ? WWCP.EMobilityProvider_Id.Parse(empId.      Value.ToString())
+                                       : null
+                               );
+                    }
+
+                    return [];
+
+                };
 
             }
 
@@ -628,15 +645,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         if (location is not null)
                         {
 
-                            //var result = await CommonAPI.AddLocation(
-                            //                       Location:            location,
-                            //                       SkipNotifications:   false,
-                            //                       EventTrackingId:     EventTrackingId,
-                            //                       CurrentUserId:       null,
-                            //                       CancellationToken:   CancellationToken
-                            //                   );
-
-                            var result =       CommonAPI.AddLocation(
+                            var result = await CommonAPI.AddLocation(
                                                    Location:            location,
                                                    SkipNotifications:   false,
                                                    EventTrackingId:     EventTrackingId,
@@ -645,6 +654,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                );
 
                             //ToDo: Handle errors!!!
+
+                            if (result.IsFailed)
+                            {
+
+                            }
 
                         }
 
@@ -740,13 +754,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         if (location is not null)
                         {
 
-                            var result = CommonAPI.AddLocation(
-                                             location,
-                                             false,
-                                             EventTrackingId,
-                                             CurrentUserId,
-                                             CancellationToken
-                                         );
+                            var result = await CommonAPI.AddLocation(
+                                                   Location:            location,
+                                                   SkipNotifications:   false,
+                                                   EventTrackingId:     EventTrackingId,
+                                                   CurrentUserId:       CurrentUserId,
+                                                   CancellationToken:   CancellationToken
+                                               );
 
                             //ToDo: Handle errors!
 
@@ -851,14 +865,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         if (location is not null)
                         {
 
-                            var result = CommonAPI.UpdateLocation(
-                                             location,
-                                             false,
-                                             false,
-                                             EventTrackingId,
-                                             CurrentUserId,
-                                             CancellationToken
-                                         );
+                            var result = await CommonAPI.UpdateLocation(
+                                                   Location:            location,
+                                                   AllowDowngrades:     null,
+                                                   SkipNotifications:   false,
+                                                   EventTrackingId:     EventTrackingId,
+                                                   CurrentUserId:       null,
+                                                   CancellationToken:   CancellationToken
+                                               );
 
                             //ToDo: Process errors!!!
 
@@ -1123,9 +1137,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     var countryCode  = CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
                     var partyId      = Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
-                    var locationId   = EVSE.ChargingPool is not null
-                                           ? Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
-                                           : null;
+                    var locationId   = EVSE.ChargingPool?.Id.ToOCPI();
 
                     if (countryCode.HasValue &&
                         partyId.    HasValue &&
@@ -1172,6 +1184,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     else
                         result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
 
+                    if (result.IsFailed)
+                    {
+                        // DE*822!!!
+                    }
 
                     return result.IsSuccess
 
@@ -1254,9 +1270,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     var countryCode  = CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
                     var partyId      = Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
-                    var locationId   = EVSE.ChargingPool is not null
-                                           ? Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
-                                           : null;
+                    var locationId   = EVSE.ChargingPool?.Id.ToOCPI();
 
                     if (countryCode.HasValue &&
                         partyId.    HasValue &&
@@ -1403,9 +1417,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     var countryCode  = CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
                     var partyId      = Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
-                    var locationId   = EVSE.ChargingPool is not null
-                                           ? Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
-                                           : null;
+                    var locationId   = EVSE.ChargingPool?.Id.ToOCPI();
 
                     if (countryCode.HasValue &&
                         partyId.    HasValue &&

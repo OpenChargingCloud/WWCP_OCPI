@@ -37,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
 
-    public delegate IEnumerable<OCPI.Tariff_Id>  GetTariffIds_Delegate(WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
+    public delegate IEnumerable<Tariff_Id>  GetTariffIds_Delegate(WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
                                                                        WWCP.ChargingPool_Id?             ChargingPoolId,
                                                                        WWCP.ChargingStation_Id?          ChargingStationId,
                                                                        WWCP.EVSE_Id?                     EVSEId,
@@ -306,16 +306,33 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 this.CommonAPI.GetTariffIdsDelegate += (cpoCountryCode,
                                                         cpoPartyId,
                                                         locationId,
-                                                        evseId,
+                                                        evseUId,
                                                         connectorId,
-                                                        empId) =>
+                                                        empId) => {
 
-                    this.GetTariffIds(                       WWCP.ChargingStationOperator_Id.Parse($"{cpoCountryCode}*{cpoPartyId}"),
-                                      locationId. HasValue ? WWCP.ChargingPool_Id.           Parse(locationId. Value.ToString()) : null,
-                                      null,
-                                      evseId.     HasValue ? WWCP.EVSE_Id.                   Parse(evseId.     Value.ToString()) : null,
-                                      connectorId.HasValue ? WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()) : null,
-                                      empId.      HasValue ? WWCP.EMobilityProvider_Id.      Parse(empId.      Value.ToString()) : null);
+                    if (locationId. HasValue &&
+                        evseUId.    HasValue &&
+                        connectorId.HasValue &&
+                        CommonAPI.TryGetLocation(Party_Idv3.From(cpoCountryCode, cpoPartyId), locationId.Value, out var location) &&
+                        location. TryGetEVSE    (evseUId.Value, out var evse) &&
+                        evse.EVSEId.HasValue)
+                    {
+
+                        return this.GetTariffIds(
+                                   WWCP.ChargingStationOperator_Id.Parse($"{cpoCountryCode}*{cpoPartyId}"),
+                                   WWCP.ChargingPool_Id.           Parse($"{cpoCountryCode}*{cpoPartyId}{locationId.Value}"),
+                                   null,
+                                   WWCP.EVSE_Id.                   Parse(evse.EVSEId.Value.ToString()),
+                                   WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()),
+                                   empId.HasValue
+                                       ? WWCP.EMobilityProvider_Id.Parse(empId.      Value.ToString())
+                                       : null
+                               );
+                    }
+
+                    return [];
+
+                };
 
             }
 
@@ -627,15 +644,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         if (location is not null)
                         {
 
-                            //var result = await CommonAPI.AddLocation(
-                            //                       Location:            location,
-                            //                       SkipNotifications:   false,
-                            //                       EventTrackingId:     EventTrackingId,
-                            //                       CurrentUserId:       null,
-                            //                       CancellationToken:   CancellationToken
-                            //                   );
-
-                            var result =       CommonAPI.AddLocation(
+                            var result = await CommonAPI.AddLocation(
                                                    Location:            location,
                                                    SkipNotifications:   false,
                                                    EventTrackingId:     EventTrackingId,
@@ -737,13 +746,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         if (location is not null)
                         {
 
-                            var result = CommonAPI.AddLocation(
-                                             location,
-                                             false,
-                                             EventTrackingId,
-                                             CurrentUserId,
-                                             CancellationToken
-                                         );
+                            var result = await CommonAPI.AddLocation(
+                                                   Location:            location,
+                                                   SkipNotifications:   false,
+                                                   EventTrackingId:     EventTrackingId,
+                                                   CurrentUserId:       CurrentUserId,
+                                                   CancellationToken:   CancellationToken
+                                               );
 
                             //ToDo: Handle errors!
 
@@ -846,14 +855,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         if (location is not null)
                         {
 
-                            var result = CommonAPI.UpdateLocation(
-                                             location,
-                                             false,
-                                             false,
-                                             EventTrackingId,
-                                             CurrentUserId,
-                                             CancellationToken
-                                         );
+                            var result = await CommonAPI.UpdateLocation(
+                                                   location,
+                                                   false,
+                                                   false,
+                                                   EventTrackingId,
+                                                   CurrentUserId,
+                                                   CancellationToken
+                                               );
 
                             //ToDo: Process errors!!!
 
@@ -1110,15 +1119,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (lockTaken)
                 {
 
-                    OCPI.AddOrUpdateResult<EVSE> result;
+                    AddOrUpdateResult<EVSE> result;
 
                     IEnumerable<Warning> warnings = [];
 
-                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
-                    var locationId   = EVSE.ChargingPool is not null
-                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
-                                           : null;
+                    var countryCode  = CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
+                    var locationId   = EVSE.ChargingPool?.Id.ToOCPI();
 
                     if (countryCode.HasValue &&
                         partyId.    HasValue &&
@@ -1151,19 +1158,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 if (evse2 is not null)
                                     result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
                                 else
-                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
+                                    result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
                             }
                             else
-                                result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
+                                result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
 
                         }
                         else
-                            result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
+                            result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
 
                     }
                     else
-                        result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
+                        result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
 
 
                     return result.IsSuccess
@@ -1239,15 +1246,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (lockTaken)
                 {
 
-                    OCPI.AddOrUpdateResult<EVSE> result;
+                    AddOrUpdateResult<EVSE> result;
 
                     IEnumerable<Warning> warnings = [];
 
-                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
-                    var locationId   = EVSE.ChargingPool is not null
-                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
-                                           : null;
+                    var countryCode  = CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
+                    var locationId   = EVSE.ChargingPool?.Id.ToOCPI();
 
                     if (countryCode.HasValue &&
                         partyId.    HasValue &&
@@ -1280,19 +1285,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 if (evse2 is not null)
                                     result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
                                 else
-                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
+                                    result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
                             }
                             else
-                                result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
+                                result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
 
                         }
                         else
-                            result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
+                            result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
 
                     }
                     else
-                        result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
+                        result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
 
 
                     return result.IsSuccess
@@ -1394,9 +1399,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     var countryCode  = CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
                     var partyId      = Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
-                    var locationId   = EVSE.ChargingPool is not null
-                                           ? Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
-                                           : null;
+                    var locationId   = EVSE.ChargingPool?.Id.ToOCPI();
 
                     if (countryCode.HasValue &&
                         partyId.    HasValue &&
@@ -1567,10 +1570,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                (IncludeEVSEs is not null && IncludeEVSEs(evse)))
                             {
 
-                                var countryCode  = OCPI.CountryCode.TryParse(evse.Id.OperatorId.CountryCode.Alpha2Code);
-                                var partyId      = OCPI.Party_Id.   TryParse(evse.Id.OperatorId.Suffix);
+                                var countryCode  = CountryCode.TryParse(evse.Id.OperatorId.CountryCode.Alpha2Code);
+                                var partyId      = Party_Id.   TryParse(evse.Id.OperatorId.Suffix);
                                 var locationId   = evse.ChargingPool is not null
-                                                       ? OCPI.Location_Id.TryParse(evse.ChargingPool.Id.Suffix)
+                                                       ? Location_Id.TryParse(evse.ChargingPool.Id.Suffix)
                                                        : null;
 
                                 if (countryCode.HasValue &&
@@ -1755,31 +1758,31 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                                                     if (authToken is null)
                                                                         return new AuthorizationInfo(
-                                                                                Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                Allowed:      AllowedType.NOT_ALLOWED,
                                                                                 Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                Info:         new OCPI.DisplayText(Languages.en, $"The local authentication must not be null!"),
+                                                                                Info:         new DisplayText(Languages.en, $"The local authentication must not be null!"),
                                                                                 RemoteParty:  remoteParty
                                                                             );
 
 
-                                                                    var tokenId = OCPI.Token_Id.TryParse(authToken);
+                                                                    var tokenId = Token_Id.TryParse(authToken);
 
                                                                     if (!tokenId.HasValue)
                                                                         return new AuthorizationInfo(
-                                                                                Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                Allowed:      AllowedType.NOT_ALLOWED,
                                                                                 Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                Info:         new OCPI.DisplayText(Languages.en, $"The token identification is invalid!"),
+                                                                                Info:         new DisplayText(Languages.en, $"The token identification is invalid!"),
                                                                                 RemoteParty:  remoteParty
                                                                             );
 
 
-                                                                    var remoteAccessInfo  = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == OCPI.RemoteAccessStatus.ONLINE);
+                                                                    var remoteAccessInfo  = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == RemoteAccessStatus.ONLINE);
 
                                                                     if (remoteAccessInfo is null)
                                                                         return new AuthorizationInfo(
-                                                                                Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                Allowed:      AllowedType.NOT_ALLOWED,
                                                                                 Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                Info:         new OCPI.DisplayText(Languages.en, $"No remote access information for '{remoteParty.Id})'"),
+                                                                                Info:         new DisplayText(Languages.en, $"No remote access information for '{remoteParty.Id})'"),
                                                                                 RemoteParty:  remoteParty
                                                                             );
 
@@ -1802,9 +1805,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                                                     if (cpoClient is null)
                                                                         return new AuthorizationInfo(
-                                                                                Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                Allowed:      AllowedType.NOT_ALLOWED,
                                                                                 Token:        null,
-                                                                                Info:         new OCPI.DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
+                                                                                Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
                                                                                 RemoteParty:  remoteParty
                                                                             );
 

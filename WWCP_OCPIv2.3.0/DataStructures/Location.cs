@@ -1546,14 +1546,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
-        internal IEnumerable<Tariff_Id> GetTariffIds(EVSE_Id?       EVSEId       = null,
+        internal IEnumerable<Tariff_Id> GetTariffIds(EVSE_UId?      EVSEUId       = null,
                                                      Connector_Id?  ConnectorId   = null,
                                                      EMSP_Id?       EMSPId        = null)
 
             => CommonAPI?.GetTariffIds(CountryCode,
                                        PartyId,
                                        Id,
-                                       EVSEId,
+                                       EVSEUId,
                                        ConnectorId,
                                        EMSPId) ?? [];
 
@@ -1589,8 +1589,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         /// <param name="EVSEUId">An EVSE identification.</param>
         /// <param name="EVSE">The EVSE having the given EVSE identification.</param>
-        public Boolean TryGetEVSE(EVSE_UId   EVSEUId,
-                                  out EVSE?  EVSE)
+        public Boolean TryGetEVSE(EVSE_UId                       EVSEUId,
+                                  [NotNullWhen(true)] out EVSE?  EVSE)
         {
 
             lock (EVSEs)

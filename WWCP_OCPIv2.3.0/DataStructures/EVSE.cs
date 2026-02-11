@@ -25,9 +25,9 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -1016,7 +1016,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         internal IEnumerable<Tariff_Id> GetTariffIds(Connector_Id?  ConnectorId   = null,
                                                      EMSP_Id?       EMSPId        = null)
 
-            => ParentLocation?.GetTariffIds(EVSEId,
+            => ParentLocation?.GetTariffIds(UId,
                                             ConnectorId,
                                             EMSPId) ?? [];
 

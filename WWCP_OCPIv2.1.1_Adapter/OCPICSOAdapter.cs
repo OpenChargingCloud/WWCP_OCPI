@@ -865,6 +865,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             //ToDo: Handle errors!!!
 
+                            if (result.IsFailed)
+                            {
+                                // DE*822???
+                            }
+
                         }
 
                         return WWCP.AddChargingPoolResult.Enqueued(
@@ -1555,7 +1560,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     IEnumerable<Warning> warnings = [];
 
                     var locationId  = EVSE.ChargingPool is not null
-                                          ? Location_Id.TryParse(EVSE.ChargingPool.ToString())
+                                          ? Location_Id.TryParse(EVSE.ChargingPool.Id.ToString())
                                           : null;
 
                     if (locationId.HasValue)
@@ -1597,6 +1602,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     }
                     else
                         result = AddResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
+
+
+                    if (result.IsFailed)
+                    {
+                        // DE*822???
+                    }
 
 
                     return result.IsSuccess

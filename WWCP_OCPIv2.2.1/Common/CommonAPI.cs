@@ -48,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
                                                                    Party_Id       CPOPartyId,
                                                                    Location_Id?   Location      = null,
-                                                                   EVSE_Id?       EVSEId        = null,
+                                                                   EVSE_UId?      EVSEUId       = null,
                                                                    Connector_Id?  ConnectorId   = null,
                                                                    EMSP_Id?       EMSPId        = null);
 
@@ -11856,19 +11856,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region GetTariffIds(CountryCode?, PartyId?, LocationId?, EVSEId?, ConnectorId?, EMSPId?)
+        #region GetTariffIds(CountryCode?, PartyId?, LocationId?, EVSEUId?, ConnectorId?, EMSPId?)
 
         public IEnumerable<Tariff_Id> GetTariffIds(CountryCode    CountryCode,
                                                    Party_Id       PartyId,
                                                    Location_Id?   LocationId,
-                                                   EVSE_Id?       EVSEId,
+                                                   EVSE_UId?      EVSEUId,
                                                    Connector_Id?  ConnectorId,
                                                    EMSP_Id?       EMSPId)
 
             => GetTariffIdsDelegate?.Invoke(CountryCode,
                                             PartyId,
                                             LocationId,
-                                            EVSEId,
+                                            EVSEUId,
                                             ConnectorId,
                                             EMSPId) ?? [];
 
