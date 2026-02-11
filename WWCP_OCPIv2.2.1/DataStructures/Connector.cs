@@ -705,9 +705,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        internal IEnumerable<Tariff_Id> GetTariffIds(EMSP_Id? EMSPId = null)
+        #region GetTariffId(EMSPId = null)
 
-            => ParentEVSE?.GetTariffIds(Id, EMSPId) ?? [];
+        /// <summary>
+        /// Returns the identification of the currently valid tariff.
+        /// For a "Free of Charge" tariff this field should be set, and point to a defined "Free of Charge" tariff.
+        /// </summary>
+        /// <param name="EMSPId">An optional EMSP identification, e.g. for including the right tariff.</param>
+        public IEnumerable<Tariff_Id> GetTariffIds(EMSP_Id? EMSPId = null)
+        {
+
+            var tariffIds = ParentEVSE?.GetTariffIds(Id, EMSPId) ?? [];
+            //if (tariffIds.Any())
+            //{
+
+            //    var now      = Timestamp.Now;
+            //    var tariffs  = new List<Tariff>();
+
+            //    foreach (var tariffId in tariffIds)
+            //    {
+
+            //        var tariff = ParentEVSE?.ParentLocation?.CommonAPI?.GetTariff(tariffId);
+
+            //        if (tariff is not null)
+            //        {
+            //            if (now >= tariff.NotBefore &&
+            //                now <  tariff.NotAfter)
+            //            {
+            //                tariffs.Add(tariff);
+            //            }
+            //        }
+
+            //    }
+
+            //    // When there are multiple tariffs...
+            //    // prefer the one that is valid for the longest remaining time!
+            //    return tariffs.OrderBy(tariff => now - tariff.NotAfter).FirstOrDefault()?.Id;
+
+            //}
+
+            //if (emspTariffIds is not null &&
+            //    EMSPId.HasValue           &&
+            //    emspTariffIds.TryGetValue(EMSPId.Value, out var emspTariffId))
+            //{
+            //    return emspTariffId;
+            //}
+
+            //if (tariffId.HasValue)
+            //    return tariffId;
+
+            return tariffIds;
+
+        }
+
+        #endregion
 
 
         #region Operator overloading

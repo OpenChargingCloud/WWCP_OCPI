@@ -384,7 +384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        WWCPEVSEId_2_EVSEId_Delegate?                                                 CustomEVSEIdConverter,
                                        WWCP.IncludeEVSEIdDelegate                                                    IncludeEVSEIds,
                                        WWCP.IncludeChargingConnectorIdDelegate                                       IncludeChargingConnectorIds,
-                                       Func<CountryCode, Party_Id, Location_Id, EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
+                                       //Func<CountryCode, Party_Id, Location_Id, EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
                                        ref List<Warning>                                                             Warnings)
         {
 
@@ -392,7 +392,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                CustomEVSEIdConverter,
                                                IncludeEVSEIds,
                                                IncludeChargingConnectorIds,
-                                               GetTariffIdsDelegate,
+                                               //GetTariffIdsDelegate,
                                                out var warnings);
 
             foreach (var warning in warnings)
@@ -411,7 +411,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        WWCPEVSEId_2_EVSEId_Delegate?                                                 CustomEVSEIdConverter,
                                        WWCP.IncludeEVSEIdDelegate                                                    IncludeEVSEIds,
                                        WWCP.IncludeChargingConnectorIdDelegate                                       IncludeChargingConnectorIds,
-                                       Func<CountryCode, Party_Id, Location_Id, EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
+                                       //Func<CountryCode, Party_Id, Location_Id, EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
                                        out IEnumerable<Warning>                                                      Warnings)
         {
 
@@ -477,20 +477,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                   Where     (evse    => includeEVSEIds(evse.Id)))
                 {
 
-                    var ocpiEVSE = evse.ToOCPI(CustomEVSEUIdConverter,
-                                               CustomEVSEIdConverter,
-                                               IncludeChargingConnectorIds,
-                                               //(evseId, connectorId) => GetTariffIdsDelegate is not null
-                                               //                             ? GetTariffIdsDelegate(countryCode.Value,
-                                               //                                                    partyId.    Value,
-                                               //                                                    locationId. Value,
-                                               //                                                    evseId,
-                                               //                                                    connectorId)
-                                               //                             : null,
-                                               evse.Status.Timestamp > evse.LastChangeDate
-                                                   ? evse.Status.Timestamp
-                                                   : evse.LastChangeDate,
-                                               ref warnings);
+                    var ocpiEVSE = evse.ToOCPI(
+                                       CustomEVSEUIdConverter,
+                                       CustomEVSEIdConverter,
+                                       IncludeChargingConnectorIds,
+                                       //(evseId, connectorId) => GetTariffIdsDelegate is not null
+                                       //                             ? GetTariffIdsDelegate(countryCode.Value,
+                                       //                                                    partyId.    Value,
+                                       //                                                    locationId. Value,
+                                       //                                                    evseId,
+                                       //                                                    connectorId)
+                                       //                             : null,
+                                       evse.Status.Timestamp > evse.LastChangeDate
+                                           ? evse.Status.Timestamp
+                                           : evse.LastChangeDate,
+                                       ref warnings
+                                   );
 
                     if (ocpiEVSE is not null)
                         evses.Add(ocpiEVSE);
@@ -584,7 +586,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                    WWCPEVSEId_2_EVSEId_Delegate?                                                 CustomEVSEIdConverter,
                                                    WWCP.IncludeEVSEIdDelegate                                                    IncludeEVSEIds,
                                                    WWCP.IncludeChargingConnectorIdDelegate                                       IncludeChargingConnectorIds,
-                                                   Func<CountryCode, Party_Id, Location_Id, EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
+                                                   //Func<CountryCode, Party_Id, Location_Id, EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
                                                    ref List<Warning>                                                             Warnings)
         {
 
@@ -592,7 +594,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                  CustomEVSEIdConverter,
                                                  IncludeEVSEIds,
                                                  IncludeChargingConnectorIds,
-                                                 GetTariffIdsDelegate,
+                                                 //GetTariffIdsDelegate,
                                                  out var warnings);
 
             foreach (var warning in warnings)
@@ -611,7 +613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                    WWCPEVSEId_2_EVSEId_Delegate?                                                 CustomEVSEIdConverter,
                                                    WWCP.IncludeEVSEIdDelegate                                                    IncludeEVSEIds,
                                                    WWCP.IncludeChargingConnectorIdDelegate                                       IncludeChargingConnectorIds,
-                                                   Func<CountryCode, Party_Id, Location_Id, EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
+                                                   //Func<CountryCode, Party_Id, Location_Id, EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
                                                    out IEnumerable<Warning>                                                      Warnings)
         {
 
@@ -628,7 +630,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                             CustomEVSEIdConverter,
                                                             IncludeEVSEIds,
                                                             IncludeChargingConnectorIds,
-                                                            GetTariffIdsDelegate,
+                                                            //GetTariffIdsDelegate,
                                                             out var warning);
 
                     if (chargingPool2 is not null)
@@ -737,12 +739,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    ref List<Warning>                         Warnings)
         {
 
-            var evse = EVSE.ToOCPI(CustomEVSEUIdConverter,
-                                   CustomEVSEIdConverter,
-                                   IncludeChargingConnectorIds,
-                                   //GetTariffIdsDelegate,
-                                   LastUpdate,
-                                   out var warnings);
+            var evse = EVSE.ToOCPI(
+                           CustomEVSEUIdConverter,
+                           CustomEVSEIdConverter,
+                           IncludeChargingConnectorIds,
+                           //GetTariffIdsDelegate,
+                           LastUpdate,
+                           out var warnings
+                       );
 
             foreach (var warning in warnings)
                 Warnings.Add(warning);
@@ -900,11 +904,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                ref List<Warning>                         Warnings)
         {
 
-            var evses = EVSEs.ToOCPI(CustomEVSEUIdConverter,
-                                     CustomEVSEIdConverter,
-                                     IncludeChargingConnectorIds,
-                                     //GetTariffIdsDelegate,
-                                     out var warnings);
+            var evses = EVSEs.ToOCPI(
+                            CustomEVSEUIdConverter,
+                            CustomEVSEIdConverter,
+                            IncludeChargingConnectorIds,
+                            //GetTariffIdsDelegate,
+                            out var warnings
+                        );
 
             foreach (var warning in warnings)
                 Warnings.Add(warning);
@@ -934,14 +940,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 try
                 {
 
-                    var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
-                                            CustomEVSEIdConverter,
-                                            IncludeChargingConnectorIds,
-                                            //GetTariffIdsDelegate,
-                                            evse.Status.Timestamp > evse.LastChangeDate
-                                                ? evse.Status.Timestamp
-                                                : evse.LastChangeDate,
-                                            out var warning);
+                    var evse2 = evse.ToOCPI(
+                                    CustomEVSEUIdConverter,
+                                    CustomEVSEIdConverter,
+                                    IncludeChargingConnectorIds,
+                                    //GetTariffIdsDelegate,
+                                    evse.Status.Timestamp > evse.LastChangeDate
+                                        ? evse.Status.Timestamp
+                                        : evse.LastChangeDate,
+                                    out var warning
+                                );
 
                     if (evse2 is not null)
                         evses.Add(evse2);
@@ -1876,18 +1884,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            CustomEVSEIdConverter,
                                            evseId      => evseId      == ChargeDetailRecord.EVSE.Id,
                                            connectorId => connectorId == ChargeDetailRecord.ChargingConnector.Id,
-                                           (countryCode,
-                                            partyId,
-                                            locationId,
-                                            evseId,
-                                            connectorId) => GetTariffIdsDelegate is not null
-                                                                ? GetTariffIdsDelegate(countryCode,
-                                                                                       partyId,
-                                                                                       locationId,
-                                                                                       evseId,
-                                                                                       connectorId,
-                                                                                       EMSPId).FirstOrDefault()
-                                                                : null,
+                                           //(countryCode,
+                                           // partyId,
+                                           // locationId,
+                                           // evseId,
+                                           // connectorId) => GetTariffIdsDelegate is not null
+                                           //                     ? GetTariffIdsDelegate(countryCode,
+                                           //                                            partyId,
+                                           //                                            locationId,
+                                           //                                            evseId,
+                                           //                                            connectorId,
+                                           //                                            EMSPId).FirstOrDefault()
+                                           //                     : null,
                                            ref Warnings
                                        );
 

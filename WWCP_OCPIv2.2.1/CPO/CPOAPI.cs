@@ -1896,7 +1896,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                   SkipTakeFilter(filters.Offset,
                                                                                  filters.Limit).
                                                                   Select        (location => location.ToJSON(
-                                                                                                 request.EMSPId,
+                                                                                                 request.EMSPId ?? request.HUBId,
                                                                                                  CustomLocationSerializer,
                                                                                                  CustomPublishTokenSerializer,
                                                                                                  CustomAdditionalGeoLocationSerializer,
@@ -2022,7 +2022,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
                                Data                 = location.ToJSON(
-                                                          request.EMSPId,
+                                                          request.EMSPId ?? request.HUBId,
                                                           CustomLocationSerializer,
                                                           CustomPublishTokenSerializer,
                                                           CustomAdditionalGeoLocationSerializer,
@@ -2134,7 +2134,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
                                Data                 = evse.ToJSON(
-                                                          request.EMSPId,
+                                                          request.EMSPId ?? request.HUBId,
                                                           CustomEVSESerializer,
                                                           CustomStatusScheduleSerializer,
                                                           CustomConnectorSerializer,
@@ -2239,7 +2239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
                                Data                 = connector.ToJSON(
-                                                          request.EMSPId,
+                                                          request.EMSPId ?? request.HUBId,
                                                           CustomConnectorSerializer
                                                       ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {

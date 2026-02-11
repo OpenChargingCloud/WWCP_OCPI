@@ -347,62 +347,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region GetTariffId(EMSPId = null)
-
-        /// <summary>
-        /// Returns the identification of the currently valid tariff.
-        /// For a "Free of Charge" tariff this field should be set, and point to a defined "Free of Charge" tariff.
-        /// </summary>
-        /// <param name="EMSPId">An optional EMSP identification, e.g. for including the right tariff.</param>
-        public Tariff_Id? GetTariffId(EMSP_Id? EMSPId = null)
-        {
-
-            var tariffIds = ParentEVSE?.GetTariffIds(Id, EMSPId) ?? [];
-            if (tariffIds.Any())
-            {
-
-                var now      = Timestamp.Now;
-                var tariffs  = new List<Tariff>();
-
-                foreach (var tariffId in tariffIds)
-                {
-
-                    var tariff = ParentEVSE?.ParentLocation?.CommonAPI?.GetTariff(tariffId);
-
-                    if (tariff is not null)
-                    {
-                        if (now >= tariff.NotBefore &&
-                            now <  tariff.NotAfter)
-                        {
-                            tariffs.Add(tariff);
-                        }
-                    }
-
-                }
-
-                // When there are multiple tariffs...
-                // prefer the one that is valid for the longest remaining time!
-                return tariffs.OrderBy(tariff => now - tariff.NotAfter).FirstOrDefault()?.Id;
-
-            }
-
-            if (emspTariffIds is not null &&
-                EMSPId.HasValue           &&
-                emspTariffIds.TryGetValue(EMSPId.Value, out var emspTariffId))
-            {
-                return emspTariffId;
-            }
-
-            if (tariffId.HasValue)
-                return tariffId;
-
-            return null;
-
-        }
-
-        #endregion
-
-
         #region (static) Parse   (JSON, ConnectorIdURL = null, IgnoreTariffId = false, CustomConnectorParser = null)
 
         /// <summary>
@@ -918,6 +862,62 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                          "Invalid JSON merge patch of a connector: " + errorResponse);
 
             }
+
+        }
+
+        #endregion
+
+
+        #region GetTariffId(EMSPId = null)
+
+        /// <summary>
+        /// Returns the identification of the currently valid tariff.
+        /// For a "Free of Charge" tariff this field should be set, and point to a defined "Free of Charge" tariff.
+        /// </summary>
+        /// <param name="EMSPId">An optional EMSP identification, e.g. for including the right tariff.</param>
+        public Tariff_Id? GetTariffId(EMSP_Id? EMSPId = null)
+        {
+
+            var tariffIds = ParentEVSE?.GetTariffIds(Id, EMSPId) ?? [];
+            if (tariffIds.Any())
+            {
+
+                var now      = Timestamp.Now;
+                var tariffs  = new List<Tariff>();
+
+                foreach (var tariffId in tariffIds)
+                {
+
+                    var tariff = ParentEVSE?.ParentLocation?.CommonAPI?.GetTariff(tariffId);
+
+                    if (tariff is not null)
+                    {
+                        if (now >= tariff.NotBefore &&
+                            now <  tariff.NotAfter)
+                        {
+                            tariffs.Add(tariff);
+                        }
+                    }
+
+                }
+
+                // When there are multiple tariffs...
+                // prefer the one that is valid for the longest remaining time!
+                return tariffs.OrderBy(tariff => now - tariff.NotAfter).FirstOrDefault()?.Id;
+
+            }
+
+            if (emspTariffIds is not null &&
+                EMSPId.HasValue           &&
+                emspTariffIds.TryGetValue(EMSPId.Value, out var emspTariffId))
+            {
+                return emspTariffId;
+            }
+
+            if (tariffId.HasValue)
+                return tariffId;
+
+            return null;
 
         }
 

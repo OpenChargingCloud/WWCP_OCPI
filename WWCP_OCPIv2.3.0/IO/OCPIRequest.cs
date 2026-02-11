@@ -466,13 +466,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         public RemoteParty?          RemoteParty                 { get; }
 
+        public IEnumerable<CPO_Id>   CPOIds                      { get; } = [];
+
         public IEnumerable<EMSP_Id>  EMSPIds                     { get; } = [];
 
-        public IEnumerable<CPO_Id>   CPOIds                      { get; } = [];
+        public IEnumerable<EMSP_Id>  HUBIds                      { get; } = [];
+
+        public CPO_Id?               CPOId                       { get; }
 
         public EMSP_Id?              EMSPId                      { get; }
 
-        public CPO_Id?               CPOId                       { get; }
+        public EMSP_Id?              HUBId                       { get; }
 
 
         /// <summary>
@@ -604,18 +608,26 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                          Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}-{LocalAccessInfo.Roles.First().PartyId.Party}")).
                                                          Distinct()];
 
+                HUBIds           = [.. RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.HUB).
+                                                         Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}-{LocalAccessInfo.Roles.First().PartyId.Party}")).
+                                                         Distinct()];
+
                 if (FromCountryCode.HasValue &&
                     FromPartyId.    HasValue)
                 {
 
                     CPOId   = CPO_Id. Parse($"{FromCountryCode}*{FromPartyId}");
                     EMSPId  = EMSP_Id.Parse($"{FromCountryCode}-{FromPartyId}");
+                    HUBId   = EMSP_Id.Parse($"{FromCountryCode}-{FromPartyId}");
 
                     if (CPOId. HasValue && !CPOIds. Contains(CPOId. Value))
                         CPOId   = null;
 
                     if (EMSPId.HasValue && !EMSPIds.Contains(EMSPId.Value))
                         EMSPId  = null;
+
+                    if (HUBId. HasValue && !HUBIds. Contains(HUBId. Value))
+                        HUBId   = null;
 
                 }
 
@@ -628,6 +640,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     if (EMSPIds.Any())
                         EMSPId  = EMSPIds.First();
+
+                    if (HUBIds. Any())
+                        HUBId   = HUBIds. First();
 
                 }
 
