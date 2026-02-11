@@ -26,36 +26,54 @@ namespace cloud.charging.open.protocols.OCPI
 {
 
     /// <summary>
-    /// A delegate which allows you to modify the conversion from WWCP EVSE identifications to OCPI EVSE unique identifications.
+    /// A delegate which allows you to modify the conversion from WWCP ChargingPool identifications to OCPI Location identifications.
     /// </summary>
-    /// <param name="EVSEId">A WWCP EVSE identification.</param>
-    public delegate EVSE_UId                 WWCPEVSEId_2_EVSEUId_Delegate                      (WWCP.EVSE_Id             EVSEId);
+    /// <param name="ChargingPoolId">A WWCP ChargingPool identification.</param>
+    public delegate Location_Id?             ChargingPoolId_2_LocationId_Delegate               (WWCP.ChargingPool_Id     ChargingPoolId);
 
     /// <summary>
-    /// A delegate which allows you to modify the conversion from OCPI EVSE unique identifications to WWCP EVSE identifications.
+    /// A delegate which allows you to modify the conversion from OCPI Location identifications to WWCP ChargingPool identifications.
     /// </summary>
-    /// <param name="EVSEId">An EVSE identification.</param>
-    public delegate WWCP.EVSE_Id             EVSEUId_2_WWCPEVSEId_Delegate                      (EVSE_UId                 EVSEUId);
+    /// <param name="LocationId">A Location identification.</param>
+    public delegate WWCP.ChargingPool_Id?    LocationId_2_ChargingPoolId_Delegate               (Location_Id              LocationId);
 
 
     /// <summary>
     /// A delegate which allows you to modify the conversion from WWCP ChargingStation identifications to OCPI ChargingStation identifications.
     /// </summary>
     /// <param name="ChargingStationId">A WWCP ChargingStation identification.</param>
-    public delegate ChargingStation_Id       WWCPChargingStationId_2_ChargingStationId_Delegate (WWCP.ChargingStation_Id  ChargingStationId);
+    public delegate ChargingStation_Id?      WWCPChargingStationId_2_ChargingStationId_Delegate (WWCP.ChargingStation_Id  ChargingStationId);
 
+    /// <summary>
+    /// A delegate which allows you to modify the conversion from OCPI ChargingStation identifications to WWCP ChargingStation identifications.
+    /// </summary>
+    /// <param name="ChargingStationId">An OCPI ChargingStation identification.</param>
+    public delegate WWCP.ChargingStation_Id? ChargingStationId_2_WWCPChargingStationId_Delegate (ChargingStation_Id       ChargingStationId);
+
+
+    /// <summary>
+    /// A delegate which allows you to modify the conversion from WWCP EVSE identifications to OCPI EVSE unique identifications.
+    /// </summary>
+    /// <param name="EVSEId">A WWCP EVSE identification.</param>
+    public delegate EVSE_UId?                WWCPEVSEId_2_EVSEUId_Delegate                      (WWCP.EVSE_Id             EVSEId);
+
+    /// <summary>
+    /// A delegate which allows you to modify the conversion from OCPI EVSE unique identifications to WWCP EVSE identifications.
+    /// </summary>
+    /// <param name="EVSEId">An EVSE identification.</param>
+    public delegate WWCP.EVSE_Id?            EVSEUId_2_WWCPEVSEId_Delegate                      (EVSE_UId                 EVSEUId);
 
     /// <summary>
     /// A delegate which allows you to modify the conversion from WWCP EVSE identifications to OCPI EVSE identifications.
     /// </summary>
     /// <param name="EVSEId">A WWCP EVSE identification.</param>
-    public delegate EVSE_Id                  WWCPEVSEId_2_EVSEId_Delegate                       (WWCP.EVSE_Id             EVSEId);
+    public delegate EVSE_Id?                 WWCPEVSEId_2_EVSEId_Delegate                       (WWCP.EVSE_Id             EVSEId);
 
     /// <summary>
     /// A delegate which allows you to modify the conversion from OCPI EVSE identifications to WWCP EVSE identifications.
     /// </summary>
     /// <param name="EVSEId">An EVSE identification.</param>
-    public delegate WWCP.EVSE_Id             EVSEId_2_WWCPEVSEId_Delegate                       (EVSE_Id                  EVSEId);
+    public delegate WWCP.EVSE_Id?            EVSEId_2_WWCPEVSEId_Delegate                       (EVSE_Id                  EVSEId);
 
 
     /// <summary>

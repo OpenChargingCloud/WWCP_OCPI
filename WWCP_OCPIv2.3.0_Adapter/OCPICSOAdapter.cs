@@ -90,6 +90,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public GetTariffIds_Delegate?                       GetTariffIds                         { get; }
 
 
+        public ChargingPoolId_2_LocationId_Delegate?        CustomChargingPoolIdConverter        { get; }
         public WWCPEVSEId_2_EVSEUId_Delegate?               CustomEVSEUIdConverter               { get; }
         public WWCPEVSEId_2_EVSEId_Delegate?                CustomEVSEIdConverter                { get; }
         public WWCPEVSE_2_EVSE_Delegate?                    CustomEVSEConverter                  { get; }
@@ -201,6 +202,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                               GetTariffIds_Delegate?                          GetTariffIds                        = null,
 
+                              ChargingPoolId_2_LocationId_Delegate?           CustomChargingPoolIdConverter       = null,
                               WWCPEVSEId_2_EVSEUId_Delegate?                  CustomEVSEUIdConverter              = null,
                               WWCPEVSEId_2_EVSEId_Delegate?                   CustomEVSEIdConverter               = null,
                               WWCPEVSE_2_EVSE_Delegate?                       CustomEVSEConverter                 = null,
@@ -320,7 +322,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                         return this.GetTariffIds(
                                    WWCP.ChargingStationOperator_Id.Parse($"{cpoCountryCode}*{cpoPartyId}"),
-                                   WWCP.ChargingPool_Id.           Parse($"{cpoCountryCode}*{cpoPartyId}{locationId.Value}"),
+                                   WWCP.ChargingPool_Id.           Parse($"{cpoCountryCode}*{cpoPartyId}*P{locationId.Value}"),
                                    null,
                                    WWCP.EVSE_Id.                   Parse(evse.EVSEId.Value.ToString()),
                                    WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()),
@@ -336,6 +338,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
+            this.CustomChargingPoolIdConverter      = CustomChargingPoolIdConverter;
             this.CustomEVSEUIdConverter             = CustomEVSEUIdConverter;
             this.CustomEVSEIdConverter              = CustomEVSEIdConverter;
             this.CustomEVSEConverter                = CustomEVSEConverter;
@@ -634,6 +637,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     {
 
                         var location = ChargingPool.ToOCPI(
+                                           CustomChargingPoolIdConverter,
                                            CustomEVSEUIdConverter,
                                            CustomEVSEIdConverter,
                                            evseId      => true,
@@ -737,7 +741,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     {
 
 
-                        var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
+                        var location = ChargingPool.ToOCPI(CustomChargingPoolIdConverter,
+                                                           CustomEVSEUIdConverter,
                                                            CustomEVSEIdConverter,
                                                            evseId      => true,
                                                            connectorId => true,
@@ -846,7 +851,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
                     {
 
-                        var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
+                        var location = ChargingPool.ToOCPI(CustomChargingPoolIdConverter,
+                                                           CustomEVSEUIdConverter,
                                                            CustomEVSEIdConverter,
                                                            evseId      => true,
                                                            connectorId => true,
@@ -1125,7 +1131,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     var countryCode  = CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
                     var partyId      = Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
-                    var locationId   = EVSE.ChargingPool?.Id.ToOCPI();
+                    var locationId   = EVSE.ChargingPool?.Id.ToOCPI(CustomChargingPoolIdConverter);
 
                     if (countryCode.HasValue &&
                         partyId.    HasValue &&
@@ -1252,7 +1258,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     var countryCode  = CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
                     var partyId      = Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
-                    var locationId   = EVSE.ChargingPool?.Id.ToOCPI();
+                    var locationId   = EVSE.ChargingPool?.Id.ToOCPI(CustomChargingPoolIdConverter);
 
                     if (countryCode.HasValue &&
                         partyId.    HasValue &&
@@ -1399,7 +1405,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     var countryCode  = CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
                     var partyId      = Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
-                    var locationId   = EVSE.ChargingPool?.Id.ToOCPI();
+                    var locationId   = EVSE.ChargingPool?.Id.ToOCPI(CustomChargingPoolIdConverter);
 
                     if (countryCode.HasValue &&
                         partyId.    HasValue &&

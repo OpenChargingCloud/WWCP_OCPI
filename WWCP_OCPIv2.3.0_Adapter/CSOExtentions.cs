@@ -70,6 +70,7 @@ namespace cloud.charging.open.protocols.WWCP
 
                                       OCPIv2_3_0.GetTariffIds_Delegate?                       GetTariffIds                        = null,
 
+                                      OCPI.      ChargingPoolId_2_LocationId_Delegate?        CustomChargingPoolIdConverter       = null,
                                       OCPI.      WWCPEVSEId_2_EVSEUId_Delegate?               CustomEVSEUIdConverter              = null,
                                       OCPI.      WWCPEVSEId_2_EVSEId_Delegate?                CustomEVSEIdConverter               = null,
                                       OCPIv2_3_0.WWCPEVSE_2_EVSE_Delegate?                    CustomEVSEConverter                 = null,
@@ -137,6 +138,7 @@ namespace cloud.charging.open.protocols.WWCP
 
                                          GetTariffIds,
 
+                                         CustomChargingPoolIdConverter,
                                          CustomEVSEUIdConverter,
                                          CustomEVSEIdConverter,
                                          CustomEVSEConverter,

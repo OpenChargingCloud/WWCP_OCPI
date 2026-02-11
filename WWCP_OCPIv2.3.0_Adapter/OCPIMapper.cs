@@ -445,13 +445,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         }
 
-        public static Location_Id ToOCPI(this WWCP.ChargingPool_Id ChargingPoolId)
-            => Location_Id.Parse(ChargingPoolId.Suffix);
+        public static Location_Id? ToOCPI(this WWCP.ChargingPool_Id              ChargingPoolId,
+                                          ChargingPoolId_2_LocationId_Delegate?  CustomChargingPoolIdConverter = null)
+
+            => CustomChargingPoolIdConverter is not null
+                   ? CustomChargingPoolIdConverter(ChargingPoolId)
+                   : Location_Id.TryParse(ChargingPoolId.Suffix);
 
 
         #region ToOCPI(this ChargingPool,  ref Warnings, IncludeEVSEIds = null)
 
         public static Location? ToOCPI(this WWCP.IChargingPool                  ChargingPool,
+                                       ChargingPoolId_2_LocationId_Delegate?    CustomChargingPoolIdConverter,
                                        WWCPEVSEId_2_EVSEUId_Delegate?           CustomEVSEUIdConverter,
                                        WWCPEVSEId_2_EVSEId_Delegate?            CustomEVSEIdConverter,
                                        WWCP.IncludeEVSEIdDelegate               IncludeEVSEIds,
@@ -459,7 +464,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                        ref List<Warning>                        Warnings)
         {
 
-            var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
+            var location = ChargingPool.ToOCPI(CustomChargingPoolIdConverter,
+                                               CustomEVSEUIdConverter,
                                                CustomEVSEIdConverter,
                                                IncludeEVSEIds,
                                                IncludeChargingConnectorIds,
@@ -477,6 +483,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region ToOCPI(this ChargingPool,  out Warnings, IncludeEVSEIds = null)
 
         public static Location? ToOCPI(this WWCP.IChargingPool                  ChargingPool,
+                                       ChargingPoolId_2_LocationId_Delegate?    CustomChargingPoolIdConverter,
                                        WWCPEVSEId_2_EVSEUId_Delegate?           CustomEVSEUIdConverter,
                                        WWCPEVSEId_2_EVSEId_Delegate?            CustomEVSEIdConverter,
                                        WWCP.IncludeEVSEIdDelegate               IncludeEVSEIds,
@@ -494,7 +501,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 return null;
             }
 
-            var locationId   = Location_Id.TryParse("P" + ChargingPool.Id.Suffix);
+            var locationId   = ChargingPool.Id.ToOCPI(CustomChargingPoolIdConverter);
 
             if (!locationId.HasValue)
             {
@@ -625,6 +632,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region ToOCPI(this ChargingPools, ref Warnings, IncludeEVSEIds = null)
 
         public static IEnumerable<Location> ToOCPI(this IEnumerable<WWCP.ChargingPool>      ChargingPools,
+                                                   ChargingPoolId_2_LocationId_Delegate?    CustomChargingPoolIdConverter,
                                                    WWCPEVSEId_2_EVSEUId_Delegate?           CustomEVSEUIdConverter,
                                                    WWCPEVSEId_2_EVSEId_Delegate?            CustomEVSEIdConverter,
                                                    WWCP.IncludeEVSEIdDelegate               IncludeEVSEIds,
@@ -632,7 +640,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                    ref List<Warning>                        Warnings)
         {
 
-            var locations = ChargingPools.ToOCPI(CustomEVSEUIdConverter,
+            var locations = ChargingPools.ToOCPI(CustomChargingPoolIdConverter,
+                                                 CustomEVSEUIdConverter,
                                                  CustomEVSEIdConverter,
                                                  IncludeEVSEIds,
                                                  IncludeChargingConnectorIds,
@@ -650,6 +659,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region ToOCPI(this ChargingPools, out Warnings, IncludeEVSEIds = null)
 
         public static IEnumerable<Location> ToOCPI(this IEnumerable<WWCP.ChargingPool>      ChargingPools,
+                                                   ChargingPoolId_2_LocationId_Delegate?    CustomChargingPoolIdConverter,
                                                    WWCPEVSEId_2_EVSEUId_Delegate?           CustomEVSEUIdConverter,
                                                    WWCPEVSEId_2_EVSEId_Delegate?            CustomEVSEIdConverter,
                                                    WWCP.IncludeEVSEIdDelegate               IncludeEVSEIds,
@@ -666,7 +676,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 try
                 {
 
-                    var chargingPool2 = chargingPool.ToOCPI(CustomEVSEUIdConverter,
+                    var chargingPool2 = chargingPool.ToOCPI(CustomChargingPoolIdConverter,
+                                                            CustomEVSEUIdConverter,
                                                             CustomEVSEIdConverter,
                                                             IncludeEVSEIds,
                                                             IncludeChargingConnectorIds,
@@ -1261,15 +1272,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region ToOCPI(this ChargeDetailRecord, out Warnings)
 
-        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord    ChargeDetailRecord,
-                                  WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
-                                  WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                  GetTariffIds_Delegate?          GetTariffIdsDelegate,
-                                  out IEnumerable<Warning>        Warnings)
+        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord           ChargeDetailRecord,
+                                  ChargingPoolId_2_LocationId_Delegate?  CustomChargingPoolIdConverter,
+                                  WWCPEVSEId_2_EVSEUId_Delegate?         CustomEVSEUIdConverter,
+                                  WWCPEVSEId_2_EVSEId_Delegate?          CustomEVSEIdConverter,
+                                  GetTariffIds_Delegate?                 GetTariffIdsDelegate,
+                                  out IEnumerable<Warning>               Warnings)
         {
 
             var warnings  = new List<Warning>();
-            var cdr       = ChargeDetailRecord.ToOCPI(CustomEVSEUIdConverter,
+            var cdr       = ChargeDetailRecord.ToOCPI(CustomChargingPoolIdConverter,
+                                                      CustomEVSEUIdConverter,
                                                       CustomEVSEIdConverter,
                                                       GetTariffIdsDelegate,
                                                       ref warnings);
@@ -1284,11 +1297,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region ToOCPI(this ChargeDetailRecord, ref Warnings)
 
-        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord    ChargeDetailRecord,
-                                  WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
-                                  WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                  GetTariffIds_Delegate?          GetTariffIdsDelegate,
-                                  ref List<Warning>               Warnings)
+        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord           ChargeDetailRecord,
+                                  ChargingPoolId_2_LocationId_Delegate?  CustomChargingPoolIdConverter,
+                                  WWCPEVSEId_2_EVSEUId_Delegate?         CustomEVSEUIdConverter,
+                                  WWCPEVSEId_2_EVSEId_Delegate?          CustomEVSEIdConverter,
+                                  GetTariffIds_Delegate?                 GetTariffIdsDelegate,
+                                  ref List<Warning>                      Warnings)
         {
 
             try
@@ -1355,7 +1369,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     return null;
                 }
 
-                var filteredLocation = ChargeDetailRecord.ChargingPool.ToOCPI(CustomEVSEUIdConverter,
+                var filteredLocation = ChargeDetailRecord.ChargingPool.ToOCPI(CustomChargingPoolIdConverter,
+                                                                              CustomEVSEUIdConverter,
                                                                               CustomEVSEIdConverter,
                                                                               evseId      => evseId      == ChargeDetailRecord.EVSE.Id,
                                                                               connectorId => connectorId == ChargeDetailRecord.ChargingConnector.Id,
