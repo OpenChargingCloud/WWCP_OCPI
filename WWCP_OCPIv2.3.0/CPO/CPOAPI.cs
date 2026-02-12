@@ -24,10 +24,10 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
@@ -2149,13 +2149,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode              = HTTPStatusCode.OK,
-                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
-                               }
+                            HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                HTTPStatusCode              = HTTPStatusCode.OK,
+                                Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders   = [ "Authorization" ],
+                                AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                            }
                         })
 
             );
@@ -2176,14 +2176,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     #region Check access token
 
                     if ((request.LocalAccessInfo is not null || CommonAPI.BaseAPI.LocationsAsOpenData == false) &&
-                        (request.LocalAccessInfo?.Status            != AccessStatus.ALLOWED ||
-                         request.LocalAccessInfo.IsNot(Role.EMSP) == true))
+                        (request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                         request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true))
                     {
-
-
-                    //if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                    //    Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
-                    //{
 
                         return Task.FromResult(
                             new OCPIResponse.Builder(request) {
@@ -2361,8 +2356,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if ((request.LocalAccessInfo is not null || CommonAPI.BaseAPI.LocationsAsOpenData == false) &&
+                        (request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                         request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true))
                     {
 
                         return Task.FromResult(
@@ -2370,9 +2366,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 StatusCode           = 2000,
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                    HTTPStatusCode              = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders   = [ "Authorization" ],
+                                    AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                                 }
                             });
 
@@ -2448,12 +2445,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
+                            HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                HTTPStatusCode              = HTTPStatusCode.OK,
+                                Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders   = [ "Authorization" ],
+                                AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
+                            }
                         })
 
             );
@@ -2472,8 +2470,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if ((request.LocalAccessInfo is not null || CommonAPI.BaseAPI.LocationsAsOpenData == false) &&
+                        (request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                         request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true))
                     {
 
                         return Task.FromResult(
@@ -2481,9 +2480,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 StatusCode           = 2000,
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                    HTTPStatusCode              = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders   = [ "Authorization" ],
+                                    AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                                 }
                             });
 
@@ -2554,12 +2554,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
+                            HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                HTTPStatusCode              = HTTPStatusCode.OK,
+                                Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders   = [ "Authorization" ],
+                                AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
+                            }
                         })
 
             );
@@ -2578,8 +2579,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if ((request.LocalAccessInfo is not null || CommonAPI.BaseAPI.LocationsAsOpenData == false) &&
+                        (request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                         request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true))
                     {
 
                         return Task.FromResult(
@@ -2587,9 +2589,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 StatusCode           = 2000,
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                    HTTPStatusCode              = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders   = [ "Authorization" ],
+                                    AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                                 }
                             });
 
@@ -2654,13 +2657,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode              = HTTPStatusCode.OK,
-                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
-                               }
+                            HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                HTTPStatusCode              = HTTPStatusCode.OK,
+                                Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders   = [ "Authorization" ],
+                                AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                            }
                         })
 
             );
@@ -2669,7 +2672,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #region GET      ~/tariffs
 
-            // https://example.com/ocpi/2.2/cpo/tariffs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
+            // https://example.com/ocpi/2.3.0/cpo/tariffs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
@@ -2680,8 +2683,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if ((request.LocalAccessInfo is not null || CommonAPI.BaseAPI.TariffsAsOpenData == false) &&
+                        (request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                         request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true))
                     {
 
                         return Task.FromResult(
@@ -2689,9 +2693,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 StatusCode           = 2000,
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                    HTTPStatusCode              = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders   = [ "Authorization" ],
+                                    AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
                                 }
                             });
 
@@ -2801,12 +2806,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
+                            HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                HTTPStatusCode              = HTTPStatusCode.OK,
+                                Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders   = [ "Authorization" ],
+                                AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
+                            }
                         })
 
             );
@@ -2825,8 +2831,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if ((request.LocalAccessInfo is not null || CommonAPI.BaseAPI.TariffsAsOpenData == false) &&
+                        (request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                         request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true))
                     {
 
                         return Task.FromResult(
@@ -2834,9 +2841,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 StatusCode           = 2000,
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                    HTTPStatusCode              = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders   = [ "Authorization" ],
+                                    AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                                 }
                             });
 
@@ -2904,13 +2912,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode              = HTTPStatusCode.OK,
-                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
-                               }
+                            HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                HTTPStatusCode              = HTTPStatusCode.OK,
+                                Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders   = [ "Authorization" ],
+                                AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                            }
                         })
 
             );
@@ -2930,8 +2938,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return Task.FromResult(
@@ -2939,9 +2948,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 StatusCode           = 2000,
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                    HTTPStatusCode              = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders   = [ "Authorization" ],
+                                    AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                                 }
                             });
 
@@ -3043,12 +3053,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
+                            HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                HTTPStatusCode              = HTTPStatusCode.OK,
+                                Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders   = [ "Authorization" ],
+                                AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
+                            }
                         })
 
             );
@@ -3067,8 +3078,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return Task.FromResult(
@@ -3076,9 +3088,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 StatusCode           = 2000,
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                    HTTPStatusCode              = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders   = [ "Authorization" ],
+                                    AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                                 }
                             });
 

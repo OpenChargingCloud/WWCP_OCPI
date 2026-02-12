@@ -257,7 +257,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             if (!TariffElements.Any())
                 throw new ArgumentNullException(nameof(TariffElements),  "The given enumeration of tariff elements must not be null or empty!");
 
-            this.CommonAPI       = CommonAPI;
             this.CountryCode     = CountryCode;
             this.PartyId         = PartyId;
             this.Id              = Id;
@@ -266,7 +265,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.TaxIncluded     = TaxIncluded;
 
             this.TariffType      = TariffType;
-            this.TariffAltText   = TariffAltText?.Distinct() ?? Array.Empty<DisplayText>();
+            this.TariffAltText   = TariffAltText?.Distinct() ?? [];
             this.TariffAltURL    = TariffAltURL;
             this.MinPrice        = MinPrice;
             this.MaxPrice        = MaxPrice;
@@ -278,7 +277,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.Created         = created;
             this.LastUpdated     = LastUpdated ?? created;
 
-            this.ETag            = SHA256.HashData(ToJSON(true,
+            this.ETag            = ETag        ?? SHA256.HashData(
+                                                      ToJSON(
+                                                          true,
                                                           true,
                                                           CustomTariffSerializer,
                                                           CustomDisplayTextSerializer,
@@ -288,7 +289,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                           CustomTariffRestrictionsSerializer,
                                                           CustomEnergyMixSerializer,
                                                           CustomEnergySourceSerializer,
-                                                          CustomEnvironmentalImpactSerializer).ToUTF8Bytes()).ToBase64();
+                                                          CustomEnvironmentalImpactSerializer
+                                                      ).ToUTF8Bytes()
+                                                  ).ToBase64();
+
+            this.CommonAPI       = CommonAPI;
 
             unchecked
             {
