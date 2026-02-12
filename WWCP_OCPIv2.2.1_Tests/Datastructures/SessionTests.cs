@@ -215,7 +215,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Session1.ConnectorId,              parsedSession.ConnectorId);
             //ClassicAssert.AreEqual(Session1.MeterId,                  parsedSession.MeterId);
             //ClassicAssert.AreEqual(Session1.EnergyMeter,              parsedSession.EnergyMeter);
-            //ClassicAssert.AreEqual(Session1.TransparencySoftwares,    parsedSession.TransparencySoftwares);
+            //ClassicAssert.AreEqual(Session1.TransparencySoftware,    parsedSession.TransparencySoftware);
             //ClassicAssert.AreEqual(Session1.Currency,                 parsedSession.Currency);
             //ClassicAssert.AreEqual(Session1.ChargingPeriods,          parsedSession.ChargingPeriods);
             //ClassicAssert.AreEqual(Session1.TotalCosts,               parsedSession.TotalCosts);
@@ -312,7 +312,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Session1.ConnectorId,              parsedSession.ConnectorId);
             //ClassicAssert.AreEqual(Session1.MeterId,                  parsedSession.MeterId);
             //ClassicAssert.AreEqual(Session1.EnergyMeter,              parsedSession.EnergyMeter);
-            //ClassicAssert.AreEqual(Session1.TransparencySoftwares,    parsedSession.TransparencySoftwares);
+            //ClassicAssert.AreEqual(Session1.TransparencySoftware,    parsedSession.TransparencySoftware);
             //ClassicAssert.AreEqual(Session1.Currency,                 parsedSession.Currency);
             //ClassicAssert.AreEqual(Session1.ChargingPeriods,          parsedSession.ChargingPeriods);
             //ClassicAssert.AreEqual(Session1.TotalCosts,               parsedSession.TotalCosts);

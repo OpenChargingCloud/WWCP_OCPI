@@ -754,7 +754,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                            Connectors.Any()
                                ? new JProperty("connectors",            new JArray(Connectors.         OrderBy(connector          => connector.Id).
-                                                                                                       Select (connector          => connector.         ToJSON(EMSPId,
+                                                                                                       Select (connector          => connector.         ToJSON(true,
+                                                                                                                                                               true,
+                                                                                                                                                               EMSPId,
                                                                                                                                                                CustomConnectorSerializer))))
                                : null,
 

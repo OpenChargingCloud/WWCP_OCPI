@@ -605,7 +605,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    EVSEUIds.              Select(evseUIds              => evseUIds.             Clone()),
                    BookableParkingOptions.Select(bookableParkingOption => bookableParkingOption.Clone()),
                    Bookable?.             Clone(),
-                   TariffIds.             Select(tariffId              => tariffId.             Clone()),
+                   [.. TariffIds],
                    BookingTerms.          Select(bookingTerm           => bookingTerm.          Clone()),
                    Calendar.              Select(calendar              => calendar.             Clone()),
 

@@ -58,7 +58,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    HTTPMethod,
                    URLTemplate,
                    OCPIRequestHandler,
-                   HTTPContentType.Application.JSON_UTF8,
+                   HTTPMethod == HTTPMethod.OPTIONS
+                       ? null
+                       : HTTPContentType.Application.JSON_UTF8,
 
                    null, //OCPIRequestLogger,
                    null, //OCPIResponseLogger,
@@ -68,58 +70,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                );
 
-
-        public static void AddOCPIMethod(this CommonAPI       CommonAPI,
-                                         HTTPMethod           HTTPMethod,
-                                         HTTPPath             URLTemplate,
-                                         HTTPContentType      HTTPContentType,
-                                         OCPIRequestDelegate  OCPIRequestHandler,
-
-                                         URLReplacement       AllowReplacement   = URLReplacement.Fail)
-
-            => AddOCPIMethod(
-
-                   CommonAPI,
-                   HTTPMethod,
-                   URLTemplate,
-                   OCPIRequestHandler,
-                   HTTPContentType,
-
-                   null, //OCPIRequestLogger,
-                   null, //OCPIResponseLogger,
-
-                   null, //DefaultErrorHandler,
-                   AllowReplacement
-
-               );
-
-
-        public static void AddOCPIMethod(this CommonAPI          CommonAPI,
-                                         HTTPMethod              HTTPMethod,
-                                         HTTPPath                URLTemplate,
-                                         HTTPContentType         HTTPContentType,
-                                         OCPIRequestLogHandler   OCPIRequestLogger,
-                                         OCPIResponseLogHandler  OCPIResponseLogger,
-                                         OCPIRequestDelegate     OCPIRequestHandler,
-
-                                         HTTPDelegate?           DefaultErrorHandler   = null,
-                                         URLReplacement          AllowReplacement      = URLReplacement.Fail)
-
-            => AddOCPIMethod(
-
-                   CommonAPI,
-                   HTTPMethod,
-                   URLTemplate,
-                   OCPIRequestHandler,
-                   HTTPContentType,
-
-                   OCPIRequestLogger,
-                   OCPIResponseLogger,
-
-                   DefaultErrorHandler,
-                   AllowReplacement
-
-               );
 
         public static void AddOCPIMethod(this CommonAPI          CommonAPI,
                                          HTTPMethod              HTTPMethod,
@@ -137,7 +87,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    HTTPMethod,
                    URLTemplate,
                    OCPIRequestHandler,
-                   null, //HTTPContentType,
+                   HTTPMethod == HTTPMethod.OPTIONS
+                       ? null
+                       : HTTPContentType.Application.JSON_UTF8,
 
                    OCPIRequestLogger,
                    OCPIResponseLogger,
@@ -146,6 +98,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    AllowReplacement
 
                );
+
 
         #region AddOCPIMethod(CommonAPI, HTTPMethod, URLTemplate, HTTPContentType, OCPIRequestHandler, HTTPContentType, ...)
 

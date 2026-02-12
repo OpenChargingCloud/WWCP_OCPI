@@ -1765,7 +1765,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region GET      ~/locations
 
-            // https://example.com/ocpi/2.2/cpo/locations/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
+            // https://example.com/ocpi/2.2.1/cpo/locations/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
@@ -1797,10 +1797,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #endregion
 
-
-                    //var emspId               = Request.LocalAccessInfo is not null
-                    //                               ? EMSP_Id.Parse(Request.LocalAccessInfo.CountryCode, Request.LocalAccessInfo.PartyId)
-                    //                               : new EMSP_Id?();
 
                     var withExtensions       = request.QueryString.GetBoolean ("withExtensions", false);
 
@@ -2239,6 +2235,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
                                Data                 = connector.ToJSON(
+                                                          true,
+                                                          true,
                                                           request.EMSPId ?? request.HUBId,
                                                           CustomConnectorSerializer
                                                       ),

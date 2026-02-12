@@ -3553,11 +3553,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                      Description:           null,
 
-                                     HTTPRealm:             "GraphDefined OCPI HUB #1 WebAPI",
-                                     HTTPLogins:            [
-                                                                new KeyValuePair<String, String>("a", "b")
-                                                            ],
-
                                      ExternalDNSName:       null,
                                      HTTPServerName:        null,
                                      HTTPServiceName:       null,
@@ -3621,11 +3616,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                      BasePath:              null,
 
                                      Description:           null,
-
-                                     HTTPRealm:             "GraphDefined OCPI HUB #2 WebAPI",
-                                     HTTPLogins:            [
-                                                                new KeyValuePair<String, String>("a", "b")
-                                                            ],
 
                                      ExternalDNSName:       null,
                                      HTTPServerName:        null,
@@ -3691,11 +3681,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                       Description:           null,
 
-                                      HTTPRealm:             "GraphDefined OCPI EMSP #1 WebAPI",
-                                      HTTPLogins:            [
-                                                                 new KeyValuePair<String, String>("a", "b")
-                                                             ],
-
                                       ExternalDNSName:       null,
                                       HTTPServerName:        null,
                                       HTTPServiceName:       null,
@@ -3759,11 +3744,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                       BasePath:              null,
 
                                       Description:           null,
-
-                                      HTTPRealm:             "GraphDefined OCPI EMSP #2 WebAPI",
-                                      HTTPLogins:            [
-                                                                 new KeyValuePair<String, String>("a", "b")
-                                                             ],
 
                                       ExternalDNSName:       null,
                                       HTTPServerName:        null,

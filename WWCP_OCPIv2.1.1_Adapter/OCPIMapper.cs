@@ -716,7 +716,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    EnergyMeter.ManufacturerURL,
                    EnergyMeter.PublicKeys.               Select(publicKey                  => PublicKey.Parse(publicKey. ToString())),
                    EnergyMeter.PublicKeyCertificateChain.HasValue ? CertificateChain.Parse(EnergyMeter.PublicKeyCertificateChain.Value.ToString()) : null,
-                   EnergyMeter.TransparencySoftwares.    Select(transparencySoftwareStatus => transparencySoftwareStatus.ToOCPI()),
+                   EnergyMeter.TransparencySoftware.    Select(transparencySoftwareStatus => transparencySoftwareStatus.ToOCPI()),
                    EnergyMeter.Description.ToOCPI(),
                    EnergyMeter.Created,
                    EnergyMeter.LastChangeDate,
@@ -1997,7 +1997,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                    //MeterId:                 null,
                                    //EnergyMeter:             null,                        // Our vendor extension!
-                                   //TransparencySoftwares:   null,                        // Our vendor extension!
+                                   //TransparencySoftware:    null,                        // Our vendor extension!
                                    //Tariffs:                 tariffs,
                                    //SignedData:              null,
                                    //TotalParkingTime:        null,
@@ -2153,7 +2153,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            EnergyMeterId:           ChargeDetailRecord.EnergyMeterId.ToOCPI(),
                            EnergyMeter:             null,                        // Our vendor extension!
-                           TransparencySoftwares:   null,                        // Our vendor extension!
+                           TransparencySoftware:   null,                        // Our vendor extension!
                            Tariffs:                 tariffs,
                            SignedData:              signedData,                  // Our backport from OCPI v2.2.1!
                            TotalParkingTime:        null,

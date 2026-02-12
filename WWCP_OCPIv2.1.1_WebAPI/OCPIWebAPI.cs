@@ -234,35 +234,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         #endregion
 
-        #region Special HTTP methods
-
-        /// <summary>
-        /// HTTP method for creating a charging reservation.
-        /// </summary>
-        public static readonly HTTPMethod HTTP_ReserveNow         = HTTPMethod.TryParse("ReserveNow",        false)!;
-
-        /// <summary>
-        /// HTTP method for canceling a charging reservation.
-        /// </summary>
-        public static readonly HTTPMethod HTTP_CancelReservation  = HTTPMethod.TryParse("CancelReservation", false)!;
-
-        /// <summary>
-        /// HTTP method for starting a charging reservation.
-        /// </summary>
-        public static readonly HTTPMethod HTTP_StartSession       = HTTPMethod.TryParse("StartSession",      false)!;
-
-        /// <summary>
-        /// HTTP method for stopping a charging reservation.
-        /// </summary>
-        public static readonly HTTPMethod HTTP_StopSession        = HTTPMethod.TryParse("StopSession",       false)!;
-
-        /// <summary>
-        /// HTTP method for unlocking a charging connector.
-        /// </summary>
-        public static readonly HTTPMethod HTTP_UnlockConnector    = HTTPMethod.TryParse("UnlockConnector",   false)!;
-
-        #endregion
-
         #region Properties
 
         public CommonWebAPI              CommonWebAPI        { get; }
@@ -274,6 +245,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         /// The HTTP URI prefix.
         /// </summary>
         public HTTPPath?                 APIURLPathPrefix    { get; }
+
+        /// <summary>
+        /// Make use of HTTP Server Sent Events for debug information.
+        /// </summary>
+        public Boolean                   UseHTTPSSE          { get; }
 
         /// <summary>
         /// Debug information via HTTP Server Sent Events.
@@ -331,6 +307,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                           //HTTPPath?                URLPathPrefix          = null,
 
+                          Boolean?                 UseHTTPSSE             = null,
+
                           String?                  ExternalDNSName        = null,
                           String?                  HTTPServerName         = DefaultHTTPServerName,
                           String?                  HTTPServiceName        = DefaultHTTPServiceName,
@@ -369,6 +347,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             this.CommonWebAPI      = CommonWebAPI;
 
             this.APIURLPathPrefix  = APIURLPathPrefix;
+
+            this.UseHTTPSSE        = UseHTTPSSE ?? false;
 
             this.DebugLog          = CommonAPI.HTTPBaseAPI.AddJSONEventSource(
                                          EventSourceId:            DebugLogId,
@@ -861,10 +841,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                 #endregion
 
 
-                CommonAPI.HTTPBaseAPI.MapJSONEventSource(
-                    DebugLog,
-                    URLPathPrefix + DebugLogId.ToString()
-                );
+                #region GET ~/debugLog
+
+                if (UseHTTPSSE)
+                    CommonAPI.HTTPBaseAPI.MapJSONEventSource(
+                        DebugLog,
+                        CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "debugLog"
+                    );
+
+                #endregion
 
             }
 
@@ -891,11 +876,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                             Allow                      = new List<HTTPMethod> {
                                                              HTTPMethod.OPTIONS,
                                                              HTTPMethod.POST,
-                                                             HTTP_ReserveNow,
-                                                             HTTP_CancelReservation,
-                                                             HTTP_StartSession,
-                                                             HTTP_StopSession,
-                                                             HTTP_UnlockConnector
+                                                             CommonWebAPI.HTTP_ReserveNow,
+                                                             CommonWebAPI.HTTP_CancelReservation,
+                                                             CommonWebAPI.HTTP_StartSession,
+                                                             CommonWebAPI.HTTP_StopSession,
+                                                             CommonWebAPI.HTTP_UnlockConnector
                                                          },
                             AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                             Connection                 = ConnectionType.KeepAlive
@@ -1431,7 +1416,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteXXXParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
             CommonAPI.HTTPBaseAPI.AddHandler(
-                                         HTTP_ReserveNow,
+                                         CommonWebAPI.HTTP_ReserveNow,
                                          APIURLPathPrefix + "remoteXXXParties/{remotePartyId}",
                                          HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: async Request => {
@@ -1883,7 +1868,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteXXXParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
             CommonAPI.HTTPBaseAPI.AddHandler(
-                                         HTTP_CancelReservation,
+                                         CommonWebAPI.HTTP_CancelReservation,
                                          APIURLPathPrefix + "remoteXXXParties/{remotePartyId}",
                                          HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: async Request => {
@@ -2219,7 +2204,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteXXXParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
             CommonAPI.HTTPBaseAPI.AddHandler(
-                                         HTTP_StartSession,
+                                         CommonWebAPI.HTTP_StartSession,
                                          APIURLPathPrefix + "remoteXXXParties/{remotePartyId}",
                                          HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: async Request => {
@@ -2613,7 +2598,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteXXXParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
             CommonAPI.HTTPBaseAPI.AddHandler(
-                                         HTTP_StopSession,
+                                         CommonWebAPI.HTTP_StopSession,
                                          APIURLPathPrefix + "remoteXXXParties/{remotePartyId}",
                                          HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: async Request => {
@@ -2944,7 +2929,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteXXXParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
             CommonAPI.HTTPBaseAPI.AddHandler(
-                                         HTTP_UnlockConnector,
+                                         CommonWebAPI.HTTP_UnlockConnector,
                                          APIURLPathPrefix + "remoteXXXParties/{remotePartyId}",
                                          HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: async Request => {

@@ -511,7 +511,7 @@ namespace cloud.charging.open.protocols.OCPI
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two transparency softwares.
+        /// Compares two transparency software.
         /// </summary>
         /// <param name="Object">A transparency software to compare with.</param>
         public Int32 CompareTo(Object? Object)
@@ -526,7 +526,7 @@ namespace cloud.charging.open.protocols.OCPI
         #region CompareTo(TransparencySoftware)
 
         /// <summary>
-        /// Compares two transparency softwares.
+        /// Compares two transparency software.
         /// </summary>
         /// <param name="TransparencySoftware">A transparency software to compare with.</param>
         public Int32 CompareTo(TransparencySoftware? TransparencySoftware)
@@ -571,7 +571,7 @@ namespace cloud.charging.open.protocols.OCPI
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two transparency softwares for equality.
+        /// Compares two transparency software for equality.
         /// </summary>
         /// <param name="Object">A transparency software to compare with.</param>
         public override Boolean Equals(Object? Object)
@@ -584,7 +584,7 @@ namespace cloud.charging.open.protocols.OCPI
         #region Equals(TransparencySoftware)
 
         /// <summary>
-        /// Compares two transparency softwares for equality.
+        /// Compares two transparency software for equality.
         /// </summary>
         /// <param name="TransparencySoftware">A transparency software to compare with.</param>
         public Boolean Equals(TransparencySoftware? TransparencySoftware)

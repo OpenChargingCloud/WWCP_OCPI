@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Collections.Concurrent;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -48,57 +50,99 @@ namespace cloud.charging.open.protocols.OCPI
 
 
     /// <summary>
+    /// A tariff identification comparer.
+    /// </summary>
+    public sealed class TariffIdComparer : IComparer<Tariff_Id>
+    {
+
+        /// <summary>
+        /// The default tariff identification comparer.
+        /// </summary>
+        public static readonly TariffIdComparer OrdinalIgnoreCase = new();
+
+        /// <summary>
+        /// Compares two tariff identifications.
+        /// </summary>
+        /// <param name="TariffId1">A tariff identification to compare with.</param>
+        /// <param name="TariffId2">A tariff identification to compare with.</param>
+        public Int32 Compare(Tariff_Id TariffId1,
+                             Tariff_Id TariffId2)
+
+            => StringComparer.OrdinalIgnoreCase.Compare(
+                   TariffId1.Value,
+                   TariffId2.Value
+               );
+
+    }
+
+
+    /// <summary>
     /// The unique identification of a tariff.
     /// </summary>
     public readonly struct Tariff_Id : IId<Tariff_Id>
     {
 
-        #region Data
+        #region Static Lookup
+
+        private readonly static ConcurrentDictionary<String, Tariff_Id> lookup = new (StringComparer.OrdinalIgnoreCase);
+
+        private static Tariff_Id Register(String Text)
+
+            => lookup.GetOrAdd(
+                   Text,
+                   static text => new Tariff_Id(text)
+               );
 
         /// <summary>
-        /// The internal identification.
+        /// All registered tariff identifications.
         /// </summary>
-        private readonly String InternalId;
+        public static IEnumerable<Tariff_Id> All
+            => lookup.Values;
 
         #endregion
 
         #region Properties
 
         /// <summary>
+        /// The text representation of the tariff identification.
+        /// </summary>
+        public String   Value    { get; }
+
+        /// <summary>
         /// Indicates whether this tariff identification is null or empty.
         /// </summary>
-        public Boolean IsNullOrEmpty
-            => InternalId.IsNullOrEmpty();
+        public Boolean  IsNullOrEmpty
+            => Value.IsNullOrEmpty();
 
         /// <summary>
         /// Indicates whether this tariff identification is NOT null or empty.
         /// </summary>
-        public Boolean IsNotNullOrEmpty
-            => InternalId.IsNotNullOrEmpty();
+        public Boolean  IsNotNullOrEmpty
+            => Value.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the tariff identification.
         /// </summary>
-        public UInt64 Length
-            => (UInt64) (InternalId?.Length ?? 0);
+        public UInt64   Length
+            => (UInt64) (Value?.Length ?? 0);
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new tariff identification based on the given text.
+        /// Create a new tariff identification based on the given text representation.
         /// </summary>
         /// <param name="Text">The text representation of a tariff identification.</param>
         private Tariff_Id(String Text)
         {
-            this.InternalId = Text;
+            this.Value = Text;
         }
 
         #endregion
 
 
-        #region (static) NewRandom(Length = 20)
+        #region (static) NewRandom (Length = 30)
 
         /// <summary>
         /// Create a new random tariff identification.
@@ -110,7 +154,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) Parse    (Text)
+        #region (static) Parse     (Text)
 
         /// <summary>
         /// Parse the given text as a tariff identification.
@@ -129,7 +173,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse (Text)
+        #region (static) TryParse  (Text)
 
         /// <summary>
         /// Try to parse the given text as a tariff identification.
@@ -147,7 +191,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse (Text, out TariffId)
+        #region (static) TryParse  (Text, out TariffId)
 
         /// <summary>
         /// Try to parse the given text as a tariff identification.
@@ -161,32 +205,14 @@ namespace cloud.charging.open.protocols.OCPI
 
             if (Text.IsNotNullOrEmpty())
             {
-                try
-                {
-                    TariffId = new Tariff_Id(Text);
-                    return true;
-                }
-                catch
-                { }
+                TariffId = Register(Text);
+                return true;
             }
 
             TariffId = default;
             return false;
 
         }
-
-        #endregion
-
-        #region Clone()
-
-        /// <summary>
-        /// Clone this tariff identification.
-        /// </summary>
-        public Tariff_Id Clone()
-
-            => new (
-                   InternalId.CloneString()
-               );
 
         #endregion
 
@@ -310,8 +336,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="TariffId">A tariff identification to compare with.</param>
         public Int32 CompareTo(Tariff_Id TariffId)
 
-            => String.Compare(InternalId,
-                              TariffId.InternalId,
+            => String.Compare(Value,
+                              TariffId.Value,
                               StringComparison.OrdinalIgnoreCase);
 
         #endregion
@@ -341,8 +367,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="TariffId">A tariff identification to compare with.</param>
         public Boolean Equals(Tariff_Id TariffId)
 
-            => String.Equals(InternalId,
-                             TariffId.InternalId,
+            => String.Equals(Value,
+                             TariffId.Value,
                              StringComparison.OrdinalIgnoreCase);
 
         #endregion
@@ -357,7 +383,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
 
-            => InternalId?.ToLower().GetHashCode() ?? 0;
+            => Value is not null
+                   ? StringComparer.OrdinalIgnoreCase.GetHashCode(Value)
+                   : 0;
 
         #endregion
 
@@ -368,7 +396,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public override String ToString()
 
-            => InternalId ?? "";
+            => Value ?? "";
 
         #endregion
 

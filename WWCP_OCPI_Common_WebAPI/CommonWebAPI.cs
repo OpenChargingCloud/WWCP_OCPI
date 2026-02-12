@@ -22,11 +22,9 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
-using org.GraphDefined.Vanaheimr.Hermod.Mail;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.WWCP;
-using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
@@ -118,8 +116,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
     /// <summary>
     /// A HTTP API providing advanced OCPI data structures.
     /// </summary>
-    public class CommonWebAPI : //HTTPExtAPIX
-                                AHTTPExtAPIXExtension2<CommonHTTPAPI, HTTPExtAPIX>
+    public class CommonWebAPI : AHTTPExtAPIXExtension2<CommonHTTPAPI, HTTPExtAPIX>
     {
 
         #region Data
@@ -167,39 +164,55 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         /// <summary>
         /// The HTTP URI prefix.
         /// </summary>
-        public HTTPPath?                                    OverlayURLPathPrefix    { get; }
+        public HTTPPath?                 OverlayURLPathPrefix    { get; }
 
         /// <summary>
         /// The HTTP URI prefix.
         /// </summary>
-        public HTTPPath?                                    APIURLPathPrefix        { get; }
+        public HTTPPath?                 APIURLPathPrefix        { get; }
 
 
         /// <summary>
-        /// The HTTP realm, if HTTP Basic Authentication is used.
+        /// Make use of HTTP Server Sent Events for debug information.
         /// </summary>
-        public String                                       HTTPRealm               { get; }
-
-        /// <summary>
-        /// An enumeration of logins for an optional HTTP Basic Authentication.
-        /// </summary>
-        public IEnumerable<KeyValuePair<String, String>>    HTTPLogins              { get; }
-
+        public Boolean                   UseHTTPSSE              { get; }
 
         /// <summary>
         /// Debug information via HTTP Server Sent Events.
         /// </summary>
-        public HTTPEventSource<JObject>                     DebugLog                { get; }
+        public HTTPEventSource<JObject>  DebugLog                { get; }
 
-
-        public CommonHTTPAPI                                CommonHTTPAPI
+        public CommonHTTPAPI             CommonHTTPAPI
             => HTTPBaseAPI;
 
+        #endregion
+
+        #region Special HTTP methods
 
         /// <summary>
-        /// The default request timeout for new CPO/EMSP clients.
+        /// HTTP method for creating a charging reservation.
         /// </summary>
-        //public TimeSpan?                                    RequestTimeout          { get; set; }
+        public static readonly HTTPMethod HTTP_ReserveNow         = HTTPMethod.TryParse("ReserveNow",        false)!;
+
+        /// <summary>
+        /// HTTP method for canceling a charging reservation.
+        /// </summary>
+        public static readonly HTTPMethod HTTP_CancelReservation  = HTTPMethod.TryParse("CancelReservation", false)!;
+
+        /// <summary>
+        /// HTTP method for starting a charging reservation.
+        /// </summary>
+        public static readonly HTTPMethod HTTP_StartSession       = HTTPMethod.TryParse("StartSession",      false)!;
+
+        /// <summary>
+        /// HTTP method for stopping a charging reservation.
+        /// </summary>
+        public static readonly HTTPMethod HTTP_StopSession        = HTTPMethod.TryParse("StopSession",       false)!;
+
+        /// <summary>
+        /// HTTP method for unlocking a charging connector.
+        /// </summary>
+        public static readonly HTTPMethod HTTP_UnlockConnector    = HTTPMethod.TryParse("UnlockConnector",   false)!;
 
         #endregion
 
@@ -256,34 +269,30 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         /// <param name="APIURLPathPrefix">An optional prefix for the HTTP URIs.</param>
         /// <param name="WebAPIURLPathPrefix">An optional prefix for the HTTP URIs.</param>
         /// <param name="BasePath">The base path of the HTTP server.</param>
-        /// 
-        /// <param name="HTTPRealm">The HTTP realm, if HTTP Basic Authentication is used.</param>
-        /// <param name="HTTPLogins">An enumeration of logins for an optional HTTP Basic Authentication.</param>
-        public CommonWebAPI(CommonHTTPAPI                               CommonHTTPAPI,
+        public CommonWebAPI(CommonHTTPAPI            CommonHTTPAPI,
 
-                            HTTPPath?                                   OverlayURLPathPrefix      = null,
-                            HTTPPath?                                   APIURLPathPrefix          = null,
-                            HTTPPath?                                   WebAPIURLPathPrefix       = null,
-                            HTTPPath?                                   BasePath                  = null,  // For URL prefixes in HTML!
+                            HTTPPath?                OverlayURLPathPrefix   = null,
+                            HTTPPath?                APIURLPathPrefix       = null,
+                            HTTPPath?                WebAPIURLPathPrefix    = null,
+                            HTTPPath?                BasePath               = null,  // For URL prefixes in HTML!
 
-                            I18NString?                                 Description               = null,
+                            I18NString?              Description            = null,
 
-                            String                                      HTTPRealm                 = DefaultHTTPRealm,
-                            IEnumerable<KeyValuePair<String, String>>?  HTTPLogins                = null,
+                            Boolean?                 UseHTTPSSE             = null,
 
-                            String?                                     ExternalDNSName           = null,
-                            String?                                     HTTPServerName            = DefaultHTTPServerName,
-                            String?                                     HTTPServiceName           = DefaultHTTPServiceName,
-                            String?                                     APIVersionHash            = null,
-                            JObject?                                    APIVersionHashes          = null,
+                            String?                  ExternalDNSName        = null,
+                            String?                  HTTPServerName         = DefaultHTTPServerName,
+                            String?                  HTTPServiceName        = DefaultHTTPServiceName,
+                            String?                  APIVersionHash         = null,
+                            JObject?                 APIVersionHashes       = null,
 
-                            Boolean?                                    IsDevelopment             = false,
-                            IEnumerable<String>?                        DevelopmentServers        = null,
-                            Boolean?                                    DisableNotifications      = false,
-                            Boolean?                                    DisableLogging            = false,
-                            String?                                     LoggingPath               = null,
-                            String?                                     LogfileName               = null,
-                            LogfileCreatorDelegate?                     LogfileCreator            = null)
+                            Boolean?                 IsDevelopment          = false,
+                            IEnumerable<String>?     DevelopmentServers     = null,
+                            Boolean?                 DisableNotifications   = false,
+                            Boolean?                 DisableLogging         = false,
+                            String?                  LoggingPath            = null,
+                            String?                  LogfileName            = null,
+                            LogfileCreatorDelegate?  LogfileCreator         = null)
 
             : base(CommonHTTPAPI,
                    CommonHTTPAPI.URLPathPrefix + WebAPIURLPathPrefix,
@@ -309,17 +318,15 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
             this.OverlayURLPathPrefix  = CommonHTTPAPI.URLPathPrefix + OverlayURLPathPrefix;
             this.APIURLPathPrefix      = CommonHTTPAPI.URLPathPrefix + APIURLPathPrefix;
 
-            this.HTTPRealm             = HTTPRealm.IsNotNullOrEmpty() ? HTTPRealm : DefaultHTTPRealm;
-            this.HTTPLogins            = HTTPLogins ?? [];
+            this.UseHTTPSSE            = UseHTTPSSE ?? false;
 
-            //var LogfilePrefix          = "HTTPSSEs" + Path.DirectorySeparatorChar;
-
-          //  this.DebugLog              = this.AddJSONEventSource(EventIdentification:      DebugLogId,
-          //                                                       URLTemplate:              HTTPPath.Root + DebugLogId.ToString(), //this.URLPathPrefix + DebugLogId.ToString(),
-          //                                                       MaxNumberOfCachedEvents:  10000,
-          //                                                       RetryInterval :           TimeSpan.FromSeconds(5),
-          //                                                       EnableLogging:            true,
-          //                                                       LogfilePrefix:            LogfilePrefix);
+            this.DebugLog              = HTTPBaseAPI.HTTPBaseAPI.AddJSONEventSource(
+                                             EventSourceId:            DebugLogId,
+                                             MaxNumberOfCachedEvents:  1000,
+                                             RetryInterval :           TimeSpan.FromSeconds(5),
+                                             EnableLogging:            true,
+                                             LogfilePrefix:            this.LoggingPath + "HTTPSSEs" + Path.DirectorySeparatorChar
+                                         );
 
             RegisterURLTemplates();
 
@@ -641,6 +648,17 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                             }.AsImmutable)
 
                 );
+
+                #endregion
+
+
+                #region GET ~/debugLog
+
+                if (UseHTTPSSE)
+                    HTTPBaseAPI.HTTPBaseAPI.MapJSONEventSource(
+                        DebugLog,
+                        OverlayURLPathPrefix.Value + "debugLog"
+                    );
 
                 #endregion
 

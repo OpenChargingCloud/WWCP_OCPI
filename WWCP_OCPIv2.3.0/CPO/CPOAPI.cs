@@ -1735,7 +1735,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="CommonAPI">The OCPI common API.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         /// 
-        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The official URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
@@ -2165,7 +2164,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #region GET      ~/locations
 
-            // https://example.com/ocpi/2.2/cpo/locations/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
+            // https://example.com/ocpi/2.3.0/cpo/locations/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
@@ -4748,7 +4747,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "commands/UNLOCK_CONNECTOR",
-                HTTPContentType.Application.JSON_UTF8,
                 request =>
 
                     Task.FromResult(

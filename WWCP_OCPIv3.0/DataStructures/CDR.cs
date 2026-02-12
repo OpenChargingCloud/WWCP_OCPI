@@ -124,11 +124,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public   EnergyMeter<EVSE>?                       EnergyMeter                 { get; }
 
         /// <summary>
-        /// The enumeration of valid transparency softwares which can be used to validate
+        /// The enumeration of valid transparency software which can be used to validate
         /// the singed charging session and metering data.
         /// </summary>
         [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
-        public   IEnumerable<TransparencySoftwareStatus>  TransparencySoftwares       { get; }
+        public   IEnumerable<TransparencySoftwareStatus>  TransparencySoftware       { get; }
 
         /// <summary>
         /// The ISO 4217 code of the currency used for this charge detail record.
@@ -280,7 +280,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="AuthorizationReference">The optional reference to the authorization given by the eMSP.</param>
         /// <param name="EnergyMeterId">The optional identification of the energy meter.</param>
         /// <param name="EnergyMeter">The optional energy meter.</param>
-        /// <param name="TransparencySoftwares">The enumeration of valid transparency softwares which can be used to validate the singed charging session and metering data.</param>
+        /// <param name="TransparencySoftware">The enumeration of valid transparency software which can be used to validate the singed charging session and metering data.</param>
         /// 
         /// <param name="SignedData">The optional signed metering data that belongs to this charging session.</param>
         /// <param name="TotalFixedCosts">The optional total sum of all the costs of this transaction in the specified currency.</param>
@@ -334,7 +334,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    AuthorizationReference?                                       AuthorizationReference                       = null,
                    EnergyMeter_Id?                                               EnergyMeterId                                = null,
                    EnergyMeter<EVSE>?                                            EnergyMeter                                  = null,
-                   IEnumerable<TransparencySoftwareStatus>?                      TransparencySoftwares                        = null,
+                   IEnumerable<TransparencySoftwareStatus>?                      TransparencySoftware                        = null,
                    SignedData?                                                   SignedData                                   = null,
                    Price?                                                        TotalFixedCosts                              = null,
                    Price?                                                        TotalEnergyCost                              = null,
@@ -390,7 +390,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    AuthorizationReference,
                    EnergyMeterId,
                    EnergyMeter,
-                   TransparencySoftwares,
+                   TransparencySoftware,
                    SignedData,
                    TotalFixedCosts,
                    TotalEnergyCost,
@@ -453,7 +453,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="AuthorizationReference">The optional reference to the authorization given by the eMSP.</param>
         /// <param name="EnergyMeterId">The optional identification of the energy meter.</param>
         /// <param name="EnergyMeter">The optional energy meter.</param>
-        /// <param name="TransparencySoftwares">The enumeration of valid transparency softwares which can be used to validate the singed charging session and metering data.</param>
+        /// <param name="TransparencySoftware">The enumeration of valid transparency software which can be used to validate the singed charging session and metering data.</param>
         /// 
         /// <param name="SignedData">The optional signed metering data that belongs to this charging session.</param>
         /// <param name="TotalFixedCosts">The optional total sum of all the costs of this transaction in the specified currency.</param>
@@ -508,7 +508,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    AuthorizationReference?                                       AuthorizationReference                       = null,
                    EnergyMeter_Id?                                               EnergyMeterId                                = null,
                    EnergyMeter<EVSE>?                                            EnergyMeter                                  = null,
-                   IEnumerable<TransparencySoftwareStatus>?                      TransparencySoftwares                        = null,
+                   IEnumerable<TransparencySoftwareStatus>?                      TransparencySoftware                        = null,
                    SignedData?                                                   SignedData                                   = null,
                    Price?                                                        TotalFixedCosts                              = null,
                    Price?                                                        TotalEnergyCost                              = null,
@@ -569,7 +569,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.AuthorizationReference    = AuthorizationReference;
             this.EnergyMeterId             = EnergyMeterId;
             this.EnergyMeter               = EnergyMeter;
-            this.TransparencySoftwares     = TransparencySoftwares ?? [];
+            this.TransparencySoftware     = TransparencySoftware ?? [];
             this.SignedData                = SignedData;
             this.TotalFixedCosts           = TotalFixedCosts;
             this.TotalEnergyCost           = TotalEnergyCost;
@@ -634,7 +634,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            (this.AuthorizationReference?.  GetHashCode()  ?? 0) *  53 ^
                            (this.EnergyMeterId?.           GetHashCode()  ?? 0) *  47 ^
                            (this.EnergyMeter?.             GetHashCode()  ?? 0) *  43 ^
-                            this.TransparencySoftwares.    CalcHashCode()       *  41 ^
+                            this.TransparencySoftware.    CalcHashCode()       *  41 ^
                            (this.SignedData?.              GetHashCode()  ?? 0) *  37 ^
                            (this.TotalFixedCosts?.         GetHashCode()  ?? 0) *  31 ^
                            (this.TotalEnergyCost?.         GetHashCode()  ?? 0) *  29 ^
@@ -941,12 +941,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
-                #region Parse TransparencySoftwares       [optional]
+                #region Parse TransparencySoftware       [optional]
 
-                if (JSON.ParseOptionalJSON("transparency_softwares",
-                                           "transparency softwares",
+                if (JSON.ParseOptionalJSON("transparency_software",
+                                           "transparency software",
                                            TransparencySoftwareStatus.TryParse,
-                                           out IEnumerable<TransparencySoftwareStatus> TransparencySoftwares,
+                                           out IEnumerable<TransparencySoftwareStatus> TransparencySoftware,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -1259,7 +1259,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                           AuthorizationReference,
                           MeterId,
                           EnergyMeter,
-                          TransparencySoftwares,
+                          TransparencySoftware,
                           SignedData,
                           TotalFixedCosts,
                           TotalEnergyCost,
@@ -1381,8 +1381,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                ? new JProperty("energy_meter",                 EnergyMeter.                   ToJSON(CustomEVSEEnergyMeterSerializer))
                                : null,
 
-                           TransparencySoftwares.Any()
-                               ? new JProperty("transparency_softwares",       new JArray(TransparencySoftwares.Select(transparencySoftware => transparencySoftware.ToJSON(CustomTransparencySoftwareStatusSerializer,
+                           TransparencySoftware.Any()
+                               ? new JProperty("transparency_software",       new JArray(TransparencySoftware.Select(transparencySoftware => transparencySoftware.ToJSON(CustomTransparencySoftwareStatusSerializer,
                                                                                                                                                                            CustomTransparencySoftwareSerializer))))
                                : null,
 
@@ -1476,7 +1476,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    CDRLocation.            Clone(),
                    Currency.               Clone(),
                    TariffAssociationId.    Clone(),
-                   TariffId.               Clone(),
+                   TariffId,
                    ChargingPeriods.        Select(chargingPeriod       => chargingPeriod.      Clone()),
                    TotalCosts.             Clone(),
                    TotalEnergy,
@@ -1486,7 +1486,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    AuthorizationReference?.Clone(),
                    EnergyMeterId?.         Clone(),
                    EnergyMeter?.           Clone(),
-                   TransparencySoftwares.  Select(transparencySoftware => transparencySoftware.Clone()),
+                   TransparencySoftware.  Select(transparencySoftware => transparencySoftware.Clone()),
                    SignedData?.            Clone(),
                    TotalFixedCosts?.       Clone(),
                    TotalEnergyCost?.       Clone(),
@@ -1902,8 +1902,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
              ((EnergyMeter              is     null &&  CDR.EnergyMeter              is     null) ||
               (EnergyMeter              is not null &&  CDR.EnergyMeter              is not null && EnergyMeter.                   Equals(CDR.EnergyMeter)))                    &&
 
-             ((TransparencySoftwares    is     null &&  CDR.TransparencySoftwares    is     null) ||
-              (TransparencySoftwares    is not null &&  CDR.TransparencySoftwares    is not null && TransparencySoftwares.         Equals(CDR.TransparencySoftwares)))          &&
+             ((TransparencySoftware    is     null &&  CDR.TransparencySoftware    is     null) ||
+              (TransparencySoftware    is not null &&  CDR.TransparencySoftware    is not null && TransparencySoftware.         Equals(CDR.TransparencySoftware)))          &&
 
              ((SignedData               is     null &&  CDR.SignedData               is     null) ||
               (SignedData               is not null &&  CDR.SignedData               is not null && SignedData.                    Equals(CDR.SignedData)))                     &&
@@ -1970,7 +1970,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        : "",
 
                    // EnergyMeter
-                   // TransparencySoftwares
+                   // TransparencySoftware
                    // SignedData
 
                    Remark is not null
@@ -2018,7 +2018,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    AuthorizationReference,
                    EnergyMeterId,
                    EnergyMeter,
-                   TransparencySoftwares,
+                   TransparencySoftware,
                    SignedData,
                    TotalFixedCosts,
                    TotalEnergyCost,
@@ -2116,11 +2116,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             public   EnergyMeter<EVSE>?                       EnergyMeter                 { get; set; }
 
             /// <summary>
-            /// The enumeration of valid transparency softwares which can be used to validate
+            /// The enumeration of valid transparency software which can be used to validate
             /// the singed charging session and metering data.
             /// </summary>
             [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
-            public   HashSet<TransparencySoftwareStatus>      TransparencySoftwares       { get; }
+            public   HashSet<TransparencySoftwareStatus>      TransparencySoftware       { get; }
 
             /// <summary>
             /// The ISO 4217 code of the currency used for this charge detail record.
@@ -2265,7 +2265,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// <param name="AuthorizationReference">The optional reference to the authorization given by the eMSP.</param>
             /// <param name="EnergyMeterId">The optional identification of the energy meter.</param>
             /// <param name="EnergyMeter">The optional energy meter.</param>
-            /// <param name="TransparencySoftwares">The enumeration of valid transparency softwares which can be used to validate the singed charging session and metering data.</param>
+            /// <param name="TransparencySoftware">The enumeration of valid transparency software which can be used to validate the singed charging session and metering data.</param>
             /// 
             /// <param name="SignedData">The optional signed metering data that belongs to this charging session.</param>
             /// <param name="TotalFixedCosts">The optional total sum of all the costs of this transaction in the specified currency.</param>
@@ -2301,7 +2301,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                              AuthorizationReference?                   AuthorizationReference     = null,
                              EnergyMeter_Id?                           EnergyMeterId              = null,
                              EnergyMeter<EVSE>?                        EnergyMeter                = null,
-                             IEnumerable<TransparencySoftwareStatus>?  TransparencySoftwares      = null,
+                             IEnumerable<TransparencySoftwareStatus>?  TransparencySoftware      = null,
                              SignedData?                               SignedData                 = null,
                              Price?                                    TotalFixedCosts            = null,
                              Price?                                    TotalEnergyCost            = null,
@@ -2339,7 +2339,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 this.AuthorizationReference    = AuthorizationReference;
                 this.EnergyMeterId             = EnergyMeterId;
                 this.EnergyMeter               = EnergyMeter;
-                this.TransparencySoftwares     = TransparencySoftwares is not null ? [.. TransparencySoftwares] : [];
+                this.TransparencySoftware     = TransparencySoftware is not null ? [.. TransparencySoftware] : [];
                 this.SignedData                = SignedData;
                 this.TotalFixedCosts           = TotalFixedCosts;
                 this.TotalEnergyCost           = TotalEnergyCost;
@@ -2424,7 +2424,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                  AuthorizationReference,
                                  EnergyMeterId,
                                  EnergyMeter,
-                                 TransparencySoftwares,
+                                 TransparencySoftware,
                                  SignedData,
                                  TotalFixedCosts,
                                  TotalEnergyCost,

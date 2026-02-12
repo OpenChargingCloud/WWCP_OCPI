@@ -4249,10 +4249,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + $"versions/{Version.Id}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   GetVersionRequest,
-                OCPIResponseLogger:  GetVersionResponse,
-                OCPIRequestHandler:  request => {
+                GetVersionRequest,
+                GetVersionResponse,
+                request => {
 
                     #region Check access token
 
@@ -4513,7 +4512,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + $"{Version.String}/credentials",
-                OCPIRequestHandler: request => {
+                request => {
 
                     #region Defaults
 
@@ -4587,10 +4586,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + $"{Version.String}/credentials",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   GetCredentialsRequest,
-                OCPIResponseLogger:  GetCredentialsResponse,
-                OCPIRequestHandler:  request => {
+                GetCredentialsRequest,
+                GetCredentialsResponse,
+                request => {
 
                     #region Check access token
 
@@ -4659,10 +4657,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + $"{Version.String}/credentials",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   PostCredentialsRequest,
-                OCPIResponseLogger:  PostCredentialsResponse,
-                OCPIRequestHandler:  async request => {
+                PostCredentialsRequest,
+                PostCredentialsResponse,
+                async request => {
 
                     if (request.LocalAccessInfo?.Status == AccessStatus.ALLOWED)
                     {
@@ -4707,10 +4704,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PUT,
                 URLPathPrefix + $"{Version.String}/credentials",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   PutCredentialsRequest,
-                OCPIResponseLogger:  PutCredentialsResponse,
-                OCPIRequestHandler:  async request => {
+                PutCredentialsRequest,
+                PutCredentialsResponse,
+                async request => {
 
                     #region The access token is known...
 
@@ -4784,10 +4780,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + $"{Version.String}/credentials",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   DeleteCredentialsRequest,
-                OCPIResponseLogger:  DeleteCredentialsResponse,
-                OCPIRequestHandler:  async request => {
+                DeleteCredentialsRequest,
+                DeleteCredentialsResponse,
+                async request => {
 
                     if (request.LocalAccessInfo?.Status == AccessStatus.ALLOWED)
                     {

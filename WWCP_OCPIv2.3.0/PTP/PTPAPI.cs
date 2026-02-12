@@ -754,7 +754,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "payments/terminals",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -778,10 +778,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "payments/terminals",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   GetTerminalsRequest,
-                OCPIResponseLogger:  GetTerminalsResponse,
-                OCPIRequestHandler:  request => {
+                GetTerminalsRequest,
+                GetTerminalsResponse,
+                request => {
 
                     #region Check access token
 
@@ -930,7 +929,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "payments/terminals/{terminalId}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -952,10 +951,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "payments/terminals/{terminalId}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   GetTerminalRequest,
-                OCPIResponseLogger:  GetTerminalResponse,
-                OCPIRequestHandler:  request => {
+                GetTerminalRequest,
+                GetTerminalResponse,
+                request => {
 
                     #region Check access token
 
@@ -1023,10 +1021,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PUT,
                 URLPathPrefix + "payments/terminals/{terminalId}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   PutTerminalRequest,
-                OCPIResponseLogger:  PutTerminalResponse,
-                OCPIRequestHandler:  async request => {
+                PutTerminalRequest,
+                PutTerminalResponse,
+                async request => {
 
                     #region Check access token
 
@@ -1147,10 +1144,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PATCH,
                 URLPathPrefix + "payments/terminals/{terminalId}",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   PatchTerminalRequest,
-                OCPIResponseLogger:  PatchTerminalResponse,
-                OCPIRequestHandler:  async request => {
+                PatchTerminalRequest,
+                PatchTerminalResponse,
+                async request => {
 
                     #region Check access token
 
@@ -1257,7 +1253,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "payments/terminals/activate",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -1280,10 +1276,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "payments/terminals/activate",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   PostTerminalsActivateRequest,
-                OCPIResponseLogger:  PostTerminalsActivateResponse,
-                OCPIRequestHandler:  async request => {
+                PostTerminalsActivateRequest,
+                PostTerminalsActivateResponse,
+                async request => {
 
                     #region Check access token
 
@@ -1407,7 +1402,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "payments/terminals/{terminalId}/deactivate",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -1430,10 +1425,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "payments/terminals/{terminalId}/deactivate",
-                HTTPContentType.Application.JSON_UTF8,
-                OCPIRequestLogger:   PostTerminalsDeactivateRequest,
-                OCPIResponseLogger:  PostTerminalsDeactivateResponse,
-                OCPIRequestHandler:  async request => {
+                PostTerminalsDeactivateRequest,
+                PostTerminalsDeactivateResponse,
+                async request => {
 
                     #region Check access token
 
@@ -1508,7 +1502,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "payments/financial-advice-confirmations",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
@@ -1539,7 +1533,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.OPTIONS,
                 URLPathPrefix + "payments/financial-advice-confirmations/{financial_advice_confirmation_id}",
-                OCPIRequestHandler: request =>
+                request =>
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {

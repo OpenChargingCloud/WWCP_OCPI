@@ -3697,7 +3697,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Location1.ConnectorId,                                      parsedLocation.ConnectorId);
             //ClassicAssert.AreEqual(Location1.MeterId,                                          parsedLocation.MeterId);
             //ClassicAssert.AreEqual(Location1.EnergyMeter,                                      parsedLocation.EnergyMeter);
-            //ClassicAssert.AreEqual(Location1.TransparencySoftwares,                            parsedLocation.TransparencySoftwares);
+            //ClassicAssert.AreEqual(Location1.TransparencySoftware,                            parsedLocation.TransparencySoftware);
             //ClassicAssert.AreEqual(Location1.Currency,                                         parsedLocation.Currency);
             //ClassicAssert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
             //ClassicAssert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
@@ -3811,7 +3811,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Location1.ConnectorId,                                      parsedLocation.ConnectorId);
             //ClassicAssert.AreEqual(Location1.MeterId,                                          parsedLocation.MeterId);
             //ClassicAssert.AreEqual(Location1.EnergyMeter,                                      parsedLocation.EnergyMeter);
-            //ClassicAssert.AreEqual(Location1.TransparencySoftwares,                            parsedLocation.TransparencySoftwares);
+            //ClassicAssert.AreEqual(Location1.TransparencySoftware,                            parsedLocation.TransparencySoftware);
             //ClassicAssert.AreEqual(Location1.Currency,                                         parsedLocation.Currency);
             //ClassicAssert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
             //ClassicAssert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
@@ -3893,7 +3893,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Location1.ConnectorId,                                      parsedLocation.ConnectorId);
             //ClassicAssert.AreEqual(Location1.MeterId,                                          parsedLocation.MeterId);
             //ClassicAssert.AreEqual(Location1.EnergyMeter,                                      parsedLocation.EnergyMeter);
-            //ClassicAssert.AreEqual(Location1.TransparencySoftwares,                            parsedLocation.TransparencySoftwares);
+            //ClassicAssert.AreEqual(Location1.TransparencySoftware,                             parsedLocation.TransparencySoftware);
             //ClassicAssert.AreEqual(Location1.Currency,                                         parsedLocation.Currency);
             //ClassicAssert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
             //ClassicAssert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
@@ -3974,7 +3974,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Location1.ConnectorId,                                      parsedLocation.ConnectorId);
             //ClassicAssert.AreEqual(Location1.MeterId,                                          parsedLocation.MeterId);
             //ClassicAssert.AreEqual(Location1.EnergyMeter,                                      parsedLocation.EnergyMeter);
-            //ClassicAssert.AreEqual(Location1.TransparencySoftwares,                            parsedLocation.TransparencySoftwares);
+            //ClassicAssert.AreEqual(Location1.TransparencySoftware,                            parsedLocation.TransparencySoftware);
             //ClassicAssert.AreEqual(Location1.Currency,                                         parsedLocation.Currency);
             //ClassicAssert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
             //ClassicAssert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
@@ -4065,7 +4065,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Location1.ConnectorId,                                      parsedLocation.ConnectorId);
             //ClassicAssert.AreEqual(Location1.MeterId,                                          parsedLocation.MeterId);
             //ClassicAssert.AreEqual(Location1.EnergyMeter,                                      parsedLocation.EnergyMeter);
-            //ClassicAssert.AreEqual(Location1.TransparencySoftwares,                            parsedLocation.TransparencySoftwares);
+            //ClassicAssert.AreEqual(Location1.TransparencySoftware,                            parsedLocation.TransparencySoftware);
             //ClassicAssert.AreEqual(Location1.Currency,                                         parsedLocation.Currency);
             //ClassicAssert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
             //ClassicAssert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
@@ -4149,7 +4149,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Location1.ConnectorId,                                      parsedLocation.ConnectorId);
             //ClassicAssert.AreEqual(Location1.MeterId,                                          parsedLocation.MeterId);
             //ClassicAssert.AreEqual(Location1.EnergyMeter,                                      parsedLocation.EnergyMeter);
-            //ClassicAssert.AreEqual(Location1.TransparencySoftwares,                            parsedLocation.TransparencySoftwares);
+            //ClassicAssert.AreEqual(Location1.TransparencySoftware,                            parsedLocation.TransparencySoftware);
             //ClassicAssert.AreEqual(Location1.Currency,                                         parsedLocation.Currency);
             //ClassicAssert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
             //ClassicAssert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);

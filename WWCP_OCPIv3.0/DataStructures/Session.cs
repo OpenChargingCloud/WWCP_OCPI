@@ -163,11 +163,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public   EnergyMeter<EVSE>?                       EnergyMeter                  { get; }
 
         /// <summary>
-        /// The enumeration of valid transparency softwares which can be used to validate
+        /// The enumeration of valid transparency software which can be used to validate
         /// the singed charging session and metering data.
         /// </summary>
         [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
-        public   IEnumerable<TransparencySoftwareStatus>  TransparencySoftwares        { get; }
+        public   IEnumerable<TransparencySoftwareStatus>  TransparencySoftware        { get; }
 
         /// <summary>
         /// The timestamp when this session was created.
@@ -216,7 +216,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="TotalCosts">The total costs of the session in the specified currency. This is the price that the eMSP will have to pay to the CPO. A total_cost of 0.00 means free of charge. When omitted, i.e. no price information is given in the Session object, it does not imply the session is/was free of charge.</param>
         /// <param name="EnergyMeterId">The optional identification of the kWh energy meter.</param>
         /// <param name="EnergyMeter">The optional energy meter used for this session.</param>
-        /// <param name="TransparencySoftwares">An optional enumeration of valid transparency softwares which can be used to validate the signed charging session and metering data.</param>
+        /// <param name="TransparencySoftware">An optional enumeration of valid transparency software which can be used to validate the signed charging session and metering data.</param>
         /// 
         /// <param name="Created">An optional timestamp when this charging session was created.</param>
         /// <param name="LastUpdated">An optional timestamp when this charging session was last updated (or created).</param>
@@ -248,7 +248,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        Price?                                              TotalCosts                         = null,
                        EnergyMeter_Id?                                     EnergyMeterId                      = null,
                        EnergyMeter<EVSE>?                                  EnergyMeter                        = null,
-                       IEnumerable<TransparencySoftwareStatus>?            TransparencySoftwares              = null,
+                       IEnumerable<TransparencySoftwareStatus>?            TransparencySoftware              = null,
 
                        DateTimeOffset?                                     Created                            = null,
                        DateTimeOffset?                                     LastUpdated                        = null,
@@ -282,7 +282,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    TotalCosts,
                    EnergyMeterId,
                    EnergyMeter,
-                   TransparencySoftwares,
+                   TransparencySoftware,
 
                    Created,
                    LastUpdated,
@@ -325,7 +325,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="TotalCosts">The total costs of the session in the specified currency. This is the price that the eMSP will have to pay to the CPO. A total_cost of 0.00 means free of charge. When omitted, i.e. no price information is given in the Session object, it does not imply the session is/was free of charge.</param>
         /// <param name="EnergyMeterId">The optional identification of the kWh energy meter.</param>
         /// <param name="EnergyMeter">The optional energy meter used for this session.</param>
-        /// <param name="TransparencySoftwares">An optional enumeration of valid transparency softwares which can be used to validate the signed charging session and metering data.</param>
+        /// <param name="TransparencySoftware">An optional enumeration of valid transparency software which can be used to validate the signed charging session and metering data.</param>
         /// 
         /// <param name="Created">An optional timestamp when this charging session was created.</param>
         /// <param name="LastUpdated">An optional timestamp when this charging session was last updated (or created).</param>
@@ -358,7 +358,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                          Price?                                              TotalCosts                         = null,
                          EnergyMeter_Id?                                     EnergyMeterId                      = null,
                          EnergyMeter<EVSE>?                                  EnergyMeter                        = null,
-                         IEnumerable<TransparencySoftwareStatus>?            TransparencySoftwares              = null,
+                         IEnumerable<TransparencySoftwareStatus>?            TransparencySoftware              = null,
 
                          DateTimeOffset?                                     Created                            = null,
                          DateTimeOffset?                                     LastUpdated                        = null,
@@ -394,7 +394,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.TotalCosts              = TotalCosts;
             this.EnergyMeterId           = EnergyMeterId;
             this.EnergyMeter             = EnergyMeter;
-            this.TransparencySoftwares   = TransparencySoftwares?.Distinct() ?? [];
+            this.TransparencySoftware   = TransparencySoftware?.Distinct() ?? [];
 
             this.Created                 = Created                           ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated             = LastUpdated                       ?? Created     ?? Timestamp.Now;
@@ -430,7 +430,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                           (this.TotalCosts?.            GetHashCode() ?? 0) * 13 ^
                           (this.EnergyMeterId?.         GetHashCode() ?? 0) * 11 ^
                           (this.EnergyMeter?.           GetHashCode() ?? 0) *  7 ^
-                           this.TransparencySoftwares.  CalcHashCode()      *  5 ^
+                           this.TransparencySoftware.  CalcHashCode()      *  5 ^
 
                            this.Created.                GetHashCode()       *  3 ^
                            this.LastUpdated.            GetHashCode();
@@ -742,12 +742,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
-                #region Parse TransparencySoftwares     [optional]
+                #region Parse TransparencySoftware     [optional]
 
-                if (JSON.ParseOptionalJSON("transparency_softwares",
-                                           "transparency softwares",
+                if (JSON.ParseOptionalJSON("transparency_software",
+                                           "transparency software",
                                            TransparencySoftwareStatus.TryParse,
-                                           out IEnumerable<TransparencySoftwareStatus> TransparencySoftwares,
+                                           out IEnumerable<TransparencySoftwareStatus> TransparencySoftware,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -887,7 +887,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               TotalCosts,
                               MeterId,
                               EnergyMeter,
-                              TransparencySoftwares,
+                              TransparencySoftware,
 
                               Created,
                               LastUpdated
@@ -1032,7 +1032,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    LocationId.             Clone(),
                    Currency.               Clone(),
                    TariffAssociationId.    Clone(),
-                   TariffId.               Clone(),
+                   TariffId,
                    Status.                 Clone(),
 
                    End,
@@ -1042,7 +1042,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    TotalCosts?.            Clone(),
                    EnergyMeterId?.               Clone(),
                    EnergyMeter?.           Clone(),
-                   TransparencySoftwares.  Select(transparencySoftware => transparencySoftware.Clone()).ToArray(),
+                   TransparencySoftware.  Select(transparencySoftware => transparencySoftware.Clone()).ToArray(),
 
                    Created,
                    LastUpdated
@@ -1573,7 +1573,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    TotalCosts,
                    EnergyMeterId,
                    EnergyMeter,
-                   TransparencySoftwares,
+                   TransparencySoftware,
 
                    Created,
                    LastUpdated
@@ -1703,11 +1703,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             public   EnergyMeter<EVSE>?                       EnergyMeter                  { get; set; }
 
             /// <summary>
-            /// The enumeration of valid transparency softwares which can be used to validate
+            /// The enumeration of valid transparency software which can be used to validate
             /// the singed charging session and metering data.
             /// </summary>
             [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
-            public   HashSet<TransparencySoftwareStatus>      TransparencySoftwares        { get; }
+            public   HashSet<TransparencySoftwareStatus>      TransparencySoftware        { get; }
 
             /// <summary>
             /// The timestamp when this session was created.
@@ -1750,7 +1750,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// <param name="TotalCosts">The total costs of the session in the specified currency. This is the price that the eMSP will have to pay to the CPO. A total_cost of 0.00 means free of charge. When omitted, i.e. no price information is given in the Session object, it does not imply the session is/was free of charge.</param>
             /// <param name="EnergyMeterId">The optional identification of the kWh energy meter.</param>
             /// <param name="EnergyMeter">The optional energy meter used for this session.</param>
-            /// <param name="TransparencySoftwares">An optional enumeration of valid transparency softwares which can be used to validate the signed charging session and metering data.</param>
+            /// <param name="TransparencySoftware">An optional enumeration of valid transparency software which can be used to validate the signed charging session and metering data.</param>
             /// 
             /// <param name="Created">An optional timestamp when this charging session was created.</param>
             /// <param name="LastUpdated">An optional timestamp when this charging session was last updated (or created).</param>
@@ -1776,7 +1776,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                              Price?                                    TotalCosts               = null,
                              EnergyMeter_Id?                           EnergyMeterId            = null,
                              EnergyMeter<EVSE>?                        EnergyMeter              = null,
-                             IEnumerable<TransparencySoftwareStatus>?  TransparencySoftwares    = null,
+                             IEnumerable<TransparencySoftwareStatus>?  TransparencySoftware    = null,
 
                              DateTimeOffset?                           Created                  = null,
                              DateTimeOffset?                           LastUpdated              = null)
@@ -1805,7 +1805,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 this.TotalCosts              = TotalCosts;
                 this.EnergyMeterId           = EnergyMeterId;
                 this.EnergyMeter             = EnergyMeter;
-                this.TransparencySoftwares   = TransparencySoftwares is not null ? new HashSet<TransparencySoftwareStatus>(TransparencySoftwares) : [];
+                this.TransparencySoftware   = TransparencySoftware is not null ? new HashSet<TransparencySoftwareStatus>(TransparencySoftware) : [];
 
                 this.Created                 = Created               ?? LastUpdated;
                 this.LastUpdated             = LastUpdated           ?? Created;
@@ -1881,7 +1881,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                  TotalCosts,
                                  EnergyMeterId,
                                  EnergyMeter,
-                                 TransparencySoftwares,
+                                 TransparencySoftware,
 
                                  Created     ?? Timestamp.Now,
                                  LastUpdated ?? Timestamp.Now

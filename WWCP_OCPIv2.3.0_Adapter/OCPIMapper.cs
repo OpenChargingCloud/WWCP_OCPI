@@ -765,7 +765,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    EnergyMeter.ManufacturerURL,
                    EnergyMeter.PublicKeys.               Select(publicKey                  => PublicKey.Parse(publicKey. ToString())),
                    EnergyMeter.PublicKeyCertificateChain.HasValue ? CertificateChain.Parse(EnergyMeter.PublicKeyCertificateChain.Value.ToString()) : null,
-                   EnergyMeter.TransparencySoftwares.    Select(transparencySoftwareStatus => transparencySoftwareStatus.ToOCPI()),
+                   EnergyMeter.TransparencySoftware.    Select(transparencySoftwareStatus => transparencySoftwareStatus.ToOCPI()),
                    EnergyMeter.Description.ToOCPI(),
                    EnergyMeter.Created,
                    EnergyMeter.LastChangeDate,
@@ -1467,7 +1467,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            AuthorizationReference:     null,
                            EnergyMeterId:                    ChargeDetailRecord.EnergyMeterId.ToOCPI(),
                            EnergyMeter:                null,
-                           TransparencySoftwares:      null,
+                           TransparencySoftware:      null,
                            Tariffs:                    (IEnumerable<Tariff>?) (GetTariffIdsDelegate?.Invoke(
                                                            ChargeDetailRecord.ChargingStationOperatorId,
                                                            ChargeDetailRecord.ChargingPoolId,

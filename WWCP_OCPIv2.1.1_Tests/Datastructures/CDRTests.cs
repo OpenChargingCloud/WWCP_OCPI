@@ -287,7 +287,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
                 ClassicAssert.AreEqual (cdr1.EnergyMeterId,                  parsedCDR.EnergyMeterId);
                 ClassicAssert.AreEqual (cdr1.EnergyMeter,              parsedCDR.EnergyMeter);
-                ClassicAssert.AreEqual (cdr1.TransparencySoftwares,    parsedCDR.TransparencySoftwares);
+                ClassicAssert.AreEqual (cdr1.TransparencySoftware,    parsedCDR.TransparencySoftware);
                 ClassicAssert.AreEqual (cdr1.Tariffs,                  parsedCDR.Tariffs);
                 ClassicAssert.AreEqual (cdr1.SignedData,               parsedCDR.SignedData);
                 ClassicAssert.AreEqual (cdr1.TotalParkingTime,         parsedCDR.TotalParkingTime);
@@ -407,7 +407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             //ClassicAssert.AreEqual(cdr1.ConnectorId,                                      parsedCDR.ConnectorId);
             //ClassicAssert.AreEqual(cdr1.MeterId,                                          parsedCDR.MeterId);
             //ClassicAssert.AreEqual(cdr1.EnergyMeter,                                      parsedCDR.EnergyMeter);
-            //ClassicAssert.AreEqual(cdr1.TransparencySoftwares,                            parsedCDR.TransparencySoftwares);
+            //ClassicAssert.AreEqual(cdr1.TransparencySoftware,                             parsedCDR.TransparencySoftware);
             //ClassicAssert.AreEqual(cdr1.Currency,                                         parsedCDR.Currency);
             //ClassicAssert.AreEqual(cdr1.ChargingPeriods,                                  parsedCDR.ChargingPeriods);
             //ClassicAssert.AreEqual(cdr1.TotalCosts,                                       parsedCDR.TotalCosts);

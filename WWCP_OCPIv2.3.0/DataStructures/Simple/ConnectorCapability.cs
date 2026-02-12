@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Collections.Concurrent;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -53,52 +55,67 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     public readonly struct ConnectorCapability : IId<ConnectorCapability>
     {
 
-        #region Data
+        #region Static Lookup
+
+        private readonly static ConcurrentDictionary<String, ConnectorCapability> lookup = new (StringComparer.OrdinalIgnoreCase);
+
+        private static ConnectorCapability Register(String Text)
+
+            => lookup.GetOrAdd(
+                   Text,
+                   static text => new ConnectorCapability(text)
+               );
 
         /// <summary>
-        /// The internal identification.
+        /// All registered connector capabilities.
         /// </summary>
-        private readonly String InternalId;
+        public static IEnumerable<ConnectorCapability> All
+            => lookup.Values;
 
         #endregion
 
         #region Properties
 
         /// <summary>
+        /// The text representation of the connector capability.
+        /// </summary>
+        public String   Value    { get; }
+
+        /// <summary>
         /// Indicates whether this connector capability is null or empty.
         /// </summary>
-        public Boolean IsNullOrEmpty
-            => InternalId.IsNullOrEmpty();
+        public Boolean  IsNullOrEmpty
+            => Value.IsNullOrEmpty();
 
         /// <summary>
         /// Indicates whether this connector capability is NOT null or empty.
         /// </summary>
-        public Boolean IsNotNullOrEmpty
-            => InternalId.IsNotNullOrEmpty();
+        public Boolean  IsNotNullOrEmpty
+            => Value.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the connector capability.
         /// </summary>
-        public UInt64 Length
-            => (UInt64) (InternalId?.Length ?? 0);
+        public UInt64   Length
+            => (UInt64) (Value?.Length ?? 0);
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new connector capability based on the given text.
+        /// Create a new connector capability based on the given text representation.
         /// </summary>
         /// <param name="Text">The text representation of a connector capability.</param>
         private ConnectorCapability(String Text)
         {
-            this.InternalId = Text;
+            this.Value = Text;
         }
 
         #endregion
 
 
-        #region (static) Parse   (Text)
+        #region (static) Parse    (Text)
 
         /// <summary>
         /// Parse the given text as a connector capability.
@@ -117,7 +134,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region (static) TryParse(Text)
+        #region (static) TryParse (Text)
 
         /// <summary>
         /// Try to parse the given text as a connector capability.
@@ -135,7 +152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region (static) TryParse(Text, out ConnectorCapability)
+        #region (static) TryParse (Text, out ConnectorCapability)
 
         /// <summary>
         /// Try to parse the given text as a connector capability.
@@ -149,32 +166,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             if (Text.IsNotNullOrEmpty())
             {
-                try
-                {
-                    ConnectorCapability = new ConnectorCapability(Text);
-                    return true;
-                }
-                catch
-                { }
+                ConnectorCapability = Register(Text);
+                return true;
             }
 
             ConnectorCapability = default;
             return false;
 
         }
-
-        #endregion
-
-        #region Clone()
-
-        /// <summary>
-        /// Clone this connector capability.
-        /// </summary>
-        public ConnectorCapability Clone()
-
-            => new (
-                   InternalId.CloneString()
-               );
 
         #endregion
 
@@ -185,13 +184,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The Connector supports authentication of the Driver using a contract certificate stored in the vehicle according to ISO 15118-2.
         /// </summary>
         public static ConnectorCapability  ISO_15118_2_PLUG_AND_CHARGE     { get; }
-            = new ("ISO_15118_2_PLUG_AND_CHARGE");
+            = Register("ISO_15118_2_PLUG_AND_CHARGE");
 
         /// <summary>
         /// The Connector supports authentication of the Driver using a contract certificate stored in the vehicle according to ISO 15118-20.
         /// </summary>
         public static ConnectorCapability  ISO_15118_20_PLUG_AND_CHARGE    { get; }
-            = new ("ISO_15118_20_PLUG_AND_CHARGE");
+            = Register("ISO_15118_20_PLUG_AND_CHARGE");
 
         #endregion
 
@@ -315,8 +314,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="ConnectorCapability">A connector capability to compare with.</param>
         public Int32 CompareTo(ConnectorCapability ConnectorCapability)
 
-            => String.Compare(InternalId,
-                              ConnectorCapability.InternalId,
+            => String.Compare(Value,
+                              ConnectorCapability.Value,
                               StringComparison.OrdinalIgnoreCase);
 
         #endregion
@@ -346,8 +345,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="ConnectorCapability">A connector capability to compare with.</param>
         public Boolean Equals(ConnectorCapability ConnectorCapability)
 
-            => String.Equals(InternalId,
-                             ConnectorCapability.InternalId,
+            => String.Equals(Value,
+                             ConnectorCapability.Value,
                              StringComparison.OrdinalIgnoreCase);
 
         #endregion
@@ -362,7 +361,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
 
-            => InternalId?.ToUpper().GetHashCode() ?? 0;
+            => Value is not null
+                   ? StringComparer.OrdinalIgnoreCase.GetHashCode(Value)
+                   : 0;
 
         #endregion
 
@@ -373,7 +374,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         public override String ToString()
 
-            => InternalId ?? "";
+            => Value ?? "";
 
         #endregion
 

@@ -145,11 +145,11 @@ namespace cloud.charging.open.protocols.OCPI
         public CertificateChain?                        PublicKeyCertificateChain     { get; }
 
         /// <summary>
-        /// The enumeration of transparency softwares and their legal status,
+        /// The enumeration of transparency software and their legal status,
         /// which can be used to validate the charging session data.
         /// </summary>
         [Optional]
-        public IEnumerable<TransparencySoftwareStatus>  TransparencySoftwares         { get; }
+        public IEnumerable<TransparencySoftwareStatus>  TransparencySoftware          { get; }
 
         /// <summary>
         /// The multi-language description of the energy meter.
@@ -186,7 +186,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="ManufacturerURL">An optional URL to the manufacturer of the energy meter.</param>
         /// <param name="PublicKeys">The optional public key of the energy meter used for signing the energy meter values.</param>
         /// <param name="PublicKeyCertificateChain">One or multiple optional certificates for the public key of the energy meter.</param>
-        /// <param name="TransparencySoftwares">An enumeration of transparency softwares and their legal status, which can be used to validate the charging session data.</param>
+        /// <param name="TransparencySoftware">An enumeration of transparency software and their legal status, which can be used to validate the charging session data.</param>
         /// <param name="Description">An multi-language description of the energy meter.</param>
         /// 
         /// <param name="Created">The timestamp when this energy meter was created.</param>
@@ -200,7 +200,7 @@ namespace cloud.charging.open.protocols.OCPI
                            URL?                                      ManufacturerURL             = null,
                            IEnumerable<PublicKey>?                   PublicKeys                  = null,
                            CertificateChain?                         PublicKeyCertificateChain   = null,
-                           IEnumerable<TransparencySoftwareStatus>?  TransparencySoftwares       = null,
+                           IEnumerable<TransparencySoftwareStatus>?  TransparencySoftware        = null,
                            IEnumerable<DisplayText>?                 Description                 = null,
 
                            DateTimeOffset?                           Created                     = null,
@@ -222,10 +222,10 @@ namespace cloud.charging.open.protocols.OCPI
             this.FirmwareVersion            = FirmwareVersion;
             this.Manufacturer               = Manufacturer;
             this.ManufacturerURL            = ManufacturerURL;
-            this.PublicKeys                 = PublicKeys?.           Distinct() ?? [];
+            this.PublicKeys                 = PublicKeys?.          Distinct() ?? [];
             this.PublicKeyCertificateChain  = PublicKeyCertificateChain;
-            this.TransparencySoftwares      = TransparencySoftwares?.Distinct() ?? [];
-            this.Description                = Description?.          Distinct() ?? [];
+            this.TransparencySoftware      = TransparencySoftware?.Distinct() ?? [];
+            this.Description                = Description?.         Distinct() ?? [];
 
             this.Created                    = Created                           ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated                = LastUpdated                       ?? Created     ?? Timestamp.Now;
@@ -242,7 +242,7 @@ namespace cloud.charging.open.protocols.OCPI
                           (this.ManufacturerURL?.          GetHashCode()  ?? 0) * 17 ^
                            this.PublicKeys.                CalcHashCode()       * 13 ^
                           (this.PublicKeyCertificateChain?.GetHashCode()  ?? 0) * 11 ^
-                           this.TransparencySoftwares.     CalcHashCode()       *  7 ^
+                           this.TransparencySoftware.     CalcHashCode()       *  7 ^
                            this.Description.               CalcHashCode()       *  6 ^
                            this.Created.                   GetHashCode()        *  3 ^
                            this.LastUpdated.               GetHashCode();
@@ -419,10 +419,10 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #region Parse TransparencySoftwareStatus    [optional]
 
-                if (JSON.ParseOptionalHashSet("transparency_softwares",
-                                              "transparency softwares",
+                if (JSON.ParseOptionalHashSet("transparency_software",
+                                              "transparency software",
                                               TransparencySoftwareStatus.TryParse,
-                                              out HashSet<TransparencySoftwareStatus> TransparencySoftwares,
+                                              out HashSet<TransparencySoftwareStatus> TransparencySoftware,
                                               out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -483,7 +483,7 @@ namespace cloud.charging.open.protocols.OCPI
                                   ManufacturerURL,
                                   PublicKeys,
                                   PublicKeyCertificateChain,
-                                  TransparencySoftwares,
+                                  TransparencySoftware,
                                   Description,
 
                                   Created,
@@ -561,8 +561,8 @@ namespace cloud.charging.open.protocols.OCPI
                                ? new JProperty("public_key_certificate_chain",   PublicKeyCertificateChain.Value.ToString())
                                : null,
 
-                           TransparencySoftwares.Any()
-                               ? new JProperty("transparency_softwares",         new JArray(TransparencySoftwares.Select(transparencySoftwareStatus => transparencySoftwareStatus.ToJSON(CustomTransparencySoftwareStatusSerializer,
+                           TransparencySoftware.Any()
+                               ? new JProperty("transparency_software",         new JArray(TransparencySoftware.Select(transparencySoftwareStatus => transparencySoftwareStatus.ToJSON(CustomTransparencySoftwareStatusSerializer,
                                                                                                                                                                                          CustomTransparencySoftwareSerializer))))
                                : null,
 
@@ -600,7 +600,7 @@ namespace cloud.charging.open.protocols.OCPI
                    ManufacturerURL?.          Clone(),
                    PublicKeys.                Select(publicKey                  => publicKey.                 Clone()).ToArray(),
                    PublicKeyCertificateChain?.Clone(),
-                   TransparencySoftwares.     Select(transparencySoftwareStatus => transparencySoftwareStatus.Clone()).ToArray(),
+                   TransparencySoftware.     Select(transparencySoftwareStatus => transparencySoftwareStatus.Clone()).ToArray(),
                    Description.               Select(displayText                => displayText.               Clone()).ToArray(),
 
                    Created,
@@ -795,7 +795,7 @@ namespace cloud.charging.open.protocols.OCPI
                         ? PublicKeyCertificateChain.Value.CompareTo(EnergyMeter.PublicKeyCertificateChain.Value)
                         : 0;
 
-            // TransparencySoftwares
+            // TransparencySoftware
             // Description
 
             return c;
@@ -862,8 +862,8 @@ namespace cloud.charging.open.protocols.OCPI
                Description.          Count().Equals(EnergyMeter.Description.          Count())                                &&
                Description.          All(publicKey            => EnergyMeter.Description.                Contains(publicKey)) &&
 
-               TransparencySoftwares.Count().Equals(EnergyMeter.TransparencySoftwares.Count())                                &&
-               TransparencySoftwares.All(transparencySoftwareStatus => EnergyMeter.TransparencySoftwares.Contains(transparencySoftwareStatus));
+               TransparencySoftware.Count().Equals(EnergyMeter.TransparencySoftware.Count())                                &&
+               TransparencySoftware.All(transparencySoftwareStatus => EnergyMeter.TransparencySoftware.Contains(transparencySoftwareStatus));
 
         #endregion
 
@@ -925,8 +925,8 @@ namespace cloud.charging.open.protocols.OCPI
                        ? $"public key certificate chain: {PublicKeyCertificateChain.Value.ToString().SubstringMax(20)}"
                        : String.Empty,
 
-                   TransparencySoftwares.Any()
-                       ? $"{TransparencySoftwares.Count()} transparency software(s)"
+                   TransparencySoftware.Any()
+                       ? $"{TransparencySoftware.Count()} transparency software(s)"
                        : String.Empty,
 
                    Description.Any()

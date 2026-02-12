@@ -574,7 +574,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            City:                 ChargingPool.Address.City.FirstText(),
                            Country:              ChargingPool.Address.Country,
                            Coordinates:          ChargingPool.GeoLocation.Value,
-                           Timezone:             ChargingPool.Address.TimeZone?.ToString() ?? "UTC",
+                           TimeZone:             ChargingPool.Address.TimeZone?.ToString() ?? "UTC",
 
                            PublishAllowedTo:     null,
                            Name:                 ChargingPool.Name.FirstText(),
@@ -766,7 +766,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    EnergyMeter.ManufacturerURL,
                    EnergyMeter.PublicKeys.               Select(publicKey                  => PublicKey.Parse(publicKey. ToString())),
                    EnergyMeter.PublicKeyCertificateChain.HasValue ? CertificateChain.Parse(EnergyMeter.PublicKeyCertificateChain.Value.ToString()) : null,
-                   EnergyMeter.TransparencySoftwares.    Select(transparencySoftwareStatus => transparencySoftwareStatus.ToOCPI()),
+                   EnergyMeter.TransparencySoftware.    Select(transparencySoftwareStatus => transparencySoftwareStatus.ToOCPI()),
                    EnergyMeter.Description.ToOCPI(),
                    EnergyMeter.Created,
                    EnergyMeter.LastChangeDate,
@@ -1469,7 +1469,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            AuthorizationReference:     null,
                            EnergyMeterId:                    ChargeDetailRecord.EnergyMeterId.ToOCPI(),
                            EnergyMeter:                null,
-                           TransparencySoftwares:      null,
+                           TransparencySoftware:      null,
                            Tariffs:                    (IEnumerable<Tariff>?) (GetTariffIdsDelegate?.Invoke(
                                                            ChargeDetailRecord.ChargingStationOperatorId,
                                                            ChargeDetailRecord.ChargingPoolId,

@@ -4843,6 +4843,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
                                Data                 = connector.ToJSON(
+                                                          true,
+                                                          true,
                                                           request.EMSPId,
                                                           CustomConnectorSerializer
                                                       ),
@@ -7936,6 +7938,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
                                Data                 = connector.ToJSON(
+                                                          true,
+                                                          true,
                                                           request.EMSPId,
                                                           CustomConnectorSerializer
                                                       ),
@@ -8040,6 +8044,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
                                    Data                 = connectorData.ToJSON(
+                                                              true,
+                                                              true,
                                                               request.EMSPId,
                                                               CustomConnectorSerializer
                                                           ),
@@ -8058,6 +8064,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                StatusCode           = 2000,
                                StatusMessage        = addOrUpdateResult.ErrorResponse,
                                Data                 = newOrUpdatedConnector.ToJSON(
+                                                          true,
+                                                          true,
                                                           request.EMSPId,
                                                           CustomConnectorSerializer
                                                       ),
@@ -8144,6 +8152,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                        StatusCode           = 1000,
                                        StatusMessage        = "Hello world!",
                                        Data                 = connectorData.ToJSON(
+                                                                  true,
+                                                                  true,
                                                                   request.EMSPId,
                                                                   CustomConnectorSerializer
                                                               ),
@@ -8226,8 +8236,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
-                                   Data                 = existingConnector.ToJSON(request.EMSPId,
-                                                                                   CustomConnectorSerializer),
+                                   Data                 = existingConnector.ToJSON(
+                                                              true,
+                                                              true,
+                                                              request.EMSPId,
+                                                              CustomConnectorSerializer
+                                                          ),
                                    HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],

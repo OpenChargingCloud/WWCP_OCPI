@@ -100,7 +100,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                );
 
 
-
         #region AddOCPIMethod(CommonAPI, HTTPMethod, URLTemplate, HTTPContentType, OCPIRequestHandler, HTTPContentType, ...)
 
         /// <summary>

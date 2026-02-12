@@ -2246,6 +2246,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
                                                                                                     Connector.ParentEVSE.               UId.        ToString() +
                                                                                                     Connector.                          Id.         ToString(),
                                                  Content:               Connector.ToJSON(
+                                                                            true,
+                                                                            true,
                                                                             EMSPId,
                                                                             CustomConnectorSerializer
                                                                         ).ToUTF8Bytes(JSONFormatting),

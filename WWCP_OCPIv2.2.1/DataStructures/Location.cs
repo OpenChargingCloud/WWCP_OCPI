@@ -219,7 +219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         /// <example>"Europe/Oslo", "Europe/Zurich"</example>
         [Mandatory]
-        public String                              Timezone                 { get; }
+        public String                              TimeZone                 { get; }
 
         /// <summary>
         /// The optional times when the EVSEs at the location can be accessed for charging.
@@ -294,7 +294,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="City">The city or town of the location.</param>
         /// <param name="Country">The country of the location.</param>
         /// <param name="Coordinates">The geographical location of this location.</param>
-        /// <param name="Timezone">One of IANA tzdata’s TZ-values representing the time zone of the location (http://www.iana.org/time-zones).</param>
+        /// <param name="TimeZone">One of IANA tzdata’s TZ-values representing the time zone of the location (http://www.iana.org/time-zones).</param>
         /// 
         /// <param name="PublishAllowedTo">An optional enumeration of publish tokens. Only owners of tokens that match all the set fields of one publish token in the list are allowed to be shown this location.</param>
         /// <param name="Name">An optional display name of the location.</param>
@@ -342,7 +342,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         String                                                        City,
                         Country                                                       Country,
                         GeoCoordinate                                                 Coordinates,
-                        String                                                        Timezone,
+                        String                                                        TimeZone,
 
                         IEnumerable<PublishToken>?                                    PublishAllowedTo                             = null,
                         String?                                                       Name                                         = null,
@@ -355,7 +355,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         BusinessDetails?                                              Operator                                     = null,
                         BusinessDetails?                                              SubOperator                                  = null,
                         BusinessDetails?                                              Owner                                        = null,
-                        IEnumerable<Facility>?                                      Facilities                                   = null,
+                        IEnumerable<Facility>?                                        Facilities                                   = null,
                         Hours?                                                        OpeningTimes                                 = null,
                         Boolean?                                                      ChargingWhenClosed                           = null,
                         IEnumerable<Image>?                                           Images                                       = null,
@@ -396,7 +396,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    City,
                    Country,
                    Coordinates,
-                   Timezone,
+                   TimeZone,
 
                    PublishAllowedTo,
                    Name,
@@ -566,7 +566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.City                 = City;
             this.Country              = Country;
             this.Coordinates          = Coordinates;
-            this.Timezone             = Timezone;
+            this.TimeZone             = Timezone;
 
             this.PublishAllowedTo     = PublishAllowedTo?.Distinct() ?? [];
             this.Name                 = Name;
@@ -646,7 +646,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            this.City.               GetHashCode()        *  89 ^
                            this.Country.            GetHashCode()        *  83 ^
                            this.Coordinates.        GetHashCode()        *  79 ^
-                           this.Timezone.           GetHashCode()        *  73 ^
+                           this.TimeZone.           GetHashCode()        *  73 ^
                            this.Created.            GetHashCode()        *  71 ^
                            this.LastUpdated.        GetHashCode()        *  67 ^
 
@@ -1331,7 +1331,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                ? new JProperty("facilities",             new JArray(Facilities.      Select (facility              => facility.ToString())))
                                : null,
 
-                           new JProperty("time_zone",                    Timezone),
+                           new JProperty("time_zone",                    TimeZone),
 
                            OpeningTimes is not null
                                ? new JProperty("opening_times",          OpeningTimes.ToJSON(CustomHoursSerializer))
@@ -1394,7 +1394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    City.            CloneString(),
                    Country.         Clone(),
                    Coordinates.     Clone(),
-                   Timezone.        CloneString(),
+                   TimeZone.        CloneString(),
 
                    PublishAllowedTo.Select(publishToken    => publishToken.   Clone()),
                    Name.            CloneNullableString(),
@@ -2077,7 +2077,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                City.                   Equals(Location.City)                    &&
                Country.                Equals(Location.Country)                 &&
                Coordinates.            Equals(Location.Coordinates)             &&
-               Timezone.               Equals(Location.Timezone)                &&
+               TimeZone.               Equals(Location.TimeZone)                &&
                Created.    ToISO8601().Equals(Location.Created.    ToISO8601()) &&
                LastUpdated.ToISO8601().Equals(Location.LastUpdated.ToISO8601()) &&
 
@@ -2183,7 +2183,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    City,
                    Country,
                    Coordinates,
-                   Timezone,
+                   TimeZone,
 
                    PublishAllowedTo,
                    Name,

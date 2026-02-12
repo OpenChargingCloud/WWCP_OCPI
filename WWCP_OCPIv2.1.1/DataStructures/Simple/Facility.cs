@@ -512,7 +512,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public override Int32 GetHashCode()
 
             => Value is not null
-                   ? StringComparer.OrdinalIgnoreCase.GetHashCode(Value) 
+                   ? StringComparer.OrdinalIgnoreCase.GetHashCode(Value)
                    : 0;
 
         #endregion

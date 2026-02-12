@@ -379,7 +379,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            cdrCostDetails, // Internal only!
                            CDR.EnergyMeterId,
                            CDR.EnergyMeter,
-                           CDR.TransparencySoftwares,
+                           CDR.TransparencySoftware,
                            [ tariff ],
                            CDR.SignedData,
                            totalParkingTime,
@@ -499,11 +499,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public   EnergyMeter<EVSE>?                       EnergyMeter                 { get; }
 
         /// <summary>
-        /// The enumeration of valid transparency softwares which can be used to validate
+        /// The enumeration of valid transparency software which can be used to validate
         /// the singed charging session and metering data.
         /// </summary>
         [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
-        public   IEnumerable<TransparencySoftwareStatus>  TransparencySoftwares        { get; }
+        public   IEnumerable<TransparencySoftwareStatus>  TransparencySoftware        { get; }
 
         /// <summary>
         /// The ISO 4217 code of the currency used for this charge detail record.
@@ -614,7 +614,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CostDetails">Optional costs calculation details for this charge detail record.</param>
         /// <param name="EnergyMeterId">An optional identification of the energy meter.</param>
         /// <param name="EnergyMeter">An optional energy meter.</param>
-        /// <param name="TransparencySoftwares">The enumeration of valid transparency softwares which can be used to validate the singed charging session and metering data.</param>
+        /// <param name="TransparencySoftware">The enumeration of valid transparency software which can be used to validate the singed charging session and metering data.</param>
         /// <param name="Tariffs">The enumeration of relevant charging tariffs.</param>
         /// <param name="SignedData">The optional signed metering data that belongs to this charging session.</param>
         /// <param name="TotalParkingTime">The optional total duration of the charging session where the EV was not charging (no energy was transferred between EVSE and EV).</param>
@@ -664,7 +664,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    CDRCostDetails?                                               CostDetails                                  = null,
                    EnergyMeter_Id?                                               EnergyMeterId                                = null,
                    EnergyMeter<EVSE>?                                            EnergyMeter                                  = null,
-                   IEnumerable<TransparencySoftwareStatus>?                      TransparencySoftwares                        = null,
+                   IEnumerable<TransparencySoftwareStatus>?                      TransparencySoftware                         = null,
                    IEnumerable<Tariff>?                                          Tariffs                                      = null,
                    SignedData?                                                   SignedData                                   = null,
                    TimeSpan?                                                     TotalParkingTime                             = null,
@@ -720,9 +720,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.TotalTime                = TotalTime;
 
             this.CostDetails              = CostDetails;
-            this.EnergyMeterId                  = EnergyMeterId;
+            this.EnergyMeterId            = EnergyMeterId;
             this.EnergyMeter              = EnergyMeter;
-            this.TransparencySoftwares    = TransparencySoftwares ?? [];
+            this.TransparencySoftware     = TransparencySoftware ?? [];
             this.Tariffs                  = Tariffs               ?? [];
             this.SignedData               = SignedData;
             this.TotalParkingTime         = TotalParkingTime;
@@ -789,7 +789,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                           (this.CostDetails?.         GetHashCode()  ?? 0) * 17 ^
                           (this.EnergyMeterId?.       GetHashCode()  ?? 0) * 13 ^
                           (this.EnergyMeter?.         GetHashCode()  ?? 0) * 11 ^
-                           this.TransparencySoftwares.CalcHashCode()       *  7 ^
+                           this.TransparencySoftware.CalcHashCode()       *  7 ^
                           (this.SignedData?.          GetHashCode()  ?? 0) *  5 ^
                           (this.TotalParkingTime?.    GetHashCode()  ?? 0) *  3 ^
                            this.Remark?.              GetHashCode()  ?? 0;
@@ -1081,12 +1081,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse TransparencySoftwares     [optional]
+                #region Parse TransparencySoftware      [optional]
 
-                if (JSON.ParseOptionalJSON("transparency_softwares",
-                                           "transparency software with status",
+                if (JSON.ParseOptionalJSON("transparency_software",
+                                           "transparency software with legal status",
                                            TransparencySoftwareStatus.TryParse,
-                                           out IEnumerable<TransparencySoftwareStatus> TransparencySoftwares,
+                                           out IEnumerable<TransparencySoftwareStatus> transparencySoftware,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -1262,7 +1262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                           null,  // CDRCostDetails is internal only!
                           MeterId,
                           EnergyMeter,
-                          TransparencySoftwares,
+                          transparencySoftware,
                           Tariffs,
                           SignedData,
                           TotalParkingTime,
@@ -1407,8 +1407,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                                CustomSignedValueSerializer))
                                : null,
 
-                           TransparencySoftwares.Any()
-                               ? new JProperty("transparency_softwares",   new JArray(TransparencySoftwares.Select(transparencySoftwareStatus => transparencySoftwareStatus.ToJSON(CustomTransparencySoftwareStatusSerializer))))
+                           TransparencySoftware.Any()
+                               ? new JProperty("transparency_software",   new JArray(TransparencySoftware.Select(transparencySoftwareStatus => transparencySoftwareStatus.ToJSON(CustomTransparencySoftwareStatusSerializer))))
                                : null,
 
                                  new JProperty("currency",                 Currency.                    ISOCode),
@@ -1486,7 +1486,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    CostDetails?.Clone(),
                    EnergyMeterId?.    Clone(),
                    EnergyMeter?.Clone(),
-                   TransparencySoftwares.Select(transparencySoftware => transparencySoftware.Clone()).ToArray(),
+                   TransparencySoftware.Select(transparencySoftware => transparencySoftware.Clone()).ToArray(),
                    Tariffs.              Select(tariff               => tariff.              Clone()).ToArray(),
                    SignedData?. Clone(),
                    TotalParkingTime,
@@ -1808,7 +1808,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             // 
             // MeterId                   
             // EnergyMeter               
-            // TransparencySoftwares     
+            // TransparencySoftware      
             // Tariffs                   
             // SignedData                
             // TotalParkingTime          
@@ -1868,8 +1868,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
              ((EnergyMeter           is     null &&  CDR.EnergyMeter           is     null) ||
               (EnergyMeter           is not null &&  CDR.EnergyMeter           is not null && EnergyMeter.          Equals(CDR.EnergyMeter)))            &&
 
-             ((TransparencySoftwares is     null &&  CDR.TransparencySoftwares is     null) ||
-              (TransparencySoftwares is not null &&  CDR.TransparencySoftwares is not null && TransparencySoftwares.Equals(CDR.TransparencySoftwares)))  &&
+             ((TransparencySoftware is     null &&  CDR.TransparencySoftware is     null) ||
+              (TransparencySoftware is not null &&  CDR.TransparencySoftware is not null && TransparencySoftware.Equals(CDR.TransparencySoftware)))  &&
 
              ((SignedData            is     null &&  CDR.SignedData            is     null) ||
               (SignedData            is not null &&  CDR.SignedData            is not null && SignedData.           Equals(CDR.SignedData)))             &&
@@ -1946,7 +1946,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    LastUpdated.ToISO8601()
 
                    // EnergyMeter
-                   // TransparencySoftwares
+                   // TransparencySoftware
                    // SignedData
 
                );

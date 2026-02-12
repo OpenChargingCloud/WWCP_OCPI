@@ -753,13 +753,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public Booking Clone()
 
             => new (
+
                    Id.                    Clone(),
                    CountryCode.           Clone(),
                    PartyId.               Clone(),
                    RequestId.             Clone(),
                    LocationId.            Clone(),
                    BookingTokens.  Select(bookingToken   => bookingToken.  Clone()),
-                   TariffIds.      Select(tariffId       => tariffId.      Clone()),
+                   [.. TariffIds],
                    Period.                Clone(),
                    ReservationStatus.     Clone(),
                    AuthorizationReference.Clone(),
@@ -774,6 +775,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    Created,
                    LastUpdated,
                    ETag.                  CloneString()
+
                );
 
         #endregion

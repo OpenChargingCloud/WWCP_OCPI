@@ -807,7 +807,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                    CountryCode.   Clone(),
                    PartyId.       Clone(),
-                   Id.            Clone(),
+                   Id,
                    Currency.      Clone(),
                    TariffElements.Select(tariffElement => tariffElement.Clone()).ToArray(),
                    TaxIncluded,

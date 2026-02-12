@@ -26,7 +26,6 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv3_0;
 
 #endregion
 
@@ -589,7 +588,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    VersionId,
 
                    Start,
-                   TariffId.  Clone(),
+                   TariffId,
                    Connectors.Select(connectorsReference => connectorsReference.Clone()),
                    Audience.  Clone(),
 

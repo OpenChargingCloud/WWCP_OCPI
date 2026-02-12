@@ -385,7 +385,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         BusinessDetails?                                              Operator                                     = null,
                         BusinessDetails?                                              SubOperator                                  = null,
                         BusinessDetails?                                              Owner                                        = null,
-                        IEnumerable<Facility>?                                      Facilities                                   = null,
+                        IEnumerable<Facility>?                                        Facilities                                   = null,
                         Hours?                                                        OpeningTimes                                 = null,
                         Boolean?                                                      ChargingWhenClosed                           = null,
                         IEnumerable<Image>?                                           Images                                       = null,

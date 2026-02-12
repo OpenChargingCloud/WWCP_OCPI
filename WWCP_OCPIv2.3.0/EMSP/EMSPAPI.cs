@@ -7240,7 +7240,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/STOP_SESSION/{commandId}",
-                HTTPContentType.Application.JSON_UTF8,
                 StopSessionCallbackRequest,
                 StopSessionCallbackResponse,
                 request => {

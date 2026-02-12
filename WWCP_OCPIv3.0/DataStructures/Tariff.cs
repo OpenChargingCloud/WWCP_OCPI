@@ -793,7 +793,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                    CommonAPI,
                    PartyId.       Clone(),
-                   Id.            Clone(),
+                   Id,
                    VersionId,
 
                    Currency.      Clone(),

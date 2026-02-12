@@ -1238,7 +1238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             // End
             // MeterId
             // EnergyMeter
-            // TransparencySoftwares
+            // TransparencySoftware
             // ChargingPeriods
             // TotalCost
 
@@ -1357,7 +1357,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        : "",
 
                    // EnergyMeter
-                   // TransparencySoftwares
+                   // TransparencySoftware
 
                    "last updated: " + LastUpdated.ToISO8601()
 

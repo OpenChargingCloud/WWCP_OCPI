@@ -143,7 +143,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
 
         /// <summary>
-        /// The timestamp when this EVSE was created.
+        /// The timestamp when this connector was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
         public DateTimeOffset                    Created                  { get; }
@@ -222,14 +222,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             this.ParentEVSE             = ParentEVSE;
 
-            this.ETag                   = ETag ?? SHA256.HashData(
-                                                      ToJSON(
-                                                          true,
-                                                          true,
-                                                          EMSPId,
-                                                          CustomConnectorSerializer
-                                                      ).ToUTF8Bytes()
-                                                  ).ToBase64();
+            this.ETag                   = ETag        ?? SHA256.HashData(
+                                                             ToJSON(
+                                                                 true,
+                                                                 true,
+                                                                 EMSPId,
+                                                                 CustomConnectorSerializer
+                                                             ).ToUTF8Bytes()
+                                                         ).ToBase64();
 
             unchecked
             {
@@ -291,12 +291,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Connector">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="ConnectorIdURL">An optional connector identification, e.g. from the HTTP URL.</param>
+        /// <param name="connectorIdURL">An optional connector identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
         public static Boolean TryParse(JObject                                  JSON,
                                        [NotNullWhen(true)]  out Connector?      Connector,
                                        [NotNullWhen(false)] out String?         ErrorResponse,
-                                       Connector_Id?                            ConnectorIdURL          = null,
+                                       Connector_Id?                            connectorIdURL          = null,
                                        CustomJObjectParserDelegate<Connector>?  CustomConnectorParser   = null)
         {
 
@@ -316,7 +316,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (JSON.ParseOptional("id",
                                        "connector identification",
                                        Connector_Id.TryParse,
-                                       out Connector_Id? ConnectorIdBody,
+                                       out Connector_Id? connectorIdBody,
                                        out ErrorResponse))
                 {
 
@@ -325,13 +325,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 }
 
-                if (!ConnectorIdURL.HasValue && !ConnectorIdBody.HasValue)
+                if (!connectorIdURL.HasValue && !connectorIdBody.HasValue)
                 {
                     ErrorResponse = "The connector identification is missing!";
                     return false;
                 }
 
-                if (ConnectorIdURL.HasValue && ConnectorIdBody.HasValue && ConnectorIdURL.Value != ConnectorIdBody.Value)
+                if (connectorIdURL.HasValue && connectorIdBody.HasValue && connectorIdURL.Value != connectorIdBody.Value)
                 {
                     ErrorResponse = "The optional connector identification given within the JSON body does not match the one given in the URL!";
                     return false;
@@ -344,7 +344,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (!JSON.ParseMandatory("standard",
                                          "connector standard",
                                          ConnectorType.TryParse,
-                                         out ConnectorType Standard,
+                                         out ConnectorType standard,
                                          out ErrorResponse))
                 {
                     return false;
@@ -357,7 +357,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (!JSON.ParseMandatory("format",
                                          "connector format",
                                          ConnectorFormatsExtensions.TryParse,
-                                         out ConnectorFormats Format,
+                                         out ConnectorFormats format,
                                          out ErrorResponse))
                 {
                     return false;
@@ -370,7 +370,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (!JSON.ParseMandatory("power_type",
                                          "power type",
                                          PowerTypesExtensions.TryParse,
-                                         out PowerTypes PowerType,
+                                         out PowerTypes powerType,
                                          out ErrorResponse))
                 {
                     return false;
@@ -383,7 +383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (!JSON.ParseMandatory("max_voltage",
                                          "max voltage",
                                          Volt.TryParse,
-                                         out Volt MaxVoltage,
+                                         out Volt maxVoltage,
                                          out ErrorResponse))
                 {
                     return false;
@@ -396,7 +396,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (!JSON.ParseMandatory("max_amperage",
                                          "max amperage",
                                          Ampere.TryParse,
-                                         out Ampere MaxAmperage,
+                                         out Ampere maxAmperage,
                                          out ErrorResponse))
                 {
                     return false;
@@ -409,7 +409,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (JSON.ParseOptional("max_electric_power",
                                        "max electric power",
                                        Watt.TryParse,
-                                       out Watt? MaxElectricPower,
+                                       out Watt? maxElectricPower,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -423,7 +423,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (JSON.ParseOptionalJSON("tariff_ids",
                                            "tariff identifications",
                                            Tariff_Id.TryParse,
-                                           out IEnumerable<Tariff_Id> TariffIds,
+                                           out IEnumerable<Tariff_Id> tariffIds,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -437,7 +437,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (JSON.ParseOptional("terms_and_conditions",
                                        "terms and conditions",
                                        URL.TryParse,
-                                       out URL? TermsAndConditionsURL,
+                                       out URL? termsAndConditionsURL,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -451,7 +451,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (JSON.ParseOptionalHashSet("capabilities",
                                               "connector capabilities",
                                               ConnectorCapability.TryParse,
-                                              out HashSet<ConnectorCapability> Capabilities,
+                                              out HashSet<ConnectorCapability> capabilities,
                                               out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -465,7 +465,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptional("created",
                                        "created",
-                                       out DateTimeOffset? Created,
+                                       out DateTimeOffset? created,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -478,7 +478,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
-                                         out DateTimeOffset LastUpdated,
+                                         out DateTimeOffset lastUpdated,
                                          out ErrorResponse))
                 {
                     return false;
@@ -489,20 +489,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 Connector = new Connector(
 
-                                ConnectorIdBody ?? ConnectorIdURL!.Value,
-                                Standard,
-                                Format,
-                                PowerType,
-                                MaxVoltage,
-                                MaxAmperage,
+                                connectorIdBody ?? connectorIdURL!.Value,
+                                standard,
+                                format,
+                                powerType,
+                                maxVoltage,
+                                maxAmperage,
 
-                                MaxElectricPower,
-                                TariffIds,
-                                TermsAndConditionsURL,
-                                Capabilities,
+                                maxElectricPower,
+                                tariffIds,
+                                termsAndConditionsURL,
+                                capabilities,
 
-                                Created,
-                                LastUpdated
+                                created,
+                                lastUpdated
 
                             );
 
@@ -571,10 +571,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      : null,
 
                                  IncludeCreatedTimestamp
-                               ? new JProperty("created",                      Created.               ToISO8601())
-                               : null,
+                                     ? new JProperty("created",                Created.               ToISO8601())
+                                     : null,
 
-                                 new JProperty("last_updated",                 LastUpdated.           ToISO8601())
+                                       new JProperty("last_updated",           LastUpdated.           ToISO8601())
 
                              );
 
@@ -602,9 +602,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    MaxVoltage,
                    MaxAmperage,
                    MaxElectricPower,
-                   TariffIds.   Select(tariffId   => tariffId.  Clone()),
+                   [.. TariffIds],
                    TermsAndConditionsURL?.Clone(),
-                   Capabilities.Select(capability => capability.Clone()),
+                   [.. Capabilities],
 
                    Created,
                    LastUpdated,

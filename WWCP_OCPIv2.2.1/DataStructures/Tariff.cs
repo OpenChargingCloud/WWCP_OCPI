@@ -866,7 +866,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             => new (
                    CountryCode.  Clone(),
                    PartyId.      Clone(),
-                   Id.           Clone(),
+                   Id,
                    Currency.     Clone(),
                    TariffElements.Select(tariffElement => tariffElement.Clone()),
                    TariffType,
