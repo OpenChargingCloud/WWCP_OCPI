@@ -15,6 +15,7 @@
     <None Remove="HTTPRoot\css\template.min.css" />
     <None Remove="HTTPRoot\css\versions\versions.css" />
     <None Remove="HTTPRoot\css\versions\versions.min.css" />
+    <None Remove="HTTPRoot\js\date.format.js" />
     <None Remove="HTTPRoot\versions\versions.js" />
     <None Remove="HTTPRoot\versions\versions.js.map" />
   </ItemGroup>
@@ -45,6 +46,7 @@
     <EmbeddedResource Include="HTTPRoot\images\favicon_big.png" />
     <EmbeddedResource Include="HTTPRoot\index.scss" />
     <EmbeddedResource Include="HTTPRoot\index.shtml" />
+    <EmbeddedResource Include="HTTPRoot\js\date.format.js" />
     <EmbeddedResource Include="HTTPRoot\support\support.shtml" />
     <EmbeddedResource Include="HTTPRoot\template.html" />
     <EmbeddedResource Include="HTTPRoot\template.scss" />

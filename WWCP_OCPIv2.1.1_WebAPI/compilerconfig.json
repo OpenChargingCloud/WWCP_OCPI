@@ -66,5 +66,9 @@
   {
     "outputFile": "HTTPRoot/css/remoteParty/remoteCPO/unlockConnector.css",
     "inputFile": "HTTPRoot/remoteParty/remoteCPO/unlockConnector.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/debugLog/debugLog.css",
+    "inputFile": "HTTPRoot/debugLog/debugLog.scss"
   }
 ]

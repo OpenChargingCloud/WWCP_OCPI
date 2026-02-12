@@ -19,6 +19,8 @@
   <ItemGroup>
     <None Remove="HTTPRoot\css\cdrs\cdrs.css" />
     <None Remove="HTTPRoot\css\cdrs\cdrs.min.css" />
+    <None Remove="HTTPRoot\css\debugLog\debugLog.css" />
+    <None Remove="HTTPRoot\css\debugLog\debugLog.min.css" />
     <None Remove="HTTPRoot\css\index.css" />
     <None Remove="HTTPRoot\css\index.min.css" />
     <None Remove="HTTPRoot\css\locations\locations.css" />
@@ -123,6 +125,8 @@
   <ItemGroup>
     <EmbeddedResource Include="HTTPRoot\css\cdrs\cdrs.css" />
     <EmbeddedResource Include="HTTPRoot\css\cdrs\cdrs.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\debugLog\debugLog.css" />
+    <EmbeddedResource Include="HTTPRoot\css\debugLog\debugLog.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\FontAwesome\css\all.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-brands-400.ttf" />
     <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-brands-400.woff2" />
@@ -164,6 +168,9 @@
     <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\versions\versions.css" />
     <EmbeddedResource Include="HTTPRoot\css\versions\versions.min.css" />
+    <EmbeddedResource Include="HTTPRoot\debugLog\debugLog.scss" />
+    <EmbeddedResource Include="HTTPRoot\debugLog\debugLog.shtml" />
+    <EmbeddedResource Include="HTTPRoot\debugLog\debugLog.ts" />
     <EmbeddedResource Include="HTTPRoot\defaults\OCPIv2.1.1.js" />
     <EmbeddedResource Include="HTTPRoot\defaults\OCPIv2.1.1.js.map" />
     <EmbeddedResource Include="HTTPRoot\defaults\OCPIv2.1.1.ts" />

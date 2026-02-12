@@ -2970,12 +2970,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
+                            HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders  = [ "Authorization" ]
+                            }
                         })
 
             );

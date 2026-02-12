@@ -100,9 +100,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     StatusCode           = 2001,
                     StatusMessage        = "Invalid country code!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
+                        HTTPStatusCode              = HTTPStatusCode.BadRequest,
+                        AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                        AccessControlAllowHeaders   = [ "Authorization" ],
+                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                     }
                 };
 
@@ -117,9 +118,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     StatusCode           = 2001,
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
+                        HTTPStatusCode              = HTTPStatusCode.BadRequest,
+                        AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                        AccessControlAllowHeaders   = [ "Authorization" ],
+                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                     }
                 };
 
@@ -140,9 +142,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     StatusCode           = 2001,
                     StatusMessage        = "Unknown party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
+                        HTTPStatusCode              = HTTPStatusCode.NotFound,
+                        AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                        AccessControlAllowHeaders   = [ "Authorization" ],
+                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                     }
                 };
 
@@ -193,9 +196,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     StatusCode           = 2001,
                     StatusMessage        = "Invalid country code!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
+                        HTTPStatusCode              = HTTPStatusCode.BadRequest,
+                        AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                        AccessControlAllowHeaders   = [ "Authorization" ],
+                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                     }
                 };
 
@@ -213,9 +217,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     StatusCode           = 2001,
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
+                        HTTPStatusCode              = HTTPStatusCode.BadRequest,
+                        AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                        AccessControlAllowHeaders   = [ "Authorization" ],
+                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                     }
                 };
 
@@ -233,9 +238,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     StatusCode           = 2001,
                     StatusMessage        = "Invalid location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
+                        HTTPStatusCode              = HTTPStatusCode.BadRequest,
+                        AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                        AccessControlAllowHeaders   = [ "Authorization" ],
+                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                     }
                 };
 
@@ -259,9 +265,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     StatusCode           = 2001,
                     StatusMessage        = "Unknown location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
+                        HTTPStatusCode              = HTTPStatusCode.NotFound,
+                        AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                        AccessControlAllowHeaders   = [ "Authorization" ],
+                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                     }
                 };
 
@@ -311,9 +318,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     StatusCode           = 2001,
                     StatusMessage        = "Invalid country code!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
+                        HTTPStatusCode              = HTTPStatusCode.BadRequest,
+                        AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                        AccessControlAllowHeaders   = [ "Authorization" ],
+                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                     }
                 };
 
@@ -331,9 +339,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     StatusCode           = 2001,
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
+                        HTTPStatusCode              = HTTPStatusCode.BadRequest,
+                        AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                        AccessControlAllowHeaders   = [ "Authorization" ],
+                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                     }
                 };
 
@@ -351,9 +360,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     StatusCode           = 2001,
                     StatusMessage        = "Invalid location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
+                        HTTPStatusCode              = HTTPStatusCode.BadRequest,
+                        AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                        AccessControlAllowHeaders   = [ "Authorization" ],
+                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                     }
                 };
 
@@ -410,9 +420,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     StatusCode           = 2001,
                     StatusMessage        = "Invalid location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
+                        HTTPStatusCode              = HTTPStatusCode.BadRequest,
+                        AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                        AccessControlAllowHeaders   = [ "Authorization" ],
+                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                     }
                 };
 
@@ -432,9 +443,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     StatusCode           = 2003,
                     StatusMessage        = "Unknown location!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                        AccessControlAllowHeaders  = [ "Authorization" ]
+                        HTTPStatusCode              = HTTPStatusCode.NotFound,
+                        AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                        AccessControlAllowHeaders   = [ "Authorization" ],
+                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                     }
                 };
 
@@ -462,9 +474,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                       StatusCode           = 2001,
                                       StatusMessage        = "Unknown location!",
                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                          HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                          //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
-                                          AccessControlAllowHeaders  = [ "Authorization" ]
+                                          HTTPStatusCode              = HTTPStatusCode.NotFound,
+                                          AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                          AccessControlAllowHeaders   = [ "Authorization" ],
+                                          AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
                                       }
                                   };
 

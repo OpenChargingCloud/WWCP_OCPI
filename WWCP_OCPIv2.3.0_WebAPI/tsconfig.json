@@ -29,7 +29,9 @@
     "HTTPRoot/remoteParty/remoteCPO/cancelReservation.ts",
     "HTTPRoot/remoteParty/remoteCPO/startSession.ts",
     "HTTPRoot/remoteParty/remoteCPO/stopSession.ts",
-    "HTTPRoot/remoteParty/remoteCPO/unlockConnector.ts"
+    "HTTPRoot/remoteParty/remoteCPO/unlockConnector.ts",
+
+    "HTTPRoot/debugLog/debugLog.ts"
 
   ]
 }

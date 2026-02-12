@@ -1,0 +1,20 @@
+﻿
+<link href="{{basePath}}/webapi/css/debugLog/debugLog.min.css" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="{{basePath}}/webapi/debugLog/debugLog.js"></script>
+<script type="text/javascript" src="/js/date.format.js"></script>
+
+
+<div id="eventsFilterDiv">
+    Events filter <input id="StreamFilter" />
+</div>
+
+<div id="response">
+</div>
+
+<div id="eventsDiv">
+</div>
+
+<script type="text/javascript">
+    StartDebugLog();
+</script>

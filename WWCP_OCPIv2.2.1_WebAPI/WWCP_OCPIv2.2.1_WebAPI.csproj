@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="HTTPRoot\css\debugLog\debugLog.css" />
+    <None Remove="HTTPRoot\css\debugLog\debugLog.min.css" />
     <None Remove="HTTPRoot\defaults\OCPIv2.2.1.js" />
     <None Remove="HTTPRoot\defaults\OCPIv2.2.1.js.map" />
   </ItemGroup>
@@ -20,6 +22,8 @@
     <EmbeddedResource Include="HTTPRoot\cdrs\cdrs.ts" />
     <EmbeddedResource Include="HTTPRoot\css\cdrs\cdrs.css" />
     <EmbeddedResource Include="HTTPRoot\css\cdrs\cdrs.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\debugLog\debugLog.css" />
+    <EmbeddedResource Include="HTTPRoot\css\debugLog\debugLog.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\FontAwesome\css\all.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-brands-400.ttf" />
     <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-brands-400.woff2" />
@@ -61,6 +65,9 @@
     <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\versions\versions.css" />
     <EmbeddedResource Include="HTTPRoot\css\versions\versions.min.css" />
+    <EmbeddedResource Include="HTTPRoot\debugLog\debugLog.shtml" />
+    <EmbeddedResource Include="HTTPRoot\debugLog\debugLog.ts" />
+    <EmbeddedResource Include="HTTPRoot\debugLog\debugLog.scss" />
     <EmbeddedResource Include="HTTPRoot\defaults\defaults.js" />
     <EmbeddedResource Include="HTTPRoot\defaults\defaults.js.map" />
     <EmbeddedResource Include="HTTPRoot\defaults\defaults.ts" />

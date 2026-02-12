@@ -1,0 +1,232 @@
+﻿
+#EventsDiv {
+    font-size: 14px;
+    padding-top: 5px;
+    display: table;
+    border-spacing: 0px 1px;
+}
+
+
+.logLine {
+    display: table-row;
+    width: 100%;
+    padding: 6px 4px;
+    margin: 1px 0px;
+    border-radius: 4px;
+
+    .timestamp {
+        display: table-cell;
+        vertical-align: top;
+        font-size: 80%;
+        padding: 4px 6px;
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+        white-space: nowrap;
+    }
+
+    .roamingNetwork {
+        display: table-cell;
+        vertical-align: top;
+        font-size: 80%;
+        padding: 4px 6px;
+        white-space: nowrap;
+    }
+
+    .eventTrackingId {
+        display: none;
+        vertical-align: top;
+        font-size: 80%;
+        padding: 4px 6px;
+        white-space: nowrap;
+    }
+
+    .command {
+        display: table-cell;
+        vertical-align: top;
+        font-size: 80%;
+        padding: 4px 6px;
+        white-space: nowrap;
+    }
+
+    .message {
+        display: table-cell;
+        vertical-align: top;
+        padding: 4px 15px;
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        width: inherit;
+
+        .authentication {
+            border: 1px solid rgba(0, 0, 0, 0.4);
+            display: inline-block;
+            border-radius: 3px;
+            padding: 1px 3px;
+        }
+
+        .providerId {
+            border: 1px solid rgba(0, 120, 0, 0.4);
+            display: inline-block;
+            border-radius: 3px;
+            padding: 1px 3px;
+        }
+
+        .CSORoamingProviderId {
+            border: 1px solid rgba(0, 120, 0, 0.4);
+            display: inline-block;
+            border-radius: 3px;
+            padding: 1px 3px;
+        }
+
+        .EMPRoamingProviderId {
+            border: 1px solid rgba(0, 120, 0, 0.4);
+            display: inline-block;
+            border-radius: 3px;
+            padding: 1px 3px;
+        }
+
+        .authorizatorId {
+            border: 1px solid rgba(0, 120, 0, 0.4);
+            display: inline-block;
+            border-radius: 3px;
+            padding: 1px 3px;
+        }
+
+        .location {
+            border: 1px solid rgba(0, 120, 0, 0.4);
+            display: inline-block;
+            border-radius: 3px;
+            padding: 1px 3px;
+        }
+
+        .duration {
+            border: 1px solid rgba(0, 120, 0, 0.4);
+            display: inline-block;
+            border-radius: 3px;
+            padding: 1px 3px;
+        }
+
+        .consumedEnergy {
+            border: 1px solid rgba(0, 120, 0, 0.4);
+            display: inline-block;
+            border-radius: 3px;
+            padding: 1px 3px;
+        }
+
+        .reservationHandling {
+            border: 1px solid rgba(0, 120, 0, 0.4);
+            display: inline-block;
+            border-radius: 3px;
+            padding: 1px 3px;
+        }
+
+
+
+        .EVSEStatus {
+            border: 1px solid rgba(0, 0, 120, 0.4);
+            display: inline-block;
+            border-radius: 3px;
+            padding: 1px 3px;
+        }
+
+
+
+        .status_Available {
+            display: inline-block;
+            background-image: linear-gradient(to bottom, #B3DB92, #73B53E);
+            color: #52842b;
+            font-size: 75%;
+            padding: 4px 6px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .status_Available:before {
+            content: "Available";
+        }
+
+        .status_Reserved {
+            display: inline-block;
+            background-image: linear-gradient(to bottom, #FFE07F, #E2C264);
+            color: #ac881d;
+            font-size: 75%;
+            padding: 4px 6px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .status_Reserved:before {
+            content: "Reserved";
+        }
+
+        .status_Charging {
+            display: inline-block;
+            background-image: linear-gradient(to bottom, #E87D7D, #BD3535);
+            color: #7b3232;
+            font-size: 75%;
+            padding: 4px 6px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .status_Charging:before {
+            content: "Charging";
+        }
+
+        .status_OutOfService {
+            display: inline-block;
+            background-image: linear-gradient(to bottom, #cdcdcd, #b3b3b3);
+            color: #777777;
+            font-size: 75%;
+            padding: 4px 6px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .status_OutOfService:before {
+            content: "Out-Of-Service";
+        }
+
+
+        .status_Faulted {
+            display: inline-block;
+            background-image: linear-gradient(to bottom, #cdcdcd, #b3b3b3);
+            color: #777777;
+            font-size: 75%;
+            padding: 4px 6px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .status_Faulted:before {
+            content: "Faulted";
+        }
+
+        .status_Offline {
+            display: inline-block;
+            background-image: linear-gradient(to bottom, #6d6d6d, #262626);
+            color: #d1d1d1;
+            font-size: 75%;
+            padding: 4px 6px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .status_Offline:before {
+            content: "Offline";
+        }
+
+        .status_Unspecified {
+            display: inline-block;
+            background-image: linear-gradient(to bottom, #729fd8, #4174b3);
+            color: #134078;
+            font-size: 75%;
+            padding: 4px 6px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .status_Unspecified:before {
+            content: "Unspecified";
+        }
+    }
+}
