@@ -196,6 +196,8 @@ namespace cloud.charging.open.protocols.OCPI
             this.RemoteAccessToken      = AccessToken;
             this.TokenAuth              = HTTPAuthentication as HTTPTokenAuthentication;
 
+            var httpHostname            = HTTPHostname.Parse($"{RemoteURL.Hostname}:{RemoteURL.Port}");
+
             this.NewHTTPClient          = new HTTPTestClient(
 
                                               URL:                                   this.RemoteURL,
@@ -206,7 +208,7 @@ namespace cloud.charging.open.protocols.OCPI
                                               ContentType:                           ocpiContentType,
                                               Connection:                            this.Connection ?? ConnectionType.KeepAlive,
                                               DefaultRequestBuilder:                 () => new HTTPRequest.Builder(this, CancellationToken.None) {
-                                                                                               Host         = this.RemoteURL.Hostname,
+                                                                                               Host         = httpHostname,
                                                                                                Accept       = ocpiAcceptTypes,
                                                                                                ContentType  = ocpiContentType,
                                                                                                UserAgent    = this.HTTPUserAgent ?? DefaultHTTPUserAgent,
@@ -260,7 +262,7 @@ namespace cloud.charging.open.protocols.OCPI
                                               ContentType:                           ocpiContentType,
                                               Connection:                            this.Connection ?? ConnectionType.KeepAlive,
                                               DefaultRequestBuilder:                 () => new HTTPRequest.Builder(this, CancellationToken.None) {
-                                                                                               Host         = this.RemoteURL.Hostname,
+                                                                                               Host         = httpHostname,
                                                                                                Accept       = ocpiAcceptTypes,
                                                                                                ContentType  = ocpiContentType,
                                                                                                UserAgent    = this.HTTPUserAgent ?? DefaultHTTPUserAgent,
@@ -289,7 +291,7 @@ namespace cloud.charging.open.protocols.OCPI
                                               ApplicationProtocols:                  null,
                                               AllowRenegotiation:                    null,
                                               AllowTLSResume:                        null,
-                                              //TOTPConfig:                            TOTPConfig,
+                                              TOTPConfig:                            TOTPConfig,
 
                                               MaxNumberOfClients:                    MaxNumberOfPooledClients ?? 6,
 
