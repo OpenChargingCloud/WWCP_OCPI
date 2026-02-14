@@ -219,7 +219,7 @@ namespace cloud.charging.open.protocols.WWCP
                                         I18NString                                              Name,
                                         I18NString                                              Description,
 
-                                        OCPIv2_1_1.CPOAPI                                       CPOAPI,
+                                        OCPIv2_1_1.CPO_HTTPAPI                                       CPOAPI,
 
                                         OCPIv2_1_1.GetTariffIds_Delegate?                       GetTariffIds                        = null,
 

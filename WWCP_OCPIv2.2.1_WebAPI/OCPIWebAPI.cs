@@ -252,9 +252,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
         public HTTPEventSource<JObject>  DebugLog            { get; }
 
 
-        public CPOAPI?                   CPOAPI              { get; set; }
+        public CPO_HTTPAPI?                   CPOAPI              { get; set; }
 
-        public EMSPAPI?                  EMSPAPI             { get; set; }
+        public EMSP_HTTPAPI?                  EMSPAPI             { get; set; }
 
         #endregion
 

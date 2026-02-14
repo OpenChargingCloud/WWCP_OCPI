@@ -227,7 +227,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
         /// <summary>
         /// Our HUB API.
         /// </summary>
-        public HUBAPI           HUBAPI      { get; }
+        public HUB_HTTPAPI           HUBAPI      { get; }
 
         /// <summary>
         /// HUB client event counters.
@@ -850,7 +850,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public HUB2EMSPClient(HUBAPI                       HUBAPI,
+        public HUB2EMSPClient(HUB_HTTPAPI                       HUBAPI,
                               RemoteParty                  RemoteParty,
                               HTTPHostname?                VirtualHostname   = null,
                               I18NString?                  Description       = null,

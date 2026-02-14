@@ -25,9 +25,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// A CPO API logger.
+    /// A CPO API HTTP logger.
     /// </summary>
-    public sealed class CPOAPILogger : CommonAPILogger
+    public sealed class CPO_HTTPAPI_Logger : CommonAPILogger
     {
 
         #region Data
@@ -42,9 +42,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
-        /// The linked CPO API.
+        /// The linked CPO HTTP API.
         /// </summary>
-        public CPOAPI  CPOAPI  { get; }
+        public CPO_HTTPAPI  CPO_HTTPAPI    { get; }
 
         #endregion
 
@@ -53,35 +53,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Create a new CPO API logger using the default logging delegates.
         /// </summary>
-        /// <param name="CPOAPI">An CPO API.</param>
+        /// <param name="CPO_HTTPAPI">An CPO API.</param>
         /// <param name="Context">A context of this API.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public CPOAPILogger(CPOAPI                       CPOAPI,
-                            String?                      Context          = DefaultContext,
-                            String?                      LoggingPath      = null,
-                            OCPILogfileCreatorDelegate?  LogfileCreator   = null)
+        public CPO_HTTPAPI_Logger(CPO_HTTPAPI                  CPO_HTTPAPI,
+                                  String?                      Context          = DefaultContext,
+                                  String?                      LoggingPath      = null,
+                                  OCPILogfileCreatorDelegate?  LogfileCreator   = null)
 
-            : base(CPOAPI.CommonAPI,
+            : base(CPO_HTTPAPI.CommonAPI,
                    Context ?? DefaultContext,
                    LoggingPath,
                    LogfileCreator)
 
         {
 
-            this.CPOAPI = CPOAPI ?? throw new ArgumentNullException(nameof(CPOAPI), "The given CPO API must not be null!");
+            this.CPO_HTTPAPI = CPO_HTTPAPI ?? throw new ArgumentNullException(nameof(CPO_HTTPAPI), "The given CPO HTTP API must not be null!");
 
             #region Location(s)
 
             RegisterEvent("GetLocationsRequest",
-                          handler => CPOAPI.OnGetLocationsRequest += handler,
-                          handler => CPOAPI.OnGetLocationsRequest -= handler,
+                          handler => CPO_HTTPAPI.OnGetLocationsHTTPRequest += handler,
+                          handler => CPO_HTTPAPI.OnGetLocationsHTTPRequest -= handler,
                           "GetLocations", "Locations", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetLocationsResponse",
-                          handler => CPOAPI.OnGetLocationsResponse += handler,
-                          handler => CPOAPI.OnGetLocationsResponse -= handler,
+                          handler => CPO_HTTPAPI.OnGetLocationsHTTPResponse += handler,
+                          handler => CPO_HTTPAPI.OnGetLocationsHTTPResponse -= handler,
                           "GetLocations", "Locations", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -90,15 +90,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             // Location
 
             RegisterEvent("GetLocationRequest",
-                          handler => CPOAPI.OnGetLocationRequest += handler,
-                          handler => CPOAPI.OnGetLocationRequest -= handler,
+                          handler => CPO_HTTPAPI.OnGetLocationHTTPRequest += handler,
+                          handler => CPO_HTTPAPI.OnGetLocationHTTPRequest -= handler,
                           "GetLocation", "Locations", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetLocationResponse",
-                          handler => CPOAPI.OnGetLocationResponse += handler,
-                          handler => CPOAPI.OnGetLocationResponse -= handler,
+                          handler => CPO_HTTPAPI.OnGetLocationHTTPResponse += handler,
+                          handler => CPO_HTTPAPI.OnGetLocationHTTPResponse -= handler,
                           "GetLocation", "Locations", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -108,15 +108,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region EVSE
 
             RegisterEvent("GetEVSERequest",
-                          handler => CPOAPI.OnGetEVSERequest += handler,
-                          handler => CPOAPI.OnGetEVSERequest -= handler,
+                          handler => CPO_HTTPAPI.OnGetEVSEHTTPRequest += handler,
+                          handler => CPO_HTTPAPI.OnGetEVSEHTTPRequest -= handler,
                           "GetEVSE", "EVSEs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetEVSEResponse",
-                          handler => CPOAPI.OnGetEVSEResponse += handler,
-                          handler => CPOAPI.OnGetEVSEResponse -= handler,
+                          handler => CPO_HTTPAPI.OnGetEVSEHTTPResponse += handler,
+                          handler => CPO_HTTPAPI.OnGetEVSEHTTPResponse -= handler,
                           "GetEVSE", "EVSEs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -126,15 +126,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region Connector
 
             RegisterEvent("GetConnectorRequest",
-                          handler => CPOAPI.OnGetConnectorRequest += handler,
-                          handler => CPOAPI.OnGetConnectorRequest -= handler,
+                          handler => CPO_HTTPAPI.OnGetConnectorHTTPRequest += handler,
+                          handler => CPO_HTTPAPI.OnGetConnectorHTTPRequest -= handler,
                           "GetConnector", "Connectors", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetConnectorResponse",
-                          handler => CPOAPI.OnGetConnectorResponse += handler,
-                          handler => CPOAPI.OnGetConnectorResponse -= handler,
+                          handler => CPO_HTTPAPI.OnGetConnectorHTTPResponse += handler,
+                          handler => CPO_HTTPAPI.OnGetConnectorHTTPResponse -= handler,
                           "GetConnector", "Connectors", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -144,15 +144,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region Tariff(s)
 
             RegisterEvent("GetTariffsRequest",
-                          handler => CPOAPI.OnGetTariffsRequest += handler,
-                          handler => CPOAPI.OnGetTariffsRequest -= handler,
+                          handler => CPO_HTTPAPI.OnGetTariffsHTTPRequest += handler,
+                          handler => CPO_HTTPAPI.OnGetTariffsHTTPRequest -= handler,
                           "GetTariffs", "Tariffs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetTariffsResponse",
-                          handler => CPOAPI.OnGetTariffsResponse += handler,
-                          handler => CPOAPI.OnGetTariffsResponse -= handler,
+                          handler => CPO_HTTPAPI.OnGetTariffsHTTPResponse += handler,
+                          handler => CPO_HTTPAPI.OnGetTariffsHTTPResponse -= handler,
                           "GetTariffs", "Tariffs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -161,15 +161,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             // Tariff
 
             RegisterEvent("GetTariffRequest",
-                          handler => CPOAPI.OnGetTariffRequest += handler,
-                          handler => CPOAPI.OnGetTariffRequest -= handler,
+                          handler => CPO_HTTPAPI.OnGetTariffHTTPRequest += handler,
+                          handler => CPO_HTTPAPI.OnGetTariffHTTPRequest -= handler,
                           "GetTariff", "Tariffs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetTariffResponse",
-                          handler => CPOAPI.OnGetTariffResponse += handler,
-                          handler => CPOAPI.OnGetTariffResponse -= handler,
+                          handler => CPO_HTTPAPI.OnGetTariffHTTPResponse += handler,
+                          handler => CPO_HTTPAPI.OnGetTariffHTTPResponse -= handler,
                           "GetTariff", "Tariffs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -179,15 +179,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region Session(s)
 
             RegisterEvent("GetSessionsRequest",
-                          handler => CPOAPI.OnGetSessionsRequest += handler,
-                          handler => CPOAPI.OnGetSessionsRequest -= handler,
+                          handler => CPO_HTTPAPI.OnGetSessionsHTTPRequest += handler,
+                          handler => CPO_HTTPAPI.OnGetSessionsHTTPRequest -= handler,
                           "GetSessions", "Sessions", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetSessionsResponse",
-                          handler => CPOAPI.OnGetSessionsResponse += handler,
-                          handler => CPOAPI.OnGetSessionsResponse -= handler,
+                          handler => CPO_HTTPAPI.OnGetSessionsHTTPResponse += handler,
+                          handler => CPO_HTTPAPI.OnGetSessionsHTTPResponse -= handler,
                           "GetSessions", "Sessions", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -196,15 +196,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             // Session
 
             RegisterEvent("GetSessionRequest",
-                          handler => CPOAPI.OnGetSessionRequest += handler,
-                          handler => CPOAPI.OnGetSessionRequest -= handler,
+                          handler => CPO_HTTPAPI.OnGetSessionHTTPRequest += handler,
+                          handler => CPO_HTTPAPI.OnGetSessionHTTPRequest -= handler,
                           "GetSession", "Sessions", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetSessionResponse",
-                          handler => CPOAPI.OnGetSessionResponse += handler,
-                          handler => CPOAPI.OnGetSessionResponse -= handler,
+                          handler => CPO_HTTPAPI.OnGetSessionHTTPResponse += handler,
+                          handler => CPO_HTTPAPI.OnGetSessionHTTPResponse -= handler,
                           "GetSession", "Sessions", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -214,15 +214,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region CDR(s)
 
             RegisterEvent("GetCDRsRequest",
-                          handler => CPOAPI.OnGetCDRsRequest += handler,
-                          handler => CPOAPI.OnGetCDRsRequest -= handler,
+                          handler => CPO_HTTPAPI.OnGetCDRsHTTPRequest += handler,
+                          handler => CPO_HTTPAPI.OnGetCDRsHTTPRequest -= handler,
                           "GetCDRs", "CDRs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetCDRsResponse",
-                          handler => CPOAPI.OnGetCDRsResponse += handler,
-                          handler => CPOAPI.OnGetCDRsResponse -= handler,
+                          handler => CPO_HTTPAPI.OnGetCDRsHTTPResponse += handler,
+                          handler => CPO_HTTPAPI.OnGetCDRsHTTPResponse -= handler,
                           "GetCDRs", "CDRs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -231,15 +231,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             // CDR
 
             RegisterEvent("GetCDRRequest",
-                          handler => CPOAPI.OnGetCDRRequest += handler,
-                          handler => CPOAPI.OnGetCDRRequest -= handler,
+                          handler => CPO_HTTPAPI.OnGetCDRHTTPRequest += handler,
+                          handler => CPO_HTTPAPI.OnGetCDRHTTPRequest -= handler,
                           "GetCDR", "CDRs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetCDRResponse",
-                          handler => CPOAPI.OnGetCDRResponse += handler,
-                          handler => CPOAPI.OnGetCDRResponse -= handler,
+                          handler => CPO_HTTPAPI.OnGetCDRHTTPResponse += handler,
+                          handler => CPO_HTTPAPI.OnGetCDRHTTPResponse -= handler,
                           "GetCDR", "CDRs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -249,30 +249,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region Token(s)
 
             RegisterEvent("GetTokensRequest",
-                          handler => CPOAPI.OnGetTokensRequest += handler,
-                          handler => CPOAPI.OnGetTokensRequest -= handler,
+                          handler => CPO_HTTPAPI.OnGetTokensHTTPRequest += handler,
+                          handler => CPO_HTTPAPI.OnGetTokensHTTPRequest -= handler,
                           "GetTokens", "Tokens", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetTokensResponse",
-                          handler => CPOAPI.OnGetTokensResponse += handler,
-                          handler => CPOAPI.OnGetTokensResponse -= handler,
+                          handler => CPO_HTTPAPI.OnGetTokensHTTPResponse += handler,
+                          handler => CPO_HTTPAPI.OnGetTokensHTTPResponse -= handler,
                           "GetTokens", "Tokens", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("DeleteTokensRequest",
-                          handler => CPOAPI.OnDeleteTokensRequest += handler,
-                          handler => CPOAPI.OnDeleteTokensRequest -= handler,
+                          handler => CPO_HTTPAPI.OnDeleteTokensHTTPRequest += handler,
+                          handler => CPO_HTTPAPI.OnDeleteTokensHTTPRequest -= handler,
                           "DeleteTokens", "Tokens", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteTokensResponse",
-                          handler => CPOAPI.OnDeleteTokensResponse += handler,
-                          handler => CPOAPI.OnDeleteTokensResponse -= handler,
+                          handler => CPO_HTTPAPI.OnDeleteTokensHTTPResponse += handler,
+                          handler => CPO_HTTPAPI.OnDeleteTokensHTTPResponse -= handler,
                           "DeleteTokens", "Tokens", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -281,60 +281,60 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             // Token
 
             RegisterEvent("GetTokenRequest",
-                          handler => CPOAPI.OnGetTokenRequest += handler,
-                          handler => CPOAPI.OnGetTokenRequest -= handler,
+                          handler => CPO_HTTPAPI.OnGetTokenHTTPRequest += handler,
+                          handler => CPO_HTTPAPI.OnGetTokenHTTPRequest -= handler,
                           "GetToken", "Tokens", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetTokenResponse",
-                          handler => CPOAPI.OnGetTokenResponse += handler,
-                          handler => CPOAPI.OnGetTokenResponse -= handler,
+                          handler => CPO_HTTPAPI.OnGetTokenHTTPResponse += handler,
+                          handler => CPO_HTTPAPI.OnGetTokenHTTPResponse -= handler,
                           "GetToken", "Tokens", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("PutTokenRequest",
-                          handler => CPOAPI.OnPutTokenRequest += handler,
-                          handler => CPOAPI.OnPutTokenRequest -= handler,
+                          handler => CPO_HTTPAPI.OnPutTokenHTTPRequest += handler,
+                          handler => CPO_HTTPAPI.OnPutTokenHTTPRequest -= handler,
                           "PutToken", "Tokens", "Put", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PutTokenResponse",
-                          handler => CPOAPI.OnPutTokenResponse += handler,
-                          handler => CPOAPI.OnPutTokenResponse -= handler,
+                          handler => CPO_HTTPAPI.OnPutTokenHTTPResponse += handler,
+                          handler => CPO_HTTPAPI.OnPutTokenHTTPResponse -= handler,
                           "PutToken", "Tokens", "Put", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("PatchTokenRequest",
-                          handler => CPOAPI.OnPatchTokenRequest += handler,
-                          handler => CPOAPI.OnPatchTokenRequest -= handler,
+                          handler => CPO_HTTPAPI.OnPatchTokenHTTPRequest += handler,
+                          handler => CPO_HTTPAPI.OnPatchTokenHTTPRequest -= handler,
                           "PatchToken", "Tokens", "Patch", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PatchTokenResponse",
-                          handler => CPOAPI.OnPatchTokenResponse += handler,
-                          handler => CPOAPI.OnPatchTokenResponse -= handler,
+                          handler => CPO_HTTPAPI.OnPatchTokenHTTPResponse += handler,
+                          handler => CPO_HTTPAPI.OnPatchTokenHTTPResponse -= handler,
                           "PatchToken", "Tokens", "Patch", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("DeleteTokenRequest",
-                          handler => CPOAPI.OnDeleteTokenRequest += handler,
-                          handler => CPOAPI.OnDeleteTokenRequest -= handler,
+                          handler => CPO_HTTPAPI.OnDeleteTokenHTTPRequest += handler,
+                          handler => CPO_HTTPAPI.OnDeleteTokenHTTPRequest -= handler,
                           "DeleteToken", "Tokens", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteTokenResponse",
-                          handler => CPOAPI.OnDeleteTokenResponse += handler,
-                          handler => CPOAPI.OnDeleteTokenResponse -= handler,
+                          handler => CPO_HTTPAPI.OnDeleteTokenHTTPResponse += handler,
+                          handler => CPO_HTTPAPI.OnDeleteTokenHTTPResponse -= handler,
                           "DeleteToken", "Tokens", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);

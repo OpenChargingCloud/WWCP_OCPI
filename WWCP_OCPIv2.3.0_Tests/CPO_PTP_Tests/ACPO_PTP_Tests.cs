@@ -43,7 +43,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
         protected  HTTPExtAPIX       cpoHTTPAPI;
         protected  CommonHTTPAPI?    cpoBaseAPI;
         protected  CommonAPI?        cpoCommonAPI;
-        protected  CPOAPI?           cpoAPI;
+        protected  CPO_HTTPAPI?           cpoAPI;
 
         protected  HTTPTestServerX?  ptpHTTPServer;
         protected  HTTPExtAPIX       ptpHTTPAPI;
@@ -157,7 +157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
             Assert.That(cpoCommonAPI,  Is.Not.Null);
 
-            cpoAPI               = new CPOAPI(
+            cpoAPI               = new CPO_HTTPAPI(
 
                                        CommonAPI:                           cpoCommonAPI,
                                        AllowDowngrades:                     null,

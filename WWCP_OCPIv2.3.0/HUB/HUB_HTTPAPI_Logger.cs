@@ -21,13 +21,13 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
     /// A HUB API logger.
     /// </summary>
-    public sealed class HUBAPILogger : CommonAPILogger
+    public sealed class HUB_HTTPAPI_Logger : CommonAPILogger
     {
 
         #region Data
@@ -42,48 +42,48 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Properties
 
         /// <summary>
-        /// The linked HUB API.
+        /// The linked HUB HTTP API.
         /// </summary>
-        public HUBAPI  HUBAPI  { get; }
+        public HUB_HTTPAPI  HUB_HTTPAPI  { get; }
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new HUB API logger using the default logging delegates.
+        /// Create a new HUB HTTP API logger using the default logging delegates.
         /// </summary>
-        /// <param name="HUBAPI">An HUB API.</param>
-        /// <param name="Context">A context of this API.</param>
+        /// <param name="HUB_HTTPAPI">An HUB HTTP API.</param>
+        /// <param name="Context">A context of this HTTP API.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public HUBAPILogger(HUBAPI                       HUBAPI,
-                            String?                      Context          = DefaultContext,
-                            String?                      LoggingPath      = null,
-                            OCPILogfileCreatorDelegate?  LogfileCreator   = null)
+        public HUB_HTTPAPI_Logger(HUB_HTTPAPI                  HUB_HTTPAPI,
+                                  String?                      Context          = DefaultContext,
+                                  String?                      LoggingPath      = null,
+                                  OCPILogfileCreatorDelegate?  LogfileCreator   = null)
 
-            : base(HUBAPI.CommonAPI,
+            : base(HUB_HTTPAPI.CommonAPI,
                    Context ?? DefaultContext,
                    LoggingPath,
                    LogfileCreator)
 
         {
 
-            this.HUBAPI = HUBAPI ?? throw new ArgumentNullException(nameof(HUBAPI), "The given HUB API must not be null!");
+            this.HUB_HTTPAPI = HUB_HTTPAPI ?? throw new ArgumentNullException(nameof(HUB_HTTPAPI), "The given HUB HTTP API must not be null!");
 
             // CPO Events
 
             #region Location(s)
 
             RegisterEvent("CPO.GetLocationsRequest",
-                          handler => HUBAPI.CPOEvents.OnGetLocationsRequest += handler,
-                          handler => HUBAPI.CPOEvents.OnGetLocationsRequest -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetLocationsHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetLocationsHTTPRequest -= handler,
                           "GetLocations", "Locations", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CPO.GetLocationsResponse",
-                          handler => HUBAPI.CPOEvents.OnGetLocationsResponse += handler,
-                          handler => HUBAPI.CPOEvents.OnGetLocationsResponse -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetLocationsHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetLocationsHTTPResponse -= handler,
                           "GetLocations", "Locations", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -92,15 +92,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             // Location
 
             RegisterEvent("CPO.GetLocationRequest",
-                          handler => HUBAPI.CPOEvents.OnGetLocationRequest += handler,
-                          handler => HUBAPI.CPOEvents.OnGetLocationRequest -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetLocationHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetLocationHTTPRequest -= handler,
                           "GetLocation", "Locations", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CPO.GetLocationResponse",
-                          handler => HUBAPI.CPOEvents.OnGetLocationResponse += handler,
-                          handler => HUBAPI.CPOEvents.OnGetLocationResponse -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetLocationHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetLocationHTTPResponse -= handler,
                           "GetLocation", "Locations", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -110,15 +110,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region EVSE
 
             RegisterEvent("CPO.GetEVSERequest",
-                          handler => HUBAPI.CPOEvents.OnGetEVSERequest += handler,
-                          handler => HUBAPI.CPOEvents.OnGetEVSERequest -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetEVSEHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetEVSEHTTPRequest -= handler,
                           "GetEVSE", "EVSEs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CPO.GetEVSEResponse",
-                          handler => HUBAPI.CPOEvents.OnGetEVSEResponse += handler,
-                          handler => HUBAPI.CPOEvents.OnGetEVSEResponse -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetEVSEHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetEVSEHTTPResponse -= handler,
                           "GetEVSE", "EVSEs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -128,15 +128,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region Connector
 
             RegisterEvent("CPO.GetConnectorRequest",
-                          handler => HUBAPI.CPOEvents.OnGetConnectorRequest += handler,
-                          handler => HUBAPI.CPOEvents.OnGetConnectorRequest -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetConnectorHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetConnectorHTTPRequest -= handler,
                           "GetConnector", "Connectors", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CPO.GetConnectorResponse",
-                          handler => HUBAPI.CPOEvents.OnGetConnectorResponse += handler,
-                          handler => HUBAPI.CPOEvents.OnGetConnectorResponse -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetConnectorHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetConnectorHTTPResponse -= handler,
                           "GetConnector", "Connectors", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -146,15 +146,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region Tariff(s)
 
             RegisterEvent("CPO.GetTariffsRequest",
-                          handler => HUBAPI.CPOEvents.OnGetTariffsRequest += handler,
-                          handler => HUBAPI.CPOEvents.OnGetTariffsRequest -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetTariffsHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetTariffsHTTPRequest -= handler,
                           "GetTariffs", "Tariffs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CPO.GetTariffsResponse",
-                          handler => HUBAPI.CPOEvents.OnGetTariffsResponse += handler,
-                          handler => HUBAPI.CPOEvents.OnGetTariffsResponse -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetTariffsHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetTariffsHTTPResponse -= handler,
                           "GetTariffs", "Tariffs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -163,15 +163,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             // Tariff
 
             RegisterEvent("CPO.GetTariffRequest",
-                          handler => HUBAPI.CPOEvents.OnGetTariffRequest += handler,
-                          handler => HUBAPI.CPOEvents.OnGetTariffRequest -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetTariffHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetTariffHTTPRequest -= handler,
                           "GetTariff", "Tariffs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CPO.GetTariffResponse",
-                          handler => HUBAPI.CPOEvents.OnGetTariffResponse += handler,
-                          handler => HUBAPI.CPOEvents.OnGetTariffResponse -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetTariffHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetTariffHTTPResponse -= handler,
                           "GetTariff", "Tariffs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -181,15 +181,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region Session(s)
 
             RegisterEvent("CPO.GetSessionsRequest",
-                          handler => HUBAPI.CPOEvents.OnGetSessionsRequest += handler,
-                          handler => HUBAPI.CPOEvents.OnGetSessionsRequest -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetSessionsHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetSessionsHTTPRequest -= handler,
                           "GetSessions", "Sessions", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CPO.GetSessionsResponse",
-                          handler => HUBAPI.CPOEvents.OnGetSessionsResponse += handler,
-                          handler => HUBAPI.CPOEvents.OnGetSessionsResponse -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetSessionsHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetSessionsHTTPResponse -= handler,
                           "GetSessions", "Sessions", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -198,15 +198,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             // Session
 
             RegisterEvent("CPO.GetSessionRequest",
-                          handler => HUBAPI.CPOEvents.OnGetSessionRequest += handler,
-                          handler => HUBAPI.CPOEvents.OnGetSessionRequest -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetSessionHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetSessionHTTPRequest -= handler,
                           "GetSession", "Sessions", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CPO.GetSessionResponse",
-                          handler => HUBAPI.CPOEvents.OnGetSessionResponse += handler,
-                          handler => HUBAPI.CPOEvents.OnGetSessionResponse -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetSessionHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetSessionHTTPResponse -= handler,
                           "GetSession", "Sessions", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -216,15 +216,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region CDR(s)
 
             RegisterEvent("CPO.GetCDRsRequest",
-                          handler => HUBAPI.CPOEvents.OnGetCDRsRequest += handler,
-                          handler => HUBAPI.CPOEvents.OnGetCDRsRequest -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetCDRsHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetCDRsHTTPRequest -= handler,
                           "GetCDRs", "CDRs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CPO.GetCDRsResponse",
-                          handler => HUBAPI.CPOEvents.OnGetCDRsResponse += handler,
-                          handler => HUBAPI.CPOEvents.OnGetCDRsResponse -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetCDRsHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetCDRsHTTPResponse -= handler,
                           "GetCDRs", "CDRs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -233,15 +233,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             // CDR
 
             RegisterEvent("CPO.GetCDRRequest",
-                          handler => HUBAPI.CPOEvents.OnGetCDRRequest += handler,
-                          handler => HUBAPI.CPOEvents.OnGetCDRRequest -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetCDRHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetCDRHTTPRequest -= handler,
                           "GetCDR", "CDRs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CPO.GetCDRResponse",
-                          handler => HUBAPI.CPOEvents.OnGetCDRResponse += handler,
-                          handler => HUBAPI.CPOEvents.OnGetCDRResponse -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetCDRHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetCDRHTTPResponse -= handler,
                           "GetCDR", "CDRs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -251,30 +251,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region Token(s)
 
             RegisterEvent("CPO.GetTokensRequest",
-                          handler => HUBAPI.CPOEvents.OnGetTokensRequest += handler,
-                          handler => HUBAPI.CPOEvents.OnGetTokensRequest -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetTokensHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetTokensHTTPRequest -= handler,
                           "GetTokens", "Tokens", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CPO.GetTokensResponse",
-                          handler => HUBAPI.CPOEvents.OnGetTokensResponse += handler,
-                          handler => HUBAPI.CPOEvents.OnGetTokensResponse -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetTokensHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetTokensHTTPResponse -= handler,
                           "GetTokens", "Tokens", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("CPO.DeleteTokensRequest",
-                          handler => HUBAPI.CPOEvents.OnDeleteTokensRequest += handler,
-                          handler => HUBAPI.CPOEvents.OnDeleteTokensRequest -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnDeleteTokensHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnDeleteTokensHTTPRequest -= handler,
                           "DeleteTokens", "Tokens", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CPO.DeleteTokensResponse",
-                          handler => HUBAPI.CPOEvents.OnDeleteTokensResponse += handler,
-                          handler => HUBAPI.CPOEvents.OnDeleteTokensResponse -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnDeleteTokensHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnDeleteTokensHTTPResponse -= handler,
                           "DeleteTokens", "Tokens", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -283,60 +283,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             // Token
 
             RegisterEvent("CPO.GetTokenRequest",
-                          handler => HUBAPI.CPOEvents.OnGetTokenRequest += handler,
-                          handler => HUBAPI.CPOEvents.OnGetTokenRequest -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetTokenHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetTokenHTTPRequest -= handler,
                           "GetToken", "Tokens", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CPO.GetTokenResponse",
-                          handler => HUBAPI.CPOEvents.OnGetTokenResponse += handler,
-                          handler => HUBAPI.CPOEvents.OnGetTokenResponse -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetTokenHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnGetTokenHTTPResponse -= handler,
                           "GetToken", "Tokens", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("CPO.PutTokenRequest",
-                          handler => HUBAPI.CPOEvents.OnPutTokenRequest += handler,
-                          handler => HUBAPI.CPOEvents.OnPutTokenRequest -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnPutTokenHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnPutTokenHTTPRequest -= handler,
                           "PutToken", "Tokens", "Put", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CPO.PutTokenResponse",
-                          handler => HUBAPI.CPOEvents.OnPutTokenResponse += handler,
-                          handler => HUBAPI.CPOEvents.OnPutTokenResponse -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnPutTokenHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnPutTokenHTTPResponse -= handler,
                           "PutToken", "Tokens", "Put", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("CPO.PatchTokenRequest",
-                          handler => HUBAPI.CPOEvents.OnPatchTokenRequest += handler,
-                          handler => HUBAPI.CPOEvents.OnPatchTokenRequest -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnPatchTokenHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnPatchTokenHTTPRequest -= handler,
                           "PatchToken", "Tokens", "Patch", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CPO.PatchTokenResponse",
-                          handler => HUBAPI.CPOEvents.OnPatchTokenResponse += handler,
-                          handler => HUBAPI.CPOEvents.OnPatchTokenResponse -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnPatchTokenHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnPatchTokenHTTPResponse -= handler,
                           "PatchToken", "Tokens", "Patch", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("CPO.DeleteTokenRequest",
-                          handler => HUBAPI.CPOEvents.OnDeleteTokenRequest += handler,
-                          handler => HUBAPI.CPOEvents.OnDeleteTokenRequest -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnDeleteTokenHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnDeleteTokenHTTPRequest -= handler,
                           "DeleteToken", "Tokens", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CPO.DeleteTokenResponse",
-                          handler => HUBAPI.CPOEvents.OnDeleteTokenResponse += handler,
-                          handler => HUBAPI.CPOEvents.OnDeleteTokenResponse -= handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnDeleteTokenHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.CPOEvents.OnDeleteTokenHTTPResponse -= handler,
                           "DeleteToken", "Tokens", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -349,30 +349,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region Location(s)
 
             RegisterEvent("EMSP.GetLocationsRequest",
-                          handler => HUBAPI.EMSPEvents.OnGetLocationsRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetLocationsRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetLocationsHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetLocationsHTTPRequest -= handler,
                           "GetLocations", "Locations", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.GetLocationsResponse",
-                          handler => HUBAPI.EMSPEvents.OnGetLocationsResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetLocationsResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetLocationsHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetLocationsHTTPResponse -= handler,
                           "GetLocations", "Locations", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.DeleteLocationsRequest",
-                          handler => HUBAPI.EMSPEvents.OnDeleteLocationsRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteLocationsRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteLocationsHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteLocationsHTTPRequest -= handler,
                           "DeleteLocations", "Locations", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.DeleteLocationsResponse",
-                          handler => HUBAPI.EMSPEvents.OnDeleteLocationsResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteLocationsResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteLocationsHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteLocationsHTTPResponse -= handler,
                           "DeleteLocations", "Locations", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -380,60 +380,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             // Location
             RegisterEvent("EMSP.GetLocationRequest",
-                          handler => HUBAPI.EMSPEvents.OnGetLocationRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetLocationRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetLocationHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetLocationHTTPRequest -= handler,
                           "GetLocation", "Location", "Get", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.GetLocationResponse",
-                          handler => HUBAPI.EMSPEvents.OnGetLocationResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetLocationResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetLocationHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetLocationHTTPResponse -= handler,
                           "GetLocation", "Location", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.PutLocationRequest",
-                          handler => HUBAPI.EMSPEvents.OnPutLocationRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnPutLocationRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutLocationHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutLocationHTTPRequest -= handler,
                           "PutLocation", "Locations", "Put", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.PutLocationResponse",
-                          handler => HUBAPI.EMSPEvents.OnPutLocationResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnPutLocationResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutLocationHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutLocationHTTPResponse -= handler,
                           "PutLocation", "Locations", "Put", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.PatchLocationRequest",
-                          handler => HUBAPI.EMSPEvents.OnPatchLocationRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnPatchLocationRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchLocationHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchLocationHTTPRequest -= handler,
                           "PatchLocation", "Locations", "Patch", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.PatchLocationResponse",
-                          handler => HUBAPI.EMSPEvents.OnPatchLocationResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnPatchLocationResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchLocationHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchLocationHTTPResponse -= handler,
                           "PatchLocation", "Locations", "Patch", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.DeleteLocationRequest",
-                          handler => HUBAPI.EMSPEvents.OnDeleteLocationRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteLocationRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteLocationHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteLocationHTTPRequest -= handler,
                           "DeleteLocation", "Locations", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.DeleteLocationResponse",
-                          handler => HUBAPI.EMSPEvents.OnDeleteLocationResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteLocationResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteLocationHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteLocationHTTPResponse -= handler,
                           "DeleteLocation", "Locations", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -443,60 +443,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region EVSE/EVSE status
 
             RegisterEvent("EMSP.GetEVSERequest",
-                          handler => HUBAPI.EMSPEvents.OnGetEVSERequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetEVSERequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetEVSEHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetEVSEHTTPRequest -= handler,
                           "GetEVSE", "EVSEs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.GetEVSEResponse",
-                          handler => HUBAPI.EMSPEvents.OnGetEVSEResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetEVSEResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetEVSEHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetEVSEHTTPResponse -= handler,
                           "GetEVSE", "EVSEs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.PutEVSERequest",
-                          handler => HUBAPI.EMSPEvents.OnPutEVSERequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnPutEVSERequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutEVSEHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutEVSEHTTPRequest -= handler,
                           "PutEVSE", "EVSEs", "Put", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.PutEVSEResponse",
-                          handler => HUBAPI.EMSPEvents.OnPutEVSEResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnPutEVSEResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutEVSEHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutEVSEHTTPResponse -= handler,
                           "PutEVSE", "EVSEs", "Put", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.PatchEVSERequest",
-                          handler => HUBAPI.EMSPEvents.OnPatchEVSERequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnPatchEVSERequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchEVSEHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchEVSEHTTPRequest -= handler,
                           "PatchEVSE", "EVSEs", "Patch", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.PatchEVSEResponse",
-                          handler => HUBAPI.EMSPEvents.OnPatchEVSEResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnPatchEVSEResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchEVSEHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchEVSEHTTPResponse -= handler,
                           "PatchEVSE", "EVSEs", "Patch", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.DeleteEVSERequest",
-                          handler => HUBAPI.EMSPEvents.OnDeleteEVSERequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteEVSERequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteEVSEHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteEVSEHTTPRequest -= handler,
                           "DeleteEVSE", "EVSEs", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.DeleteEVSEResponse",
-                          handler => HUBAPI.EMSPEvents.OnDeleteEVSEResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteEVSEResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteEVSEHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteEVSEHTTPResponse -= handler,
                           "DeleteEVSE", "EVSEs", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -505,15 +505,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             // EVSE status
 
             RegisterEvent("EMSP.PostEVSEStatusRequest",
-                          handler => HUBAPI.EMSPEvents.OnPostEVSEStatusRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnPostEVSEStatusRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPostEVSEStatusHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPostEVSEStatusHTTPRequest -= handler,
                           "PostEVSEStatus", "EVSEs", "Post", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.PostEVSEStatusResponse",
-                          handler => HUBAPI.EMSPEvents.OnPostEVSEStatusResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnPostEVSEStatusResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPostEVSEStatusHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPostEVSEStatusHTTPResponse -= handler,
                           "PostEVSEStatus", "EVSEs", "Post", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -522,60 +522,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region Connector
 
             RegisterEvent("EMSP.GetConnectorRequest",
-                          handler => HUBAPI.EMSPEvents.OnGetConnectorRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetConnectorRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetConnectorHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetConnectorHTTPRequest -= handler,
                           "GetConnector", "Connectors", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.GetConnectorResponse",
-                          handler => HUBAPI.EMSPEvents.OnGetConnectorResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetConnectorResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetConnectorHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetConnectorHTTPResponse -= handler,
                           "GetConnector", "Connectors", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.PutConnectorRequest",
-                          handler => HUBAPI.EMSPEvents.OnPutConnectorRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnPutConnectorRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutConnectorHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutConnectorHTTPRequest -= handler,
                           "PutConnector", "Connectors", "Put", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.PutConnectorResponse",
-                          handler => HUBAPI.EMSPEvents.OnPutConnectorResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnPutConnectorResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutConnectorHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutConnectorHTTPResponse -= handler,
                           "PutConnector", "Connectors", "Put", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.PatchConnectorRequest",
-                          handler => HUBAPI.EMSPEvents.OnPatchConnectorRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnPatchConnectorRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchConnectorHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchConnectorHTTPRequest -= handler,
                           "PatchConnector", "Connectors", "Patch", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.PatchConnectorResponse",
-                          handler => HUBAPI.EMSPEvents.OnPatchConnectorResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnPatchConnectorResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchConnectorHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchConnectorHTTPResponse -= handler,
                           "PatchConnector", "Connectors", "Patch", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.DeleteConnectorRequest",
-                          handler => HUBAPI.EMSPEvents.OnDeleteConnectorRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteConnectorRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteConnectorHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteConnectorHTTPRequest -= handler,
                           "DeleteConnector", "Connectors", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.DeleteConnectorResponse",
-                          handler => HUBAPI.EMSPEvents.OnDeleteConnectorResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteConnectorResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteConnectorHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteConnectorHTTPResponse -= handler,
                           "DeleteConnector", "Connectors", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -585,30 +585,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region Tariff(s)
 
             RegisterEvent("EMSP.GetTariffsRequest",
-                          handler => HUBAPI.EMSPEvents.OnGetTariffsRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetTariffsRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetTariffsHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetTariffsHTTPRequest -= handler,
                           "GetTariffs", "Tariffs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.GetTariffsResponse",
-                          handler => HUBAPI.EMSPEvents.OnGetTariffsResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetTariffsResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetTariffsHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetTariffsHTTPResponse -= handler,
                           "GetTariffs", "Tariffs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.DeleteTariffsRequest",
-                          handler => HUBAPI.EMSPEvents.OnDeleteTariffsRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteTariffsRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteTariffsHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteTariffsHTTPRequest -= handler,
                           "DeleteTariffs", "Tariffs", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.DeleteTariffsResponse",
-                          handler => HUBAPI.EMSPEvents.OnDeleteTariffsResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteTariffsResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteTariffsHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteTariffsHTTPResponse -= handler,
                           "DeleteTariffs", "Tariffs", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -617,60 +617,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             // Tariff
 
             RegisterEvent("EMSP.GetTariffRequest",
-                          handler => HUBAPI.EMSPEvents.OnGetTariffRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetTariffRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetTariffHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetTariffHTTPRequest -= handler,
                           "GetTariff", "Tariffs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.GetTariffResponse",
-                          handler => HUBAPI.EMSPEvents.OnGetTariffResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetTariffResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetTariffHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetTariffHTTPResponse -= handler,
                           "GetTariff", "Tariffs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.PutTariffRequest",
-                          handler => HUBAPI.EMSPEvents.OnPutTariffRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnPutTariffRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutTariffHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutTariffHTTPRequest -= handler,
                           "PutTariff", "Tariffs", "Put", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.PutTariffResponse",
-                          handler => HUBAPI.EMSPEvents.OnPutTariffResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnPutTariffResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutTariffHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutTariffHTTPResponse -= handler,
                           "PutTariff", "Tariffs", "Put", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.PatchTariffRequest",
-                          handler => HUBAPI.EMSPEvents.OnPatchTariffRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnPatchTariffRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchTariffHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchTariffHTTPRequest -= handler,
                           "PatchTariff", "Tariffs", "Patch", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.PatchTariffResponse",
-                          handler => HUBAPI.EMSPEvents.OnPatchTariffResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnPatchTariffResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchTariffHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchTariffHTTPResponse -= handler,
                           "PatchTariff", "Tariffs", "Patch", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.DeleteTariffRequest",
-                          handler => HUBAPI.EMSPEvents.OnDeleteTariffRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteTariffRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteTariffHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteTariffHTTPRequest -= handler,
                           "DeleteTariff", "Tariffs", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.DeleteTariffResponse",
-                          handler => HUBAPI.EMSPEvents.OnDeleteTariffResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteTariffResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteTariffHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteTariffHTTPResponse -= handler,
                           "DeleteTariff", "Tariffs", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -680,30 +680,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region Session(s)
 
             RegisterEvent("EMSP.GetSessionsRequest",
-                          handler => HUBAPI.EMSPEvents.OnGetSessionsRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetSessionsRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetSessionsHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetSessionsHTTPRequest -= handler,
                           "GetSessions", "Sessions", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.GetSessionsResponse",
-                          handler => HUBAPI.EMSPEvents.OnGetSessionsResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetSessionsResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetSessionsHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetSessionsHTTPResponse -= handler,
                           "GetSessions", "Sessions", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.DeleteSessionsRequest",
-                          handler => HUBAPI.EMSPEvents.OnDeleteSessionsRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteSessionsRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteSessionsHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteSessionsHTTPRequest -= handler,
                           "DeleteSessions", "Sessions", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.DeleteSessionsResponse",
-                          handler => HUBAPI.EMSPEvents.OnDeleteSessionsResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteSessionsResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteSessionsHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteSessionsHTTPResponse -= handler,
                           "DeleteSessions", "Sessions", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -712,60 +712,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             // Session
 
             RegisterEvent("EMSP.GetSessionRequest",
-                          handler => HUBAPI.EMSPEvents.OnGetSessionRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetSessionRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetSessionHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetSessionHTTPRequest -= handler,
                           "GetSession", "Sessions", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.GetSessionResponse",
-                          handler => HUBAPI.EMSPEvents.OnGetSessionResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetSessionResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetSessionHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetSessionHTTPResponse -= handler,
                           "GetSession", "Sessions", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.PutSessionRequest",
-                          handler => HUBAPI.EMSPEvents.OnPutSessionRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnPutSessionRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutSessionHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutSessionHTTPRequest -= handler,
                           "PutSession", "Sessions", "Put", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.PutSessionResponse",
-                          handler => HUBAPI.EMSPEvents.OnPutSessionResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnPutSessionResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutSessionHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPutSessionHTTPResponse -= handler,
                           "PutSession", "Sessions", "Put", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.PatchSessionRequest",
-                          handler => HUBAPI.EMSPEvents.OnPatchSessionRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnPatchSessionRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchSessionHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchSessionHTTPRequest -= handler,
                           "PatchSession", "Sessions", "Patch", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.PatchSessionResponse",
-                          handler => HUBAPI.EMSPEvents.OnPatchSessionResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnPatchSessionResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchSessionHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPatchSessionHTTPResponse -= handler,
                           "PatchSession", "Sessions", "Patch", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.DeleteSessionRequest",
-                          handler => HUBAPI.EMSPEvents.OnDeleteSessionRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteSessionRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteSessionHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteSessionHTTPRequest -= handler,
                           "DeleteSession", "Sessions", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.DeleteSessionResponse",
-                          handler => HUBAPI.EMSPEvents.OnDeleteSessionResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteSessionResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteSessionHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteSessionHTTPResponse -= handler,
                           "DeleteSession", "Sessions", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -775,45 +775,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region CDR(s)
 
             RegisterEvent("EMSP.GetCDRsRequest",
-                          handler => HUBAPI.EMSPEvents.OnGetCDRsRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetCDRsRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetCDRsHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetCDRsHTTPRequest -= handler,
                           "GetCDRs", "CDRs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.GetCDRsResponse",
-                          handler => HUBAPI.EMSPEvents.OnGetCDRsResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetCDRsResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetCDRsHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetCDRsHTTPResponse -= handler,
                           "GetCDRs", "CDRs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.PostCDRRequest",
-                          handler => HUBAPI.EMSPEvents.OnPostCDRRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnPostCDRRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPostCDRHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPostCDRHTTPRequest -= handler,
                           "PostCDR", "CDRs", "Post", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.PostCDRResponse",
-                          handler => HUBAPI.EMSPEvents.OnPostCDRResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnPostCDRResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPostCDRHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPostCDRHTTPResponse -= handler,
                           "PostCDR", "CDRs", "Post", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.DeleteCDRsRequest",
-                          handler => HUBAPI.EMSPEvents.OnDeleteCDRsRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteCDRsRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteCDRsHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteCDRsHTTPRequest -= handler,
                           "DeleteCDRs", "CDRs", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.DeleteCDRsResponse",
-                          handler => HUBAPI.EMSPEvents.OnDeleteCDRsResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteCDRsResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteCDRsHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteCDRsHTTPResponse -= handler,
                           "DeleteCDRs", "CDRs", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -823,30 +823,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             // CDR
 
             RegisterEvent("EMSP.GetCDRRequest",
-                          handler => HUBAPI.EMSPEvents.OnGetCDRRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetCDRRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetCDRHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetCDRHTTPRequest -= handler,
                           "GetCDR", "CDRs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.GetCDRResponse",
-                          handler => HUBAPI.EMSPEvents.OnGetCDRResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetCDRResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetCDRHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetCDRHTTPResponse -= handler,
                           "GetCDR", "CDRs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.DeleteCDRRequest",
-                          handler => HUBAPI.EMSPEvents.OnDeleteCDRRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteCDRRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteCDRHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteCDRHTTPRequest -= handler,
                           "DeleteCDR", "CDRs", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.DeleteCDRResponse",
-                          handler => HUBAPI.EMSPEvents.OnDeleteCDRResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnDeleteCDRResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteCDRHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnDeleteCDRHTTPResponse -= handler,
                           "DeleteCDR", "CDRs", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -856,15 +856,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region Token(s)
 
             RegisterEvent("EMSP.GetTokensRequest",
-                          handler => HUBAPI.EMSPEvents.OnGetTokensRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetTokensRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetTokensHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetTokensHTTPRequest -= handler,
                           "GetTokens", "Tokens", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.GetTokensResponse",
-                          handler => HUBAPI.EMSPEvents.OnGetTokensResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnGetTokensResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetTokensHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnGetTokensHTTPResponse -= handler,
                           "GetTokens", "Tokens", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -873,15 +873,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             // Token
 
             RegisterEvent("EMSP.PostTokenRequest",
-                          handler => HUBAPI.EMSPEvents.OnPostTokenRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnPostTokenRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPostTokenHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPostTokenHTTPRequest -= handler,
                           "PostToken", "Tokens", "Post", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.PostTokenResponse",
-                          handler => HUBAPI.EMSPEvents.OnPostTokenResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnPostTokenResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPostTokenHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnPostTokenHTTPResponse -= handler,
                           "PostToken", "Tokens", "Post", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -891,75 +891,75 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region Command callbacks
 
             RegisterEvent("EMSP.ReserveNowCallbackRequest",
-                          handler => HUBAPI.EMSPEvents.OnReserveNowCallbackRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnReserveNowCallbackRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnReserveNowCallbackHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnReserveNowCallbackHTTPRequest -= handler,
                           "ReserveNowCallback", "ReservationCallbacks", "Callbacks", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.ReserveNowCallbackResponse",
-                          handler => HUBAPI.EMSPEvents.OnReserveNowCallbackResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnReserveNowCallbackResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnReserveNowCallbackHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnReserveNowCallbackHTTPResponse -= handler,
                           "ReserveNowCallback", "ReservationCallbacks", "Callbacks", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.CancelReservationCallbackRequest",
-                          handler => HUBAPI.EMSPEvents.OnCancelReservationCallbackRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnCancelReservationCallbackRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnCancelReservationCallbackHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnCancelReservationCallbackHTTPRequest -= handler,
                           "CancelReservationCallback", "ReservationCallbacks", "Callbacks", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.CancelReservationCallbackResponse",
-                          handler => HUBAPI.EMSPEvents.OnCancelReservationCallbackResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnCancelReservationCallbackResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnCancelReservationCallbackHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnCancelReservationCallbackHTTPResponse -= handler,
                           "CancelReservationCallback", "ReservationCallbacks", "Callbacks", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.StartSessionCallbackRequest",
-                          handler => HUBAPI.EMSPEvents.OnStartSessionCallbackRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnStartSessionCallbackRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnStartSessionCallbackHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnStartSessionCallbackHTTPRequest -= handler,
                           "StartSessionCallback", "SessionCallbacks", "Callbacks", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.StartSessionCallbackResponse",
-                          handler => HUBAPI.EMSPEvents.OnStartSessionCallbackResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnStartSessionCallbackResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnStartSessionCallbackHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnStartSessionCallbackHTTPResponse -= handler,
                           "StartSessionCallback", "SessionCallbacks", "Callbacks", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.StopSessionCallbackRequest",
-                          handler => HUBAPI.EMSPEvents.OnStopSessionCallbackRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnStopSessionCallbackRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnStopSessionCallbackHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnStopSessionCallbackHTTPRequest -= handler,
                           "StopSessionCallback", "SessionCallbacks", "Callbacks", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.StopSessionCallbackResponse",
-                          handler => HUBAPI.EMSPEvents.OnStopSessionCallbackResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnStopSessionCallbackResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnStopSessionCallbackHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnStopSessionCallbackHTTPResponse -= handler,
                           "StopSessionCallback", "SessionCallbacks", "CaCallbackslback", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("EMSP.UnlockConnectorCallbackRequest",
-                          handler => HUBAPI.EMSPEvents.OnUnlockConnectorCallbackRequest += handler,
-                          handler => HUBAPI.EMSPEvents.OnUnlockConnectorCallbackRequest -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnUnlockConnectorCallbackHTTPRequest += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnUnlockConnectorCallbackHTTPRequest -= handler,
                           "UnlockConnectorCallback", "Callbacks", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("EMSP.UnlockConnectorCallbackResponse",
-                          handler => HUBAPI.EMSPEvents.OnUnlockConnectorCallbackResponse += handler,
-                          handler => HUBAPI.EMSPEvents.OnUnlockConnectorCallbackResponse -= handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnUnlockConnectorCallbackHTTPResponse += handler,
+                          handler => HUB_HTTPAPI.EMSPEvents.OnUnlockConnectorCallbackHTTPResponse -= handler,
                           "UnlockConnectorCallback", "Callbacks", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);

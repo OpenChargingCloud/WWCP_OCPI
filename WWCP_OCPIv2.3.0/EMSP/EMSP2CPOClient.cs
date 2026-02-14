@@ -215,7 +215,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <summary>
         /// Our EMSP API.
         /// </summary>
-        public EMSPAPI          EMSPAPI        { get; }
+        public EMSP_HTTPAPI          EMSPAPI        { get; }
 
         /// <summary>
         /// EMSP client event counters.
@@ -744,7 +744,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public EMSP2CPOClient(EMSPAPI                      EMSPAPI,
+        public EMSP2CPOClient(EMSP_HTTPAPI                      EMSPAPI,
                               RemoteParty                  RemoteParty,
                               HTTPHostname?                VirtualHostname   = null,
                               I18NString?                  Description       = null,
@@ -786,10 +786,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         }
 
         #endregion
-
-
-        public override JObject ToJSON()
-            => base.ToJSON(nameof(EMSP2CPOClient));
 
 
         #region GetLocations      (...)
@@ -2499,7 +2495,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         #region GetToken          (CountryCode, PartyId, TokenId, ...)
 
         /// <summary>
-        /// Get the token specified by the given token identification from the remote API.
+        /// Get the token specified by its token identification from the remote API.
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
@@ -2689,7 +2685,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         #region PutToken          (Token, ...)
 
         /// <summary>
-        /// Put/store the given token on/within the remote API.
+        /// Put/store the given token within the remote API.
         /// </summary>
         /// <param name="Token">The token to store/put at/onto the remote API.</param>
         /// 
@@ -2851,7 +2847,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         #region PatchToken        (CountryCode, PartyId, TokenId, ...)
 
         /// <summary>
-        /// Start a charging token.
+        /// Patch the specified token with the given token patch.
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
@@ -3353,7 +3349,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         #region ReserveNow        (Token, ExpirationTimestamp, ReservationId, LocationId, EVSEUId, AuthorizationReference, ...)
 
         /// <summary>
-        /// Put/store the given token on/within the remote API.
+        /// Reserve a charging session for the given token at the given location and EVSE (if specified).
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
@@ -3556,7 +3552,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         #region CancelReservation (ReservationId, ...)
 
         /// <summary>
-        /// Put/store the given token on/within the remote API.
+        /// Cancel the reservation specified by the given reservation identification.
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
@@ -3739,7 +3735,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         #region StartSession      (Token, LocationId, EVSEUId, AuthorizationReference, ...)
 
         /// <summary>
-        /// Put/store the given token on/within the remote API.
+        /// Start a charging session.
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
@@ -3938,7 +3934,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         #region StopSession       (SessionId, ...)
 
         /// <summary>
-        /// Put/store the given token on/within the remote API.
+        /// Stop a charging session.
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
@@ -4121,7 +4117,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         #region UnlockConnector   (LocationId, EVSEUId, ConnectorId, ...)
 
         /// <summary>
-        /// Put/store the given token on/within the remote API.
+        /// Unlock an EVSE and connector.
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
@@ -4328,6 +4324,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
         #endregion
 
+
+        #region ToJSON()
+
+        public override JObject ToJSON()
+            => base.ToJSON(nameof(EMSP2CPOClient));
+
+        #endregion
 
         #region Dispose()
 

@@ -93,7 +93,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public CommonAPI                                    CommonAPI                            { get; }
 
-        public CPOAPI                                       CPOAPI                               { get; }
+        public CPO_HTTPAPI                                       CPOAPI                               { get; }
 
         public GetTariffIds_Delegate?                       GetTariffIds                         { get; }
 
@@ -305,7 +305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             this.CommonAPI                          = CommonAPI;
-            this.CPOAPI                             = new CPOAPI(
+            this.CPOAPI                             = new CPO_HTTPAPI(
 
                                                           this.CommonAPI,
                                                           null, // AllowDowngrades
@@ -370,7 +370,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               I18NString                                      Description,
                               WWCP.IRoamingNetwork                            RoamingNetwork,
 
-                              CPOAPI                                          CPOAPI,
+                              CPO_HTTPAPI                                          CPOAPI,
 
                               GetTariffIds_Delegate?                          GetTariffIds                        = null,
 

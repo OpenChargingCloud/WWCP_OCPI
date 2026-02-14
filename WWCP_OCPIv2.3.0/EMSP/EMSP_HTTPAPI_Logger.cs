@@ -21,19 +21,19 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
-    /// A EMSP API logger.
+    /// A EMSP HTTP API logger.
     /// </summary>
-    public sealed class EMSPAPILogger : CommonAPILogger
+    public sealed class EMSP_HTTPAPI_Logger : CommonAPILogger
     {
 
         #region Data
 
         /// <summary>
-        /// The default context of this logger.
+        /// The default context of this HTTP logger.
         /// </summary>
         public new const String DefaultContext = "EMSPAPI";
 
@@ -42,61 +42,61 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
-        /// The linked EMSP API.
+        /// The linked EMSP HTTP API.
         /// </summary>
-        public EMSPAPI  EMSPAPI  { get; }
+        public EMSP_HTTPAPI  EMSP_HTTPAPI    { get; }
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new EMSP API logger using the default logging delegates.
+        /// Create a new EMSP HTTP API logger using the default logging delegates.
         /// </summary>
-        /// <param name="EMSPAPI">An EMSP API.</param>
-        /// <param name="Context">A context of this API.</param>
+        /// <param name="EMSP_HTTPAPI">The EMSP HTTP API.</param>
+        /// <param name="Context">A context of this HTTP API.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public EMSPAPILogger(EMSPAPI                      EMSPAPI,
-                             String?                      Context          = DefaultContext,
-                             String?                      LoggingPath      = null,
-                             OCPILogfileCreatorDelegate?  LogfileCreator   = null)
+        public EMSP_HTTPAPI_Logger(EMSP_HTTPAPI                 EMSP_HTTPAPI,
+                                   String?                      Context          = DefaultContext,
+                                   String?                      LoggingPath      = null,
+                                   OCPILogfileCreatorDelegate?  LogfileCreator   = null)
 
-            : base(EMSPAPI.CommonAPI,
+            : base(EMSP_HTTPAPI.CommonAPI,
                    Context ?? DefaultContext,
                    LoggingPath,
                    LogfileCreator)
 
         {
 
-            this.EMSPAPI = EMSPAPI ?? throw new ArgumentNullException(nameof(EMSPAPI), "The given EMSP API must not be null!");
+            this.EMSP_HTTPAPI = EMSP_HTTPAPI ?? throw new ArgumentNullException(nameof(EMSP_HTTPAPI), "The given EMSP HTTP API must not be null!");
 
             #region Location(s)
 
             RegisterEvent("GetLocationsRequest",
-                          handler => EMSPAPI.OnGetLocationsRequest += handler,
-                          handler => EMSPAPI.OnGetLocationsRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetLocationsHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetLocationsHTTPRequest -= handler,
                           "GetLocations", "Locations", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetLocationsResponse",
-                          handler => EMSPAPI.OnGetLocationsResponse += handler,
-                          handler => EMSPAPI.OnGetLocationsResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetLocationsHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetLocationsHTTPResponse -= handler,
                           "GetLocations", "Locations", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("DeleteLocationsRequest",
-                          handler => EMSPAPI.OnDeleteLocationsRequest += handler,
-                          handler => EMSPAPI.OnDeleteLocationsRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteLocationsHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteLocationsHTTPRequest -= handler,
                           "DeleteLocations", "Locations", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteLocationsResponse",
-                          handler => EMSPAPI.OnDeleteLocationsResponse += handler,
-                          handler => EMSPAPI.OnDeleteLocationsResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteLocationsHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteLocationsHTTPResponse -= handler,
                           "DeleteLocations", "Locations", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -104,60 +104,60 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             // Location
             RegisterEvent("GetLocationRequest",
-                          handler => EMSPAPI.OnGetLocationRequest += handler,
-                          handler => EMSPAPI.OnGetLocationRequest -= handler,
-                          "GetLocation", "Location", "Get", "Request",  "all").
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetLocationHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetLocationHTTPRequest -= handler,
+                          "GetLocation", "Location", "Get", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetLocationResponse",
-                          handler => EMSPAPI.OnGetLocationResponse += handler,
-                          handler => EMSPAPI.OnGetLocationResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetLocationHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetLocationHTTPResponse -= handler,
                           "GetLocation", "Location", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("PutLocationRequest",
-                          handler => EMSPAPI.OnPutLocationRequest += handler,
-                          handler => EMSPAPI.OnPutLocationRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutLocationHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutLocationHTTPRequest -= handler,
                           "PutLocation", "Locations", "Put", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PutLocationResponse",
-                          handler => EMSPAPI.OnPutLocationResponse += handler,
-                          handler => EMSPAPI.OnPutLocationResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutLocationHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutLocationHTTPResponse -= handler,
                           "PutLocation", "Locations", "Put", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("PatchLocationRequest",
-                          handler => EMSPAPI.OnPatchLocationRequest += handler,
-                          handler => EMSPAPI.OnPatchLocationRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchLocationHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchLocationHTTPRequest -= handler,
                           "PatchLocation", "Locations", "Patch", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PatchLocationResponse",
-                          handler => EMSPAPI.OnPatchLocationResponse += handler,
-                          handler => EMSPAPI.OnPatchLocationResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchLocationHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchLocationHTTPResponse -= handler,
                           "PatchLocation", "Locations", "Patch", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("DeleteLocationRequest",
-                          handler => EMSPAPI.OnDeleteLocationRequest += handler,
-                          handler => EMSPAPI.OnDeleteLocationRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteLocationHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteLocationHTTPRequest -= handler,
                           "DeleteLocation", "Locations", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteLocationResponse",
-                          handler => EMSPAPI.OnDeleteLocationResponse += handler,
-                          handler => EMSPAPI.OnDeleteLocationResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteLocationHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteLocationHTTPResponse -= handler,
                           "DeleteLocation", "Locations", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -167,60 +167,60 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region EVSE/EVSE status
 
             RegisterEvent("GetEVSERequest",
-                          handler => EMSPAPI.OnGetEVSERequest += handler,
-                          handler => EMSPAPI.OnGetEVSERequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetEVSEHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetEVSEHTTPRequest -= handler,
                           "GetEVSE", "EVSEs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetEVSEResponse",
-                          handler => EMSPAPI.OnGetEVSEResponse += handler,
-                          handler => EMSPAPI.OnGetEVSEResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetEVSEHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetEVSEHTTPResponse -= handler,
                           "GetEVSE", "EVSEs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("PutEVSERequest",
-                          handler => EMSPAPI.OnPutEVSERequest += handler,
-                          handler => EMSPAPI.OnPutEVSERequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutEVSEHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutEVSEHTTPRequest -= handler,
                           "PutEVSE", "EVSEs", "Put", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PutEVSEResponse",
-                          handler => EMSPAPI.OnPutEVSEResponse += handler,
-                          handler => EMSPAPI.OnPutEVSEResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutEVSEHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutEVSEHTTPResponse -= handler,
                           "PutEVSE", "EVSEs", "Put", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("PatchEVSERequest",
-                          handler => EMSPAPI.OnPatchEVSERequest += handler,
-                          handler => EMSPAPI.OnPatchEVSERequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchEVSEHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchEVSEHTTPRequest -= handler,
                           "PatchEVSE", "EVSEs", "Patch", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PatchEVSEResponse",
-                          handler => EMSPAPI.OnPatchEVSEResponse += handler,
-                          handler => EMSPAPI.OnPatchEVSEResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchEVSEHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchEVSEHTTPResponse -= handler,
                           "PatchEVSE", "EVSEs", "Patch", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("DeleteEVSERequest",
-                          handler => EMSPAPI.OnDeleteEVSERequest += handler,
-                          handler => EMSPAPI.OnDeleteEVSERequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteEVSEHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteEVSEHTTPRequest -= handler,
                           "DeleteEVSE", "EVSEs", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteEVSEResponse",
-                          handler => EMSPAPI.OnDeleteEVSEResponse += handler,
-                          handler => EMSPAPI.OnDeleteEVSEResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteEVSEHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteEVSEHTTPResponse -= handler,
                           "DeleteEVSE", "EVSEs", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -229,78 +229,77 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             // EVSE status
 
             RegisterEvent("PostEVSEStatusRequest",
-                          handler => EMSPAPI.OnPostEVSEStatusRequest += handler,
-                          handler => EMSPAPI.OnPostEVSEStatusRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPostEVSEStatusHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPostEVSEStatusHTTPRequest -= handler,
                           "PostEVSEStatus", "EVSEs", "Post", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PostEVSEStatusResponse",
-                          handler => EMSPAPI.OnPostEVSEStatusResponse += handler,
-                          handler => EMSPAPI.OnPostEVSEStatusResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPostEVSEStatusHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPostEVSEStatusHTTPResponse -= handler,
                           "PostEVSEStatus", "EVSEs", "Post", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
-
             #endregion
 
             #region Connector
 
             RegisterEvent("GetConnectorRequest",
-                          handler => EMSPAPI.OnGetConnectorRequest += handler,
-                          handler => EMSPAPI.OnGetConnectorRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetConnectorHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetConnectorHTTPRequest -= handler,
                           "GetConnector", "Connectors", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetConnectorResponse",
-                          handler => EMSPAPI.OnGetConnectorResponse += handler,
-                          handler => EMSPAPI.OnGetConnectorResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetConnectorHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetConnectorHTTPResponse -= handler,
                           "GetConnector", "Connectors", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("PutConnectorRequest",
-                          handler => EMSPAPI.OnPutConnectorRequest += handler,
-                          handler => EMSPAPI.OnPutConnectorRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutConnectorHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutConnectorHTTPRequest -= handler,
                           "PutConnector", "Connectors", "Put", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PutConnectorResponse",
-                          handler => EMSPAPI.OnPutConnectorResponse += handler,
-                          handler => EMSPAPI.OnPutConnectorResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutConnectorHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutConnectorHTTPResponse -= handler,
                           "PutConnector", "Connectors", "Put", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("PatchConnectorRequest",
-                          handler => EMSPAPI.OnPatchConnectorRequest += handler,
-                          handler => EMSPAPI.OnPatchConnectorRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchConnectorHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchConnectorHTTPRequest -= handler,
                           "PatchConnector", "Connectors", "Patch", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PatchConnectorResponse",
-                          handler => EMSPAPI.OnPatchConnectorResponse += handler,
-                          handler => EMSPAPI.OnPatchConnectorResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchConnectorHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchConnectorHTTPResponse -= handler,
                           "PatchConnector", "Connectors", "Patch", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("DeleteConnectorRequest",
-                          handler => EMSPAPI.OnDeleteConnectorRequest += handler,
-                          handler => EMSPAPI.OnDeleteConnectorRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteConnectorHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteConnectorHTTPRequest -= handler,
                           "DeleteConnector", "Connectors", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteConnectorResponse",
-                          handler => EMSPAPI.OnDeleteConnectorResponse += handler,
-                          handler => EMSPAPI.OnDeleteConnectorResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteConnectorHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteConnectorHTTPResponse -= handler,
                           "DeleteConnector", "Connectors", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -310,30 +309,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region Tariff(s)
 
             RegisterEvent("GetTariffsRequest",
-                          handler => EMSPAPI.OnGetTariffsRequest += handler,
-                          handler => EMSPAPI.OnGetTariffsRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetTariffsHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetTariffsHTTPRequest -= handler,
                           "GetTariffs", "Tariffs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetTariffsResponse",
-                          handler => EMSPAPI.OnGetTariffsResponse += handler,
-                          handler => EMSPAPI.OnGetTariffsResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetTariffsHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetTariffsHTTPResponse -= handler,
                           "GetTariffs", "Tariffs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("DeleteTariffsRequest",
-                          handler => EMSPAPI.OnDeleteTariffsRequest += handler,
-                          handler => EMSPAPI.OnDeleteTariffsRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteTariffsHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteTariffsHTTPRequest -= handler,
                           "DeleteTariffs", "Tariffs", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteTariffsResponse",
-                          handler => EMSPAPI.OnDeleteTariffsResponse += handler,
-                          handler => EMSPAPI.OnDeleteTariffsResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteTariffsHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteTariffsHTTPResponse -= handler,
                           "DeleteTariffs", "Tariffs", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -342,60 +341,60 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             // Tariff
 
             RegisterEvent("GetTariffRequest",
-                          handler => EMSPAPI.OnGetTariffRequest += handler,
-                          handler => EMSPAPI.OnGetTariffRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetTariffHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetTariffHTTPRequest -= handler,
                           "GetTariff", "Tariffs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetTariffResponse",
-                          handler => EMSPAPI.OnGetTariffResponse += handler,
-                          handler => EMSPAPI.OnGetTariffResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetTariffHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetTariffHTTPResponse -= handler,
                           "GetTariff", "Tariffs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("PutTariffRequest",
-                          handler => EMSPAPI.OnPutTariffRequest += handler,
-                          handler => EMSPAPI.OnPutTariffRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutTariffHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutTariffHTTPRequest -= handler,
                           "PutTariff", "Tariffs", "Put", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PutTariffResponse",
-                          handler => EMSPAPI.OnPutTariffResponse += handler,
-                          handler => EMSPAPI.OnPutTariffResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutTariffHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutTariffHTTPResponse -= handler,
                           "PutTariff", "Tariffs", "Put", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("PatchTariffRequest",
-                          handler => EMSPAPI.OnPatchTariffRequest += handler,
-                          handler => EMSPAPI.OnPatchTariffRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchTariffHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchTariffHTTPRequest -= handler,
                           "PatchTariff", "Tariffs", "Patch", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PatchTariffResponse",
-                          handler => EMSPAPI.OnPatchTariffResponse += handler,
-                          handler => EMSPAPI.OnPatchTariffResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchTariffHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchTariffHTTPResponse -= handler,
                           "PatchTariff", "Tariffs", "Patch", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("DeleteTariffRequest",
-                          handler => EMSPAPI.OnDeleteTariffRequest += handler,
-                          handler => EMSPAPI.OnDeleteTariffRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteTariffHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteTariffHTTPRequest -= handler,
                           "DeleteTariff", "Tariffs", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteTariffResponse",
-                          handler => EMSPAPI.OnDeleteTariffResponse += handler,
-                          handler => EMSPAPI.OnDeleteTariffResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteTariffHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteTariffHTTPResponse -= handler,
                           "DeleteTariff", "Tariffs", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -405,30 +404,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region Session(s)
 
             RegisterEvent("GetSessionsRequest",
-                          handler => EMSPAPI.OnGetSessionsRequest += handler,
-                          handler => EMSPAPI.OnGetSessionsRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetSessionsHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetSessionsHTTPRequest -= handler,
                           "GetSessions", "Sessions", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetSessionsResponse",
-                          handler => EMSPAPI.OnGetSessionsResponse += handler,
-                          handler => EMSPAPI.OnGetSessionsResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetSessionsHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetSessionsHTTPResponse -= handler,
                           "GetSessions", "Sessions", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("DeleteSessionsRequest",
-                          handler => EMSPAPI.OnDeleteSessionsRequest += handler,
-                          handler => EMSPAPI.OnDeleteSessionsRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteSessionsHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteSessionsHTTPRequest -= handler,
                           "DeleteSessions", "Sessions", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteSessionsResponse",
-                          handler => EMSPAPI.OnDeleteSessionsResponse += handler,
-                          handler => EMSPAPI.OnDeleteSessionsResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteSessionsHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteSessionsHTTPResponse -= handler,
                           "DeleteSessions", "Sessions", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -437,60 +436,60 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             // Session
 
             RegisterEvent("GetSessionRequest",
-                          handler => EMSPAPI.OnGetSessionRequest += handler,
-                          handler => EMSPAPI.OnGetSessionRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetSessionHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetSessionHTTPRequest -= handler,
                           "GetSession", "Sessions", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetSessionResponse",
-                          handler => EMSPAPI.OnGetSessionResponse += handler,
-                          handler => EMSPAPI.OnGetSessionResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetSessionHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetSessionHTTPResponse -= handler,
                           "GetSession", "Sessions", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("PutSessionRequest",
-                          handler => EMSPAPI.OnPutSessionRequest += handler,
-                          handler => EMSPAPI.OnPutSessionRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutSessionHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutSessionHTTPRequest -= handler,
                           "PutSession", "Sessions", "Put", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PutSessionResponse",
-                          handler => EMSPAPI.OnPutSessionResponse += handler,
-                          handler => EMSPAPI.OnPutSessionResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutSessionHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPutSessionHTTPResponse -= handler,
                           "PutSession", "Sessions", "Put", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("PatchSessionRequest",
-                          handler => EMSPAPI.OnPatchSessionRequest += handler,
-                          handler => EMSPAPI.OnPatchSessionRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchSessionHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchSessionHTTPRequest -= handler,
                           "PatchSession", "Sessions", "Patch", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PatchSessionResponse",
-                          handler => EMSPAPI.OnPatchSessionResponse += handler,
-                          handler => EMSPAPI.OnPatchSessionResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchSessionHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPatchSessionHTTPResponse -= handler,
                           "PatchSession", "Sessions", "Patch", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("DeleteSessionRequest",
-                          handler => EMSPAPI.OnDeleteSessionRequest += handler,
-                          handler => EMSPAPI.OnDeleteSessionRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteSessionHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteSessionHTTPRequest -= handler,
                           "DeleteSession", "Sessions", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteSessionResponse",
-                          handler => EMSPAPI.OnDeleteSessionResponse += handler,
-                          handler => EMSPAPI.OnDeleteSessionResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteSessionHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteSessionHTTPResponse -= handler,
                           "DeleteSession", "Sessions", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -500,45 +499,45 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region CDR(s)
 
             RegisterEvent("GetCDRsRequest",
-                          handler => EMSPAPI.OnGetCDRsRequest += handler,
-                          handler => EMSPAPI.OnGetCDRsRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetCDRsHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetCDRsHTTPRequest -= handler,
                           "GetCDRs", "CDRs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetCDRsResponse",
-                          handler => EMSPAPI.OnGetCDRsResponse += handler,
-                          handler => EMSPAPI.OnGetCDRsResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetCDRsHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetCDRsHTTPResponse -= handler,
                           "GetCDRs", "CDRs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("PostCDRRequest",
-                          handler => EMSPAPI.OnPostCDRRequest += handler,
-                          handler => EMSPAPI.OnPostCDRRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPostCDRHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPostCDRHTTPRequest -= handler,
                           "PostCDR", "CDRs", "Post", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PostCDRResponse",
-                          handler => EMSPAPI.OnPostCDRResponse += handler,
-                          handler => EMSPAPI.OnPostCDRResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPostCDRHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPostCDRHTTPResponse -= handler,
                           "PostCDR", "CDRs", "Post", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("DeleteCDRsRequest",
-                          handler => EMSPAPI.OnDeleteCDRsRequest += handler,
-                          handler => EMSPAPI.OnDeleteCDRsRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteCDRsHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteCDRsHTTPRequest -= handler,
                           "DeleteCDRs", "CDRs", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteCDRsResponse",
-                          handler => EMSPAPI.OnDeleteCDRsResponse += handler,
-                          handler => EMSPAPI.OnDeleteCDRsResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteCDRsHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteCDRsHTTPResponse -= handler,
                           "DeleteCDRs", "CDRs", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -548,30 +547,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             // CDR
 
             RegisterEvent("GetCDRRequest",
-                          handler => EMSPAPI.OnGetCDRRequest += handler,
-                          handler => EMSPAPI.OnGetCDRRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetCDRHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetCDRHTTPRequest -= handler,
                           "GetCDR", "CDRs", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetCDRResponse",
-                          handler => EMSPAPI.OnGetCDRResponse += handler,
-                          handler => EMSPAPI.OnGetCDRResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetCDRHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetCDRHTTPResponse -= handler,
                           "GetCDR", "CDRs", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("DeleteCDRRequest",
-                          handler => EMSPAPI.OnDeleteCDRRequest += handler,
-                          handler => EMSPAPI.OnDeleteCDRRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteCDRHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteCDRHTTPRequest -= handler,
                           "DeleteCDR", "CDRs", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteCDRResponse",
-                          handler => EMSPAPI.OnDeleteCDRResponse += handler,
-                          handler => EMSPAPI.OnDeleteCDRResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteCDRHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnDeleteCDRHTTPResponse -= handler,
                           "DeleteCDR", "CDRs", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -581,15 +580,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region Token(s)
 
             RegisterEvent("GetTokensRequest",
-                          handler => EMSPAPI.OnGetTokensRequest += handler,
-                          handler => EMSPAPI.OnGetTokensRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetTokensHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetTokensHTTPRequest -= handler,
                           "GetTokens", "Tokens", "Get", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetTokensResponse",
-                          handler => EMSPAPI.OnGetTokensResponse += handler,
-                          handler => EMSPAPI.OnGetTokensResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetTokensHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnGetTokensHTTPResponse -= handler,
                           "GetTokens", "Tokens", "Get", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -598,15 +597,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             // Token
 
             RegisterEvent("PostTokenRequest",
-                          handler => EMSPAPI.OnPostTokenRequest += handler,
-                          handler => EMSPAPI.OnPostTokenRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPostTokenHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPostTokenHTTPRequest -= handler,
                           "PostToken", "Tokens", "Post", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PostTokenResponse",
-                          handler => EMSPAPI.OnPostTokenResponse += handler,
-                          handler => EMSPAPI.OnPostTokenResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPostTokenHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnPostTokenHTTPResponse -= handler,
                           "PostToken", "Tokens", "Post", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -616,75 +615,75 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region Command callbacks
 
             RegisterEvent("ReserveNowCallbackRequest",
-                          handler => EMSPAPI.OnReserveNowCallbackRequest += handler,
-                          handler => EMSPAPI.OnReserveNowCallbackRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnReserveNowCallbackHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnReserveNowCallbackHTTPRequest -= handler,
                           "ReserveNowCallback", "ReservationCallbacks", "Callbacks", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("ReserveNowCallbackResponse",
-                          handler => EMSPAPI.OnReserveNowCallbackResponse += handler,
-                          handler => EMSPAPI.OnReserveNowCallbackResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnReserveNowCallbackHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnReserveNowCallbackHTTPResponse -= handler,
                           "ReserveNowCallback", "ReservationCallbacks", "Callbacks", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("CancelReservationCallbackRequest",
-                          handler => EMSPAPI.OnCancelReservationCallbackRequest += handler,
-                          handler => EMSPAPI.OnCancelReservationCallbackRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnCancelReservationCallbackHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnCancelReservationCallbackHTTPRequest -= handler,
                           "CancelReservationCallback", "ReservationCallbacks", "Callbacks", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("CancelReservationCallbackResponse",
-                          handler => EMSPAPI.OnCancelReservationCallbackResponse += handler,
-                          handler => EMSPAPI.OnCancelReservationCallbackResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnCancelReservationCallbackHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnCancelReservationCallbackHTTPResponse -= handler,
                           "CancelReservationCallback", "ReservationCallbacks", "Callbacks", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("StartSessionCallbackRequest",
-                          handler => EMSPAPI.OnStartSessionCallbackRequest += handler,
-                          handler => EMSPAPI.OnStartSessionCallbackRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnStartSessionCallbackHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnStartSessionCallbackHTTPRequest -= handler,
                           "StartSessionCallback", "SessionCallbacks", "Callbacks", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("StartSessionCallbackResponse",
-                          handler => EMSPAPI.OnStartSessionCallbackResponse += handler,
-                          handler => EMSPAPI.OnStartSessionCallbackResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnStartSessionCallbackHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnStartSessionCallbackHTTPResponse -= handler,
                           "StartSessionCallback", "SessionCallbacks", "Callbacks", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("StopSessionCallbackRequest",
-                          handler => EMSPAPI.OnStopSessionCallbackRequest += handler,
-                          handler => EMSPAPI.OnStopSessionCallbackRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnStopSessionCallbackHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnStopSessionCallbackHTTPRequest -= handler,
                           "StopSessionCallback", "SessionCallbacks", "Callbacks", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("StopSessionCallbackResponse",
-                          handler => EMSPAPI.OnStopSessionCallbackResponse += handler,
-                          handler => EMSPAPI.OnStopSessionCallbackResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnStopSessionCallbackHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnStopSessionCallbackHTTPResponse -= handler,
                           "StopSessionCallback", "SessionCallbacks", "CaCallbackslback", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("UnlockConnectorCallbackRequest",
-                          handler => EMSPAPI.OnUnlockConnectorCallbackRequest += handler,
-                          handler => EMSPAPI.OnUnlockConnectorCallbackRequest -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnUnlockConnectorCallbackHTTPRequest += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnUnlockConnectorCallbackHTTPRequest -= handler,
                           "UnlockConnectorCallback", "Callbacks", "Request", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("UnlockConnectorCallbackResponse",
-                          handler => EMSPAPI.OnUnlockConnectorCallbackResponse += handler,
-                          handler => EMSPAPI.OnUnlockConnectorCallbackResponse -= handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnUnlockConnectorCallbackHTTPResponse += handler,
+                          handler => EMSP_HTTPAPI.HTTPEvents.OnUnlockConnectorCallbackHTTPResponse -= handler,
                           "UnlockConnectorCallback", "Callbacks", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);

@@ -22,11 +22,11 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP;
+using cloud.charging.open.protocols.OCPIv2_3_0.HUB.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB2CPO.HTTP
 {
 
     #region OnGetLocationsRequest/-Response
@@ -35,7 +35,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a get locations request will be send.
     /// </summary>
     public delegate Task OnGetLocationsRequestDelegate(DateTimeOffset                        LogTimestamp,
-                                                       HUB2CPOClient                            Sender,
+                                                       HUB2CPOClient                         Sender,
                                                        Request_Id                            RequestId,
                                                        Correlation_Id                        CorrelationId,
 
@@ -47,7 +47,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a get locations request had been received.
     /// </summary>
     public delegate Task OnGetLocationsResponseDelegate(DateTimeOffset                        LogTimestamp,
-                                                        HUB2CPOClient                            Sender,
+                                                        HUB2CPOClient                         Sender,
                                                         Request_Id                            RequestId,
                                                         Correlation_Id                        CorrelationId,
 
@@ -66,7 +66,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a get location by its identification request will be send.
     /// </summary>
     public delegate Task OnGetLocationRequestDelegate(DateTimeOffset           LogTimestamp,
-                                                      HUB2CPOClient           Sender,
+                                                      HUB2CPOClient            Sender,
                                                       Request_Id               RequestId,
                                                       Correlation_Id           CorrelationId,
 
@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a get location by its identification request had been received.
     /// </summary>
     public delegate Task OnGetLocationResponseDelegate(DateTimeOffset           LogTimestamp,
-                                                       HUB2CPOClient           Sender,
+                                                       HUB2CPOClient            Sender,
                                                        Request_Id               RequestId,
                                                        Correlation_Id           CorrelationId,
 
@@ -101,7 +101,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a get EVSE by its identification request will be send.
     /// </summary>
     public delegate Task OnGetEVSERequestDelegate(DateTimeOffset           LogTimestamp,
-                                                  HUB2CPOClient           Sender,
+                                                  HUB2CPOClient            Sender,
                                                   Request_Id               RequestId,
                                                   Correlation_Id           CorrelationId,
 
@@ -116,7 +116,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a get EVSE by its identification request had been received.
     /// </summary>
     public delegate Task OnGetEVSEResponseDelegate(DateTimeOffset           LogTimestamp,
-                                                   HUB2CPOClient           Sender,
+                                                   HUB2CPOClient            Sender,
                                                    Request_Id               RequestId,
                                                    Correlation_Id           CorrelationId,
 
@@ -138,7 +138,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a get connector by its identification request will be send.
     /// </summary>
     public delegate Task OnGetConnectorRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                       HUB2CPOClient                Sender,
+                                                       HUB2CPOClient             Sender,
                                                        Request_Id                RequestId,
                                                        Correlation_Id            CorrelationId,
 
@@ -154,7 +154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a get connector by its identification request had been received.
     /// </summary>
     public delegate Task OnGetConnectorResponseDelegate(DateTimeOffset            LogTimestamp,
-                                                        HUB2CPOClient                Sender,
+                                                        HUB2CPOClient             Sender,
                                                         Request_Id                RequestId,
                                                         Correlation_Id            CorrelationId,
 
@@ -178,7 +178,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a get tariffs request will be send.
     /// </summary>
     public delegate Task OnGetTariffsRequestDelegate(DateTimeOffset                        LogTimestamp,
-                                                     HUB2CPOClient                        Sender,
+                                                     HUB2CPOClient                         Sender,
                                                      Request_Id                            RequestId,
                                                      Correlation_Id                        CorrelationId,
 
@@ -195,7 +195,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a get tariffs request had been received.
     /// </summary>
     public delegate Task OnGetTariffsResponseDelegate(DateTimeOffset                        LogTimestamp,
-                                                      HUB2CPOClient                        Sender,
+                                                      HUB2CPOClient                         Sender,
                                                       Request_Id                            RequestId,
                                                       Correlation_Id                        CorrelationId,
 
@@ -219,7 +219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a get tariff by its identification request will be send.
     /// </summary>
     public delegate Task OnGetTariffRequestDelegate(DateTimeOffset           LogTimestamp,
-                                                    HUB2CPOClient           Sender,
+                                                    HUB2CPOClient            Sender,
                                                     Request_Id               RequestId,
                                                     Correlation_Id           CorrelationId,
 
@@ -235,7 +235,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a get tariff by its identification request had been received.
     /// </summary>
     public delegate Task OnGetTariffResponseDelegate(DateTimeOffset           LogTimestamp,
-                                                     HUB2CPOClient           Sender,
+                                                     HUB2CPOClient            Sender,
                                                      Request_Id               RequestId,
                                                      Correlation_Id           CorrelationId,
 
@@ -259,7 +259,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a get sessions request will be send.
     /// </summary>
     public delegate Task OnGetSessionsRequestDelegate(DateTimeOffset                        LogTimestamp,
-                                                      HUB2CPOClient                            Sender,
+                                                      HUB2CPOClient                         Sender,
                                                       Request_Id                            RequestId,
                                                       Correlation_Id                        CorrelationId,
 
@@ -271,7 +271,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a get sessions request had been received.
     /// </summary>
     public delegate Task OnGetSessionsResponseDelegate(DateTimeOffset                        LogTimestamp,
-                                                       HUB2CPOClient                            Sender,
+                                                       HUB2CPOClient                         Sender,
                                                        Request_Id                            RequestId,
                                                        Correlation_Id                        CorrelationId,
 
@@ -290,7 +290,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a get session by its identification request will be send.
     /// </summary>
     public delegate Task OnGetSessionRequestDelegate(DateTimeOffset           LogTimestamp,
-                                                     HUB2CPOClient           Sender,
+                                                     HUB2CPOClient            Sender,
                                                      Request_Id               RequestId,
                                                      Correlation_Id           CorrelationId,
 
@@ -304,7 +304,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a get session by its identification request had been received.
     /// </summary>
     public delegate Task OnGetSessionResponseDelegate(DateTimeOffset           LogTimestamp,
-                                                      HUB2CPOClient           Sender,
+                                                      HUB2CPOClient            Sender,
                                                       Request_Id               RequestId,
                                                       Correlation_Id           CorrelationId,
 
@@ -326,7 +326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a get CDRs request will be send.
     /// </summary>
     public delegate Task OnGetCDRsRequestDelegate(DateTimeOffset                        LogTimestamp,
-                                                  HUB2CPOClient                            Sender,
+                                                  HUB2CPOClient                         Sender,
                                                   Request_Id                            RequestId,
                                                   Correlation_Id                        CorrelationId,
 
@@ -338,7 +338,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a get CDRs request had been received.
     /// </summary>
     public delegate Task OnGetCDRsResponseDelegate(DateTimeOffset                        LogTimestamp,
-                                                   HUB2CPOClient                            Sender,
+                                                   HUB2CPOClient                         Sender,
                                                    Request_Id                            RequestId,
                                                    Correlation_Id                        CorrelationId,
 
@@ -357,7 +357,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a get CDR by its identification request will be send.
     /// </summary>
     public delegate Task OnGetCDRRequestDelegate(DateTimeOffset           LogTimestamp,
-                                                 HUB2CPOClient           Sender,
+                                                 HUB2CPOClient            Sender,
                                                  Request_Id               RequestId,
                                                  Correlation_Id           CorrelationId,
 
@@ -371,7 +371,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a get CDR by its identification request had been received.
     /// </summary>
     public delegate Task OnGetCDRResponseDelegate(DateTimeOffset           LogTimestamp,
-                                                  HUB2CPOClient           Sender,
+                                                  HUB2CPOClient            Sender,
                                                   Request_Id               RequestId,
                                                   Correlation_Id           CorrelationId,
 
@@ -393,7 +393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a get token request will be send.
     /// </summary>
     public delegate Task OnGetTokenRequestDelegate(DateTimeOffset           LogTimestamp,
-                                                   HUB2CPOClient           Sender,
+                                                   HUB2CPOClient            Sender,
                                                    Request_Id               RequestId,
                                                    Correlation_Id           CorrelationId,
 
@@ -409,7 +409,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a get token request had been received.
     /// </summary>
     public delegate Task OnGetTokenResponseDelegate(DateTimeOffset           LogTimestamp,
-                                                    HUB2CPOClient           Sender,
+                                                    HUB2CPOClient            Sender,
                                                     Request_Id               RequestId,
                                                     Correlation_Id           CorrelationId,
 
@@ -432,7 +432,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a put token request will be send.
     /// </summary>
     public delegate Task OnPutTokenRequestDelegate(DateTimeOffset           LogTimestamp,
-                                                   HUB2CPOClient           Sender,
+                                                   HUB2CPOClient            Sender,
                                                    Request_Id               RequestId,
                                                    Correlation_Id           CorrelationId,
 
@@ -446,7 +446,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a put token request had been received.
     /// </summary>
     public delegate Task OnPutTokenResponseDelegate(DateTimeOffset           LogTimestamp,
-                                                    HUB2CPOClient           Sender,
+                                                    HUB2CPOClient            Sender,
                                                     Request_Id               RequestId,
                                                     Correlation_Id           CorrelationId,
 
@@ -467,7 +467,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a patch token request will be send.
     /// </summary>
     public delegate Task OnPatchTokenRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                     HUB2CPOClient                Sender,
+                                                     HUB2CPOClient             Sender,
                                                      Request_Id                RequestId,
                                                      Correlation_Id            CorrelationId,
 
@@ -484,7 +484,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a patch token request had been received.
     /// </summary>
     public delegate Task OnPatchTokenResponseDelegate(DateTimeOffset            LogTimestamp,
-                                                      HUB2CPOClient                Sender,
+                                                      HUB2CPOClient             Sender,
                                                       Request_Id                RequestId,
                                                       Correlation_Id            CorrelationId,
 
@@ -509,7 +509,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a reserve now command request will be send.
     /// </summary>
     public delegate Task OnReserveNowRequestDelegate(DateTimeOffset                                      LogTimestamp,
-                                                     HUB2CPOClient                                          Sender,
+                                                     HUB2CPOClient                                       Sender,
                                                      Request_Id                                          RequestId,
                                                      Correlation_Id                                      CorrelationId,
 
@@ -528,7 +528,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a reserve now command request had been received.
     /// </summary>
     public delegate Task OnReserveNowResponseDelegate(DateTimeOffset                                      LogTimestamp,
-                                                      HUB2CPOClient                                          Sender,
+                                                      HUB2CPOClient                                       Sender,
                                                       Request_Id                                          RequestId,
                                                       Correlation_Id                                      CorrelationId,
 
@@ -554,7 +554,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a cancel reservation command request will be send.
     /// </summary>
     public delegate Task OnCancelReservationRequestDelegate(DateTimeOffset                                             LogTimestamp,
-                                                            HUB2CPOClient                                                 Sender,
+                                                            HUB2CPOClient                                              Sender,
                                                             Request_Id                                                 RequestId,
                                                             Correlation_Id                                             CorrelationId,
 
@@ -568,7 +568,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a cancel reservation command request had been received.
     /// </summary>
     public delegate Task OnCancelReservationResponseDelegate(DateTimeOffset                                             LogTimestamp,
-                                                             HUB2CPOClient                                                 Sender,
+                                                             HUB2CPOClient                                              Sender,
                                                              Request_Id                                                 RequestId,
                                                              Correlation_Id                                             CorrelationId,
 
@@ -589,7 +589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a start session command request will be send.
     /// </summary>
     public delegate Task OnStartSessionRequestDelegate(DateTimeOffset                                        LogTimestamp,
-                                                       HUB2CPOClient                                            Sender,
+                                                       HUB2CPOClient                                         Sender,
                                                        Request_Id                                            RequestId,
                                                        Correlation_Id                                        CorrelationId,
 
@@ -607,7 +607,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a start session command request had been received.
     /// </summary>
     public delegate Task OnStartSessionResponseDelegate(DateTimeOffset                                        LogTimestamp,
-                                                        HUB2CPOClient                                            Sender,
+                                                        HUB2CPOClient                                         Sender,
                                                         Request_Id                                            RequestId,
                                                         Correlation_Id                                        CorrelationId,
 
@@ -632,7 +632,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a stop session command request will be send.
     /// </summary>
     public delegate Task OnStopSessionRequestDelegate(DateTimeOffset                                       LogTimestamp,
-                                                      HUB2CPOClient                                           Sender,
+                                                      HUB2CPOClient                                        Sender,
                                                       Request_Id                                           RequestId,
                                                       Correlation_Id                                       CorrelationId,
 
@@ -646,7 +646,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to a stop session command request had been received.
     /// </summary>
     public delegate Task OnStopSessionResponseDelegate(DateTimeOffset                                       LogTimestamp,
-                                                       HUB2CPOClient                                           Sender,
+                                                       HUB2CPOClient                                        Sender,
                                                        Request_Id                                           RequestId,
                                                        Correlation_Id                                       CorrelationId,
 
@@ -667,7 +667,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever an unlock connector command request will be send.
     /// </summary>
     public delegate Task OnUnlockConnectorRequestDelegate(DateTimeOffset                                           LogTimestamp,
-                                                          HUB2CPOClient                                               Sender,
+                                                          HUB2CPOClient                                            Sender,
                                                           Request_Id                                               RequestId,
                                                           Correlation_Id                                           CorrelationId,
 
@@ -683,7 +683,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to an unlock connector command request had been received.
     /// </summary>
     public delegate Task OnUnlockConnectorResponseDelegate(DateTimeOffset                                           LogTimestamp,
-                                                           HUB2CPOClient                                               Sender,
+                                                           HUB2CPOClient                                            Sender,
                                                            Request_Id                                               RequestId,
                                                            Correlation_Id                                           CorrelationId,
 
@@ -706,7 +706,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever an unlock connector command request will be send.
     /// </summary>
     public delegate Task OnSetChargingProfileRequestDelegate(DateTimeOffset                                              LogTimestamp,
-                                                             HUB2CPOClient                                                  Sender,
+                                                             HUB2CPOClient                                               Sender,
                                                              Request_Id                                                  RequestId,
                                                              Correlation_Id                                              CorrelationId,
 
@@ -722,7 +722,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
     /// A delegate called whenever a response to an unlock connector command request had been received.
     /// </summary>
     public delegate Task OnSetChargingProfileResponseDelegate(DateTimeOffset                                              LogTimestamp,
-                                                              HUB2CPOClient                                                  Sender,
+                                                              HUB2CPOClient                                               Sender,
                                                               Request_Id                                                  RequestId,
                                                               Correlation_Id                                              CorrelationId,
 

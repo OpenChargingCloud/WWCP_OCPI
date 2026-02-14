@@ -38,7 +38,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// The HTTP API for EV roaming hubs.
     /// CPOS and EMSPs will connect to this API.
     /// </summary>
-    public class HUBAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
+    public class HUB_HTTPAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
     {
 
         #region Data
@@ -65,19 +65,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// The OCPI CommonAPI.
         /// </summary>
-        public CommonAPI      CommonAPI
+        public CommonAPI            CommonAPI
             => HTTPBaseAPI;
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI v2.2 does not define any behaviour for this.
         /// </summary>
-        public Boolean?       AllowDowngrades    { get; }
+        public Boolean?             AllowDowngrades    { get; }
 
         /// <summary>
-        /// The HUB API logger.
+        /// The HUB HTTP API logger.
         /// </summary>
-        public HUBAPILogger?  Logger             { get; set; }
+        public HUB_HTTPAPI_Logger?  HTTPLogger         { get; set; }
 
         #endregion
 
@@ -140,3776 +140,98 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region Events
 
-        public CPO_Events  CPOEvents      { get; } = new CPO_Events();
+        #region CPO
 
-        public class CPO_Events
-        {
+        public CPO_HTTPAPI.HTTP_Events  CPOEvents      { get; } = new CPO_HTTPAPI.HTTP_Events();
 
-            #region Location(s)
 
-            #region (protected internal) GetLocationsRequest    (Request)
+        // Commands
 
-            /// <summary>
-            /// An event sent whenever a GET locations request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetLocationsRequest = new();
+        #region OnReserveNowCommand
 
-            /// <summary>
-            /// An event sent whenever a GET locations request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetLocationsRequest(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        CancellationToken  CancellationToken)
+        public delegate Task<CommandResponse> OnReserveNowCommandDelegate(EMSP_Id            EMSPId,
+                                                                          ReserveNowCommand  ReserveNowCommand);
 
-                => OnGetLocationsRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
+        public event OnReserveNowCommandDelegate? OnReserveNowCommand;
 
-            #endregion
+        #endregion
 
-            #region (protected internal) GetLocationsResponse   (Response)
+        #region OnCancelReservationCommand
 
-            /// <summary>
-            /// An event sent whenever a GET locations response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetLocationsResponse = new();
+        public delegate Task<CommandResponse> OnCancelReservationCommandDelegate(EMSP_Id                   EMSPId,
+                                                                                 CancelReservationCommand  CancelReservationCommand);
 
-            /// <summary>
-            /// An event sent whenever a GET locations response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetLocationsResponse(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
-                                                         OCPIRequest        Request,
-                                                         OCPIResponse       Response,
-                                                         CancellationToken  CancellationToken)
+        public event OnCancelReservationCommandDelegate? OnCancelReservationCommand;
 
-                => OnGetLocationsResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
+        #endregion
 
-            #endregion
+        #region OnStartSessionCommand
 
+        public delegate Task<CommandResponse> OnStartSessionCommandDelegate(EMSP_Id              EMSPId,
+                                                                            StartSessionCommand  StartSessionCommand);
 
-            #region (protected internal) GetLocationRequest    (Request)
+        public event OnStartSessionCommandDelegate? OnStartSessionCommand;
 
-            /// <summary>
-            /// An event sent whenever a GET location request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetLocationRequest = new();
+        #endregion
 
-            /// <summary>
-            /// An event sent whenever a GET location request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetLocationRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       CancellationToken  CancellationToken)
+        #region OnStopSessionCommand
 
-                => OnGetLocationRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
+        public delegate Task<CommandResponse> OnStopSessionCommandDelegate(EMSP_Id             EMSPId,
+                                                                           StopSessionCommand  StopSessionCommand);
 
-            #endregion
+        public event OnStopSessionCommandDelegate? OnStopSessionCommand;
 
-            #region (protected internal) GetLocationResponse   (Response)
+        #endregion
 
-            /// <summary>
-            /// An event sent whenever a GET location response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetLocationResponse = new();
+        #region OnUnlockConnectorCommand
 
-            /// <summary>
-            /// An event sent whenever a GET location response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetLocationResponse(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        OCPIResponse       Response,
-                                                        CancellationToken  CancellationToken)
+        public delegate Task<CommandResponse> OnUnlockConnectorCommandDelegate(EMSP_Id                 EMSPId,
+                                                                               UnlockConnectorCommand  UnlockConnectorCommand);
 
-                => OnGetLocationResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
+        public event OnUnlockConnectorCommandDelegate? OnUnlockConnectorCommand;
 
-            #endregion
+        #endregion
 
-            #endregion
+        #endregion
 
-            #region EVSE
+        #region EMSP
 
-            #region (protected internal) GetEVSERequest    (Request)
+        public EMSP_HTTPAPI.HTTP_Events  EMSPEvents    { get; } = new EMSP_HTTPAPI.HTTP_Events();
 
-            /// <summary>
-            /// An event sent whenever a GET EVSE request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetEVSERequest = new();
 
-            /// <summary>
-            /// An event sent whenever a GET EVSE request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetEVSERequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   CancellationToken  CancellationToken)
 
-                => OnGetEVSERequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
+        public delegate Task<AuthorizationInfo> OnRFIDAuthTokenDelegate(CountryCode         From_CountryCode,
+                                                                        Party_Id            From_PartyId,
+                                                                        CountryCode         To_CountryCode,
+                                                                        Party_Id            To_PartyId,
+                                                                        Token_Id            TokenId,
+                                                                        LocationReference?  LocationReference);
 
-            #endregion
+        public event OnRFIDAuthTokenDelegate? OnRFIDAuthToken;
 
-            #region (protected internal) GetEVSEResponse   (Response)
 
-            /// <summary>
-            /// An event sent whenever a GET EVSE response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetEVSEResponse = new();
 
-            /// <summary>
-            /// An event sent whenever a GET EVSE response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetEVSEResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    OCPIResponse       Response,
-                                                    CancellationToken  CancellationToken)
+        public async Task<AuthorizationInfo?> RFIDAuthToken(CountryCode         From_CountryCode,
+                                                            Party_Id            From_PartyId,
+                                                            CountryCode         To_CountryCode,
+                                                            Party_Id            To_PartyId,
+                                                            Token_Id            TokenId,
+                                                            LocationReference?  LocationReference)
 
-                => OnGetEVSEResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
+            => OnRFIDAuthToken is not null
 
-            #endregion
+                    ? await OnRFIDAuthToken.Invoke(
+                                From_CountryCode,
+                                From_PartyId,
+                                To_CountryCode,
+                                To_PartyId,
+                                TokenId,
+                                LocationReference
+                            )
 
-            #endregion
+                    : null;
 
-            #region Connector
-
-            #region (protected internal) GetConnectorRequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET connector request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetConnectorRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET connector request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetConnectorRequest(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        CancellationToken  CancellationToken)
-
-                => OnGetConnectorRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetConnectorResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a GET connector response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetConnectorResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET connector response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetConnectorResponse(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
-                                                         OCPIRequest        Request,
-                                                         OCPIResponse       Response,
-                                                         CancellationToken  CancellationToken)
-
-                => OnGetConnectorResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #endregion
-
-            #region Tariff(s)
-
-            #region (protected internal) GetTariffsRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET tariffs request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetTariffsRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET tariffs request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetTariffsRequest(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      CancellationToken  CancellationToken)
-
-                => OnGetTariffsRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetTariffsResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a GET tariffs response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetTariffsResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET tariffs response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetTariffsResponse(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       OCPIResponse       Response,
-                                                       CancellationToken  CancellationToken)
-
-                => OnGetTariffsResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) GetTariffRequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET tariff request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetTariffRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET tariff request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetTariffRequest(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     CancellationToken  CancellationToken)
-
-                => OnGetTariffRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetTariffResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a GET tariff response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetTariffResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET tariff response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetTariffResponse(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      OCPIResponse       Response,
-                                                      CancellationToken  CancellationToken)
-
-                => OnGetTariffResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #endregion
-
-            #region Session(s)
-
-            #region (protected internal) GetSessionsRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET sessions request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetSessionsRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET sessions request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetSessionsRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       CancellationToken  CancellationToken)
-
-                => OnGetSessionsRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetSessionsResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a GET sessions response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetSessionsResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET sessions response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetSessionsResponse(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        OCPIResponse       Response,
-                                                        CancellationToken  CancellationToken)
-
-                => OnGetSessionsResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) GetSessionRequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET session request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetSessionRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET session request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetSessionRequest(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      CancellationToken  CancellationToken)
-
-                => OnGetSessionRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetSessionResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a GET session response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetSessionResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET session response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetSessionResponse(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       OCPIResponse       Response,
-                                                       CancellationToken  CancellationToken)
-
-                => OnGetSessionResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #endregion
-
-            #region CDR(s)
-
-            #region (protected internal) GetCDRsRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET CDRs request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetCDRsRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET CDRs request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetCDRsRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   CancellationToken  CancellationToken)
-
-                => OnGetCDRsRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetCDRsResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a GET CDRs response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetCDRsResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET CDRs response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetCDRsResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    OCPIResponse       Response,
-                                                    CancellationToken  CancellationToken)
-
-                => OnGetCDRsResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) GetCDRRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET CDR request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetCDRRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET CDR request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetCDRRequest(DateTimeOffset     Timestamp,
-                                                  HTTPAPIX           API,
-                                                  OCPIRequest        Request,
-                                                  CancellationToken  CancellationToken)
-
-                => OnGetCDRRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetCDRResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a GET CDR response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetCDRResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET CDR response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetCDRResponse(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   OCPIResponse       Response,
-                                                   CancellationToken  CancellationToken)
-
-                => OnGetCDRResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #endregion
-
-            #region Token(s)
-
-            #region (protected internal) GetTokensRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET Tokens request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetTokensRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET Tokens request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetTokensRequest(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     CancellationToken  CancellationToken)
-
-                => OnGetTokensRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetTokensResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a GET Tokens response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetTokensResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET Tokens response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetTokensResponse(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      OCPIResponse       Response,
-                                                      CancellationToken  CancellationToken)
-
-                => OnGetTokensResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) DeleteTokensRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a DELETE Tokens request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnDeleteTokensRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE Tokens request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task DeleteTokensRequest(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        CancellationToken  CancellationToken)
-
-                => OnDeleteTokensRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) DeleteTokensResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a DELETE Tokens response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnDeleteTokensResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE Tokens response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task DeleteTokensResponse(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
-                                                         OCPIRequest        Request,
-                                                         OCPIResponse       Response,
-                                                         CancellationToken  CancellationToken)
-
-                => OnDeleteTokensResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            // Token
-
-            #region (protected internal) GetTokenRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET Token request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetTokenRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET Token request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetTokenRequest(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    CancellationToken  CancellationToken)
-
-                => OnGetTokenRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetTokenResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a GET Token response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetTokenResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET Token response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetTokenResponse(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     OCPIResponse       Response,
-                                                     CancellationToken  CancellationToken)
-
-                => OnGetTokenResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) PostTokenRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a POST token request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnPostTokenRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a POST token request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task PostTokenRequest(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     CancellationToken  CancellationToken)
-
-                => OnPostTokenRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) PostTokenResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a POST token response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnPostTokenResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a POST token response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task PostTokenResponse(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      OCPIResponse       Response,
-                                                      CancellationToken  CancellationToken)
-
-                => OnPostTokenResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) PutTokenRequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a put token request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnPutTokenRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a put token request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task PutTokenRequest(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    CancellationToken  CancellationToken)
-
-                => OnPutTokenRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) PutTokenResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a put token response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnPutTokenResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a put token response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task PutTokenResponse(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     OCPIResponse       Response,
-                                                     CancellationToken  CancellationToken)
-
-                => OnPutTokenResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) PatchTokenRequest  (Request)
-
-            /// <summary>
-            /// An event sent whenever a patch token request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnPatchTokenRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a patch token request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task PatchTokenRequest(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      CancellationToken  CancellationToken)
-
-                => OnPatchTokenRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) PatchTokenResponse (Response)
-
-            /// <summary>
-            /// An event sent whenever a patch token response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnPatchTokenResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a patch token response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task PatchTokenResponse(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       OCPIResponse       Response,
-                                                       CancellationToken  CancellationToken)
-
-                => OnPatchTokenResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) DeleteTokenRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a delete token request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnDeleteTokenRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a delete token request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task DeleteTokenRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       CancellationToken  CancellationToken)
-
-                => OnDeleteTokenRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) DeleteTokenResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a delete token response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnDeleteTokenResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a delete token response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task DeleteTokenResponse(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        OCPIResponse       Response,
-                                                        CancellationToken  CancellationToken)
-
-                => OnDeleteTokenResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #endregion
-
-
-            // Commands
-
-            #region (protected internal) ReserveNowRequest        (Request)
-
-            /// <summary>
-            /// An event sent whenever a reserve now command was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnReserveNowRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a reserve now command was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the command request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task ReserveNowRequest(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      CancellationToken  CancellationToken)
-
-                => OnReserveNowRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region OnReserveNowCommand
-
-            public delegate Task<CommandResponse> OnReserveNowCommandDelegate(EMSP_Id            EMSPId,
-                                                                              ReserveNowCommand  ReserveNowCommand);
-
-            public event OnReserveNowCommandDelegate? OnReserveNowCommand;
-
-
-            public async Task<CommandResponse> ReserveNowCommand(EMSP_Id            EMSPId,
-                                                                 ReserveNowCommand  ReserveNowCommand)
-
-                => OnReserveNowCommand is not null
-
-                       ? await OnReserveNowCommand.Invoke(
-                                   EMSPId,
-                                   ReserveNowCommand
-                               )
-
-                       : new CommandResponse(
-                             ReserveNowCommand,
-                             CommandResponseTypes.NOT_SUPPORTED,
-                             TimeSpan.Zero,
-                             [ DisplayText.Create("No handler for the ReserveNow command available!")]
-                         );
-
-            #endregion
-
-            #region (protected internal) ReserveNowResponse       (Response)
-
-            /// <summary>
-            /// An event sent whenever a reserve now command response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnReserveNowResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a reserve now command response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the command response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task ReserveNowResponse(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       OCPIResponse       Response,
-                                                       CancellationToken  CancellationToken)
-
-                => OnReserveNowResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) CancelReservationRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a cancel reservation command was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnCancelReservationRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a cancel reservation command was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the command request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task CancelReservationRequest(DateTimeOffset     Timestamp,
-                                                             HTTPAPIX           API,
-                                                             OCPIRequest        Request,
-                                                             CancellationToken  CancellationToken)
-
-                => OnCancelReservationRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region OnCancelReservationCommand
-
-            public delegate Task<CommandResponse> OnCancelReservationCommandDelegate(EMSP_Id                   EMSPId,
-                                                                                     CancelReservationCommand  CancelReservationCommand);
-
-            public event OnCancelReservationCommandDelegate? OnCancelReservationCommand;
-
-            public async Task<CommandResponse> CancelReservationCommand(EMSP_Id                   EMSPId,
-                                                                        CancelReservationCommand  CancelReservationCommand)
-
-                => OnCancelReservationCommand is not null
-
-                       ? await OnCancelReservationCommand.Invoke(
-                                   EMSPId,
-                                   CancelReservationCommand
-                               )
-
-                       : new CommandResponse(
-                             CancelReservationCommand,
-                             CommandResponseTypes.NOT_SUPPORTED,
-                             TimeSpan.Zero,
-                             [ DisplayText.Create("No handler for the CancelReservation command available!")]
-                         );
-
-            #endregion
-
-            #region (protected internal) CancelReservationResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a cancel reservation command response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnCancelReservationResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a cancel reservation command response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the command response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task CancelReservationResponse(DateTimeOffset     Timestamp,
-                                                              HTTPAPIX           API,
-                                                              OCPIRequest        Request,
-                                                              OCPIResponse       Response,
-                                                              CancellationToken  CancellationToken)
-
-                => OnCancelReservationResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) StartSessionRequest      (Request)
-
-            /// <summary>
-            /// An event sent whenever a start session command was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnStartSessionRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a start session command was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the command request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task StartSessionRequest(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        CancellationToken  CancellationToken)
-
-                => OnStartSessionRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region OnStartSessionCommand
-
-            public delegate Task<CommandResponse> OnStartSessionCommandDelegate(EMSP_Id              EMSPId,
-                                                                                StartSessionCommand  StartSessionCommand);
-
-            public event OnStartSessionCommandDelegate? OnStartSessionCommand;
-
-            public async Task<CommandResponse> StartSessionCommand(EMSP_Id              EMSPId,
-                                                                   StartSessionCommand  StartSessionCommand)
-
-                => OnStartSessionCommand is not null
-
-                       ? await OnStartSessionCommand.Invoke(
-                                   EMSPId,
-                                   StartSessionCommand
-                               )
-
-                       : new CommandResponse(
-                             StartSessionCommand,
-                             CommandResponseTypes.NOT_SUPPORTED,
-                             TimeSpan.Zero,
-                             [ DisplayText.Create("No handler for the StartSession command available!")]
-                         );
-
-            #endregion
-
-            #region (protected internal) StartSessionResponse     (Response)
-
-            /// <summary>
-            /// An event sent whenever a start session command response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnStartSessionResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a start session command response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the command response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task StartSessionResponse(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
-                                                         OCPIRequest        Request,
-                                                         OCPIResponse       Response,
-                                                         CancellationToken  CancellationToken)
-
-                => OnStartSessionResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) StopSessionRequest       (Request)
-
-            /// <summary>
-            /// An event sent whenever a stop session command was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnStopSessionRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a stop session command was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the command request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task StopSessionRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       CancellationToken  CancellationToken)
-
-                => OnStopSessionRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region OnStopSessionCommand
-
-            public delegate Task<CommandResponse> OnStopSessionCommandDelegate(EMSP_Id             EMSPId,
-                                                                               StopSessionCommand  StopSessionCommand);
-
-            public event OnStopSessionCommandDelegate? OnStopSessionCommand;
-
-            public async Task<CommandResponse> StopSessionCommand(EMSP_Id             EMSPId,
-                                                                  StopSessionCommand  StopSessionCommand)
-
-                => OnStopSessionCommand is not null
-
-                       ? await OnStopSessionCommand.Invoke(
-                                   EMSPId,
-                                   StopSessionCommand
-                               )
-
-                       : new CommandResponse(
-                             StopSessionCommand,
-                             CommandResponseTypes.NOT_SUPPORTED,
-                             TimeSpan.Zero,
-                             [ DisplayText.Create("No handler for the StopSession command available!")]
-                         );
-
-            #endregion
-
-            #region (protected internal) StopSessionResponse      (Response)
-
-            /// <summary>
-            /// An event sent whenever a stop session command response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnStopSessionResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a stop session command response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the command response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task StopSessionResponse(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        OCPIResponse       Response,
-                                                        CancellationToken  CancellationToken)
-
-                => OnStopSessionResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) UnlockConnectorRequest   (Request)
-
-            /// <summary>
-            /// An event sent whenever a unlock connector command was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnUnlockConnectorRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a unlock connector command was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the command request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task UnlockConnectorRequest(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           API,
-                                                           OCPIRequest        Request,
-                                                           CancellationToken  CancellationToken)
-
-                => OnUnlockConnectorRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region OnUnlockConnectorCommand
-
-            public delegate Task<CommandResponse> OnUnlockConnectorCommandDelegate(EMSP_Id                 EMSPId,
-                                                                                   UnlockConnectorCommand  UnlockConnectorCommand);
-
-            public event OnUnlockConnectorCommandDelegate? OnUnlockConnectorCommand;
-
-            public async Task<CommandResponse> UnlockConnectorCommand(EMSP_Id                 EMSPId,
-                                                                      UnlockConnectorCommand  UnlockConnectorCommand)
-
-                => OnUnlockConnectorCommand is not null
-
-                       ? await OnUnlockConnectorCommand.Invoke(
-                                   EMSPId,
-                                   UnlockConnectorCommand
-                               )
-
-                       : new CommandResponse(
-                             UnlockConnectorCommand,
-                             CommandResponseTypes.NOT_SUPPORTED,
-                             TimeSpan.Zero,
-                             [ DisplayText.Create("No handler for the UnlockConnector command available!")]
-                         );
-
-            #endregion
-
-            #region (protected internal) UnlockConnectorResponse  (Response)
-
-            /// <summary>
-            /// An event sent whenever a unlock connector command response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnUnlockConnectorResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a unlock connector command response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the command response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task UnlockConnectorResponse(DateTimeOffset     Timestamp,
-                                                            HTTPAPIX           API,
-                                                            OCPIRequest        Request,
-                                                            OCPIResponse       Response,
-                                                            CancellationToken  CancellationToken)
-
-                => OnUnlockConnectorResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-                #endregion
-
-        }
-
-
-
-        public EMSP_Events  EMSPEvents    { get; } = new EMSP_Events();
-        public class EMSP_Events
-        {
-
-            #region Location(s)
-
-            #region (protected internal) GetLocationsRequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET locations request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetLocationsRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET locations request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetLocationsRequest(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        CancellationToken  CancellationToken)
-
-                => OnGetLocationsRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetLocationsResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a GET locations response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetLocationsResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET locations response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetLocationsResponse(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
-                                                         OCPIRequest        Request,
-                                                         OCPIResponse       Response,
-                                                         CancellationToken  CancellationToken)
-
-                => OnGetLocationsResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) DeleteLocationsRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a delete locations request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnDeleteLocationsRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a delete locations request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task DeleteLocationsRequest(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           API,
-                                                           OCPIRequest        Request,
-                                                           CancellationToken  CancellationToken)
-
-                => OnDeleteLocationsRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) DeleteLocationsResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a delete locations response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnDeleteLocationsResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a delete locations response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task DeleteLocationsResponse(DateTimeOffset     Timestamp,
-                                                            HTTPAPIX           API,
-                                                            OCPIRequest        Request,
-                                                            OCPIResponse       Response,
-                                                            CancellationToken  CancellationToken)
-
-                => OnDeleteLocationsResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-
-            #region (protected internal) GetLocationRequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET location request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetLocationRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET location request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetLocationRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       CancellationToken  CancellationToken)
-
-                => OnGetLocationRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetLocationResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a GET location response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetLocationResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET location response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetLocationResponse(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        OCPIResponse       Response,
-                                                        CancellationToken  CancellationToken)
-
-                => OnGetLocationResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) PutLocationRequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a PUT location request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnPutLocationRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a PUT location request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task PutLocationRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       CancellationToken  CancellationToken)
-
-                => OnPutLocationRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) PutLocationResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a PUT location response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnPutLocationResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a PUT location response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task PutLocationResponse(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        OCPIResponse       Response,
-                                                        CancellationToken  CancellationToken)
-
-                => OnPutLocationResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) PatchLocationRequest  (Request)
-
-            /// <summary>
-            /// An event sent whenever a PATCH location request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnPatchLocationRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a PATCH location request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task PatchLocationRequest(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
-                                                         OCPIRequest        Request,
-                                                         CancellationToken  CancellationToken)
-
-                => OnPatchLocationRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) PatchLocationResponse (Response)
-
-            /// <summary>
-            /// An event sent whenever a PATCH location response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnPatchLocationResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a PATCH location response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task PatchLocationResponse(DateTimeOffset     Timestamp,
-                                                          HTTPAPIX           API,
-                                                          OCPIRequest        Request,
-                                                          OCPIResponse       Response,
-                                                          CancellationToken  CancellationToken)
-
-                => OnPatchLocationResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) DeleteLocationRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a DELETE location request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnDeleteLocationRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE location request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task DeleteLocationRequest(DateTimeOffset     Timestamp,
-                                                          HTTPAPIX           API,
-                                                          OCPIRequest        Request,
-                                                          CancellationToken  CancellationToken)
-
-                => OnDeleteLocationRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) DeleteLocationResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a DELETE location response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnDeleteLocationResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE location response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task DeleteLocationResponse(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           API,
-                                                           OCPIRequest        Request,
-                                                           OCPIResponse       Response,
-                                                           CancellationToken  CancellationToken)
-
-                => OnDeleteLocationResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #endregion
-
-            #region EVSE/EVSE status
-
-            #region (protected internal) GetEVSERequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET EVSE request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetEVSERequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET EVSE request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetEVSERequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   CancellationToken  CancellationToken)
-
-                => OnGetEVSERequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetEVSEResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a GET EVSE response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetEVSEResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET EVSE response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetEVSEResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    OCPIResponse       Response,
-                                                    CancellationToken  CancellationToken)
-
-                => OnGetEVSEResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) PutEVSERequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a PUT EVSE request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnPutEVSERequest = new();
-
-            /// <summary>
-            /// An event sent whenever a PUT EVSE request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task PutEVSERequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   CancellationToken  CancellationToken)
-
-                => OnPutEVSERequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) PutEVSEResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a PUT EVSE response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnPutEVSEResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a PUT EVSE response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task PutEVSEResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    OCPIResponse       Response,
-                                                    CancellationToken  CancellationToken)
-
-                => OnPutEVSEResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) PatchEVSERequest  (Request)
-
-            /// <summary>
-            /// An event sent whenever a PATCH EVSE request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnPatchEVSERequest = new();
-
-            /// <summary>
-            /// An event sent whenever a PATCH EVSE request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task PatchEVSERequest(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     CancellationToken  CancellationToken)
-
-                => OnPatchEVSERequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) PatchEVSEResponse (Response)
-
-            /// <summary>
-            /// An event sent whenever a PATCH EVSE response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnPatchEVSEResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a PATCH EVSE response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task PatchEVSEResponse(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      OCPIResponse       Response,
-                                                      CancellationToken  CancellationToken)
-
-                => OnPatchEVSEResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) DeleteEVSERequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a DELETE EVSE request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnDeleteEVSERequest = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE EVSE request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task DeleteEVSERequest(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      CancellationToken  CancellationToken)
-
-                => OnDeleteEVSERequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) DeleteEVSEResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a DELETE EVSE response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnDeleteEVSEResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE EVSE response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task DeleteEVSEResponse(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       OCPIResponse       Response,
-                                                       CancellationToken  CancellationToken)
-
-                => OnDeleteEVSEResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-
-            #region (protected internal) OnPostEVSEStatusRequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a POST EVSE status request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnPostEVSEStatusRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a POST EVSE status request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task PostEVSEStatusRequest(DateTimeOffset     Timestamp,
-                                                          HTTPAPIX           API,
-                                                          OCPIRequest        Request,
-                                                          CancellationToken  CancellationToken)
-
-                => OnPostEVSEStatusRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) PostEVSEStatusResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a POST EVSE status response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnPostEVSEStatusResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a POST EVSE status response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task PostEVSEStatusResponse(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           API,
-                                                           OCPIRequest        Request,
-                                                           OCPIResponse       Response,
-                                                           CancellationToken  CancellationToken)
-
-                => OnPostEVSEStatusResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #endregion
-
-            #region Connector
-
-            #region (protected internal) GetConnectorRequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET connector request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetConnectorRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET connector request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetConnectorRequest(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        CancellationToken  CancellationToken)
-
-                => OnGetConnectorRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetConnectorResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a GET connector response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetConnectorResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET connector response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetConnectorResponse(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
-                                                         OCPIRequest        Request,
-                                                         OCPIResponse       Response,
-                                                         CancellationToken  CancellationToken)
-
-                => OnGetConnectorResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) PutConnectorRequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a PUT connector request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnPutConnectorRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a PUT connector request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task PutConnectorRequest(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        CancellationToken  CancellationToken)
-
-                => OnPutConnectorRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) PutConnectorResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a PUT connector response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnPutConnectorResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a PUT connector response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task PutConnectorResponse(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
-                                                         OCPIRequest        Request,
-                                                         OCPIResponse       Response,
-                                                         CancellationToken  CancellationToken)
-
-                => OnPutConnectorResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) PatchConnectorRequest  (Request)
-
-            /// <summary>
-            /// An event sent whenever a PATCH connector request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnPatchConnectorRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a PATCH connector request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task PatchConnectorRequest(DateTimeOffset     Timestamp,
-                                                          HTTPAPIX           API,
-                                                          OCPIRequest        Request,
-                                                          CancellationToken  CancellationToken)
-
-                => OnPatchConnectorRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) PatchConnectorResponse (Response)
-
-            /// <summary>
-            /// An event sent whenever a PATCH connector response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnPatchConnectorResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a PATCH connector response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task PatchConnectorResponse(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           API,
-                                                           OCPIRequest        Request,
-                                                           OCPIResponse       Response,
-                                                           CancellationToken  CancellationToken)
-
-                => OnPatchConnectorResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) DeleteConnectorRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a DELETE connector request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnDeleteConnectorRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE connector request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task DeleteConnectorRequest(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           API,
-                                                           OCPIRequest        Request,
-                                                           CancellationToken  CancellationToken)
-
-                => OnDeleteConnectorRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) DeleteConnectorResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a DELETE connector response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnDeleteConnectorResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE connector response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task DeleteConnectorResponse(DateTimeOffset     Timestamp,
-                                                            HTTPAPIX           API,
-                                                            OCPIRequest        Request,
-                                                            OCPIResponse       Response,
-                                                            CancellationToken  CancellationToken)
-
-                => OnDeleteConnectorResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #endregion
-
-            #region Tariff(s)
-
-            #region (protected internal) GetTariffsRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET tariffs request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetTariffsRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET tariffs request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetTariffsRequest(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      CancellationToken  CancellationToken)
-
-                => OnGetTariffsRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetTariffsResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a GET tariffs response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetTariffsResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET tariffs response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetTariffsResponse(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       OCPIResponse       Response,
-                                                       CancellationToken  CancellationToken)
-
-                => OnGetTariffsResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) DeleteTariffsRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a DELETE tariffs request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnDeleteTariffsRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE tariffs request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task DeleteTariffsRequest(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
-                                                         OCPIRequest        Request,
-                                                         CancellationToken  CancellationToken)
-
-                => OnDeleteTariffsRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) DeleteTariffsResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a DELETE tariffs response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnDeleteTariffsResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE tariffs response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task DeleteTariffsResponse(DateTimeOffset     Timestamp,
-                                                          HTTPAPIX           API,
-                                                          OCPIRequest        Request,
-                                                          OCPIResponse       Response,
-                                                          CancellationToken  CancellationToken)
-
-                => OnDeleteTariffsResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-
-            #region (protected internal) GetTariffRequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET tariff request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetTariffRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET tariff request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetTariffRequest(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     CancellationToken  CancellationToken)
-
-                => OnGetTariffRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetTariffResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a GET tariff response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetTariffResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET tariff response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetTariffResponse(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      OCPIResponse       Response,
-                                                      CancellationToken  CancellationToken)
-
-                => OnGetTariffResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) PutTariffRequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a PUT tariff request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnPutTariffRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a PUT tariff request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task PutTariffRequest(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     CancellationToken  CancellationToken)
-
-                => OnPutTariffRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) PutTariffResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a PUT tariff response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnPutTariffResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a PUT tariff response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task PutTariffResponse(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      OCPIResponse       Response,
-                                                      CancellationToken  CancellationToken)
-
-                => OnPutTariffResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) PatchTariffRequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a PATCH tariff request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnPatchTariffRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a PATCH tariff request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task PatchTariffRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       CancellationToken  CancellationToken)
-
-                => OnPatchTariffRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) PatchTariffResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a PATCH tariff response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnPatchTariffResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a PATCH tariff response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task PatchTariffResponse(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        OCPIResponse       Response,
-                                                        CancellationToken  CancellationToken)
-
-                => OnPatchTariffResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) DeleteTariffRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a DELETE tariff request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnDeleteTariffRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE tariff request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task DeleteTariffRequest(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        CancellationToken  CancellationToken)
-
-                => OnDeleteTariffRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) DeleteTariffResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a DELETE tariff response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnDeleteTariffResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE tariff response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task DeleteTariffResponse(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
-                                                         OCPIRequest        Request,
-                                                         OCPIResponse       Response,
-                                                         CancellationToken  CancellationToken)
-
-                => OnDeleteTariffResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #endregion
-
-            #region Sessions
-
-            #region (protected internal) GetSessionsRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET sessions request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetSessionsRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET sessions request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetSessionsRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       CancellationToken  CancellationToken)
-
-                => OnGetSessionsRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetSessionsResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a GET sessions response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetSessionsResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET sessions response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetSessionsResponse(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        OCPIResponse       Response,
-                                                        CancellationToken  CancellationToken)
-
-                => OnGetSessionsResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) DeleteSessionsRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a DELETE sessions request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnDeleteSessionsRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE sessions request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task DeleteSessionsRequest(DateTimeOffset     Timestamp,
-                                                          HTTPAPIX           API,
-                                                          OCPIRequest        Request,
-                                                          CancellationToken  CancellationToken)
-
-                => OnDeleteSessionsRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) DeleteSessionsResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a DELETE sessions response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnDeleteSessionsResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE sessions response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task DeleteSessionsResponse(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           API,
-                                                           OCPIRequest        Request,
-                                                           OCPIResponse       Response,
-                                                           CancellationToken  CancellationToken)
-
-                => OnDeleteSessionsResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-
-            #region (protected internal) GetSessionRequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET session request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetSessionRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET session request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetSessionRequest(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      CancellationToken  CancellationToken)
-
-                => OnGetSessionRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetSessionResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a GET session response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetSessionResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET session response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetSessionResponse(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       OCPIResponse       Response,
-                                                       CancellationToken  CancellationToken)
-
-                => OnGetSessionResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) PutSessionRequest    (Request)
-
-            /// <summary>
-            /// An event sent whenever a PUT session request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnPutSessionRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a PUT session request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task PutSessionRequest(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      CancellationToken  CancellationToken)
-
-                => OnPutSessionRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) PutSessionResponse   (Response)
-
-            /// <summary>
-            /// An event sent whenever a PUT session response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnPutSessionResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a PUT session response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task PutSessionResponse(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       OCPIResponse       Response,
-                                                       CancellationToken  CancellationToken)
-
-                => OnPutSessionResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) PatchSessionRequest  (Request)
-
-            /// <summary>
-            /// An event sent whenever a PATCH session request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnPatchSessionRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a PATCH session request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task PatchSessionRequest(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        CancellationToken  CancellationToken)
-
-                => OnPatchSessionRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) PatchSessionResponse (Response)
-
-            /// <summary>
-            /// An event sent whenever a PATCH session response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnPatchSessionResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a PATCH session response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task PatchSessionResponse(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
-                                                         OCPIRequest        Request,
-                                                         OCPIResponse       Response,
-                                                         CancellationToken  CancellationToken)
-
-                => OnPatchSessionResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) DeleteSessionRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a DELETE session request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnDeleteSessionRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE session request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task DeleteSessionRequest(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
-                                                         OCPIRequest        Request,
-                                                         CancellationToken  CancellationToken)
-
-                => OnDeleteSessionRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) DeleteSessionResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a DELETE session response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnDeleteSessionResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE session response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task DeleteSessionResponse(DateTimeOffset     Timestamp,
-                                                          HTTPAPIX           API,
-                                                          OCPIRequest        Request,
-                                                          OCPIResponse       Response,
-                                                          CancellationToken  CancellationToken)
-
-                => OnDeleteSessionResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #endregion
-
-            #region CDRs
-
-            #region (protected internal) GetCDRsRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET CDRs request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetCDRsRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET CDRs request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetCDRsRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   CancellationToken  CancellationToken)
-
-                => OnGetCDRsRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetCDRsResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a GET CDRs response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetCDRsResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET CDRs response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetCDRsResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    OCPIResponse       Response,
-                                                    CancellationToken  CancellationToken)
-
-                => OnGetCDRsResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) DeleteCDRsRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a DELETE CDRs request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnDeleteCDRsRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE CDRs request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task DeleteCDRsRequest(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      CancellationToken  CancellationToken)
-
-                => OnDeleteCDRsRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) DeleteCDRsResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a DELETE CDRs response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnDeleteCDRsResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE CDRs response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task DeleteCDRsResponse(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       OCPIResponse       Response,
-                                                       CancellationToken  CancellationToken)
-
-                => OnDeleteCDRsResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-
-            #region (protected internal) GetCDRRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET CDR request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetCDRRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET CDR request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetCDRRequest(DateTimeOffset     Timestamp,
-                                                  HTTPAPIX           API,
-                                                  OCPIRequest        Request,
-                                                  CancellationToken  CancellationToken)
-
-                => OnGetCDRRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetCDRResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a GET CDR response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetCDRResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET CDR response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetCDRResponse(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   OCPIResponse       Response,
-                                                   CancellationToken  CancellationToken)
-
-                => OnGetCDRResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) PostCDRRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a POST CDR request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnPostCDRRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a POST CDR request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task PostCDRRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   CancellationToken  CancellationToken)
-
-                => OnPostCDRRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) PostCDRResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a POST CDR response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnPostCDRResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a POST CDR response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task PostCDRResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    OCPIResponse       Response,
-                                                    CancellationToken  CancellationToken)
-
-                => OnPostCDRResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) DeleteCDRRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a DELETE CDR request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnDeleteCDRRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE CDR request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task DeleteCDRRequest(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     CancellationToken  CancellationToken)
-
-                => OnDeleteCDRRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) DeleteCDRResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a DELETE CDR response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnDeleteCDRResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a DELETE CDR response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task DeleteCDRResponse(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      OCPIResponse       Response,
-                                                      CancellationToken  CancellationToken)
-
-                => OnDeleteCDRResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #endregion
-
-            #region Tokens
-
-            #region (protected internal) GetTokensRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a GET Tokens request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnGetTokensRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a GET Tokens request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task GetTokensRequest(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     CancellationToken  CancellationToken)
-
-                => OnGetTokensRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) GetTokensResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a GET Tokens response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnGetTokensResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a GET Tokens response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task GetTokensResponse(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      OCPIResponse       Response,
-                                                      CancellationToken  CancellationToken)
-
-                => OnGetTokensResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) PostTokenRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a POST token request was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnPostTokenRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a POST token request was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task PostTokenRequest(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     CancellationToken  CancellationToken)
-
-                => OnPostTokenRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) PostTokenResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a POST token response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnPostTokenResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a POST token response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task PostTokenResponse(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      OCPIResponse       Response,
-                                                      CancellationToken  CancellationToken)
-
-                => OnPostTokenResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #endregion
-
-
-            public delegate Task<AuthorizationInfo> OnRFIDAuthTokenDelegate(CountryCode         From_CountryCode,
-                                                                            Party_Id            From_PartyId,
-                                                                            CountryCode         To_CountryCode,
-                                                                            Party_Id            To_PartyId,
-                                                                            Token_Id            TokenId,
-                                                                            LocationReference?  LocationReference);
-
-            public event OnRFIDAuthTokenDelegate? OnRFIDAuthToken;
-
-
-
-            public async Task<AuthorizationInfo?> RFIDAuthToken(CountryCode         From_CountryCode,
-                                                                Party_Id            From_PartyId,
-                                                                CountryCode         To_CountryCode,
-                                                                Party_Id            To_PartyId,
-                                                                Token_Id            TokenId,
-                                                                LocationReference?  LocationReference)
-
-                => OnRFIDAuthToken is not null
-
-                       ? await OnRFIDAuthToken.Invoke(
-                                   From_CountryCode,
-                                   From_PartyId,
-                                   To_CountryCode,
-                                   To_PartyId,
-                                   TokenId,
-                                   LocationReference
-                               )
-
-                       : null;
-
-
-
-
-            // Command callbacks
-
-            #region (protected internal) ReserveNowCallbackRequest        (Request)
-
-            /// <summary>
-            /// An event sent whenever a reserve now callback was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnReserveNowCallbackRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a reserve now callback was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the callback request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task ReserveNowCallbackRequest(DateTimeOffset     Timestamp,
-                                                              HTTPAPIX           API,
-                                                              OCPIRequest        Request,
-                                                              CancellationToken  CancellationToken)
-
-                => OnReserveNowCallbackRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) ReserveNowCallbackResponse       (Response)
-
-            /// <summary>
-            /// An event sent whenever a reserve now callback response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnReserveNowCallbackResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a reserve now callback response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the callback response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task ReserveNowCallbackResponse(DateTimeOffset     Timestamp,
-                                                               HTTPAPIX           API,
-                                                               OCPIRequest        Request,
-                                                               OCPIResponse       Response,
-                                                               CancellationToken  CancellationToken)
-
-                => OnReserveNowCallbackResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) CancelReservationCallbackRequest (Request)
-
-            /// <summary>
-            /// An event sent whenever a cancel reservation callback was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnCancelReservationCallbackRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a cancel reservation callback was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the callback request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task CancelReservationCallbackRequest(DateTimeOffset     Timestamp,
-                                                                     HTTPAPIX           API,
-                                                                     OCPIRequest        Request,
-                                                                     CancellationToken  CancellationToken)
-
-                => OnCancelReservationCallbackRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) CancelReservationCallbackResponse(Response)
-
-            /// <summary>
-            /// An event sent whenever a cancel reservation callback response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnCancelReservationCallbackResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a cancel reservation callback response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the callback response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task CancelReservationCallbackResponse(DateTimeOffset     Timestamp,
-                                                                      HTTPAPIX           API,
-                                                                      OCPIRequest        Request,
-                                                                      OCPIResponse       Response,
-                                                                      CancellationToken  CancellationToken)
-
-                => OnCancelReservationCallbackResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) StartSessionCallbackRequest      (Request)
-
-            /// <summary>
-            /// An event sent whenever a start session callback was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnStartSessionCallbackRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a start session callback was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the callback request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task StartSessionCallbackRequest(DateTimeOffset     Timestamp,
-                                                                HTTPAPIX           API,
-                                                                OCPIRequest        Request,
-                                                                CancellationToken  CancellationToken)
-
-                => OnStartSessionCallbackRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) StartSessionCallbackResponse     (Response)
-
-            /// <summary>
-            /// An event sent whenever a start session callback response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnStartSessionCallbackResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a start session callback response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the callback response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task StartSessionCallbackResponse(DateTimeOffset     Timestamp,
-                                                                 HTTPAPIX           API,
-                                                                 OCPIRequest        Request,
-                                                                 OCPIResponse       Response,
-                                                                 CancellationToken  CancellationToken)
-
-                => OnStartSessionCallbackResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) StopSessionCallbackRequest       (Request)
-
-            /// <summary>
-            /// An event sent whenever a stop session callback was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnStopSessionCallbackRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a stop session callback was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the callback request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task StopSessionCallbackRequest(DateTimeOffset     Timestamp,
-                                                               HTTPAPIX           API,
-                                                               OCPIRequest        Request,
-                                                               CancellationToken  CancellationToken)
-
-                => OnStopSessionCallbackRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) StopSessionCallbackResponse      (Response)
-
-            /// <summary>
-            /// An event sent whenever a stop session callback response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnStopSessionCallbackResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a stop session callback response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the callback response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task StopSessionCallbackResponse(DateTimeOffset     Timestamp,
-                                                                HTTPAPIX           API,
-                                                                OCPIRequest        Request,
-                                                                OCPIResponse       Response,
-                                                                CancellationToken  CancellationToken)
-
-                => OnStopSessionCallbackResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-            #endregion
-
-
-            #region (protected internal) UnlockConnectorCallbackRequest   (Request)
-
-            /// <summary>
-            /// An event sent whenever a unlock connector callback was received.
-            /// </summary>
-            public OCPIRequestLogEvent OnUnlockConnectorCallbackRequest = new();
-
-            /// <summary>
-            /// An event sent whenever a unlock connector callback was received.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the callback request.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            protected internal Task UnlockConnectorCallbackRequest(DateTimeOffset     Timestamp,
-                                                                   HTTPAPIX           API,
-                                                                   OCPIRequest        Request,
-                                                                   CancellationToken  CancellationToken)
-
-                => OnUnlockConnectorCallbackRequest.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       CancellationToken
-                   );
-
-            #endregion
-
-            #region (protected internal) UnlockConnectorCallbackResponse  (Response)
-
-            /// <summary>
-            /// An event sent whenever a unlock connector callback response was sent.
-            /// </summary>
-            public OCPIResponseLogEvent OnUnlockConnectorCallbackResponse = new();
-
-            /// <summary>
-            /// An event sent whenever a unlock connector callback response was sent.
-            /// </summary>
-            /// <param name="Timestamp">The timestamp of the callback response.</param>
-            /// <param name="API">The EMSP API.</param>
-            /// <param name="Request">An OCPI request.</param>
-            /// <param name="Response">An OCPI response.</param>
-            protected internal Task UnlockConnectorCallbackResponse(DateTimeOffset     Timestamp,
-                                                                    HTTPAPIX           API,
-                                                                    OCPIRequest        Request,
-                                                                    OCPIResponse       Response,
-                                                                    CancellationToken  CancellationToken)
-
-                => OnUnlockConnectorCallbackResponse.WhenAll(
-                       Timestamp,
-                       API,
-                       Request,
-                       Response,
-                       CancellationToken
-                   );
-
-                #endregion
-
-        }
+        #endregion
 
         #endregion
 
@@ -3926,32 +248,32 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
-        public HUBAPI(CommonAPI                    CommonAPI,
-                      I18NString?                  Description          = null,
-                      Boolean?                     AllowDowngrades      = null,
+        public HUB_HTTPAPI(CommonAPI                    CommonAPI,
+                           I18NString?                  Description          = null,
+                           Boolean?                     AllowDowngrades      = null,
 
-                      HTTPPath?                    BasePath             = null,
-                      HTTPPath?                    URLPathPrefix        = null,
+                           HTTPPath?                    BasePath             = null,
+                           HTTPPath?                    URLPathPrefix        = null,
 
-                      String?                      ExternalDNSName      = null,
-                      String?                      HTTPServerName       = DefaultHTTPServerName,
-                      String?                      HTTPServiceName      = DefaultHTTPServiceName,
-                      String?                      APIVersionHash       = null,
-                      JObject?                     APIVersionHashes     = null,
+                           String?                      ExternalDNSName      = null,
+                           String?                      HTTPServerName       = DefaultHTTPServerName,
+                           String?                      HTTPServiceName      = DefaultHTTPServiceName,
+                           String?                      APIVersionHash       = null,
+                           JObject?                     APIVersionHashes     = null,
 
-                      Boolean?                     IsDevelopment        = false,
-                      IEnumerable<String>?         DevelopmentServers   = null,
-                      Boolean?                     DisableLogging       = false,
-                      String?                      LoggingContext       = null,
-                      String?                      LoggingPath          = null,
-                      String?                      LogfileName          = null,
-                      OCPILogfileCreatorDelegate?  LogfileCreator       = null)
+                           Boolean?                     IsDevelopment        = false,
+                           IEnumerable<String>?         DevelopmentServers   = null,
+                           Boolean?                     DisableLogging       = false,
+                           String?                      LoggingContext       = null,
+                           String?                      LoggingPath          = null,
+                           String?                      LogfileName          = null,
+                           OCPILogfileCreatorDelegate?  LogfileCreator       = null)
 
             : base(CommonAPI,
                    CommonAPI.URLPathPrefix + (URLPathPrefix ?? DefaultURLPathPrefix),
                    BasePath,
 
-                   Description     ?? I18NString.Create($"OCPI{Version.String} HUB API"),
+                   Description     ?? I18NString.Create($"OCPI{Version.String} HUB HTTP API"),
 
                    ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,
@@ -3972,8 +294,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             this.AllowDowngrades  = AllowDowngrades;
 
-            this.Logger           = this.DisableLogging == false
-                                        ? new HUBAPILogger(
+            this.HTTPLogger       = this.DisableLogging == false
+                                        ? new HUB_HTTPAPI_Logger(
                                               this,
                                               LoggingContext,
                                               LoggingPath,
@@ -4376,8 +698,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations",
-                CPOEvents.GetLocationsRequest,
-                CPOEvents.GetLocationsResponse,
+                CPOEvents.GetLocationsHTTPRequest,
+                CPOEvents.GetLocationsHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -4589,8 +911,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{locationId}",
-                CPOEvents.GetLocationRequest,
-                CPOEvents.GetLocationResponse,
+                CPOEvents.GetLocationHTTPRequest,
+                CPOEvents.GetLocationHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -4700,8 +1022,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{locationId}/{evseId}",
-                CPOEvents.GetEVSERequest,
-                CPOEvents.GetEVSEResponse,
+                CPOEvents.GetEVSEHTTPRequest,
+                CPOEvents.GetEVSEHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -4806,8 +1128,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
-                CPOEvents.GetConnectorRequest,
-                CPOEvents.GetConnectorResponse,
+                CPOEvents.GetConnectorHTTPRequest,
+                CPOEvents.GetConnectorHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -4908,8 +1230,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tariffs",
-                CPOEvents.GetTariffsRequest,
-                CPOEvents.GetTariffsResponse,
+                CPOEvents.GetTariffsHTTPRequest,
+                CPOEvents.GetTariffsHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -5053,8 +1375,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tariffs/{tariffId}",
-                CPOEvents.GetTariffRequest,
-                CPOEvents.GetTariffResponse,
+                CPOEvents.GetTariffHTTPRequest,
+                CPOEvents.GetTariffHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -5158,8 +1480,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "sessions",
-                CPOEvents.GetSessionsRequest,
-                CPOEvents.GetSessionsResponse,
+                CPOEvents.GetSessionsHTTPRequest,
+                CPOEvents.GetSessionsHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -5297,8 +1619,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "sessions/{sessionId}",
-                CPOEvents.GetSessionRequest,
-                CPOEvents.GetSessionResponse,
+                CPOEvents.GetSessionHTTPRequest,
+                CPOEvents.GetSessionHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -5440,8 +1762,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "cdrs",
-                CPOEvents.GetCDRsRequest,
-                CPOEvents.GetCDRsResponse,
+                CPOEvents.GetCDRsHTTPRequest,
+                CPOEvents.GetCDRsHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -5594,8 +1916,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "cdrs/{CDRId}",
-                CPOEvents.GetCDRRequest,
-                CPOEvents.GetCDRResponse,
+                CPOEvents.GetCDRHTTPRequest,
+                CPOEvents.GetCDRHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -5707,8 +2029,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tokens/{country_code}/{party_id}",
-                CPOEvents.GetTokensRequest,
-                CPOEvents.GetTokensResponse,
+                CPOEvents.GetTokensHTTPRequest,
+                CPOEvents.GetTokensHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -5825,8 +2147,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "tokens/{country_code}/{party_id}",
-                CPOEvents.DeleteTokensRequest,
-                CPOEvents.DeleteTokensResponse,
+                CPOEvents.DeleteTokensHTTPRequest,
+                CPOEvents.DeleteTokensHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -5911,8 +2233,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                CPOEvents.GetTokenRequest,
-                CPOEvents.GetTokenResponse,
+                CPOEvents.GetTokenHTTPRequest,
+                CPOEvents.GetTokenHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -5984,8 +2306,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PUT,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                CPOEvents.PutTokenRequest,
-                CPOEvents.PutTokenResponse,
+                CPOEvents.PutTokenHTTPRequest,
+                CPOEvents.PutTokenHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -6101,8 +2423,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PATCH,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                CPOEvents.PatchTokenRequest,
-                CPOEvents.PatchTokenResponse,
+                CPOEvents.PatchTokenHTTPRequest,
+                CPOEvents.PatchTokenHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -6202,8 +2524,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                CPOEvents.DeleteTokenRequest,
-                CPOEvents.DeleteTokenResponse,
+                CPOEvents.DeleteTokenHTTPRequest,
+                CPOEvents.DeleteTokenHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -6316,8 +2638,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/RESERVE_NOW",
-                CPOEvents.ReserveNowRequest,
-                CPOEvents.ReserveNowResponse,
+                CPOEvents.ReserveNowHTTPRequest,
+                CPOEvents.ReserveNowHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -6365,10 +2687,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     #endregion
 
 
-                    var commandResponse = await CPOEvents.ReserveNowCommand(
+                    CommandResponse? commandResponse = null;
+
+                    if (OnReserveNowCommand is not null)
+                        commandResponse = await OnReserveNowCommand.Invoke(
                                                     EMSP_Id.From(request.RemoteParty.Id),
                                                     reserveNowCommand
                                                 );
+
+                    commandResponse ??= new CommandResponse(
+                                            reserveNowCommand,
+                                            CommandResponseTypes.NOT_SUPPORTED,
+                                            Timeout: TimeSpan.FromSeconds(15),
+                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                        );
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
@@ -6420,8 +2752,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/CANCEL_RESERVATION",
-                CPOEvents.CancelReservationRequest,
-                CPOEvents.CancelReservationResponse,
+                CPOEvents.CancelReservationHTTPRequest,
+                CPOEvents.CancelReservationHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -6469,10 +2801,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     #endregion
 
 
-                    var commandResponse = await CPOEvents.CancelReservationCommand(
+                    CommandResponse? commandResponse = null;
+
+                    if (OnCancelReservationCommand is not null)
+                        commandResponse = await OnCancelReservationCommand.Invoke(
                                                     EMSP_Id.From(request.RemoteParty.Id),
                                                     cancelReservationCommand
                                                 );
+
+                    commandResponse ??= new CommandResponse(
+                                            cancelReservationCommand,
+                                            CommandResponseTypes.NOT_SUPPORTED,
+                                            Timeout: TimeSpan.FromSeconds(15),
+                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                        );
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
@@ -6524,8 +2866,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/START_SESSION",
-                CPOEvents.StartSessionRequest,
-                CPOEvents.StartSessionResponse,
+                CPOEvents.StartSessionHTTPRequest,
+                CPOEvents.StartSessionHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -6573,10 +2915,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     #endregion
 
 
-                    var commandResponse = await CPOEvents.StartSessionCommand(
+                    CommandResponse? commandResponse = null;
+
+                    if (OnStartSessionCommand is not null)
+                        commandResponse = await OnStartSessionCommand.Invoke(
                                                     EMSP_Id.From(request.RemoteParty.Id),
                                                     startSessionCommand
                                                 );
+
+                    commandResponse ??= new CommandResponse(
+                                            startSessionCommand,
+                                            CommandResponseTypes.NOT_SUPPORTED,
+                                            Timeout: TimeSpan.FromSeconds(15),
+                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                        );
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
@@ -6628,8 +2980,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/STOP_SESSION",
-                CPOEvents.StopSessionRequest,
-                CPOEvents.StopSessionResponse,
+                CPOEvents.StopSessionHTTPRequest,
+                CPOEvents.StopSessionHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -6677,10 +3029,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     #endregion
 
 
-                    var commandResponse = await CPOEvents.StopSessionCommand(
+                    CommandResponse? commandResponse = null;
+
+                    if (OnStopSessionCommand is not null)
+                        commandResponse = await OnStopSessionCommand.Invoke(
                                                     EMSP_Id.From(request.RemoteParty.Id),
                                                     stopSessionCommand
                                                 );
+
+                    commandResponse ??= new CommandResponse(
+                                            stopSessionCommand,
+                                            CommandResponseTypes.NOT_SUPPORTED,
+                                            Timeout: TimeSpan.FromSeconds(15),
+                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                        );
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
@@ -6732,8 +3094,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/UNLOCK_CONNECTOR",
-                CPOEvents.UnlockConnectorRequest,
-                CPOEvents.UnlockConnectorResponse,
+                CPOEvents.UnlockConnectorHTTPRequest,
+                CPOEvents.UnlockConnectorHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -6781,10 +3143,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     #endregion
 
 
-                    var commandResponse = await CPOEvents.UnlockConnectorCommand(
+                    CommandResponse? commandResponse = null;
+
+                    if (OnUnlockConnectorCommand is not null)
+                        commandResponse = await OnUnlockConnectorCommand.Invoke(
                                                     EMSP_Id.From(request.RemoteParty.Id),
                                                     unlockConnectorCommand
                                                 );
+
+                    commandResponse ??= new CommandResponse(
+                                            unlockConnectorCommand,
+                                            CommandResponseTypes.NOT_SUPPORTED,
+                                            Timeout: TimeSpan.FromSeconds(15),
+                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                        );
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
@@ -6843,8 +3215,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{country_code}/{party_id}",
-                EMSPEvents.GetLocationsRequest,
-                EMSPEvents.GetLocationsResponse,
+                EMSPEvents.GetLocationsHTTPRequest,
+                EMSPEvents.GetLocationsHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -6942,8 +3314,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "locations/{country_code}/{party_id}",
-                EMSPEvents.DeleteLocationsRequest,
-                EMSPEvents.DeleteLocationsResponse,
+                EMSPEvents.DeleteLocationsHTTPRequest,
+                EMSPEvents.DeleteLocationsHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -7030,8 +3402,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
-                EMSPEvents.GetLocationRequest,
-                EMSPEvents.GetLocationResponse,
+                EMSPEvents.GetLocationHTTPRequest,
+                EMSPEvents.GetLocationHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -7116,8 +3488,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PUT,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
-                EMSPEvents.PutLocationRequest,
-                EMSPEvents.PutLocationResponse,
+                EMSPEvents.PutLocationHTTPRequest,
+                EMSPEvents.PutLocationHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -7272,8 +3644,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PATCH,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
-                EMSPEvents.PatchLocationRequest,
-                EMSPEvents.PatchLocationResponse,
+                EMSPEvents.PatchLocationHTTPRequest,
+                EMSPEvents.PatchLocationHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -7388,8 +3760,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
-                EMSPEvents.DeleteLocationRequest,
-                EMSPEvents.DeleteLocationResponse,
+                EMSPEvents.DeleteLocationHTTPRequest,
+                EMSPEvents.DeleteLocationHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -7503,8 +3875,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
-                EMSPEvents.GetEVSERequest,
-                EMSPEvents.GetEVSEResponse,
+                EMSPEvents.GetEVSEHTTPRequest,
+                EMSPEvents.GetEVSEHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -7584,8 +3956,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PUT,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
-                EMSPEvents.PutEVSERequest,
-                EMSPEvents.PutEVSEResponse,
+                EMSPEvents.PutEVSEHTTPRequest,
+                EMSPEvents.PutEVSEHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -7724,8 +4096,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PATCH,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
-                EMSPEvents.PatchEVSERequest,
-                EMSPEvents.PatchEVSEResponse,
+                EMSPEvents.PatchEVSEHTTPRequest,
+                EMSPEvents.PatchEVSEHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -7828,8 +4200,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
-                EMSPEvents.DeleteEVSERequest,
-                EMSPEvents.DeleteEVSEResponse,
+                EMSPEvents.DeleteEVSEHTTPRequest,
+                EMSPEvents.DeleteEVSEHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -7939,8 +4311,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
-                EMSPEvents.GetConnectorRequest,
-                EMSPEvents.GetConnectorResponse,
+                EMSPEvents.GetConnectorHTTPRequest,
+                EMSPEvents.GetConnectorHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -8013,8 +4385,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PUT,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
-                EMSPEvents.PutConnectorRequest,
-                EMSPEvents.PutConnectorResponse,
+                EMSPEvents.PutConnectorHTTPRequest,
+                EMSPEvents.PutConnectorHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -8139,8 +4511,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PATCH,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
-                EMSPEvents.PatchConnectorRequest,
-                EMSPEvents.PatchConnectorResponse,
+                EMSPEvents.PatchConnectorHTTPRequest,
+                EMSPEvents.PatchConnectorHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -8237,8 +4609,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
-                EMSPEvents.DeleteConnectorRequest,
-                EMSPEvents.DeleteConnectorResponse,
+                EMSPEvents.DeleteConnectorHTTPRequest,
+                EMSPEvents.DeleteConnectorHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -8340,8 +4712,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/status",
-                EMSPEvents.PutEVSERequest,
-                EMSPEvents.PutEVSEResponse,
+                EMSPEvents.PutEVSEHTTPRequest,
+                EMSPEvents.PutEVSEHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -8442,8 +4814,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tariffs/{country_code}/{party_id}",
-                EMSPEvents.GetTariffsRequest,
-                EMSPEvents.GetTariffsResponse,
+                EMSPEvents.GetTariffsHTTPRequest,
+                EMSPEvents.GetTariffsHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -8532,8 +4904,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "tariffs/{country_code}/{party_id}",
-                EMSPEvents.DeleteTariffsRequest,
-                EMSPEvents.DeleteTariffsResponse,
+                EMSPEvents.DeleteTariffsHTTPRequest,
+                EMSPEvents.DeleteTariffsHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -8619,8 +4991,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
-                EMSPEvents.GetTariffRequest,
-                EMSPEvents.GetTariffResponse,
+                EMSPEvents.GetTariffHTTPRequest,
+                EMSPEvents.GetTariffHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -8696,8 +5068,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PUT,
                 URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
-                EMSPEvents.PutTariffRequest,
-                EMSPEvents.PutTariffResponse,
+                EMSPEvents.PutTariffHTTPRequest,
+                EMSPEvents.PutTariffHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -8832,8 +5204,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PATCH,
                 URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
-                EMSPEvents.PatchTariffRequest,
-                EMSPEvents.PatchTariffResponse,
+                EMSPEvents.PatchTariffHTTPRequest,
+                EMSPEvents.PatchTariffHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -8926,8 +5298,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
-                EMSPEvents.DeleteTariffRequest,
-                EMSPEvents.DeleteTariffResponse,
+                EMSPEvents.DeleteTariffHTTPRequest,
+                EMSPEvents.DeleteTariffHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -9061,8 +5433,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "sessions_EMSP",
-                EMSPEvents.GetSessionsRequest,
-                EMSPEvents.GetSessionsResponse,
+                EMSPEvents.GetSessionsHTTPRequest,
+                EMSPEvents.GetSessionsHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -9138,8 +5510,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "sessions/{country_code}/{party_id}",
-                EMSPEvents.GetSessionsRequest,
-                EMSPEvents.GetSessionsResponse,
+                EMSPEvents.GetSessionsHTTPRequest,
+                EMSPEvents.GetSessionsHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -9222,8 +5594,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "sessions",
-                EMSPEvents.DeleteSessionsRequest,
-                EMSPEvents.DeleteSessionsResponse,
+                EMSPEvents.DeleteSessionsHTTPRequest,
+                EMSPEvents.DeleteSessionsHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -9283,8 +5655,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "sessions/{country_code}/{party_id}",
-                EMSPEvents.DeleteSessionsRequest,
-                EMSPEvents.DeleteSessionsResponse,
+                EMSPEvents.DeleteSessionsHTTPRequest,
+                EMSPEvents.DeleteSessionsHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -9370,8 +5742,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
-                EMSPEvents.GetSessionRequest,
-                EMSPEvents.GetSessionResponse,
+                EMSPEvents.GetSessionHTTPRequest,
+                EMSPEvents.GetSessionHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -9441,8 +5813,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PUT,
                 URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
-                EMSPEvents.PutSessionRequest,
-                EMSPEvents.PutSessionResponse,
+                EMSPEvents.PutSessionHTTPRequest,
+                EMSPEvents.PutSessionHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -9564,8 +5936,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.PATCH,
                 URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
-                EMSPEvents.PatchSessionRequest,
-                EMSPEvents.PatchSessionResponse,
+                EMSPEvents.PatchSessionHTTPRequest,
+                EMSPEvents.PatchSessionHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -9662,8 +6034,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
-                EMSPEvents.DeleteSessionRequest,
-                EMSPEvents.DeleteSessionResponse,
+                EMSPEvents.DeleteSessionHTTPRequest,
+                EMSPEvents.DeleteSessionHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -9763,8 +6135,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "cdrs_EMSP",
-                EMSPEvents.GetCDRsRequest,
-                EMSPEvents.GetCDRsResponse,
+                EMSPEvents.GetCDRsHTTPRequest,
+                EMSPEvents.GetCDRsHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -9864,8 +6236,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "cdrs/{country_code}/{party_id}",
-                EMSPEvents.GetCDRsRequest,
-                EMSPEvents.GetCDRsResponse,
+                EMSPEvents.GetCDRsHTTPRequest,
+                EMSPEvents.GetCDRsHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -9964,8 +6336,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "cdrs",///{country_code}/{party_id}",
-                EMSPEvents.PostCDRRequest,
-                EMSPEvents.PostCDRResponse,
+                EMSPEvents.PostCDRHTTPRequest,
+                EMSPEvents.PostCDRHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -10086,8 +6458,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "cdrs",
-                EMSPEvents.DeleteCDRsRequest,
-                EMSPEvents.DeleteCDRsResponse,
+                EMSPEvents.DeleteCDRsHTTPRequest,
+                EMSPEvents.DeleteCDRsHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -10136,8 +6508,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "cdrs/{country_code}/{party_id}",
-                EMSPEvents.DeleteCDRsRequest,
-                EMSPEvents.DeleteCDRsResponse,
+                EMSPEvents.DeleteCDRsHTTPRequest,
+                EMSPEvents.DeleteCDRsHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -10223,8 +6595,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
-                EMSPEvents.GetCDRRequest,
-                EMSPEvents.GetCDRResponse,
+                EMSPEvents.GetCDRHTTPRequest,
+                EMSPEvents.GetCDRHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -10309,8 +6681,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
-                EMSPEvents.DeleteCDRRequest,
-                EMSPEvents.DeleteCDRResponse,
+                EMSPEvents.DeleteCDRHTTPRequest,
+                EMSPEvents.DeleteCDRHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -10428,8 +6800,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tokens",
-                EMSPEvents.GetTokensRequest,
-                EMSPEvents.GetTokensResponse,
+                EMSPEvents.GetTokensHTTPRequest,
+                EMSPEvents.GetTokensHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -10526,8 +6898,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "tokens/{token_id}/authorize",
-                EMSPEvents.PostTokenRequest,
-                EMSPEvents.PostTokenResponse,
+                EMSPEvents.PostTokenHTTPRequest,
+                EMSPEvents.PostTokenHTTPResponse,
                 async request => {
 
                     #region Check access token
@@ -10852,8 +7224,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/RESERVE_NOW/{command_id}",
-                EMSPEvents.ReserveNowCallbackRequest,
-                EMSPEvents.ReserveNowCallbackResponse,
+                EMSPEvents.ReserveNowCallbackHTTPRequest,
+                EMSPEvents.ReserveNowCallbackHTTPResponse,
                 request => {
 
                     #region Check command identification
@@ -10960,8 +7332,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/CANCEL_RESERVATION/{command_id}",
-                EMSPEvents.CancelReservationCallbackRequest,
-                EMSPEvents.CancelReservationCallbackResponse,
+                EMSPEvents.CancelReservationCallbackHTTPRequest,
+                EMSPEvents.CancelReservationCallbackHTTPResponse,
                 request => {
 
                     #region Check command identification
@@ -11068,8 +7440,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/START_SESSION/{command_id}",
-                EMSPEvents.StartSessionCallbackRequest,
-                EMSPEvents.StartSessionCallbackResponse,
+                EMSPEvents.StartSessionCallbackHTTPRequest,
+                EMSPEvents.StartSessionCallbackHTTPResponse,
                 request => {
 
                     #region Check command identification
@@ -11176,8 +7548,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/STOP_SESSION/{command_id}",
-                EMSPEvents.StopSessionCallbackRequest,
-                EMSPEvents.StopSessionCallbackResponse,
+                EMSPEvents.StopSessionCallbackHTTPRequest,
+                EMSPEvents.StopSessionCallbackHTTPResponse,
                 request => {
 
                     #region Check command identification
@@ -11284,8 +7656,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/UNLOCK_CONNECTOR/{command_id}",
-                EMSPEvents.UnlockConnectorCallbackRequest,
-                EMSPEvents.UnlockConnectorCallbackResponse,
+                EMSPEvents.UnlockConnectorCallbackHTTPRequest,
+                EMSPEvents.UnlockConnectorCallbackHTTPResponse,
                 request => {
 
                     #region Check command identification

@@ -228,7 +228,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         /// <summary>
         /// Our CPO API.
         /// </summary>
-        public CPOAPI           CPOAPI          { get; }
+        public CPO_HTTPAPI           CPOAPI          { get; }
 
         /// <summary>
         /// CPO client event counters.
@@ -882,7 +882,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPO2EMSPClient(CPOAPI                       CPOAPI,
+        public CPO2EMSPClient(CPO_HTTPAPI                       CPOAPI,
                               RemoteParty                  RemoteParty,
                               HTTPHostname?                VirtualHostname   = null,
                               I18NString?                  Description       = null,

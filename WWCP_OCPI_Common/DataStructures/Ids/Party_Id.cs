@@ -181,6 +181,10 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
+        public static Party_Id Unknown {  get; }
+            = new Party_Id("XXX");
+
+
         #region Operator overloading
 
         #region Operator == (PartyId1, PartyId2)

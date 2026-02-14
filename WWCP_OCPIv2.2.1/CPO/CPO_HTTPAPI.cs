@@ -27,18 +27,18 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP;
+using cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3_0
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
     /// The HTTP API for charge point operators.
     /// EMSPs will connect to this API.
     /// </summary>
-    public class CPOAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
+    public class CPO_HTTPAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
     {
 
         #region Data
@@ -65,19 +65,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// The OCPI CommonAPI.
         /// </summary>
-        public CommonAPI      CommonAPI
+        public CommonAPI            CommonAPI
             => HTTPBaseAPI;
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
-        /// OCPI v2.2 does not define any behaviour for this.
+        /// OCPI v2.2.x does not define any behaviour for this.
         /// </summary>
-        public Boolean?       AllowDowngrades    { get; }
+        public Boolean?             AllowDowngrades    { get; }
 
         /// <summary>
-        /// The CPO API logger.
+        /// The CPO HTTP API logger.
         /// </summary>
-        public CPOAPILogger?  Logger             { get; set; }
+        public CPO_HTTPAPI_Logger?  HTTPLogger         { get; set; }
 
         #endregion
 
@@ -87,7 +87,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region Custom JSON serializers
 
-        public CustomJObjectSerializerDelegate<Terminal>?                    CustomTerminalSerializer                      { get; set; }
         public CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                      { get; set; }
         public CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                  { get; set; }
         public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer         { get; set; }
@@ -99,22 +98,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer    { get; set; }
         public CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer          { get; set; }
         public CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                   { get; set; }
-        public CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                       { get; set; }
         public CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                         { get; set; }
-        public CustomJObjectSerializerDelegate<EVSEParking>?                 CustomEVSEParkingSerializer                   { get; set; }
         public CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                         { get; set; }
         public CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                     { get; set; }
         public CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                  { get; set; }
         public CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer           { get; set; }
+        public CustomJObjectSerializerDelegate<CommandResponse>?             CustomCommandResponseSerializer               { get; set; }
 
 
         public CustomJObjectSerializerDelegate<Tariff>?                      CustomTariffSerializer                        { get; set; }
         public CustomJObjectSerializerDelegate<Price>?                       CustomPriceSerializer                         { get; set; }
-        public CustomJObjectSerializerDelegate<PriceLimit>?                  CustomPriceLimitSerializer                    { get; set; }
         public CustomJObjectSerializerDelegate<TariffElement>?               CustomTariffElementSerializer                 { get; set; }
         public CustomJObjectSerializerDelegate<PriceComponent>?              CustomPriceComponentSerializer                { get; set; }
-        public CustomJObjectSerializerDelegate<TaxAmount>?                   CustomTaxAmountSerializer                     { get; set; }
         public CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer            { get; set; }
 
 
@@ -133,1289 +129,1321 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public CustomJObjectSerializerDelegate<Token>?                       CustomTokenSerializer                         { get; set; }
         public CustomJObjectSerializerDelegate<EnergyContract>?              CustomEnergyContractSerializer                { get; set; }
 
-
-        public CustomJObjectSerializerDelegate<Booking>?                     CustomBookingSerializer                       { get; set; }
-
         #endregion
 
         #region Events
 
-        #region Location(s)
-
-        #region (protected internal) GetLocationsRequest    (Request)
-
-        /// <summary>
-        /// An event sent whenever a GET locations request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetLocationsRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a GET locations request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetLocationsRequest(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    CancellationToken  CancellationToken)
-
-            => OnGetLocationsRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) GetLocationsResponse   (Response)
-
-        /// <summary>
-        /// An event sent whenever a GET locations response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetLocationsResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a GET locations response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetLocationsResponse(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     OCPIResponse       Response,
-                                                     CancellationToken  CancellationToken)
-
-            => OnGetLocationsResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) GetLocationRequest    (Request)
-
-        /// <summary>
-        /// An event sent whenever a GET location request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetLocationRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a GET location request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetLocationRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   CancellationToken  CancellationToken)
-
-            => OnGetLocationRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) GetLocationResponse   (Response)
-
-        /// <summary>
-        /// An event sent whenever a GET location response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetLocationResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a GET location response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetLocationResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    OCPIResponse       Response,
-                                                    CancellationToken  CancellationToken)
-
-            => OnGetLocationResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #endregion
-
-        #region EVSE
-
-        #region (protected internal) GetEVSERequest    (Request)
-
-        /// <summary>
-        /// An event sent whenever a GET EVSE request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetEVSERequest = new();
-
-        /// <summary>
-        /// An event sent whenever a GET EVSE request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetEVSERequest(DateTimeOffset     Timestamp,
-                                               HTTPAPIX           API,
-                                               OCPIRequest        Request,
-                                               CancellationToken  CancellationToken)
-
-            => OnGetEVSERequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) GetEVSEResponse   (Response)
-
-        /// <summary>
-        /// An event sent whenever a GET EVSE response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetEVSEResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a GET EVSE response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetEVSEResponse(DateTimeOffset     Timestamp,
-                                                HTTPAPIX           API,
-                                                OCPIRequest        Request,
-                                                OCPIResponse       Response,
-                                                CancellationToken  CancellationToken)
-
-            => OnGetEVSEResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #endregion
-
-        #region Connector
-
-        #region (protected internal) GetConnectorRequest    (Request)
-
-        /// <summary>
-        /// An event sent whenever a GET connector request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetConnectorRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a GET connector request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetConnectorRequest(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    CancellationToken  CancellationToken)
-
-            => OnGetConnectorRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) GetConnectorResponse   (Response)
-
-        /// <summary>
-        /// An event sent whenever a GET connector response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetConnectorResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a GET connector response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetConnectorResponse(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     OCPIResponse       Response,
-                                                     CancellationToken  CancellationToken)
-
-            => OnGetConnectorResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #endregion
-
-        #region Tariff(s)
-
-        #region (protected internal) GetTariffsRequest (Request)
-
-        /// <summary>
-        /// An event sent whenever a GET tariffs request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetTariffsRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a GET tariffs request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetTariffsRequest(DateTimeOffset     Timestamp,
-                                                  HTTPAPIX           API,
-                                                  OCPIRequest        Request,
-                                                  CancellationToken  CancellationToken)
-
-            => OnGetTariffsRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) GetTariffsResponse(Response)
-
-        /// <summary>
-        /// An event sent whenever a GET tariffs response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetTariffsResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a GET tariffs response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTariffsResponse(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   OCPIResponse       Response,
-                                                   CancellationToken  CancellationToken)
-
-            => OnGetTariffsResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) GetTariffRequest    (Request)
-
-        /// <summary>
-        /// An event sent whenever a GET tariff request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetTariffRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a GET tariff request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetTariffRequest(DateTimeOffset     Timestamp,
-                                                 HTTPAPIX           API,
-                                                 OCPIRequest        Request,
-                                                 CancellationToken  CancellationToken)
-
-            => OnGetTariffRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) GetTariffResponse   (Response)
-
-        /// <summary>
-        /// An event sent whenever a GET tariff response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetTariffResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a GET tariff response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTariffResponse(DateTimeOffset     Timestamp,
-                                                  HTTPAPIX           API,
-                                                  OCPIRequest        Request,
-                                                  OCPIResponse       Response,
-                                                  CancellationToken  CancellationToken)
-
-            => OnGetTariffResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #endregion
-
-        #region Session(s)
-
-        #region (protected internal) GetSessionsRequest (Request)
-
-        /// <summary>
-        /// An event sent whenever a GET sessions request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetSessionsRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a GET sessions request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetSessionsRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   CancellationToken  CancellationToken)
-
-            => OnGetSessionsRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) GetSessionsResponse(Response)
-
-        /// <summary>
-        /// An event sent whenever a GET sessions response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetSessionsResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a GET sessions response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetSessionsResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    OCPIResponse       Response,
-                                                    CancellationToken  CancellationToken)
-
-            => OnGetSessionsResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) GetSessionRequest    (Request)
-
-        /// <summary>
-        /// An event sent whenever a GET session request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetSessionRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a GET session request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetSessionRequest(DateTimeOffset     Timestamp,
-                                                  HTTPAPIX           API,
-                                                  OCPIRequest        Request,
-                                                  CancellationToken  CancellationToken)
-
-            => OnGetSessionRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) GetSessionResponse   (Response)
-
-        /// <summary>
-        /// An event sent whenever a GET session response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetSessionResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a GET session response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetSessionResponse(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   OCPIResponse       Response,
-                                                   CancellationToken  CancellationToken)
-
-            => OnGetSessionResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #endregion
-
-        #region CDR(s)
-
-        #region (protected internal) GetCDRsRequest (Request)
-
-        /// <summary>
-        /// An event sent whenever a GET CDRs request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetCDRsRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a GET CDRs request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetCDRsRequest(DateTimeOffset     Timestamp,
-                                               HTTPAPIX           API,
-                                               OCPIRequest        Request,
-                                               CancellationToken  CancellationToken)
-
-            => OnGetCDRsRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) GetCDRsResponse(Response)
-
-        /// <summary>
-        /// An event sent whenever a GET CDRs response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetCDRsResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a GET CDRs response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetCDRsResponse(DateTimeOffset     Timestamp,
-                                                HTTPAPIX           API,
-                                                OCPIRequest        Request,
-                                                OCPIResponse       Response,
-                                                CancellationToken  CancellationToken)
-
-            => OnGetCDRsResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) GetCDRRequest (Request)
-
-        /// <summary>
-        /// An event sent whenever a GET CDR request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetCDRRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a GET CDR request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetCDRRequest(DateTimeOffset     Timestamp,
-                                              HTTPAPIX           API,
-                                              OCPIRequest        Request,
-                                              CancellationToken  CancellationToken)
-
-            => OnGetCDRRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) GetCDRResponse(Response)
-
-        /// <summary>
-        /// An event sent whenever a GET CDR response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetCDRResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a GET CDR response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetCDRResponse(DateTimeOffset     Timestamp,
-                                               HTTPAPIX           API,
-                                               OCPIRequest        Request,
-                                               OCPIResponse       Response,
-                                               CancellationToken  CancellationToken)
-
-            => OnGetCDRResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #endregion
-
-        #region Token(s)
-
-        #region (protected internal) GetTokensRequest (Request)
-
-        /// <summary>
-        /// An event sent whenever a GET Tokens request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetTokensRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a GET Tokens request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetTokensRequest(DateTimeOffset     Timestamp,
-                                                 HTTPAPIX           API,
-                                                 OCPIRequest        Request,
-                                                 CancellationToken  CancellationToken)
-
-            => OnGetTokensRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) GetTokensResponse(Response)
-
-        /// <summary>
-        /// An event sent whenever a GET Tokens response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetTokensResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a GET Tokens response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTokensResponse(DateTimeOffset     Timestamp,
-                                                  HTTPAPIX           API,
-                                                  OCPIRequest        Request,
-                                                  OCPIResponse       Response,
-                                                  CancellationToken  CancellationToken)
-
-            => OnGetTokensResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) DeleteTokensRequest (Request)
-
-        /// <summary>
-        /// An event sent whenever a DELETE Tokens request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnDeleteTokensRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a DELETE Tokens request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task DeleteTokensRequest(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    CancellationToken  CancellationToken)
-
-            => OnDeleteTokensRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) DeleteTokensResponse(Response)
-
-        /// <summary>
-        /// An event sent whenever a DELETE Tokens response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnDeleteTokensResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a DELETE Tokens response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteTokensResponse(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     OCPIResponse       Response,
-                                                     CancellationToken  CancellationToken)
-
-            => OnDeleteTokensResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        // Token
-
-        #region (protected internal) GetTokenRequest (Request)
-
-        /// <summary>
-        /// An event sent whenever a GET Token request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetTokenRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a GET Token request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetTokenRequest(DateTimeOffset     Timestamp,
-                                                HTTPAPIX           API,
-                                                OCPIRequest        Request,
-                                                CancellationToken  CancellationToken)
-
-            => OnGetTokenRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) GetTokenResponse(Response)
-
-        /// <summary>
-        /// An event sent whenever a GET Token response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetTokenResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a GET Token response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTokenResponse(DateTimeOffset     Timestamp,
-                                                 HTTPAPIX           API,
-                                                 OCPIRequest        Request,
-                                                 OCPIResponse       Response,
-                                                 CancellationToken  CancellationToken)
-
-            => OnGetTokenResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) PostTokenRequest (Request)
-
-        /// <summary>
-        /// An event sent whenever a POST token request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnPostTokenRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a POST token request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task PostTokenRequest(DateTimeOffset     Timestamp,
-                                                 HTTPAPIX           API,
-                                                 OCPIRequest        Request,
-                                                 CancellationToken  CancellationToken)
-
-            => OnPostTokenRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) PostTokenResponse(Response)
-
-        /// <summary>
-        /// An event sent whenever a POST token response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnPostTokenResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a POST token response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task PostTokenResponse(DateTimeOffset     Timestamp,
-                                                  HTTPAPIX           API,
-                                                  OCPIRequest        Request,
-                                                  OCPIResponse       Response,
-                                                  CancellationToken  CancellationToken)
-
-            => OnPostTokenResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) PutTokenRequest    (Request)
-
-        /// <summary>
-        /// An event sent whenever a put token request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnPutTokenRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a put token request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task PutTokenRequest(DateTimeOffset     Timestamp,
-                                                HTTPAPIX           API,
-                                                OCPIRequest        Request,
-                                                CancellationToken  CancellationToken)
-
-            => OnPutTokenRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) PutTokenResponse   (Response)
-
-        /// <summary>
-        /// An event sent whenever a put token response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnPutTokenResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a put token response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task PutTokenResponse(DateTimeOffset     Timestamp,
-                                                 HTTPAPIX           API,
-                                                 OCPIRequest        Request,
-                                                 OCPIResponse       Response,
-                                                 CancellationToken  CancellationToken)
-
-            => OnPutTokenResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) PatchTokenRequest  (Request)
-
-        /// <summary>
-        /// An event sent whenever a patch token request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnPatchTokenRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a patch token request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task PatchTokenRequest(DateTimeOffset     Timestamp,
-                                                  HTTPAPIX           API,
-                                                  OCPIRequest        Request,
-                                                  CancellationToken  CancellationToken)
-
-            => OnPatchTokenRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) PatchTokenResponse (Response)
-
-        /// <summary>
-        /// An event sent whenever a patch token response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnPatchTokenResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a patch token response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task PatchTokenResponse(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   OCPIResponse       Response,
-                                                   CancellationToken  CancellationToken)
-
-            => OnPatchTokenResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) DeleteTokenRequest (Request)
-
-        /// <summary>
-        /// An event sent whenever a delete token request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnDeleteTokenRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a delete token request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task DeleteTokenRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   CancellationToken  CancellationToken)
-
-            => OnDeleteTokenRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) DeleteTokenResponse(Response)
-
-        /// <summary>
-        /// An event sent whenever a delete token response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnDeleteTokenResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a delete token response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteTokenResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    OCPIResponse       Response,
-                                                    CancellationToken  CancellationToken)
-
-            => OnDeleteTokenResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #endregion
-
-        #region Booking(s)
-
-        #region (protected internal) GetBookingsRequest (Request)
-
-        /// <summary>
-        /// An event sent whenever a GET Bookings request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetBookingsRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a GET Bookings request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetBookingsRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   CancellationToken  CancellationToken)
-
-            => OnGetBookingsRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) GetBookingsResponse(Response)
-
-        /// <summary>
-        /// An event sent whenever a GET Bookings response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetBookingsResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a GET Bookings response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetBookingsResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    OCPIResponse       Response,
-                                                    CancellationToken  CancellationToken)
-
-            => OnGetBookingsResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) PostBookingRequest (Request)
-
-        /// <summary>
-        /// An event sent whenever a POST Booking request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnPostBookingRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a POST Booking request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task PostBookingRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   CancellationToken  CancellationToken)
-
-            => OnPostBookingRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) PostBookingResponse(Response)
-
-        /// <summary>
-        /// An event sent whenever a POST Booking response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnPostBookingResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a POST Booking response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task PostBookingResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    OCPIResponse       Response,
-                                                    CancellationToken  CancellationToken)
-
-            => OnPostBookingResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #endregion
-
-        #region Terminal(s)
-
-        #region (protected internal) GetTerminalRequest    (Request)
-
-        /// <summary>
-        /// An event sent whenever a GET terminal request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetTerminalRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a GET terminal request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The PTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetTerminalRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   CancellationToken  CancellationToken)
-
-            => OnGetTerminalRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) GetTerminalResponse   (Response)
-
-        /// <summary>
-        /// An event sent whenever a GET terminal response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetTerminalResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a GET terminal response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The PTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTerminalResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    OCPIResponse       Response,
-                                                    CancellationToken  CancellationToken)
-
-            => OnGetTerminalResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) PostTerminalRequest    (Request)
-
-        /// <summary>
-        /// An event sent whenever a POST terminal request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnPostTerminalRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a POST terminal request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The PTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task PostTerminalRequest(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    CancellationToken  CancellationToken)
-
-            => OnPostTerminalRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) PostTerminalResponse   (Response)
-
-        /// <summary>
-        /// An event sent whenever a POST terminal response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnPostTerminalResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a POST terminal response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The PTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task PostTerminalResponse(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     OCPIResponse       Response,
-                                                     CancellationToken  CancellationToken)
-
-            => OnPostTerminalResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #endregion
+        public HTTP_Events  HTTPEvents    { get; } = new HTTP_Events();
+
+        public class HTTP_Events
+        {
+
+            #region Location(s)
+
+            #region (protected internal) GetLocationsHTTPRequest  (Request)
+
+            /// <summary>
+            /// An event sent whenever a GET locations HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnGetLocationsHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a GET locations HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task GetLocationsHTTPRequest(DateTimeOffset     Timestamp,
+                                                            HTTPAPIX           API,
+                                                            OCPIRequest        Request,
+                                                            CancellationToken  CancellationToken)
+
+                => OnGetLocationsHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) GetLocationsHTTPResponse (Response)
+
+            /// <summary>
+            /// An event sent whenever a GET locations HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnGetLocationsHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a GET locations HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task GetLocationsHTTPResponse(DateTimeOffset     Timestamp,
+                                                             HTTPAPIX           API,
+                                                             OCPIRequest        Request,
+                                                             OCPIResponse       Response,
+                                                             CancellationToken  CancellationToken)
+
+                => OnGetLocationsHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+
+            #region (protected internal) GetLocationHTTPRequest   (Request)
+
+            /// <summary>
+            /// An event sent whenever a GET location HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnGetLocationHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a GET location HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task GetLocationHTTPRequest(DateTimeOffset     Timestamp,
+                                                           HTTPAPIX           API,
+                                                           OCPIRequest        Request,
+                                                           CancellationToken  CancellationToken)
+
+                => OnGetLocationHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) GetLocationHTTPResponse  (Response)
+
+            /// <summary>
+            /// An event sent whenever a GET location HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnGetLocationHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a GET location HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task GetLocationHTTPResponse(DateTimeOffset     Timestamp,
+                                                            HTTPAPIX           API,
+                                                            OCPIRequest        Request,
+                                                            OCPIResponse       Response,
+                                                            CancellationToken  CancellationToken)
+
+                => OnGetLocationHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #endregion
+
+            #region EVSE
+
+            #region (protected internal) GetEVSEHTTPRequest  (Request)
+
+            /// <summary>
+            /// An event sent whenever a GET EVSE HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnGetEVSEHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a GET EVSE HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task GetEVSEHTTPRequest(DateTimeOffset     Timestamp,
+                                                       HTTPAPIX           API,
+                                                       OCPIRequest        Request,
+                                                       CancellationToken  CancellationToken)
+
+                => OnGetEVSEHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) GetEVSEHTTPResponse (Response)
+
+            /// <summary>
+            /// An event sent whenever a GET EVSE HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnGetEVSEHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a GET EVSE HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task GetEVSEHTTPResponse(DateTimeOffset     Timestamp,
+                                                        HTTPAPIX           API,
+                                                        OCPIRequest        Request,
+                                                        OCPIResponse       Response,
+                                                        CancellationToken  CancellationToken)
+
+                => OnGetEVSEHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #endregion
+
+            #region Connector
+
+            #region (protected internal) GetConnectorHTTPRequest  (Request)
+
+            /// <summary>
+            /// An event sent whenever a GET connector HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnGetConnectorHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a GET connector HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task GetConnectorHTTPRequest(DateTimeOffset     Timestamp,
+                                                            HTTPAPIX           API,
+                                                            OCPIRequest        Request,
+                                                            CancellationToken  CancellationToken)
+
+                => OnGetConnectorHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) GetConnectorHTTPResponse (Response)
+
+            /// <summary>
+            /// An event sent whenever a GET connector HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnGetConnectorHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a GET connector HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task GetConnectorHTTPResponse(DateTimeOffset     Timestamp,
+                                                             HTTPAPIX           API,
+                                                             OCPIRequest        Request,
+                                                             OCPIResponse       Response,
+                                                             CancellationToken  CancellationToken)
+
+                => OnGetConnectorHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #endregion
+
+            #region Tariff(s)
+
+            #region (protected internal) GetTariffsHTTPRequest  (Request)
+
+            /// <summary>
+            /// An event sent whenever a GET tariffs HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnGetTariffsHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a GET tariffs HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task GetTariffsHTTPRequest(DateTimeOffset     Timestamp,
+                                                          HTTPAPIX           API,
+                                                          OCPIRequest        Request,
+                                                          CancellationToken  CancellationToken)
+
+                => OnGetTariffsHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) GetTariffsHTTPResponse (Response)
+
+            /// <summary>
+            /// An event sent whenever a GET tariffs HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnGetTariffsHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a GET tariffs HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task GetTariffsHTTPResponse(DateTimeOffset     Timestamp,
+                                                           HTTPAPIX           API,
+                                                           OCPIRequest        Request,
+                                                           OCPIResponse       Response,
+                                                           CancellationToken  CancellationToken)
+
+                => OnGetTariffsHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+
+            #region (protected internal) GetTariffHTTPRequest   (Request)
+
+            /// <summary>
+            /// An event sent whenever a GET tariff HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnGetTariffHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a GET tariff HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task GetTariffHTTPRequest(DateTimeOffset     Timestamp,
+                                                         HTTPAPIX           API,
+                                                         OCPIRequest        Request,
+                                                         CancellationToken  CancellationToken)
+
+                => OnGetTariffHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) GetTariffHTTPResponse  (Response)
+
+            /// <summary>
+            /// An event sent whenever a GET tariff HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnGetTariffHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a GET tariff HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task GetTariffHTTPResponse(DateTimeOffset     Timestamp,
+                                                          HTTPAPIX           API,
+                                                          OCPIRequest        Request,
+                                                          OCPIResponse       Response,
+                                                          CancellationToken  CancellationToken)
+
+                => OnGetTariffHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #endregion
+
+            #region Session(s)
+
+            #region (protected internal) GetSessionsHTTPRequest  (Request)
+
+            /// <summary>
+            /// An event sent whenever a GET sessions HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnGetSessionsHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a GET sessions HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task GetSessionsHTTPRequest(DateTimeOffset     Timestamp,
+                                                           HTTPAPIX           API,
+                                                           OCPIRequest        Request,
+                                                           CancellationToken  CancellationToken)
+
+                => OnGetSessionsHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) GetSessionsHTTPResponse (Response)
+
+            /// <summary>
+            /// An event sent whenever a GET sessions HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnGetSessionsHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a GET sessions HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task GetSessionsHTTPResponse(DateTimeOffset     Timestamp,
+                                                            HTTPAPIX           API,
+                                                            OCPIRequest        Request,
+                                                            OCPIResponse       Response,
+                                                            CancellationToken  CancellationToken)
+
+                => OnGetSessionsHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+
+            #region (protected internal) GetSessionHTTPRequest   (Request)
+
+            /// <summary>
+            /// An event sent whenever a GET session HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnGetSessionHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a GET session HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task GetSessionHTTPRequest(DateTimeOffset     Timestamp,
+                                                          HTTPAPIX           API,
+                                                          OCPIRequest        Request,
+                                                          CancellationToken  CancellationToken)
+
+                => OnGetSessionHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) GetSessionHTTPResponse  (Response)
+
+            /// <summary>
+            /// An event sent whenever a GET session HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnGetSessionHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a GET session HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task GetSessionHTTPResponse(DateTimeOffset     Timestamp,
+                                                           HTTPAPIX           API,
+                                                           OCPIRequest        Request,
+                                                           OCPIResponse       Response,
+                                                           CancellationToken  CancellationToken)
+
+                => OnGetSessionHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #endregion
+
+            #region CDR(s)
+
+            #region (protected internal) GetCDRsHTTPRequest  (Request)
+
+            /// <summary>
+            /// An event sent whenever a GET CDRs HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnGetCDRsHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a GET CDRs HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task GetCDRsHTTPRequest(DateTimeOffset     Timestamp,
+                                                       HTTPAPIX           API,
+                                                       OCPIRequest        Request,
+                                                       CancellationToken  CancellationToken)
+
+                => OnGetCDRsHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) GetCDRsHTTPResponse (Response)
+
+            /// <summary>
+            /// An event sent whenever a GET CDRs HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnGetCDRsHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a GET CDRs HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task GetCDRsHTTPResponse(DateTimeOffset     Timestamp,
+                                                        HTTPAPIX           API,
+                                                        OCPIRequest        Request,
+                                                        OCPIResponse       Response,
+                                                        CancellationToken  CancellationToken)
+
+                => OnGetCDRsHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+
+            #region (protected internal) GetCDRHTTPRequest   (Request)
+
+            /// <summary>
+            /// An event sent whenever a GET CDR HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnGetCDRHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a GET CDR HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task GetCDRHTTPRequest(DateTimeOffset     Timestamp,
+                                                      HTTPAPIX           API,
+                                                      OCPIRequest        Request,
+                                                      CancellationToken  CancellationToken)
+
+                => OnGetCDRHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) GetCDRHTTPResponse  (Response)
+
+            /// <summary>
+            /// An event sent whenever a GET CDR HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnGetCDRHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a GET CDR HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task GetCDRHTTPResponse(DateTimeOffset     Timestamp,
+                                                       HTTPAPIX           API,
+                                                       OCPIRequest        Request,
+                                                       OCPIResponse       Response,
+                                                       CancellationToken  CancellationToken)
+
+                => OnGetCDRHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #endregion
+
+            #region Token(s)
+
+            #region (protected internal) GetTokensHTTPRequest     (Request)
+
+            /// <summary>
+            /// An event sent whenever a GET Tokens HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnGetTokensHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a GET Tokens HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task GetTokensHTTPRequest(DateTimeOffset     Timestamp,
+                                                         HTTPAPIX           API,
+                                                         OCPIRequest        Request,
+                                                         CancellationToken  CancellationToken)
+
+                => OnGetTokensHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) GetTokensHTTPResponse    (Response)
+
+            /// <summary>
+            /// An event sent whenever a GET Tokens HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnGetTokensHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a GET Tokens HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task GetTokensHTTPResponse(DateTimeOffset     Timestamp,
+                                                          HTTPAPIX           API,
+                                                          OCPIRequest        Request,
+                                                          OCPIResponse       Response,
+                                                          CancellationToken  CancellationToken)
+
+                => OnGetTokensHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+
+            #region (protected internal) DeleteTokensHTTPRequest  (Request)
+
+            /// <summary>
+            /// An event sent whenever a DELETE Tokens HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnDeleteTokensHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a DELETE Tokens HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task DeleteTokensHTTPRequest(DateTimeOffset     Timestamp,
+                                                            HTTPAPIX           API,
+                                                            OCPIRequest        Request,
+                                                            CancellationToken  CancellationToken)
+
+                => OnDeleteTokensHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) DeleteTokensHTTPResponse (Response)
+
+            /// <summary>
+            /// An event sent whenever a DELETE Tokens HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnDeleteTokensHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a DELETE Tokens HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task DeleteTokensHTTPResponse(DateTimeOffset     Timestamp,
+                                                             HTTPAPIX           API,
+                                                             OCPIRequest        Request,
+                                                             OCPIResponse       Response,
+                                                             CancellationToken  CancellationToken)
+
+                => OnDeleteTokensHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+
+            // Token
+
+            #region (protected internal) GetTokenHTTPRequest      (Request)
+
+            /// <summary>
+            /// An event sent whenever a GET Token HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnGetTokenHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a GET Token HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task GetTokenHTTPRequest(DateTimeOffset     Timestamp,
+                                                        HTTPAPIX           API,
+                                                        OCPIRequest        Request,
+                                                        CancellationToken  CancellationToken)
+
+                => OnGetTokenHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) GetTokenHTTPResponse     (Response)
+
+            /// <summary>
+            /// An event sent whenever a GET Token HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnGetTokenHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a GET Token HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task GetTokenHTTPResponse(DateTimeOffset     Timestamp,
+                                                         HTTPAPIX           API,
+                                                         OCPIRequest        Request,
+                                                         OCPIResponse       Response,
+                                                         CancellationToken  CancellationToken)
+
+                => OnGetTokenHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+
+            #region (protected internal) PostTokenHTTPRequest     (Request)
+
+            /// <summary>
+            /// An event sent whenever a POST token HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnPostTokenHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a POST token HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task PostTokenHTTPRequest(DateTimeOffset     Timestamp,
+                                                         HTTPAPIX           API,
+                                                         OCPIRequest        Request,
+                                                         CancellationToken  CancellationToken)
+
+                => OnPostTokenHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) PostTokenHTTPResponse    (Response)
+
+            /// <summary>
+            /// An event sent whenever a POST token HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnPostTokenHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a POST token HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task PostTokenHTTPResponse(DateTimeOffset     Timestamp,
+                                                          HTTPAPIX           API,
+                                                          OCPIRequest        Request,
+                                                          OCPIResponse       Response,
+                                                          CancellationToken  CancellationToken)
+
+                => OnPostTokenHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+
+            #region (protected internal) PutTokenHTTPRequest      (Request)
+
+            /// <summary>
+            /// An event sent whenever a put token HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnPutTokenHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a put token HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task PutTokenHTTPRequest(DateTimeOffset     Timestamp,
+                                                        HTTPAPIX           API,
+                                                        OCPIRequest        Request,
+                                                        CancellationToken  CancellationToken)
+
+                => OnPutTokenHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) PutTokenHTTPResponse     (Response)
+
+            /// <summary>
+            /// An event sent whenever a put token HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnPutTokenHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a put token HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task PutTokenHTTPResponse(DateTimeOffset     Timestamp,
+                                                         HTTPAPIX           API,
+                                                         OCPIRequest        Request,
+                                                         OCPIResponse       Response,
+                                                         CancellationToken  CancellationToken)
+
+                => OnPutTokenHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+
+            #region (protected internal) PatchTokenHTTPRequest    (Request)
+
+            /// <summary>
+            /// An event sent whenever a patch token HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnPatchTokenHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a patch token HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task PatchTokenHTTPRequest(DateTimeOffset     Timestamp,
+                                                          HTTPAPIX           API,
+                                                          OCPIRequest        Request,
+                                                          CancellationToken  CancellationToken)
+
+                => OnPatchTokenHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) PatchTokenHTTPResponse   (Response)
+
+            /// <summary>
+            /// An event sent whenever a patch token HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnPatchTokenHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a patch token HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task PatchTokenHTTPResponse(DateTimeOffset     Timestamp,
+                                                           HTTPAPIX           API,
+                                                           OCPIRequest        Request,
+                                                           OCPIResponse       Response,
+                                                           CancellationToken  CancellationToken)
+
+                => OnPatchTokenHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+
+            #region (protected internal) DeleteTokenHTTPRequest   (Request)
+
+            /// <summary>
+            /// An event sent whenever a delete token HTTP request was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnDeleteTokenHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a delete token HTTP request was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task DeleteTokenHTTPRequest(DateTimeOffset     Timestamp,
+                                                           HTTPAPIX           API,
+                                                           OCPIRequest        Request,
+                                                           CancellationToken  CancellationToken)
+
+                => OnDeleteTokenHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) DeleteTokenHTTPResponse  (Response)
+
+            /// <summary>
+            /// An event sent whenever a delete token HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnDeleteTokenHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a delete token HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the logging request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task DeleteTokenHTTPResponse(DateTimeOffset     Timestamp,
+                                                            HTTPAPIX           API,
+                                                            OCPIRequest        Request,
+                                                            OCPIResponse       Response,
+                                                            CancellationToken  CancellationToken)
+
+                => OnDeleteTokenHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #endregion
+
+
+            // Commands
+
+            #region (protected internal) ReserveNowHTTPRequest         (Request)
+
+            /// <summary>
+            /// An event sent whenever a reserve now command was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnReserveNowHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a reserve now command was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the command request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task ReserveNowHTTPRequest(DateTimeOffset     Timestamp,
+                                                          HTTPAPIX           API,
+                                                          OCPIRequest        Request,
+                                                          CancellationToken  CancellationToken)
+
+                => OnReserveNowHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) ReserveNowHTTPResponse        (Response)
+
+            /// <summary>
+            /// An event sent whenever a reserve now command HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnReserveNowHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a reserve now command HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the command response.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task ReserveNowHTTPResponse(DateTimeOffset     Timestamp,
+                                                           HTTPAPIX           API,
+                                                           OCPIRequest        Request,
+                                                           OCPIResponse       Response,
+                                                           CancellationToken  CancellationToken)
+
+                => OnReserveNowHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+
+            #region (protected internal) CancelReservationHTTPRequest  (Request)
+
+            /// <summary>
+            /// An event sent whenever a cancel reservation command was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnCancelReservationHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a cancel reservation command was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the command request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task CancelReservationHTTPRequest(DateTimeOffset     Timestamp,
+                                                                 HTTPAPIX           API,
+                                                                 OCPIRequest        Request,
+                                                                 CancellationToken  CancellationToken)
+
+                => OnCancelReservationHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) CancelReservationHTTPResponse (Response)
+
+            /// <summary>
+            /// An event sent whenever a cancel reservation command HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnCancelReservationHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a cancel reservation command HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the command response.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task CancelReservationHTTPResponse(DateTimeOffset     Timestamp,
+                                                                  HTTPAPIX           API,
+                                                                  OCPIRequest        Request,
+                                                                  OCPIResponse       Response,
+                                                                  CancellationToken  CancellationToken)
+
+                => OnCancelReservationHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+
+            #region (protected internal) StartSessionHTTPRequest       (Request)
+
+            /// <summary>
+            /// An event sent whenever a start session command was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnStartSessionHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a start session command was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the command request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task StartSessionHTTPRequest(DateTimeOffset     Timestamp,
+                                                            HTTPAPIX           API,
+                                                            OCPIRequest        Request,
+                                                            CancellationToken  CancellationToken)
+
+                => OnStartSessionHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) StartSessionHTTPResponse      (Response)
+
+            /// <summary>
+            /// An event sent whenever a start session command HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnStartSessionHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a start session command HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the command response.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task StartSessionHTTPResponse(DateTimeOffset     Timestamp,
+                                                             HTTPAPIX           API,
+                                                             OCPIRequest        Request,
+                                                             OCPIResponse       Response,
+                                                             CancellationToken  CancellationToken)
+
+                => OnStartSessionHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+
+            #region (protected internal) StopSessionHTTPRequest        (Request)
+
+            /// <summary>
+            /// An event sent whenever a stop session command was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnStopSessionHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a stop session command was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the command request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task StopSessionHTTPRequest(DateTimeOffset     Timestamp,
+                                                           HTTPAPIX           API,
+                                                           OCPIRequest        Request,
+                                                           CancellationToken  CancellationToken)
+
+                => OnStopSessionHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) StopSessionHTTPResponse       (Response)
+
+            /// <summary>
+            /// An event sent whenever a stop session command HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnStopSessionHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a stop session command HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the command response.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task StopSessionHTTPResponse(DateTimeOffset     Timestamp,
+                                                            HTTPAPIX           API,
+                                                            OCPIRequest        Request,
+                                                            OCPIResponse       Response,
+                                                            CancellationToken  CancellationToken)
+
+                => OnStopSessionHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+            #endregion
+
+
+            #region (protected internal) UnlockConnectorHTTPRequest    (Request)
+
+            /// <summary>
+            /// An event sent whenever a unlock connector command was received.
+            /// </summary>
+            public OCPIRequestLogEvent OnUnlockConnectorHTTPRequest = new();
+
+            /// <summary>
+            /// An event sent whenever a unlock connector command was received.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the command request.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            protected internal Task UnlockConnectorHTTPRequest(DateTimeOffset     Timestamp,
+                                                               HTTPAPIX           API,
+                                                               OCPIRequest        Request,
+                                                               CancellationToken  CancellationToken)
+
+                => OnUnlockConnectorHTTPRequest.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       CancellationToken
+                   );
+
+            #endregion
+
+            #region (protected internal) UnlockConnectorHTTPResponse   (Response)
+
+            /// <summary>
+            /// An event sent whenever a unlock connector command HTTP response was sent.
+            /// </summary>
+            public OCPIResponseLogEvent OnUnlockConnectorHTTPResponse = new();
+
+            /// <summary>
+            /// An event sent whenever a unlock connector command HTTP response was sent.
+            /// </summary>
+            /// <param name="Timestamp">The timestamp of the command response.</param>
+            /// <param name="API">The CPO HTTP API.</param>
+            /// <param name="Request">The OCPI request.</param>
+            /// <param name="Response">The OCPI response.</param>
+            protected internal Task UnlockConnectorHTTPResponse(DateTimeOffset     Timestamp,
+                                                                HTTPAPIX           API,
+                                                                OCPIRequest        Request,
+                                                                OCPIResponse       Response,
+                                                                CancellationToken  CancellationToken)
+
+                => OnUnlockConnectorHTTPResponse.WhenAll(
+                       Timestamp,
+                       API,
+                       Request,
+                       Response,
+                       CancellationToken
+                   );
+
+                #endregion
+
+
+        }
 
 
         // Commands
-
-        #region (protected internal) ReserveNowRequest        (Request)
-
-        /// <summary>
-        /// An event sent whenever a reserve now command was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnReserveNowRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a reserve now command was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the command request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task ReserveNowRequest(DateTimeOffset     Timestamp,
-                                                  HTTPAPIX           API,
-                                                  OCPIRequest        Request,
-                                                  CancellationToken  CancellationToken)
-
-            => OnReserveNowRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
 
         #region OnReserveNowCommand
 
@@ -1423,64 +1451,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                           ReserveNowCommand  ReserveNowCommand);
 
         public event OnReserveNowCommandDelegate? OnReserveNowCommand;
-
-        #endregion
-
-        #region (protected internal) ReserveNowResponse       (Response)
-
-        /// <summary>
-        /// An event sent whenever a reserve now command response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnReserveNowResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a reserve now command response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the command response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task ReserveNowResponse(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   OCPIResponse       Response,
-                                                   CancellationToken  CancellationToken)
-
-            => OnReserveNowResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) CancelReservationRequest (Request)
-
-        /// <summary>
-        /// An event sent whenever a cancel reservation command was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnCancelReservationRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a cancel reservation command was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the command request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task CancelReservationRequest(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
-                                                         OCPIRequest        Request,
-                                                         CancellationToken  CancellationToken)
-
-            => OnCancelReservationRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
 
         #endregion
 
@@ -1493,128 +1463,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region (protected internal) CancelReservationResponse(Response)
-
-        /// <summary>
-        /// An event sent whenever a cancel reservation command response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnCancelReservationResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a cancel reservation command response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the command response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task CancelReservationResponse(DateTimeOffset     Timestamp,
-                                                          HTTPAPIX           API,
-                                                          OCPIRequest        Request,
-                                                          OCPIResponse       Response,
-                                                          CancellationToken  CancellationToken)
-
-            => OnCancelReservationResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) StartSessionRequest      (Request)
-
-        /// <summary>
-        /// An event sent whenever a start session command was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnStartSessionRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a start session command was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the command request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task StartSessionRequest(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    CancellationToken  CancellationToken)
-
-            => OnStartSessionRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
         #region OnStartSessionCommand
 
         public delegate Task<CommandResponse> OnStartSessionCommandDelegate(EMSP_Id              EMSPId,
                                                                             StartSessionCommand  StartSessionCommand);
 
         public event OnStartSessionCommandDelegate? OnStartSessionCommand;
-
-        #endregion
-
-        #region (protected internal) StartSessionResponse     (Response)
-
-        /// <summary>
-        /// An event sent whenever a start session command response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnStartSessionResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a start session command response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the command response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task StartSessionResponse(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     OCPIResponse       Response,
-                                                     CancellationToken  CancellationToken)
-
-            => OnStartSessionResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) StopSessionRequest       (Request)
-
-        /// <summary>
-        /// An event sent whenever a stop session command was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnStopSessionRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a stop session command was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the command request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task StopSessionRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   CancellationToken  CancellationToken)
-
-            => OnStopSessionRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
 
         #endregion
 
@@ -1627,100 +1481,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region (protected internal) StopSessionResponse      (Response)
-
-        /// <summary>
-        /// An event sent whenever a stop session command response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnStopSessionResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a stop session command response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the command response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task StopSessionResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    OCPIResponse       Response,
-                                                    CancellationToken  CancellationToken)
-
-            => OnStopSessionResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) UnlockConnectorRequest   (Request)
-
-        /// <summary>
-        /// An event sent whenever a unlock connector command was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnUnlockConnectorRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a unlock connector command was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the command request.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task UnlockConnectorRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
-                                                       OCPIRequest        Request,
-                                                       CancellationToken  CancellationToken)
-
-            => OnUnlockConnectorRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
         #region OnUnlockConnectorCommand
 
         public delegate Task<CommandResponse> OnUnlockConnectorCommandDelegate(EMSP_Id                 EMSPId,
                                                                                UnlockConnectorCommand  UnlockConnectorCommand);
 
         public event OnUnlockConnectorCommandDelegate? OnUnlockConnectorCommand;
-
-        #endregion
-
-        #region (protected internal) UnlockConnectorResponse  (Response)
-
-        /// <summary>
-        /// An event sent whenever a unlock connector command response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnUnlockConnectorResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a unlock connector command response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the command response.</param>
-        /// <param name="API">The CPO HTTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task UnlockConnectorResponse(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
-                                                        OCPIRequest        Request,
-                                                        OCPIResponse       Response,
-                                                        CancellationToken  CancellationToken)
-
-            => OnUnlockConnectorResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
 
         #endregion
 
@@ -1739,32 +1505,32 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
-        public CPOAPI(CommonAPI                    CommonAPI,
-                      I18NString?                  Description          = null,
-                      Boolean?                     AllowDowngrades      = null,
+        public CPO_HTTPAPI(CommonAPI                    CommonAPI,
+                           I18NString?                  Description          = null,
+                           Boolean?                     AllowDowngrades      = null,
 
-                      HTTPPath?                    BasePath             = null,
-                      HTTPPath?                    URLPathPrefix        = null,
+                           HTTPPath?                    BasePath             = null,
+                           HTTPPath?                    URLPathPrefix        = null,
 
-                      String?                      ExternalDNSName      = null,
-                      String?                      HTTPServerName       = DefaultHTTPServerName,
-                      String?                      HTTPServiceName      = DefaultHTTPServiceName,
-                      String?                      APIVersionHash       = null,
-                      JObject?                     APIVersionHashes     = null,
+                           String?                      ExternalDNSName      = null,
+                           String?                      HTTPServerName       = DefaultHTTPServerName,
+                           String?                      HTTPServiceName      = DefaultHTTPServiceName,
+                           String?                      APIVersionHash       = null,
+                           JObject?                     APIVersionHashes     = null,
 
-                      Boolean?                     IsDevelopment        = false,
-                      IEnumerable<String>?         DevelopmentServers   = null,
-                      Boolean?                     DisableLogging       = false,
-                      String?                      LoggingContext       = null,
-                      String?                      LoggingPath          = null,
-                      String?                      LogfileName          = null,
-                      OCPILogfileCreatorDelegate?  LogfileCreator       = null)
+                           Boolean?                     IsDevelopment        = false,
+                           IEnumerable<String>?         DevelopmentServers   = null,
+                           Boolean?                     DisableLogging       = false,
+                           String?                      LoggingContext       = null,
+                           String?                      LoggingPath          = null,
+                           String?                      LogfileName          = null,
+                           OCPILogfileCreatorDelegate?  LogfileCreator       = null)
 
             : base(CommonAPI,
                    CommonAPI.URLPathPrefix + (URLPathPrefix ?? DefaultURLPathPrefix),
                    BasePath,
 
-                   Description     ?? I18NString.Create($"OCPI{Version.String} CPO API"),
+                   Description     ?? I18NString.Create($"OCPI{Version.String} CPO HTTP API"),
 
                    ExternalDNSName,
                    HTTPServerName  ?? DefaultHTTPServerName,
@@ -1785,8 +1551,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             this.AllowDowngrades  = AllowDowngrades;
 
-            this.Logger           = this.DisableLogging == false
-                                        ? new CPOAPILogger(
+            this.HTTPLogger       = this.DisableLogging == false
+                                        ? new CPO_HTTPAPI_Logger(
                                               this,
                                               LoggingContext,
                                               LoggingPath,
@@ -1812,7 +1578,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             => cpo2emspClients.Values;
 
 
-        #region GetEMSPClient(CountryCode, PartyId, Description = null, AllowCachedClients = true)
+        #region GetEMSPClient (CountryCode, PartyId,   Description = null, AllowCachedClients = true)
 
         /// <summary>
         /// As a CPO create a client to access e.g. a remote EMSP.
@@ -1825,47 +1591,43 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                              Party_Id     PartyId,
                                              I18NString?  Description          = null,
                                              Boolean      AllowCachedClients   = true)
-        {
 
-            var emspId         = EMSP_Id.       From(CountryCode, PartyId);
-            var remotePartyId  = RemoteParty_Id.From(emspId);
-
-            if (AllowCachedClients &&
-                cpo2emspClients.TryGetValue(emspId, out var cachedCPOClient))
-            {
-                return cachedCPOClient;
-            }
-
-            if (CommonAPI.TryGetRemoteParty(remotePartyId, out var remoteParty) &&
-                remoteParty?.RemoteAccessInfos?.Any() == true)
-            {
-
-                var cpoClient = new CPO2EMSPClient(
-                                    this,
-                                    remoteParty,
-                                    null,
-                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(remotePartyId),
-                                    null,
-                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(remotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
-                                );
-
-                cpo2emspClients.TryAdd(emspId, cpoClient);
-
-                return cpoClient;
-
-            }
-
-            return null;
-
-        }
+            => GetEMSPClient(
+                   RemoteParty_Id.From(
+                       CountryCode,
+                       PartyId,
+                       Role.EMSP
+                   ),
+                   Description,
+                   AllowCachedClients
+               );
 
         #endregion
 
-        #region GetEMSPClient(RemoteParty,          Description = null, AllowCachedClients = true)
+        #region GetEMSPClient (             PartyIdv3, Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote EMSP.
+        /// </summary>
+        /// <param name="v">The party identification of the remote EMSP.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPO2EMSPClient? GetEMSPClient(Party_Idv3   PartyIdv3,
+                                             I18NString?  Description          = null,
+                                             Boolean      AllowCachedClients   = true)
+
+            => GetEMSPClient(
+                   RemoteParty_Id.From(
+                       PartyIdv3,
+                       Role.EMSP
+                   ),
+                   Description,
+                   AllowCachedClients
+               );
+
+        #endregion
+
+        #region GetEMSPClient (RemoteParty,            Description = null, AllowCachedClients = true)
 
         /// <summary>
         /// As a CPO create a client to access e.g. a remote EMSP.
@@ -1889,22 +1651,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             if (RemoteParty?.RemoteAccessInfos?.Any() == true)
             {
 
-                var cpoClient = new CPO2EMSPClient(
-                                    this,
-                                    RemoteParty,
-                                    null,
-                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
-                                    null,
-                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
-                                );
+                var cpo2EMSPClient = new CPO2EMSPClient(
+                                         this,
+                                         RemoteParty,
+                                         null,
+                                         Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
+                                         null,
+                                         CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                         CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
+                                     );
 
-                cpo2emspClients.TryAdd(emspId, cpoClient);
+                cpo2emspClients.TryAdd(emspId, cpo2EMSPClient);
 
-                return cpoClient;
+                return cpo2EMSPClient;
 
             }
 
@@ -1914,7 +1676,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region GetEMSPClient(RemotePartyId,        Description = null, AllowCachedClients = true)
+        #region GetEMSPClient (RemotePartyId,          Description = null, AllowCachedClients = true)
 
         /// <summary>
         /// As a CPO create a client to access e.g. a remote EMSP.
@@ -1939,22 +1701,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 remoteParty?.RemoteAccessInfos?.Any() == true)
             {
 
-                var cpoClient = new CPO2EMSPClient(
-                                    this,
-                                    remoteParty,
-                                    null,
-                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
-                                    null,
-                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
-                                );
+                var cpo2EMSPClient = new CPO2EMSPClient(
+                                         this,
+                                         remoteParty,
+                                         null,
+                                         Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
+                                         null,
+                                         CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                         CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
+                                     );
 
-                cpo2emspClients.TryAdd(emspId, cpoClient);
+                cpo2emspClients.TryAdd(emspId, cpo2EMSPClient);
 
-                return cpoClient;
+                return cpo2EMSPClient;
 
             }
 
@@ -1964,170 +1726,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #endregion
 
-        #region CPO-2-PTP  Clients
-
-        private readonly ConcurrentDictionary<PTP_Id, CPO2PTPClient> cpo2ptpClients = new();
-
-        /// <summary>
-        /// Return an enumeration of all CPO2PTP clients.
-        /// </summary>
-        public IEnumerable<CPO2PTPClient> CPO2PTPClients
-            => cpo2ptpClients.Values;
-
-
-        #region GetPTPClient(CountryCode, PartyId, Description = null, AllowCachedClients = true)
-
-        /// <summary>
-        /// As a CPO create a client to access e.g. a remote PTP.
-        /// </summary>
-        /// <param name="CountryCode">The country code of the remote PTP.</param>
-        /// <param name="PartyId">The party identification of the remote PTP.</param>
-        /// <param name="Description">A description for the OCPI client.</param>
-        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public CPO2PTPClient? GetPTPClient(CountryCode  CountryCode,
-                                           Party_Id     PartyId,
-                                           I18NString?  Description          = null,
-                                           Boolean      AllowCachedClients   = true)
+        public Task CloseAllClients()
         {
 
-            var ptpId          = PTP_Id.        Parse(CountryCode, PartyId);
-            var remotePartyId  = RemoteParty_Id.From (ptpId);
-
-            if (AllowCachedClients &&
-                cpo2ptpClients.TryGetValue(ptpId, out var cachedCPOClient))
+            foreach (var client in cpo2emspClients.Values)
             {
-                return cachedCPOClient;
+                client.Close();
             }
 
-            if (CommonAPI.TryGetRemoteParty(remotePartyId, out var remoteParty) &&
-                remoteParty?.RemoteAccessInfos?.Any() == true)
-            {
+            cpo2emspClients.Clear();
 
-                var cpoClient = new CPO2PTPClient(
-                                    this,
-                                    remoteParty,
-                                    null,
-                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(remotePartyId),
-                                    null,
-                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(remotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
-                                );
-
-                cpo2ptpClients.TryAdd(ptpId, cpoClient);
-
-                return cpoClient;
-
-            }
-
-            return null;
+            return Task.CompletedTask;
 
         }
-
-        #endregion
-
-        #region GetPTPClient(RemoteParty,          Description = null, AllowCachedClients = true)
-
-        /// <summary>
-        /// As a CPO create a client to access e.g. a remote PTP.
-        /// </summary>
-        /// <param name="RemoteParty">A remote party.</param>
-        /// <param name="Description">A description for the OCPI client.</param>
-        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public CPO2PTPClient? GetPTPClient(RemoteParty  RemoteParty,
-                                           I18NString?  Description          = null,
-                                           Boolean      AllowCachedClients   = true)
-        {
-
-            var ptpId = PTP_Id.From(RemoteParty.Id);
-
-            if (AllowCachedClients &&
-                cpo2ptpClients.TryGetValue(ptpId, out var cachedCPOClient))
-            {
-                return cachedCPOClient;
-            }
-
-            if (RemoteParty?.RemoteAccessInfos?.Any() == true)
-            {
-
-                var cpoClient = new CPO2PTPClient(
-                                    this,
-                                    RemoteParty,
-                                    null,
-                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
-                                    null,
-                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
-                                );
-
-                cpo2ptpClients.TryAdd(ptpId, cpoClient);
-
-                return cpoClient;
-
-            }
-
-            return null;
-
-        }
-
-        #endregion
-
-        #region GetPTPClient(RemotePartyId,        Description = null, AllowCachedClients = true)
-
-        /// <summary>
-        /// As a CPO create a client to access e.g. a remote PTP.
-        /// </summary>
-        /// <param name="RemotePartyId">A remote party identification.</param>
-        /// <param name="Description">A description for the OCPI client.</param>
-        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public CPO2PTPClient? GetPTPClient(RemoteParty_Id  RemotePartyId,
-                                           I18NString?     Description          = null,
-                                           Boolean         AllowCachedClients   = true)
-        {
-
-            var ptpId = PTP_Id.From(RemotePartyId);
-
-            if (AllowCachedClients &&
-                cpo2ptpClients.TryGetValue(ptpId, out var cachedCPOClient))
-            {
-                return cachedCPOClient;
-            }
-
-            if (CommonAPI.TryGetRemoteParty(RemotePartyId, out var remoteParty) &&
-                remoteParty?.RemoteAccessInfos?.Any() == true)
-            {
-
-                var cpoClient = new CPO2PTPClient(
-                                    this,
-                                    remoteParty,
-                                    null,
-                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
-                                    null,
-                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
-                                );
-
-                cpo2ptpClients.TryAdd(ptpId, cpoClient);
-
-                return cpoClient;
-
-            }
-
-            return null;
-
-        }
-
-        #endregion
 
         #endregion
 
@@ -2164,13 +1776,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #region GET      ~/locations
 
-            // https://example.com/ocpi/2.3.0/cpo/locations/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
+            // https://example.com/ocpi/2.2.1/cpo/locations/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations",
-                GetLocationsRequest,
-                GetLocationsResponse,
+                HTTPEvents.GetLocationsHTTPRequest,
+                HTTPEvents.GetLocationsHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -2186,7 +1798,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                     HTTPStatusCode              = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
+                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                                     AccessControlAllowHeaders   = [ "Authorization" ],
                                     AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
                                 }
@@ -2220,14 +1832,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                );
 
                                                                       //ToDo: Filter to NOT show all locations to everyone!
-                    var allLocations       = CommonAPI.GetLocations().//location => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == location.CountryCode &&
-                                                                      //                                                       role.PartyId     == location.PartyId)).
-                                                       ToArray();
+                    var allLocations         = CommonAPI.
+                                                   GetLocations().//location => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == location.CountryCode &&
+                                                                  //                                                       role.PartyId     == location.PartyId)).
+                                                   ToArray();
 
-                    var filteredLocations  = allLocations.Where(matchFilter).
-                                                          Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
-                                                          Where(location => !filters.To.  HasValue || location.LastUpdated <= filters.To.  Value).
-                                                          ToArray();
+                    var filteredLocations    = allLocations.
+                                                   Where(matchFilter).
+                                                   Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
+                                                   Where(location => !filters.To.  HasValue || location.LastUpdated <= filters.To.  Value).
+                                                   ToArray();
 
 
                     var httpResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
@@ -2270,8 +1884,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         // Link to the 'next' page should be provided when this is NOT the last page, e.g.:
                         //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
-                                                                                     ? $"https://{ExternalDNSName}"
-                                                                                     : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/locations{queryParameters}>; rel=\"next\"");
+                                                                 ? $"https://{ExternalDNSName}"
+                                                                 : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/locations{queryParameters}>; rel=\"next\"");
 
                     }
 
@@ -2300,11 +1914,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                                                  CustomEVSEEnergyMeterSerializer,
                                                                                                  CustomTransparencySoftwareStatusSerializer,
                                                                                                  CustomTransparencySoftwareSerializer,
-                                                                                                 CustomParkingSerializer,
                                                                                                  CustomDisplayTextSerializer,
                                                                                                  CustomBusinessDetailsSerializer,
                                                                                                  CustomHoursSerializer,
-                                                                                                 CustomEVSEParkingSerializer,
                                                                                                  CustomImageSerializer,
                                                                                                  CustomEnergyMixSerializer,
                                                                                                  CustomEnergySourceSerializer,
@@ -2315,6 +1927,27 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            );
 
                 });
+
+                //    return Task.FromResult(
+                //        new OCPIResponse.Builder(Request) {
+                //                StatusCode           = 1000,
+                //                StatusMessage        = "Hello world!",
+                //                Data                 = new JArray(filteredLocations.SkipTakeFilter(filters.Offset,
+                //                                                                                   filters.Limit).
+                //                                                                    SafeSelect(location => location.ToJSON(Request.EMSPId,
+                                                                                                                           
+                //                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                //                    HTTPStatusCode             = HTTPStatusCode.OK,
+                //                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                //                    AccessControlAllowHeaders  = [ "Authorization" ]
+                //                    //LastModified               = ?
+                //                }.
+                //                Set("X-Total-Count", allLocations.Length)
+                //                // X-Limit               The maximum number of objects that the server WILL return.
+                //                // Link                  Link to the 'next' page should be provided when this is NOT the last page.
+                //        });
+
+                //});
 
             #endregion
 
@@ -2332,12 +1965,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
+                            HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                HTTPStatusCode              = HTTPStatusCode.OK,
+                                Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders   = [ "Authorization" ],
+                                AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
+                            }
                         })
 
             );
@@ -2350,8 +1984,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{locationId}",
-                GetLocationRequest,
-                GetLocationResponse,
+                HTTPEvents.GetLocationHTTPRequest,
+                HTTPEvents.GetLocationHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -2386,7 +2020,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                         out var location,
                                                         out var ocpiResponseBuilder))
                     {
-                        return Task.FromResult(ocpiResponseBuilder!);
+                        return Task.FromResult(ocpiResponseBuilder);
                     }
 
                     #endregion
@@ -2408,11 +2042,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                           CustomEVSEEnergyMeterSerializer,
                                                           CustomTransparencySoftwareStatusSerializer,
                                                           CustomTransparencySoftwareSerializer,
-                                                          CustomParkingSerializer,
                                                           CustomDisplayTextSerializer,
                                                           CustomBusinessDetailsSerializer,
                                                           CustomHoursSerializer,
-                                                          CustomEVSEParkingSerializer,
                                                           CustomImageSerializer,
                                                           CustomEnergyMixSerializer,
                                                           CustomEnergySourceSerializer,
@@ -2464,8 +2096,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{locationId}/{evseId}",
-                GetEVSERequest,
-                GetEVSEResponse,
+                HTTPEvents.GetEVSEHTTPRequest,
+                HTTPEvents.GetEVSEHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -2502,7 +2134,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                             out var evse,
                                                             out var ocpiResponseBuilder))
                     {
-                        return Task.FromResult(ocpiResponseBuilder!);
+                        return Task.FromResult(ocpiResponseBuilder);
                     }
 
                     #endregion
@@ -2513,9 +2145,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
                                Data                 = evse.ToJSON(
-                                                          true,
-                                                          true,
-                                                          true,
                                                           request.EMSPId ?? request.HUBId,
                                                           CustomEVSESerializer,
                                                           CustomStatusScheduleSerializer,
@@ -2524,7 +2153,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                           CustomTransparencySoftwareStatusSerializer,
                                                           CustomTransparencySoftwareSerializer,
                                                           CustomDisplayTextSerializer,
-                                                          CustomEVSEParkingSerializer,
                                                           CustomImageSerializer
                                                       ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
@@ -2573,8 +2201,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
-                GetConnectorRequest,
-                GetConnectorResponse,
+                HTTPEvents.GetConnectorHTTPRequest,
+                HTTPEvents.GetConnectorHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -2613,7 +2241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                      out var connector,
                                                                      out var ocpiResponseBuilder))
                     {
-                        return Task.FromResult(ocpiResponseBuilder!);
+                        return Task.FromResult(ocpiResponseBuilder);
                     }
 
                     #endregion
@@ -2672,13 +2300,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #region GET      ~/tariffs
 
-            // https://example.com/ocpi/2.3.0/cpo/tariffs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
+            // https://example.com/ocpi/2.2.1/cpo/tariffs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tariffs",
-                GetTariffsRequest,
-                GetTariffsResponse,
+                HTTPEvents.GetTariffsHTTPRequest,
+                HTTPEvents.GetTariffsHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -2754,8 +2382,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         // Link to the 'next' page should be provided when this is NOT the last page, e.g.:
                         //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
-                                                                                     ? $"https://{ExternalDNSName}"
-                                                                                     : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/tariffs{queryParameters}>; rel=\"next\"");
+                                                                 ? $"https://{ExternalDNSName}"
+                                                                 : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/tariffs{queryParameters}>; rel=\"next\"");
 
                     }
 
@@ -2776,7 +2404,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                                            true,
                                                                                            CustomTariffSerializer,
                                                                                            CustomDisplayTextSerializer,
-                                                                                           CustomPriceLimitSerializer,
+                                                                                           CustomPriceSerializer,
                                                                                            CustomTariffElementSerializer,
                                                                                            CustomPriceComponentSerializer,
                                                                                            CustomTariffRestrictionsSerializer,
@@ -2825,8 +2453,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tariffs/{tariffId}",
-                GetTariffRequest,
-                GetTariffResponse,
+                HTTPEvents.GetTariffHTTPRequest,
+                HTTPEvents.GetTariffHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -2861,7 +2489,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                       out var tariff,
                                                       out var ocpiResponseBuilder))
                     {
-                        return Task.FromResult(ocpiResponseBuilder!);
+                        return Task.FromResult(ocpiResponseBuilder);
                     }
 
                     #endregion
@@ -2876,7 +2504,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                           false, //IncludeExtensions
                                                           CustomTariffSerializer,
                                                           CustomDisplayTextSerializer,
-                                                          CustomPriceLimitSerializer,
+                                                          CustomPriceSerializer,
                                                           CustomTariffElementSerializer,
                                                           CustomPriceComponentSerializer,
                                                           CustomTariffRestrictionsSerializer,
@@ -2932,8 +2560,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "sessions",
-                GetSessionRequest,
-                GetSessionResponse,
+                HTTPEvents.GetSessionsHTTPRequest,
+                HTTPEvents.GetSessionsHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -2960,17 +2588,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     #endregion
 
 
-                    var filters           = request.GetDateAndPaginationFilters();
+                    var filters              = request.GetDateAndPaginationFilters();
 
-                    var allSessions       = CommonAPI.//GetSessions(session => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == session.CountryCode &&
-                                                      //                                                                  role.PartyId     == session.PartyId)).
-                                                      GetSessions(session => CommonAPI.Parties.Any(partyData => partyData.Id.CountryCode == session.CountryCode &&
-                                                                                                                partyData.Id.Party       == session.PartyId)).
-                                                      ToArray();
+                    var allSessions          = CommonAPI.//GetSessions(session => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == session.CountryCode &&
+                                                         //                                                                  role.PartyId     == session.PartyId)).
+                                                         GetSessions(session => CommonAPI.Parties.Any(partyData => partyData.Id.CountryCode == session.CountryCode &&
+                                                                                                                   partyData.Id.Party       == session.PartyId)).
+                                                         ToArray();
 
-                    var filteredSessions  = allSessions.Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
-                                                        Where(session => !filters.To.  HasValue || session.LastUpdated <= filters.To.  Value).
-                                                        ToArray();
+                    var filteredSessions     = allSessions.Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
+                                                           Where(session => !filters.To.  HasValue || session.LastUpdated <= filters.To.  Value).
+                                                           ToArray();
 
 
                     var httpResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
@@ -3009,8 +2637,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         // Link to the 'next' page should be provided when this is NOT the last page, e.g.:
                         //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
-                                                                                     ? $"https://{ExternalDNSName}"
-                                                                                     : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/sessions{queryParameters}>; rel=\"next\"");
+                                                                 ? $"https://{ExternalDNSName}"
+                                                                 : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/sessions{queryParameters}>; rel=\"next\"");
 
                     }
 
@@ -3026,11 +2654,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                   OrderBy       (session => session.Created).
                                                                   SkipTakeFilter(filters.Offset,
                                                                                  filters.Limit).
-                                                                  Select        (session => session.ToJSON(CustomSessionSerializer,
-                                                                                                           CustomCDRTokenSerializer,
-                                                                                                           CustomChargingPeriodSerializer,
-                                                                                                           CustomCDRDimensionSerializer,
-                                                                                                           CustomPriceSerializer))
+                                                                  Select        (session => session.ToJSON(
+                                                                                                CustomSessionSerializer,
+                                                                                                CustomCDRTokenSerializer,
+                                                                                                CustomChargingPeriodSerializer,
+                                                                                                CustomCDRDimensionSerializer,
+                                                                                                CustomPriceSerializer
+                                                                                            ))
                                                           )
                                }
                            );
@@ -3053,13 +2683,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
-                            HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                HTTPStatusCode              = HTTPStatusCode.OK,
-                                Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
-                                AccessControlAllowHeaders   = [ "Authorization" ],
-                                AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
-                            }
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
                         })
 
             );
@@ -3072,8 +2701,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "sessions/{sessionId}",
-                GetSessionRequest,
-                GetSessionResponse,
+                HTTPEvents.GetSessionHTTPRequest,
+                HTTPEvents.GetSessionHTTPResponse,
                 request => {
 
                     #region Check access token
@@ -3108,7 +2737,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                        out var session,
                                                        out var ocpiResponseBuilder))
                     {
-                        return Task.FromResult(ocpiResponseBuilder!);
+                        return Task.FromResult(ocpiResponseBuilder);
                     }
 
                     #endregion
@@ -3146,7 +2775,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             // https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/mod_charging_profiles.asciidoc
 
-            #region GET     ~/chargingprofiles/{session_id}?duration={duration}&response_url=https://client.com/12345/
+            #region GET      ~/chargingprofiles/{session_id}?duration={duration}&response_url=https://client.com/12345/
 
             // 1. GET will just return a ChargingProfileResponse (result=ACCEPTED).
             // 2. The resposeURL will be called with a ActiveProfileResult object (result=ACCEPTED, ActiveChargingProfile).
@@ -3155,14 +2784,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region PUT     ~/chargingprofiles/{session_id}?response_url=https://client.com/12345/
+            #region PUT      ~/chargingprofiles/{session_id}?response_url=https://client.com/12345/
 
             // 1. PUT (with a resposeURL): SetChargingProfile object
             // 2. The resposeURL will be called later, e.g. POST https://client.com/12345/ with a ChargingProfileResult object.
 
             #endregion
 
-            #region DELETE  ~/chargingprofiles/{session_id}?response_url=https://client.com/12345/
+            #region DELETE   ~/chargingprofiles/{session_id}?response_url=https://client.com/12345/
 
             // 1. DELETE will just return a ChargingProfileResponse (result=ACCEPTED).
             // 2. The resposeURL will be called with a ClearProfileResult object (result=ACCEPTED).
@@ -3176,7 +2805,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             //ToDo: Implement ~/sessions/{session_id}/charging_preferences!
 
-            #region PUT     ~/sessions/{session_id}/charging_preferences
+            #region PUT      ~/sessions/{session_id}/charging_preferences
 
             // https://example.com/ocpi/2.2/cpo/sessions/12454/charging_preferences
 
@@ -3192,7 +2821,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "cdrs",
+                URLPathPrefix + "CDRs",
                 request =>
 
                     Task.FromResult(
@@ -3217,14 +2846,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "cdrs",
-                GetCDRsRequest,
-                GetCDRsResponse,
+                HTTPEvents.GetCDRsHTTPRequest,
+                HTTPEvents.GetCDRsHTTPResponse,
                 request => {
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return Task.FromResult(
@@ -3243,17 +2873,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     #endregion
 
 
-                    var filters            = request.GetDateAndPaginationFilters();
+                    var filters              = request.GetDateAndPaginationFilters();
 
-                    var allCDRs            = CommonAPI.//GetCDRs(cdr => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == cdr.CountryCode &&
-                                                       //                                                          role.PartyId     == cdr.PartyId)).
-                                                       GetCDRs(cdr => CommonAPI.Parties.Any(partyData => partyData.Id.CountryCode == cdr.CountryCode &&
-                                                                                                         partyData.Id.Party       == cdr.PartyId)).
+                    var allCDRs              = CommonAPI.//GetCDRs(cdr => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == cdr.CountryCode &&
+                                                         //                                                          role.PartyId     == cdr.PartyId)).
+                                                         GetCDRs(cdr => CommonAPI.Parties.Any(partyData => partyData.Id.CountryCode == cdr.CountryCode &&
+                                                                                                           partyData.Id.Party       == cdr.PartyId)).
+                                                         ToArray();
+
+                    var filteredCDRs         = allCDRs.Where(CDR => !filters.From.HasValue || CDR.LastUpdated >  filters.From.Value).
+                                                       Where(CDR => !filters.To.  HasValue || CDR.LastUpdated <= filters.To.  Value).
                                                        ToArray();
-
-                    var filteredCDRs       = allCDRs.Where(CDR => !filters.From.HasValue || CDR.LastUpdated >  filters.From.Value).
-                                                     Where(CDR => !filters.To.  HasValue || CDR.LastUpdated <= filters.To.  Value).
-                                                     ToArray();
 
 
                     var httpResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
@@ -3292,8 +2922,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         // Link to the 'next' page should be provided when this is NOT the last page, e.g.:
                         //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
-                                                    ? $"https://{ExternalDNSName}"
-                                                    : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/cdrs{queryParameters}>; rel=\"next\"");
+                                                                 ? $"https://{ExternalDNSName}"
+                                                                 : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/cdrs{queryParameters}>; rel=\"next\"");
 
                     }
 
@@ -3318,10 +2948,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                                         CustomTariffSerializer,
                                                                                         CustomDisplayTextSerializer,
                                                                                         CustomPriceSerializer,
-                                                                                        CustomPriceLimitSerializer,
                                                                                         CustomTariffElementSerializer,
                                                                                         CustomPriceComponentSerializer,
-                                                                                        CustomTaxAmountSerializer,
                                                                                         CustomTariffRestrictionsSerializer,
                                                                                         CustomEnergyMixSerializer,
                                                                                         CustomEnergySourceSerializer,
@@ -3353,12 +2981,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
+                            HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders  = [ "Authorization" ]
+                            }
                         })
 
             );
@@ -3371,14 +2999,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "cdrs/{CDRId}",
-                GetCDRRequest,
-                GetCDRResponse,
+                HTTPEvents.GetCDRHTTPRequest,
+                HTTPEvents.GetCDRHTTPResponse,
                 request => {
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return Task.FromResult(
@@ -3405,7 +3034,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                    out var cdr,
                                                    out var ocpiResponseBuilder))
                     {
-                        return Task.FromResult(ocpiResponseBuilder!);
+                        return Task.FromResult(ocpiResponseBuilder);
                     }
 
                     #endregion
@@ -3424,10 +3053,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                           CustomTariffSerializer,
                                                           CustomDisplayTextSerializer,
                                                           CustomPriceSerializer,
-                                                          CustomPriceLimitSerializer,
                                                           CustomTariffElementSerializer,
                                                           CustomPriceComponentSerializer,
-                                                          CustomTaxAmountSerializer,
                                                           CustomTariffRestrictionsSerializer,
                                                           CustomEnergyMixSerializer,
                                                           CustomEnergySourceSerializer,
@@ -3484,14 +3111,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tokens/{country_code}/{party_id}",
-                GetTokensRequest,
-                GetTokensResponse,
+                HTTPEvents.GetTokensHTTPRequest,
+                HTTPEvents.GetTokensHTTPResponse,
                 request => {
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return Task.FromResult(
@@ -3521,14 +3149,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     #endregion
 
 
-                    var filters         = request.GetDateAndPaginationFilters();
+                    var filters              = request.GetDateAndPaginationFilters();
 
-                    var allTokens       = CommonAPI.GetTokenStatus(partyId.Value).ToArray();
+                    var allTokens            = CommonAPI.GetTokenStatus(partyId.Value).ToArray();
 
-                    var filteredTokens  = allTokens.Select(tokenStatus => tokenStatus.Token).
-                                                    Where (token       => !filters.From.HasValue || token.LastUpdated >  filters.From.Value).
-                                                    Where (token       => !filters.To.  HasValue || token.LastUpdated <= filters.To.  Value).
-                                                    ToArray();
+                    var filteredTokens       = allTokens.Select(tokenStatus => tokenStatus.Token).
+                                                         Where (token       => !filters.From.HasValue || token.LastUpdated >  filters.From.Value).
+                                                         Where (token       => !filters.To.  HasValue || token.LastUpdated <= filters.To.  Value).
+                                                         ToArray();
 
 
                     var httpResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
@@ -3602,14 +3230,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "tokens/{country_code}/{party_id}",
-                DeleteTokensRequest,
-                DeleteTokensResponse,
+                HTTPEvents.DeleteTokensHTTPRequest,
+                HTTPEvents.DeleteTokensHTTPResponse,
                 async request => {
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -3682,21 +3311,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region GET     ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
+            #region GET      ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                GetTokenRequest,
-                GetTokenResponse,
+                HTTPEvents.GetTokenHTTPRequest,
+                HTTPEvents.GetTokenHTTPResponse,
                 request => {
 
                     #region Check access token
 
                     if (request.LocalAccessInfo is null ||
-                        request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return Task.FromResult(
@@ -3738,8 +3367,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
-                               Data                 = tokenStatus.Token.ToJSON(CustomTokenSerializer,
-                                                                               CustomEnergyContractSerializer),
+                               Data                 = tokenStatus.Token.ToJSON(
+                                                          CustomTokenSerializer,
+                                                          CustomEnergyContractSerializer
+                                                      ),
                             HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
@@ -3753,21 +3384,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region PUT     ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
+            #region PUT      ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PUT,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                PutTokenRequest,
-                PutTokenResponse,
+                HTTPEvents.PutTokenHTTPRequest,
+                HTTPEvents.PutTokenHTTPResponse,
                 async request => {
 
                     #region Check access token
 
                     if (request.LocalAccessInfo is null ||
-                        request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -3806,8 +3437,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                         out var errorResponse,
                                         countryCode,
                                         partyId,
-                                        tokenId) ||
-                         newOrUpdatedToken is null)
+                                        tokenId))
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -3834,64 +3464,58 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                    );
 
 
-                    if (addOrUpdateResult.IsSuccessAndDataNotNull(out var data))
-                    {
-
+                    if (addOrUpdateResult.IsSuccessAndDataNotNull(out var tokenData))
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
-                                   Data                 = data.Token.ToJSON(
+                                   Data                 = tokenData.Token.ToJSON(
                                                               CustomTokenSerializer,
                                                               CustomEnergyContractSerializer
                                                           ),
-                            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = addOrUpdateResult.WasCreated == true
-                                                                        ? HTTPStatusCode.Created
-                                                                        : HTTPStatusCode.OK,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ],
-                                       LastModified               = data.Token.LastUpdated,
-                                       ETag                       = data.Token.ETag
-                                   }
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                                              HTTPStatusCode             = addOrUpdateResult.WasCreated == true
+                                                                                               ? HTTPStatusCode.Created
+                                                                                               : HTTPStatusCode.OK,
+                                                              AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
+                                                              AccessControlAllowHeaders  = [ "Authorization" ],
+                                                              LastModified               = tokenData.Token.LastUpdated,
+                                                              ETag                       = tokenData.Token.ETag
+                                                          }
                                };
-
-                    }
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 2000,
                                StatusMessage        = addOrUpdateResult.ErrorResponse,
-                               Data                 = newOrUpdatedToken.ToJSON(
-                                                          CustomTokenSerializer,
-                                                          CustomEnergyContractSerializer
-                                                      ),
-                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ],
-                                   LastModified               = newOrUpdatedToken.LastUpdated,
-                                   ETag                       = newOrUpdatedToken.ETag
-                               }
+                               Data                 = newOrUpdatedToken.ToJSON(CustomTokenSerializer,
+                                                                               CustomEnergyContractSerializer),
+                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                                          HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                          AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
+                                                          AccessControlAllowHeaders  = [ "Authorization" ],
+                                                          LastModified               = newOrUpdatedToken.LastUpdated,
+                                                          ETag                       = newOrUpdatedToken.ETag
+                                                      }
                            };
 
                 });
 
             #endregion
 
-            #region PATCH   ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
+            #region PATCH    ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PATCH,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                PatchTokenRequest,
-                PatchTokenResponse,
+                HTTPEvents.PatchTokenHTTPRequest,
+                HTTPEvents.PatchTokenHTTPResponse,
                 async request => {
 
                     #region Check access token
 
                     if (request.LocalAccessInfo is null ||
-                        request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -3947,11 +3571,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                               );
 
 
-                    if (patchedToken.IsSuccessAndDataNotNull(out var data))
+                    if (patchedToken.IsSuccessAndDataNotNull(out var tokenData))
                         return new OCPIResponse.Builder(request) {
                                        StatusCode           = 1000,
                                        StatusMessage        = "Hello world!",
-                                       Data                 = data.ToJSON(
+                                       Data                 = tokenData.ToJSON(
                                                                   CustomTokenSerializer,
                                                                   CustomEnergyContractSerializer
                                                               ),
@@ -3959,8 +3583,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                            AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                            AccessControlAllowHeaders  = [ "Authorization" ],
-                                           LastModified               = data.LastUpdated,
-                                           ETag                       = data.ETag
+                                           LastModified               = tokenData.LastUpdated,
+                                           ETag                       = tokenData.ETag
                                        }
                                    };
 
@@ -3978,20 +3602,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region DELETE  ~/tokens/{country_code}/{party_id}/{tokenId}      [NonStandard]
+            #region DELETE   ~/tokens/{country_code}/{party_id}/{tokenId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
                 URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                DeleteTokenRequest,
-                DeleteTokenResponse,
+                HTTPEvents.DeleteTokenHTTPRequest,
+                HTTPEvents.DeleteTokenHTTPResponse,
                 async request => {
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4025,15 +3650,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
 
                     //ToDo: What exactly to do with this information?
-                    var tokenType = request.QueryString.TryParseEnum<TokenType>("type") ?? TokenType.RFID;
+                    var tokenType  = request.QueryString.TryParseEnum<TokenType>("type") ?? TokenType.RFID;
 
-                    var result = await CommonAPI.RemoveToken(existingTokenStatus.Token);
+                    var result     = await CommonAPI.RemoveToken(existingTokenStatus.Token);
 
-                    if (result.IsSuccessAndDataNotNull(out var data))
+                    if (result.IsSuccessAndDataNotNull(out var tokenData))
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
-                                   Data                 = data.ToJSON(
+                                   Data                 = tokenData.ToJSON(
                                                               CustomTokenSerializer,
                                                               CustomEnergyContractSerializer
                                                           ),
@@ -4049,10 +3674,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 2000,
                                    StatusMessage        = "Hello world!",
-                                   Data                 = existingTokenStatus.Token.ToJSON(
-                                                              CustomTokenSerializer,
-                                                              CustomEnergyContractSerializer
-                                                          ),
+                                   Data                 = existingTokenStatus.Token.ToJSON(CustomTokenSerializer,
+                                                                                           CustomEnergyContractSerializer),
                                    HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
@@ -4067,239 +3690,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-
-            #region ~/bookings
-
-            #region OPTIONS  ~/bookings
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.OPTIONS,
-                URLPathPrefix + "bookings",
-                request =>
-
-                    Task.FromResult(
-                        new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode              = HTTPStatusCode.OK,
-                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
-                               }
-                        })
-
-            );
-
-            #endregion
-
-            #region GET      ~/bookings
-
-            // https://example.com/ocpi/2.2/cpo/bookings/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.GET,
-                URLPathPrefix + "bookings",
-                GetBookingsRequest,
-                GetBookingsResponse,
-                request => {
-
-                    #region Check access token
-
-                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
-                    {
-
-                        return Task.FromResult(
-                            new OCPIResponse.Builder(request) {
-                                StatusCode           = 2000,
-                                StatusMessage        = "Invalid or blocked access token!",
-                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
-                                }
-                            });
-
-                    }
-
-                    #endregion
-
-
-                    var filters              = request.GetDateAndPaginationFilters();
-
-                    var allBookings          = CommonAPI.//Getbookings(booking => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == booking.CountryCode &&
-                                                     //                                                          role.PartyId     == booking.PartyId)).
-                                                     GetBookings(booking => CommonAPI.Parties.Any(partyData => partyData.Id.CountryCode == booking.CountryCode &&
-                                                                                                  partyData.Id.Party       == booking.PartyId)).
-                                                     ToArray();
-
-                    var filteredBookings     = allBookings.Where(booking => !filters.From.HasValue || booking.LastUpdated >  filters.From.Value).
-                                                   Where(booking => !filters.To.  HasValue || booking.LastUpdated <= filters.To.  Value).
-                                                   ToArray();
-
-
-                    var httpResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                                   Server                     = DefaultHTTPServerName,
-                                                   Date                       = Timestamp.Now,
-                                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                                               }.
-
-                                               // The overall number of bookings
-                                               Set("X-Total-Count",  allBookings.Length).
-
-                                               // The maximum number of bookings that the server WILL return within a single request
-                                               Set("X-Limit",        allBookings.Length);
-
-
-                    #region When the limit query parameter was set & this is not the last pagination page...
-
-                    if (filters.Limit.HasValue &&
-                        allBookings.ULongLength() > ((filters.Offset ?? 0) + (filters.Limit ?? 0)))
-                    {
-
-                        // The new query parameters for the "next" page of pagination within the HTTP Link header
-                        var queryParameters    = new List<String?>() {
-                                                     filters.From. HasValue ? $"from={filters.From.Value}" :                             null,
-                                                     filters.To.   HasValue ? $"to={filters.To.Value}" :                                 null,
-                                                     filters.Limit.HasValue ? $"offset={(filters.Offset ?? 0) + (filters.Limit ?? 0)}" : null,
-                                                     filters.Limit.HasValue ? $"limit={filters.Limit ?? 0}" :                            null
-                                                 }.Where(queryParameter => queryParameter is not null).
-                                                   AggregateWith("&");
-
-                        if (queryParameters.Length > 0)
-                            queryParameters = "?" + queryParameters;
-
-                        // Link to the 'next' page should be provided when this is NOT the last page, e.g.:
-                        //   - Link: <https://www.server.com/ocpi/cpo/2.0/bookings/?offset=150&limit=50>; rel="next"
-                        httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
-                                                    ? $"https://{ExternalDNSName}"
-                                                    : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/bookings{queryParameters}>; rel=\"next\"");
-
-                    }
-
-                    #endregion
-
-                    return Task.FromResult(
-                               new OCPIResponse.Builder(request) {
-                                   StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
-                                   HTTPResponseBuilder  = httpResponseBuilder,
-                                   Data                 = new JArray(
-                                                              filteredBookings.
-                                                              OrderBy       (booking => booking.Created).
-                                                              SkipTakeFilter(filters.Offset,
-                                                                             filters.Limit).
-                                                              Select        (booking => booking.ToJSON(
-                                                                                            CustomBookingSerializer
-                                                                                            //CustombookingTokenSerializer,
-                                                                                            //CustombookingLocationSerializer,
-                                                                                            //CustomEVSEEnergyMeterSerializer,
-                                                                                            //CustomTransparencySoftwareSerializer,
-                                                                                            //CustomTariffSerializer,
-                                                                                            //CustomDisplayTextSerializer,
-                                                                                            //CustomPriceSerializer,
-                                                                                            //CustomPriceLimitSerializer,
-                                                                                            //CustomTariffElementSerializer,
-                                                                                            //CustomPriceComponentSerializer,
-                                                                                            //CustomTaxAmountSerializer,
-                                                                                            //CustomTariffRestrictionsSerializer,
-                                                                                            //CustomEnergyMixSerializer,
-                                                                                            //CustomEnergySourceSerializer,
-                                                                                            //CustomEnvironmentalImpactSerializer,
-                                                                                            //CustomChargingPeriodSerializer,
-                                                                                            //CustombookingDimensionSerializer,
-                                                                                            //CustomSignedDataSerializer,
-                                                                                            //CustomSignedValueSerializer
-                                                                                        ))
-                                                          )
-                               }
-                           );
-
-                });
-
-            #endregion
-
-            #region POST     ~/bookings
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.POST,
-                URLPathPrefix + "bookings",
-                GetBookingsRequest,
-                GetBookingsResponse,
-                request => {
-
-                    #region Check access token
-
-                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
-                    {
-
-                        return Task.FromResult(
-                            new OCPIResponse.Builder(request) {
-                                StatusCode           = 2000,
-                                StatusMessage        = "Invalid or blocked access token!",
-                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
-                                }
-                            });
-
-                    }
-
-                    #endregion
-
-
-                    return Task.FromResult(
-                               new OCPIResponse.Builder(request) {
-                                   StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                                              HTTPStatusCode             = HTTPStatusCode.OK,
-                                                              Server                     = DefaultHTTPServerName,
-                                                              Date                       = Timestamp.Now,
-                                                              AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                              AccessControlAllowHeaders  = [ "Authorization" ]
-                                                          },
-                                   Data                 = new JArray(
-                                                              
-                                                          )
-                               }
-                           );
-
-                });
-
-            #endregion
-
-            #endregion
-
-            #region ~/bookings/booking_locations
-
-            #region OPTIONS  ~/bookings/booking_locations
-            #endregion
-
-            #region GET      ~/bookings/booking_locations
-            #endregion
-
-            #endregion
-
-            #region ~/bookings/booking_locations/{booking_location_id}
-
-            #endregion
-
-            #region ~/bookings/booking_locations/{booking_location_id}/{calendar_id}
-
-            #region OPTIONS  ~/bookings/booking_locations/{booking_location_id}/{calendar_id}
-            #endregion
-
-            #region GET      ~/bookings/booking_locations/{booking_location_id}/{calendar_id}
-            #endregion
-
-            #endregion
 
 
             // Commands
@@ -4334,14 +3724,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/RESERVE_NOW",
-                ReserveNowRequest,
-                ReserveNowResponse,
+                HTTPEvents.ReserveNowHTTPRequest,
+                HTTPEvents.ReserveNowHTTPResponse,
                 async request => {
 
                     #region Check access token
 
-                    if (request.RemoteParty is null ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.RemoteParty     is null ||
+                        request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4402,7 +3794,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
-                               Data                 = commandResponse.ToJSON(),
+                               Data                 = commandResponse.ToJSON(
+                                                          CustomCommandResponseSerializer,
+                                                          CustomDisplayTextSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
@@ -4446,14 +3841,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/CANCEL_RESERVATION",
-                CancelReservationRequest,
-                CancelReservationResponse,
+                HTTPEvents.CancelReservationHTTPRequest,
+                HTTPEvents.CancelReservationHTTPResponse,
                 async request => {
 
                     #region Check access token
 
-                    if (request.RemoteParty is null ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.RemoteParty     is null ||
+                        request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4514,7 +3911,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
-                               Data                 = commandResponse.ToJSON(),
+                               Data                 = commandResponse.ToJSON(
+                                                          CustomCommandResponseSerializer,
+                                                          CustomDisplayTextSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
@@ -4558,14 +3958,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/START_SESSION",
-                StartSessionRequest,
-                StartSessionResponse,
+                HTTPEvents.StartSessionHTTPRequest,
+                HTTPEvents.StartSessionHTTPResponse,
                 async request => {
 
                     #region Check access token
 
-                    if (request.RemoteParty is null ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.RemoteParty     is null ||
+                        request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4626,7 +4028,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
-                               Data                 = commandResponse.ToJSON(),
+                               Data                 = commandResponse.ToJSON(
+                                                          CustomCommandResponseSerializer,
+                                                          CustomDisplayTextSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
@@ -4670,14 +4075,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/STOP_SESSION",
-                StopSessionRequest,
-                StopSessionResponse,
+                HTTPEvents.StopSessionHTTPRequest,
+                HTTPEvents.StopSessionHTTPResponse,
                 async request => {
 
                     #region Check access token
 
-                    if (request.RemoteParty is null ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.RemoteParty     is null ||
+                        request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4700,8 +4107,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         return ocpiResponse;
 
                     if (!StopSessionCommand.TryParse(stopSessionJSON,
-                                                      out var stopSessionCommand,
-                                                      out var errorResponse))
+                                                     out var stopSessionCommand,
+                                                     out var errorResponse))
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4738,7 +4145,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
-                               Data                 = commandResponse.ToJSON(),
+                               Data                 = commandResponse.ToJSON(
+                                                          CustomCommandResponseSerializer,
+                                                          CustomDisplayTextSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
@@ -4782,14 +4192,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 HTTPMethod.POST,
                 URLPathPrefix + "commands/UNLOCK_CONNECTOR",
-                UnlockConnectorRequest,
-                UnlockConnectorResponse,
+                HTTPEvents.UnlockConnectorHTTPRequest,
+                HTTPEvents.UnlockConnectorHTTPResponse,
                 async request => {
 
                     #region Check access token
 
-                    if (request.RemoteParty is null ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.RemoteParty     is null ||
+                        request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4850,307 +4262,23 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
-                               Data                 = commandResponse.ToJSON(),
-                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
-                           };
-
-                });
-
-            #endregion
-
-            #endregion
-
-
-
-            // Payment Terminals
-
-            #region ~/payments/terminals/{terminalId}
-
-            #region OPTIONS  ~/payments/terminals/{terminalId}
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.OPTIONS,
-                URLPathPrefix + "payments/terminals/{terminalId}",
-                request =>
-
-                    Task.FromResult(
-                        new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
-                        })
-
-            );
-
-            #endregion
-
-            #region GET      ~/payments/terminals/{terminalId}
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.GET,
-                URLPathPrefix + "payments/terminals/{terminalId}",
-                GetTerminalRequest,
-                GetTerminalResponse,
-                request => {
-
-                    #region Check access token
-
-                    if (request.LocalAccessInfo.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
-                    {
-
-                        return Task.FromResult(
-                            new OCPIResponse.Builder(request) {
-                                StatusCode           = 2000,
-                                StatusMessage        = "Invalid or blocked access token!",
-                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
-                                }
-                            });
-
-                    }
-
-                    #endregion
-
-                    #region Check terminal
-
-                    if (!request.ParsePaymentTerminal(CommonAPI,
-                                                      //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                                      CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
-                                                      out var terminalId,
-                                                      out var terminal,
-                                                      out var ocpiResponseBuilder,
-                                                      FailOnMissingTerminal: true))
-                    {
-                        return Task.FromResult(ocpiResponseBuilder!);
-                    }
-
-                    #endregion
-
-
-                    return Task.FromResult(
-                        new OCPIResponse.Builder(request) {
-                               StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
-                               Data                 = terminal.ToJSON(true,
-                                                                      true,
-                                                                      CustomTerminalSerializer,
-                                                                      CustomDisplayTextSerializer,
-                                                                      CustomImageSerializer),
-                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ],
-                                   LastModified               = terminal.LastUpdated,
-                                   ETag                       = terminal.ETag
-                               }
-                        });
-
-                });
-
-            #endregion
-
-            #region POST     ~/payments/terminals/{terminalId}
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.POST,
-                URLPathPrefix + "payments/terminals/{terminalId}",
-                PostTerminalRequest,
-                PostTerminalResponse,
-                async request => {
-
-                    #region Check access token
-
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
-                    {
-
-                        return new OCPIResponse.Builder(request) {
-                                   StatusCode           = 2000,
-                                   StatusMessage        = "Invalid or blocked access token!",
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PATCH" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                   }
-                               };
-
-                    }
-
-                    #endregion
-
-                    #region Check existing location
-
-                    if (!request.ParsePaymentTerminal(CommonAPI,
-                                                      out var terminalId,
-                                                      out var existingTerminal,
-                                                      out var ocpiResponseBuilder,
-                                                      FailOnMissingTerminal: false))
-                    {
-                        return ocpiResponseBuilder;
-                    }
-
-                    #endregion
-
-                    #region Parse new or updated location JSON
-
-                    if (!request.TryParseJObjectRequestBody(out var locationJSON, out ocpiResponseBuilder))
-                        return ocpiResponseBuilder;
-
-                    if (!Terminal.TryParse(locationJSON,
-                                           out var newOrUpdatedTerminal,
-                                           out var errorResponse,
-                                           terminalId))
-                    {
-
-                        return new OCPIResponse.Builder(request) {
-                                   StatusCode           = 2001,
-                                   StatusMessage        = "Could not parse the given location JSON: " + errorResponse,
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PATCH" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                   }
-                               };
-
-                    }
-
-                    #endregion
-
-
-                    var addOrUpdateResult = await CommonAPI.AddOrUpdatePaymentTerminal(
-                                                      newOrUpdatedTerminal,
-                                                      AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade"),
-                                                      false, //SkipNotifications
-                                                      request.HTTPRequest.EventTrackingId,
-                                                      CurrentUserId: null
-                                                  );
-
-                    if (addOrUpdateResult.IsSuccess &&
-                        addOrUpdateResult.Data is not null)
-                    {
-
-                        return new OCPIResponse.Builder(request) {
-                                   StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
-                                   Data                 = addOrUpdateResult.Data.ToJSON(
-                                                              true,
-                                                              true,
-                                                              CustomTerminalSerializer,
-                                                              CustomDisplayTextSerializer,
-                                                              CustomImageSerializer
-                                                          ),
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = addOrUpdateResult.WasCreated == true
-                                                                        ? HTTPStatusCode.Created
-                                                                        : HTTPStatusCode.OK,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PATCH" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ],
-                                       LastModified               = addOrUpdateResult.Data.LastUpdated,
-                                       ETag                       = addOrUpdateResult.Data.ETag
-                                   }
-                               };
-
-                    }
-
-                    return new OCPIResponse.Builder(request) {
-                               StatusCode           = 2000,
-                               StatusMessage        = addOrUpdateResult.ErrorResponse,
-                               Data                 = newOrUpdatedTerminal.ToJSON(
-                                                          true,
-                                                          true,
-                                                          CustomTerminalSerializer,
-                                                          CustomDisplayTextSerializer,
-                                                          CustomImageSerializer
+                               Data                 = commandResponse.ToJSON(
+                                                          CustomCommandResponseSerializer,
+                                                          CustomDisplayTextSerializer
                                                       ),
-                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PATCH" ],
+                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
                                    AccessControlAllowHeaders  = [ "Authorization" ]
                                }
                            };
 
-                }
-
-            );
+                });
 
             #endregion
 
             #endregion
 
-            #region ~/payments/financial-advice-confirmations
-
-            #region OPTIONS  ~/payments/financial-advice-confirmations
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.OPTIONS,
-                URLPathPrefix + "payments/financial-advice-confirmations",
-                request =>
-
-                    Task.FromResult(
-                        new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.POST ],
-                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
-                        })
-
-            );
-
-            #endregion
-
-            #region POST     ~/payments/financial-advice-confirmations
-
-
-            #endregion
-
-            #endregion
-
-            #region ~/payments/financial-advice-confirmations/{financial_advice_confirmation_id}
-
-            #region OPTIONS  ~/payments/financial-advice-confirmations/{financial_advice_confirmation_id}
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.OPTIONS,
-                URLPathPrefix + "payments/financial-advice-confirmations/{financial_advice_confirmation_id}",
-                request =>
-
-                    Task.FromResult(
-                        new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
-                        })
-
-            );
-
-            #endregion
-
-            #region GET      ~/payments/financial-advice-confirmations/{financial_advice_confirmation_id}
-
-
-            #endregion
-
-            #endregion
 
         }
 

@@ -183,7 +183,7 @@ namespace cloud.charging.open.protocols.WWCP
                                       I18NString                                              Name,
                                       I18NString                                              Description,
 
-                                      OCPIv2_1_1.EMSPAPI                                      EMSPAPI,
+                                      OCPIv2_1_1.EMSP_HTTPAPI                                      EMSPAPI,
 
                                       OCPI.      EVSEId_2_WWCPEVSEId_Delegate?                CustomEVSEIdConverter               = null,
                                       OCPIv2_1_1.EVSE_2_WWCPEVSE_Delegate?                    CustomEVSEConverter                 = null,
