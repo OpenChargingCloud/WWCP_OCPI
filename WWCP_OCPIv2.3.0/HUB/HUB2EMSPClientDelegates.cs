@@ -815,7 +815,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB2EMSP.HTTP
     /// A delegate called whenever a post token request will be send.
     /// </summary>
     public delegate Task OnPostTokenRequestDelegate(DateTimeOffset                     LogTimestamp,
-                                                    HUB2EMSPClient                          Sender,
+                                                    HUB2EMSPClient                     Sender,
                                                     Request_Id                         RequestId,
                                                     Correlation_Id                     CorrelationId,
 
@@ -831,7 +831,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB2EMSP.HTTP
     /// A delegate called whenever a response to a post token request had been received.
     /// </summary>
     public delegate Task OnPostTokenResponseDelegate(DateTimeOffset                    LogTimestamp,
-                                                     HUB2EMSPClient                         Sender,
+                                                     HUB2EMSPClient                    Sender,
                                                      Request_Id                        RequestId,
                                                      Correlation_Id                    CorrelationId,
 

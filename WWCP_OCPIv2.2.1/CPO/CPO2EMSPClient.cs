@@ -840,7 +840,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         /// <summary>
         /// Create a new CPO2EMSP client.
         /// </summary>
-        /// <param name="CPOAPI">The CPO API.</param>
+        /// <param name="CPO_HTTPAPI">The CPO HTTP API.</param>
         /// <param name="RemoteParty">The remote party.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
@@ -849,7 +849,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPO2EMSPClient(CPO_HTTPAPI                       CPOAPI,
+        public CPO2EMSPClient(CPO_HTTPAPI                  CPO_HTTPAPI,
                               RemoteParty                  RemoteParty,
                               HTTPHostname?                VirtualHostname   = null,
                               I18NString?                  Description       = null,
@@ -861,7 +861,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                               OCPILogfileCreatorDelegate?  LogfileCreator    = null,
                               IDNSClient?                  DNSClient         = null)
 
-            : base(CPOAPI.CommonAPI,
+            : base(CPO_HTTPAPI.CommonAPI,
                    RemoteParty,
                    VirtualHostname,
                    Description,
@@ -876,7 +876,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         {
 
             this.RemoteEMSPId  = RemoteParty.Id.AsEMSPId;
-            this.CPOAPI        = CPOAPI;
+            this.CPOAPI        = CPO_HTTPAPI;
             this.Counters      = new APICounters();
 
             base.HTTPLogger    = this.DisableLogging == false

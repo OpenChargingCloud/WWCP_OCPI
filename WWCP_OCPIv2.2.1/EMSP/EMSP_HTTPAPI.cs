@@ -17,13 +17,16 @@
 
 #region Usings
 
+using System.Diagnostics;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
+using Hermod = org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP;
@@ -33,12 +36,461 @@ using cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP;
 namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
+    #region OnPutLocation    (Request|Response)Delegate
+
+    /// <summary>
+    /// A delegate called whenever a PUT Location request was received.
+    /// </summary>
+    public delegate Task OnPutLocationRequestDelegate2 (DateTimeOffset       Timestamp,
+                                                        EMSP_HTTPAPI         Sender,
+                                                        EventTracking_Id     EventTrackingId,
+                                                        CountryCode?         From_CountryCode,
+                                                        Party_Id?            From_PartyId,
+                                                        CountryCode?         To_CountryCode,
+                                                        Party_Id?            To_PartyId,
+
+                                                        Location             Location,
+
+                                                        CancellationToken    CancellationToken);
+
+    /// <summary>
+    /// A delegate whenever a response to a PUT Location request had been sent.
+    /// </summary>
+    public delegate Task OnPutLocationResponseDelegate2(DateTimeOffset       Timestamp,
+                                                        EMSP_HTTPAPI         Sender,
+                                                        EventTracking_Id     EventTrackingId,
+                                                        CountryCode?         From_CountryCode,
+                                                        Party_Id?            From_PartyId,
+                                                        CountryCode?         To_CountryCode,
+                                                        Party_Id?            To_PartyId,
+
+                                                        Location             Location,
+
+                                                        TimeSpan             Runtime,
+                                                        CancellationToken    CancellationToken);
+
+    #endregion
+
+    #region OnPatchLocation  (Request|Response)Delegate
+
+    /// <summary>
+    /// A delegate called whenever a PATCH Location request was received.
+    /// </summary>
+    public delegate Task OnPatchLocationRequestDelegate2 (DateTimeOffset       Timestamp,
+                                                          EMSP_HTTPAPI         Sender,
+                                                          EventTracking_Id     EventTrackingId,
+                                                          CountryCode?         From_CountryCode,
+                                                          Party_Id?            From_PartyId,
+                                                          CountryCode?         To_CountryCode,
+                                                          Party_Id?            To_PartyId,
+
+                                                          Location_Id          LocationId,
+                                                          JObject              LocationPatch,
+
+                                                          CancellationToken    CancellationToken);
+
+    /// <summary>
+    /// A delegate whenever a response to a PATCH Location request had been sent.
+    /// </summary>
+    public delegate Task OnPatchLocationResponseDelegate2(DateTimeOffset       Timestamp,
+                                                          EMSP_HTTPAPI         Sender,
+                                                          EventTracking_Id     EventTrackingId,
+                                                          CountryCode?         From_CountryCode,
+                                                          Party_Id?            From_PartyId,
+                                                          CountryCode?         To_CountryCode,
+                                                          Party_Id?            To_PartyId,
+
+                                                          Location_Id          LocationId,
+                                                          JObject              LocationPatch,
+
+                                                          TimeSpan             Runtime,
+                                                          CancellationToken    CancellationToken);
+
+    #endregion
+
+    #region OnPutEVSE        (Request|Response)Delegate
+
+    /// <summary>
+    /// A delegate called whenever a PUT EVSE request was received.
+    /// </summary>
+    public delegate Task OnPutEVSERequestDelegate2 (DateTimeOffset       Timestamp,
+                                                    EMSP_HTTPAPI         Sender,
+                                                    EventTracking_Id     EventTrackingId,
+                                                    CountryCode?         From_CountryCode,
+                                                    Party_Id?            From_PartyId,
+                                                    CountryCode?         To_CountryCode,
+                                                    Party_Id?            To_PartyId,
+
+                                                    EVSE                 EVSE,
+
+                                                    CancellationToken    CancellationToken);
+
+    /// <summary>
+    /// A delegate whenever a response to a PUT EVSE request had been sent.
+    /// </summary>
+    public delegate Task OnPutEVSEResponseDelegate2(DateTimeOffset       Timestamp,
+                                                    EMSP_HTTPAPI         Sender,
+                                                    EventTracking_Id     EventTrackingId,
+                                                    CountryCode?         From_CountryCode,
+                                                    Party_Id?            From_PartyId,
+                                                    CountryCode?         To_CountryCode,
+                                                    Party_Id?            To_PartyId,
+
+                                                    EVSE                 EVSE,
+
+                                                    TimeSpan             Runtime,
+                                                    CancellationToken    CancellationToken);
+
+    #endregion
+
+    #region OnPatchEVSE      (Request|Response)Delegate
+
+    /// <summary>
+    /// A delegate called whenever a PATCH EVSE request was received.
+    /// </summary>
+    public delegate Task OnPatchEVSERequestDelegate2 (DateTimeOffset       Timestamp,
+                                                      EMSP_HTTPAPI         Sender,
+                                                      EventTracking_Id     EventTrackingId,
+                                                      CountryCode?         From_CountryCode,
+                                                      Party_Id?            From_PartyId,
+                                                      CountryCode?         To_CountryCode,
+                                                      Party_Id?            To_PartyId,
+
+                                                      EVSE_UId             EVSEUId,
+                                                      JObject              EVSEPatch,
+
+                                                      CancellationToken    CancellationToken);
+
+    /// <summary>
+    /// A delegate whenever a response to a PATCH EVSE request had been sent.
+    /// </summary>
+    public delegate Task OnPatchEVSEResponseDelegate2(DateTimeOffset       Timestamp,
+                                                      EMSP_HTTPAPI         Sender,
+                                                      EventTracking_Id     EventTrackingId,
+                                                      CountryCode?         From_CountryCode,
+                                                      Party_Id?            From_PartyId,
+                                                      CountryCode?         To_CountryCode,
+                                                      Party_Id?            To_PartyId,
+
+                                                      EVSE_UId             EVSEUId,
+                                                      JObject              EVSEPatch,
+
+                                                      TimeSpan             Runtime,
+                                                      CancellationToken    CancellationToken);
+
+    #endregion
+
+    #region OnPutConnector   (Request|Response)Delegate
+
+    /// <summary>
+    /// A delegate called whenever a PUT Connector request was received.
+    /// </summary>
+    public delegate Task OnPutConnectorRequestDelegate2 (DateTimeOffset       Timestamp,
+                                                         EMSP_HTTPAPI         Sender,
+                                                         EventTracking_Id     EventTrackingId,
+                                                         CountryCode?         From_CountryCode,
+                                                         Party_Id?            From_PartyId,
+                                                         CountryCode?         To_CountryCode,
+                                                         Party_Id?            To_PartyId,
+
+                                                         Connector            Connector,
+
+                                                         CancellationToken    CancellationToken);
+
+    /// <summary>
+    /// A delegate whenever a response to a PUT Connector request had been sent.
+    /// </summary>
+    public delegate Task OnPutConnectorResponseDelegate2(DateTimeOffset       Timestamp,
+                                                         EMSP_HTTPAPI         Sender,
+                                                         EventTracking_Id     EventTrackingId,
+                                                         CountryCode?         From_CountryCode,
+                                                         Party_Id?            From_PartyId,
+                                                         CountryCode?         To_CountryCode,
+                                                         Party_Id?            To_PartyId,
+
+                                                         Connector            Connector,
+
+                                                         TimeSpan             Runtime,
+                                                         CancellationToken    CancellationToken);
+
+    #endregion
+
+    #region OnPatchConnector (Request|Response)Delegate
+
+    /// <summary>
+    /// A delegate called whenever a PATCH Connector request was received.
+    /// </summary>
+    public delegate Task OnPatchConnectorRequestDelegate2 (DateTimeOffset       Timestamp,
+                                                           EMSP_HTTPAPI         Sender,
+                                                           EventTracking_Id     EventTrackingId,
+                                                           CountryCode?         From_CountryCode,
+                                                           Party_Id?            From_PartyId,
+                                                           CountryCode?         To_CountryCode,
+                                                           Party_Id?            To_PartyId,
+
+                                                           Connector_Id         ConnectorId,
+                                                           JObject              ConnectorPatch,
+
+                                                           CancellationToken    CancellationToken);
+
+    /// <summary>
+    /// A delegate whenever a response to a PATCH Connector request had been sent.
+    /// </summary>
+    public delegate Task OnPatchConnectorResponseDelegate2(DateTimeOffset       Timestamp,
+                                                           EMSP_HTTPAPI         Sender,
+                                                           EventTracking_Id     EventTrackingId,
+                                                           CountryCode?         From_CountryCode,
+                                                           Party_Id?            From_PartyId,
+                                                           CountryCode?         To_CountryCode,
+                                                           Party_Id?            To_PartyId,
+
+                                                           Connector_Id         ConnectorId,
+                                                           JObject              ConnectorPatch,
+
+                                                           TimeSpan             Runtime,
+                                                           CancellationToken    CancellationToken);
+
+    #endregion
+
+    #region OnPutTariff      (Request|Response)Delegate
+
+    /// <summary>
+    /// A delegate called whenever a PUT Tariff request was received.
+    /// </summary>
+    public delegate Task OnPutTariffRequestDelegate2 (DateTimeOffset       Timestamp,
+                                                      EMSP_HTTPAPI         Sender,
+                                                      EventTracking_Id     EventTrackingId,
+                                                      CountryCode?         From_CountryCode,
+                                                      Party_Id?            From_PartyId,
+                                                      CountryCode?         To_CountryCode,
+                                                      Party_Id?            To_PartyId,
+
+                                                      Tariff               Tariff,
+
+                                                      CancellationToken    CancellationToken);
+
+    /// <summary>
+    /// A delegate whenever a response to a PUT Tariff request had been sent.
+    /// </summary>
+    public delegate Task OnPutTariffResponseDelegate2(DateTimeOffset       Timestamp,
+                                                      EMSP_HTTPAPI         Sender,
+                                                      EventTracking_Id     EventTrackingId,
+                                                      CountryCode?         From_CountryCode,
+                                                      Party_Id?            From_PartyId,
+                                                      CountryCode?         To_CountryCode,
+                                                      Party_Id?            To_PartyId,
+
+                                                      Tariff               Tariff,
+
+                                                      TimeSpan             Runtime,
+                                                      CancellationToken    CancellationToken);
+
+    #endregion
+
+    #region OnPutSession     (Request|Response)Delegate
+
+    /// <summary>
+    /// A delegate called whenever a PUT Session request was received.
+    /// </summary>
+    public delegate Task OnPutSessionRequestDelegate2 (DateTimeOffset       Timestamp,
+                                                       EMSP_HTTPAPI         Sender,
+                                                       EventTracking_Id     EventTrackingId,
+                                                       CountryCode?         From_CountryCode,
+                                                       Party_Id?            From_PartyId,
+                                                       CountryCode?         To_CountryCode,
+                                                       Party_Id?            To_PartyId,
+
+                                                       Session              Session,
+
+                                                       CancellationToken    CancellationToken);
+
+    /// <summary>
+    /// A delegate whenever a response to a PUT Session request had been sent.
+    /// </summary>
+    public delegate Task OnPutSessionResponseDelegate2(DateTimeOffset       Timestamp,
+                                                       EMSP_HTTPAPI         Sender,
+                                                       EventTracking_Id     EventTrackingId,
+                                                       CountryCode?         From_CountryCode,
+                                                       Party_Id?            From_PartyId,
+                                                       CountryCode?         To_CountryCode,
+                                                       Party_Id?            To_PartyId,
+
+                                                       Session              Session,
+
+                                                       TimeSpan             Runtime,
+                                                       CancellationToken    CancellationToken);
+
+    #endregion
+
+    #region OnPatchSession   (Request|Response)Delegate
+
+    /// <summary>
+    /// A delegate called whenever a PATCH Session request was received.
+    /// </summary>
+    public delegate Task OnPatchSessionRequestDelegate2 (DateTimeOffset       Timestamp,
+                                                         EMSP_HTTPAPI         Sender,
+                                                         EventTracking_Id     EventTrackingId,
+                                                         CountryCode?         From_CountryCode,
+                                                         Party_Id?            From_PartyId,
+                                                         CountryCode?         To_CountryCode,
+                                                         Party_Id?            To_PartyId,
+
+                                                         Session_Id           SessionId,
+                                                         JObject              SessionPatch,
+
+                                                         CancellationToken    CancellationToken);
+
+    /// <summary>
+    /// A delegate whenever a response to a PATCH Session request had been sent.
+    /// </summary>
+    public delegate Task OnPatchSessionResponseDelegate2(DateTimeOffset       Timestamp,
+                                                         EMSP_HTTPAPI         Sender,
+                                                         EventTracking_Id     EventTrackingId,
+                                                         CountryCode?         From_CountryCode,
+                                                         Party_Id?            From_PartyId,
+                                                         CountryCode?         To_CountryCode,
+                                                         Party_Id?            To_PartyId,
+
+                                                         Session_Id           SessionId,
+                                                         JObject              SessionPatch,
+
+                                                         TimeSpan             Runtime,
+                                                         CancellationToken    CancellationToken);
+
+    #endregion
+
+    #region OnPostCDR        (Request|Response)Delegate
+
+    /// <summary>
+    /// A delegate called whenever a POST CDR request was received.
+    /// </summary>
+    public delegate Task OnPostCDRRequestDelegate2 (DateTimeOffset       Timestamp,
+                                                    EMSP_HTTPAPI         Sender,
+                                                    EventTracking_Id     EventTrackingId,
+                                                    CountryCode?         From_CountryCode,
+                                                    Party_Id?            From_PartyId,
+                                                    CountryCode?         To_CountryCode,
+                                                    Party_Id?            To_PartyId,
+
+                                                    CDR                  CDR,
+
+                                                    CancellationToken    CancellationToken);
+
+    /// <summary>
+    /// A delegate whenever a response to a POST CDR request had been sent.
+    /// </summary>
+    public delegate Task OnPostCDRResponseDelegate2(DateTimeOffset       Timestamp,
+                                                    EMSP_HTTPAPI         Sender,
+                                                    EventTracking_Id     EventTrackingId,
+                                                    CountryCode?         From_CountryCode,
+                                                    Party_Id?            From_PartyId,
+                                                    CountryCode?         To_CountryCode,
+                                                    Party_Id?            To_PartyId,
+
+                                                    CDR                  CDR,
+
+                                                    Hermod.Location      CDRLocation,
+                                                    TimeSpan             Runtime,
+                                                    CancellationToken    CancellationToken);
+
+    #endregion
+
+    #region OnPostToken      (Request|Response)Delegate
+
+    /// <summary>
+    /// A delegate called whenever a POST Token request was received.
+    /// </summary>
+    public delegate Task OnPostTokenRequestDelegate2 (DateTimeOffset       Timestamp,
+                                                      EMSP_HTTPAPI         Sender,
+                                                      EventTracking_Id     EventTrackingId,
+                                                      CountryCode?         From_CountryCode,
+                                                      Party_Id?            From_PartyId,
+                                                      CountryCode?         To_CountryCode,
+                                                      Party_Id?            To_PartyId,
+
+                                                      Token_Id             TokenId,
+                                                      TokenType?           RequestedTokenType,
+                                                      LocationReference?   LocationReference,
+                                                      CancellationToken    CancellationToken);
+
+    /// <summary>
+    /// A delegate whenever a response to a POST Token request had been sent.
+    /// </summary>
+    public delegate Task OnPostTokenResponseDelegate2(DateTimeOffset       Timestamp,
+                                                      EMSP_HTTPAPI         Sender,
+                                                      EventTracking_Id     EventTrackingId,
+                                                      CountryCode?         From_CountryCode,
+                                                      Party_Id?            From_PartyId,
+                                                      CountryCode?         To_CountryCode,
+                                                      Party_Id?            To_PartyId,
+
+                                                      Token_Id             TokenId,
+                                                      TokenType?           RequestedTokenType,
+                                                      LocationReference?   LocationReference,
+
+                                                      AuthorizationInfo    Result,
+                                                      TimeSpan             Runtime,
+                                                      CancellationToken    CancellationToken);
+
+    #endregion
+
+
     /// <summary>
     /// The EMSP HTTP API for e-mobility service providers.
     /// CPOs will connect to this API.
     /// </summary>
     public class EMSP_HTTPAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
     {
+
+        #region (class) APICounters
+
+        public class APICounters(APICounterValues?  PutLocation      = null,
+                                 APICounterValues?  PatchLocation    = null,
+                                 APICounterValues?  PutEVSE          = null,
+                                 APICounterValues?  PatchEVSE        = null,
+                                 APICounterValues?  PutConnector     = null,
+                                 APICounterValues?  PatchConnector   = null,
+                                 APICounterValues?  PutTariff        = null,
+                                 APICounterValues?  PutSession       = null,
+                                 APICounterValues?  PatchSession     = null,
+                                 APICounterValues?  PostCDR          = null,
+                                 APICounterValues?  PostToken        = null)
+        {
+
+            public APICounterValues PutLocation      { get; } = PutLocation    ?? new APICounterValues();
+            public APICounterValues PatchLocation    { get; } = PatchLocation  ?? new APICounterValues();
+            public APICounterValues PutEVSE          { get; } = PutEVSE        ?? new APICounterValues();
+            public APICounterValues PatchEVSE        { get; } = PatchEVSE      ?? new APICounterValues();
+            public APICounterValues PutConnector     { get; } = PutConnector   ?? new APICounterValues();
+            public APICounterValues PatchConnector   { get; } = PatchConnector ?? new APICounterValues();
+            public APICounterValues PutTariff        { get; } = PutTariff      ?? new APICounterValues();
+            public APICounterValues PutSession       { get; } = PutSession     ?? new APICounterValues();
+            public APICounterValues PatchSession     { get; } = PatchSession   ?? new APICounterValues();
+            public APICounterValues PostCDR          { get; } = PostCDR        ?? new APICounterValues();
+            public APICounterValues PostToken        { get; } = PostToken      ?? new APICounterValues();
+
+            public JObject ToJSON()
+
+                => JSONObject.Create(
+
+                       new JProperty("PutLocation",     PutLocation.   ToJSON()),
+                       new JProperty("PatchLocation",   PatchLocation. ToJSON()),
+                       new JProperty("PutEVSE",         PutEVSE.       ToJSON()),
+                       new JProperty("PatchEVSE",       PatchEVSE.     ToJSON()),
+                       new JProperty("PutConnector",    PutConnector.  ToJSON()),
+                       new JProperty("PatchConnector",  PatchConnector.ToJSON()),
+                       new JProperty("PutTariff",       PutTariff.     ToJSON()),
+                       new JProperty("PutSession",      PutSession.    ToJSON()),
+                       new JProperty("PatchSession",    PatchSession.  ToJSON()),
+                       new JProperty("PostCDR",         PostCDR.       ToJSON()),
+                       new JProperty("PostToken",       PostToken.     ToJSON())
+
+                   );
+
+        }
+
+        #endregion
+
 
         #region Data
 
@@ -72,6 +524,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// OCPI v2.2.x does not define any behaviour for this.
         /// </summary>
         public Boolean?              AllowDowngrades    { get; }
+
+        /// <summary>
+        /// API Counters.
+        /// </summary>
+        public APICounters           Counters           { get; }
 
         /// <summary>
         /// The EMSP HTTP API logger.
@@ -2439,9 +2896,174 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                         CountryCode         To_CountryCode,
                                                                         Party_Id            To_PartyId,
                                                                         Token_Id            TokenId,
+                                                                        TokenType?          RequestedTokenType,
                                                                         LocationReference?  LocationReference);
 
         public event OnRFIDAuthTokenDelegate? OnRFIDAuthToken;
+
+
+
+        #region Domain Events
+
+        #region OnPutLocation    (Request/-Response)
+
+        /// <summary>
+        /// An event fired whenever a PUT Location request was received.
+        /// </summary>
+        public event OnPutLocationRequestDelegate2?   OnPutLocationRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a PUT Location request had been sent.
+        /// </summary>
+        public event OnPutLocationResponseDelegate2?  OnPutLocationResponse;
+
+        #endregion
+
+        #region OnPatchLocation  (Request/-Response)
+
+        /// <summary>
+        /// An event fired whenever a PATCH Location request was received.
+        /// </summary>
+        public event OnPatchLocationRequestDelegate2?   OnPatchLocationRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a PATCH Location request had been sent.
+        /// </summary>
+        public event OnPatchLocationResponseDelegate2?  OnPatchLocationResponse;
+
+        #endregion
+
+        #region OnPutEVSE        (Request/-Response)
+
+        /// <summary>
+        /// An event fired whenever a PUT EVSE request was received.
+        /// </summary>
+        public event OnPutEVSERequestDelegate2?   OnPutEVSERequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a PUT EVSE request had been sent.
+        /// </summary>
+        public event OnPutEVSEResponseDelegate2?  OnPutEVSEResponse;
+
+        #endregion
+
+        #region OnPatchEVSE      (Request/-Response)
+
+        /// <summary>
+        /// An event fired whenever a PATCH EVSE request was received.
+        /// </summary>
+        public event OnPatchEVSERequestDelegate2?   OnPatchEVSERequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a PATCH EVSE request had been sent.
+        /// </summary>
+        public event OnPatchEVSEResponseDelegate2?  OnPatchEVSEResponse;
+
+        #endregion
+
+        #region OnPutConnector   (Request/-Response)
+
+        /// <summary>
+        /// An event fired whenever a PUT Connector request was received.
+        /// </summary>
+        public event OnPutConnectorRequestDelegate2?   OnPutConnectorRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a PUT Connector request had been sent.
+        /// </summary>
+        public event OnPutConnectorResponseDelegate2?  OnPutConnectorResponse;
+
+        #endregion
+
+        #region OnPatchConnector (Request/-Response)
+
+        /// <summary>
+        /// An event fired whenever a PATCH Connector request was received.
+        /// </summary>
+        public event OnPatchConnectorRequestDelegate2?   OnPatchConnectorRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a PATCH Connector request had been sent.
+        /// </summary>
+        public event OnPatchConnectorResponseDelegate2?  OnPatchConnectorResponse;
+
+        #endregion
+
+
+        #region OnPutTariff      (Request/-Response)
+
+        /// <summary>
+        /// An event fired whenever a PUT Tariff request was received.
+        /// </summary>
+        public event OnPutTariffRequestDelegate2?   OnPutTariffRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a PUT Tariff request had been sent.
+        /// </summary>
+        public event OnPutTariffResponseDelegate2?  OnPutTariffResponse;
+
+        #endregion
+
+
+        #region OnPutSession     (Request/-Response)
+
+        /// <summary>
+        /// An event fired whenever a PUT Session request was received.
+        /// </summary>
+        public event OnPutSessionRequestDelegate2?   OnPutSessionRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a PUT Session request had been sent.
+        /// </summary>
+        public event OnPutSessionResponseDelegate2?  OnPutSessionResponse;
+
+        #endregion
+
+        #region OnPatchSession   (Request/-Response)
+
+        /// <summary>
+        /// An event fired whenever a PATCH Session request was received.
+        /// </summary>
+        public event OnPatchSessionRequestDelegate2?   OnPatchSessionRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a PATCH Session request had been sent.
+        /// </summary>
+        public event OnPatchSessionResponseDelegate2?  OnPatchSessionResponse;
+
+        #endregion
+
+
+        #region OnPostCDR        (Request/-Response)
+
+        /// <summary>
+        /// An event fired whenever a POST CDR request was received.
+        /// </summary>
+        public event OnPostCDRRequestDelegate2?   OnPostCDRRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a POST CDR request had been sent.
+        /// </summary>
+        public event OnPostCDRResponseDelegate2?  OnPostCDRResponse;
+
+        #endregion
+
+
+        #region OnPostToken      (Request/-Response)
+
+        /// <summary>
+        /// An event fired whenever a POST Token request was received.
+        /// </summary>
+        public event OnPostTokenRequestDelegate2?   OnPostTokenRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a POST Token request had been sent.
+        /// </summary>
+        public event OnPostTokenResponseDelegate2?  OnPostTokenResponse;
+
+        #endregion
+
+        #endregion
 
         #endregion
 
@@ -3073,10 +3695,63 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     #endregion
 
 
+                    #region Send OnPutLocationRequest event
+
+                    var startTime  = Timestamp.Now;
+                    var stopwatch  = Stopwatch.StartNew();
+
+                    Counters.PutLocation.IncRequests_OK();
+
+                    await LogEvent(
+                              OnPutLocationRequest,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  startTime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  newOrUpdatedLocation,
+
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
+
                     var addOrUpdateResult = await CommonAPI.AddOrUpdateLocation(
                                                       newOrUpdatedLocation,
                                                       AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade")
                                                   );
+
+
+                    #region Send OnPutLocationResponse event
+
+                    var endtime = Timestamp.Now;
+                    stopwatch.Stop();
+
+                    await LogEvent(
+                              OnPutLocationResponse,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  endtime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  newOrUpdatedLocation,
+
+                                  stopwatch.Elapsed,
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
 
 
                     if (addOrUpdateResult.IsSuccessAndDataNotNull(out var locationData))
@@ -3205,6 +3880,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     #endregion
 
 
+                    #region Send OnPatchLocationRequest event
+
+                    var startTime  = Timestamp.Now;
+                    var stopwatch  = Stopwatch.StartNew();
+
+                    Counters.PatchLocation.IncRequests_OK();
+
+                    await LogEvent(
+                              OnPatchLocationRequest,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  startTime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  locationId.Value,
+                                  locationPatch,
+
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
                     // Validation-Checks for PATCHes
                     // (E-Tag, Timestamp, ...)
 
@@ -3216,6 +3918,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                     locationId.Value,
                                                     locationPatch
                                                 );
+
+
+                    #region Send OnPatchLocationResponse event
+
+                    var endtime = Timestamp.Now;
+                    stopwatch.Stop();
+
+                    await LogEvent(
+                              OnPatchLocationResponse,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  endtime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  locationId.Value,
+                                  locationPatch,
+
+                                  stopwatch.Elapsed,
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
 
 
                     //ToDo: Handle update errors!
@@ -3529,11 +4258,64 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     #endregion
 
 
+                    #region Send OnPutEVSERequest event
+
+                    var startTime  = Timestamp.Now;
+                    var stopwatch  = Stopwatch.StartNew();
+
+                    Counters.PutEVSE.IncRequests_OK();
+
+                    await LogEvent(
+                              OnPutEVSERequest,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  startTime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  newOrUpdatedEVSE,
+
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
+
                     var addOrUpdateResult = await CommonAPI.AddOrUpdateEVSE(
                                                       existingLocation,
                                                       newOrUpdatedEVSE,
                                                       AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade")
                                                   );
+
+
+                    #region Send OnPutEVSEResponse event
+
+                    var endtime = Timestamp.Now;
+                    stopwatch.Stop();
+
+                    await LogEvent(
+                              OnPutEVSEResponse,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  endtime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  newOrUpdatedEVSE,
+
+                                  stopwatch.Elapsed,
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
 
 
                     if (addOrUpdateResult.IsSuccessAndDataNotNull(out var evseData))
@@ -3643,11 +4425,67 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     #endregion
 
 
+                    #region Send OnPatchEVSERequest event
+
+                    var startTime  = Timestamp.Now;
+                    var stopwatch  = Stopwatch.StartNew();
+
+                    Counters.PatchEVSE.IncRequests_OK();
+
+                    await LogEvent(
+                              OnPatchEVSERequest,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  startTime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  evseUId.Value,
+                                  evsePatch,
+
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
+
                     var patchedEVSE = await CommonAPI.TryPatchEVSE(
                                                 existingLocation,
                                                 existingEVSE,
                                                 evsePatch
                                             );
+
+
+                    #region Send OnPatchEVSEResponse event
+
+                    var endtime = Timestamp.Now;
+                    stopwatch.Stop();
+
+                    await LogEvent(
+                              OnPatchEVSEResponse,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  endtime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  evseUId.Value,
+                                  evsePatch,
+
+                                  stopwatch.Elapsed,
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
 
                     //ToDo: Handle update errors!
                     if (patchedEVSE.IsSuccessAndDataNotNull(out var evseData))
@@ -3944,12 +4782,66 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     #endregion
 
 
+                    #region Send OnPutConnectorRequest event
+
+                    var startTime  = Timestamp.Now;
+                    var stopwatch  = Stopwatch.StartNew();
+
+                    Counters.PutConnector.IncRequests_OK();
+
+                    await LogEvent(
+                              OnPutConnectorRequest,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  startTime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  newOrUpdatedConnector,
+
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
+
                     var addOrUpdateResult = await CommonAPI.AddOrUpdateConnector(
                                                       existingLocation,
                                                       existingEVSE,
                                                       newOrUpdatedConnector,
                                                       AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade")
                                                   );
+
+
+                    #region Send OnPutConnectorResponse event
+
+                    var endtime = Timestamp.Now;
+                    stopwatch.Stop();
+
+                    await LogEvent(
+                              OnPutConnectorResponse,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  endtime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  newOrUpdatedConnector,
+
+                                  stopwatch.Elapsed,
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
 
 
                     if (addOrUpdateResult.IsSuccessAndDataNotNull(out var connectorData))
@@ -4052,12 +4944,68 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     #endregion
 
 
+                    #region Send OnPatchConnectorRequest event
+
+                    var startTime  = Timestamp.Now;
+                    var stopwatch  = Stopwatch.StartNew();
+
+                    Counters.PatchConnector.IncRequests_OK();
+
+                    await LogEvent(
+                              OnPatchConnectorRequest,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  startTime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  connectorId.Value,
+                                  connectorPatch,
+
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
+
                     var patchedConnector = await CommonAPI.TryPatchConnector(
                                                      existingLocation,
                                                      existingEVSE,
                                                      existingConnector,
                                                      connectorPatch
                                                  );
+
+
+                    #region Send OnPatchConnectorResponse event
+
+                    var endtime = Timestamp.Now;
+                    stopwatch.Stop();
+
+                    await LogEvent(
+                              OnPatchConnectorResponse,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  endtime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  connectorId.Value,
+                                  connectorPatch,
+
+                                  stopwatch.Elapsed,
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
 
                     //ToDo: Handle update errors!
                     if (patchedConnector.IsSuccessAndDataNotNull(out var connectorData))
@@ -4625,10 +5573,63 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     #endregion
 
 
+                    #region Send OnPutTariffRequest event
+
+                    var startTime  = Timestamp.Now;
+                    var stopwatch  = Stopwatch.StartNew();
+
+                    Counters.PutTariff.IncRequests_OK();
+
+                    await LogEvent(
+                              OnPutTariffRequest,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  startTime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  newOrUpdatedTariff,
+
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
+
                     var addOrUpdateResult = await CommonAPI.AddOrUpdateTariff(
                                                       newOrUpdatedTariff,
                                                       AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade")
                                                   );
+
+
+                    #region Send OnPutTariffResponse event
+
+                    var endtime = Timestamp.Now;
+                    stopwatch.Stop();
+
+                    await LogEvent(
+                              OnPutTariffResponse,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  endtime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  newOrUpdatedTariff,
+
+                                  stopwatch.Elapsed,
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
 
 
                     if (addOrUpdateResult.IsSuccessAndDataNotNull(out var data))
@@ -5369,10 +6370,63 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     #endregion
 
 
+                    #region Send OnPutSessionRequest event
+
+                    var startTime  = Timestamp.Now;
+                    var stopwatch  = Stopwatch.StartNew();
+
+                    Counters.PutSession.IncRequests_OK();
+
+                    await LogEvent(
+                              OnPutSessionRequest,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  startTime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  newOrUpdatedSession,
+
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
+
                     var addOrUpdateResult = await CommonAPI.AddOrUpdateSession(
                                                       newOrUpdatedSession,
                                                       AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade")
                                                   );
+
+
+                    #region Send OnPutSessionResponse event
+
+                    var endtime = Timestamp.Now;
+                    stopwatch.Stop();
+
+                    await LogEvent(
+                              OnPutSessionResponse,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  endtime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  newOrUpdatedSession,
+
+                                  stopwatch.Elapsed,
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
 
 
                     if (addOrUpdateResult.IsSuccessAndDataNotNull(out var sessionData))
@@ -5473,6 +6527,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     #endregion
 
 
+                    #region Send OnPatchSessionRequest event
+
+                    var startTime  = Timestamp.Now;
+                    var stopwatch  = Stopwatch.StartNew();
+
+                    Counters.PatchSession.IncRequests_OK();
+
+                    await LogEvent(
+                              OnPatchSessionRequest,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  startTime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  existingSession.Id,
+                                  sessionPatch,
+
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
+
                     var patchedSession = await CommonAPI.TryPatchSession(
                                                    Party_Idv3.From(
                                                        countryCode.Value,
@@ -5481,6 +6563,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                    existingSession.Id,
                                                    sessionPatch
                                                );
+
+
+                    #region Send OnPatchSessionResponse event
+
+                    var endtime = Timestamp.Now;
+                    stopwatch.Stop();
+
+                    await LogEvent(
+                              OnPatchSessionResponse,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  endtime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  existingSession.Id,
+                                  sessionPatch,
+
+                                  stopwatch.Elapsed,
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
 
 
                     //ToDo: Handle update errors!
@@ -5817,12 +6926,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region POST     ~/cdrs               ///{country_code}/{party_id}       <= Unclear if this URL is correct!
+            #region POST     ~/cdrs                                 <= Unclear if this URL is correct!
 
             CommonAPI.AddOCPIMethod(
-                    //POST /ocpi/v2.2.1/emsp/cdrs/DE/GEF/CDR0001
+
                 HTTPMethod.POST,
-                URLPathPrefix + "cdrs",//{country_code}/{party_id}",
+                URLPathPrefix + "cdrs",
                 HTTPEvents.PostCDRHTTPRequest,
                 HTTPEvents.PostCDRHTTPResponse,
                 async request => {
@@ -5834,14 +6943,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     {
 
                         return new OCPIResponse.Builder(request) {
-                                   StatusCode           = 2000,
-                                   StatusMessage        = "Invalid or blocked access token!",
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                   }
-                               };
+                                    StatusCode           = 2000,
+                                    StatusMessage        = "Invalid or blocked access token!",
+                                    HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "DELETE" ],
+                                        AccessControlAllowHeaders  = [ "Authorization" ]
+                                    }
+                                };
 
                     }
 
@@ -5872,68 +6981,162 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     {
 
                         return new OCPIResponse.Builder(request) {
-                                   StatusCode           = 2001,
-                                   StatusMessage        = "Could not parse the given charge detail record JSON: " + errorResponse,
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "DELETE" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                   }
-                               };
+                                    StatusCode           = 2001,
+                                    StatusMessage        = "Could not parse the given charge detail record JSON: " + errorResponse,
+                                    HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "DELETE" ],
+                                        AccessControlAllowHeaders  = [ "Authorization" ]
+                                    }
+                                };
 
                     }
 
                     #endregion
 
 
+                    #region Send OnPostCDRRequest event
+
+                    var startTime  = Timestamp.Now;
+                    var stopwatch  = Stopwatch.StartNew();
+
+                    Counters.PostCDR.IncRequests_OK();
+
+                    await LogEvent(
+                              OnPostCDRRequest,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  startTime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  newCDR,
+
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
+
+                    //ToDo: How do we verify, that this CPO does not send CDRs for other CPOs?
+
+
                     // ToDo: What kind of error might happen here?
-                    var result = await CommonAPI.AddCDR(newCDR);
+                    var addResult    = await CommonAPI.AddCDR(newCDR);
+
+                    var cdrLocation  = Hermod.Location.From(
+                                           URLPathPrefix + "cdrs" +
+                                           newCDR.CountryCode.ToString() +
+                                           newCDR.PartyId.ToString() +
+                                           newCDR.Id.ToString()
+                                       );
 
 
-                    // https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/mod_cdrs.asciidoc#mod_cdrs_post_method
+                    #region Send OnPostCDRResponse event
+
+                    var endtime = Timestamp.Now;
+                    stopwatch.Stop();
+
+                    await LogEvent(
+                              OnPostCDRResponse,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  endtime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+
+                                  newCDR,
+
+                                  cdrLocation,
+                                  stopwatch.Elapsed,
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
+
+                    // https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/mod_cdrs.asciidoc#mod_cdrs_post_method
                     // The response should contain the URL to the just created CDR object in the eMSP’s system.
                     //
                     // Parameter    Location
                     // Datatype     URL
                     // Required     yes
                     // Description  URL to the newly created CDR in the eMSP’s system, can be used by the CPO system to perform a GET on the same CDR.
-                    // Example      https://www.server.com/ocpi/emsp/2.2/cdrs/123456
+                    // Example      https://www.server.com/ocpi/emsp/2.2.1/cdrs/123456
+
+                    if (addResult.IsSuccess)
+                        return new OCPIResponse.Builder(request) {
+                                        StatusCode           = 1000,
+                                        StatusMessage        = "Hello world!",
+                                        Data                 = newCDR.ToJSON(
+                                                                   CustomCDRSerializer,
+                                                                   CustomCDRTokenSerializer,
+                                                                   CustomCDRLocationSerializer,
+                                                                   CustomEVSEEnergyMeterSerializer,
+                                                                   CustomTransparencySoftwareSerializer,
+                                                                   CustomTariffSerializer,
+                                                                   CustomDisplayTextSerializer,
+                                                                   CustomPriceSerializer,
+                                                                   CustomTariffElementSerializer,
+                                                                   CustomPriceComponentSerializer,
+                                                                   CustomTariffRestrictionsSerializer,
+                                                                   CustomEnergyMixSerializer,
+                                                                   CustomEnergySourceSerializer,
+                                                                   CustomEnvironmentalImpactSerializer,
+                                                                   CustomChargingPeriodSerializer,
+                                                                   CustomCDRDimensionSerializer,
+                                                                   CustomSignedDataSerializer,
+                                                                   CustomSignedValueSerializer
+                                                               ),
+                                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                            HTTPStatusCode             = HTTPStatusCode.Created,
+                                            Location                   = cdrLocation,
+                                            AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "DELETE" ],
+                                            AccessControlAllowHeaders  = [ "Authorization" ],
+                                            LastModified               = newCDR.LastUpdated,
+                                            ETag                       = newCDR.ETag
+                                        }
+                                    };
 
                     return new OCPIResponse.Builder(request) {
-                                   StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
-                                   Data                 = newCDR.ToJSON(
-                                                              CustomCDRSerializer,
-                                                              CustomCDRTokenSerializer,
-                                                              CustomCDRLocationSerializer,
-                                                              CustomEVSEEnergyMeterSerializer,
-                                                              CustomTransparencySoftwareSerializer,
-                                                              CustomTariffSerializer,
-                                                              CustomDisplayTextSerializer,
-                                                              CustomPriceSerializer,
-                                                              CustomTariffElementSerializer,
-                                                              CustomPriceComponentSerializer,
-                                                              CustomTariffRestrictionsSerializer,
-                                                              CustomEnergyMixSerializer,
-                                                              CustomEnergySourceSerializer,
-                                                              CustomEnvironmentalImpactSerializer,
-                                                              CustomChargingPeriodSerializer,
-                                                              CustomCDRDimensionSerializer,
-                                                              CustomSignedDataSerializer,
-                                                              CustomSignedValueSerializer
-                                                          ),
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = HTTPStatusCode.Created,
-                                       Location                   = org.GraphDefined.Vanaheimr.Hermod.HTTP.Location.From(URLPathPrefix + "cdrs" + newCDR.CountryCode.ToString() + newCDR.PartyId.ToString() + newCDR.Id.ToString()),
-                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ],
-                                       LastModified               = newCDR.LastUpdated,
-                                       ETag                       = newCDR.ETag
-                                   }
-                               };
+                               StatusCode           = 2000,
+                               StatusMessage        = addResult.ErrorResponse,
+                               Data                 = newCDR.ToJSON(
+                                                          CustomCDRSerializer,
+                                                          CustomCDRTokenSerializer,
+                                                          CustomCDRLocationSerializer,
+                                                          CustomEVSEEnergyMeterSerializer,
+                                                          CustomTransparencySoftwareSerializer,
+                                                          CustomTariffSerializer,
+                                                          CustomDisplayTextSerializer,
+                                                          CustomPriceSerializer,
+                                                          CustomTariffElementSerializer,
+                                                          CustomPriceComponentSerializer,
+                                                          CustomTariffRestrictionsSerializer,
+                                                          CustomEnergyMixSerializer,
+                                                          CustomEnergySourceSerializer,
+                                                          CustomEnvironmentalImpactSerializer,
+                                                          CustomChargingPeriodSerializer,
+                                                          CustomCDRDimensionSerializer,
+                                                          CustomSignedDataSerializer,
+                                                          CustomSignedValueSerializer
+                                                      ),
+                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "DELETE" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                           };
 
-                }
-            );
+                });
 
             #endregion
 
@@ -6408,12 +7611,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (!request.ParseTokenId(out var tokenId,
                                               out var ocpiResponseBuilder))
                     {
+
+                        Counters.PostToken.IncRequests_Error();
+
                         return ocpiResponseBuilder;
+
                     }
 
                     #endregion
 
-                    var requestedTokenType  = request.QueryString.Map("type", TokenType.TryParse) ?? TokenType.RFID;
+                    var requestedTokenType = request.QueryString.Map("type", TokenType.TryParse);
 
                     #region Parse optional LocationReference JSON
 
@@ -6428,6 +7635,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                         out var _locationReference,
                                                         out var errorResponse))
                         {
+
+                            Counters.PostToken.IncRequests_Error();
 
                             return new OCPIResponse.Builder(request) {
                                    StatusCode           = 2001,
@@ -6448,6 +7657,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     #endregion
 
 
+                    #region Send OnTokenAuthorizeRequest event
+
+                    var startTime  = Timestamp.Now;
+                    var stopwatch  = Stopwatch.StartNew();
+
+                    Counters.PostToken.IncRequests_OK();
+
+                    await LogEvent(
+                              OnPostTokenRequest,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  startTime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.FromCountryCode ?? request.CPOId?.CountryCode,
+                                  request.FromPartyId     ?? request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+                                  tokenId.Value,
+                                  requestedTokenType,
+                                  locationReference,
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
+
+                    #region OnRFIDAuthToken...
+
                     AuthorizationInfo? authorizationInfo = null;
 
                     var onRFIDAuthTokenLocal = OnRFIDAuthToken;
@@ -6463,6 +7701,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                    request.ToCountryCode   ?? CommonAPI.DefaultPartyId.CountryCode,
                                                    request.ToPartyId       ?? CommonAPI.DefaultPartyId.Party,
                                                    tokenId.Value,
+                                                   requestedTokenType,
                                                    locationReference
                                                );
 
@@ -6472,13 +7711,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         catch (Exception e)
                         {
 
+                            Counters.PostToken.IncResponses_Error();
+
                             authorizationInfo = new AuthorizationInfo(
                                                     AllowedType.NOT_ALLOWED,
                                                     new Token(
                                                         CommonAPI.DefaultPartyId.CountryCode,
                                                         CommonAPI.DefaultPartyId.Party,
                                                         tokenId.Value,
-                                                        requestedTokenType,
+                                                        requestedTokenType ?? TokenType.RFID,
                                                         Contract_Id.Parse($"{CommonAPI.DefaultPartyId.ToString(Role.EMSP)}-{tokenId}"),
                                                         $"Could not call {nameof(EMSP_HTTPAPI)}.OnRFIDAuthToken(...): {e.Message}",
                                                         false,
@@ -6489,6 +7730,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         }
 
                     }
+
+                    #endregion
+
+                    #region ...or check local
 
                     else
                     {
@@ -6695,12 +7940,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     }
 
                     authorizationInfo ??= new AuthorizationInfo(
-                                              AllowedType.BLOCKED,
+                                              AllowedType.NOT_ALLOWED,
                                               new Token(
                                                   CommonAPI.DefaultPartyId.CountryCode,
                                                   CommonAPI.DefaultPartyId.Party,
                                                   tokenId.Value,
-                                                  requestedTokenType,
+                                                  requestedTokenType ?? TokenType.RFID,
                                                   Contract_Id.Parse($"{CommonAPI.DefaultPartyId.ToString(Role.EMSP)}-{tokenId}"),
                                                   "Internal Error!",
                                                   false,
@@ -6708,10 +7953,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                               )
                                           );
 
+                    #endregion
 
                     // too little information like e.g. no LocationReferences provided:
                     //   => status_code 2002
-
 
                     #region Set a user-friendly response message for the ev driver
 
@@ -6724,6 +7969,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         if (authorizationInfo.Allowed == AllowedType.ALLOWED)
                         {
+
+                            Counters.PostToken.IncResponses_OK();
 
                             responseText = "Charging allowed!";
 
@@ -6746,6 +7993,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
                         {
 
+                            Counters.PostToken.IncResponses_OK();
+
                             responseText = "Sorry, your token is blocked!";
 
                             if (authorizationInfo.Token?.UILanguage.HasValue == true)
@@ -6766,6 +8015,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
                         {
+
+                            Counters.PostToken.IncResponses_OK();
 
                             responseText = "Sorry, your token has expired!";
 
@@ -6788,6 +8039,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
                         {
 
+                            Counters.PostToken.IncResponses_OK();
+
                             responseText = "Sorry, your have not enough credits for charging!";
 
                             if (authorizationInfo.Token?.UILanguage.HasValue == true)
@@ -6808,6 +8061,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
                         {
+
+                            Counters.PostToken.IncResponses_OK();
 
                             responseText = "Sorry, charging is not allowed!";
 
@@ -6830,6 +8085,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         else
                         {
 
+                            Counters.PostToken.IncResponses_Error();
+
                             responseText = "An error occurred!";
 
                             if (authorizationInfo.Token?.UILanguage.HasValue == true)
@@ -6848,30 +8105,59 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     }
 
+                    var authorizationInfo2 = new AuthorizationInfo(
+                                                 authorizationInfo.Allowed,
+                                                 authorizationInfo.Token,
+                                                 authorizationInfo.Location,
+                                                 authorizationInfo.AuthorizationReference ?? AuthorizationReference.NewRandom(),
+                                                 authorizationInfo.Info                   ?? new DisplayText(
+                                                                                                 authorizationInfo.Token?.UILanguage ?? Languages.en,
+                                                                                                 responseText
+                                                                                             ),
+                                                 authorizationInfo.RemoteParty,
+                                                 authorizationInfo.EMSPId,
+                                                 authorizationInfo.Runtime
+                                             );
+
+                    #endregion
+
+
+                    #region Send OnTokenAuthorizeResponse event
+
+                    var endtime = Timestamp.Now;
+                    stopwatch.Stop();
+
+                    await LogEvent(
+                              OnPostTokenResponse,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  endtime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.FromCountryCode ?? request.CPOId?.CountryCode,
+                                  request.FromPartyId     ?? request.CPOId?.PartyId,
+                                  request.ToCountryCode,
+                                  request.ToPartyId,
+                                  tokenId.Value,
+                                  requestedTokenType,
+                                  locationReference,
+                                  authorizationInfo2,
+                                  stopwatch.Elapsed,
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
                     #endregion
 
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
-                               Data                 = new AuthorizationInfo(
-                                                          authorizationInfo.Allowed,
-                                                          authorizationInfo.Token,
-                                                          authorizationInfo.Location,
-                                                          authorizationInfo.AuthorizationReference ?? AuthorizationReference.NewRandom(),
-                                                          authorizationInfo.Info                   ?? new DisplayText(
-                                                                                                          authorizationInfo.Token?.UILanguage ?? Languages.en,
-                                                                                                          responseText
-                                                                                                      ),
-                                                          authorizationInfo.RemoteParty,
-                                                          authorizationInfo.EMSPId,
-                                                          authorizationInfo.Runtime
-                                                      ).ToJSON(
-                                                            CustomAuthorizationInfoSerializer,
-                                                            CustomTokenSerializer,
-                                                            CustomLocationReferenceSerializer,
-                                                            CustomDisplayTextSerializer
-                                                        ),
+                               Data                 = authorizationInfo2.ToJSON(
+                                                          CustomAuthorizationInfoSerializer,
+                                                          CustomTokenSerializer,
+                                                          CustomLocationReferenceSerializer,
+                                                          CustomDisplayTextSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
@@ -7469,6 +8755,265 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
         }
+
+        #endregion
+
+
+
+
+
+        public void LinkEventsToHTTPSSE(HTTPEventSource<JObject> HTTPSSE)
+        {
+            EventsToJSON(
+                //async (txt, json, ct) => await HTTPSSE.SubmitEvent(txt, json, ct)
+                HTTPSSE.SubmitEvent
+            );
+        }
+
+        public void EventsToJSON(Func<String, JObject, CancellationToken, Task> Processor)
+        {
+
+            #region OnPostTokenRequest
+
+            OnPostTokenRequest += async (timestamp,
+                                         sender,
+                                         eventTrackingId,
+                                         from_CountryCode,
+                                         from_PartyId,
+                                         to_CountryCode,
+                                         to_PartyId,
+                                         tokenId,
+                                         requestedTokenType,
+                                         locationReference,
+                                         cancellationToken) => {
+
+                await Processor(
+                    "tokenAuthorizeRequest",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",                 $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",                   $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("tokenId",              tokenId.ToString()),
+
+                        requestedTokenType.HasValue
+                            ? new JProperty("requestedTokenType",   requestedTokenType.Value.ToString())
+                            : null,
+
+                        locationReference.HasValue
+                            ? new JProperty("locationReference",    locationReference.Value.ToJSON(
+                                                                        CustomLocationReferenceSerializer
+                                                                    ))
+                            : null
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnPostTokenResponse
+
+            OnPostTokenResponse += async (timestamp,
+                                          sender,
+                                          eventTrackingId,
+                                          from_CountryCode,
+                                          from_PartyId,
+                                          to_CountryCode,
+                                          to_PartyId,
+                                          tokenId,
+                                          requestedTokenType,
+                                          locationReference,
+                                          result,
+                                          runtime,
+                                          cancellationToken) => {
+
+                await Processor(
+                    "tokenAuthorizeResponse",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",                 $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",                   $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("tokenId",              tokenId.ToString()),
+
+                        requestedTokenType.HasValue
+                            ? new JProperty("requestedTokenType",   requestedTokenType.Value.ToString())
+                            : null,
+
+                        locationReference. HasValue
+                            ? new JProperty("locationReference",    locationReference.Value.ToJSON(
+                                                                        CustomLocationReferenceSerializer
+                                                                    ))
+                            : null,
+
+                              new JProperty("result",               result.ToJSON(
+                                                                        CustomAuthorizationInfoSerializer,
+                                                                        CustomTokenSerializer,
+                                                                        CustomLocationReferenceSerializer,
+                                                                        CustomDisplayTextSerializer
+                                                                    )),
+
+                              new JProperty("runtime",              runtime.TotalSeconds)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+        }
+
+
+
+        public void LinkEventsToDebugText()
+        {
+            EventsToText(
+                (txt, ct) => {
+                    DebugX.LogT(txt);
+                    return Task.CompletedTask;
+                }
+            );
+        }
+
+        public void EventsToText(Func<String, CancellationToken, Task> Processor)
+        {
+
+
+            #region OnPostCDRRequest
+
+            OnPostCDRRequest += async (timestamp,
+                                       sender,
+                                       eventTrackingId,
+                                       from_CountryCode,
+                                       from_PartyId,
+                                       to_CountryCode,
+                                       to_PartyId,
+
+                                       cdr,
+
+                                       cancellationToken) =>
+
+                String.Concat(
+                    $"PostCDR request '{cdr.Id}' for session '{cdr.SessionId}'"
+                );
+
+            #endregion
+
+            #region OnPostCDRResponse
+
+            OnPostCDRResponse += async (timestamp,
+                                        sender,
+                                        eventTrackingId,
+                                        from_CountryCode,
+                                        from_PartyId,
+                                        to_CountryCode,
+                                        to_PartyId,
+                                        cdr,
+                                        cdrLocation,
+                                        runtime,
+                                        cancellationToken) =>
+
+                String.Concat(
+                    $"PostCDR response '{cdr.Id}' for session '{cdr.SessionId}' @ {cdrLocation}",
+                    " => ",
+                    $"({(UInt64) runtime.TotalMilliseconds} ms)"
+                );
+
+            #endregion
+
+
+            #region OnPostTokenRequest
+
+            OnPostTokenRequest += async (timestamp,
+                                         sender,
+                                         eventTrackingId,
+                                         from_CountryCode,
+                                         from_PartyId,
+                                         to_CountryCode,
+                                         to_PartyId,
+                                         tokenId,
+                                         requestedTokenType,
+                                         locationReference,
+                                         cancellationToken) =>
+
+                String.Concat(
+                    $"PostToken request '{tokenId}'",
+                    requestedTokenType.HasValue
+                        ? $" ({requestedTokenType})"
+                        : "",
+                    locationReference.HasValue
+                        ? $" @{locationReference.Value.LocationId}{(locationReference.Value.EVSEUIds.Any() ? $"/{locationReference.Value.EVSEUIds.AggregateWith(", ")}" : "")}"
+                        : ""
+                );
+
+            #endregion
+
+            #region OnPostTokenResponse
+
+            OnPostTokenResponse += async (timestamp,
+                                          sender,
+                                          eventTrackingId,
+                                          from_CountryCode,
+                                          from_PartyId,
+                                          to_CountryCode,
+                                          to_PartyId,
+                                          tokenId,
+                                          requestedTokenType,
+                                          locationReference,
+                                          result,
+                                          runtime,
+                                          cancellationToken) =>
+
+                String.Concat(
+                    $"PostToken response '{tokenId}'",
+                    requestedTokenType.HasValue
+                        ? $" ({requestedTokenType})"
+                        : "",
+                    locationReference.HasValue
+                        ? $" @{locationReference.Value.LocationId}{(locationReference.Value.EVSEUIds.Any() ? $"/{locationReference.Value.EVSEUIds.AggregateWith(", ")}" : "")}"
+                        : "",
+                    " => ",
+                    $"{result.Allowed} ({(UInt64) runtime.TotalMilliseconds} ms)"
+                );
+
+            #endregion
+
+
+        }
+
+
+
+        #region (private) LogEvent (Logger, LogHandler, ...)
+
+        private Task LogEvent<TDelegate>(TDelegate?                                         Logger,
+                                         Func<TDelegate, Task>                              LogHandler,
+                                         [CallerArgumentExpression(nameof(Logger))] String  EventName     = "",
+                                         [CallerMemberName()]                       String  OICPCommand   = "")
+
+            where TDelegate : Delegate
+
+            => LogEvent(
+                   nameof(EMSP_HTTPAPI),
+                   Logger,
+                   LogHandler,
+                   EventName,
+                   OICPCommand
+               );
 
         #endregion
 

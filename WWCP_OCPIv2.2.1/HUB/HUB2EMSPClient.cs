@@ -790,7 +790,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
         /// <summary>
         /// An event fired whenever a request posting a token will be send.
         /// </summary>
-        public event OnPostTokenRequestDelegate?   OnPostTokenRequest;
+        public event HUB2EMSP.HTTP.OnPostTokenRequestDelegate?   OnPostTokenRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request posting a token will be send.
@@ -805,7 +805,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
         /// <summary>
         /// An event fired whenever a response to a posting a token request had been received.
         /// </summary>
-        public event OnPostTokenResponseDelegate?  OnPostTokenResponse;
+        public event HUB2EMSP.HTTP.OnPostTokenResponseDelegate?  OnPostTokenResponse;
 
         #endregion
 

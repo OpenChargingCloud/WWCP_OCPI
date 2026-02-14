@@ -17,13 +17,16 @@
 
 #region Usings
 
+using System.Diagnostics;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
+using Hermod = org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP;
@@ -33,12 +36,103 @@ using cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP;
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
+    #region OnPostCDR(Request|Response)Delegate
+
+    /// <summary>
+    /// A delegate called whenever a POST CDR request was received.
+    /// </summary>
+    public delegate Task OnPostCDRRequestDelegate2 (DateTimeOffset       Timestamp,
+                                                    EMSP_HTTPAPI         Sender,
+                                                    EventTracking_Id     EventTrackingId,
+                                                    CountryCode?         From_CountryCode,
+                                                    Party_Id?            From_PartyId,
+
+                                                    CDR                  CDR,
+
+                                                    CancellationToken    CancellationToken);
+
+    /// <summary>
+    /// A delegate whenever a response to a POST CDR request had been sent.
+    /// </summary>
+    public delegate Task OnPostCDRResponseDelegate2(DateTimeOffset       Timestamp,
+                                                    EMSP_HTTPAPI         Sender,
+                                                    EventTracking_Id     EventTrackingId,
+                                                    CountryCode?         From_CountryCode,
+                                                    Party_Id?            From_PartyId,
+
+                                                    CDR                  CDR,
+
+                                                    Hermod.Location      CDRLocation,
+                                                    TimeSpan             Runtime,
+                                                    CancellationToken    CancellationToken);
+
+    #endregion
+
+    #region OnPostToken(Request|Response)Delegate
+
+    /// <summary>
+    /// A delegate called whenever a POST Token request was received.
+    /// </summary>
+    public delegate Task OnPostTokenRequestDelegate2 (DateTimeOffset       Timestamp,
+                                                      EMSP_HTTPAPI         Sender,
+                                                      EventTracking_Id     EventTrackingId,
+                                                      CountryCode?         From_CountryCode,
+                                                      Party_Id?            From_PartyId,
+
+                                                      Token_Id             TokenId,
+                                                      TokenType?           RequestedTokenType,
+                                                      LocationReference?   LocationReference,
+                                                      CancellationToken    CancellationToken);
+
+    /// <summary>
+    /// A delegate whenever a response to a POST Token request had been sent.
+    /// </summary>
+    public delegate Task OnPostTokenResponseDelegate2(DateTimeOffset       Timestamp,
+                                                      EMSP_HTTPAPI         Sender,
+                                                      EventTracking_Id     EventTrackingId,
+                                                      CountryCode?         From_CountryCode,
+                                                      Party_Id?            From_PartyId,
+
+                                                      Token_Id             TokenId,
+                                                      TokenType?           RequestedTokenType,
+                                                      LocationReference?   LocationReference,
+
+                                                      AuthorizationInfo    Result,
+                                                      TimeSpan             Runtime,
+                                                      CancellationToken    CancellationToken);
+
+    #endregion
+
+
     /// <summary>
     /// The HTTP API for e-mobility service providers.
     /// CPOs will connect to this API.
     /// </summary>
     public class EMSP_HTTPAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
     {
+
+        #region (class) APICounters
+
+        public class APICounters(APICounterValues?  PostCDR     = null,
+                                 APICounterValues?  PostToken   = null)
+        {
+
+            public APICounterValues PostCDR      { get; } = PostCDR   ?? new APICounterValues();
+            public APICounterValues PostToken    { get; } = PostToken ?? new APICounterValues();
+
+            public JObject ToJSON()
+
+                => JSONObject.Create(
+
+                       new JProperty("PostCDR",    PostCDR.  ToJSON()),
+                       new JProperty("PostToken",  PostToken.ToJSON())
+
+                   );
+
+        }
+
+        #endregion
+
 
         #region Data
 
@@ -72,6 +166,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// OCPI v2.1.x does not define any behaviour for this.
         /// </summary>
         public Boolean?              AllowDowngrades    { get; }
+
+        /// <summary>
+        /// API Counters.
+        /// </summary>
+        public APICounters           Counters           { get; }
 
         /// <summary>
         /// The EMSP API logger.
@@ -2426,6 +2525,40 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    Response,
                    CancellationToken
                );
+
+        #endregion
+
+
+
+        #region Domain Events
+
+        #region OnPostCDRRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever a POST CDR request was received.
+        /// </summary>
+        public event OnPostCDRRequestDelegate2?   OnPostCDRRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a POST CDR request had been sent.
+        /// </summary>
+        public event OnPostCDRResponseDelegate2?  OnPostCDRResponse;
+
+        #endregion
+
+        #region OnPostTokenRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever a POST Token request was received.
+        /// </summary>
+        public event OnPostTokenRequestDelegate2?   OnPostTokenRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a POST Token request had been sent.
+        /// </summary>
+        public event OnPostTokenResponseDelegate2?  OnPostTokenResponse;
+
+        #endregion
 
         #endregion
 
@@ -5653,10 +5786,66 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     #endregion
 
 
+                    #region Send OnPostCDRRequest event
+
+                    var startTime  = Timestamp.Now;
+                    var stopwatch  = Stopwatch.StartNew();
+
+                    Counters.PostCDR.IncRequests_OK();
+
+                    await LogEvent(
+                              OnPostCDRRequest,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  startTime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+
+                                  newCDR,
+
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
+
                     //ToDo: How do we verify, that this CPO does not send CDRs for other CPOs?
 
 
-                    var addResult = await CommonAPI.AddCDR(newCDR);
+                    // ToDo: What kind of error might happen here?
+                    var addResult    = await CommonAPI.AddCDR(newCDR);
+
+                    var cdrLocation  = Hermod.Location.From(
+                                           URLPathPrefix + "cdrs" +
+                                           newCDR.Id.ToString()
+                                       );
+
+
+                    #region Send OnPostCDRResponse event
+
+                    var endtime = Timestamp.Now;
+                    stopwatch.Stop();
+
+                    await LogEvent(
+                              OnPostCDRResponse,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  endtime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+
+                                  newCDR,
+
+                                  cdrLocation,
+                                  stopwatch.Elapsed,
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
 
 
                     // https://github.com/ocpi/ocpi/blob/release-2.1.1-bugfixes/mod_cdrs.md#response-headers
@@ -5672,10 +5861,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         return new OCPIResponse.Builder(request) {
                                        StatusCode           = 1000,
                                        StatusMessage        = "Hello world!",
-                                       Data                 = newCDR.ToJSON(),
+                                       Data                 = newCDR.ToJSON(
+                                                                  false, //IncludeOwnerInformation,
+                                                                  false, //IncludeEnergyMeter,
+                                                                  false, //IncludeCostDetails,
+                                                                  null,  //CostDigits,
+                                                                  CustomCDRSerializer,
+                                                                  CustomLocationSerializer,
+                                                                  CustomAdditionalGeoLocationSerializer,
+                                                                  CustomEVSESerializer,
+                                                                  CustomStatusScheduleSerializer,
+                                                                  CustomConnectorSerializer,
+                                                                  CustomLocationEnergyMeterSerializer,
+                                                                  CustomEVSEEnergyMeterSerializer,
+                                                                  CustomTransparencySoftwareStatusSerializer,
+                                                                  CustomTransparencySoftwareSerializer,
+                                                                  CustomDisplayTextSerializer,
+                                                                  CustomBusinessDetailsSerializer,
+                                                                  CustomHoursSerializer,
+                                                                  CustomImageSerializer,
+                                                                  CustomEnergyMixSerializer,
+                                                                  CustomEnergySourceSerializer,
+                                                                  CustomEnvironmentalImpactSerializer,
+                                                                  CustomTariffSerializer,
+                                                                  CustomTariffElementSerializer,
+                                                                  CustomPriceComponentSerializer,
+                                                                  CustomTariffRestrictionsSerializer,
+                                                                  CustomChargingPeriodSerializer,
+                                                                  CustomCDRDimensionSerializer,
+                                                                  CustomCDRCostDetailsSerializer,
+                                                                  CustomSignedDataSerializer,
+                                                                  CustomSignedValueSerializer
+                                                              ),
                                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                            HTTPStatusCode             = HTTPStatusCode.Created,
-                                           Location                   = org.GraphDefined.Vanaheimr.Hermod.HTTP.Location.From(URLPathPrefix + "cdrs" + newCDR.Id.ToString()),
+                                           Location                   = cdrLocation,
                                            AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "DELETE" ],
                                            AccessControlAllowHeaders  = [ "Authorization" ],
                                            LastModified               = newCDR.LastUpdated,
@@ -5687,39 +5907,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 2000,
                                StatusMessage        = addResult.ErrorResponse,
-                               Data                 = newCDR.ToJSON(true,
-                                                                    true,
-                                                                    true,
-                                                                    null,
-                                                                    CustomCDRSerializer,
-                                                                    CustomLocationSerializer,
-                                                                    CustomAdditionalGeoLocationSerializer,
-                                                                    CustomEVSESerializer,
-                                                                    CustomStatusScheduleSerializer,
-                                                                    CustomConnectorSerializer,
-                                                                    CustomLocationEnergyMeterSerializer,
-                                                                    CustomEVSEEnergyMeterSerializer,
-                                                                    CustomTransparencySoftwareStatusSerializer,
-                                                                    CustomTransparencySoftwareSerializer,
-                                                                    CustomDisplayTextSerializer,
-                                                                    CustomBusinessDetailsSerializer,
-                                                                    CustomHoursSerializer,
-                                                                    CustomImageSerializer,
-                                                                    CustomEnergyMixSerializer,
-                                                                    CustomEnergySourceSerializer,
-                                                                    CustomEnvironmentalImpactSerializer,
-                                                                    CustomTariffSerializer,
-                                                                    CustomTariffElementSerializer,
-                                                                    CustomPriceComponentSerializer,
-                                                                    CustomTariffRestrictionsSerializer,
-                                                                    CustomChargingPeriodSerializer,
-                                                                    CustomCDRDimensionSerializer,
-                                                                    CustomCDRCostDetailsSerializer,
-                                                                    CustomSignedDataSerializer,
-                                                                    CustomSignedValueSerializer),
+                               Data                 = newCDR.ToJSON(
+                                                          false, //IncludeOwnerInformation,
+                                                          false, //IncludeEnergyMeter,
+                                                          false, //IncludeCostDetails,
+                                                          null,  //CostDigits,
+                                                          CustomCDRSerializer,
+                                                          CustomLocationSerializer,
+                                                          CustomAdditionalGeoLocationSerializer,
+                                                          CustomEVSESerializer,
+                                                          CustomStatusScheduleSerializer,
+                                                          CustomConnectorSerializer,
+                                                          CustomLocationEnergyMeterSerializer,
+                                                          CustomEVSEEnergyMeterSerializer,
+                                                          CustomTransparencySoftwareStatusSerializer,
+                                                          CustomTransparencySoftwareSerializer,
+                                                          CustomDisplayTextSerializer,
+                                                          CustomBusinessDetailsSerializer,
+                                                          CustomHoursSerializer,
+                                                          CustomImageSerializer,
+                                                          CustomEnergyMixSerializer,
+                                                          CustomEnergySourceSerializer,
+                                                          CustomEnvironmentalImpactSerializer,
+                                                          CustomTariffSerializer,
+                                                          CustomTariffElementSerializer,
+                                                          CustomPriceComponentSerializer,
+                                                          CustomTariffRestrictionsSerializer,
+                                                          CustomChargingPeriodSerializer,
+                                                          CustomCDRDimensionSerializer,
+                                                          CustomCDRCostDetailsSerializer,
+                                                          CustomSignedDataSerializer,
+                                                          CustomSignedValueSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "DELETE" ],
                                    AccessControlAllowHeaders  = [ "Authorization" ]
                                }
                            };
@@ -6050,7 +6272,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region OPTIONS  ~/tokens
 
-            // https://example.com/ocpi/2.2/cpo/tokens/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
+            // https://example.com/ocpi/2.1.1/cpo/tokens/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
@@ -6074,7 +6296,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region GET      ~/tokens
 
-            // https://example.com/ocpi/2.2/cpo/tokens/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
+            // https://example.com/ocpi/2.1.1/cpo/tokens/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
@@ -6171,8 +6393,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region POST     ~/tokens/{token_id}/authorize?type=RFID
 
             // A real-time authorization request
-            // https://example.com/ocpi/2.2/emsp/tokens/012345678/authorize?type=RFID
-            // curl -X POST http://127.0.0.1:3000/2.2/emsp/tokens/012345678/authorize?type=RFID
+            // https://example.com/ocpi/2.1.1/emsp/tokens/012345678/authorize?type=RFID
+            // curl -X POST http://127.0.0.1:3000/2.1.1/emsp/tokens/012345678/authorize?type=RFID
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.POST,
@@ -6247,6 +6469,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     #endregion
 
 
+                    #region Send OnPostTokenRequest event
+
+                    var startTime  = Timestamp.Now;
+                    var stopwatch  = Stopwatch.StartNew();
+
+                    Counters.PostToken.IncRequests_OK();
+
+                    await LogEvent(
+                              OnPostTokenRequest,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  startTime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  tokenId.Value,
+                                  requestedTokenType,
+                                  locationReference,
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
+                    #endregion
+
+
+                    #region OnRFIDAuthToken...
+
                     AuthorizationInfo? authorizationInfo = null;
 
                     var onRFIDAuthTokenLocal = OnRFIDAuthToken;
@@ -6272,6 +6521,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         }
 
                     }
+
+                    #endregion
+
+                    #region ...or check local
 
                     else
                     {
@@ -6439,6 +6692,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               AllowedType.BLOCKED
                                           );
 
+                    #endregion
 
                     // too little information like e.g. no LocationReferences provided:
                     //   => status_code 2002
@@ -6468,22 +6722,54 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     }
 
+                    var authorizationInfo2 = new AuthorizationInfo(
+                                                 authorizationInfo.Allowed,
+                                                 authorizationInfo.Location,
+                                                 authorizationInfo.Info ?? new DisplayText(
+                                                                               Languages.en,
+                                                                               responseText
+                                                                           ),
+                                                 authorizationInfo.RemoteParty,
+                                                 authorizationInfo.EMSPId,
+                                                 authorizationInfo.Runtime
+                                             );
+
+                    #endregion
+
+
+                    #region Send OnPostTokenResponse event
+
+                    var endtime = Timestamp.Now;
+                    stopwatch.Stop();
+
+                    await LogEvent(
+                              OnPostTokenResponse,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  endtime,
+                                  this,
+                                  request.HTTPRequest.EventTrackingId,
+                                  request.CPOId?.CountryCode,
+                                  request.CPOId?.PartyId,
+                                  tokenId.Value,
+                                  requestedTokenType,
+                                  locationReference,
+                                  authorizationInfo2,
+                                  stopwatch.Elapsed,
+                                  request.HTTPRequest.CancellationToken
+                              )
+                          );
+
                     #endregion
 
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
-                               Data                 = new AuthorizationInfo(
-                                                          authorizationInfo.Allowed,
-                                                          authorizationInfo.Location,
-                                                          authorizationInfo.Info ?? new DisplayText(
-                                                                                        Languages.en,
-                                                                                        responseText
-                                                                                    )
-                                                      ).ToJSON(CustomAuthorizationInfoSerializer,
-                                                               CustomLocationReferenceSerializer,
-                                                               CustomDisplayTextSerializer),
+                               Data                 = authorizationInfo2.ToJSON(
+                                                          CustomAuthorizationInfoSerializer,
+                                                          CustomLocationReferenceSerializer,
+                                                          CustomDisplayTextSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
@@ -7037,6 +7323,196 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #endregion
 
         }
+
+        #endregion
+
+
+        public void LinkEventsToHTTPSSE(HTTPEventSource<JObject> HTTPSSE)
+        {
+            SubscribeToEvents(
+                //async (txt, json, ct) => await HTTPSSE.SubmitEvent(txt, json, ct)
+                HTTPSSE.SubmitEvent
+            );
+        }
+
+        public void SubscribeToEvents(Func<String, JObject, CancellationToken, Task> Processor)
+        {
+
+            #region OnPostTokenRequest
+
+            OnPostTokenRequest += async (timestamp,
+                                         sender,
+                                         eventTrackingId,
+                                         from_CountryCode,
+                                         from_PartyId,
+                                         tokenId,
+                                         requestedTokenType,
+                                         locationReference,
+                                         cancellationToken) => {
+
+                await Processor(
+                    "tokenAuthorizeRequest",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",                $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                              new JProperty("tokenId",             tokenId.ToString()),
+
+                        requestedTokenType.HasValue
+                            ? new JProperty("requestedTokenType",  requestedTokenType.Value.ToString())
+                            : null,
+
+                        locationReference.HasValue
+                            ? new JProperty("locationReference",   locationReference.Value.ToJSON(
+                                                                       CustomLocationReferenceSerializer
+                                                                   ))
+                            : null
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnPostTokenResponse
+
+            OnPostTokenResponse += async (timestamp,
+                                          sender,
+                                          eventTrackingId,
+                                          from_CountryCode,
+                                          from_PartyId,
+                                          tokenId,
+                                          requestedTokenType,
+                                          locationReference,
+                                          result,
+                                          runtime,
+                                          cancellationToken) => {
+
+                await Processor(
+                    "tokenAuthorizeResponse",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",                $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                              new JProperty("tokenId",             tokenId.ToString()),
+
+                        requestedTokenType.HasValue
+                            ? new JProperty("requestedTokenType",  requestedTokenType.Value.ToString())
+                            : null,
+
+                        locationReference. HasValue
+                            ? new JProperty("locationReference",   locationReference.Value.ToJSON(
+                                                                       CustomLocationReferenceSerializer
+                                                                   ))
+                            : null,
+
+                              new JProperty("result",              result.ToJSON(
+                                                                       CustomAuthorizationInfoSerializer,
+                                                                       CustomLocationReferenceSerializer,
+                                                                       CustomDisplayTextSerializer
+                                                                   )),
+
+                              new JProperty("runtime",             runtime.TotalSeconds)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+        }
+
+
+        public void LogEvents()
+        {
+
+            #region OnPostTokenRequest
+
+            OnPostTokenRequest += async (timestamp,
+                                         sender,
+                                         eventTrackingId,
+                                         from_CountryCode,
+                                         from_PartyId,
+                                         tokenId,
+                                         requestedTokenType,
+                                         locationReference,
+                                         cancellationToken) => {
+
+                DebugX.LogT(
+                    String.Concat(
+                        $"PostToken request '{tokenId}'",
+                        requestedTokenType.HasValue
+                            ? $" ({requestedTokenType})"
+                            : "",
+                        locationReference.HasValue
+                            ? $" @{locationReference.Value.LocationId}{(locationReference.Value.EVSEUIds.Any() ? $"/{locationReference.Value.EVSEUIds.AggregateWith(", ")}" : "")}"
+                            : ""
+                    )
+                );
+
+            };
+
+            #endregion
+
+            #region OnPostTokenResponse
+
+            OnPostTokenResponse += async (timestamp,
+                                          sender,
+                                          eventTrackingId,
+                                          from_CountryCode,
+                                          from_PartyId,
+                                          tokenId,
+                                          requestedTokenType,
+                                          locationReference,
+                                          result,
+                                          runtime,
+                                          cancellationToken) => {
+
+                DebugX.LogT(
+                    String.Concat(
+                        $"PostToken response '{tokenId}'",
+                        requestedTokenType.HasValue
+                            ? $" ({requestedTokenType})"
+                            : "",
+                        locationReference.HasValue
+                            ? $" @{locationReference.Value.LocationId}{(locationReference.Value.EVSEUIds.Any() ? $"/{locationReference.Value.EVSEUIds.AggregateWith(", ")}" : "")}"
+                            : "",
+                        " => ",
+                        $"{result.Allowed} ({(UInt64) runtime.TotalMilliseconds} ms)"
+                    )
+                );
+
+            };
+
+            #endregion
+
+        }
+
+
+        #region (private) LogEvent (Logger, LogHandler, ...)
+
+        private Task LogEvent<TDelegate>(TDelegate?                                         Logger,
+                                         Func<TDelegate, Task>                              LogHandler,
+                                         [CallerArgumentExpression(nameof(Logger))] String  EventName     = "",
+                                         [CallerMemberName()]                       String  OICPCommand   = "")
+
+            where TDelegate : Delegate
+
+            => LogEvent(
+                   nameof(EMSP_HTTPAPI),
+                   Logger,
+                   LogHandler,
+                   EventName,
+                   OICPCommand
+               );
 
         #endregion
 

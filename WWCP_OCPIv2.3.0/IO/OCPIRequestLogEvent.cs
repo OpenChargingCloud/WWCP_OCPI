@@ -103,7 +103,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
-        #region InvokeAsync(ServerTimestamp, OCPIAPI, Request)
+        #region InvokeAsync (ServerTimestamp, OCPIAPI, Request)
 
         /// <summary>
         /// Call all subscribers sequentially.
@@ -131,7 +131,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region WhenAny    (ServerTimestamp, OCPIAPI, Request,               Timeout = null)
+        #region WhenAny     (ServerTimestamp, OCPIAPI, Request,               Timeout = null)
 
         /// <summary>
         /// Call all subscribers in parallel and wait for any to complete.
@@ -165,7 +165,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region WhenFirst  (ServerTimestamp, OCPIAPI, Request, VerifyResult, Timeout = null, DefaultResult = null)
+        #region WhenFirst   (ServerTimestamp, OCPIAPI, Request, VerifyResult, Timeout = null, DefaultResult = null)
 
         /// <summary>
         /// Call all subscribers in parallel and wait for all to complete.
@@ -246,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region WhenAll    (ServerTimestamp, OCPIAPI, Request)
+        #region WhenAll     (ServerTimestamp, OCPIAPI, Request)
 
         /// <summary>
         /// Call all subscribers in parallel and wait for all to complete.
